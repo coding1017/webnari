@@ -1227,10 +1227,8 @@ td.bold { color: var(--white); font-weight: 600; }
         <div class="panel-body" style="display:flex;flex-direction:column;gap:16px;">
           <div>
             <div style="font-size:10.5px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Template Path</div>
-            <div style="display:flex;gap:8px;align-items:center;">
-              <input id="td-path" type="text" class="form-input" style="font-family:monospace;font-size:13px;color:var(--indigo2);background:var(--indigo-bg);border:1px solid var(--indigo-border);border-radius:8px;flex:1;" placeholder="https://yourdomain.com/template">
-              <button class="btn btn-primary btn-sm" onclick="saveTemplatePath()">Save</button>
-            </div>
+            <input id="td-path" type="text" class="form-input" style="font-family:monospace;font-size:12px;color:var(--indigo2);background:var(--indigo-bg);border:1px solid var(--indigo-border);border-radius:8px;width:100%;margin-bottom:8px;" placeholder="https://yourdomain.com/template">
+            <button class="btn btn-primary btn-sm" style="width:100%;justify-content:center;" onclick="saveTemplatePath()">💾 Save Path</button>
           </div>
           <div>
             <div style="font-size:10.5px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Niche</div>
@@ -2318,7 +2316,7 @@ const SEED = {
     }
   ],
   templates: [
-    {id:'pest-control', name:'PestPro',    niche:'Pest Control', color:'#F45C0A', status:'ready',    path:'webnari.luissballen.workers.dev/pestpro.html',
+    {id:'pest-control', name:'PestPro',    niche:'Pest Control', color:'#F45C0A', status:'ready',    path:'https://webnari.luissballen.workers.dev/pestpro.html',
      icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>`},
     {id:'electrician',  name:'ElectriPro', niche:'Electrician',  color:'#EAB308', status:'planned', path:'templates/electrician/',
      icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`},
@@ -3112,10 +3110,12 @@ function autoFillRate() {
 function saveTemplatePath() {
   const input = document.getElementById('td-path');
   const id = input.dataset.templateId;
-  const newPath = input.value.trim();
-  if (!id || !newPath) return;
+  let newPath = input.value.trim();
+  if (!id || !newPath) { toast('Enter a URL first', 'error'); return; }
+  if (!newPath.startsWith('http://') && !newPath.startsWith('https://')) newPath = 'https://' + newPath;
+  input.value = newPath;
   const t = DB.templates.find(x => x.id === id);
-  if (!t) return;
+  if (!t) { toast('Template not found', 'error'); return; }
   t.path = newPath;
   save();
   toast('Template path saved!', 'success');
