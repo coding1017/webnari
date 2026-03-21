@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact VoltPro Electric | Free Estimates</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────────── */
+:root {
+  --black:   #070711;
+  --dark:    #0D0D1E;
+  --surface: #131328;
+  --surface2:#1A1A38;
+  --border:  #252548;
+  --yellow:  #FBBF24;
+  --yellow2: #FDE68A;
+  --gold:    #D97706;
+  --white:   #F0F4FF;
+  --muted:   #7878A0;
+  --text:    #C4C4E0;
+  --font-head: 'Barlow Condensed', sans-serif;
+  --font-body: 'Barlow', sans-serif;
+  --radius:  4px;
+  --radius-lg: 8px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--black);
+  color: var(--text);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+.container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+.section { padding: 96px 0; }
+.eyebrow {
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--yellow);
+  margin-bottom: 12px;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 14px 28px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+.btn-primary { background: var(--yellow); color: var(--black); }
+.btn-primary:hover { background: var(--yellow2); transform: translateY(-1px); }
+.btn-outline {
+  background: transparent;
+  color: var(--white);
+  border: 1.5px solid var(--border);
+}
+.btn-outline:hover { border-color: var(--yellow); color: var(--yellow); }
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+/* ─── NAV ────────────────────────────────────────── */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(7,7,17,0.94);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 68px;
+}
+.logo {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--white);
+}
+.logo span { color: var(--yellow); }
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+}
+.nav-links a {
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: color 0.15s;
+}
+.nav-links a:hover { color: var(--white); }
+.nav-links li { position: relative; }
+.nav-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 8px;
+  min-width: 220px;
+  z-index: 200;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+}
+.nav-dropdown::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px; height: 10px;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+  rotate: 45deg;
+}
+.nav-dropdown a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-family: var(--font-head);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text);
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.nav-dropdown a:hover { background: var(--surface2); color: var(--yellow); }
+.nav-dropdown-icon { font-size: 16px; line-height: 1; }
+.nav-has-dropdown > a::after { content: ' ▾'; font-size: 10px; opacity: 0.6; }
+.nav-has-dropdown:hover .nav-dropdown { display: block; }
+.nav-cta { display: flex; align-items: center; gap: 16px; }
+.emergency-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--yellow);
+}
+.pulse-dot {
+  width: 8px; height: 8px;
+  background: var(--yellow);
+  border-radius: 50%;
+  animation: pulse 1.8s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.7); }
+}
+/* ─── PAGE HERO ──────────────────────────────────── */
+.page-hero {
+  min-height: 55vh;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(160deg, var(--black) 0%, var(--dark) 60%, rgba(251,191,36,0.04) 100%);
+  position: relative;
+  overflow: hidden;
+  padding: 120px 0 80px;
+}
+.page-hero::before {
+  content: '';
+  position: absolute;
+  top: -100px; right: -100px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(251,191,36,0.08) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.page-hero::after {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(251,191,36,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(251,191,36,0.04) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(ellipse 80% 80% at 70% 50%, black 20%, transparent 80%);
+}
+.page-hero-content { position: relative; z-index: 2; max-width: 760px; }
+.page-hero h1 {
+  font-family: var(--font-head);
+  font-size: clamp(44px, 7vw, 84px);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 0.93;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--yellow) 50%, var(--yellow2) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 20px;
+}
+.page-hero p {
+  font-size: 18px;
+  color: var(--text);
+  max-width: 580px;
+  line-height: 1.65;
+}
+.section-h2 {
+  font-family: var(--font-head);
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: var(--white);
+  line-height: 0.95;
+  margin-bottom: 20px;
+}
+/* ─── CONTACT GRID ───────────────────────────────── */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 64px;
+  align-items: start;
+}
+/* ─── CONTACT INFO ───────────────────────────────── */
+.contact-info-panel { display: flex; flex-direction: column; gap: 20px; }
+.phone-display {
+  font-family: var(--font-head);
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 900;
+  color: var(--yellow);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+.phone-display a { color: inherit; }
+.phone-display a:hover { color: var(--yellow2); }
+.phone-sub {
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 32px;
+}
+.contact-detail {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  transition: border-color 0.2s;
+}
+.contact-detail:hover { border-color: rgba(251,191,36,0.2); }
+.contact-detail-icon {
+  width: 40px; height: 40px;
+  background: rgba(251,191,36,0.1);
+  border: 1px solid rgba(251,191,36,0.2);
+  border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.contact-detail-text strong {
+  display: block;
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--white);
+  margin-bottom: 2px;
+}
+.contact-detail-text span { font-size: 15px; color: var(--text); }
+.emergency-callout {
+  background: rgba(251,191,36,0.07);
+  border: 1.5px solid rgba(251,191,36,0.25);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.emergency-callout .ec-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+.emergency-callout p {
+  font-size: 15px;
+  color: var(--yellow2);
+  line-height: 1.6;
+  font-weight: 500;
+}
+.emergency-callout strong { color: var(--yellow); }
+/* ─── FORM ───────────────────────────────────────── */
+.form-wrap {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 40px;
+}
+.form-title {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--white);
+  margin-bottom: 28px;
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-group { margin-bottom: 14px; }
+.form-group label {
+  display: block;
+  font-family: var(--font-head);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--white);
+  outline: none;
+  transition: border-color 0.15s;
+  appearance: none;
+}
+.form-group select { cursor: pointer; }
+.form-group input::placeholder,
+.form-group textarea::placeholder { color: var(--muted); }
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus { border-color: var(--yellow); }
+.form-group textarea { resize: vertical; min-height: 110px; }
+/* Contact method radio group */
+.radio-group { display: flex; gap: 10px; flex-wrap: wrap; }
+.radio-opt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text);
+  user-select: none;
+}
+.radio-opt input[type="radio"] { display: none; }
+.radio-opt:hover { border-color: rgba(251,191,36,0.3); color: var(--white); }
+.radio-opt.selected,
+.radio-opt:has(input:checked) { border-color: var(--yellow); color: var(--yellow); background: rgba(251,191,36,0.07); }
+.form-submit {
+  width: 100%;
+  padding: 16px;
+  font-size: 16px;
+  justify-content: center;
+  margin-top: 8px;
+  border-radius: var(--radius);
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  background: var(--yellow);
+  color: var(--black);
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+}
+.form-submit:hover { background: var(--yellow2); transform: translateY(-1px); }
+.form-note {
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 14px;
+}
+/* ─── FAQ SECTION ────────────────────────────────── */
+.faq-section { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.faq-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 48px;
+}
+.faq-card {
+  background: var(--black);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+.faq-card:hover { border-color: rgba(251,191,36,0.2); }
+.faq-q {
+  padding: 24px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: pointer;
+}
+.faq-q h3 {
+  font-family: var(--font-head);
+  font-size: 18px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--white);
+  line-height: 1.2;
+}
+.faq-arrow {
+  font-size: 20px;
+  color: var(--yellow);
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+.faq-card.open .faq-arrow { transform: rotate(45deg); }
+.faq-a {
+  padding: 0 28px;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease;
+}
+.faq-card.open .faq-a {
+  max-height: 300px;
+  padding: 0 28px 24px;
+}
+.faq-a p {
+  font-size: 15px;
+  color: var(--text);
+  line-height: 1.7;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+/* ─── FOOTER ─────────────────────────────────────── */
+footer { background: var(--black); border-top: 1px solid var(--border); padding: 56px 0 32px; }
+.footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+.footer-brand .logo { font-size: 24px; margin-bottom: 14px; }
+.footer-brand p { font-size: 14px; color: var(--muted); line-height: 1.65; margin-bottom: 20px; max-width: 260px; }
+.footer-social { display: flex; gap: 10px; }
+.social-btn {
+  width: 36px; height: 36px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
+  font-size: 15px; color: var(--muted); transition: all 0.15s;
+}
+.social-btn:hover { border-color: var(--yellow); color: var(--yellow); }
+.footer-col h4 {
+  font-family: var(--font-head); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--white); margin-bottom: 20px;
+}
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-col li a { font-size: 14px; color: var(--muted); transition: color 0.15s; }
+.footer-col li a:hover { color: var(--yellow); }
+.footer-bottom {
+  border-top: 1px solid var(--border); padding-top: 28px;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+.footer-bottom p { font-size: 13px; color: var(--muted); }
+.license-badges { display: flex; gap: 10px; }
+.license-badge {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 4px 10px; font-family: var(--font-head); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+}
+@media (max-width: 900px) {
+  .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+  .faq-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .nav-links { display: none; }
+}
+@media (max-width: 600px) {
+  .form-row { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .form-wrap { padding: 28px 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a href="electrician.html" class="logo">VOLT<span>PRO</span></a>
+      <ul class="nav-links">
+        <li class="nav-has-dropdown">
+          <a href="#">Services</a>
+          <div class="nav-dropdown">
+            <a href="panel-upgrades.html"><span class="nav-dropdown-icon">⚡</span>Panel Upgrades</a>
+            <a href="ev-charger.html"><span class="nav-dropdown-icon">🔌</span>EV Charger Install</a>
+            <a href="home-rewiring.html"><span class="nav-dropdown-icon">🏠</span>Home Rewiring</a>
+            <a href="smart-home.html"><span class="nav-dropdown-icon">💡</span>Smart Home &amp; Lighting</a>
+            <a href="commercial.html"><span class="nav-dropdown-icon">🏢</span>Commercial Electric</a>
+            <a href="emergency-service.html"><span class="nav-dropdown-icon">🚨</span>Emergency Service</a>
+          </div>
+        </li>
+        <li><a href="electrician.html#why">Why Us</a></li>
+        <li><a href="reviews.html">Reviews</a></li>
+        <li><a href="electrician.html#areas">Service Areas</a></li>
+        <li class="nav-has-dropdown">
+          <a href="#">Company</a>
+          <div class="nav-dropdown">
+            <a href="about.html"><span class="nav-dropdown-icon">🏢</span>About Us</a>
+            <a href="team.html"><span class="nav-dropdown-icon">👥</span>Our Team</a>
+            <a href="blog.html"><span class="nav-dropdown-icon">📝</span>Blog</a>
+            <a href="reviews.html"><span class="nav-dropdown-icon">⭐</span>Reviews</a>
+            <a href="privacy.html"><span class="nav-dropdown-icon">🔒</span>Privacy Policy</a>
+            <a href="contact.html"><span class="nav-dropdown-icon">📞</span>Contact</a>
+          </div>
+        </li>
+      </ul>
+      <div class="nav-cta">
+        <div class="emergency-badge">
+          <div class="pulse-dot"></div>
+          24/7 Emergency
+        </div>
+        <a href="tel:5615550200" class="btn btn-primary">⚡ Call Now</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="container">
+    <div class="page-hero-content">
+      <div class="eyebrow">Get In Touch</div>
+      <h1>Get Your Free<br>Estimate</h1>
+      <p>Call, text, or fill out the form. We respond within 2 hours during business hours and have emergency staff available 24/7.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT SECTION -->
+<section class="section">
+  <div class="container">
+    <div class="contact-grid">
+
+      <!-- LEFT: Contact Details -->
+      <div class="contact-info-panel">
+        <div>
+          <div class="eyebrow">Call or Text</div>
+          <div class="phone-display"><a href="tel:5615550200">(561) 555-0200</a></div>
+          <div class="phone-sub">Available 24/7 for emergencies</div>
+        </div>
+
+        <div class="contact-detail">
+          <div class="contact-detail-icon">✉️</div>
+          <div class="contact-detail-text">
+            <strong>Email Us</strong>
+            <span>hello@voltproelectric.com</span>
+          </div>
+        </div>
+
+        <div class="contact-detail">
+          <div class="contact-detail-icon">🕐</div>
+          <div class="contact-detail-text">
+            <strong>Business Hours</strong>
+            <span>Mon–Sat 7am–6pm · Emergency: 24/7</span>
+          </div>
+        </div>
+
+        <div class="contact-detail">
+          <div class="contact-detail-icon">📍</div>
+          <div class="contact-detail-text">
+            <strong>Service Area</strong>
+            <span>Palm Beach &amp; Broward County, FL</span>
+          </div>
+        </div>
+
+        <div class="emergency-callout">
+          <div class="ec-icon">⚡</div>
+          <p><strong>For electrical emergencies, call immediately</strong> — don't wait for a callback. Our emergency technicians respond on-site within 60 minutes around the clock.</p>
+        </div>
+      </div>
+
+      <!-- RIGHT: Form -->
+      <div class="form-wrap">
+        <div class="form-title">Request a Free Estimate</div>
+        <form>
+          <div class="form-row">
+            <div class="form-group">
+              <label>First Name</label>
+              <input type="text" placeholder="John">
+            </div>
+            <div class="form-group">
+              <label>Last Name</label>
+              <input type="text" placeholder="Smith">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Phone Number</label>
+              <input type="tel" placeholder="(561) 000-0000">
+            </div>
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" placeholder="john@email.com">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Service Address</label>
+            <input type="text" placeholder="123 Palm Ave, Boca Raton, FL">
+          </div>
+          <div class="form-group">
+            <label>Service Type</label>
+            <select>
+              <option value="" disabled selected>Select a service...</option>
+              <option>Panel Upgrade / Replacement</option>
+              <option>EV Charger Installation</option>
+              <option>Whole-Home Rewiring</option>
+              <option>Smart Home / Lighting</option>
+              <option>Commercial Electrical</option>
+              <option>Emergency Service</option>
+              <option>Not Sure — Need Assessment</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Preferred Contact Method</label>
+            <div class="radio-group">
+              <label class="radio-opt">
+                <input type="radio" name="contact_method" value="phone"> Phone
+              </label>
+              <label class="radio-opt">
+                <input type="radio" name="contact_method" value="email"> Email
+              </label>
+              <label class="radio-opt">
+                <input type="radio" name="contact_method" value="text"> Text
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Message</label>
+            <textarea placeholder="Tell us about your project — any existing issues, timeline, or other details that help us prepare your estimate..."></textarea>
+          </div>
+          <button type="submit" class="form-submit">Send My Request →</button>
+          <p class="form-note">🔒 We never share your info. Expect a response within 2 hours.</p>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FAQ SECTION -->
+<section class="section faq-section">
+  <div class="container">
+    <div class="eyebrow">Common Questions</div>
+    <h2 class="section-h2">Frequently Asked<br>Questions</h2>
+    <div class="faq-grid">
+
+      <div class="faq-card" id="faq1">
+        <div class="faq-q" onclick="toggleFaq('faq1')">
+          <h3>How quickly can you come out?</h3>
+          <span class="faq-arrow">+</span>
+        </div>
+        <div class="faq-a">
+          <p>For non-emergency work we typically schedule within 2–3 business days. We offer same-day availability for many service areas. Emergency calls are responded to within 60 minutes, 24 hours a day, 7 days a week — including holidays.</p>
+        </div>
+      </div>
+
+      <div class="faq-card" id="faq2">
+        <div class="faq-q" onclick="toggleFaq('faq2')">
+          <h3>Do you provide written quotes?</h3>
+          <span class="faq-arrow">+</span>
+        </div>
+        <div class="faq-a">
+          <p>Yes, always. We provide flat-rate written quotes before any work begins. No verbal estimates. You'll know the exact total price — parts, labor, permits, and everything — before a single wire is touched. If the scope changes, we discuss it with you first.</p>
+        </div>
+      </div>
+
+      <div class="faq-card" id="faq3">
+        <div class="faq-q" onclick="toggleFaq('faq3')">
+          <h3>Do you pull permits?</h3>
+          <span class="faq-arrow">+</span>
+        </div>
+        <div class="faq-a">
+          <p>Absolutely. Every job that legally requires a permit gets one, and we handle all the paperwork with the county. We schedule and attend the final inspection, and we never hand a project off until it has passed. Work done without permits can void your homeowner's insurance and cause problems when you sell.</p>
+        </div>
+      </div>
+
+      <div class="faq-card" id="faq4">
+        <div class="faq-q" onclick="toggleFaq('faq4')">
+          <h3>What areas do you serve?</h3>
+          <span class="faq-arrow">+</span>
+        </div>
+        <div class="faq-a">
+          <p>We serve all of Palm Beach County and northern Broward County, including Boca Raton, Delray Beach, Boynton Beach, West Palm Beach, Palm Beach Gardens, Wellington, Jupiter, Lake Worth, Deerfield Beach, Pompano Beach, Fort Lauderdale, and Coral Springs. Call us if you're unsure — we likely cover your area.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">VOLT<span>PRO</span></div>
+        <p>South Florida's licensed electrical specialists. Serving Palm Beach and Broward County since 2009.</p>
+        <div class="footer-social">
+          <a href="#" class="social-btn">f</a>
+          <a href="#" class="social-btn">in</a>
+          <a href="#" class="social-btn">▶</a>
+          <a href="#" class="social-btn">★</a>
+        </div>
+      </div>
+      <div class="footer-col"><h4>Services</h4><ul>
+        <li><a href="panel-upgrades.html">Panel Upgrades</a></li>
+        <li><a href="ev-charger.html">EV Charger Installation</a></li>
+        <li><a href="home-rewiring.html">Whole-Home Rewiring</a></li>
+        <li><a href="smart-home.html">Smart Home &amp; Lighting</a></li>
+        <li><a href="commercial.html">Commercial Electrical</a></li>
+        <li><a href="emergency-service.html">Emergency Service</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Service Areas</h4><ul>
+        <li><a href="#">Boca Raton</a></li>
+        <li><a href="#">Delray Beach</a></li>
+        <li><a href="#">West Palm Beach</a></li>
+        <li><a href="#">Palm Beach Gardens</a></li>
+        <li><a href="#">Fort Lauderdale</a></li>
+        <li><a href="#">View All Areas →</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Company</h4><ul>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="team.html">Our Team</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="reviews.html">Reviews</a></li>
+        <li><a href="privacy.html">Privacy Policy</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul></div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 VoltPro Electric. All rights reserved. · FL Electrical License #EC13009274</p>
+      <div class="license-badges"><span class="license-badge">Licensed</span><span class="license-badge">Insured</span><span class="license-badge">BBB A+</span></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleFaq(id) {
+  var card = document.getElementById(id);
+  var wasOpen = card.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.faq-card').forEach(function(c) { c.classList.remove('open'); });
+  // Toggle clicked
+  if (!wasOpen) card.classList.add('open');
+}
+// Highlight selected radio option
+document.querySelectorAll('.radio-opt').forEach(function(label) {
+  label.querySelector('input').addEventListener('change', function() {
+    document.querySelectorAll('.radio-opt').forEach(function(l) { l.classList.remove('selected'); });
+    label.classList.add('selected');
+  });
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Team | VoltPro Electric</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────────── */
+:root {
+  --black:   #070711;
+  --dark:    #0D0D1E;
+  --surface: #131328;
+  --surface2:#1A1A38;
+  --border:  #252548;
+  --yellow:  #FBBF24;
+  --yellow2: #FDE68A;
+  --gold:    #D97706;
+  --white:   #F0F4FF;
+  --muted:   #7878A0;
+  --text:    #C4C4E0;
+  --font-head: 'Barlow Condensed', sans-serif;
+  --font-body: 'Barlow', sans-serif;
+  --radius:  4px;
+  --radius-lg: 8px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--black);
+  color: var(--text);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+.container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+.section { padding: 96px 0; }
+.eyebrow {
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--yellow);
+  margin-bottom: 12px;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 14px 28px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+.btn-primary { background: var(--yellow); color: var(--black); }
+.btn-primary:hover { background: var(--yellow2); transform: translateY(-1px); }
+.btn-outline {
+  background: transparent;
+  color: var(--white);
+  border: 1.5px solid var(--border);
+}
+.btn-outline:hover { border-color: var(--yellow); color: var(--yellow); }
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+/* ─── NAV ────────────────────────────────────────── */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(7,7,17,0.94);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 68px;
+}
+.logo {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--white);
+}
+.logo span { color: var(--yellow); }
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+}
+.nav-links a {
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: color 0.15s;
+}
+.nav-links a:hover { color: var(--white); }
+.nav-links li { position: relative; }
+.nav-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 8px;
+  min-width: 220px;
+  z-index: 200;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+}
+.nav-dropdown::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px; height: 10px;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+  rotate: 45deg;
+}
+.nav-dropdown a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-family: var(--font-head);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text);
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.nav-dropdown a:hover { background: var(--surface2); color: var(--yellow); }
+.nav-dropdown-icon { font-size: 16px; line-height: 1; }
+.nav-has-dropdown > a::after {
+  content: ' ▾';
+  font-size: 10px;
+  opacity: 0.6;
+}
+.nav-has-dropdown:hover .nav-dropdown { display: block; }
+.nav-cta { display: flex; align-items: center; gap: 16px; }
+.emergency-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--yellow);
+}
+.pulse-dot {
+  width: 8px; height: 8px;
+  background: var(--yellow);
+  border-radius: 50%;
+  animation: pulse 1.8s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.7); }
+}
+/* ─── PAGE HERO ──────────────────────────────────── */
+.page-hero {
+  min-height: 55vh;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(160deg, var(--black) 0%, var(--dark) 60%, rgba(251,191,36,0.04) 100%);
+  position: relative;
+  overflow: hidden;
+  padding: 120px 0 80px;
+}
+.page-hero::before {
+  content: '';
+  position: absolute;
+  top: -100px; right: -100px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(251,191,36,0.08) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.page-hero::after {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(251,191,36,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(251,191,36,0.04) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(ellipse 80% 80% at 70% 50%, black 20%, transparent 80%);
+}
+.page-hero-content { position: relative; z-index: 2; max-width: 760px; }
+.page-hero h1 {
+  font-family: var(--font-head);
+  font-size: clamp(44px, 7vw, 84px);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 0.93;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--yellow) 50%, var(--yellow2) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 20px;
+}
+.page-hero p {
+  font-size: 18px;
+  color: var(--text);
+  max-width: 580px;
+  line-height: 1.65;
+}
+.section-h2 {
+  font-family: var(--font-head);
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: var(--white);
+  line-height: 0.95;
+  margin-bottom: 20px;
+}
+/* ─── TEAM GRID ──────────────────────────────────── */
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 56px;
+}
+.team-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 36px 32px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.team-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--yellow);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+.team-card:hover { border-color: rgba(251,191,36,0.25); transform: translateY(-3px); }
+.team-card:hover::before { transform: scaleX(1); }
+.team-avatar {
+  width: 72px; height: 72px;
+  background: rgba(251,191,36,0.12);
+  border: 2px solid rgba(251,191,36,0.3);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-head);
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--yellow);
+  margin-bottom: 20px;
+}
+.team-name {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--white);
+  margin-bottom: 4px;
+}
+.team-title {
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--yellow);
+  margin-bottom: 10px;
+}
+.team-years {
+  display: inline-block;
+  background: rgba(251,191,36,0.08);
+  border: 1px solid rgba(251,191,36,0.15);
+  border-radius: var(--radius);
+  padding: 3px 10px;
+  font-family: var(--font-head);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+.team-bio {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+/* ─── JOIN SECTION ───────────────────────────────── */
+.join-section {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.join-inner {
+  max-width: 720px;
+  margin: 0 auto;
+  text-align: center;
+}
+.join-inner p {
+  font-size: 17px;
+  color: var(--text);
+  line-height: 1.75;
+  margin-bottom: 32px;
+}
+/* ─── FOOTER ─────────────────────────────────────── */
+footer { background: var(--black); border-top: 1px solid var(--border); padding: 56px 0 32px; }
+.footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+.footer-brand .logo { font-size: 24px; margin-bottom: 14px; }
+.footer-brand p { font-size: 14px; color: var(--muted); line-height: 1.65; margin-bottom: 20px; max-width: 260px; }
+.footer-social { display: flex; gap: 10px; }
+.social-btn {
+  width: 36px; height: 36px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
+  font-size: 15px; color: var(--muted); transition: all 0.15s;
+}
+.social-btn:hover { border-color: var(--yellow); color: var(--yellow); }
+.footer-col h4 {
+  font-family: var(--font-head); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--white); margin-bottom: 20px;
+}
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-col li a { font-size: 14px; color: var(--muted); transition: color 0.15s; }
+.footer-col li a:hover { color: var(--yellow); }
+.footer-bottom {
+  border-top: 1px solid var(--border); padding-top: 28px;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+.footer-bottom p { font-size: 13px; color: var(--muted); }
+.license-badges { display: flex; gap: 10px; }
+.license-badge {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 4px 10px; font-family: var(--font-head); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+}
+@media (max-width: 900px) {
+  .team-grid { grid-template-columns: 1fr 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .nav-links { display: none; }
+}
+@media (max-width: 600px) {
+  .team-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a href="electrician.html" class="logo">VOLT<span>PRO</span></a>
+      <ul class="nav-links">
+        <li class="nav-has-dropdown">
+          <a href="#">Services</a>
+          <div class="nav-dropdown">
+            <a href="panel-upgrades.html"><span class="nav-dropdown-icon">⚡</span>Panel Upgrades</a>
+            <a href="ev-charger.html"><span class="nav-dropdown-icon">🔌</span>EV Charger Install</a>
+            <a href="home-rewiring.html"><span class="nav-dropdown-icon">🏠</span>Home Rewiring</a>
+            <a href="smart-home.html"><span class="nav-dropdown-icon">💡</span>Smart Home &amp; Lighting</a>
+            <a href="commercial.html"><span class="nav-dropdown-icon">🏢</span>Commercial Electric</a>
+            <a href="emergency-service.html"><span class="nav-dropdown-icon">🚨</span>Emergency Service</a>
+          </div>
+        </li>
+        <li><a href="electrician.html#why">Why Us</a></li>
+        <li><a href="reviews.html">Reviews</a></li>
+        <li><a href="electrician.html#areas">Service Areas</a></li>
+        <li class="nav-has-dropdown">
+          <a href="#">Company</a>
+          <div class="nav-dropdown">
+            <a href="about.html"><span class="nav-dropdown-icon">🏢</span>About Us</a>
+            <a href="team.html"><span class="nav-dropdown-icon">👥</span>Our Team</a>
+            <a href="blog.html"><span class="nav-dropdown-icon">📝</span>Blog</a>
+            <a href="reviews.html"><span class="nav-dropdown-icon">⭐</span>Reviews</a>
+            <a href="privacy.html"><span class="nav-dropdown-icon">🔒</span>Privacy Policy</a>
+            <a href="contact.html"><span class="nav-dropdown-icon">📞</span>Contact</a>
+          </div>
+        </li>
+      </ul>
+      <div class="nav-cta">
+        <div class="emergency-badge">
+          <div class="pulse-dot"></div>
+          24/7 Emergency
+        </div>
+        <a href="tel:5615550200" class="btn btn-primary">⚡ Call Now</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="container">
+    <div class="page-hero-content">
+      <div class="eyebrow">The People Behind The Work</div>
+      <h1>Meet The<br>VoltPro Team</h1>
+      <p>Every technician is a licensed Florida electrician. No apprentice-only crews, no subcontractors.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM GRID -->
+<section class="section">
+  <div class="container">
+    <div class="eyebrow">Our People</div>
+    <h2 class="section-h2">18 Licensed Electricians.<br>One Standard of Work.</h2>
+    <div class="team-grid">
+
+      <div class="team-card">
+        <div class="team-avatar">DR</div>
+        <div class="team-name">David Reyes</div>
+        <div class="team-title">Founder &amp; Master Electrician</div>
+        <div class="team-years">22 Years Experience</div>
+        <p class="team-bio">Started VoltPro in 2009 after 12 years in commercial electrical. EC license #EC13009274. David oversees every large project and sets the standard for everything the company does.</p>
+      </div>
+
+      <div class="team-card">
+        <div class="team-avatar">MD</div>
+        <div class="team-name">Marco Delgado</div>
+        <div class="team-title">Lead Residential Electrician</div>
+        <div class="team-years">14 Years Experience</div>
+        <p class="team-bio">Specializes in panel upgrades and whole-home rewiring. Speaks Spanish and English. Marco is the team's go-to technician for complex residential retrofits.</p>
+      </div>
+
+      <div class="team-card">
+        <div class="team-avatar">AT</div>
+        <div class="team-name">Ashley Torres</div>
+        <div class="team-title">Smart Home Division Lead</div>
+        <div class="team-years">9 Years Experience</div>
+        <p class="team-bio">Lutron and Control4 certified. Has designed over 200 smart home systems across South Florida. Ashley is the person customers ask for by name.</p>
+      </div>
+
+      <div class="team-card">
+        <div class="team-avatar">JW</div>
+        <div class="team-name">James Whitfield</div>
+        <div class="team-title">Commercial Project Manager</div>
+        <div class="team-years">17 Years Experience</div>
+        <p class="team-bio">Manages all commercial tenant improvements and new construction projects. Previously a project superintendent on large-scale builds. Nothing fazes James.</p>
+      </div>
+
+      <div class="team-card">
+        <div class="team-avatar">CR</div>
+        <div class="team-name">Carlos Rivera</div>
+        <div class="team-title">EV Charging Specialist</div>
+        <div class="team-years">6 Years Experience</div>
+        <p class="team-bio">Tesla-certified and ChargePoint-trained. Has installed 400+ EV chargers across Palm Beach and Broward County. The team's resident expert on everything EV.</p>
+      </div>
+
+      <div class="team-card">
+        <div class="team-avatar">NP</div>
+        <div class="team-name">Nicole Park</div>
+        <div class="team-title">Office Manager</div>
+        <div class="team-years">8 Years Experience</div>
+        <p class="team-bio">Handles scheduling, permitting, and customer experience. The glue that holds it all together. If you've called our office, you've talked to Nicole.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- JOIN THE TEAM -->
+<section class="section join-section">
+  <div class="container">
+    <div class="join-inner">
+      <div class="eyebrow">Careers</div>
+      <h2 class="section-h2">Join the Team</h2>
+      <p>We're always looking for licensed electricians who share our values. Competitive pay, company vehicle, full benefits, and a team that actually has your back. We don't cut corners, so we only hire people who don't cut corners.</p>
+      <a href="mailto:careers@voltproelectric.com" class="btn btn-primary">Send Your Resume →</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">VOLT<span>PRO</span></div>
+        <p>South Florida's licensed electrical specialists. Serving Palm Beach and Broward County since 2009.</p>
+        <div class="footer-social">
+          <a href="#" class="social-btn">f</a>
+          <a href="#" class="social-btn">in</a>
+          <a href="#" class="social-btn">▶</a>
+          <a href="#" class="social-btn">★</a>
+        </div>
+      </div>
+      <div class="footer-col"><h4>Services</h4><ul>
+        <li><a href="panel-upgrades.html">Panel Upgrades</a></li>
+        <li><a href="ev-charger.html">EV Charger Installation</a></li>
+        <li><a href="home-rewiring.html">Whole-Home Rewiring</a></li>
+        <li><a href="smart-home.html">Smart Home &amp; Lighting</a></li>
+        <li><a href="commercial.html">Commercial Electrical</a></li>
+        <li><a href="emergency-service.html">Emergency Service</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Service Areas</h4><ul>
+        <li><a href="#">Boca Raton</a></li>
+        <li><a href="#">Delray Beach</a></li>
+        <li><a href="#">West Palm Beach</a></li>
+        <li><a href="#">Palm Beach Gardens</a></li>
+        <li><a href="#">Fort Lauderdale</a></li>
+        <li><a href="#">View All Areas →</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Company</h4><ul>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="team.html">Our Team</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="reviews.html">Reviews</a></li>
+        <li><a href="privacy.html">Privacy Policy</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul></div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 VoltPro Electric. All rights reserved. · FL Electrical License #EC13009274</p>
+      <div class="license-badges"><span class="license-badge">Licensed</span><span class="license-badge">Insured</span><span class="license-badge">BBB A+</span></div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

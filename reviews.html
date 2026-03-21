@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Customer Reviews | VoltPro Electric</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────────── */
+:root {
+  --black:   #070711;
+  --dark:    #0D0D1E;
+  --surface: #131328;
+  --surface2:#1A1A38;
+  --border:  #252548;
+  --yellow:  #FBBF24;
+  --yellow2: #FDE68A;
+  --gold:    #D97706;
+  --white:   #F0F4FF;
+  --muted:   #7878A0;
+  --text:    #C4C4E0;
+  --font-head: 'Barlow Condensed', sans-serif;
+  --font-body: 'Barlow', sans-serif;
+  --radius:  4px;
+  --radius-lg: 8px;
+}
+/* ─── RESET ──────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--black);
+  color: var(--text);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+/* ─── UTILITY ────────────────────────────────────── */
+.container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+.section { padding: 96px 0; }
+.eyebrow {
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--yellow);
+  margin-bottom: 12px;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 14px 28px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+.btn-primary { background: var(--yellow); color: var(--black); }
+.btn-primary:hover { background: var(--yellow2); transform: translateY(-1px); }
+.btn-outline {
+  background: transparent;
+  color: var(--white);
+  border: 1.5px solid var(--border);
+}
+.btn-outline:hover { border-color: var(--yellow); color: var(--yellow); }
+/* ─── NOISE TEXTURE ──────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+/* ─── NAV ────────────────────────────────────────── */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(7,7,17,0.94);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 68px;
+}
+.logo {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--white);
+}
+.logo span { color: var(--yellow); }
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+}
+.nav-links a {
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: color 0.15s;
+}
+.nav-links a:hover { color: var(--white); }
+.nav-links li { position: relative; }
+.nav-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 8px;
+  min-width: 220px;
+  z-index: 200;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+}
+.nav-dropdown::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px; height: 10px;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+  rotate: 45deg;
+}
+.nav-dropdown a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-family: var(--font-head);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text);
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.nav-dropdown a:hover { background: var(--surface2); color: var(--yellow); }
+.nav-dropdown-icon { font-size: 16px; line-height: 1; }
+.nav-has-dropdown > a::after { content: ' ▾'; font-size: 10px; opacity: 0.6; }
+.nav-has-dropdown:hover .nav-dropdown { display: block; }
+.nav-cta { display: flex; align-items: center; gap: 16px; }
+.emergency-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--yellow);
+}
+.pulse-dot {
+  width: 8px; height: 8px;
+  background: var(--yellow);
+  border-radius: 50%;
+  animation: pulse 1.8s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.7); }
+}
+/* ─── PAGE HERO ──────────────────────────────────── */
+.page-hero {
+  min-height: 55vh;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(160deg, var(--black) 0%, var(--dark) 60%, rgba(251,191,36,0.04) 100%);
+  position: relative;
+  overflow: hidden;
+  padding: 120px 0 80px;
+}
+.page-hero::before {
+  content: '';
+  position: absolute;
+  top: -100px;
+  right: -100px;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(251,191,36,0.08) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.page-hero h1 {
+  font-family: var(--font-head);
+  font-size: clamp(44px, 7vw, 84px);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 0.93;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--yellow) 50%, var(--yellow2) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 20px;
+}
+.page-hero-sub {
+  font-size: 18px;
+  color: var(--muted);
+  line-height: 1.65;
+  max-width: 560px;
+  margin-bottom: 36px;
+}
+/* ─── RATING SUMMARY ─────────────────────────────── */
+.rating-summary {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 48px;
+  text-align: center;
+  margin-bottom: 64px;
+  position: relative;
+  overflow: hidden;
+}
+.rating-summary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 70% at 50% 50%, rgba(251,191,36,0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+.rating-display-stars {
+  font-size: 36px;
+  letter-spacing: 6px;
+  margin-bottom: 12px;
+}
+.rating-display-num {
+  font-family: var(--font-head);
+  font-size: 72px;
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.rating-display-num span {
+  font-size: 32px;
+  color: var(--muted);
+  font-weight: 600;
+}
+.rating-display-label {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 32px;
+  letter-spacing: 0.05em;
+}
+.platform-badges {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.platform-badge {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 20px;
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.platform-badge .star { color: var(--yellow); }
+/* ─── REVIEWS GRID ───────────────────────────────── */
+.reviews-section-main { background: var(--black); }
+.reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; }
+.review-card {
+  background: var(--surface);
+  padding: 32px;
+  box-shadow: 0 0 0 1px rgba(251,191,36,0.06);
+  transition: background 0.2s;
+}
+.review-card:hover { background: var(--surface2); }
+.review-top { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 16px; gap: 12px; }
+.reviewer { display: flex; align-items: center; gap: 12px; }
+.reviewer-avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--surface2); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-head); font-size: 15px; font-weight: 800; color: var(--yellow);
+  flex-shrink: 0;
+}
+.reviewer-name { font-family: var(--font-head); font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--white); }
+.reviewer-loc { font-size: 12px; color: var(--muted); }
+.review-date { font-size: 11px; color: var(--muted); letter-spacing: 0.04em; white-space: nowrap; margin-top: 2px; }
+.review-stars { color: var(--yellow); font-size: 13px; letter-spacing: 2px; margin-bottom: 14px; }
+.review-text { font-size: 14px; color: var(--text); line-height: 1.7; font-style: italic; }
+.review-text::before { content: '"'; color: var(--yellow); font-size: 20px; font-style: normal; }
+/* ─── CTA SECTION ────────────────────────────────── */
+.cta-section { position: relative; padding: 100px 0; overflow: hidden; }
+.cta-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(251,191,36,0.09) 0%, transparent 70%), var(--black);
+}
+.cta-grid-overlay {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 40px 40px; opacity: 0.10;
+}
+.cta-content { position: relative; z-index: 2; text-align: center; max-width: 700px; margin: 0 auto; }
+.cta-content h2 {
+  font-family: var(--font-head);
+  font-size: clamp(40px, 6vw, 72px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em;
+  color: var(--white); line-height: 0.95; margin-bottom: 20px;
+}
+.cta-content h2 span { color: var(--yellow); }
+.cta-content p { color: var(--muted); font-size: 17px; line-height: 1.65; margin-bottom: 48px; }
+.cta-buttons { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; margin-bottom: 40px; }
+.cta-guarantees { display: flex; align-items: center; justify-content: center; gap: 32px; flex-wrap: wrap; }
+.cta-guarantee {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-head); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+}
+.cta-guarantee::before { content: '✓'; color: var(--yellow); font-size: 13px; }
+/* ─── FOOTER ─────────────────────────────────────── */
+footer { background: var(--black); border-top: 1px solid var(--border); padding: 56px 0 32px; }
+.footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+.footer-brand .logo { font-size: 24px; margin-bottom: 14px; }
+.footer-brand p { font-size: 14px; color: var(--muted); line-height: 1.65; margin-bottom: 20px; max-width: 260px; }
+.footer-social { display: flex; gap: 10px; }
+.social-btn {
+  width: 36px; height: 36px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
+  font-size: 15px; color: var(--muted); transition: all 0.15s;
+}
+.social-btn:hover { border-color: var(--yellow); color: var(--yellow); }
+.footer-col h4 {
+  font-family: var(--font-head); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--white); margin-bottom: 20px;
+}
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-col li a { font-size: 14px; color: var(--muted); transition: color 0.15s; }
+.footer-col li a:hover { color: var(--yellow); }
+.footer-bottom {
+  border-top: 1px solid var(--border); padding-top: 28px;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+.footer-bottom p { font-size: 13px; color: var(--muted); }
+.license-badges { display: flex; gap: 10px; }
+.license-badge {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 4px 10px; font-family: var(--font-head); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+}
+/* ─── SCROLL REVEAL ──────────────────────────────── */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.55s ease, transform 0.55s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+/* ─── RESPONSIVE ─────────────────────────────────── */
+@media (max-width: 900px) {
+  .reviews-grid { grid-template-columns: 1fr 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .nav-links { display: none; }
+}
+@media (max-width: 600px) {
+  .reviews-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .rating-summary { padding: 32px 20px; }
+  .rating-display-num { font-size: 52px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a href="electrician.html" class="logo">VOLT<span>PRO</span></a>
+      <ul class="nav-links">
+        <li class="nav-has-dropdown">
+          <a href="#">Services</a>
+          <div class="nav-dropdown">
+            <a href="panel-upgrades.html"><span class="nav-dropdown-icon">⚡</span>Panel Upgrades</a>
+            <a href="ev-charger.html"><span class="nav-dropdown-icon">🔌</span>EV Charger Install</a>
+            <a href="home-rewiring.html"><span class="nav-dropdown-icon">🏠</span>Home Rewiring</a>
+            <a href="smart-home.html"><span class="nav-dropdown-icon">💡</span>Smart Home &amp; Lighting</a>
+            <a href="commercial.html"><span class="nav-dropdown-icon">🏢</span>Commercial Electric</a>
+            <a href="emergency-service.html"><span class="nav-dropdown-icon">🚨</span>Emergency Service</a>
+          </div>
+        </li>
+        <li><a href="electrician.html#why">Why Us</a></li>
+        <li><a href="reviews.html">Reviews</a></li>
+        <li><a href="electrician.html#areas">Service Areas</a></li>
+        <li class="nav-has-dropdown">
+          <a href="#">Company</a>
+          <div class="nav-dropdown">
+            <a href="about.html"><span class="nav-dropdown-icon">🏢</span>About Us</a>
+            <a href="team.html"><span class="nav-dropdown-icon">👥</span>Our Team</a>
+            <a href="blog.html"><span class="nav-dropdown-icon">📝</span>Blog</a>
+            <a href="reviews.html"><span class="nav-dropdown-icon">⭐</span>Reviews</a>
+            <a href="privacy.html"><span class="nav-dropdown-icon">🔒</span>Privacy Policy</a>
+            <a href="contact.html"><span class="nav-dropdown-icon">📞</span>Contact</a>
+          </div>
+        </li>
+      </ul>
+      <div class="nav-cta">
+        <div class="emergency-badge">
+          <div class="pulse-dot"></div>
+          24/7 Emergency
+        </div>
+        <a href="tel:5615550200" class="btn btn-primary">⚡ Call Now</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="container" style="position:relative;z-index:1;">
+    <div class="eyebrow">What Customers Say</div>
+    <h1>4.9 Stars.<br>312 Reviews.</h1>
+    <p class="page-hero-sub">Every review is from a verified VoltPro Electric customer. We respond to every single one.</p>
+  </div>
+</section>
+
+<!-- REVIEWS SECTION -->
+<section class="section reviews-section-main">
+  <div class="container">
+
+    <!-- Rating Summary -->
+    <div class="rating-summary reveal">
+      <div class="rating-display-stars">⭐⭐⭐⭐⭐</div>
+      <div class="rating-display-num">4.9 <span>/ 5.0</span></div>
+      <div class="rating-display-label">Based on 453 verified customer reviews across all platforms</div>
+      <div class="platform-badges">
+        <div class="platform-badge"><span class="star">★</span> Google &nbsp;<strong>4.9</strong>&nbsp; (312)</div>
+        <div class="platform-badge"><span class="star">★</span> Yelp &nbsp;<strong>4.8</strong>&nbsp; (87)</div>
+        <div class="platform-badge"><span class="star">★</span> HomeAdvisor &nbsp;<strong>4.9</strong>&nbsp; (54)</div>
+        <div class="platform-badge"><span class="star">★</span> BBB &nbsp;<strong>A+</strong></div>
+      </div>
+    </div>
+
+    <!-- Reviews Grid -->
+    <div class="reviews-grid">
+
+      <div class="review-card reveal">
+        <div class="review-top">
+          <div class="reviewer">
+            <div class="reviewer-avatar">RM</div>
+            <div>
+              <div class="reviewer-name">Robert M.</div>
+              <div class="reviewer-loc">Boca Raton, FL</div>
+            </div>
+          </div>
+          <div class="review-date">Mar 2026</div>
+        </div>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">Panel was 40 years old and failing. VoltPro gave me a fair quote, pulled permits, and had a new 200A panel installed in one day. Passed inspection first try. Highly recommend."</p>
+      </div>
+
+      <div class="review-card reveal">
+        <div class="review-top">
+          <div class="reviewer">
+            <div class="reviewer-avatar">LK</div>
+            <div>
+              <div class="reviewer-name">Linda K.</div>
+              <div class="reviewer-loc">Delray Beach, FL</div>
+            </div>
+          </div>
+          <div class="review-date">Mar 2026</div>
+        </div>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">Had them install two Tesla Wall Connectors and rewire my garage. Clean work, on time, and they handled all the permits. Will absolutely use again for our second home."</p>
+      </div>
+
+      <div class="review-card reveal">
+        <div class="review-top">
+          <div class="reviewer">
+            <div class="reviewer-avatar">CV</div>
+            <div>
+              <div class="reviewer-name">Carlos V.</div>
+              <div class="reviewer-loc">West Palm Beach, FL</div>
+            </div>
+          </div>
+          <div class="review-date">Feb 2026</div>
+        </div>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">Called at 9pm with a burning smell from the panel. They were at my house within 45 minutes, found a failing breaker, and had it fixed the same night. Absolute lifesavers."</p>
+      </div>
+
+      <div class="review-card reveal">
+        <div class="review-top">
+          <div class="reviewer">
+            <div class="reviewer-avatar">JM</div>
+            <div>
+              <div class="reviewer-name">Jennifer M.</div>
+              <div class="reviewer-loc">Palm Beach Gardens, FL</div>
+            </div>
+          </div>
+          <div class="review-date">Feb 2026</div>
+        </div>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">Marco rewired our entire 1972 home. The crew was clean, professional, finished 2 days ahead of schedule. Could not recommend more highly."</p>
+      </div>
+
+      <div class="review-card reveal">
+        <div class="review-top">
+          <div class="reviewer">
+            <div class="reviewer-avatar">TR</div>
+            <div>
+              <div class="reviewer-name">Tom R.</div>
+              <div class="reviewer-loc">Wellington, FL</div>
+            </div>
+          </div>
+          <div class="review-date">Feb 2026</div>
+        </div>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">Ashley designed our Lutron system and it's incredible. Every light in the house on schedules, scenes, and voice control. Worth every penny."</p>
+      </div>
+
+      <div class="review-card reveal">
+        <div class="review-top">
+          <div class="reviewer">
+            <div class="reviewer-avatar">PD</div>
+            <div>
+              <div class="reviewer-name">Patricia D.</div>
+              <div class="reviewer-loc">Coral Springs, FL</div>
+            </div>
+          </div>
+          <div class="review-date">Jan 2026</div>
+        </div>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">Commercial build-out for our dental office. James managed the whole project, coordinated with our GC, and everything was done to spec on time."</p>
+      </div>
+
+      <div class="review-card reveal">
+        <div class="review-top">
+          <div class="reviewer">
+            <div class="reviewer-avatar">MS</div>
+            <div>
+              <div class="reviewer-name">Mike S.</div>
+              <div class="reviewer-loc">Fort Lauderdale, FL</div>
+            </div>
+          </div>
+          <div class="review-date">Jan 2026</div>
+        </div>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">Fair price, clean work, no hidden fees. Exactly what you want. Panel upgrade and three EV chargers installed in one day."</p>
+      </div>
+
+      <div class="review-card reveal">
+        <div class="review-top">
+          <div class="reviewer">
+            <div class="reviewer-avatar">RT</div>
+            <div>
+              <div class="reviewer-name">Rachel T.</div>
+              <div class="reviewer-loc">Boynton Beach, FL</div>
+            </div>
+          </div>
+          <div class="review-date">Jan 2026</div>
+        </div>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">Our breakers kept tripping and two other companies quoted us a whole panel replacement. VoltPro found a failing breaker and fixed it for $180. Honest people!"</p>
+      </div>
+
+      <div class="review-card reveal">
+        <div class="review-top">
+          <div class="reviewer">
+            <div class="reviewer-avatar">DL</div>
+            <div>
+              <div class="reviewer-name">David L.</div>
+              <div class="reviewer-loc">Jupiter, FL</div>
+            </div>
+          </div>
+          <div class="review-date">Dec 2025</div>
+        </div>
+        <div class="review-stars">★★★★★</div>
+        <p class="review-text">Whole-home smart lighting with Lutron RA3. Ashley knew the system cold, programmed everything perfectly. Our house feels like a completely different place."</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-bg"></div>
+  <div class="cta-grid-overlay"></div>
+  <div class="container">
+    <div class="cta-content reveal">
+      <div class="eyebrow">Ready to get started?</div>
+      <h2>Join Our <span>Happy</span><br>Customers</h2>
+      <p>Get a flat-rate written quote from a licensed electrician. We'll assess your project, pull all permits, and back everything with a lifetime labor warranty.</p>
+      <div class="cta-buttons">
+        <a href="contact.html" class="btn btn-primary">Schedule Free Estimate →</a>
+        <a href="tel:5615550200" class="btn btn-outline">⚡ (561) 555-0200</a>
+      </div>
+      <div class="cta-guarantees">
+        <span class="cta-guarantee">Free estimate</span>
+        <span class="cta-guarantee">Same-day availability</span>
+        <span class="cta-guarantee">Lifetime labor warranty</span>
+        <span class="cta-guarantee">Permit handled for you</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">VOLT<span>PRO</span></div>
+        <p>South Florida's licensed electrical specialists. Serving Palm Beach and Broward County since 2009.</p>
+        <div class="footer-social">
+          <a href="#" class="social-btn">f</a>
+          <a href="#" class="social-btn">in</a>
+          <a href="#" class="social-btn">▶</a>
+          <a href="#" class="social-btn">★</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="panel-upgrades.html">Panel Upgrades</a></li>
+          <li><a href="ev-charger.html">EV Charger Installation</a></li>
+          <li><a href="home-rewiring.html">Whole-Home Rewiring</a></li>
+          <li><a href="smart-home.html">Smart Home &amp; Lighting</a></li>
+          <li><a href="commercial.html">Commercial Electrical</a></li>
+          <li><a href="emergency-service.html">Emergency Service</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Service Areas</h4>
+        <ul>
+          <li><a href="#">Boca Raton</a></li>
+          <li><a href="#">Delray Beach</a></li>
+          <li><a href="#">West Palm Beach</a></li>
+          <li><a href="#">Palm Beach Gardens</a></li>
+          <li><a href="#">Fort Lauderdale</a></li>
+          <li><a href="#">View All Areas →</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="team.html">Our Team</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="reviews.html">Reviews</a></li>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 VoltPro Electric. All rights reserved. · FL Electrical License #EC13009274</p>
+      <div class="license-badges">
+        <span class="license-badge">Licensed</span>
+        <span class="license-badge">Insured</span>
+        <span class="license-badge">BBB A+</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+  var reveals = document.querySelectorAll('.reveal');
+  var observer = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(function (el) { observer.observe(el); });
+})();
+</script>
+</body>
+</html>

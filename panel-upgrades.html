@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel Upgrades &amp; Replacements | VoltPro Electric</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────────── */
+:root {
+  --black:   #070711;
+  --dark:    #0D0D1E;
+  --surface: #131328;
+  --surface2:#1A1A38;
+  --border:  #252548;
+  --yellow:  #FBBF24;
+  --yellow2: #FDE68A;
+  --gold:    #D97706;
+  --white:   #F0F4FF;
+  --muted:   #7878A0;
+  --text:    #C4C4E0;
+  --font-head: 'Barlow Condensed', sans-serif;
+  --font-body: 'Barlow', sans-serif;
+  --radius:  4px;
+  --radius-lg: 8px;
+}
+/* ─── RESET ──────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--black);
+  color: var(--text);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+/* ─── UTILITY ────────────────────────────────────── */
+.container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+.section { padding: 96px 0; }
+.section-sm { padding: 64px 0; }
+.eyebrow {
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--yellow);
+  margin-bottom: 12px;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 14px 28px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+.btn-primary { background: var(--yellow); color: var(--black); }
+.btn-primary:hover { background: var(--yellow2); transform: translateY(-1px); }
+.btn-outline {
+  background: transparent;
+  color: var(--white);
+  border: 1.5px solid var(--border);
+}
+.btn-outline:hover { border-color: var(--yellow); color: var(--yellow); }
+/* ─── NOISE TEXTURE ──────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+/* ─── NAV ────────────────────────────────────────── */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(7,7,17,0.94);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 68px;
+}
+.logo {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--white);
+}
+.logo span { color: var(--yellow); }
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+}
+.nav-links a {
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: color 0.15s;
+}
+.nav-links a:hover { color: var(--white); }
+.nav-links li { position: relative; }
+.nav-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 8px;
+  min-width: 220px;
+  z-index: 200;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+}
+.nav-dropdown::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px; height: 10px;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+  rotate: 45deg;
+}
+.nav-dropdown a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-family: var(--font-head);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text);
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.nav-dropdown a:hover { background: var(--surface2); color: var(--yellow); }
+.nav-dropdown-icon { font-size: 16px; line-height: 1; }
+.nav-has-dropdown > a::after {
+  content: ' ▾';
+  font-size: 10px;
+  opacity: 0.6;
+}
+.nav-has-dropdown:hover .nav-dropdown { display: block; }
+.nav-cta { display: flex; align-items: center; gap: 16px; }
+.emergency-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--yellow);
+}
+.pulse-dot {
+  width: 8px; height: 8px;
+  background: var(--yellow);
+  border-radius: 50%;
+  animation: pulse 1.8s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.7); }
+}
+/* ─── PAGE HERO ──────────────────────────────────── */
+.page-hero {
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(160deg, var(--black) 0%, var(--dark) 60%, rgba(251,191,36,0.04) 100%);
+  position: relative;
+  overflow: hidden;
+  padding: 120px 0 80px;
+}
+.page-hero::before {
+  content: '';
+  position: absolute;
+  top: -100px; right: -100px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(251,191,36,0.08) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.page-hero::after {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(251,191,36,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(251,191,36,0.04) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(ellipse 80% 80% at 70% 50%, black 20%, transparent 80%);
+}
+.page-hero-inner { position: relative; z-index: 2; }
+.page-hero h1 {
+  font-family: var(--font-head);
+  font-size: clamp(44px, 7vw, 84px);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 0.93;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--yellow) 50%, var(--yellow2) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 20px;
+}
+.page-hero-sub {
+  font-size: 18px;
+  color: var(--muted);
+  line-height: 1.65;
+  max-width: 560px;
+  margin-bottom: 36px;
+}
+/* ─── SECTION HEADINGS ───────────────────────────── */
+.section-title {
+  font-family: var(--font-head);
+  font-size: clamp(32px, 4vw, 48px);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: var(--white);
+  margin-bottom: 16px;
+  line-height: 1;
+}
+.section-sub {
+  font-size: 16px;
+  color: var(--muted);
+  line-height: 1.65;
+  max-width: 560px;
+  margin-bottom: 48px;
+}
+/* ─── WARNING SIGNS ──────────────────────────────── */
+.two-col-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 56px;
+  align-items: start;
+}
+.warning-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.warning-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 18px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  transition: border-color 0.2s;
+}
+.warning-card:hover { border-color: rgba(251,191,36,0.3); }
+.warning-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.warning-card p {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.5;
+}
+/* ─── FEATURE CARDS ──────────────────────────────── */
+.three-col-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.feature-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px 28px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.feature-card:hover { border-color: rgba(251,191,36,0.35); transform: translateY(-3px); }
+.feature-card-icon {
+  font-size: 32px;
+  margin-bottom: 18px;
+}
+.feature-card h3 {
+  font-family: var(--font-head);
+  font-size: 20px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color: var(--white);
+  margin-bottom: 10px;
+}
+.feature-card p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+/* ─── PROCESS STEPS ──────────────────────────────── */
+.process-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+.step-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px 24px;
+  position: relative;
+}
+.step-num {
+  font-family: var(--font-head);
+  font-size: 48px;
+  font-weight: 900;
+  color: rgba(251,191,36,0.12);
+  line-height: 1;
+  margin-bottom: 16px;
+}
+.step-card h3 {
+  font-family: var(--font-head);
+  font-size: 18px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--yellow);
+  margin-bottom: 10px;
+}
+.step-card p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+/* ─── PRICING BOX ────────────────────────────────── */
+.pricing-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--yellow);
+  border-radius: var(--radius-lg);
+  padding: 32px 36px;
+  margin-top: 48px;
+}
+.pricing-box p {
+  font-size: 16px;
+  color: var(--text);
+  line-height: 1.7;
+}
+.pricing-box strong { color: var(--yellow); }
+/* ─── SCROLL REVEAL ──────────────────────────────── */
+.reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.55s ease, transform 0.55s ease; }
+.reveal.visible { opacity: 1; transform: none; }
+/* ─── FOOTER ─────────────────────────────────────── */
+footer { background: var(--black); border-top: 1px solid var(--border); padding: 56px 0 32px; }
+.footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+.footer-brand .logo { font-size: 24px; margin-bottom: 14px; }
+.footer-brand p { font-size: 14px; color: var(--muted); line-height: 1.65; margin-bottom: 20px; max-width: 260px; }
+.footer-social { display: flex; gap: 10px; }
+.social-btn {
+  width: 36px; height: 36px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
+  font-size: 15px; color: var(--muted); transition: all 0.15s;
+}
+.social-btn:hover { border-color: var(--yellow); color: var(--yellow); }
+.footer-col h4 {
+  font-family: var(--font-head); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--white); margin-bottom: 20px;
+}
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-col li a { font-size: 14px; color: var(--muted); transition: color 0.15s; }
+.footer-col li a:hover { color: var(--yellow); }
+.footer-bottom {
+  border-top: 1px solid var(--border); padding-top: 28px;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+.footer-bottom p { font-size: 13px; color: var(--muted); }
+.license-badges { display: flex; gap: 10px; }
+.license-badge {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 4px 10px; font-family: var(--font-head); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+}
+/* ─── RESPONSIVE ─────────────────────────────────── */
+@media (max-width: 900px) {
+  .two-col-grid { grid-template-columns: 1fr; gap: 40px; }
+  .three-col-grid { grid-template-columns: 1fr 1fr; }
+  .process-steps { grid-template-columns: 1fr 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .nav-links { display: none; }
+}
+@media (max-width: 600px) {
+  .three-col-grid { grid-template-columns: 1fr; }
+  .process-steps { grid-template-columns: 1fr; }
+  .warning-cards { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a href="electrician.html" class="logo">VOLT<span>PRO</span></a>
+      <ul class="nav-links">
+        <li class="nav-has-dropdown">
+          <a href="#">Services</a>
+          <div class="nav-dropdown">
+            <a href="panel-upgrades.html"><span class="nav-dropdown-icon">⚡</span>Panel Upgrades</a>
+            <a href="ev-charger.html"><span class="nav-dropdown-icon">🔌</span>EV Charger Install</a>
+            <a href="home-rewiring.html"><span class="nav-dropdown-icon">🏠</span>Home Rewiring</a>
+            <a href="smart-home.html"><span class="nav-dropdown-icon">💡</span>Smart Home &amp; Lighting</a>
+            <a href="commercial.html"><span class="nav-dropdown-icon">🏢</span>Commercial Electric</a>
+            <a href="emergency-service.html"><span class="nav-dropdown-icon">🚨</span>Emergency Service</a>
+          </div>
+        </li>
+        <li><a href="electrician.html#why">Why Us</a></li>
+        <li><a href="reviews.html">Reviews</a></li>
+        <li><a href="electrician.html#areas">Service Areas</a></li>
+        <li class="nav-has-dropdown">
+          <a href="#">Company</a>
+          <div class="nav-dropdown">
+            <a href="about.html"><span class="nav-dropdown-icon">🏢</span>About Us</a>
+            <a href="team.html"><span class="nav-dropdown-icon">👥</span>Our Team</a>
+            <a href="blog.html"><span class="nav-dropdown-icon">📝</span>Blog</a>
+            <a href="reviews.html"><span class="nav-dropdown-icon">⭐</span>Reviews</a>
+            <a href="privacy.html"><span class="nav-dropdown-icon">🔒</span>Privacy Policy</a>
+            <a href="contact.html"><span class="nav-dropdown-icon">📞</span>Contact</a>
+          </div>
+        </li>
+      </ul>
+      <div class="nav-cta">
+        <div class="emergency-badge">
+          <div class="pulse-dot"></div>
+          24/7 Emergency
+        </div>
+        <a href="tel:5615550200" class="btn btn-primary">⚡ Call Now</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="container page-hero-inner">
+    <div class="eyebrow">Safety First</div>
+    <h1>Panel Upgrades<br>&amp; Replacements</h1>
+    <p class="page-hero-sub">Old panels cause fires. We replace Federal Pacific, Zinsco, and undersized panels with modern 200A service — safely, on schedule, and fully permitted.</p>
+    <a href="contact.html" class="btn btn-primary">Get a Free Panel Assessment →</a>
+  </div>
+</section>
+
+<!-- SECTION 1: Is Your Panel a Hazard? -->
+<section class="section" style="background: var(--dark);">
+  <div class="container">
+    <div class="two-col-grid">
+      <div class="reveal">
+        <div class="eyebrow">Know the Risk</div>
+        <h2 class="section-title">Is Your Panel a Hazard?</h2>
+        <p class="section-sub">Many South Florida homes still have Federal Pacific Stab-Lok panels, Zinsco panels, or old fuse boxes — all of which are known fire hazards. These panels can fail to trip during overloads, allowing wires to overheat silently inside your walls. If your home was built before 1990, there's a real chance your electrical panel is putting your family at risk every day.</p>
+        <p style="font-size:15px;color:var(--muted);line-height:1.65;">We inspect every panel at no charge and give you a straight answer — no upselling, no scare tactics. Just facts and flat-rate pricing.</p>
+      </div>
+      <div class="reveal" style="transition-delay:0.1s;">
+        <div style="font-family:var(--font-head);font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--yellow);margin-bottom:20px;">Warning Signs</div>
+        <div class="warning-cards">
+          <div class="warning-card">
+            <div class="warning-icon">⚠️</div>
+            <p>Breakers that trip frequently or won't reset</p>
+          </div>
+          <div class="warning-card">
+            <div class="warning-icon">🔥</div>
+            <p>Burning smell from the panel or nearby outlets</p>
+          </div>
+          <div class="warning-card">
+            <div class="warning-icon">💡</div>
+            <p>Lights that flicker or dim unexpectedly</p>
+          </div>
+          <div class="warning-card">
+            <div class="warning-icon">🌡️</div>
+            <p>Panel feels warm to the touch</p>
+          </div>
+          <div class="warning-card">
+            <div class="warning-icon">🔧</div>
+            <p>You have a fuse box instead of breakers</p>
+          </div>
+          <div class="warning-card">
+            <div class="warning-icon">🚗</div>
+            <p>You're adding an EV charger or solar system</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2: What We Upgrade To -->
+<section class="section">
+  <div class="container">
+    <div class="reveal" style="text-align:center;margin-bottom:56px;">
+      <div class="eyebrow">Modern Standards</div>
+      <h2 class="section-title" style="max-width:560px;margin:0 auto 16px;">What We Upgrade To</h2>
+      <p style="font-size:16px;color:var(--muted);max-width:500px;margin:0 auto;">We only install industry-leading panels that meet or exceed current NEC and Florida Building Code requirements.</p>
+    </div>
+    <div class="three-col-grid">
+      <div class="feature-card reveal">
+        <div class="feature-card-icon">⚡</div>
+        <h3>200A Main Panel</h3>
+        <p>Industry standard for modern homes. Handles all current loads plus future expansion for EV chargers, solar, and smart home systems.</p>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:0.1s;">
+        <div class="feature-card-icon">🏆</div>
+        <h3>Square D QO / Eaton CH</h3>
+        <p>We install only top-tier panels with a 10-year manufacturer warranty. No gray-market parts, no cut corners.</p>
+      </div>
+      <div class="feature-card reveal" style="transition-delay:0.2s;">
+        <div class="feature-card-icon">🛡️</div>
+        <h3>AFCI/GFCI Protection</h3>
+        <p>All new panels include Arc Fault and Ground Fault protection on every circuit for maximum safety and full code compliance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 3: Our Panel Upgrade Process -->
+<section class="section" style="background: var(--dark);">
+  <div class="container">
+    <div class="reveal" style="text-align:center;margin-bottom:56px;">
+      <div class="eyebrow">How It Works</div>
+      <h2 class="section-title">Our Panel Upgrade Process</h2>
+    </div>
+    <div class="process-steps">
+      <div class="step-card reveal">
+        <div class="step-num">01</div>
+        <h3>Free Assessment</h3>
+        <p>We inspect your current panel and recommend the right upgrade for your home's actual load requirements.</p>
+      </div>
+      <div class="step-card reveal" style="transition-delay:0.1s;">
+        <div class="step-num">02</div>
+        <h3>Permit Pull</h3>
+        <p>We handle all paperwork with Palm Beach or Broward County Building Department. You don't lift a finger.</p>
+      </div>
+      <div class="step-card reveal" style="transition-delay:0.2s;">
+        <div class="step-num">03</div>
+        <h3>Same-Day Upgrade</h3>
+        <p>Most panel upgrades are completed in one day with minimal power interruption to your home.</p>
+      </div>
+      <div class="step-card reveal" style="transition-delay:0.3s;">
+        <div class="step-num">04</div>
+        <h3>Final Inspection</h3>
+        <p>County inspector signs off, and we hand you a documented lifetime labor warranty on all our work.</p>
+      </div>
+    </div>
+    <div class="pricing-box reveal">
+      <p>Most residential panel upgrades range from <strong>$1,800 – $3,500</strong> depending on amperage, permit fees, and scope. We provide written flat-rate quotes before any work begins — no surprises at closeout.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA STRIP -->
+<section style="background:var(--yellow);padding:64px 0;">
+  <div class="container" style="text-align:center;">
+    <div style="font-family:var(--font-head);font-size:clamp(28px,4vw,48px);font-weight:900;text-transform:uppercase;color:var(--black);letter-spacing:-0.02em;margin-bottom:12px;">Ready to Get Started?</div>
+    <p style="color:rgba(0,0,0,0.65);font-size:16px;margin-bottom:28px;max-width:500px;margin-left:auto;margin-right:auto;">Free estimates, flat-rate pricing, lifetime labor warranty. Call or fill out the form — we'll get back to you within 2 hours.</p>
+    <a href="contact.html" style="display:inline-flex;align-items:center;gap:8px;background:var(--black);color:var(--yellow);font-family:var(--font-head);font-weight:700;font-size:16px;letter-spacing:0.05em;text-transform:uppercase;padding:16px 36px;border-radius:4px;text-decoration:none;">Get a Free Estimate →</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">VOLT<span>PRO</span></div>
+        <p>South Florida's licensed electrical specialists. Serving Palm Beach and Broward County since 2009.</p>
+        <div class="footer-social">
+          <a href="#" class="social-btn">f</a>
+          <a href="#" class="social-btn">in</a>
+          <a href="#" class="social-btn">▶</a>
+          <a href="#" class="social-btn">★</a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul>
+          <li><a href="panel-upgrades.html">Panel Upgrades</a></li>
+          <li><a href="ev-charger.html">EV Charger Installation</a></li>
+          <li><a href="home-rewiring.html">Whole-Home Rewiring</a></li>
+          <li><a href="smart-home.html">Smart Home &amp; Lighting</a></li>
+          <li><a href="commercial.html">Commercial Electrical</a></li>
+          <li><a href="emergency-service.html">Emergency Service</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Service Areas</h4>
+        <ul>
+          <li><a href="#">Boca Raton</a></li>
+          <li><a href="#">Delray Beach</a></li>
+          <li><a href="#">West Palm Beach</a></li>
+          <li><a href="#">Palm Beach Gardens</a></li>
+          <li><a href="#">Fort Lauderdale</a></li>
+          <li><a href="#">View All Areas →</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About Us</a></li>
+          <li><a href="team.html">Our Team</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="reviews.html">Reviews</a></li>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 VoltPro Electric. All rights reserved. · FL Electrical License #EC13009274</p>
+      <div class="license-badges">
+        <span class="license-badge">Licensed</span>
+        <span class="license-badge">Insured</span>
+        <span class="license-badge">BBB A+</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function() {
+  'use strict';
+  const reveals = document.querySelectorAll('.reveal');
+  if (!reveals.length) return;
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  reveals.forEach(el => io.observe(el));
+})();
+</script>
+</body>
+</html>

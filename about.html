@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About VoltPro Electric | South Florida Licensed Electricians</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────────── */
+:root {
+  --black:   #070711;
+  --dark:    #0D0D1E;
+  --surface: #131328;
+  --surface2:#1A1A38;
+  --border:  #252548;
+  --yellow:  #FBBF24;
+  --yellow2: #FDE68A;
+  --gold:    #D97706;
+  --white:   #F0F4FF;
+  --muted:   #7878A0;
+  --text:    #C4C4E0;
+  --font-head: 'Barlow Condensed', sans-serif;
+  --font-body: 'Barlow', sans-serif;
+  --radius:  4px;
+  --radius-lg: 8px;
+}
+/* ─── RESET ──────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--black);
+  color: var(--text);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+/* ─── UTILITY ────────────────────────────────────── */
+.container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+.section { padding: 96px 0; }
+.section-sm { padding: 64px 0; }
+.eyebrow {
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--yellow);
+  margin-bottom: 12px;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 14px 28px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+.btn-primary { background: var(--yellow); color: var(--black); }
+.btn-primary:hover { background: var(--yellow2); transform: translateY(-1px); }
+.btn-outline {
+  background: transparent;
+  color: var(--white);
+  border: 1.5px solid var(--border);
+}
+.btn-outline:hover { border-color: var(--yellow); color: var(--yellow); }
+/* ─── NOISE TEXTURE ──────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+/* ─── NAV ────────────────────────────────────────── */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(7,7,17,0.94);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 68px;
+}
+.logo {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--white);
+}
+.logo span { color: var(--yellow); }
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+}
+.nav-links a {
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: color 0.15s;
+}
+.nav-links a:hover { color: var(--white); }
+/* ─── NAV DROPDOWN ───────────────────────────────── */
+.nav-links li { position: relative; }
+.nav-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 8px;
+  min-width: 220px;
+  z-index: 200;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+}
+.nav-dropdown::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px; height: 10px;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+  rotate: 45deg;
+}
+.nav-dropdown a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-family: var(--font-head);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text);
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.nav-dropdown a:hover { background: var(--surface2); color: var(--yellow); }
+.nav-dropdown-icon { font-size: 16px; line-height: 1; }
+.nav-has-dropdown > a::after {
+  content: ' ▾';
+  font-size: 10px;
+  opacity: 0.6;
+}
+.nav-has-dropdown:hover .nav-dropdown { display: block; }
+.nav-cta { display: flex; align-items: center; gap: 16px; }
+.emergency-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--yellow);
+}
+.pulse-dot {
+  width: 8px; height: 8px;
+  background: var(--yellow);
+  border-radius: 50%;
+  animation: pulse 1.8s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.7); }
+}
+/* ─── PAGE HERO ──────────────────────────────────── */
+.page-hero {
+  min-height: 55vh;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(160deg, var(--black) 0%, var(--dark) 60%, rgba(251,191,36,0.04) 100%);
+  position: relative;
+  overflow: hidden;
+  padding: 120px 0 80px;
+}
+.page-hero::before {
+  content: '';
+  position: absolute;
+  top: -100px; right: -100px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(251,191,36,0.08) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.page-hero::after {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(251,191,36,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(251,191,36,0.04) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(ellipse 80% 80% at 70% 50%, black 20%, transparent 80%);
+}
+.page-hero-content { position: relative; z-index: 2; max-width: 760px; }
+.page-hero h1 {
+  font-family: var(--font-head);
+  font-size: clamp(44px, 7vw, 84px);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 0.93;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--yellow) 50%, var(--yellow2) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 20px;
+}
+.page-hero p {
+  font-size: 18px;
+  color: var(--text);
+  max-width: 580px;
+  line-height: 1.65;
+}
+/* ─── SECTION HEADING ────────────────────────────── */
+.section-h2 {
+  font-family: var(--font-head);
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: var(--white);
+  line-height: 0.95;
+  margin-bottom: 20px;
+}
+/* ─── STORY SECTION ──────────────────────────────── */
+.story-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 72px;
+  align-items: center;
+}
+.story-text p {
+  font-size: 16px;
+  color: var(--text);
+  line-height: 1.75;
+  margin-bottom: 18px;
+}
+.story-img-frame {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  height: 460px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.story-img-frame img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  filter: brightness(0.82) saturate(0.85);
+}
+.story-img-badge {
+  position: absolute;
+  bottom: -16px; left: -16px;
+  background: var(--yellow);
+  color: var(--black);
+  border-radius: 50%;
+  width: 110px; height: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: var(--font-head);
+}
+.story-img-badge .num { font-size: 30px; font-weight: 900; line-height: 1; }
+.story-img-badge .lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; line-height: 1.3; margin-top: 2px; }
+/* ─── VALUES ─────────────────────────────────────── */
+.values-section { background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  margin-top: 52px;
+}
+.value-card {
+  background: var(--black);
+  padding: 40px 36px;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.2s;
+}
+.value-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--yellow);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+.value-card:hover { background: var(--surface2); }
+.value-card:hover::before { transform: scaleX(1); }
+.value-icon { font-size: 32px; margin-bottom: 18px; display: block; }
+.value-card h3 {
+  font-family: var(--font-head);
+  font-size: 24px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--white);
+  margin-bottom: 12px;
+}
+.value-card p { font-size: 15px; color: var(--muted); line-height: 1.65; }
+/* ─── STATS ──────────────────────────────────────── */
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2px;
+  margin-top: 52px;
+}
+.stat-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 40px 32px;
+  text-align: center;
+}
+.stat-block .num {
+  font-family: var(--font-head);
+  font-size: clamp(40px, 5vw, 64px);
+  font-weight: 900;
+  color: var(--yellow);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.stat-block .num span { font-size: 0.6em; opacity: 0.7; }
+.stat-block .label {
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 8px;
+}
+/* ─── CERTS ──────────────────────────────────────── */
+.certs-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 48px;
+}
+.cert-item {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: border-color 0.2s;
+}
+.cert-item:hover { border-color: rgba(251,191,36,0.3); }
+.cert-check {
+  width: 36px; height: 36px;
+  background: rgba(251,191,36,0.1);
+  border: 1px solid rgba(251,191,36,0.25);
+  border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.cert-item span {
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+/* ─── FOOTER ─────────────────────────────────────── */
+footer { background: var(--black); border-top: 1px solid var(--border); padding: 56px 0 32px; }
+.footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+.footer-brand .logo { font-size: 24px; margin-bottom: 14px; }
+.footer-brand p { font-size: 14px; color: var(--muted); line-height: 1.65; margin-bottom: 20px; max-width: 260px; }
+.footer-social { display: flex; gap: 10px; }
+.social-btn {
+  width: 36px; height: 36px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
+  font-size: 15px; color: var(--muted); transition: all 0.15s;
+}
+.social-btn:hover { border-color: var(--yellow); color: var(--yellow); }
+.footer-col h4 {
+  font-family: var(--font-head); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--white); margin-bottom: 20px;
+}
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-col li a { font-size: 14px; color: var(--muted); transition: color 0.15s; }
+.footer-col li a:hover { color: var(--yellow); }
+.footer-bottom {
+  border-top: 1px solid var(--border); padding-top: 28px;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+.footer-bottom p { font-size: 13px; color: var(--muted); }
+.license-badges { display: flex; gap: 10px; }
+.license-badge {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 4px 10px; font-family: var(--font-head); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+}
+/* ─── RESPONSIVE ─────────────────────────────────── */
+@media (max-width: 900px) {
+  .story-grid { grid-template-columns: 1fr; gap: 40px; }
+  .values-grid { grid-template-columns: 1fr; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .certs-grid { grid-template-columns: 1fr 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .nav-links { display: none; }
+}
+@media (max-width: 600px) {
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .certs-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a href="electrician.html" class="logo">VOLT<span>PRO</span></a>
+      <ul class="nav-links">
+        <li class="nav-has-dropdown">
+          <a href="#">Services</a>
+          <div class="nav-dropdown">
+            <a href="panel-upgrades.html"><span class="nav-dropdown-icon">⚡</span>Panel Upgrades</a>
+            <a href="ev-charger.html"><span class="nav-dropdown-icon">🔌</span>EV Charger Install</a>
+            <a href="home-rewiring.html"><span class="nav-dropdown-icon">🏠</span>Home Rewiring</a>
+            <a href="smart-home.html"><span class="nav-dropdown-icon">💡</span>Smart Home &amp; Lighting</a>
+            <a href="commercial.html"><span class="nav-dropdown-icon">🏢</span>Commercial Electric</a>
+            <a href="emergency-service.html"><span class="nav-dropdown-icon">🚨</span>Emergency Service</a>
+          </div>
+        </li>
+        <li><a href="electrician.html#why">Why Us</a></li>
+        <li><a href="reviews.html">Reviews</a></li>
+        <li><a href="electrician.html#areas">Service Areas</a></li>
+        <li class="nav-has-dropdown">
+          <a href="#">Company</a>
+          <div class="nav-dropdown">
+            <a href="about.html"><span class="nav-dropdown-icon">🏢</span>About Us</a>
+            <a href="team.html"><span class="nav-dropdown-icon">👥</span>Our Team</a>
+            <a href="blog.html"><span class="nav-dropdown-icon">📝</span>Blog</a>
+            <a href="reviews.html"><span class="nav-dropdown-icon">⭐</span>Reviews</a>
+            <a href="privacy.html"><span class="nav-dropdown-icon">🔒</span>Privacy Policy</a>
+            <a href="contact.html"><span class="nav-dropdown-icon">📞</span>Contact</a>
+          </div>
+        </li>
+      </ul>
+      <div class="nav-cta">
+        <div class="emergency-badge">
+          <div class="pulse-dot"></div>
+          24/7 Emergency
+        </div>
+        <a href="tel:5615550200" class="btn btn-primary">⚡ Call Now</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="container">
+    <div class="page-hero-content">
+      <div class="eyebrow">Our Story</div>
+      <h1>Built on Trust.<br>Powered by<br>Expertise.</h1>
+      <p>Founded in 2009, VoltPro Electric has grown from a two-man crew to South Florida's most trusted residential and commercial electrical contractor.</p>
+    </div>
+  </div>
+</section>
+
+<!-- OUR STORY -->
+<section class="section">
+  <div class="container">
+    <div class="story-grid">
+      <div class="story-text">
+        <div class="eyebrow">Our Story</div>
+        <h2 class="section-h2">From One Truck<br>to South Florida's<br>Most Trusted Team</h2>
+        <p>VoltPro Electric was founded by master electrician David Reyes in 2009, after 12 years working with a national electrical contractor. After watching customers get upsold on work they didn't need and watching crews cut corners that left homes less safe than when they started, David had enough.</p>
+        <p>He started VoltPro with one truck, a single apprentice, and a commitment that every job would be done right — flat-rate pricing, every permit pulled, every installation inspected. No exceptions.</p>
+        <p>Sixteen years later, VoltPro Electric employs 18 licensed electricians, has completed over 3,200 projects across Palm Beach and Broward County, and holds Florida electrical contractor license EC13009274. The commitment hasn't changed. Neither has the work ethic.</p>
+        <p>We're not the cheapest electrician in South Florida. We're the one you won't have to call back.</p>
+      </div>
+      <div class="story-img-frame">
+        <img src="https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=900&q=80&auto=format&fit=crop" alt="VoltPro Electric founder David Reyes">
+        <div class="story-img-badge">
+          <div class="num">2009</div>
+          <div class="lbl">Est.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OUR VALUES -->
+<section class="section values-section">
+  <div class="container">
+    <div class="eyebrow">What We Stand For</div>
+    <h2 class="section-h2">Our Values</h2>
+    <div class="values-grid">
+      <div class="value-card">
+        <span class="value-icon">🤝</span>
+        <h3>Honesty First</h3>
+        <p>Flat-rate quotes before any work begins. No hidden fees. No upselling unnecessary work. We tell you exactly what you need and exactly what it will cost — every time.</p>
+      </div>
+      <div class="value-card">
+        <span class="value-icon">📋</span>
+        <h3>Code or Nothing</h3>
+        <p>Every job is permitted and inspected by the county. We've never cut a corner in 15 years. If it can't be done right, it doesn't get done.</p>
+      </div>
+      <div class="value-card">
+        <span class="value-icon">🛡️</span>
+        <h3>Standing Behind Our Work</h3>
+        <p>Lifetime labor warranty on every installation. Period. If our work ever fails, we come back and fix it. No charge. No questions. No runaround.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BY THE NUMBERS -->
+<section class="section">
+  <div class="container">
+    <div class="eyebrow">By The Numbers</div>
+    <h2 class="section-h2">The Record Speaks<br>for Itself</h2>
+    <div class="stats-row">
+      <div class="stat-block">
+        <div class="num">15<span>+</span></div>
+        <div class="label">Years in Business</div>
+      </div>
+      <div class="stat-block">
+        <div class="num">3,200<span>+</span></div>
+        <div class="label">Projects Completed</div>
+      </div>
+      <div class="stat-block">
+        <div class="num">18</div>
+        <div class="label">Licensed Electricians</div>
+      </div>
+      <div class="stat-block">
+        <div class="num">312</div>
+        <div class="label">Five-Star Reviews</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CERTIFICATIONS -->
+<section class="section" style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+  <div class="container">
+    <div class="eyebrow">Credentials</div>
+    <h2 class="section-h2">Certifications<br>&amp; Licenses</h2>
+    <div class="certs-grid">
+      <div class="cert-item">
+        <div class="cert-check">⚡</div>
+        <span>FL Electrical License EC13009274</span>
+      </div>
+      <div class="cert-item">
+        <div class="cert-check">🏆</div>
+        <span>BBB Accredited A+ Rating</span>
+      </div>
+      <div class="cert-item">
+        <div class="cert-check">💡</div>
+        <span>Lutron Certified Installer</span>
+      </div>
+      <div class="cert-item">
+        <div class="cert-check">🏠</div>
+        <span>Control4 Authorized Dealer</span>
+      </div>
+      <div class="cert-item">
+        <div class="cert-check">☀️</div>
+        <span>NABCEP Certified</span>
+      </div>
+      <div class="cert-item">
+        <div class="cert-check">🛡️</div>
+        <span>Fully Insured — $2M Liability</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">VOLT<span>PRO</span></div>
+        <p>South Florida's licensed electrical specialists. Serving Palm Beach and Broward County since 2009.</p>
+        <div class="footer-social">
+          <a href="#" class="social-btn">f</a>
+          <a href="#" class="social-btn">in</a>
+          <a href="#" class="social-btn">▶</a>
+          <a href="#" class="social-btn">★</a>
+        </div>
+      </div>
+      <div class="footer-col"><h4>Services</h4><ul>
+        <li><a href="panel-upgrades.html">Panel Upgrades</a></li>
+        <li><a href="ev-charger.html">EV Charger Installation</a></li>
+        <li><a href="home-rewiring.html">Whole-Home Rewiring</a></li>
+        <li><a href="smart-home.html">Smart Home &amp; Lighting</a></li>
+        <li><a href="commercial.html">Commercial Electrical</a></li>
+        <li><a href="emergency-service.html">Emergency Service</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Service Areas</h4><ul>
+        <li><a href="#">Boca Raton</a></li>
+        <li><a href="#">Delray Beach</a></li>
+        <li><a href="#">West Palm Beach</a></li>
+        <li><a href="#">Palm Beach Gardens</a></li>
+        <li><a href="#">Fort Lauderdale</a></li>
+        <li><a href="#">View All Areas →</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Company</h4><ul>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="team.html">Our Team</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="reviews.html">Reviews</a></li>
+        <li><a href="privacy.html">Privacy Policy</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul></div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 VoltPro Electric. All rights reserved. · FL Electrical License #EC13009274</p>
+      <div class="license-badges"><span class="license-badge">Licensed</span><span class="license-badge">Insured</span><span class="license-badge">BBB A+</span></div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
