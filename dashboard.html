@@ -1227,7 +1227,10 @@ td.bold { color: var(--white); font-weight: 600; }
         <div class="panel-body" style="display:flex;flex-direction:column;gap:16px;">
           <div>
             <div style="font-size:10.5px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Template Path</div>
-            <div id="td-path" style="font-family:monospace;font-size:13px;color:var(--indigo2);background:var(--indigo-bg);border:1px solid var(--indigo-border);padding:8px 12px;border-radius:8px;word-break:break-all;"></div>
+            <div style="display:flex;gap:8px;align-items:center;">
+              <input id="td-path" type="text" class="form-input" style="font-family:monospace;font-size:13px;color:var(--indigo2);background:var(--indigo-bg);border:1px solid var(--indigo-border);border-radius:8px;flex:1;" placeholder="https://yourdomain.com/template">
+              <button class="btn btn-primary btn-sm" onclick="saveTemplatePath()">Save</button>
+            </div>
           </div>
           <div>
             <div style="font-size:10.5px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;">Niche</div>
@@ -2566,7 +2569,8 @@ function renderTemplateDetail(id) {
   document.getElementById('td-stat-live').textContent = live;
 
   // Path
-  document.getElementById('td-path').textContent = t.path || t.id + '/';
+  document.getElementById('td-path').value = t.path || t.id + '/';
+  document.getElementById('td-path').dataset.templateId = t.id;
   document.getElementById('td-niche-detail').textContent = t.niche;
 
   // Preview button + live iframe
@@ -3105,6 +3109,18 @@ function autoFillRate() {
 // ════════════════════════════════════════════════════
 //  TEMPLATE MODAL
 // ════════════════════════════════════════════════════
+function saveTemplatePath() {
+  const input = document.getElementById('td-path');
+  const id = input.dataset.templateId;
+  const newPath = input.value.trim();
+  if (!id || !newPath) return;
+  const t = DB.templates.find(x => x.id === id);
+  if (!t) return;
+  t.path = newPath;
+  save();
+  toast('Template path saved!', 'success');
+  renderTemplateDetail(id);
+}
 function openAddTemplate() { openModal('modal-template'); }
 
 function saveTemplate() {
