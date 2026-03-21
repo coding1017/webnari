@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Webnari — Websites That Work While You Work</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+<style>
+/* ── Tokens ── */
+:root {
+  --bg:#04060F; --surface:#090D1C; --surface2:#0F1527; --surface3:#162036;
+  --border:#182240; --border2:#223257;
+  --indigo:#7B6FFF; --indigo2:#A99DFF; --indigo-glow:rgba(123,111,255,.45);
+  --gold:#E8A020; --gold2:#F5CC5A;
+  --teal:#00BFA6; --purple:#B07CFF; --rose:#FF5E8E;
+  --white:#EEF2FF; --muted:#4A5E80; --text:#7A91B8;
+  --green:#00C98D; --red:#FF4D6D; --amber:#F5A623;
+  --radius:12px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--white);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;overflow-x:hidden}
+
+/* ── Landing wrapper ── */
+#landing{display:block}
+#portal-page{display:none}
+
+/* ── Nav ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;height:64px;display:flex;align-items:center;padding:0 48px;gap:32px;
+  background:rgba(4,6,15,.7);backdrop-filter:blur(20px) saturate(180%);border-bottom:1px solid var(--border);}
+.nav-logo{font-size:18px;font-weight:800;letter-spacing:-.02em;color:var(--white);display:flex;align-items:center;gap:8px;}
+.nav-logo-mark{width:32px;height:32px;background:linear-gradient(135deg,var(--indigo),var(--purple));border-radius:8px;
+  display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff;}
+.nav-links{display:flex;gap:28px;margin-left:16px;}
+.nav-links a{color:var(--text);font-size:14px;text-decoration:none;transition:color .2s;}
+.nav-links a:hover{color:var(--white)}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:12px;}
+.btn-ghost-sm{background:transparent;border:1px solid var(--border2);color:var(--text);padding:8px 20px;border-radius:8px;font-size:14px;cursor:pointer;transition:all .2s;}
+.btn-ghost-sm:hover{border-color:var(--indigo);color:var(--white)}
+.btn-primary-sm{background:linear-gradient(135deg,var(--indigo),var(--purple));color:#fff;padding:8px 22px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;border:none;box-shadow:0 0 20px var(--indigo-glow);transition:all .2s;}
+.btn-primary-sm:hover{transform:translateY(-1px);box-shadow:0 4px 32px var(--indigo-glow)}
+
+/* ── Hero ── */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;position:relative;overflow:hidden;}
+.hero-glow{position:absolute;top:20%;left:50%;transform:translateX(-50%);width:800px;height:400px;
+  background:radial-gradient(ellipse,rgba(123,111,255,.18) 0%,transparent 70%);pointer-events:none;}
+.hero-glow2{position:absolute;bottom:0;left:30%;width:500px;height:300px;
+  background:radial-gradient(ellipse,rgba(176,124,255,.1) 0%,transparent 70%);pointer-events:none;}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:rgba(123,111,255,.1);border:1px solid rgba(123,111,255,.3);
+  color:var(--indigo2);font-size:12px;font-weight:700;letter-spacing:.06em;padding:6px 16px;border-radius:20px;margin-bottom:28px;}
+.hero h1{font-size:clamp(42px,6vw,80px);font-weight:900;line-height:1.05;letter-spacing:-.03em;max-width:900px;
+  background:linear-gradient(135deg,var(--white) 40%,var(--indigo2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.hero-sub{font-size:clamp(16px,2vw,20px);color:var(--text);max-width:600px;margin:24px auto;line-height:1.6;}
+.hero-ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:8px;}
+.btn-hero{padding:14px 32px;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;transition:all .25s;border:none;}
+.btn-hero-primary{background:linear-gradient(135deg,var(--indigo) 0%,var(--purple));color:#fff;
+  box-shadow:0 0 40px rgba(123,111,255,.5);}
+.btn-hero-primary:hover{transform:translateY(-2px);box-shadow:0 8px 48px rgba(123,111,255,.6)}
+.btn-hero-ghost{background:transparent;color:var(--text);border:1px solid var(--border2);}
+.btn-hero-ghost:hover{border-color:var(--indigo);color:var(--white)}
+
+/* Dashboard float preview */
+.hero-preview{position:relative;margin-top:60px;max-width:900px;width:100%;}
+.hero-preview-inner{border-radius:16px;overflow:hidden;border:1px solid var(--border2);
+  box-shadow:0 40px 120px rgba(0,0,0,.6),0 0 60px rgba(123,111,255,.12);
+  background:var(--surface);transform:perspective(1200px) rotateX(8deg);transform-origin:top center;}
+.preview-bar{height:36px;background:var(--surface2);display:flex;align-items:center;padding:0 14px;gap:8px;border-bottom:1px solid var(--border);}
+.preview-dots{display:flex;gap:5px}
+.preview-dots span{width:10px;height:10px;border-radius:50%;}
+.preview-dots span:nth-child(1){background:#FF5F57}
+.preview-dots span:nth-child(2){background:#FEBC2E}
+.preview-dots span:nth-child(3){background:#28C840}
+.preview-url{flex:1;height:22px;background:rgba(255,255,255,.05);border-radius:4px;margin-left:8px;display:flex;align-items:center;padding:0 10px;}
+.preview-url span{font-size:11px;color:var(--muted);font-family:monospace;}
+.preview-body{height:320px;background:var(--bg);display:grid;grid-template-columns:200px 1fr;gap:0;}
+.preview-sidebar{background:var(--surface);border-right:1px solid var(--border);padding:16px 12px;}
+.preview-sidebar-item{height:10px;background:var(--surface2);border-radius:5px;margin-bottom:8px;}
+.preview-sidebar-item.active{background:rgba(123,111,255,.3);}
+.preview-main-area{padding:20px;display:flex;flex-direction:column;gap:12px;}
+.preview-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.preview-kpi{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px;}
+.preview-kpi-num{height:12px;background:var(--indigo);border-radius:4px;margin-bottom:4px;width:60%}
+.preview-kpi-lbl{height:8px;background:var(--border2);border-radius:3px;width:80%}
+.preview-chart{background:var(--surface);border:1px solid var(--border);border-radius:8px;flex:1;
+  display:flex;align-items:flex-end;padding:12px;gap:6px;}
+.preview-bar-item{flex:1;background:rgba(123,111,255,.3);border-radius:3px 3px 0 0;}
+
+/* ── Trust Bar ── */
+.trust-bar{padding:40px 48px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:48px;overflow:hidden;background:var(--surface);}
+.trust-label{font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--muted);white-space:nowrap;}
+.trust-logos{display:flex;gap:40px;align-items:center;flex:1;}
+.trust-logo{font-size:13px;font-weight:700;color:var(--muted);opacity:.6;white-space:nowrap;}
+
+/* ── Section commons ── */
+section{padding:100px 48px;}
+.section-eyebrow{font-size:11px;font-weight:700;letter-spacing:.1em;color:var(--indigo);text-transform:uppercase;margin-bottom:16px;}
+.section-title{font-size:clamp(32px,4vw,52px);font-weight:800;letter-spacing:-.025em;line-height:1.1;color:var(--white);max-width:600px;}
+.section-sub{font-size:17px;color:var(--text);max-width:520px;margin-top:16px;line-height:1.65;}
+
+/* ── Parallax Section ── */
+.parallax-wrap{height:350vh;position:relative;}
+.parallax-sticky{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:var(--bg);}
+.parallax-bg{position:absolute;inset:0;background:radial-gradient(ellipse 800px 500px at 50% 60%,rgba(123,111,255,.08) 0%,transparent 70%);pointer-events:none;}
+.parallax-headline{position:absolute;top:72px;left:0;right:0;text-align:center;z-index:2;pointer-events:none;}
+.parallax-headline h2{font-size:clamp(28px,3.5vw,44px);font-weight:800;letter-spacing:-.025em;}
+.parallax-headline p{color:var(--text);font-size:16px;margin-top:8px;min-height:24px;transition:opacity .4s;}
+
+/* Browser mockup */
+.browser-scene{position:relative;display:flex;align-items:center;justify-content:center;width:100%;z-index:5;}
+.browser-wrap{width:860px;border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.08);
+  box-shadow:0 40px 120px rgba(0,0,0,.7),0 0 80px rgba(123,111,255,.15);
+  transform:perspective(1400px) rotateY(28deg) scale(.32);transform-origin:center center;will-change:transform;}
+.browser-chrome{height:42px;background:#1A2035;display:flex;align-items:center;padding:0 14px;gap:10px;border-bottom:1px solid rgba(255,255,255,.06);}
+.b-dots{display:flex;gap:6px}
+.b-dots span{width:11px;height:11px;border-radius:50%}
+.b-dots span:nth-child(1){background:#FF5F57}
+.b-dots span:nth-child(2){background:#FEBC2E}
+.b-dots span:nth-child(3){background:#28C840}
+.b-url{flex:1;height:26px;background:rgba(255,255,255,.05);border-radius:5px;display:flex;align-items:center;padding:0 10px;font-size:12px;font-family:monospace;color:rgba(255,255,255,.4);}
+.b-url .url-cursor{display:inline-block;width:1px;height:13px;background:var(--indigo2);margin-left:1px;animation:blink .8s step-end infinite;vertical-align:middle;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.browser-body{background:#fff;height:480px;overflow:hidden;}
+
+/* Site inside browser */
+.site-inside{width:100%;height:100%;display:flex;flex-direction:column;font-family:'Segoe UI',sans-serif;}
+.site-nav-bar{background:#F45C0A;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
+.site-nav-bar .logo{color:#fff;font-weight:800;font-size:15px;}
+.site-nav-links-mock{display:flex;gap:12px;align-items:center;}
+.site-nav-links-mock span{color:rgba(255,255,255,.8);font-size:11px;}
+.site-nav-links-mock .call-btn{background:#fff;color:#F45C0A;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;}
+
+.site-hero-section{background:linear-gradient(135deg,#1a0800 0%,#3d1500 60%,#1a0800 100%);padding:32px 28px;flex-shrink:0;opacity:0;transform:translateY(20px);transition:opacity .5s,transform .5s;}
+.site-hero-section.visible{opacity:1;transform:translateY(0)}
+.site-hero-headline{font-size:20px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:8px;}
+.site-hero-sub{font-size:11px;color:rgba(255,255,255,.65);margin-bottom:14px;}
+.site-hero-btns{display:flex;gap:8px;}
+.site-hero-btns button{padding:7px 14px;border-radius:6px;font-size:11px;font-weight:700;border:none;cursor:pointer;}
+.site-hero-btns .cta1{background:#F45C0A;color:#fff;}
+.site-hero-btns .cta2{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.3);}
+.site-stars{display:flex;align-items:center;gap:6px;margin-top:12px;}
+.site-stars .stars{color:#F5CC5A;font-size:14px;}
+.site-stars .count{font-size:10px;color:rgba(255,255,255,.6);}
+
+.site-services-section{background:#fff;padding:20px 20px;opacity:0;transform:translateY(20px);transition:opacity .5s .15s,transform .5s .15s;}
+.site-services-section.visible{opacity:1;transform:translateY(0)}
+.site-services-title{font-size:13px;font-weight:700;color:#1a1a2e;text-align:center;margin-bottom:12px;}
+.site-service-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.site-svc-card{background:#fff8f5;border:1px solid #fde0ce;border-radius:8px;padding:10px;text-align:center;}
+.site-svc-card .icon{font-size:20px;margin-bottom:4px;}
+.site-svc-card .name{font-size:10px;font-weight:600;color:#3d1a00;}
+
+.site-contact-bar{background:#F45C0A;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;opacity:0;transform:translateY(20px);transition:opacity .5s .3s,transform .5s .3s;}
+.site-contact-bar.visible{opacity:1;transform:translateY(0)}
+.site-contact-bar .txt{font-size:12px;font-weight:700;color:#fff;}
+.site-contact-bar .phone{font-size:16px;font-weight:900;color:#fff;}
+.site-contact-bar .book-btn{background:#fff;color:#F45C0A;padding:6px 14px;border-radius:6px;font-size:11px;font-weight:700;border:none;cursor:pointer;}
+
+/* Phone mockup */
+.phone-mockup{position:absolute;right:calc(50% - 540px);top:50%;transform:translateY(-50%) translateX(160px);opacity:0;will-change:transform,opacity;z-index:6;}
+.phone-frame{width:140px;height:280px;background:#111827;border-radius:32px;border:3px solid #374151;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.5);}
+.phone-notch{height:24px;background:#111827;display:flex;align-items:center;justify-content:center;border-bottom:1px solid rgba(255,255,255,.05);}
+.phone-notch-bar{width:60px;height:6px;background:#374151;border-radius:3px;}
+.phone-screen{background:#fff;height:calc(100% - 24px);overflow:hidden;display:flex;flex-direction:column;}
+.phone-site-nav{background:#F45C0A;height:28px;display:flex;align-items:center;justify-content:center;}
+.phone-site-nav span{color:#fff;font-size:10px;font-weight:800;}
+.phone-hero{background:linear-gradient(135deg,#1a0800,#3d1500);padding:12px;color:#fff;flex:1;}
+.phone-h1{font-size:11px;font-weight:800;line-height:1.3;margin-bottom:6px;}
+.phone-sub{font-size:8px;color:rgba(255,255,255,.6);margin-bottom:8px;}
+.phone-cta{background:#F45C0A;color:#fff;padding:5px 10px;border-radius:4px;font-size:9px;font-weight:700;display:inline-block;}
+.phone-star{font-size:9px;color:#F5CC5A;margin-top:6px;}
+
+/* Stat bubbles */
+.stat-bubble{position:absolute;background:var(--surface);border:1px solid var(--border2);border-radius:12px;padding:12px 16px;
+  display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,.4);opacity:0;will-change:transform,opacity;z-index:7;}
+.stat-b1{left:calc(50% - 480px);top:50%;transform:translateY(-50%) translateY(30px);}
+.stat-b2{left:calc(50% - 480px);top:calc(50% + 80px);transform:translateY(30px);}
+.stat-b3{right:calc(50% - 500px);top:calc(50% + 70px);transform:translateY(30px);}
+.stat-icon{font-size:22px;}
+.stat-val{font-size:20px;font-weight:800;color:var(--white);}
+.stat-lbl{font-size:11px;color:var(--muted);}
+
+/* ── Features ── */
+.features-section{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:56px;}
+.feature-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:28px;
+  transition:border-color .2s,transform .2s;}
+.feature-card:hover{border-color:var(--border2);transform:translateY(-3px)}
+.feature-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:18px;}
+.feature-title{font-size:16px;font-weight:700;color:var(--white);margin-bottom:8px;}
+.feature-desc{font-size:14px;color:var(--text);line-height:1.6;}
+
+/* ── How it works ── */
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:0;margin-top:56px;position:relative;}
+.steps::before{content:'';position:absolute;top:28px;left:calc(16.6% + 28px);right:calc(16.6% + 28px);height:1px;background:linear-gradient(90deg,var(--indigo),var(--purple));opacity:.4;}
+.step{text-align:center;padding:0 24px;}
+.step-num{width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--indigo),var(--purple));
+  display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;margin:0 auto 20px;
+  box-shadow:0 0 32px var(--indigo-glow);}
+.step-title{font-size:18px;font-weight:700;color:var(--white);margin-bottom:10px;}
+.step-desc{font-size:14px;color:var(--text);line-height:1.6;}
+
+/* ── Pricing ── */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:56px;max-width:980px;margin-left:auto;margin-right:auto;}
+.pricing-card{background:var(--surface2);border:1px solid var(--border);border-radius:16px;padding:32px;position:relative;}
+.pricing-card.popular{border-color:var(--indigo);box-shadow:0 0 0 1px var(--indigo),0 8px 40px rgba(123,111,255,.2);}
+.pricing-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--indigo);color:#fff;
+  font-size:10px;font-weight:700;letter-spacing:.06em;padding:4px 14px;border-radius:20px;white-space:nowrap;}
+.pricing-tier{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--muted);margin-bottom:12px;}
+.pricing-tier.std{color:var(--indigo2)}
+.pricing-tier.prem{color:var(--gold)}
+.pricing-name{font-size:24px;font-weight:800;color:var(--white);margin-bottom:4px;}
+.pricing-desc{font-size:13px;color:var(--text);margin-bottom:20px;min-height:40px;}
+.pricing-price{font-size:44px;font-weight:900;color:var(--white);line-height:1;}
+.pricing-price span{font-size:18px;color:var(--muted);}
+.pricing-period{font-size:12px;color:var(--muted);margin-bottom:24px;margin-top:4px;}
+.pricing-setup{font-size:12px;color:var(--muted);margin-bottom:20px;}
+.pricing-features{list-style:none;display:flex;flex-direction:column;gap:10px;margin-bottom:28px;}
+.pricing-features li{font-size:13px;color:var(--text);display:flex;gap:8px;}
+.pricing-features li::before{content:'✓';color:var(--green);font-weight:700;flex-shrink:0;}
+.pricing-cta{width:100%;padding:12px;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;border:none;
+  background:var(--surface3);color:var(--text);transition:all .2s;}
+.pricing-card.popular .pricing-cta{background:linear-gradient(135deg,var(--indigo),var(--purple));color:#fff;box-shadow:0 0 24px var(--indigo-glow);}
+.pricing-cta:hover{transform:translateY(-2px)}
+
+/* ── Testimonials ── */
+.testimonials-section{background:var(--surface);border-top:1px solid var(--border);}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:56px;}
+.testi-card{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:28px;}
+.testi-stars{color:var(--gold);font-size:14px;margin-bottom:14px;letter-spacing:2px;}
+.testi-text{font-size:15px;color:var(--text);line-height:1.7;margin-bottom:20px;font-style:italic;}
+.testi-author{display:flex;align-items:center;gap:12px;}
+.testi-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--indigo),var(--purple));
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fff;}
+.testi-name{font-size:14px;font-weight:700;color:var(--white);}
+.testi-biz{font-size:12px;color:var(--muted);}
+
+/* ── CTA Banner ── */
+.cta-banner{text-align:center;background:linear-gradient(135deg,rgba(123,111,255,.12),rgba(176,124,255,.08));border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.cta-banner h2{font-size:clamp(32px,4vw,52px);font-weight:800;letter-spacing:-.025em;margin-bottom:16px;}
+.cta-banner p{font-size:18px;color:var(--text);margin-bottom:36px;}
+
+/* ── Footer ── */
+footer{background:var(--surface);border-top:1px solid var(--border);padding:48px;display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:40px;}
+.footer-brand p{font-size:13px;color:var(--muted);margin-top:12px;line-height:1.6;max-width:240px;}
+.footer-col h4{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--muted);margin-bottom:14px;}
+.footer-col a{display:block;font-size:13px;color:var(--text);text-decoration:none;margin-bottom:8px;transition:color .2s;}
+.footer-col a:hover{color:var(--white)}
+.footer-bottom{background:var(--surface);border-top:1px solid var(--border);padding:20px 48px;display:flex;align-items:center;justify-content:space-between;}
+.footer-bottom p{font-size:12px;color:var(--muted);}
+
+/* ── Auth Modal ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:500;
+  display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .2s;}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.auth-modal{background:var(--surface);border:1px solid var(--border2);border-radius:20px;padding:40px;width:100%;max-width:420px;
+  transform:translateY(20px);transition:transform .3s;}
+.modal-overlay.open .auth-modal{transform:translateY(0)}
+.auth-logo{display:flex;align-items:center;gap:10px;margin-bottom:28px;}
+.auth-title{font-size:24px;font-weight:800;color:var(--white);margin-bottom:6px;}
+.auth-sub{font-size:14px;color:var(--muted);margin-bottom:28px;}
+.auth-field{margin-bottom:16px;}
+.auth-label{font-size:11px;font-weight:700;letter-spacing:.06em;color:var(--muted);display:block;margin-bottom:6px;}
+.auth-input{width:100%;background:var(--surface2);border:1px solid var(--border2);color:var(--white);
+  padding:12px 14px;border-radius:10px;font-size:15px;outline:none;transition:border-color .2s;}
+.auth-input:focus{border-color:var(--indigo)}
+.auth-error{font-size:12px;color:var(--red);margin-bottom:12px;display:none;}
+.auth-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--indigo),var(--purple));color:#fff;
+  border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;margin-top:4px;
+  box-shadow:0 0 32px var(--indigo-glow);transition:all .2s;}
+.auth-btn:hover{transform:translateY(-1px);box-shadow:0 4px 40px var(--indigo-glow)}
+.auth-hint{font-size:12px;color:var(--muted);text-align:center;margin-top:16px;}
+.auth-hint span{color:var(--indigo);cursor:pointer;}
+.modal-close-btn{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:4px 8px;}
+.auth-modal{position:relative;}
+
+/* ── Client Portal ── */
+#portal-page{min-height:100vh;background:var(--bg);}
+.portal-nav{height:64px;background:var(--surface);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;padding:0 32px;gap:16px;}
+.portal-user-info{margin-left:auto;display:flex;align-items:center;gap:12px;}
+.portal-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--indigo),var(--purple));
+  display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#fff;}
+.portal-name{font-size:14px;color:var(--text);}
+.portal-logout{font-size:13px;color:var(--muted);cursor:pointer;padding:6px 12px;border:1px solid var(--border);border-radius:6px;background:none;transition:all .2s;}
+.portal-logout:hover{border-color:var(--red);color:var(--red)}
+
+.portal-body{max-width:1100px;margin:0 auto;padding:40px 32px;}
+.portal-hero{margin-bottom:32px;}
+.portal-hero h1{font-size:32px;font-weight:800;color:var(--white);margin-bottom:4px;}
+.portal-hero p{color:var(--muted);font-size:14px;}
+.status-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:700;}
+.status-live{background:rgba(0,201,141,.12);color:var(--green);}
+.status-onboarding{background:rgba(245,166,35,.12);color:var(--amber);}
+.status-draft{background:rgba(74,94,128,.12);color:var(--muted);}
+
+.portal-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.portal-kpi{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;}
+.portal-kpi-label{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;}
+.portal-kpi-value{font-size:28px;font-weight:800;color:var(--white);}
+.portal-kpi-sub{font-size:12px;color:var(--muted);margin-top:4px;}
+
+.portal-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;}
+.portal-panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;}
+.portal-panel-title{font-size:14px;font-weight:700;color:var(--white);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+
+.review-item-mini{padding:12px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;}
+.review-item-mini:last-child{border-bottom:none}
+.ri-platform{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+.ri-body{flex:1}
+.ri-author{font-size:13px;font-weight:600;color:var(--white);}
+.ri-stars{color:var(--gold);font-size:11px;}
+.ri-text{font-size:12px;color:var(--text);margin-top:2px;}
+
+.source-bar-mini{display:flex;flex-direction:column;gap:10px;}
+.sbm-row{display:flex;flex-direction:column;gap:4px;}
+.sbm-label{display:flex;justify-content:space-between;font-size:12px;}
+.sbm-bar{height:5px;background:var(--surface3);border-radius:3px;overflow:hidden;}
+.sbm-fill{height:100%;border-radius:3px;}
+
+.portal-preview{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:24px;}
+.portal-preview-bar{height:36px;background:var(--surface2);display:flex;align-items:center;padding:0 14px;gap:8px;border-bottom:1px solid var(--border);}
+.portal-iframe{width:100%;height:300px;border:none;background:#fff;}
+
+.portal-contact{background:linear-gradient(135deg,rgba(123,111,255,.1),rgba(176,124,255,.06));border:1px solid rgba(123,111,255,.2);border-radius:12px;padding:24px;text-align:center;}
+.portal-contact h3{font-size:18px;font-weight:700;color:var(--white);margin-bottom:8px;}
+.portal-contact p{font-size:13px;color:var(--text);margin-bottom:16px;}
+
+/* ── Scroll reveal ── */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .6s,transform .6s;}
+.reveal.revealed{opacity:1;transform:translateY(0)}
+
+/* ── Responsive ── */
+@media(max-width:900px){
+  nav{padding:0 20px}
+  .nav-links{display:none}
+  section{padding:60px 24px}
+  .features-grid,.pricing-grid,.testi-grid,.steps{grid-template-columns:1fr}
+  footer{grid-template-columns:1fr 1fr}
+  .trust-bar{padding:24px;gap:24px}
+  .trust-logos{gap:20px}
+  .portal-kpis{grid-template-columns:repeat(2,1fr)}
+  .portal-grid{grid-template-columns:1fr}
+  .phone-mockup{display:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════
+     LANDING PAGE
+══════════════════════════ -->
+<div id="landing">
+
+<!-- Nav -->
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-mark">W</div>
+    Web<span style="color:var(--indigo2)">nari</span>
+  </div>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#how-it-works">How It Works</a>
+    <a href="#pricing">Pricing</a>
+  </div>
+  <div class="nav-right">
+    <button class="btn-ghost-sm" onclick="openAuth()">Log In</button>
+    <button class="btn-primary-sm" onclick="openAuth()">Get Started</button>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-eyebrow">✦ For Local Service Businesses</div>
+  <h1>Your Website,<br>Managed & Growing</h1>
+  <p class="hero-sub">We build, host, and optimize your website — plus handle your SEO, reviews, ads, and leads. One monthly rate. Zero headaches.</p>
+  <div class="hero-ctas">
+    <button class="btn-hero btn-hero-primary" onclick="openAuth()">Get Your Website →</button>
+    <button class="btn-hero btn-hero-ghost" onclick="document.getElementById('how-it-works').scrollIntoView({behavior:'smooth'})">See How It Works</button>
+  </div>
+  <div class="hero-preview">
+    <div class="hero-preview-inner">
+      <div class="preview-bar">
+        <div class="preview-dots"><span></span><span></span><span></span></div>
+        <div class="preview-url"><span>app.webnari.io</span></div>
+      </div>
+      <div class="preview-body">
+        <div class="preview-sidebar">
+          <div class="preview-sidebar-item" style="height:7px;width:60%;margin-bottom:16px;background:rgba(123,111,255,.4);"></div>
+          <div class="preview-sidebar-item active"></div>
+          <div class="preview-sidebar-item"></div>
+          <div class="preview-sidebar-item"></div>
+          <div class="preview-sidebar-item" style="height:1px;background:var(--border);margin:12px 0;"></div>
+          <div class="preview-sidebar-item"></div>
+          <div class="preview-sidebar-item"></div>
+          <div class="preview-sidebar-item"></div>
+        </div>
+        <div class="preview-main-area">
+          <div class="preview-kpis">
+            <div class="preview-kpi"><div class="preview-kpi-num" style="background:var(--green)"></div><div class="preview-kpi-lbl"></div></div>
+            <div class="preview-kpi"><div class="preview-kpi-num" style="background:var(--indigo)"></div><div class="preview-kpi-lbl"></div></div>
+            <div class="preview-kpi"><div class="preview-kpi-num" style="background:var(--gold)"></div><div class="preview-kpi-lbl"></div></div>
+            <div class="preview-kpi"><div class="preview-kpi-num" style="background:var(--teal)"></div><div class="preview-kpi-lbl"></div></div>
+          </div>
+          <div class="preview-chart">
+            <div class="preview-bar-item" style="height:45%"></div>
+            <div class="preview-bar-item" style="height:62%"></div>
+            <div class="preview-bar-item" style="height:38%"></div>
+            <div class="preview-bar-item" style="height:80%;background:rgba(123,111,255,.6)"></div>
+            <div class="preview-bar-item" style="height:55%"></div>
+            <div class="preview-bar-item" style="height:91%;background:rgba(123,111,255,.6)"></div>
+            <div class="preview-bar-item" style="height:70%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Trust Bar -->
+<div class="trust-bar">
+  <span class="trust-label">TRUSTED BY BUSINESSES ACROSS</span>
+  <div class="trust-logos">
+    <span class="trust-logo">🐜 Pest Control</span>
+    <span class="trust-logo">⚡ Electricians</span>
+    <span class="trust-logo">❄ HVAC</span>
+    <span class="trust-logo">🔧 Plumbers</span>
+    <span class="trust-logo">🌿 Landscaping</span>
+    <span class="trust-logo">🔒 Locksmiths</span>
+    <span class="trust-logo">🐾 Pet Services</span>
+  </div>
+</div>
+
+<!-- Parallax Section -->
+<div class="parallax-wrap" id="parallax-wrap">
+  <div class="parallax-sticky" id="parallax-sticky">
+    <div class="parallax-bg"></div>
+    <div class="parallax-headline">
+      <div class="section-eyebrow" style="text-align:center">Watch It Come To Life</div>
+      <h2>From blank page to <span style="background:linear-gradient(135deg,var(--indigo2),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">booked out</span></h2>
+      <p id="parallax-sub">We handle every detail, start to finish.</p>
+    </div>
+
+    <!-- Browser -->
+    <div class="browser-scene">
+      <div class="browser-wrap" id="browser-wrap">
+        <div class="browser-chrome">
+          <div class="b-dots"><span></span><span></span><span></span></div>
+          <div class="b-url"><span id="url-text"></span><span class="url-cursor"></span></div>
+        </div>
+        <div class="browser-body">
+          <div class="site-inside">
+            <div class="site-nav-bar">
+              <span class="logo">🛡 PestPro</span>
+              <div class="site-nav-links-mock">
+                <span>Services</span><span>About</span><span>Reviews</span>
+                <span class="call-btn">📞 Call Now</span>
+              </div>
+            </div>
+            <div class="site-hero-section" id="site-hero-el">
+              <div class="site-hero-headline">South Florida's #1<br>Pest Control Service</div>
+              <div class="site-hero-sub">Termites • Roaches • Mosquitoes • Licensed & Insured</div>
+              <div class="site-hero-btns">
+                <button class="cta1">🛡 Free Inspection</button>
+                <button class="cta2">Learn More</button>
+              </div>
+              <div class="site-stars">
+                <span class="stars">★★★★★</span>
+                <span class="count">4.9 · 47 Google Reviews</span>
+              </div>
+            </div>
+            <div class="site-services-section" id="site-svc-el">
+              <div class="site-services-title">Our Services</div>
+              <div class="site-service-cards">
+                <div class="site-svc-card"><div class="icon">🐜</div><div class="name">Termite Control</div></div>
+                <div class="site-svc-card"><div class="icon">🪳</div><div class="name">Roach Removal</div></div>
+                <div class="site-svc-card"><div class="icon">🦟</div><div class="name">Mosquito Control</div></div>
+              </div>
+            </div>
+            <div class="site-contact-bar" id="site-contact-el">
+              <div><div class="txt">Ready to get rid of pests?</div><div class="phone">(561) 555-0100</div></div>
+              <button class="book-btn">Book Inspection</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Phone -->
+    <div class="phone-mockup" id="phone-mockup">
+      <div class="phone-frame">
+        <div class="phone-notch"><div class="phone-notch-bar"></div></div>
+        <div class="phone-screen">
+          <div class="phone-site-nav"><span>🛡 PestPro</span></div>
+          <div class="phone-hero">
+            <div class="phone-h1">South Florida's #1<br>Pest Control</div>
+            <div class="phone-sub">Licensed · Insured · 30-Day Guarantee</div>
+            <div class="phone-cta">Free Inspection →</div>
+            <div class="phone-star">★★★★★ 4.9 Google</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stat Bubbles -->
+    <div class="stat-bubble stat-b1" id="stat1">
+      <div class="stat-icon">📈</div>
+      <div><div class="stat-val">+47%</div><div class="stat-lbl">More Traffic</div></div>
+    </div>
+    <div class="stat-bubble stat-b2" id="stat2">
+      <div class="stat-icon">⭐</div>
+      <div><div class="stat-val">4.9★</div><div class="stat-lbl">Google Rating</div></div>
+    </div>
+    <div class="stat-bubble stat-b3" id="stat3">
+      <div class="stat-icon">🎯</div>
+      <div><div class="stat-val">+127</div><div class="stat-lbl">New Leads / Mo</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Features -->
+<section id="features" class="features-section">
+  <div class="reveal">
+    <div class="section-eyebrow">Everything included</div>
+    <div class="section-title">One subscription. Every tool you need.</div>
+    <div class="section-sub">No agency retainers, no surprise fees. Every plan includes the tools serious local businesses use to dominate their market.</div>
+  </div>
+  <div class="features-grid">
+    <div class="feature-card reveal" style="transition-delay:.05s">
+      <div class="feature-icon" style="background:rgba(123,111,255,.12)">🌐</div>
+      <div class="feature-title">Professional Website</div>
+      <div class="feature-desc">Custom-built, mobile-optimized website for your industry — designed to convert visitors into calls and form submissions.</div>
+    </div>
+    <div class="feature-card reveal" style="transition-delay:.1s">
+      <div class="feature-icon" style="background:rgba(0,191,166,.12)">🔍</div>
+      <div class="feature-title">SEO Manager</div>
+      <div class="feature-desc">On-page metadata, local schema markup, keyword rank tracking, and Google Business Profile optimization — all in one place.</div>
+    </div>
+    <div class="feature-card reveal" style="transition-delay:.15s">
+      <div class="feature-icon" style="background:rgba(232,160,32,.12)">⭐</div>
+      <div class="feature-title">Reputation Manager</div>
+      <div class="feature-desc">Monitor reviews across Google, Yelp, and Facebook. Get response templates and automated review request messages.</div>
+    </div>
+    <div class="feature-card reveal" style="transition-delay:.2s">
+      <div class="feature-icon" style="background:rgba(0,201,141,.12)">📈</div>
+      <div class="feature-title">Analytics Dashboard</div>
+      <div class="feature-desc">Live traffic, conversion tracking, top pages, and traffic source breakdown — updated monthly with a clean client report.</div>
+    </div>
+    <div class="feature-card reveal" style="transition-delay:.25s">
+      <div class="feature-icon" style="background:rgba(255,94,142,.12)">🎯</div>
+      <div class="feature-title">Lead Tracker</div>
+      <div class="feature-desc">Track every inbound call, form, and referral through a visual pipeline — from first contact to signed client.</div>
+    </div>
+    <div class="feature-card reveal" style="transition-delay:.3s">
+      <div class="feature-icon" style="background:rgba(176,124,255,.12)">📣</div>
+      <div class="feature-title">Ad Campaign Tracking</div>
+      <div class="feature-desc">Monitor Google Ads and Facebook spend, clicks, CPC, and ROAS. Know exactly what's working and what's not.</div>
+    </div>
+  </div>
+</section>
+
+<!-- How it works -->
+<section id="how-it-works" style="text-align:center;">
+  <div class="reveal">
+    <div class="section-eyebrow" style="text-align:center">Simple process</div>
+    <div class="section-title" style="margin:0 auto;text-align:center">Up and running in days,<br>not months</div>
+  </div>
+  <div class="steps">
+    <div class="step reveal" style="transition-delay:.05s">
+      <div class="step-num">1</div>
+      <div class="step-title">We Build</div>
+      <div class="step-desc">Tell us about your business and we design your custom website — optimized for your niche and your city.</div>
+    </div>
+    <div class="step reveal" style="transition-delay:.15s">
+      <div class="step-num">2</div>
+      <div class="step-title">We Launch</div>
+      <div class="step-desc">Your site goes live with SEO, Google Business setup, and all tracking configured and ready from day one.</div>
+    </div>
+    <div class="step reveal" style="transition-delay:.25s">
+      <div class="step-num">3</div>
+      <div class="step-title">We Grow</div>
+      <div class="step-desc">Monthly management, review monitoring, lead tracking, and reporting — you focus on the work, we handle the web.</div>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section id="pricing" style="background:var(--surface);border-top:1px solid var(--border);text-align:center;">
+  <div class="reveal">
+    <div class="section-eyebrow" style="text-align:center">Transparent pricing</div>
+    <div class="section-title" style="margin:0 auto;text-align:center">No contracts. No surprises.</div>
+    <div class="section-sub" style="margin:16px auto 0;">Cancel any time. All plans include hosting, SSL, support, and your client dashboard.</div>
+  </div>
+  <div class="pricing-grid reveal" id="pricing-grid">
+    <!-- Rendered by JS -->
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonials-section">
+  <div class="reveal">
+    <div class="section-eyebrow">Client stories</div>
+    <div class="section-title">Real results for real businesses</div>
+  </div>
+  <div class="testi-grid">
+    <div class="testi-card reveal" style="transition-delay:.05s">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">"We went from invisible online to ranking #3 in Boca Raton for pest control in under 90 days. The monthly leads keep coming in. Best investment I've made."</div>
+      <div class="testi-author">
+        <div class="testi-avatar">MG</div>
+        <div><div class="testi-name">Maria Gonzalez</div><div class="testi-biz">PestPro South Florida</div></div>
+      </div>
+    </div>
+    <div class="testi-card reveal" style="transition-delay:.1s">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">"Having everything in one dashboard — my website, reviews, and leads — saves me hours every week. The team built exactly what I needed."</div>
+      <div class="testi-author">
+        <div class="testi-avatar">JT</div>
+        <div><div class="testi-name">James Torres</div><div class="testi-biz">Spark Electric Co.</div></div>
+      </div>
+    </div>
+    <div class="testi-card reveal" style="transition-delay:.15s">
+      <div class="testi-stars">★★★★★</div>
+      <div class="testi-text">"I was referred by a friend and signed up the same day. Onboarding was fast and the site looked incredible right out of the gate."</div>
+      <div class="testi-author">
+        <div class="testi-avatar">SL</div>
+        <div><div class="testi-name">Sandra Lee</div><div class="testi-biz">Cool Air HVAC</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Banner -->
+<section class="cta-banner">
+  <div class="reveal">
+    <div class="section-eyebrow" style="text-align:center">Ready when you are</div>
+    <h2>Let's build your website.</h2>
+    <p>Join local businesses growing with Webnari.</p>
+    <button class="btn-hero btn-hero-primary" onclick="openAuth()">Get Started Today →</button>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-brand">
+    <div class="nav-logo" style="font-size:16px;">
+      <div class="nav-logo-mark" style="width:28px;height:28px;font-size:12px;">W</div>
+      Web<span style="color:var(--indigo2)">nari</span>
+    </div>
+    <p>Professional websites and digital marketing tools for local service businesses in South Florida.</p>
+  </div>
+  <div class="footer-col">
+    <h4>PRODUCT</h4>
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#how-it-works">How It Works</a>
+  </div>
+  <div class="footer-col">
+    <h4>SERVICES</h4>
+    <a href="#">Website Design</a>
+    <a href="#">SEO Management</a>
+    <a href="#">Reputation</a>
+    <a href="#">Ads</a>
+  </div>
+  <div class="footer-col">
+    <h4>COMPANY</h4>
+    <a href="#">About</a>
+    <a href="#">Contact</a>
+    <a href="#" onclick="openAuth();return false">Client Login</a>
+  </div>
+</footer>
+<div class="footer-bottom">
+  <p>© 2026 Webnari. All rights reserved.</p>
+  <p style="color:var(--muted);font-size:12px;">Built for local businesses.</p>
+</div>
+
+</div><!-- /landing -->
+
+<!-- ══════════════════════════
+     AUTH MODAL
+══════════════════════════ -->
+<div class="modal-overlay" id="auth-modal">
+  <div class="auth-modal">
+    <button class="modal-close-btn" onclick="closeAuth()">✕</button>
+    <div class="auth-logo">
+      <div class="nav-logo-mark">W</div>
+      <span style="font-weight:800;font-size:16px;">Web<span style="color:var(--indigo2)">nari</span></span>
+    </div>
+    <div class="auth-title">Welcome back</div>
+    <div class="auth-sub">Log in to access your website dashboard.</div>
+    <div class="auth-field">
+      <label class="auth-label">EMAIL</label>
+      <input class="auth-input" id="auth-email" type="email" placeholder="you@yourbusiness.com" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="auth-field">
+      <label class="auth-label">PASSWORD</label>
+      <input class="auth-input" id="auth-password" type="password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="auth-error" id="auth-error">Incorrect email or password. Please try again.</div>
+    <button class="auth-btn" onclick="doLogin()">Log In →</button>
+    <div class="auth-hint">Demo admin: <span onclick="fillDemo('admin')">admin@agency.com</span> &nbsp;|&nbsp; Demo client: <span onclick="fillDemo('client')">maria@pestprosfl.com</span></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════
+     CLIENT PORTAL
+══════════════════════════ -->
+<div id="portal-page">
+  <nav class="portal-nav">
+    <div class="nav-logo" style="font-size:16px;">
+      <div class="nav-logo-mark" style="width:28px;height:28px;font-size:12px;">W</div>
+      Web<span style="color:var(--indigo2)">nari</span>
+    </div>
+    <div class="portal-user-info">
+      <div class="portal-avatar" id="portal-avatar">?</div>
+      <span class="portal-name" id="portal-user-name">Loading…</span>
+      <button class="portal-logout" onclick="doLogout()">Log Out</button>
+    </div>
+  </nav>
+  <div class="portal-body">
+    <div class="portal-hero">
+      <h1 id="portal-biz-name">Your Website</h1>
+      <div style="display:flex;align-items:center;gap:12px;margin-top:8px;">
+        <span class="status-pill" id="portal-status-pill"></span>
+        <span style="font-size:13px;color:var(--muted);" id="portal-url-display"></span>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="portal-kpis" id="portal-kpis"></div>
+
+    <!-- Grid: Analytics + Reviews -->
+    <div class="portal-grid">
+      <div class="portal-panel">
+        <div class="portal-panel-title">📈 Traffic Sources</div>
+        <div id="portal-sources"></div>
+      </div>
+      <div class="portal-panel">
+        <div class="portal-panel-title">⭐ Recent Reviews</div>
+        <div id="portal-reviews"></div>
+      </div>
+    </div>
+
+    <!-- Website Preview -->
+    <div id="portal-preview-wrap" style="display:none;" class="portal-preview">
+      <div class="portal-preview-bar">
+        <div class="preview-dots"><span></span><span></span><span></span></div>
+        <div class="preview-url" style="flex:1;height:22px;background:rgba(255,255,255,.05);border-radius:4px;margin-left:8px;display:flex;align-items:center;padding:0 10px;">
+          <span style="font-size:11px;color:var(--muted);font-family:monospace;" id="portal-preview-url"></span>
+        </div>
+      </div>
+      <iframe class="portal-iframe" id="portal-iframe" src="" loading="lazy"></iframe>
+    </div>
+
+    <!-- Leads + Ads -->
+    <div class="portal-grid">
+      <div class="portal-panel">
+        <div class="portal-panel-title">🎯 Lead Pipeline</div>
+        <div id="portal-leads"></div>
+      </div>
+      <div class="portal-panel">
+        <div class="portal-panel-title">📣 Ad Campaigns</div>
+        <div id="portal-ads"></div>
+      </div>
+    </div>
+
+    <!-- Contact CTA -->
+    <div class="portal-contact">
+      <h3>Need something? We're here.</h3>
+      <p>Your account manager is available for questions, updates, or changes to your website.</p>
+      <button class="btn-primary-sm" style="font-size:14px;padding:12px 28px;" onclick="window.location.href='mailto:hello@webnari.io'">Contact Your Account Manager</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Supabase client ──────────────────────────────────────
+const _sb = (typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL !== 'YOUR_SUPABASE_URL')
+  ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON)
+  : null;
+
+// ── Fallback user DB (demo/dev mode only — not used when Supabase is configured) ──
+const USERS = [
+  { email:'admin@agency.com',        password:'admin123',  role:'admin',  name:'Luis Ballen',     initials:'LB' },
+  { email:'maria@pestprosfl.com',    password:'client123', role:'client', clientId:'demo1', name:'Maria Gonzalez',  initials:'MG' },
+  { email:'james@sparkelectric.com', password:'client123', role:'client', clientId:'demo2', name:'James Torres',    initials:'JT' },
+  { email:'sandra@coolair.com',      password:'client123', role:'client', clientId:'demo3', name:'Sandra Lee',      initials:'SL' },
+];
+
+// ── Dashboard data (shared localStorage key with dashboard.html) ──
+const DB_KEY = 'waas_os_v1';
+const SEED = {
+  clients:[
+    { id:'demo1', bizName:'PestPro South Florida', status:'live', liveUrl:'http://localhost:3002',
+      seo:{ title:'Pest Control South Florida | PestPro' },
+      analytics:{sessions:3840,organic:1920,paid:960,direct:480,social:384,referral:96,bounceRate:41,avgDuration:'2:18',conversions:127,convRate:3.3,topPages:[]},
+      reputation:{google:{rating:4.9,reviews:47},yelp:{rating:4.5,reviews:23},facebook:{rating:5.0,reviews:31},recentReviews:[
+        {platform:'google',author:'Mike R.',rating:5,text:'Best pest control in Boca!',date:'2026-03-18',responded:true},
+        {platform:'yelp',author:'Sarah T.',rating:2,text:'Took too long to arrive.',date:'2026-03-15',responded:false},
+        {platform:'google',author:'David K.',rating:5,text:'Used them 3 times — always great!',date:'2026-03-12',responded:true},
+      ]},
+      leads:[{stage:'qualified'},{stage:'contacted'},{stage:'new'},{stage:'closed'}],
+      ads:{campaigns:[{name:'Google Search',platform:'google',spend:612,conversions:9},{name:'Facebook',platform:'facebook',spend:244,conversions:3}]},
+    },
+    { id:'demo2', bizName:'Spark Electric Co.', status:'onboarding', liveUrl:'',
+      seo:{ title:'Electrician Delray Beach | Spark Electric' },
+      analytics:{sessions:820,organic:410,paid:205,direct:123,social:82,referral:0,bounceRate:48,avgDuration:'1:45',conversions:22,convRate:2.7,topPages:[]},
+      reputation:{google:{rating:4.7,reviews:28},yelp:{rating:4.4,reviews:11},facebook:{rating:4.8,reviews:19},recentReviews:[
+        {platform:'google',author:'Chris P.',rating:5,text:'Very professional, fixed our panel quickly.',date:'2026-03-16',responded:true},
+        {platform:'google',author:'Janet W.',rating:4,text:'Good work, will use again.',date:'2026-03-10',responded:false},
+      ]},
+      leads:[{stage:'new'},{stage:'contacted'}],
+      ads:{campaigns:[{name:'Google Search',platform:'google',spend:387,conversions:6}]},
+    },
+    { id:'demo3', bizName:'Cool Air HVAC', status:'draft', liveUrl:'',
+      seo:{ title:'HVAC Boynton Beach | Cool Air' },
+      analytics:{sessions:0,organic:0,paid:0,direct:0,social:0,referral:0,bounceRate:0,avgDuration:'0:00',conversions:0,convRate:0,topPages:[]},
+      reputation:{google:{rating:0,reviews:0},yelp:{rating:0,reviews:0},facebook:{rating:0,reviews:0},recentReviews:[]},
+      leads:[{stage:'closed'}],
+      ads:{campaigns:[]},
+    },
+  ]
+};
+
+function getDB() {
+  try { const d = localStorage.getItem(DB_KEY); return d ? JSON.parse(d) : SEED; } catch { return SEED; }
+}
+function getClient(id) {
+  const db = getDB();
+  return (db.clients || SEED.clients).find(c => c.id === id) || SEED.clients.find(c => c.id === id);
+}
+
+// ── Auth ──
+function openAuth() {
+  document.getElementById('auth-modal').classList.add('open');
+  setTimeout(() => document.getElementById('auth-email').focus(), 100);
+}
+function closeAuth() { document.getElementById('auth-modal').classList.remove('open'); }
+function fillDemo(type) {
+  if (type === 'admin') { document.getElementById('auth-email').value='admin@agency.com'; document.getElementById('auth-password').value='admin123'; }
+  else { document.getElementById('auth-email').value='maria@pestprosfl.com'; document.getElementById('auth-password').value='client123'; }
+}
+async function doLogin() {
+  const email = document.getElementById('auth-email').value.trim().toLowerCase();
+  const pass  = document.getElementById('auth-password').value;
+  const errEl = document.getElementById('auth-error');
+  errEl.style.display = 'none';
+
+  if (_sb) {
+    // ── Supabase auth ──
+    const { data, error } = await _sb.auth.signInWithPassword({ email, password: pass });
+    if (error || !data.user) { errEl.style.display = 'block'; return; }
+    // Fetch role from profiles table
+    const { data: profile } = await _sb.from('profiles').select('role, name, initials, client_id').eq('id', data.user.id).single();
+    if (!profile) { errEl.style.display = 'block'; return; }
+    sessionStorage.setItem('waas_user', JSON.stringify({ ...profile, email }));
+    closeAuth();
+    if (profile.role === 'admin') {
+      window.location.href = 'dashboard.html';
+    } else {
+      showPortal({ ...profile, email });
+    }
+  } else {
+    // ── Fallback: demo mode ──
+    const user = USERS.find(u => u.email === email && u.password === pass);
+    if (!user) { errEl.style.display = 'block'; return; }
+    sessionStorage.setItem('waas_user', JSON.stringify(user));
+    closeAuth();
+    if (user.role === 'admin') {
+      window.location.href = 'dashboard.html';
+    } else {
+      showPortal(user);
+    }
+  }
+}
+async function doLogout() {
+  sessionStorage.removeItem('waas_user');
+  if (_sb) await _sb.auth.signOut();
+  document.getElementById('landing').style.display = 'block';
+  document.getElementById('portal-page').style.display = 'none';
+}
+
+// ── Client Portal ──
+function showPortal(user) {
+  document.getElementById('landing').style.display = 'none';
+  document.getElementById('portal-page').style.display = 'block';
+  window.scrollTo(0,0);
+
+  const c = getClient(user.clientId);
+  if (!c) return;
+
+  document.getElementById('portal-avatar').textContent    = user.initials;
+  document.getElementById('portal-user-name').textContent = user.name;
+  document.getElementById('portal-biz-name').textContent  = c.bizName;
+
+  // Status
+  const pill = document.getElementById('portal-status-pill');
+  const statusMap = { live:['status-live','● Live'], onboarding:['status-onboarding','◐ Onboarding'], draft:['status-draft','○ Draft'] };
+  const [cls, txt] = statusMap[c.status] || ['status-draft','○ Draft'];
+  pill.className = 'status-pill ' + cls; pill.textContent = txt;
+
+  const url = c.liveUrl || '';
+  const urlEl = document.getElementById('portal-url-display');
+  urlEl.textContent = url ? url.replace('https://','').replace('http://','') : 'Site in progress';
+
+  // KPIs
+  const a = c.analytics || {};
+  const r = c.reputation || {};
+  const leads = c.leads || [];
+  const totalR = ['google','yelp','facebook'].reduce((s,p) => s + ((r[p]?.rating||0)*(r[p]?.reviews||0)), 0);
+  const totalC = ['google','yelp','facebook'].reduce((s,p) => s + (r[p]?.reviews||0), 0);
+  const avgRating = totalC ? (totalR/totalC).toFixed(1) : '—';
+  document.getElementById('portal-kpis').innerHTML = `
+    <div class="portal-kpi"><div class="portal-kpi-label">MONTHLY SESSIONS</div><div class="portal-kpi-value">${(a.sessions||0).toLocaleString()}</div><div class="portal-kpi-sub">Website visitors</div></div>
+    <div class="portal-kpi"><div class="portal-kpi-label">CONVERSIONS</div><div class="portal-kpi-value">${(a.conversions||0).toLocaleString()}</div><div class="portal-kpi-sub">${a.convRate||0}% conversion rate</div></div>
+    <div class="portal-kpi"><div class="portal-kpi-label">OVERALL RATING</div><div class="portal-kpi-value">${avgRating}${avgRating!=='—'?'★':''}</div><div class="portal-kpi-sub">${totalC} total reviews</div></div>
+    <div class="portal-kpi"><div class="portal-kpi-label">ACTIVE LEADS</div><div class="portal-kpi-value">${leads.filter(l=>l.stage!=='closed'&&l.stage!=='lost').length}</div><div class="portal-kpi-sub">${leads.filter(l=>l.stage==='closed').length} closed won</div></div>`;
+
+  // Traffic sources
+  const total = a.sessions || 1;
+  const sources = [{l:'Organic',v:a.organic||0,c:'var(--teal)'},{l:'Paid Ads',v:a.paid||0,c:'var(--indigo)'},{l:'Direct',v:a.direct||0,c:'var(--gold)'},{l:'Social',v:a.social||0,c:'var(--purple)'}];
+  document.getElementById('portal-sources').innerHTML = '<div class="source-bar-mini">' + sources.map(s => {
+    const pct = Math.round((s.v/total)*100);
+    return `<div class="sbm-row"><div class="sbm-label"><span style="color:var(--text)">${s.l}</span><span style="color:var(--white);font-weight:600;">${s.v.toLocaleString()} <span style="color:var(--muted);font-weight:400">(${pct}%)</span></span></div>
+    <div class="sbm-bar"><div class="sbm-fill" style="width:${pct}%;background:${s.c}"></div></div></div>`;
+  }).join('') + '</div>';
+
+  // Reviews
+  const reviews = (r.recentReviews||[]).slice(0,3);
+  const platColors = {google:'#4285F4',yelp:'#D32323',facebook:'#1877F2'};
+  document.getElementById('portal-reviews').innerHTML = reviews.length
+    ? reviews.map(rv => {
+        const pc = platColors[rv.platform]||'var(--muted)';
+        return `<div class="review-item-mini">
+          <div class="ri-platform" style="background:${pc}22;color:${pc};">${rv.platform[0].toUpperCase()}</div>
+          <div class="ri-body"><div class="ri-author">${rv.author} <span class="ri-stars">${'★'.repeat(rv.rating)+'☆'.repeat(5-rv.rating)}</span></div>
+          <div class="ri-text">"${rv.text}"</div></div></div>`;
+      }).join('')
+    : '<div style="color:var(--muted);font-size:13px;padding:12px 0;">No reviews tracked yet. We\'ll set this up during onboarding.</div>';
+
+  // Website preview iframe
+  if (url && url.startsWith('http')) {
+    document.getElementById('portal-preview-wrap').style.display = 'block';
+    document.getElementById('portal-preview-url').textContent = url.replace(/^https?:\/\//,'');
+    document.getElementById('portal-iframe').src = url;
+  }
+
+  // Leads
+  const stageColors = {new:'var(--indigo)',contacted:'var(--amber)',qualified:'var(--teal)',closed:'var(--green)',lost:'var(--red)'};
+  const stageCounts = {};
+  leads.forEach(l => stageCounts[l.stage] = (stageCounts[l.stage]||0)+1);
+  document.getElementById('portal-leads').innerHTML = Object.keys(stageCounts).length
+    ? `<div style="display:flex;flex-wrap:wrap;gap:8px;">${Object.entries(stageCounts).map(([s,n])=>`
+        <div style="background:${stageColors[s]||'var(--muted)'}22;border:1px solid ${stageColors[s]||'var(--muted)'}44;border-radius:8px;padding:10px 16px;text-align:center;">
+          <div style="font-size:24px;font-weight:800;color:var(--white);">${n}</div>
+          <div style="font-size:11px;color:var(--muted);text-transform:capitalize;margin-top:2px;">${s}</div>
+        </div>`).join('')}</div>`
+    : '<div style="color:var(--muted);font-size:13px;">No leads yet.</div>';
+
+  // Ads
+  const campaigns = (c.ads?.campaigns)||[];
+  document.getElementById('portal-ads').innerHTML = campaigns.length
+    ? campaigns.map(cam => {
+        const platC = {google:'#4285F4',facebook:'#1877F2'}[cam.platform]||'var(--muted)';
+        const platL = {google:'Google Ads',facebook:'Facebook'}[cam.platform]||cam.platform;
+        return `<div style="padding:10px 0;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+          <div><div style="font-weight:600;color:var(--white);font-size:13px;">${cam.name}</div>
+          <span style="font-size:11px;font-weight:700;color:${platC};">${platL}</span></div>
+          <div style="text-align:right;"><div style="font-size:16px;font-weight:700;color:var(--white);">$${cam.spend}</div>
+          <div style="font-size:11px;color:var(--green);">${cam.conversions} conversions</div></div></div>`;
+      }).join('')
+    : '<div style="color:var(--muted);font-size:13px;">No active campaigns. Contact us to get started with ads.</div>';
+}
+
+// ── Parallax ──
+const PHASES = [
+  'We handle every detail, start to finish.',
+  'Your website comes to life — mobile-first, fast, and stunning.',
+  'Rankings rise, reviews pour in, and leads keep coming.'
+];
+let lastPhase = -1;
+function initParallax() {
+  const wrap = document.getElementById('parallax-wrap');
+  if (!wrap) return;
+  const browser = document.getElementById('browser-wrap');
+  const phone   = document.getElementById('phone-mockup');
+  const s1 = document.getElementById('stat1');
+  const s2 = document.getElementById('stat2');
+  const s3 = document.getElementById('stat3');
+  const urlEl = document.getElementById('url-text');
+  const siteHero = document.getElementById('site-hero-el');
+  const siteSvc  = document.getElementById('site-svc-el');
+  const siteCtc  = document.getElementById('site-contact-el');
+  const subEl = document.getElementById('parallax-sub');
+  const DOMAIN = 'pestprosfl.com';
+  let typed = 0, typing = false;
+
+  function typeUrl() {
+    if (typing) return; typing = true;
+    urlEl.textContent = '';
+    let i = 0;
+    const t = setInterval(() => {
+      urlEl.textContent = DOMAIN.substring(0,++i);
+      if (i >= DOMAIN.length) clearInterval(t);
+    }, 55);
+  }
+
+  let ticking = false;
+  window.addEventListener('scroll', () => { if (!ticking) { requestAnimationFrame(update); ticking = true; } });
+
+  function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+  function phase(p,from,to){ return clamp((p-from)/(to-from),0,1); }
+  function ease(t){ return t<.5 ? 2*t*t : -1+(4-2*t)*t; }
+
+  function update() {
+    ticking = false;
+    const rect = wrap.getBoundingClientRect();
+    const total = wrap.offsetHeight - window.innerHeight;
+    const scrolled = Math.max(0,-rect.top);
+    const p = clamp(scrolled/total, 0, 1);
+
+    // Phase labels
+    const phaseIdx = p < .33 ? 0 : p < .66 ? 1 : 2;
+    if (phaseIdx !== lastPhase) { subEl.textContent = PHASES[phaseIdx]; lastPhase = phaseIdx; }
+
+    // Phase 1: browser scales up + de-rotates (0 → 0.40)
+    const p1 = ease(phase(p, 0, 0.40));
+    const scl   = 0.32 + p1 * 0.56;
+    const rotY  = 28 * (1 - p1);
+    browser.style.transform = `perspective(1400px) rotateY(${rotY}deg) scale(${scl})`;
+
+    // Type URL when browser starts opening
+    if (p1 > 0.3 && typed === 0) { typed = 1; typeUrl(); }
+
+    // Phase 2: site content + phone (0.40 → 0.72)
+    const p2 = ease(phase(p, 0.40, 0.72));
+    if (p2 > 0.1) { siteHero.classList.add('visible'); } else { siteHero.classList.remove('visible'); }
+    if (p2 > 0.35) { siteSvc.classList.add('visible'); } else { siteSvc.classList.remove('visible'); }
+    if (p2 > 0.6)  { siteCtc.classList.add('visible'); } else { siteCtc.classList.remove('visible'); }
+    const phoneX = (1 - ease(phase(p, 0.50, 0.75))) * 200;
+    phone.style.transform = `translateY(-50%) translateX(${phoneX}px)`;
+    phone.style.opacity   = phase(p, 0.50, 0.65);
+
+    // Phase 3: stat bubbles (0.70 → 1.0)
+    const applyBubble = (el, from) => {
+      const ep = ease(phase(p, from, from + 0.15));
+      el.style.opacity   = ep;
+      const base = el === s1 ? 'translateY(-50%) translateY' : 'translateY';
+      el.style.transform = el === s1
+        ? `translateY(calc(-50% + ${(1-ep)*30}px))`
+        : `translateY(${(1-ep)*30}px)`;
+    };
+    applyBubble(s1, 0.70);
+    applyBubble(s2, 0.80);
+    applyBubble(s3, 0.85);
+  }
+  update();
+}
+
+// ── Pricing render ──
+function renderPricing() {
+  const db = getDB();
+  const pr = db.pricing || { starter:79, standard:129, premium:189, setup:500,
+    starterName:'Starter',  starterDesc:'Great for small businesses getting started.',  starterFeatures:'1 website\nUp to 5 pages\nBasic SEO setup\nEmail support',
+    standardName:'Standard', standardDesc:'Our most popular plan for growing businesses.', standardFeatures:'1 website\nUp to 10 pages\nSEO Manager\nPriority support\nMonthly report',
+    premiumName:'Premium',  premiumDesc:'Full-service website management, top to bottom.', premiumFeatures:'1 website\nUnlimited pages\nFull SEO suite\nDedicated support\nBi-weekly reports\nBlog management',
+  };
+  const tiers = [
+    { key:'starter',  name: pr.starterName||'Starter',  price:pr.starter,  desc:pr.starterDesc||'',  features:pr.starterFeatures||'', cls:'', tierCls:'', setup:pr.setup },
+    { key:'standard', name: pr.standardName||'Standard', price:pr.standard, desc:pr.standardDesc||'', features:pr.standardFeatures||'', cls:'popular', tierCls:'std', setup:pr.setup },
+    { key:'premium',  name: pr.premiumName||'Premium',  price:pr.premium,  desc:pr.premiumDesc||'',  features:pr.premiumFeatures||'', cls:'', tierCls:'prem', setup:pr.setup },
+  ];
+  document.getElementById('pricing-grid').innerHTML = tiers.map(t => {
+    const feats = (t.features||'').split('\n').filter(Boolean).map(f => `<li>${f}</li>`).join('');
+    return `<div class="pricing-card ${t.cls}">
+      ${t.cls==='popular' ? '<div class="pricing-badge">MOST POPULAR</div>' : ''}
+      <div class="pricing-tier ${t.tierCls}">${t.name.toUpperCase()} PLAN</div>
+      <div class="pricing-name">${t.name}</div>
+      <div class="pricing-desc">${t.desc}</div>
+      <div class="pricing-price"><span>$</span>${t.price}</div>
+      <div class="pricing-period">per month</div>
+      <div class="pricing-setup">+ $${t.setup} one-time setup fee</div>
+      <ul class="pricing-features">${feats}</ul>
+      <button class="pricing-cta" onclick="openAuth()">Get Started</button>
+    </div>`;
+  }).join('');
+}
+
+// ── Scroll reveal ──
+function initReveal() {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('revealed'); obs.unobserve(e.target); } });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+}
+
+// ── Nav scroll effect ──
+window.addEventListener('scroll', () => {
+  const nav = document.querySelector('nav');
+  if (nav) nav.style.borderBottomColor = window.scrollY > 20 ? 'var(--border)' : 'transparent';
+});
+
+// ── Init ──
+(function() {
+  // Check for existing session
+  const stored = sessionStorage.getItem('waas_user');
+  if (stored) {
+    try {
+      const user = JSON.parse(stored);
+      if (user.role === 'admin') { window.location.href = 'dashboard.html'; return; }
+      if (user.role === 'client') { showPortal(user); return; }
+    } catch {}
+  }
+  renderPricing();
+  initParallax();
+  initReveal();
+})();
+</script>
+</body>
+</html>
