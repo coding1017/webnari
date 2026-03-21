@@ -1,0 +1,1711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VoltPro Electric — South Florida's Premier Electrical Contractors</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────────── */
+:root {
+  --black:   #070711;
+  --dark:    #0D0D1E;
+  --surface: #131328;
+  --surface2:#1A1A38;
+  --border:  #252548;
+  --yellow:  #FBBF24;
+  --yellow2: #FDE68A;
+  --gold:    #D97706;
+  --white:   #F0F4FF;
+  --muted:   #7878A0;
+  --text:    #C4C4E0;
+  --font-head: 'Barlow Condensed', sans-serif;
+  --font-body: 'Barlow', sans-serif;
+  --radius:  4px;
+  --radius-lg: 8px;
+}
+/* ─── RESET ──────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--black);
+  color: var(--text);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+/* ─── UTILITY ────────────────────────────────────── */
+.container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+.section { padding: 96px 0; }
+.section-sm { padding: 64px 0; }
+.eyebrow {
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--yellow);
+  margin-bottom: 12px;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 14px 28px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+.btn-primary { background: var(--yellow); color: var(--black); }
+.btn-primary:hover { background: var(--yellow2); transform: translateY(-1px); }
+.btn-outline {
+  background: transparent;
+  color: var(--white);
+  border: 1.5px solid var(--border);
+}
+.btn-outline:hover { border-color: var(--yellow); color: var(--yellow); }
+/* ─── NOISE TEXTURE ──────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+/* ─── NAV ────────────────────────────────────────── */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(7,7,17,0.94);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 68px;
+}
+.logo {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--white);
+}
+.logo span { color: var(--yellow); }
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+}
+.nav-links a {
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: color 0.15s;
+}
+.nav-links a:hover { color: var(--white); }
+/* ─── NAV DROPDOWN ───────────────────────────────── */
+.nav-links li { position: relative; }
+.nav-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 8px;
+  min-width: 220px;
+  z-index: 200;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.6);
+}
+.nav-dropdown::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 10px; height: 10px;
+  background: var(--surface);
+  border-left: 1px solid var(--border);
+  border-top: 1px solid var(--border);
+  rotate: 45deg;
+}
+.nav-dropdown a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  font-size: 13px;
+  font-family: var(--font-head);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text);
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.nav-dropdown a:hover { background: var(--surface2); color: var(--yellow); }
+.nav-dropdown-icon { font-size: 16px; line-height: 1; }
+.nav-has-dropdown > a::after {
+  content: ' ▾';
+  font-size: 10px;
+  opacity: 0.6;
+}
+.nav-has-dropdown:hover .nav-dropdown { display: block; }
+.nav-cta { display: flex; align-items: center; gap: 16px; }
+.emergency-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--yellow);
+}
+.pulse-dot {
+  width: 8px; height: 8px;
+  background: var(--yellow);
+  border-radius: 50%;
+  animation: pulse 1.8s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.7); }
+}
+/* ════════════════════════════════════════════════════
+   SCROLL SEQUENCE HERO
+   ════════════════════════════════════════════════════ */
+.scroll-sequence {
+  height: 400vh;
+  position: relative;
+}
+.sequence-sticky {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: calc(100vh - 68px);
+  overflow: hidden;
+  background: #070711;
+}
+/* — Background — */
+.seq-bg {
+  position: absolute;
+  inset: 0;
+  background: #070711;
+  z-index: 0;
+  will-change: background;
+}
+/* — Grid — */
+.seq-grid {
+  position: absolute;
+  inset: -20%;
+  background-image:
+    linear-gradient(rgba(251,191,36,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(251,191,36,0.06) 1px, transparent 1px);
+  background-size: 72px 72px;
+  z-index: 1;
+  will-change: transform, opacity;
+  mask-image: radial-gradient(ellipse 85% 85% at 50% 50%, black 20%, transparent 80%);
+}
+/* — Circuit rings — */
+.seq-circuit {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(75vw, 75vh);
+  height: min(75vw, 75vh);
+  z-index: 2;
+  will-change: opacity;
+}
+.circuit-ring {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px solid rgba(251,191,36,0.15);
+}
+.cr1 { width: 22%; height: 22%; border-radius: 42% 58% 46% 54% / 50% 44% 56% 50%; }
+.cr2 { width: 44%; height: 44%; border-radius: 50% 42% 54% 46% / 46% 52% 48% 54%; }
+.cr3 { width: 66%; height: 66%; border-radius: 46% 54% 42% 58% / 54% 46% 54% 46%; }
+.cr4 { width: 88%; height: 88%; border-radius: 50%; }
+.cr5 { width: 110%; height: 110%; border-radius: 50%; border-color: rgba(251,191,36,0.06); }
+.circuit-sweep {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(251,191,36,0.10) 40deg,
+    rgba(251,191,36,0.03) 75deg,
+    transparent 95deg
+  );
+  animation: circuitSpin 3s linear infinite;
+}
+@keyframes circuitSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+/* — Intro overlay — */
+.seq-intro {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9;
+  text-align: center;
+  pointer-events: none;
+  will-change: opacity;
+}
+.seq-intro-logo {
+  font-family: var(--font-head);
+  font-size: clamp(52px, 9vw, 88px);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--white);
+  line-height: 1;
+  margin-bottom: 14px;
+  animation: fadeSlideUp 0.7s 0.2s ease both;
+}
+.seq-intro-logo span { color: var(--yellow); }
+.seq-intro-sub {
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  animation: fadeSlideUp 0.7s 0.4s ease both;
+}
+.seq-scroll-hint {
+  position: absolute;
+  bottom: 52px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-head);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  animation: fadeIn 0.8s 1s ease both;
+}
+.seq-scroll-line {
+  width: 1px; height: 40px;
+  background: linear-gradient(180deg, var(--yellow), transparent);
+  animation: scrollPulse 1.6s ease-in-out infinite;
+}
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.4; transform: scaleY(1); }
+  50%       { opacity: 1;   transform: scaleY(1.2); }
+}
+@keyframes fadeIn      { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* — Bolt system — */
+.seq-bolt-system {
+  position: absolute;
+  top: 50%; left: 50%;
+  z-index: 5;
+  pointer-events: none;
+}
+.seq-bolt {
+  position: absolute;
+  font-size: 260px;
+  line-height: 1;
+  top: 0; left: 0;
+  transform: translate(-50%, -50%) scale(0.08);
+  transform-origin: center center;
+  will-change: transform, opacity, filter;
+  filter: drop-shadow(0 0 60px rgba(251,191,36,0.2));
+  opacity: 0;
+}
+/* — Arc brackets — */
+.seq-arc {
+  position: absolute;
+  top: 0; left: 0;
+  width: 220px; height: 220px;
+  transform: translate(-50%, -50%) scale(2.4);
+  opacity: 0;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+.ch-bracket {
+  position: absolute;
+  width: 30px; height: 30px;
+  border-color: var(--yellow);
+  border-style: solid;
+  border-width: 0;
+}
+.ch-tl { top: 0; left: 0; border-top-width: 3px; border-left-width: 3px; }
+.ch-tr { top: 0; right: 0; border-top-width: 3px; border-right-width: 3px; }
+.ch-bl { bottom: 0; left: 0; border-bottom-width: 3px; border-left-width: 3px; }
+.ch-br { bottom: 0; right: 0; border-bottom-width: 3px; border-right-width: 3px; }
+.ch-tl::before { content:''; position:absolute; top:-1px; left:34px; width:20px; height:1px; background:rgba(251,191,36,0.4); }
+.ch-tl::after  { content:''; position:absolute; top:34px; left:-1px; width:1px; height:20px; background:rgba(251,191,36,0.4); }
+.ch-tr::before { content:''; position:absolute; top:-1px; right:34px; width:20px; height:1px; background:rgba(251,191,36,0.4); }
+.ch-tr::after  { content:''; position:absolute; top:34px; right:-1px; width:1px; height:20px; background:rgba(251,191,36,0.4); }
+.ch-bl::before { content:''; position:absolute; bottom:-1px; left:34px; width:20px; height:1px; background:rgba(251,191,36,0.4); }
+.ch-bl::after  { content:''; position:absolute; bottom:34px; left:-1px; width:1px; height:20px; background:rgba(251,191,36,0.4); }
+.ch-br::before { content:''; position:absolute; bottom:-1px; right:34px; width:20px; height:1px; background:rgba(251,191,36,0.4); }
+.ch-br::after  { content:''; position:absolute; bottom:34px; right:-1px; width:1px; height:20px; background:rgba(251,191,36,0.4); }
+.ch-dot {
+  position: absolute; top:50%; left:50%;
+  transform: translate(-50%,-50%);
+  width: 10px; height: 10px;
+  background: var(--yellow);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(251,191,36,0.6), 0 0 20px rgba(251,191,36,0.4);
+}
+.ch-hline {
+  position: absolute; top:50%; left:50%;
+  transform: translate(-50%,-50%);
+  width: 80px; height: 1px;
+  background: rgba(251,191,36,0.4);
+}
+.ch-vline {
+  position: absolute; top:50%; left:50%;
+  transform: translate(-50%,-50%);
+  width: 1px; height: 80px;
+  background: rgba(251,191,36,0.4);
+}
+/* — Pulse rings — */
+.seq-rings {
+  position: absolute;
+  top: 0; left: 0;
+  opacity: 0;
+  will-change: opacity;
+  pointer-events: none;
+}
+.tr {
+  position: absolute;
+  top: 0; left: 0;
+  border: 1px solid rgba(251,191,36,0.35);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: trPulse 1.9s ease-in-out infinite;
+}
+.tr1 { width: 90px;  height: 90px; }
+.tr2 { width: 160px; height: 160px; animation-delay: 0.38s; border-color: rgba(251,191,36,0.22); }
+.tr3 { width: 260px; height: 260px; animation-delay: 0.76s; border-color: rgba(251,191,36,0.12); }
+@keyframes trPulse {
+  0%, 100% { opacity: 0.3; }
+  50%       { opacity: 0.8; }
+}
+/* — HUD overlays — */
+.seq-hud {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  pointer-events: none;
+  opacity: 0;
+  will-change: opacity;
+  font-family: var(--font-head);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--yellow);
+  text-transform: uppercase;
+  line-height: 1.75;
+}
+.hud-item {
+  position: absolute;
+  padding: 10px 14px;
+  border: 1px solid rgba(251,191,36,0.18);
+  background: rgba(7,7,17,0.6);
+  backdrop-filter: blur(4px);
+}
+.hud-item::before {
+  content: '';
+  display: block;
+  width: 16px; height: 1px;
+  background: rgba(251,191,36,0.5);
+  margin-bottom: 6px;
+}
+.hud-tl { top: 44px; left: 44px; }
+.hud-tr { top: 44px; right: 44px; text-align: right; }
+.hud-bl { bottom: 64px; left: 44px; }
+.hud-br { bottom: 64px; right: 44px; text-align: right; }
+.hud-scan-line {
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(251,191,36,0.45), transparent);
+  animation: hudScan 2.4s linear infinite;
+  z-index: 7;
+}
+@keyframes hudScan {
+  0%   { top: 0%;   opacity: 0; }
+  5%   { opacity: 1; }
+  95%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+/* — Alert flash — */
+.seq-alert {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  background: rgba(251,191,36,0.1);
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity;
+}
+/* — Surge wipe — */
+.seq-surge {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  clip-path: inset(0 100% 0 0);
+  pointer-events: none;
+  will-change: clip-path;
+  background:
+    radial-gradient(ellipse 55% 90% at 25% 50%, rgba(251,191,36,0.3) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 70% at 75% 40%, rgba(253,230,138,0.18) 0%, transparent 55%),
+    linear-gradient(108deg,
+      #7c3a00 0%,
+      #d97706 15%,
+      #fbbf24 35%,
+      #fde68a 55%,
+      #fbbf24 75%,
+      #b45309 100%
+    );
+}
+.seq-surge::after {
+  content: '';
+  position: absolute;
+  top: -10%; bottom: -10%; right: -80px;
+  width: 160px;
+  background: linear-gradient(90deg, transparent, rgba(251,191,36,0.5));
+  filter: blur(24px);
+}
+/* — POWERED ON text — */
+.seq-powered {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 12;
+  pointer-events: none;
+  opacity: 0;
+  will-change: opacity, transform;
+}
+.seq-powered-text {
+  font-family: var(--font-head);
+  font-size: clamp(48px, 10vw, 118px);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: var(--white);
+  text-shadow:
+    0 0 40px rgba(251,191,36,0.35),
+    0 0 80px rgba(251,191,36,0.15);
+}
+.seq-powered-check {
+  color: var(--yellow);
+  margin-right: 12px;
+}
+/* — Phase label — */
+.seq-phase {
+  position: absolute;
+  bottom: 42px;
+  left: 50%;
+  transform: translateX(-50%) translateY(0);
+  font-family: var(--font-head);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--yellow);
+  z-index: 20;
+  white-space: nowrap;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+/* — Progress scrub — */
+.seq-scrub {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: rgba(255,255,255,0.05);
+  z-index: 25;
+}
+.seq-scrub-fill {
+  height: 100%;
+  background: var(--yellow);
+  width: 0%;
+  will-change: width;
+}
+/* — Final hero content — */
+.seq-final {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  z-index: 15;
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+.seq-final.active { pointer-events: auto; }
+.hero-content {
+  position: relative;
+  z-index: 10;
+  max-width: 720px;
+}
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(251,191,36,0.10);
+  border: 1px solid rgba(251,191,36,0.22);
+  border-radius: 2px;
+  padding: 6px 14px;
+  font-family: var(--font-head);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--yellow2);
+  margin-bottom: 28px;
+}
+.hero h1 {
+  font-family: var(--font-head);
+  font-size: clamp(52px, 8vw, 96px);
+  font-weight: 900;
+  line-height: 0.93;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, var(--gold) 0%, var(--yellow) 45%, var(--yellow2) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 8px;
+}
+.hero h1 .accent {
+  display: block;
+  background: linear-gradient(135deg, var(--yellow) 0%, var(--yellow2) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero h1 .plain {
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: var(--white);
+  background-clip: unset;
+  color: var(--white);
+  display: block;
+}
+.hero-sub {
+  font-size: 18px;
+  color: var(--muted);
+  line-height: 1.65;
+  max-width: 540px;
+  margin-bottom: 44px;
+  margin-top: 20px;
+}
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.hero-phone {
+  font-family: var(--font-head);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: 0.02em;
+}
+.hero-phone small {
+  display: block;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 2px;
+}
+.hero-stats {
+  position: absolute;
+  right: 0; top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 2;
+}
+.stat-block {
+  background: rgba(19,19,40,0.88);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--yellow);
+  border-right: none;
+  border-radius: var(--radius) 0 0 var(--radius);
+  padding: 20px 28px;
+  text-align: right;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 0 0 1px rgba(251,191,36,0.08);
+}
+.stat-block .num {
+  font-family: var(--font-head);
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1;
+}
+.stat-block .num span { color: var(--yellow); }
+.stat-block .label {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 4px;
+}
+/* ─── MOBILE HERO FALLBACK ───────────────────────── */
+.hero-mobile {
+  display: none;
+  position: relative;
+  min-height: 100vh;
+  align-items: center;
+  overflow: hidden;
+  padding: 80px 0;
+  background: linear-gradient(160deg, #070711 0%, #0D0D1E 60%, #0d0d20 100%);
+}
+.hero-mobile .mob-bg-grid {
+  position: absolute;
+  inset: -20%;
+  background-image:
+    linear-gradient(rgba(251,191,36,0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(251,191,36,0.06) 1px, transparent 1px);
+  background-size: 72px 72px;
+  opacity: 0.6;
+  mask-image: radial-gradient(ellipse 90% 90% at 50% 40%, black 20%, transparent 80%);
+}
+.hero-mobile .mob-glow {
+  position: absolute;
+  top: 10%; right: -5%;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(251,191,36,0.10) 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(40px);
+}
+.hero-mobile .hero h1 {
+  font-size: clamp(44px, 8vw, 80px);
+}
+/* ─── TRUST BAR ──────────────────────────────────── */
+.trust-bar {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 20px 0;
+}
+.trust-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+.trust-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+.trust-icon {
+  width: 32px; height: 32px;
+  background: rgba(251,191,36,0.10);
+  border: 1px solid rgba(251,191,36,0.2);
+  border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+.trust-divider { width: 1px; height: 28px; background: var(--border); }
+/* ─── SERVICES ───────────────────────────────────── */
+.services-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 56px;
+  gap: 32px;
+}
+.services-header h2 {
+  font-family: var(--font-head);
+  font-size: clamp(36px, 5vw, 60px);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: var(--white);
+  line-height: 0.95;
+}
+.services-header p { max-width: 340px; color: var(--muted); font-size: 15px; line-height: 1.65; }
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+}
+.service-card {
+  background: var(--surface);
+  padding: 36px 32px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: background 0.2s;
+  box-shadow: 0 0 0 1px rgba(251,191,36,0.08);
+}
+.service-card::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--yellow);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s ease;
+}
+.service-card:hover { background: var(--surface2); }
+.service-card:hover::before { transform: scaleX(1); }
+.service-num {
+  font-family: var(--font-head);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--yellow);
+  margin-bottom: 20px;
+}
+.service-icon { font-size: 28px; margin-bottom: 16px; display: block; }
+.service-card h3 {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--white);
+  margin-bottom: 10px;
+}
+.service-card p { font-size: 14px; color: var(--muted); line-height: 1.65; }
+.service-arrow {
+  position: absolute;
+  top: 36px; right: 32px;
+  font-size: 18px;
+  color: var(--border);
+  transition: color 0.2s, transform 0.2s;
+}
+.service-card:hover .service-arrow { color: var(--yellow); transform: translate(3px,-3px); }
+/* ─── WHY US ─────────────────────────────────────── */
+.why-section {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.why-visual { position: relative; }
+.why-img-frame {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  height: 480px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.why-placeholder {
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--border);
+  text-align: center;
+}
+.why-badge {
+  position: absolute;
+  bottom: -20px; right: -20px;
+  background: var(--yellow);
+  color: var(--black);
+  border-radius: 50%;
+  width: 120px; height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: var(--font-head);
+}
+.why-badge .num { font-size: 36px; font-weight: 900; line-height: 1; }
+.why-badge .lbl { font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1.3; margin-top: 2px; }
+.why-photo {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  margin-bottom: 28px;
+  border: 1px solid var(--border);
+  position: relative;
+  height: 220px;
+}
+.why-photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+  filter: brightness(0.82) saturate(0.85);
+  transition: filter 0.3s ease;
+}
+.why-photo:hover img { filter: brightness(0.95) saturate(1); }
+.why-photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(251,191,36,0.07) 0%, transparent 60%);
+  pointer-events: none;
+}
+.why-content h2 {
+  font-family: var(--font-head);
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: var(--white);
+  line-height: 0.96;
+  margin-bottom: 24px;
+}
+.why-content > p { color: var(--muted); font-size: 15px; line-height: 1.7; margin-bottom: 40px; }
+.why-list { display: flex; flex-direction: column; gap: 16px; }
+.why-item { display: flex; gap: 16px; align-items: flex-start; }
+.why-check {
+  width: 28px; height: 28px;
+  background: rgba(251,191,36,0.10);
+  border: 1px solid rgba(251,191,36,0.28);
+  border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px;
+  color: var(--yellow);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.why-item-text h4 {
+  font-family: var(--font-head);
+  font-size: 16px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--white); margin-bottom: 3px;
+}
+.why-item-text p { font-size: 14px; color: var(--muted); line-height: 1.5; }
+/* ─── PROCESS ────────────────────────────────────── */
+.process-steps { display: grid; grid-template-columns: repeat(4,1fr); gap: 2px; margin-top: 56px; }
+.step-card { background: var(--surface); padding: 40px 28px; position: relative; }
+.step-card:not(:last-child)::after {
+  content: '→';
+  position: absolute;
+  right: -14px; top: 40px;
+  font-size: 20px; color: var(--yellow); z-index: 2; font-weight: 700;
+}
+.step-num {
+  font-family: var(--font-head);
+  font-size: 64px; font-weight: 900;
+  line-height: 1; margin-bottom: 16px;
+  -webkit-text-stroke: 1.5px rgba(251,191,36,0.4);
+  color: rgba(251,191,36,0.06);
+}
+.step-card h3 {
+  font-family: var(--font-head);
+  font-size: 18px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--white); margin-bottom: 10px;
+}
+.step-card p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+/* ─── REVIEWS ────────────────────────────────────── */
+.reviews-section { background: var(--black); }
+.reviews-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 48px; }
+.reviews-header h2 {
+  font-family: var(--font-head);
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em;
+  color: var(--white); line-height: 0.95;
+}
+.rating-badge { text-align: right; }
+.rating-stars { color: var(--yellow); font-size: 18px; letter-spacing: 2px; }
+.rating-num { font-family: var(--font-head); font-size: 44px; font-weight: 900; color: var(--white); line-height: 1; }
+.rating-count { font-size: 13px; color: var(--muted); }
+.reviews-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; }
+.review-card { background: var(--surface); padding: 32px; box-shadow: 0 0 0 1px rgba(251,191,36,0.06); }
+.review-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+.reviewer { display: flex; align-items: center; gap: 12px; }
+.reviewer-avatar {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--surface2); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-head); font-size: 16px; font-weight: 800; color: var(--yellow);
+}
+.reviewer-name { font-family: var(--font-head); font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--white); }
+.reviewer-loc { font-size: 12px; color: var(--muted); }
+.review-stars { color: var(--yellow); font-size: 13px; }
+.review-text { font-size: 14px; color: var(--text); line-height: 1.7; font-style: italic; }
+.review-text::before { content: '"'; color: var(--yellow); font-size: 20px; }
+/* ─── SERVICE AREAS ──────────────────────────────── */
+.areas-section { background: var(--surface); border-top: 1px solid var(--border); }
+.areas-grid { display: grid; grid-template-columns: 1fr 2fr; gap: 80px; align-items: center; }
+.areas-content h2 {
+  font-family: var(--font-head);
+  font-size: clamp(32px, 4vw, 52px);
+  font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em;
+  color: var(--white); line-height: 0.95; margin-bottom: 20px;
+}
+.areas-content p { color: var(--muted); font-size: 15px; line-height: 1.7; margin-bottom: 32px; }
+.areas-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.area-tag {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 8px 14px; font-family: var(--font-head); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); transition: all 0.15s;
+}
+.area-tag:hover { border-color: var(--yellow); color: var(--yellow); }
+.areas-map {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); height: 360px;
+  position: relative; overflow: hidden;
+}
+.areas-map iframe {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  filter: invert(90%) hue-rotate(180deg) saturate(0.55) brightness(0.85);
+}
+/* ─── CTA SECTION ────────────────────────────────── */
+.cta-section { position: relative; padding: 100px 0; overflow: hidden; }
+.cta-bg {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(251,191,36,0.09) 0%, transparent 70%), var(--black);
+}
+.cta-grid-overlay {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+  background-size: 40px 40px; opacity: 0.10;
+}
+.cta-content { position: relative; z-index: 2; text-align: center; max-width: 700px; margin: 0 auto; }
+.cta-content h2 {
+  font-family: var(--font-head);
+  font-size: clamp(40px, 6vw, 72px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em;
+  color: var(--white); line-height: 0.95; margin-bottom: 20px;
+}
+.cta-content h2 span { color: var(--yellow); }
+.cta-content p { color: var(--muted); font-size: 17px; line-height: 1.65; margin-bottom: 48px; }
+.cta-buttons { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; margin-bottom: 40px; }
+.cta-guarantees { display: flex; align-items: center; justify-content: center; gap: 32px; flex-wrap: wrap; }
+.cta-guarantee {
+  display: flex; align-items: center; gap: 8px;
+  font-family: var(--font-head); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+}
+.cta-guarantee::before { content: '✓'; color: var(--yellow); font-size: 13px; }
+/* ─── CONTACT FORM ───────────────────────────────── */
+.contact-section { background: var(--surface); border-top: 1px solid var(--border); }
+.contact-grid { display: grid; grid-template-columns: 1fr 1.5fr; gap: 80px; align-items: start; }
+.contact-info h2 {
+  font-family: var(--font-head);
+  font-size: clamp(32px, 3vw, 44px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em;
+  color: var(--white); line-height: 0.95; margin-bottom: 20px;
+}
+.contact-info p { color: var(--muted); font-size: 15px; line-height: 1.7; margin-bottom: 40px; }
+.contact-details { display: flex; flex-direction: column; gap: 20px; }
+.contact-detail { display: flex; gap: 16px; align-items: flex-start; }
+.contact-detail-icon {
+  width: 40px; height: 40px; background: rgba(251,191,36,0.10); border: 1px solid rgba(251,191,36,0.2);
+  border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.contact-detail-text strong {
+  display: block; font-family: var(--font-head); font-size: 14px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em; color: var(--white); margin-bottom: 2px;
+}
+.contact-detail-text span { font-size: 15px; color: var(--text); }
+.form-wrap {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); padding: 40px;
+}
+.form-title {
+  font-family: var(--font-head); font-size: 22px; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.04em; color: var(--white); margin-bottom: 28px;
+}
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-group { margin-bottom: 14px; }
+.form-group label {
+  display: block; font-family: var(--font-head); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+}
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 12px 16px;
+  font-family: var(--font-body); font-size: 15px; color: var(--white);
+  outline: none; transition: border-color 0.15s; appearance: none;
+}
+.form-group select { cursor: pointer; }
+.form-group input::placeholder, .form-group textarea::placeholder { color: var(--muted); }
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--yellow); }
+.form-group textarea { resize: vertical; min-height: 100px; }
+.form-submit { width: 100%; padding: 16px; font-size: 16px; justify-content: center; margin-top: 8px; }
+.form-note { text-align: center; font-size: 12px; color: var(--muted); margin-top: 14px; }
+/* ─── FOOTER ─────────────────────────────────────── */
+footer { background: var(--black); border-top: 1px solid var(--border); padding: 56px 0 32px; }
+.footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+.footer-brand .logo { font-size: 24px; margin-bottom: 14px; }
+.footer-brand p { font-size: 14px; color: var(--muted); line-height: 1.65; margin-bottom: 20px; max-width: 260px; }
+.footer-social { display: flex; gap: 10px; }
+.social-btn {
+  width: 36px; height: 36px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); display: flex; align-items: center; justify-content: center;
+  font-size: 15px; color: var(--muted); transition: all 0.15s;
+}
+.social-btn:hover { border-color: var(--yellow); color: var(--yellow); }
+.footer-col h4 {
+  font-family: var(--font-head); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--white); margin-bottom: 20px;
+}
+.footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+.footer-col li a { font-size: 14px; color: var(--muted); transition: color 0.15s; }
+.footer-col li a:hover { color: var(--yellow); }
+.footer-bottom {
+  border-top: 1px solid var(--border); padding-top: 28px;
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+.footer-bottom p { font-size: 13px; color: var(--muted); }
+.license-badges { display: flex; gap: 10px; }
+.license-badge {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 4px 10px; font-family: var(--font-head); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+}
+/* ─── RESPONSIVE ─────────────────────────────────── */
+@media (max-width: 768px) {
+  .scroll-sequence { display: none; }
+  .hero-mobile { display: flex; }
+}
+@media (max-width: 900px) {
+  .hero-stats { display: none; }
+  .services-grid { grid-template-columns: 1fr 1fr; }
+  .why-grid { grid-template-columns: 1fr; gap: 40px; }
+  .process-steps { grid-template-columns: 1fr 1fr; }
+  .reviews-grid { grid-template-columns: 1fr; }
+  .areas-grid { grid-template-columns: 1fr; gap: 40px; }
+  .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  .nav-links { display: none; }
+  .services-header { flex-direction: column; align-items: flex-start; }
+}
+@media (max-width: 600px) {
+  .services-grid { grid-template-columns: 1fr; }
+  .process-steps { grid-template-columns: 1fr; }
+  .step-card::after { display: none; }
+  .form-row { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .trust-divider { display: none; }
+  .trust-inner { justify-content: center; }
+  .hero-actions { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#" class="logo">VOLT<span>PRO</span></a>
+      <ul class="nav-links">
+        <li class="nav-has-dropdown">
+          <a href="#services">Services</a>
+          <div class="nav-dropdown">
+            <a href="#"><span class="nav-dropdown-icon">⚡</span>Panel Upgrades</a>
+            <a href="#"><span class="nav-dropdown-icon">🔌</span>EV Charger Install</a>
+            <a href="#"><span class="nav-dropdown-icon">🏠</span>Home Rewiring</a>
+            <a href="#"><span class="nav-dropdown-icon">💡</span>Smart Home &amp; Lighting</a>
+            <a href="#"><span class="nav-dropdown-icon">🏢</span>Commercial Electric</a>
+            <a href="#"><span class="nav-dropdown-icon">🚨</span>Emergency Service</a>
+          </div>
+        </li>
+        <li><a href="#why">Why Us</a></li>
+        <li><a href="#reviews">Reviews</a></li>
+        <li><a href="#areas">Service Areas</a></li>
+        <li class="nav-has-dropdown">
+          <a href="#">Company</a>
+          <div class="nav-dropdown">
+            <a href="#"><span class="nav-dropdown-icon">🏢</span>About Us</a>
+            <a href="#"><span class="nav-dropdown-icon">👥</span>Our Team</a>
+            <a href="#"><span class="nav-dropdown-icon">📝</span>Blog</a>
+            <a href="#"><span class="nav-dropdown-icon">⭐</span>Reviews</a>
+            <a href="#"><span class="nav-dropdown-icon">🔒</span>Privacy Policy</a>
+            <a href="#contact"><span class="nav-dropdown-icon">📞</span>Contact</a>
+          </div>
+        </li>
+      </ul>
+      <div class="nav-cta">
+        <div class="emergency-badge">
+          <div class="pulse-dot"></div>
+          24/7 Emergency
+        </div>
+        <a href="tel:5615550200" class="btn btn-primary">⚡ Call Now</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- SCROLL SEQUENCE HERO -->
+<div class="scroll-sequence" id="hero">
+  <div class="sequence-sticky" id="seqSticky">
+    <div class="seq-bg" id="seqBg"></div>
+    <div class="seq-grid" id="seqGrid"></div>
+    <div class="seq-circuit" id="seqCircuit">
+      <div class="circuit-ring cr1"></div>
+      <div class="circuit-ring cr2"></div>
+      <div class="circuit-ring cr3"></div>
+      <div class="circuit-ring cr4"></div>
+      <div class="circuit-ring cr5"></div>
+      <div class="circuit-sweep"></div>
+    </div>
+    <div class="seq-bolt-system" id="seqBoltSystem">
+      <div class="seq-bolt" id="seqBolt">⚡</div>
+      <div class="seq-arc" id="seqArc">
+        <div class="ch-bracket ch-tl"></div>
+        <div class="ch-bracket ch-tr"></div>
+        <div class="ch-bracket ch-bl"></div>
+        <div class="ch-bracket ch-br"></div>
+        <div class="ch-dot"></div>
+        <div class="ch-hline"></div>
+        <div class="ch-vline"></div>
+      </div>
+      <div class="seq-rings" id="seqRings">
+        <div class="tr tr1"></div>
+        <div class="tr tr2"></div>
+        <div class="tr tr3"></div>
+      </div>
+    </div>
+    <div class="seq-hud" id="seqHud">
+      <div class="hud-scan-line"></div>
+      <div class="hud-item hud-tl">Voltage: 240V<br>Phase: <span style="color:#fde68a">3-Phase</span></div>
+      <div class="hud-item hud-tr">Lat: 26.4615° N<br>Lon: 80.0728° W</div>
+      <div class="hud-item hud-bl">Panel: 200A / 42 Slots<br>Fault: <span style="color:#ff7070">Circuit 12</span></div>
+      <div class="hud-item hud-br">Status: On-Site Now<br>ETA: Immediate</div>
+    </div>
+    <div class="seq-alert" id="seqAlert"></div>
+    <div class="seq-surge" id="seqSurge"></div>
+    <div class="seq-powered" id="seqPowered">
+      <span class="seq-powered-text"><span class="seq-powered-check">⚡</span>Powered On</span>
+    </div>
+    <div class="seq-intro" id="seqIntro">
+      <div class="seq-intro-logo">VOLT<span>⚡</span>PRO</div>
+      <div class="seq-intro-sub">South Florida's Premier Electrical Contractors</div>
+      <div class="seq-scroll-hint">
+        <span>Scroll</span>
+        <div class="seq-scroll-line"></div>
+      </div>
+    </div>
+    <div class="seq-phase" id="seqPhase"></div>
+    <div class="seq-scrub"><div class="seq-scrub-fill" id="seqScrubFill"></div></div>
+    <div class="seq-final" id="seqFinal">
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-tag"><div class="pulse-dot"></div>South Florida's #1 Licensed Electrical Contractors</div>
+          <h1 class="hero">We Power<span class="accent">Every Project.</span><span class="plain">Guaranteed.</span></h1>
+          <p class="hero-sub">Panel upgrades, EV chargers, rewiring, smart home — we handle South Florida's most complex electrical needs. Licensed, insured, backed by a lifetime labor warranty.</p>
+          <div class="hero-actions">
+            <a href="#contact" class="btn btn-primary">Get a Free Estimate →</a>
+            <div class="hero-phone"><small>Emergency Line</small>(561) 555-0200</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-block"><div class="num">15<span>+</span></div><div class="label">Years Experience</div></div>
+        <div class="stat-block"><div class="num">3,200<span>+</span></div><div class="label">Projects Complete</div></div>
+        <div class="stat-block"><div class="num">4.9<span>★</span></div><div class="label">Google Rating</div></div>
+        <div class="stat-block"><div class="num">Lifetime</div><div class="label">Labor Warranty</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MOBILE HERO -->
+<section class="hero-mobile" id="hero-mob">
+  <div class="mob-bg-grid"></div>
+  <div class="mob-glow"></div>
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-tag"><div class="pulse-dot"></div>South Florida's #1 Licensed Electrical Contractors</div>
+      <h1 class="hero">We Power<span class="accent">Every Project.</span><span class="plain">Guaranteed.</span></h1>
+      <p class="hero-sub">Panel upgrades, EV chargers, rewiring, smart home — we handle South Florida's most complex electrical needs. Licensed, insured, backed by a lifetime labor warranty.</p>
+      <div class="hero-actions">
+        <a href="#contact" class="btn btn-primary">Get a Free Estimate →</a>
+        <div class="hero-phone"><small>Emergency Line</small>(561) 555-0200</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST BAR -->
+<div class="trust-bar">
+  <div class="container">
+    <div class="trust-inner">
+      <div class="trust-item"><div class="trust-icon">🛡️</div>Licensed &amp; Insured</div>
+      <div class="trust-divider"></div>
+      <div class="trust-item"><div class="trust-icon">⚡</div>Same-Day Service</div>
+      <div class="trust-divider"></div>
+      <div class="trust-item"><div class="trust-icon">✅</div>Lifetime Labor Warranty</div>
+      <div class="trust-divider"></div>
+      <div class="trust-item"><div class="trust-icon">💰</div>Upfront Flat-Rate Pricing</div>
+      <div class="trust-divider"></div>
+      <div class="trust-item"><div class="trust-icon">📞</div>24/7 Emergency Response</div>
+    </div>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<section class="section" id="services">
+  <div class="container">
+    <div class="services-header">
+      <div>
+        <div class="eyebrow">What We Do</div>
+        <h2>Complete<br>Electrical<br>Solutions</h2>
+      </div>
+      <p>From panel upgrades to full commercial fit-outs — every project in South Florida's unique climate and code environment requires a licensed expert who knows the work.</p>
+    </div>
+    <div class="services-grid">
+      <a href="#" class="service-card"><div class="service-num">01</div><span class="service-icon">⚡</span><h3>Panel Upgrades</h3><p>Federal Pacific and Zinsco panels are dangerous. We upgrade to modern 200A panels safely, on schedule, and to code.</p><div class="service-arrow">↗</div></a>
+      <a href="#" class="service-card"><div class="service-num">02</div><span class="service-icon">🔌</span><h3>EV Charger Installation</h3><p>Level 2 home chargers, Tesla Wall Connectors, commercial charging stations. Get your EV charged overnight, every night.</p><div class="service-arrow">↗</div></a>
+      <a href="#" class="service-card"><div class="service-num">03</div><span class="service-icon">🏠</span><h3>Whole-Home Rewiring</h3><p>Aluminum wiring, knob-and-tube, or undersized panels — we bring your home's electrical system fully up to 2026 code.</p><div class="service-arrow">↗</div></a>
+      <a href="#" class="service-card"><div class="service-num">04</div><span class="service-icon">💡</span><h3>Smart Home &amp; Lighting</h3><p>Lutron, Control4, Savant — we design and install smart lighting, automated shades, and whole-home AV systems.</p><div class="service-arrow">↗</div></a>
+      <a href="#" class="service-card"><div class="service-num">05</div><span class="service-icon">🏢</span><h3>Commercial Electrical</h3><p>Tenant improvements, new construction, lighting retrofits, and 3-phase service for South Florida businesses of all sizes.</p><div class="service-arrow">↗</div></a>
+      <a href="#" class="service-card"><div class="service-num">06</div><span class="service-icon">🚨</span><h3>Emergency Electrical</h3><p>Burning smell, flickering lights, tripped breaker that won't reset? Our emergency crew responds within 60 minutes.</p><div class="service-arrow">↗</div></a>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section class="section why-section" id="why">
+  <div class="container">
+    <div class="why-grid">
+      <div class="why-visual">
+        <div class="why-img-frame">
+          <img src="https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=900&q=80&auto=format&fit=crop" alt="VoltPro electrician at work" style="width:100%;height:100%;object-fit:cover;filter:brightness(0.82) saturate(0.85);">
+        </div>
+        <div class="why-badge"><div class="num">A+</div><div class="lbl">BBB<br>Rating</div></div>
+      </div>
+      <div class="why-content">
+        <div class="eyebrow">Why Choose VoltPro</div>
+        <h2>South Florida<br>Licensed.<br>Not Franchised.</h2>
+        <p>The big box electrical companies send whoever is available. We send the same licensed electrician every time — someone who knows your home, your panel, and your history.</p>
+        <div class="why-list">
+          <div class="why-item"><div class="why-check">✓</div><div class="why-item-text"><h4>State-Certified Master Electricians</h4><p>All work performed or supervised by Florida-licensed Master Electricians. No apprentice-only crews.</p></div></div>
+          <div class="why-item"><div class="why-check">✓</div><div class="why-item-text"><h4>Upfront Flat-Rate Pricing</h4><p>We quote the full price before we start. No hourly surprises, no material markups.</p></div></div>
+          <div class="why-item"><div class="why-check">✓</div><div class="why-item-text"><h4>Code-Compliant Guaranteed</h4><p>Every job is pulled with proper permits and passes final inspection. We handle all the paperwork.</p></div></div>
+          <div class="why-item"><div class="why-check">✓</div><div class="why-item-text"><h4>Lifetime Labor Warranty</h4><p>If our work ever fails, we come back and fix it. No charge. No questions.</p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="section" id="process">
+  <div class="container">
+    <div class="eyebrow">How It Works</div>
+    <h2 style="font-family:var(--font-head);font-size:clamp(32px,4vw,52px);font-weight:900;text-transform:uppercase;letter-spacing:-0.02em;color:var(--white);line-height:0.95;margin-bottom:0">From First Call<br>to Power On</h2>
+    <div class="process-steps">
+      <div class="step-card"><div class="step-num">01</div><h3>Free Estimate</h3><p>A licensed electrician visits, assesses your project, and gives you a written flat-rate quote. No guessing, no hidden costs.</p></div>
+      <div class="step-card"><div class="step-num">02</div><h3>Permit &amp; Planning</h3><p>We pull the required permits, order materials, and coordinate with your schedule. You don't lift a finger.</p></div>
+      <div class="step-card"><div class="step-num">03</div><h3>Clean Installation</h3><p>Our crew works cleanly, protects your finishes, and completes the job to NEC code and Florida Building Code standards.</p></div>
+      <div class="step-card"><div class="step-num">04</div><h3>Inspection &amp; Warranty</h3><p>We schedule and pass the final county inspection, then hand you a documented lifetime labor warranty card.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="section reviews-section" id="reviews">
+  <div class="container">
+    <div class="reviews-header">
+      <div><div class="eyebrow">What Customers Say</div><h2>4.9 Stars.<br>312+ Reviews.<br>Real People.</h2></div>
+      <div class="rating-badge"><div class="rating-stars">★★★★★</div><div class="rating-num">4.9</div><div class="rating-count">Based on 312 Google Reviews</div></div>
+    </div>
+    <div class="reviews-grid">
+      <div class="review-card"><div class="review-top"><div class="reviewer"><div class="reviewer-avatar">RM</div><div><div class="reviewer-name">Robert M.</div><div class="reviewer-loc">Boca Raton, FL</div></div></div><div class="review-stars">★★★★★</div></div><p class="review-text">Panel was 40 years old and failing. VoltPro gave me a fair quote, pulled permits, and had a new 200A panel installed in one day. Passed inspection first try. Highly recommend."</p></div>
+      <div class="review-card"><div class="review-top"><div class="reviewer"><div class="reviewer-avatar">LK</div><div><div class="reviewer-name">Linda K.</div><div class="reviewer-loc">Delray Beach, FL</div></div></div><div class="review-stars">★★★★★</div></div><p class="review-text">Had them install two Tesla Wall Connectors and rewire my garage. Clean work, on time, and they handled all the permits. Will use again for our second home."</p></div>
+      <div class="review-card"><div class="review-top"><div class="reviewer"><div class="reviewer-avatar">CV</div><div><div class="reviewer-name">Carlos V.</div><div class="reviewer-loc">West Palm Beach, FL</div></div></div><div class="review-stars">★★★★★</div></div><p class="review-text">Called at 9pm with a burning smell from the panel. They were at my house within 45 minutes, found a failing breaker, and had it fixed the same night. Absolute lifesavers."</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICE AREAS -->
+<section class="section areas-section" id="areas">
+  <div class="container">
+    <div class="areas-grid">
+      <div class="areas-content">
+        <div class="eyebrow">Where We Serve</div>
+        <h2>All of South Florida</h2>
+        <p>We serve Palm Beach and Broward County homeowners and businesses. Same-day service available in most areas.</p>
+        <div class="areas-tags">
+          <span class="area-tag">Boca Raton</span>
+          <span class="area-tag">Delray Beach</span>
+          <span class="area-tag">Boynton Beach</span>
+          <span class="area-tag">West Palm Beach</span>
+          <span class="area-tag">Palm Beach Gardens</span>
+          <span class="area-tag">Wellington</span>
+          <span class="area-tag">Jupiter</span>
+          <span class="area-tag">Lake Worth</span>
+          <span class="area-tag">Deerfield Beach</span>
+          <span class="area-tag">Pompano Beach</span>
+          <span class="area-tag">Fort Lauderdale</span>
+          <span class="area-tag">Coral Springs</span>
+        </div>
+        <br>
+        <a href="#contact" class="btn btn-primary" style="margin-top:8px">Check Your Area →</a>
+      </div>
+      <div class="areas-map">
+        <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=-80.55%2C25.85%2C-80.0%2C26.75&amp;layer=mapnik" width="100%" height="100%" style="border:0;display:block;" allowfullscreen="" loading="lazy" title="VoltPro Service Area"></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-bg"></div>
+  <div class="cta-grid-overlay"></div>
+  <div class="container">
+    <div class="cta-content">
+      <div class="eyebrow">Ready to get started?</div>
+      <h2>Book Your <span>Free</span><br>Estimate Today</h2>
+      <p>We'll assess your electrical needs, give you a flat-rate written quote, and schedule the work around your calendar. Most residential estimates take under 30 minutes.</p>
+      <div class="cta-buttons">
+        <a href="#contact" class="btn btn-primary">Schedule Free Estimate →</a>
+        <a href="tel:5615550200" class="btn btn-outline">⚡ (561) 555-0200</a>
+      </div>
+      <div class="cta-guarantees">
+        <span class="cta-guarantee">Free estimate</span>
+        <span class="cta-guarantee">Same-day availability</span>
+        <span class="cta-guarantee">Lifetime labor warranty</span>
+        <span class="cta-guarantee">Permit handled for you</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section contact-section" id="contact">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-info">
+        <div class="eyebrow">Get In Touch</div>
+        <h2>Schedule Your Free Estimate</h2>
+        <p>Fill out the form and we'll contact you within 2 hours to confirm your appointment.</p>
+        <div class="contact-details">
+          <div class="contact-detail"><div class="contact-detail-icon">📞</div><div class="contact-detail-text"><strong>Emergency Line</strong><span>(561) 555-0200</span></div></div>
+          <div class="contact-detail"><div class="contact-detail-icon">✉️</div><div class="contact-detail-text"><strong>Email Us</strong><span>hello@voltproelectric.com</span></div></div>
+          <div class="contact-detail"><div class="contact-detail-icon">🕐</div><div class="contact-detail-text"><strong>Hours</strong><span>Mon–Sat 7am–6pm · Emergency: 24/7</span></div></div>
+          <div class="contact-detail"><div class="contact-detail-icon">📍</div><div class="contact-detail-text"><strong>Service Area</strong><span>Palm Beach &amp; Broward County, FL</span></div></div>
+        </div>
+      </div>
+      <div class="form-wrap">
+        <div class="form-title">Request a Free Estimate</div>
+        <form>
+          <div class="form-row">
+            <div class="form-group"><label>First Name</label><input type="text" placeholder="John"></div>
+            <div class="form-group"><label>Last Name</label><input type="text" placeholder="Smith"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Phone Number</label><input type="tel" placeholder="(561) 000-0000"></div>
+            <div class="form-group"><label>Email Address</label><input type="email" placeholder="john@email.com"></div>
+          </div>
+          <div class="form-group"><label>Service Address</label><input type="text" placeholder="123 Palm Ave, Boca Raton, FL"></div>
+          <div class="form-group">
+            <label>Type of Service</label>
+            <select>
+              <option value="" disabled selected>Select a service...</option>
+              <option>Panel Upgrade / Replacement</option>
+              <option>EV Charger Installation</option>
+              <option>Whole-Home Rewiring</option>
+              <option>Smart Home / Lighting</option>
+              <option>Commercial Electrical</option>
+              <option>Emergency Service</option>
+              <option>Not Sure — Need Assessment</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Anything else we should know?</label><textarea placeholder="Describe the project, any existing issues, or other relevant details..."></textarea></div>
+          <button type="submit" class="btn btn-primary form-submit">Request My Free Estimate →</button>
+          <p class="form-note">🔒 We never share your info. Expect a call within 2 hours.</p>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">VOLT<span>PRO</span></div>
+        <p>South Florida's licensed electrical specialists. Serving Palm Beach and Broward County since 2009.</p>
+        <div class="footer-social">
+          <a href="#" class="social-btn">f</a>
+          <a href="#" class="social-btn">in</a>
+          <a href="#" class="social-btn">▶</a>
+          <a href="#" class="social-btn">★</a>
+        </div>
+      </div>
+      <div class="footer-col"><h4>Services</h4><ul><li><a href="#">Panel Upgrades</a></li><li><a href="#">EV Charger Installation</a></li><li><a href="#">Whole-Home Rewiring</a></li><li><a href="#">Smart Home &amp; Lighting</a></li><li><a href="#">Commercial Electrical</a></li><li><a href="#">Emergency Service</a></li></ul></div>
+      <div class="footer-col"><h4>Service Areas</h4><ul><li><a href="#">Boca Raton</a></li><li><a href="#">Delray Beach</a></li><li><a href="#">West Palm Beach</a></li><li><a href="#">Palm Beach Gardens</a></li><li><a href="#">Fort Lauderdale</a></li><li><a href="#">View All Areas →</a></li></ul></div>
+      <div class="footer-col"><h4>Company</h4><ul><li><a href="#">About Us</a></li><li><a href="#">Our Team</a></li><li><a href="#">Blog</a></li><li><a href="#">Reviews</a></li><li><a href="#">Privacy Policy</a></li><li><a href="#contact">Contact</a></li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 VoltPro Electric. All rights reserved. · FL Electrical License #EC13009274</p>
+      <div class="license-badges"><span class="license-badge">Licensed</span><span class="license-badge">Insured</span><span class="license-badge">BBB A+</span></div>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+  const clamp   = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+  const map     = (v, a, b, c, d) => c + (d - c) * clamp((v - a) / (b - a), 0, 1);
+  const easeIn3 = t => t * t * t;
+  const easeOut3= t => 1 - Math.pow(1 - t, 3);
+
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+  if (!isMobile) {
+    const seqEl    = document.getElementById('hero');
+    const stickyEl = document.getElementById('seqSticky');
+    if (seqEl && stickyEl) {
+      const bg       = document.getElementById('seqBg');
+      const grid     = document.getElementById('seqGrid');
+      const circuit  = document.getElementById('seqCircuit');
+      const bolt     = document.getElementById('seqBolt');
+      const arc      = document.getElementById('seqArc');
+      const rings    = document.getElementById('seqRings');
+      const hud      = document.getElementById('seqHud');
+      const alert_   = document.getElementById('seqAlert');
+      const surge    = document.getElementById('seqSurge');
+      const powered  = document.getElementById('seqPowered');
+      const intro    = document.getElementById('seqIntro');
+      const phaseEl  = document.getElementById('seqPhase');
+      const scrubFill= document.getElementById('seqScrubFill');
+      const finalEl  = document.getElementById('seqFinal');
+
+      function getProgress() {
+        const scrolled = -seqEl.getBoundingClientRect().top;
+        const total    = seqEl.offsetHeight - stickyEl.offsetHeight;
+        return clamp(scrolled / total, 0, 1);
+      }
+
+      let lastPhase = '';
+      function setPhase(text) {
+        if (text === lastPhase) return;
+        lastPhase = text;
+        phaseEl.style.opacity   = '0';
+        phaseEl.style.transform = 'translateX(-50%) translateY(7px)';
+        setTimeout(() => {
+          phaseEl.textContent     = text;
+          phaseEl.style.opacity   = '1';
+          phaseEl.style.transform = 'translateX(-50%) translateY(0)';
+        }, 190);
+      }
+
+      function update() {
+        const p = getProgress();
+        scrubFill.style.width = (p * 100) + '%';
+        intro.style.opacity       = map(p, 0, 0.07, 1, 0);
+        intro.style.pointerEvents = p > 0.04 ? 'none' : 'auto';
+
+        // Background warms from near-black to deep electric blue-black during surge
+        let r, g, b2;
+        if (p < 0.65) {
+          r  = Math.round(map(p, 0, 0.65, 7,  16));
+          g  = Math.round(map(p, 0, 0.65, 7,  8));
+          b2 = Math.round(map(p, 0, 0.65, 17, 38));
+        } else {
+          const cool = map(p, 0.82, 1.0, 0, 1);
+          r  = Math.round(map(cool, 0, 1, 16, 7));
+          g  = Math.round(map(cool, 0, 1, 8,  7));
+          b2 = Math.round(map(cool, 0, 1, 38, 17));
+        }
+        bg.style.background = `rgb(${r},${g},${b2})`;
+
+        // Grid scroll up + fade
+        grid.style.transform = `translateY(${-p * 130}px)`;
+        grid.style.opacity   = String(map(p, 0, 0.1, 0.5, 1) * (p < 0.62 ? 1 : map(p, 0.62, 0.78, 1, 0)));
+
+        // Circuit rings fade out as bolt appears
+        circuit.style.opacity = String(map(p, 0.04, 0.22, 1, 0));
+
+        // Bolt grows — easeIn3, scale 0.08 → 5.2
+        const boltProgress = easeIn3(clamp((p - 0.05) / 0.60, 0, 1));
+        const boltScale    = map(boltProgress, 0, 1, 0.08, 5.2);
+        const boltOpacity  = p < 0.06 ? map(p, 0.04, 0.07, 0, 1) : p < 0.62 ? 1 : map(p, 0.62, 0.79, 1, 0);
+        bolt.style.transform = `translate(-50%,-50%) scale(${boltScale})`;
+        bolt.style.opacity   = String(Math.max(0, boltOpacity));
+        const glowPx  = Math.round(boltProgress * 90);
+        const glowAmt = boltProgress * 0.55;
+        bolt.style.filter = `drop-shadow(0 0 ${glowPx}px rgba(251,191,36,${glowAmt}))`;
+
+        // Arc brackets — slide in from large scale → tight
+        const chIn  = map(p, 0.08, 0.20, 0, 1);
+        const chOut = p < 0.62 ? 1 : map(p, 0.62, 0.76, 1, 0);
+        arc.style.opacity   = String(clamp(chIn * chOut, 0, 1));
+        const chScale = map(easeOut3(clamp((p - 0.08) / 0.57, 0, 1)), 0, 1, 2.6, 0.7);
+        arc.style.transform = `translate(-50%,-50%) scale(${chScale})`;
+
+        // Pulse rings
+        const rIn  = map(p, 0.30, 0.48, 0, 1);
+        const rOut = p < 0.59 ? 1 : map(p, 0.59, 0.72, 1, 0);
+        rings.style.opacity = String(clamp(rIn * rOut, 0, 1));
+
+        // HUD panels
+        const hudIn  = map(p, 0.38, 0.54, 0, 1);
+        const hudOut = p < 0.58 ? 1 : map(p, 0.58, 0.68, 1, 0);
+        hud.style.opacity = String(clamp(hudIn * hudOut, 0, 1));
+
+        // Alert flicker
+        const alertVal = p < 0.50 ? 0 : map(Math.sin(p * 28), -1, 1, 0, 0.12) * map(p, 0.50, 0.58, 0, 1) * (p < 0.62 ? 1 : map(p, 0.62, 0.68, 1, 0));
+        alert_.style.opacity = String(Math.max(0, alertVal));
+
+        // Surge sweep — clip-path wipe (p 0.65 → 0.82 in, 0.82 → 0.94 out)
+        if (p < 0.65) {
+          surge.style.clipPath = 'inset(0 100% 0 0)';
+        } else if (p < 0.82) {
+          const right = map(easeOut3((p - 0.65) / 0.17), 0, 1, 100, -2);
+          surge.style.clipPath = `inset(0 ${right}% 0 0)`;
+        } else if (p < 0.94) {
+          const left = map(easeIn3((p - 0.82) / 0.12), 0, 1, 0, 102);
+          surge.style.clipPath = `inset(0 0 0 ${left}%)`;
+        } else {
+          surge.style.clipPath = 'inset(0 0 0 102%)';
+        }
+
+        // POWERED ON text
+        const poweredVal = map(p, 0.80, 0.84, 0, 1) * map(p, 0.84, 0.94, 1, 0);
+        powered.style.opacity   = String(Math.max(0, poweredVal));
+        powered.style.transform = `scale(${map(p, 0.80, 0.84, 0.75, 1)})`;
+
+        // Final hero fade in
+        const finalP  = map(p, 0.88, 0.98, 0, 1);
+        const finalOp = easeOut3(finalP);
+        finalEl.style.opacity   = String(finalOp);
+        finalEl.style.transform = `translateY(${map(finalP, 0, 1, 26, 0)}px)`;
+        finalEl.classList.toggle('active', p > 0.88);
+
+        // Phase labels
+        if      (p < 0.04) setPhase('');
+        else if (p < 0.20) setPhase('SCANNING ELECTRICAL SYSTEM');
+        else if (p < 0.43) setPhase('FAULT DETECTED');
+        else if (p < 0.64) setPhase('CIRCUIT ANALYSIS COMPLETE');
+        else if (p < 0.85) setPhase('RESTORING POWER...');
+        else               setPhase('POWERED ON ✓');
+      }
+
+      function updateSticky() {
+        const rect = seqEl.getBoundingClientRect();
+        const sH   = stickyEl.offsetHeight;
+        if (rect.top > 0) {
+          stickyEl.style.position = 'absolute';
+          stickyEl.style.top      = '0';
+          stickyEl.style.bottom   = 'auto';
+        } else if (rect.bottom <= sH) {
+          stickyEl.style.position = 'absolute';
+          stickyEl.style.top      = 'auto';
+          stickyEl.style.bottom   = '0';
+        } else {
+          stickyEl.style.position = 'fixed';
+          stickyEl.style.top      = '68px';
+          stickyEl.style.bottom   = 'auto';
+        }
+      }
+
+      (function loop() {
+        requestAnimationFrame(loop);
+        updateSticky();
+        try { update(); } catch(e) {}
+      })();
+
+      window.addEventListener('resize', update, { passive: true });
+
+      let countersRun = false;
+      function animateCounters() {
+        if (countersRun) return;
+        countersRun = true;
+        document.querySelectorAll('.stat-block .num').forEach(el => {
+          const raw   = el.textContent.trim();
+          const match = raw.match(/[\d,]+/);
+          if (!match) return;
+          const target = parseInt(match[0].replace(/,/g, ''), 10);
+          const suffix = raw.slice(match.index + match[0].length);
+          const t0     = performance.now();
+          (function tick(now) {
+            const frac = Math.min((now - t0) / 1400, 1);
+            const ease = 1 - Math.pow(1 - frac, 3);
+            el.innerHTML = Math.round(target * ease).toLocaleString() + '<span>' + suffix + '</span>';
+            if (frac < 1) requestAnimationFrame(tick);
+          })(t0);
+        });
+      }
+
+      if ('IntersectionObserver' in window) {
+        const io = new IntersectionObserver(entries => {
+          if (entries[0].isIntersecting && getProgress() > 0.85) { animateCounters(); io.disconnect(); }
+        }, { threshold: 0.1 });
+        io.observe(finalEl);
+      }
+    }
+  }
+
+  /* Scroll reveal */
+  const revealEls = document.querySelectorAll('.service-card, .why-item, .step-card, .review-card, .area-tag, .trust-item');
+  revealEls.forEach(el => { el.style.cssText += 'opacity:0;transform:translateY(28px);transition:opacity .55s ease,transform .55s ease;'; });
+  if ('IntersectionObserver' in window) {
+    const ro = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity   = '1';
+          entry.target.style.transform = 'translateY(0)';
+          ro.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -30px 0px' });
+    revealEls.forEach(el => ro.observe(el));
+  }
+})();
+</script>
+</body>
+</html>
