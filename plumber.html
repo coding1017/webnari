@@ -370,6 +370,144 @@ body::before {
   flex-shrink: 0;
 }
 
+/* ─── PRESSURE PARALLAX ─────────────────────────────────────────────────── */
+#plumb-seq { position: relative; height: 500vh; }
+.plumb-sticky {
+  position: sticky; top: 0; height: 100vh; overflow: hidden;
+  background: #06080F;
+}
+.plumb-bg { position: absolute; inset: 0; background: #1a0414; }
+.pipe-net {
+  position: absolute; inset: 0; width: 100%; height: 100%;
+  opacity: 0.22; pointer-events: none;
+}
+@keyframes flowH { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -90; } }
+@keyframes flowV { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -90; } }
+.pipe-flow-h { animation: flowH 2.4s linear infinite; }
+.pipe-flow-v { animation: flowV 2s linear infinite; }
+.plumb-vignette {
+  position: absolute; inset: 0; pointer-events: none;
+  box-shadow: inset 0 0 140px 70px rgba(200,0,30,0.5);
+  animation: pVig 1.1s ease-in-out infinite alternate;
+}
+@keyframes pVig {
+  from { box-shadow: inset 0 0 140px 70px rgba(200,0,30,0.5); }
+  to   { box-shadow: inset 0 0 180px 90px rgba(240,0,40,0.65); }
+}
+.plumb-scan {
+  position: absolute; left: 0; right: 0; height: 2px; top: 0;
+  background: linear-gradient(to right, transparent, rgba(14,165,233,0.35), transparent);
+  animation: scanDown 3.5s linear infinite; pointer-events: none;
+}
+@keyframes scanDown { from { top: 0; } to { top: 100%; } }
+.plumb-gauge-wrap {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 360px; height: 360px;
+  filter: drop-shadow(0 0 32px rgba(14,165,233,0.18));
+}
+.plumb-gauge-wrap svg { width: 100%; height: 100%; }
+.gauge-corner {
+  position: absolute; width: 22px; height: 22px;
+  border-color: rgba(14,165,233,0.28); border-style: solid;
+}
+.gauge-corner.tl { top: 0; left: 0; border-width: 1px 0 0 1px; }
+.gauge-corner.tr { top: 0; right: 0; border-width: 1px 1px 0 0; }
+.gauge-corner.bl { bottom: 0; left: 0; border-width: 0 0 1px 1px; }
+.gauge-corner.br { bottom: 0; right: 0; border-width: 0 1px 1px 0; }
+.plumb-psi-readout {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, calc(-50% + 28px));
+  font-family: 'Barlow Condensed', sans-serif; font-size: 60px;
+  font-weight: 900; color: #F0F8FF; letter-spacing: -0.02em;
+  line-height: 1; text-align: center; pointer-events: none;
+}
+.plumb-psi-readout .psi-unit {
+  display: block; font-size: 14px; font-weight: 700;
+  letter-spacing: 0.22em; color: var(--muted); margin-top: 4px;
+}
+.plumb-hud {
+  position: absolute; font-family: 'Barlow Condensed', sans-serif;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.14em;
+  color: var(--blue2); text-transform: uppercase;
+  padding: 14px 18px; border: 1px solid rgba(14,165,233,0.18);
+  background: rgba(6,8,15,0.75); min-width: 130px;
+}
+.plumb-hud .hud-label { color: rgba(176,200,224,0.45); font-size: 9px; margin-bottom: 5px; letter-spacing: 0.18em; }
+.plumb-hud .hud-value { font-size: 24px; font-weight: 900; line-height: 1; color: #F0F8FF; }
+.plumb-hud .hud-unit { font-size: 9px; color: var(--muted); margin-top: 2px; letter-spacing: 0.12em; }
+.plumb-hud-tl { top: 24px; left: 24px; }
+.plumb-hud-tr { top: 24px; right: 24px; text-align: right; }
+.plumb-hud-bl { bottom: 80px; left: 24px; }
+.plumb-hud-br { bottom: 80px; right: 24px; text-align: right; }
+.plumb-phase {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, calc(-50% + 118px));
+  font-family: 'Barlow Condensed', sans-serif; font-size: 12px;
+  font-weight: 700; letter-spacing: 0.24em; text-transform: uppercase;
+  padding: 5px 14px; border: 1px solid currentColor; pointer-events: none;
+}
+.leak-layer { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.leak-drop {
+  position: absolute; width: 3px; background: rgba(14,165,233,0.75);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  animation: leakFall var(--dur) ease-in infinite var(--delay);
+}
+@keyframes leakFall {
+  0%   { transform: translateY(0) translateX(0); opacity: 0.85; height: var(--h); }
+  100% { transform: translateY(55px) translateX(var(--dx)); opacity: 0; height: 2px; }
+}
+.leak-spray {
+  position: absolute; width: 2px; height: 2px;
+  background: rgba(56,191,248,0.85); border-radius: 50%;
+  animation: leakSpr var(--sdur) ease-out infinite var(--sdelay);
+}
+@keyframes leakSpr {
+  0%   { transform: translate(0,0); opacity: 1; }
+  100% { transform: translate(var(--sx),var(--sy)); opacity: 0; }
+}
+.plumb-crosshair {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 330px; height: 330px;
+  border: 1px solid rgba(14,165,233,0.05); pointer-events: none;
+}
+.plumb-crosshair::before, .plumb-crosshair::after {
+  content: ''; position: absolute; background: rgba(14,165,233,0.07);
+}
+.plumb-crosshair::before { top: 50%; left: 0; right: 0; height: 1px; transform: translateY(-50%); }
+.plumb-crosshair::after  { left: 50%; top: 0; bottom: 0; width: 1px; transform: translateX(-50%); }
+.plumb-scrub {
+  position: absolute; bottom: 22px; left: 50%; transform: translateX(-50%);
+  width: min(380px, 78vw); display: flex; align-items: center; gap: 10px;
+}
+.scrub-track { flex: 1; height: 2px; background: rgba(176,200,224,0.1); position: relative; }
+.scrub-fill { position: absolute; left: 0; top: 0; height: 100%; background: var(--blue); width: 0%; }
+.scrub-lbl {
+  font-family: 'Barlow Condensed', sans-serif; font-size: 10px;
+  font-weight: 700; letter-spacing: 0.15em; color: rgba(176,200,224,0.3); white-space: nowrap;
+}
+.plumb-scroll-hint {
+  position: absolute; bottom: 46px; left: 50%; transform: translateX(-50%);
+  font-family: 'Barlow Condensed', sans-serif; font-size: 11px;
+  font-weight: 700; letter-spacing: 0.2em; color: rgba(176,200,224,0.35);
+  text-align: center; animation: hintBob 2s ease-in-out infinite;
+}
+@keyframes hintBob {
+  0%,100% { transform: translateX(-50%) translateY(0); }
+  50%     { transform: translateX(-50%) translateY(-5px); }
+}
+.plumb-final {
+  position: absolute; inset: 0; opacity: 0; pointer-events: none;
+  background: var(--dark); display: flex; flex-direction: column;
+}
+.plumb-final.vis { opacity: 1; pointer-events: auto; }
+@media (max-width: 768px) {
+  .plumb-gauge-wrap { width: 260px; height: 260px; }
+  .plumb-hud { display: none; }
+  .plumb-psi-readout { font-size: 44px; }
+}
+
 /* ─── HERO ────────────────────────────────────────────────────────────────── */
 .hero {
   position: relative;
@@ -1449,36 +1587,233 @@ body::before {
   </div>
 </div>
 
-<!-- ── HERO ───────────────────────────────────────────────────────────────── -->
-<section class="hero" id="home">
-  <div class="hero-inner">
-    <!-- Left column -->
-    <div class="hero-left">
-      <div class="eyebrow reveal">FlowPro Plumbing &mdash; Doral, FL</div>
-      <h1 class="hero-h1 reveal reveal-delay-1">
-        WE FIX<br>
-        YOUR <span class="accent">PIPES</span><br>
-        FAST.
-      </h1>
-      <p class="hero-sub reveal reveal-delay-2">
-        South Florida's most trusted plumbers since 2004. Licensed, insured, and available around the clock for everything from a leaky faucet to a full repipe.
-      </p>
-      <div class="hero-actions reveal reveal-delay-3">
-        <a href="tel:7865550200" class="btn-primary">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.01 1.18 2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14v2.92z"/></svg>
-          Call (786) 555-0200
-        </a>
-        <a href="#contact" class="btn-secondary">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 8h18M8 4v4M16 4v4"/></svg>
-          Book Online
-        </a>
-      </div>
+<!-- ── PRESSURE PARALLAX ─────────────────────────────────────────────────── -->
+<div id="plumb-seq">
+  <div class="plumb-sticky">
+
+    <!-- BG color -->
+    <div class="plumb-bg" id="plumb-bg"></div>
+
+    <!-- Pipe network schematic -->
+    <svg class="pipe-net" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Main horizontal pipe runs -->
+      <rect x="0" y="196" width="1440" height="34" fill="#0D1628" stroke="#1E3050" stroke-width="1"/>
+      <rect x="0" y="196" width="1440" height="6" fill="rgba(14,165,233,0.14)"/>
+      <rect x="0" y="224" width="1440" height="6" fill="rgba(0,0,0,0.4)"/>
+      <rect x="0" y="672" width="1440" height="34" fill="#0D1628" stroke="#1E3050" stroke-width="1"/>
+      <rect x="0" y="672" width="1440" height="6" fill="rgba(14,165,233,0.09)"/>
+      <rect x="0" y="700" width="1440" height="6" fill="rgba(0,0,0,0.4)"/>
+      <!-- Main vertical pipe runs -->
+      <rect x="296" y="0" width="34" height="900" fill="#0D1628" stroke="#1E3050" stroke-width="1"/>
+      <rect x="296" y="0" width="6" height="900" fill="rgba(14,165,233,0.11)"/>
+      <rect x="1110" y="0" width="34" height="900" fill="#0D1628" stroke="#1E3050" stroke-width="1"/>
+      <rect x="1110" y="0" width="6" height="900" fill="rgba(14,165,233,0.07)"/>
+      <!-- Animated flow dashes -->
+      <line class="pipe-flow-h" x1="0" y1="213" x2="1440" y2="213" stroke="rgba(14,165,233,0.3)" stroke-width="2" stroke-dasharray="28 62"/>
+      <line class="pipe-flow-h" x1="0" y1="689" x2="1440" y2="689" stroke="rgba(14,165,233,0.2)" stroke-width="2" stroke-dasharray="20 70" style="animation-duration:3.2s"/>
+      <line class="pipe-flow-v" x1="313" y1="0" x2="313" y2="900" stroke="rgba(14,165,233,0.22)" stroke-width="2" stroke-dasharray="22 58"/>
+      <line class="pipe-flow-v" x1="1127" y1="0" x2="1127" y2="900" stroke="rgba(14,165,233,0.16)" stroke-width="2" stroke-dasharray="22 58" style="animation-duration:2.6s"/>
+      <!-- Pipe joints -->
+      <rect x="283" y="183" width="60" height="60" fill="#132034" stroke="#1F3D62" stroke-width="1.5"/>
+      <circle cx="313" cy="213" r="13" fill="#0A1020" stroke="#1F3D62" stroke-width="1"/>
+      <circle cx="313" cy="213" r="5" fill="rgba(14,165,233,0.45)"/>
+      <circle cx="289" cy="189" r="2.5" fill="#1A3050"/><circle cx="337" cy="189" r="2.5" fill="#1A3050"/>
+      <circle cx="289" cy="237" r="2.5" fill="#1A3050"/><circle cx="337" cy="237" r="2.5" fill="#1A3050"/>
+      <rect x="1097" y="183" width="60" height="60" fill="#132034" stroke="#1F3D62" stroke-width="1.5"/>
+      <circle cx="1127" cy="213" r="13" fill="#0A1020" stroke="#1F3D62" stroke-width="1"/>
+      <circle cx="1127" cy="213" r="5" fill="rgba(14,165,233,0.35)"/>
+      <rect x="283" y="659" width="60" height="60" fill="#132034" stroke="#1F3D62" stroke-width="1.5"/>
+      <circle cx="313" cy="689" r="13" fill="#0A1020" stroke="#1F3D62" stroke-width="1"/>
+      <circle cx="313" cy="689" r="5" fill="rgba(14,165,233,0.4)"/>
+      <rect x="1097" y="659" width="60" height="60" fill="#132034" stroke="#1F3D62" stroke-width="1.5"/>
+      <circle cx="1127" cy="689" r="13" fill="#0A1020" stroke="#1F3D62" stroke-width="1"/>
+      <circle cx="1127" cy="689" r="5" fill="rgba(14,165,233,0.28)"/>
+      <!-- Gauges on pipes -->
+      <circle cx="118" cy="213" r="26" fill="#0D1628" stroke="#1F3D62" stroke-width="1.5"/>
+      <circle cx="118" cy="213" r="20" fill="#0A1020" stroke="#1A3050" stroke-width="1"/>
+      <circle cx="118" cy="213" r="3" fill="#0EA5E9"/>
+      <line id="pnet-g1" x1="118" y1="213" x2="118" y2="197" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round"/>
+      <text x="118" y="228" text-anchor="middle" font-family="'Barlow Condensed'" font-size="7" font-weight="700" fill="#4A6A88" letter-spacing="0.1em">PSI</text>
+      <circle cx="1322" cy="213" r="26" fill="#0D1628" stroke="#1F3D62" stroke-width="1.5"/>
+      <circle cx="1322" cy="213" r="20" fill="#0A1020" stroke="#1A3050" stroke-width="1"/>
+      <circle cx="1322" cy="213" r="3" fill="#0EA5E9"/>
+      <line id="pnet-g2" x1="1322" y1="213" x2="1322" y2="197" stroke="#EF4444" stroke-width="1.5" stroke-linecap="round"/>
+      <text x="1322" y="228" text-anchor="middle" font-family="'Barlow Condensed'" font-size="7" font-weight="700" fill="#4A6A88" letter-spacing="0.1em">PSI</text>
+      <!-- Valve symbols -->
+      <rect x="584" y="664" width="46" height="50" fill="#0D1628" stroke="#1F3D62" stroke-width="1"/>
+      <polygon points="607,673 607,703 593,688" fill="rgba(14,165,233,0.28)" stroke="#0EA5E9" stroke-width="1"/>
+      <polygon points="607,673 607,703 621,688" fill="rgba(14,165,233,0.14)" stroke="#0EA5E9" stroke-width="1"/>
+      <rect x="826" y="664" width="46" height="50" fill="#0D1628" stroke="#1F3D62" stroke-width="1"/>
+      <polygon points="849,673 849,703 835,688" fill="rgba(14,165,233,0.28)" stroke="#0EA5E9" stroke-width="1"/>
+      <polygon points="849,673 849,703 863,688" fill="rgba(14,165,233,0.14)" stroke="#0EA5E9" stroke-width="1"/>
+      <!-- Elbow pipe accent -->
+      <path d="M720 0 L720 120 Q720 155 755 155 L1097 155" stroke="#1E3050" stroke-width="16" fill="none"/>
+      <path d="M720 0 L720 120 Q720 155 755 155 L1097 155" stroke="rgba(14,165,233,0.06)" stroke-width="3" fill="none"/>
+    </svg>
+
+    <!-- Scan line -->
+    <div class="plumb-scan"></div>
+
+    <!-- Crosshair -->
+    <div class="plumb-crosshair"></div>
+
+    <!-- Vignette -->
+    <div class="plumb-vignette" id="plumb-vignette"></div>
+
+    <!-- Leak particle layer -->
+    <div class="leak-layer" id="leak-layer"></div>
+
+    <!-- Main pressure gauge -->
+    <div class="plumb-gauge-wrap" id="plumb-gauge-wrap">
+      <div class="gauge-corner tl"></div>
+      <div class="gauge-corner tr"></div>
+      <div class="gauge-corner bl"></div>
+      <div class="gauge-corner br"></div>
+      <svg viewBox="0 0 380 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Outer bezel -->
+        <circle cx="190" cy="190" r="175" fill="#0D1628" stroke="#1E3050" stroke-width="2"/>
+        <!-- Bezel bolts -->
+        <circle cx="190" cy="18" r="5" fill="#132034" stroke="#1F3D62" stroke-width="1"/>
+        <circle cx="190" cy="362" r="5" fill="#132034" stroke="#1F3D62" stroke-width="1"/>
+        <circle cx="18" cy="190" r="5" fill="#132034" stroke="#1F3D62" stroke-width="1"/>
+        <circle cx="362" cy="190" r="5" fill="#132034" stroke="#1F3D62" stroke-width="1"/>
+        <circle cx="46" cy="46" r="5" fill="#132034" stroke="#1F3D62" stroke-width="1"/>
+        <circle cx="334" cy="46" r="5" fill="#132034" stroke="#1F3D62" stroke-width="1"/>
+        <circle cx="46" cy="334" r="5" fill="#132034" stroke="#1F3D62" stroke-width="1"/>
+        <circle cx="334" cy="334" r="5" fill="#132034" stroke="#1F3D62" stroke-width="1"/>
+        <!-- Gauge face -->
+        <circle cx="190" cy="190" r="160" fill="#06080F" stroke="#132034" stroke-width="1.5"/>
+        <circle cx="190" cy="190" r="150" fill="none" stroke="rgba(14,165,233,0.05)" stroke-width="1"/>
+        <!-- Zone arcs r=140, C=879.65, total 270°=659.74px, transform rotate(-135) -->
+        <!-- Gray 0-30 PSI: 123.70px at pos 0, dashoffset=879.65 -->
+        <circle cx="190" cy="190" r="140" stroke="#2A3A50" stroke-width="14"
+          stroke-dasharray="123.70 755.95" stroke-dashoffset="879.65"
+          transform="rotate(-135 190 190)" stroke-linecap="butt"/>
+        <!-- Green 30-70 PSI: 164.94px at pos 123.70, dashoffset=755.95 -->
+        <circle cx="190" cy="190" r="140" stroke="#22C55E" stroke-width="14"
+          stroke-dasharray="164.94 714.71" stroke-dashoffset="755.95"
+          transform="rotate(-135 190 190)" stroke-linecap="butt"/>
+        <!-- Yellow 70-100 PSI: 123.70px at pos 288.64, dashoffset=591.01 -->
+        <circle cx="190" cy="190" r="140" stroke="#EAB308" stroke-width="14"
+          stroke-dasharray="123.70 755.95" stroke-dashoffset="591.01"
+          transform="rotate(-135 190 190)" stroke-linecap="butt"/>
+        <!-- Red 100-160 PSI: 247.40px at pos 412.34, dashoffset=467.31 -->
+        <circle cx="190" cy="190" r="140" stroke="#EF4444" stroke-width="14"
+          stroke-dasharray="247.40 632.25" stroke-dashoffset="467.31"
+          transform="rotate(-135 190 190)" stroke-linecap="butt"/>
+        <!-- Active fill arc (0 to current PSI) — updated by JS -->
+        <circle id="pg-arc-fill" cx="190" cy="190" r="140"
+          stroke="rgba(239,68,68,0.35)" stroke-width="4"
+          stroke-dasharray="515.42 364.23" stroke-dashoffset="879.65"
+          transform="rotate(-135 190 190)" stroke-linecap="butt"/>
+        <!-- Tick marks: line at (190,38)→(190,28), rotated by gauge angle -->
+        <line x1="190" y1="40" x2="190" y2="28" stroke="#4A6A88" stroke-width="1.5" transform="rotate(-135 190 190)"/>
+        <line x1="190" y1="40" x2="190" y2="28" stroke="#4A6A88" stroke-width="1.5" transform="rotate(-101.25 190 190)"/>
+        <line x1="190" y1="40" x2="190" y2="28" stroke="#4A6A88" stroke-width="1.5" transform="rotate(-67.5 190 190)"/>
+        <line x1="190" y1="40" x2="190" y2="28" stroke="#22C55E" stroke-width="2" transform="rotate(-33.75 190 190)"/>
+        <line x1="190" y1="40" x2="190" y2="28" stroke="#6B7280" stroke-width="1.5" transform="rotate(0 190 190)"/>
+        <line x1="190" y1="40" x2="190" y2="28" stroke="#EAB308" stroke-width="2" transform="rotate(33.75 190 190)"/>
+        <line x1="190" y1="40" x2="190" y2="28" stroke="#EF4444" stroke-width="1.5" transform="rotate(67.5 190 190)"/>
+        <line x1="190" y1="40" x2="190" y2="28" stroke="#EF4444" stroke-width="1.5" transform="rotate(101.25 190 190)"/>
+        <line x1="190" y1="40" x2="190" y2="28" stroke="#EF4444" stroke-width="2" transform="rotate(135 190 190)"/>
+        <!-- PSI labels — calculated at r=110 from center using angle formula -->
+        <text x="112" y="116" text-anchor="middle" font-family="'Barlow Condensed'" font-size="11" font-weight="700" fill="#4A6A88">0</text>
+        <text x="148" y="79" text-anchor="middle" font-family="'Barlow Condensed'" font-size="11" font-weight="700" fill="#4A6A88">20</text>
+        <text x="234" y="79" text-anchor="middle" font-family="'Barlow Condensed'" font-size="11" font-weight="700" fill="#4A6A88">40</text>
+        <text x="284" y="124" text-anchor="middle" font-family="'Barlow Condensed'" font-size="11" font-weight="700" fill="#22C55E">60</text>
+        <text x="302" y="190" text-anchor="middle" font-family="'Barlow Condensed'" font-size="11" font-weight="700" fill="#6B7280">80</text>
+        <text x="284" y="258" text-anchor="middle" font-family="'Barlow Condensed'" font-size="11" font-weight="700" fill="#EAB308">100</text>
+        <text x="234" y="303" text-anchor="middle" font-family="'Barlow Condensed'" font-size="11" font-weight="700" fill="#EF4444">120</text>
+        <text x="148" y="303" text-anchor="middle" font-family="'Barlow Condensed'" font-size="11" font-weight="700" fill="#EF4444">140</text>
+        <text x="112" y="266" text-anchor="middle" font-family="'Barlow Condensed'" font-size="11" font-weight="700" fill="#EF4444">160</text>
+        <!-- Inner decorative -->
+        <circle cx="190" cy="190" r="100" fill="none" stroke="rgba(14,165,233,0.04)" stroke-width="1"/>
+        <circle cx="190" cy="190" r="80" fill="#0A1020" stroke="rgba(14,165,233,0.07)" stroke-width="1"/>
+        <!-- Needle — rotated by JS; angle=-135+(psi/160)*270; at 125psi=75.94° -->
+        <g id="pg-needle" style="transform-origin:190px 190px;transform:rotate(75.94deg)">
+          <line x1="190" y1="190" x2="190" y2="72" stroke="rgba(0,0,0,0.35)" stroke-width="5" stroke-linecap="round"/>
+          <line x1="190" y1="210" x2="190" y2="70" stroke="#F0F8FF" stroke-width="2.5" stroke-linecap="round"/>
+          <ellipse cx="190" cy="208" rx="5" ry="10" fill="#334155"/>
+        </g>
+        <!-- Center hub -->
+        <circle cx="190" cy="190" r="14" fill="#132034" stroke="#1F3D62" stroke-width="1.5"/>
+        <circle cx="190" cy="190" r="8" fill="#0EA5E9"/>
+        <circle cx="190" cy="190" r="4" fill="#38BDF8"/>
+        <!-- Connector stub -->
+        <rect x="182" y="356" width="16" height="10" fill="#132034" stroke="#1F3D62" stroke-width="1"/>
+        <rect x="176" y="363" width="28" height="7" fill="#0D1628" stroke="#1E3050" stroke-width="1"/>
+        <!-- Labels -->
+        <text x="190" y="156" text-anchor="middle" font-family="'Barlow Condensed'" font-size="9" font-weight="700" fill="rgba(176,200,224,0.2)" letter-spacing="0.2em">PRESSURE</text>
+        <text x="190" y="238" text-anchor="middle" font-family="'Barlow Condensed'" font-size="9" font-weight="700" fill="rgba(176,200,224,0.2)" letter-spacing="0.2em">GAUGE</text>
+      </svg>
     </div>
 
-    <!-- Right column — pipe cross illustration -->
-    <div class="hero-right reveal reveal-delay-2">
-      <div class="hero-ghost-number">01</div>
-      <div class="pipe-illustration">
+    <!-- PSI number overlay -->
+    <div class="plumb-psi-readout">
+      <span id="plumb-psi-num">125</span>
+      <span class="psi-unit">PSI</span>
+    </div>
+
+    <!-- HUD panels -->
+    <div class="plumb-hud plumb-hud-tl">
+      <div class="hud-label">SUPPLY PRESSURE</div>
+      <div class="hud-value" id="hud-supply">140</div>
+      <div class="hud-unit">PSI INLET</div>
+    </div>
+    <div class="plumb-hud plumb-hud-tr">
+      <div class="hud-label">SYSTEM STATUS</div>
+      <div class="hud-value" id="hud-status" style="color:#EF4444;font-size:17px">CRITICAL</div>
+      <div class="hud-unit">PRESSURE ALERT</div>
+    </div>
+    <div class="plumb-hud plumb-hud-bl">
+      <div class="hud-label">FLOW RATE</div>
+      <div class="hud-value" id="hud-flow">24.5</div>
+      <div class="hud-unit">GAL / MIN</div>
+    </div>
+    <div class="plumb-hud plumb-hud-br">
+      <div class="hud-label">WATER TEMP</div>
+      <div class="hud-value" id="hud-temp">145</div>
+      <div class="hud-unit">DEGREES F</div>
+    </div>
+
+    <!-- Phase label -->
+    <div class="plumb-phase" id="plumb-phase" style="color:#EF4444;border-color:#EF4444">CRITICAL PRESSURE</div>
+
+    <!-- Scrub bar -->
+    <div class="plumb-scrub">
+      <span class="scrub-lbl">125 PSI</span>
+      <div class="scrub-track"><div class="scrub-fill" id="plumb-scrub-fill"></div></div>
+      <span class="scrub-lbl">60 PSI</span>
+    </div>
+
+    <!-- Scroll hint -->
+    <div class="plumb-scroll-hint" id="plumb-scroll-hint">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:block;margin:0 auto 4px"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      SCROLL TO NORMALIZE
+    </div>
+
+    <!-- Final hero content -->
+    <div class="plumb-final" id="plumb-final">
+      <section class="hero" id="home">
+        <div class="hero-inner">
+          <div class="hero-left">
+            <div class="eyebrow">FlowPro Plumbing &mdash; Doral, FL</div>
+            <h1 class="hero-h1">WE FIX<br>YOUR <span class="accent">PIPES</span><br>FAST.</h1>
+            <p class="hero-sub">South Florida's most trusted plumbers since 2004. Licensed, insured, and available around the clock for everything from a leaky faucet to a full repipe.</p>
+            <div class="hero-actions">
+              <a href="tel:7865550200" class="btn-primary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.01 1.18 2 2 0 012 0h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 14v2.92z"/></svg>
+                Call (786) 555-0200
+              </a>
+              <a href="#contact" class="btn-secondary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 8h18M8 4v4M16 4v4"/></svg>
+                Book Online
+              </a>
+            </div>
+          </div>
+          <div class="hero-right">
+            <div class="hero-ghost-number">01</div>
+            <div class="pipe-illustration">
         <svg width="360" height="360" viewBox="0 0 360 360" fill="none" xmlns="http://www.w3.org/2000/svg">
           <!-- Outer ring accent -->
           <circle cx="180" cy="180" r="170" stroke="rgba(14,165,233,0.06)" stroke-width="1"/>
@@ -1571,6 +1906,9 @@ body::before {
     </div>
   </div>
 </section>
+    </div><!-- /plumb-final -->
+  </div><!-- /plumb-sticky -->
+</div><!-- /plumb-seq -->
 
 <!-- ── SERVICES ───────────────────────────────────────────────────────────── -->
 <section class="services-section" id="services">
@@ -2110,6 +2448,171 @@ document.querySelectorAll('a[href^="#"]').forEach(function(anchor){
       document.getElementById('form-success').style.display = 'block';
     }
   });
+})();
+
+// ── PRESSURE PARALLAX ────────────────────────────────────────────────────────
+(function(){
+  var seq = document.getElementById('plumb-seq');
+  if(!seq) return;
+
+  var bg        = document.getElementById('plumb-bg');
+  var vignette  = document.getElementById('plumb-vignette');
+  var needle    = document.getElementById('pg-needle');
+  var arcFill   = document.getElementById('pg-arc-fill');
+  var psiNum    = document.getElementById('plumb-psi-num');
+  var scrubFill = document.getElementById('plumb-scrub-fill');
+  var hint      = document.getElementById('plumb-scroll-hint');
+  var phase     = document.getElementById('plumb-phase');
+  var final     = document.getElementById('plumb-final');
+  var leakLayer = document.getElementById('leak-layer');
+  var hudSupply = document.getElementById('hud-supply');
+  var hudStatus = document.getElementById('hud-status');
+  var hudFlow   = document.getElementById('hud-flow');
+  var hudTemp   = document.getElementById('hud-temp');
+  var pnetG1    = document.getElementById('pnet-g1');
+  var pnetG2    = document.getElementById('pnet-g2');
+
+  function lerp(a,b,t){ return a+(b-a)*t; }
+  function clamp(v,lo,hi){ return Math.max(lo,Math.min(hi,v)); }
+
+  // Generate leak particles at 4 joint positions
+  var leakPts = [
+    {lx:21.9, ly:23.7}, {lx:77.8, ly:23.7},
+    {lx:21.9, ly:75.4}, {lx:77.8, ly:75.4}
+  ];
+  leakPts.forEach(function(lp){
+    for(var i=0;i<8;i++){
+      var d = document.createElement('div');
+      d.className = 'leak-drop';
+      var ox = (Math.random()*24-12).toFixed(1);
+      var h  = (8+Math.random()*18).toFixed(1);
+      var w  = (2.5+Math.random()*3).toFixed(1);
+      var dur= (0.5+Math.random()*0.9).toFixed(2);
+      var del= (-Math.random()*2).toFixed(2);
+      var dx = (Math.random()*18-9).toFixed(1);
+      d.style.cssText='left:calc('+lp.lx+'% + '+ox+'px);top:'+lp.ly+'%;width:'+w+'px;--h:'+h+'px;--dur:'+dur+'s;--delay:'+del+'s;--dx:'+dx+'px;';
+      leakLayer.appendChild(d);
+      for(var j=0;j<3;j++){
+        var s=document.createElement('div'); s.className='leak-spray';
+        var sx=(Math.random()*38-19).toFixed(1);
+        var sy=(-Math.random()*28-4).toFixed(1);
+        var sd=(0.25+Math.random()*0.35).toFixed(2);
+        var sdel=(-Math.random()*0.7).toFixed(2);
+        s.style.cssText='left:calc('+lp.lx+'% + '+(Math.random()*8-4).toFixed(1)+'px);top:'+lp.ly+'%;--sx:'+sx+'px;--sy:'+sy+'px;--sdur:'+sd+'s;--sdelay:'+sdel+'s;';
+        leakLayer.appendChild(s);
+      }
+    }
+  });
+
+  // BG color stops: dark crimson → deep navy
+  var bgStops=[{r:26,g:4,b:20},{r:14,g:6,b:22},{r:8,g:10,b:26},{r:10,g:16,b:32}];
+  // Vignette color stops: red → gone
+  var vigStops=[{r:200,g:0,b:30,a:0.55},{r:100,g:0,b:20,a:0.25},{r:0,g:0,b:0,a:0}];
+
+  function lerpStops(stops,t){
+    var n=stops.length-1, si=clamp(Math.floor(t*n),0,n-1), lt=clamp(t*n-si,0,1);
+    var a=stops[si],b=stops[si+1];
+    return {r:Math.round(lerp(a.r,b.r,lt)),g:Math.round(lerp(a.g,b.g,lt)),b:Math.round(lerp(a.b,b.b,lt)),a:a.a!=null?lerp(a.a,b.a,lt):1};
+  }
+
+  // Arc fill color: red → yellow → green
+  var arcStops=[{r:239,g:68,b:68,a:0.38},{r:234,g:179,b:8,a:0.33},{r:34,g:197,b:94,a:0.38}];
+
+  var currentP=0, targetP=0;
+
+  function update(){
+    var rect=seq.getBoundingClientRect();
+    targetP=clamp(-rect.top/(seq.offsetHeight-window.innerHeight),0,1);
+    currentP+=(targetP-currentP)*0.07;
+    var p=currentP;
+
+    // PSI: 125 → 60
+    var psi=lerp(125,60,p);
+    var psiR=Math.round(psi);
+
+    // Needle: angle = -135 + (psi/160)*270 degrees
+    var ang=-135+(psi/160)*270;
+    if(needle) needle.style.transform='rotate('+ang.toFixed(2)+'deg)';
+    if(psiNum) psiNum.textContent=psiR;
+
+    // Arc fill: segment length = (psi/160)*659.74
+    var arcLen=(psi/160)*659.74;
+    if(arcFill){
+      arcFill.setAttribute('stroke-dasharray',arcLen.toFixed(2)+' '+(879.65-arcLen).toFixed(2));
+      var ac=lerpStops(arcStops,p);
+      arcFill.setAttribute('stroke','rgba('+ac.r+','+ac.g+','+ac.b+','+ac.a.toFixed(2)+')');
+    }
+
+    // Background
+    var bc=lerpStops(bgStops,p);
+    if(bg) bg.style.background='rgb('+bc.r+','+bc.g+','+bc.b+')';
+
+    // Vignette
+    var vc=lerpStops(vigStops,clamp(p*2.2,0,1));
+    if(vignette){
+      vignette.style.boxShadow='inset 0 0 '+(140+vc.a*50)+'px '+(70+vc.a*30)+'px rgba('+vc.r+','+vc.g+','+vc.b+','+vc.a.toFixed(3)+')';
+      vignette.style.animationPlayState=p<0.35?'running':'paused';
+    }
+
+    // Leak layer
+    if(leakLayer) leakLayer.style.opacity=clamp(1-(p-0.25)/0.3,0,1);
+
+    // Mini gauges on pipe network needle rotation
+    var netAng=-135+(psi/160)*270;
+    var nx2=118, ny2=118-16*Math.cos((netAng-90)*Math.PI/180)+213; // rough calc
+    // Simpler: rotate a fixed line
+    if(pnetG1){
+      var a1=(netAng-90)*Math.PI/180;
+      pnetG1.setAttribute('x2',(118+16*Math.sin(a1)).toFixed(1));
+      pnetG1.setAttribute('y2',(213-16*Math.cos(a1)).toFixed(1));
+      var c=psi>=100?'#EF4444':psi>=70?'#EAB308':'#22C55E';
+      pnetG1.setAttribute('stroke',c);
+    }
+    if(pnetG2){
+      var a2=(netAng-90)*Math.PI/180;
+      pnetG2.setAttribute('x2',(1322+16*Math.sin(a2)).toFixed(1));
+      pnetG2.setAttribute('y2',(213-16*Math.cos(a2)).toFixed(1));
+      pnetG2.setAttribute('stroke',pnetG1?pnetG1.getAttribute('stroke'):'#EF4444');
+    }
+
+    // HUD values
+    if(hudSupply) hudSupply.textContent=Math.round(lerp(140,65,p));
+    if(hudFlow)   hudFlow.textContent=lerp(24.5,8.2,p).toFixed(1);
+    if(hudTemp)   hudTemp.textContent=Math.round(lerp(145,58,p));
+
+    var statusColor, statusText, statusUnit;
+    if(psiR>=100){
+      statusText='CRITICAL'; statusColor='#EF4444'; statusUnit='PRESSURE ALERT';
+    } else if(psiR>=70){
+      statusText='WARNING'; statusColor='#EAB308'; statusUnit='NORMALIZING';
+    } else {
+      statusText='OPTIMAL'; statusColor='#22C55E'; statusUnit='PRESSURE OK';
+    }
+    if(hudStatus){ hudStatus.textContent=statusText; hudStatus.style.color=statusColor; }
+
+    // Phase label
+    if(phase){
+      if(psiR>=100){ phase.textContent='CRITICAL PRESSURE'; phase.style.color='#EF4444'; phase.style.borderColor='#EF4444'; }
+      else if(psiR>=70){ phase.textContent='NORMALIZING...'; phase.style.color='#EAB308'; phase.style.borderColor='#EAB308'; }
+      else { phase.textContent='OPTIMAL PRESSURE'; phase.style.color='#22C55E'; phase.style.borderColor='#22C55E'; }
+    }
+
+    // Scrub bar
+    if(scrubFill) scrubFill.style.width=(p*100).toFixed(1)+'%';
+
+    // Scroll hint
+    if(hint) hint.style.opacity=clamp(1-p*10,0,1);
+
+    // Final hero reveal
+    if(final){
+      var fo=clamp((p-0.85)/0.12,0,1);
+      final.style.opacity=fo;
+      final.style.pointerEvents=fo>0.5?'auto':'none';
+    }
+
+    requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
 })();
 </script>
 </body>
