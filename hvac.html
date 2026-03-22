@@ -1197,9 +1197,117 @@ footer { background: var(--dark); border-top: 1px solid var(--border); padding: 
    ═══════════════════════════════════════════════════════ */
 
 /* ── Sequence wrapper ── */
+/* ── Parallax sequence wrapper ── */
 .hvac-sequence {
   position: relative;
-  height: 400vh;
+  height: 500vh;
+}
+
+/* ── Glow halos (behind everything) ── */
+.glow-halos { position: absolute; inset: 0; z-index: 1; pointer-events: none; display: flex; align-items: center; justify-content: center; }
+.glow-halo { position: absolute; border-radius: 50%; pointer-events: none; }
+@keyframes haloPulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.06); opacity: 0.65; } }
+
+/* ── Orbital rings ── */
+.orbit-rings { position: absolute; inset: 0; z-index: 2; pointer-events: none; display: flex; align-items: center; justify-content: center; }
+.orbit-ring { position: absolute; border-radius: 50%; will-change: transform; }
+.orbit-ring-1 { width: 430px; height: 430px; border: 1px dashed rgba(220,80,20,0.18); animation: orbitSpin 14s linear infinite; }
+.orbit-ring-2 { width: 570px; height: 570px; border: 1px solid rgba(220,80,20,0.10); animation: orbitSpin 24s linear infinite reverse; }
+.orbit-ring-3 { width: 730px; height: 730px; border: 1px dashed rgba(220,80,20,0.06); animation: orbitSpin 40s linear infinite; }
+@keyframes orbitSpin { to { transform: rotate(360deg); } }
+
+/* ── Pulsing rings ── */
+.pulse-ring {
+  position: absolute; top: 50%; left: 50%;
+  width: 370px; height: 370px; border-radius: 50%;
+  border: 1px solid rgba(220,80,20,0.45);
+  transform: translate(-50%,-50%) scale(1);
+  animation: ringPulse 2.4s ease-out infinite;
+  pointer-events: none; z-index: 2;
+}
+.pulse-ring-b { animation-delay: 0.8s; width: 390px; height: 390px; border-color: rgba(220,80,20,0.3); }
+.pulse-ring-c { animation-delay: 1.6s; width: 410px; height: 410px; border-color: rgba(220,80,20,0.15); }
+@keyframes ringPulse {
+  0%   { transform: translate(-50%,-50%) scale(0.92); opacity: 0.8; }
+  100% { transform: translate(-50%,-50%) scale(1.22); opacity: 0; }
+}
+
+/* ── Ambient particle field ── */
+.ambient-field { position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+.amb-dot { position: absolute; border-radius: 50%; will-change: transform, opacity; }
+@keyframes ambFloat {
+  0%   { transform: translate(0, 0) scale(1);    opacity: var(--aop); }
+  33%  { transform: translate(var(--adx), -18px) scale(1.15); opacity: calc(var(--aop) * 1.6); }
+  66%  { transform: translate(calc(var(--adx) * -0.5), -8px) scale(0.9); opacity: calc(var(--aop) * 0.7); }
+  100% { transform: translate(0, 0) scale(1);    opacity: var(--aop); }
+}
+
+/* ── Data stream numbers (hot phase) ── */
+.data-stream { position: absolute; inset: 0; z-index: 2; pointer-events: none; overflow: hidden; }
+.data-num { position: absolute; font-family: var(--font-head); font-size: 10px; font-weight: 700; letter-spacing: 0.12em; will-change: transform, opacity; }
+@keyframes dataRise {
+  0%   { transform: translateY(50px); opacity: 0; }
+  12%  { opacity: 1; }
+  85%  { opacity: 0.45; }
+  100% { transform: translateY(-90px); opacity: 0; }
+}
+
+/* ── Corner HUD panels ── */
+.hud-panel {
+  position: absolute; z-index: 4; pointer-events: none;
+  font-family: var(--font-head);
+  padding: 14px 18px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  min-width: 148px;
+  border-radius: 6px;
+}
+.hud-tl { top: 80px; left: 36px; }
+.hud-tr { top: 80px; right: 36px; text-align: right; }
+.hud-bl { bottom: 72px; left: 36px; }
+.hud-br { bottom: 72px; right: 36px; text-align: right; }
+.hud-row { margin-bottom: 10px; }
+.hud-row:last-child { margin-bottom: 0; }
+.hud-lbl { font-size: 8px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(255,255,255,0.2); margin-bottom: 3px; }
+.hud-val { font-size: 17px; font-weight: 900; letter-spacing: 0.02em; color: rgba(255,255,255,0.45); transition: color 0.4s; }
+.hud-bar { height: 2px; background: rgba(255,255,255,0.07); margin-top: 5px; border-radius: 2px; overflow: hidden; }
+.hud-bar-fill { height: 100%; border-radius: 2px; transition: width 0.6s ease, background 0.5s ease; }
+.hud-sep { height: 1px; background: rgba(255,255,255,0.05); margin: 9px 0; }
+
+/* ── Scan line ── */
+.scan-line {
+  position: absolute; left: 0; right: 0; height: 1px;
+  z-index: 3; pointer-events: none; top: -2px;
+  animation: scanSweep 5s ease-in-out infinite;
+}
+@keyframes scanSweep {
+  0%   { top: -2px;   opacity: 0; }
+  4%   { opacity: 0.7; }
+  96%  { opacity: 0.2; }
+  100% { top: 102%;   opacity: 0; }
+}
+
+/* ── Frost crystal layer ── */
+.frost-layer { position: absolute; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; opacity: 0; transition: opacity 0.8s ease; }
+.frost-crystal { position: absolute; }
+@keyframes crystallize {
+  0%   { transform: scale(0) rotate(0deg);   opacity: 0; }
+  50%  { opacity: 0.7; }
+  100% { transform: scale(1) rotate(45deg);  opacity: 0.45; }
+}
+
+/* ── Arc needle dot ── */
+.arc-needle-dot {
+  position: absolute;
+  width: 10px; height: 10px; border-radius: 50%;
+  background: rgb(220,50,15);
+  top: 50%; left: 50%;
+  transform-origin: 0 0;
+  pointer-events: none;
+  box-shadow: 0 0 8px 2px rgba(220,50,15,0.6);
+  transition: background 0.3s, box-shadow 0.3s;
 }
 @media (max-width: 768px) {
   .hvac-sequence { display: none; }
@@ -1579,11 +1687,36 @@ footer { background: var(--dark); border-top: 1px solid var(--border); padding: 
 <div class="hvac-sequence" id="hvac-seq">
   <div class="hvac-scene" id="hvac-scene">
 
+    <!-- ── Layer 1: Glow halos (deepest) ── -->
+    <div class="glow-halos" id="glow-halos">
+      <div class="glow-halo" id="halo-1" style="width:280px;height:280px;background:radial-gradient(circle,rgba(220,50,10,0.22) 0%,transparent 70%);animation:haloPulse 3s ease-in-out infinite;"></div>
+      <div class="glow-halo" id="halo-2" style="width:500px;height:500px;background:radial-gradient(circle,rgba(220,50,10,0.1) 0%,transparent 70%);animation:haloPulse 4.5s ease-in-out 1.2s infinite;"></div>
+      <div class="glow-halo" id="halo-3" style="width:800px;height:800px;background:radial-gradient(circle,rgba(220,50,10,0.04) 0%,transparent 70%);animation:haloPulse 6s ease-in-out 2.5s infinite;"></div>
+    </div>
+
+    <!-- ── Layer 2: Ambient particle field ── -->
+    <div class="ambient-field" id="ambient-field"></div>
+
+    <!-- ── Layer 3: Orbital rings ── -->
+    <div class="orbit-rings" id="orbit-rings">
+      <div class="orbit-ring orbit-ring-1" id="orbit-1"></div>
+      <div class="orbit-ring orbit-ring-2" id="orbit-2"></div>
+      <div class="orbit-ring orbit-ring-3" id="orbit-3"></div>
+    </div>
+
+    <!-- ── Pulsing rings behind thermostat ── -->
+    <div class="pulse-ring" id="pulse-ring-a"></div>
+    <div class="pulse-ring pulse-ring-b" id="pulse-ring-b"></div>
+    <div class="pulse-ring pulse-ring-c" id="pulse-ring-c"></div>
+
     <!-- Giant background ghost temperature number -->
     <div class="temp-ghost" id="temp-ghost">95</div>
 
     <!-- Heat shimmer lines (phase 1) — generated by JS -->
     <div class="heat-shimmer" id="heat-shimmer"></div>
+
+    <!-- Data stream numbers (hot phase) — generated by JS -->
+    <div class="data-stream" id="data-stream"></div>
 
     <!-- ── Central thermostat ring ── -->
     <div class="thermo-ring-wrap" id="thermo-ring-wrap">
@@ -1667,14 +1800,63 @@ footer { background: var(--dark); border-top: 1px solid var(--border); padding: 
     <!-- Cool air particles (phase 3+) — generated by JS -->
     <div class="cool-streams" id="cool-streams"></div>
 
-    <!-- ── Readouts ── -->
-    <div class="seq-readout seq-readout-left">
-      <div class="seq-readout-label">Outdoor Temp</div>
-      <div class="seq-readout-value" id="readout-outdoor">95°F</div>
+    <!-- Frost crystal layer (phase 3) — generated by JS -->
+    <div class="frost-layer" id="frost-layer"></div>
+
+    <!-- Scan line (phase 2+) -->
+    <div class="scan-line" id="scan-line" style="background:linear-gradient(90deg,transparent,rgba(220,80,20,0.35),transparent);"></div>
+
+    <!-- ── Corner HUD panels ── -->
+    <!-- Top-left: Temp + Humidity -->
+    <div class="hud-panel hud-tl" id="hud-tl">
+      <div class="hud-row">
+        <div class="hud-lbl">Outdoor Temp</div>
+        <div class="hud-val" id="readout-outdoor">95°F</div>
+      </div>
+      <div class="hud-sep"></div>
+      <div class="hud-row">
+        <div class="hud-lbl">Humidity</div>
+        <div class="hud-val" id="readout-humidity">82%</div>
+        <div class="hud-bar"><div class="hud-bar-fill" id="humidity-bar" style="width:82%;background:rgba(220,80,20,0.7);"></div></div>
+      </div>
     </div>
-    <div class="seq-readout seq-readout-right">
-      <div class="seq-readout-label">System Status</div>
-      <div class="seq-readout-value" id="readout-status">STANDBY</div>
+    <!-- Top-right: Status + Efficiency -->
+    <div class="hud-panel hud-tr" id="hud-tr">
+      <div class="hud-row">
+        <div class="hud-lbl">System Status</div>
+        <div class="hud-val" id="readout-status">STANDBY</div>
+      </div>
+      <div class="hud-sep"></div>
+      <div class="hud-row">
+        <div class="hud-lbl">Efficiency</div>
+        <div class="hud-val" id="readout-efficiency">—</div>
+        <div class="hud-bar"><div class="hud-bar-fill" id="efficiency-bar" style="width:0%;background:rgba(220,80,20,0.7);"></div></div>
+      </div>
+    </div>
+    <!-- Bottom-left: PSI + Load -->
+    <div class="hud-panel hud-bl" id="hud-bl">
+      <div class="hud-row">
+        <div class="hud-lbl">Refrigerant PSI</div>
+        <div class="hud-val" id="readout-psi">—</div>
+      </div>
+      <div class="hud-sep"></div>
+      <div class="hud-row">
+        <div class="hud-lbl">Compressor Load</div>
+        <div class="hud-val" id="readout-load">—</div>
+        <div class="hud-bar"><div class="hud-bar-fill" id="load-bar" style="width:0%;background:rgba(220,80,20,0.7);"></div></div>
+      </div>
+    </div>
+    <!-- Bottom-right: Runtime + Target -->
+    <div class="hud-panel hud-br" id="hud-br">
+      <div class="hud-row">
+        <div class="hud-lbl">Runtime</div>
+        <div class="hud-val" id="readout-runtime">—</div>
+      </div>
+      <div class="hud-sep"></div>
+      <div class="hud-row">
+        <div class="hud-lbl">Target Temp</div>
+        <div class="hud-val" id="readout-target">68°F</div>
+      </div>
     </div>
 
     <!-- Phase label -->
@@ -2379,229 +2561,423 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
 })();
 
 /* ══════════════════════════════════════════════════════════════
-   THERMOSTAT COOLDOWN — Scroll-Driven Parallax
+   THERMOSTAT COOLDOWN — Enhanced Scroll-Driven Parallax v2
    ══════════════════════════════════════════════════════════════ */
 (function() {
   const seq = document.getElementById('hvac-seq');
   if (!seq) return;
-  // Skip on small screens (CSS hides the sequence there too)
   if (window.matchMedia('(max-width: 768px)').matches) return;
 
-  const scene       = document.getElementById('hvac-scene');
-  const tempDigits  = document.getElementById('temp-digits');
-  const tempGhost   = document.getElementById('temp-ghost');
-  const thermoArc   = document.getElementById('thermo-arc');
-  const heatShimmer = document.getElementById('heat-shimmer');
-  const coolStreams  = document.getElementById('cool-streams');
-  const acSchematic = document.getElementById('ac-schematic');
-  const seqFinal    = document.getElementById('seq-final');
-  const scrubFill   = document.getElementById('seq-scrub-fill');
-  const phaseLbl    = document.getElementById('seq-phase-lbl');
-  const hintArrow   = document.querySelector('.seq-hint-arrow');
-  const readoutOD   = document.getElementById('readout-outdoor');
-  const readoutSt   = document.getElementById('readout-status');
-  const thermoSvg   = document.querySelector('.thermo-svg');
+  // ── DOM refs ─────────────────────────────────────────────────
+  const scene        = document.getElementById('hvac-scene');
+  const tempDigits   = document.getElementById('temp-digits');
+  const tempGhost    = document.getElementById('temp-ghost');
+  const thermoArc    = document.getElementById('thermo-arc');
+  const heatShimmer  = document.getElementById('heat-shimmer');
+  const coolStreams   = document.getElementById('cool-streams');
+  const acSchematic  = document.getElementById('ac-schematic');
+  const seqFinal     = document.getElementById('seq-final');
+  const scrubFill    = document.getElementById('seq-scrub-fill');
+  const phaseLbl     = document.getElementById('seq-phase-lbl');
+  const hintArrow    = document.querySelector('.seq-hint-arrow');
+  const thermoSvg    = document.querySelector('.thermo-svg');
+  const ringWrap     = document.getElementById('thermo-ring-wrap');
+  const ambField     = document.getElementById('ambient-field');
+  const dataStream   = document.getElementById('data-stream');
+  const frostLayer   = document.getElementById('frost-layer');
+  const scanLine     = document.getElementById('scan-line');
+  const orbit1       = document.getElementById('orbit-1');
+  const orbit2       = document.getElementById('orbit-2');
+  const orbit3       = document.getElementById('orbit-3');
+  const halo1        = document.getElementById('halo-1');
+  const halo2        = document.getElementById('halo-2');
+  const halo3        = document.getElementById('halo-3');
+  const pulseA       = document.getElementById('pulse-ring-a');
+  const pulseB       = document.getElementById('pulse-ring-b');
+  const pulseC       = document.getElementById('pulse-ring-c');
+  const readoutOD    = document.getElementById('readout-outdoor');
+  const readoutSt    = document.getElementById('readout-status');
+  const readoutHum   = document.getElementById('readout-humidity');
+  const readoutEff   = document.getElementById('readout-efficiency');
+  const readoutPsi   = document.getElementById('readout-psi');
+  const readoutLoad  = document.getElementById('readout-load');
+  const readoutRun   = document.getElementById('readout-runtime');
+  const humBar       = document.getElementById('humidity-bar');
+  const effBar       = document.getElementById('efficiency-bar');
+  const loadBar      = document.getElementById('load-bar');
 
   // ── Constants ────────────────────────────────────────────────
-  const CIRC      = 753.98;  // 2π×120
-  const SPAN      = 565.5;   // 270° of circumference
-  const TEMP_HOT  = 95;
-  const TEMP_COOL = 68;
-  // Arc fill formula: ((temp - 50) / 50) * SPAN
+  const CIRC = 753.98, SPAN = 565.5;
+  const TEMP_HOT = 95, TEMP_COOL = 68;
   function tempToArc(t) { return Math.max(0, ((t - 50) / 50) * SPAN); }
 
-  // ── Build heat shimmer lines ──────────────────────────────────
-  (function buildHeatLines() {
-    for (let i = 0; i < 14; i++) {
-      const line = document.createElement('div');
-      line.className = 'heat-line';
-      const topPct = 20 + Math.random() * 60;
-      const delay  = Math.random() * 2.4;
-      const dur    = 1.8 + Math.random() * 1.4;
-      line.style.cssText = `top:${topPct}%; animation: heatRise ${dur}s ${delay}s ease-out infinite;`;
-      heatShimmer.appendChild(line);
-    }
-  })();
-
-  // ── Build cool-air particles ──────────────────────────────────
-  (function buildParticles() {
-    for (let i = 0; i < 18; i++) {
-      const p   = document.createElement('div');
-      p.className = 'cool-dot';
-      const angle = (i / 18) * 360;
-      const dist  = 180 + Math.random() * 140;
-      const rad   = angle * Math.PI / 180;
-      const tx    = Math.round(Math.cos(rad) * dist);
-      const ty    = Math.round(Math.sin(rad) * dist);
-      const delay = (i / 18) * 1.6;
-      const dur   = 1.8 + Math.random() * 0.8;
-      p.style.cssText = `--tx:${tx}px; --ty:${ty}px;
-        position:absolute; top:50%; left:50%;
-        width:6px; height:6px; border-radius:50%;
-        background:rgba(56,189,248,0.75);
-        transform:translate(-50%,-50%);
-        animation: coolSpread ${dur}s ${delay}s ease-out infinite;
-        pointer-events:none;`;
-      coolStreams.appendChild(p);
-    }
-  })();
-
-  // ── Build thermostat tick marks ───────────────────────────────
-  (function buildTicks() {
-    const tickSvg = document.querySelector('.thermo-svg');
-    if (!tickSvg) return;
-    const ns = 'http://www.w3.org/2000/svg';
-    const CX = 150, CY = 150, R_OUTER = 135, R_INNER = 125;
-    const START_DEG = 225; // bottom-left
-    const TOTAL_DEG = 270;
-    const steps = 10; // 50°F → 100°F in 5° steps = 10 intervals, 11 marks
-    for (let i = 0; i <= steps; i++) {
-      const angleDeg = START_DEG + (TOTAL_DEG / steps) * i;
-      const rad = angleDeg * Math.PI / 180;
-      const x1 = CX + Math.cos(rad) * R_INNER;
-      const y1 = CY + Math.sin(rad) * R_INNER;
-      const x2 = CX + Math.cos(rad) * R_OUTER;
-      const y2 = CY + Math.sin(rad) * R_OUTER;
-      const line = document.createElementNS(ns, 'line');
-      line.setAttribute('x1', x1.toFixed(2));
-      line.setAttribute('y1', y1.toFixed(2));
-      line.setAttribute('x2', x2.toFixed(2));
-      line.setAttribute('y2', y2.toFixed(2));
-      line.setAttribute('stroke', i === 0 || i === steps ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.18)');
-      line.setAttribute('stroke-width', i % 2 === 0 ? '2' : '1');
-      tickSvg.appendChild(line);
-    }
-  })();
-
-  // ── Color interpolation helpers ───────────────────────────────
+  // ── Helpers ──────────────────────────────────────────────────
   function lerp(a, b, t) { return a + (b - a) * t; }
+  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
   function lerpRGB(c1, c2, t) {
-    return [
-      Math.round(lerp(c1[0], c2[0], t)),
-      Math.round(lerp(c1[1], c2[1], t)),
-      Math.round(lerp(c1[2], c2[2], t))
-    ];
+    t = clamp(t, 0, 1);
+    return [Math.round(lerp(c1[0],c2[0],t)), Math.round(lerp(c1[1],c2[1],t)), Math.round(lerp(c1[2],c2[2],t))];
   }
-  // Scene background: hot → warm → dark-cool → full-cool
+  function multiStop(stops, p) {
+    let i = 0;
+    while (i < stops.length - 2 && p >= stops[i+1].p) i++;
+    const a = stops[i], b = stops[i+1];
+    const t = (p - a.p) / (b.p - a.p);
+    return lerpRGB(a.c, b.c, t);
+  }
+
+  // ── Color tables ─────────────────────────────────────────────
   const bgStops = [
-    { p: 0.00, r: 28,  g: 3,   b: 0   },
-    { p: 0.25, r: 18,  g: 4,   b: 0   },
-    { p: 0.45, r: 6,   g: 11,  b: 22  },
-    { p: 0.70, r: 5,   g: 12,  b: 24  },
-    { p: 1.00, r: 5,   g: 12,  b: 28  }
+    {p:0.00,c:[28,3,0]}, {p:0.25,c:[18,4,0]},
+    {p:0.45,c:[6,11,22]}, {p:0.70,c:[5,12,24]}, {p:1.00,c:[4,10,28]}
   ];
-  function interpBg(p) {
-    let i = 0;
-    while (i < bgStops.length - 2 && p >= bgStops[i+1].p) i++;
-    const a = bgStops[i], b = bgStops[i+1];
-    const t = (p - a.p) / (b.p - a.p);
-    const [r,g,bl] = lerpRGB([a.r,a.g,a.b],[b.r,b.g,b.b], Math.max(0, Math.min(1,t)));
-    return `rgb(${r},${g},${bl})`;
+  const arcStops = [
+    {p:0.00,c:[220,50,15]}, {p:0.30,c:[240,130,20]},
+    {p:0.60,c:[200,200,40]}, {p:0.85,c:[56,189,248]}
+  ];
+  function bgColor(p)  { const [r,g,b]=multiStop(bgStops,p);  return `rgb(${r},${g},${b})`; }
+  function arcColor(p) { const [r,g,b]=multiStop(arcStops,p); return `rgb(${r},${g},${b})`; }
+  function arcArr(p)   { return multiStop(arcStops, p); }
+
+  // ── Build: heat shimmer lines ─────────────────────────────────
+  for (let i = 0; i < 18; i++) {
+    const el = document.createElement('div');
+    el.className = 'heat-line';
+    const top = 15 + Math.random() * 70;
+    const delay = Math.random() * 3;
+    const dur   = 1.6 + Math.random() * 1.6;
+    el.style.cssText = `top:${top}%; animation:heatRise ${dur}s ${delay}s ease-out infinite;`;
+    heatShimmer.appendChild(el);
   }
 
-  // Arc stroke color: hot-orange → amber → yellow → ice-blue
-  const arcColorStops = [
-    { p: 0.00, c: [220, 50,  15] },
-    { p: 0.30, c: [240, 130, 20] },
-    { p: 0.60, c: [200, 200, 40] },
-    { p: 0.85, c: [56,  189, 248] }
-  ];
-  function interpArcColor(p) {
-    let i = 0;
-    while (i < arcColorStops.length - 2 && p >= arcColorStops[i+1].p) i++;
-    const a = arcColorStops[i], b = arcColorStops[i+1];
-    const t = (p - a.p) / (b.p - a.p);
-    const [r,g,bl] = lerpRGB(a.c, b.c, Math.max(0, Math.min(1, t)));
-    return `rgb(${r},${g},${bl})`;
+  // ── Build: ambient particle field ────────────────────────────
+  const ambDots = [];
+  for (let i = 0; i < 90; i++) {
+    const el = document.createElement('div');
+    el.className = 'amb-dot';
+    const size  = 2 + Math.random() * 3;
+    const left  = Math.random() * 100;
+    const top   = Math.random() * 100;
+    const dur   = 4 + Math.random() * 5;
+    const delay = Math.random() * 6;
+    const adx   = (-8 + Math.random() * 16).toFixed(1);
+    const aop   = (0.15 + Math.random() * 0.35).toFixed(2);
+    el.style.cssText = `width:${size}px;height:${size}px;left:${left}%;top:${top}%;
+      --aop:${aop};--adx:${adx}px;
+      background:rgba(220,80,20,0.6);
+      animation:ambFloat ${dur}s ${delay}s ease-in-out infinite;`;
+    ambField.appendChild(el);
+    ambDots.push(el);
   }
 
-  // ── Scroll driver ─────────────────────────────────────────────
+  // ── Build: cool-air particles ─────────────────────────────────
+  for (let i = 0; i < 30; i++) {
+    const el = document.createElement('div');
+    el.className = 'cool-dot';
+    const angle = (i / 30) * 360 + Math.random() * 12;
+    const dist  = 160 + Math.random() * 180;
+    const rad   = angle * Math.PI / 180;
+    const tx    = Math.round(Math.cos(rad) * dist);
+    const ty    = Math.round(Math.sin(rad) * dist);
+    const delay = (i / 30) * 2.2;
+    const dur   = 1.6 + Math.random() * 1.0;
+    const size  = 4 + Math.random() * 5;
+    el.style.cssText = `--tx:${tx}px;--ty:${ty}px;
+      position:absolute;top:50%;left:50%;
+      width:${size}px;height:${size}px;border-radius:50%;
+      background:rgba(56,189,248,0.8);
+      transform:translate(-50%,-50%);
+      animation:coolSpread ${dur}s ${delay}s ease-out infinite;
+      pointer-events:none;`;
+    coolStreams.appendChild(el);
+  }
+
+  // ── Build: thermostat tick marks ──────────────────────────────
+  (function() {
+    const ns='http://www.w3.org/2000/svg', CX=150, CY=150;
+    for (let i = 0; i <= 10; i++) {
+      const deg = 225 + (270/10)*i;
+      const rad = deg*Math.PI/180;
+      const isMajor = i%2===0;
+      const r1 = isMajor ? 122 : 124, r2 = isMajor ? 136 : 132;
+      const line = document.createElementNS(ns,'line');
+      line.setAttribute('x1',(CX+Math.cos(rad)*r1).toFixed(2));
+      line.setAttribute('y1',(CY+Math.sin(rad)*r1).toFixed(2));
+      line.setAttribute('x2',(CX+Math.cos(rad)*r2).toFixed(2));
+      line.setAttribute('y2',(CY+Math.sin(rad)*r2).toFixed(2));
+      line.setAttribute('stroke', isMajor ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.14)');
+      line.setAttribute('stroke-width', isMajor ? '2' : '1');
+      thermoSvg.appendChild(line);
+    }
+  })();
+
+  // ── Build: arc needle dot ─────────────────────────────────────
+  const needleDot = document.createElement('div');
+  needleDot.className = 'arc-needle-dot';
+  ringWrap.appendChild(needleDot);
+
+  // ── Build: data stream numbers ────────────────────────────────
+  const dataLabels = ['95°F','PSI:310','RH:82%','BTU:48K','HT:CRIT','LOAD:98%','92°F','PSI:305','87°F','RH:79%','84°F'];
+  dataLabels.forEach((lbl, i) => {
+    const el = document.createElement('div');
+    el.className = 'data-num';
+    const left  = 5 + Math.random() * 90;
+    const delay = Math.random() * 4;
+    const dur   = 2.5 + Math.random() * 2;
+    const col   = `rgba(${220-i*8},${40+i*4},${10},${0.25+Math.random()*0.2})`;
+    el.textContent = lbl;
+    el.style.cssText = `left:${left}%;bottom:0;color:${col};
+      animation:dataRise ${dur}s ${delay}s ease-out infinite;`;
+    dataStream.appendChild(el);
+  });
+
+  // ── Build: frost crystals ─────────────────────────────────────
+  (function() {
+    const ns='http://www.w3.org/2000/svg';
+    const positions = [
+      [6,8],[92,6],[4,82],[94,85],[20,5],[80,4],[3,45],[97,50],
+      [50,3],[14,92],[86,90],[35,96],[65,95]
+    ];
+    positions.forEach(([lp,tp], idx) => {
+      const svg = document.createElementNS(ns,'svg');
+      svg.setAttribute('viewBox','-20 -20 40 40');
+      svg.setAttribute('width','28'); svg.setAttribute('height','28');
+      svg.style.cssText = `position:absolute;left:${lp}%;top:${tp}%;
+        animation:crystallize ${1.2+Math.random()*0.8}s ${idx*0.15}s ease-out both;`;
+      // 6-arm snowflake
+      for (let a=0; a<6; a++) {
+        const angle = (a/6)*Math.PI*2;
+        const x2=(Math.cos(angle)*16).toFixed(2), y2=(Math.sin(angle)*16).toFixed(2);
+        const ln=document.createElementNS(ns,'line');
+        ln.setAttribute('x1','0');ln.setAttribute('y1','0');
+        ln.setAttribute('x2',x2);ln.setAttribute('y2',y2);
+        ln.setAttribute('stroke','rgba(147,210,255,0.6)');ln.setAttribute('stroke-width','1.2');
+        svg.appendChild(ln);
+        // crossbar
+        const mx=(Math.cos(angle)*9).toFixed(2), my=(Math.sin(angle)*9).toFixed(2);
+        const px=(-Math.sin(angle)*5).toFixed(2), py=(Math.cos(angle)*5).toFixed(2);
+        const bar=document.createElementNS(ns,'line');
+        bar.setAttribute('x1',(+mx-+px).toFixed(2));bar.setAttribute('y1',(+my-+py).toFixed(2));
+        bar.setAttribute('x2',(+mx+ +px).toFixed(2));bar.setAttribute('y2',(+my+ +py).toFixed(2));
+        bar.setAttribute('stroke','rgba(147,210,255,0.4)');bar.setAttribute('stroke-width','0.8');
+        svg.appendChild(bar);
+      }
+      // center dot
+      const circ=document.createElementNS(ns,'circle');
+      circ.setAttribute('cx','0');circ.setAttribute('cy','0');circ.setAttribute('r','2');
+      circ.setAttribute('fill','rgba(147,210,255,0.7)');
+      svg.appendChild(circ);
+      frostLayer.appendChild(svg);
+    });
+  })();
+
+  // ── Needle position helper ────────────────────────────────────
+  // Arc goes from 225° to 135° (clockwise 270°) on a 340px SVG centered at 170,170
+  // thermo-svg is 340px; ring-wrap centers it. Needle is absolute child of ring-wrap.
+  function updateNeedle(temp, col) {
+    const fraction = clamp((temp - 50) / 50, 0, 1);
+    const angleDeg = 225 + fraction * 270; // maps 50°→225°, 100°→495°≡135°
+    const rad = angleDeg * Math.PI / 180;
+    const R = 120; // arc radius in SVG units; SVG is 300×300, rendered at 340px → scale 340/300
+    const scale = 340 / 300;
+    const cx = 170, cy = 170; // center of 340px rendered SVG within ring-wrap
+    const nx = cx + Math.cos(rad) * R * scale - 5; // -5 to center the 10px dot
+    const ny = cy + Math.sin(rad) * R * scale - 5;
+    needleDot.style.left = nx.toFixed(1) + 'px';
+    needleDot.style.top  = ny.toFixed(1) + 'px';
+    needleDot.style.background = col;
+    needleDot.style.boxShadow  = `0 0 10px 3px ${col.replace('rgb','rgba').replace(')',',0.5)')}`;
+  }
+
+  // ── Scroll update ─────────────────────────────────────────────
   let ticking = false;
-  function onScroll() {
-    if (ticking) return;
-    ticking = true;
-    requestAnimationFrame(update);
-  }
+  let lastP = -1;
 
   function update() {
     ticking = false;
-    const rect = seq.getBoundingClientRect();
-    const seqH = seq.offsetHeight;               // 400vh
-    const scrolled = -rect.top;                   // px scrolled into sequence
-    const p = Math.max(0, Math.min(1, scrolled / (seqH - window.innerHeight)));
+    const rect  = seq.getBoundingClientRect();
+    const seqH  = seq.offsetHeight;
+    const p     = clamp(-rect.top / (seqH - window.innerHeight), 0, 1);
+    if (Math.abs(p - lastP) < 0.0005 && lastP >= 0) return;
+    lastP = p;
 
-    // ── Temperature (95 → 68)
-    const temp = Math.round(lerp(TEMP_HOT, TEMP_COOL, Math.min(1, p / 0.90)));
+    const temp     = Math.round(lerp(TEMP_HOT, TEMP_COOL, clamp(p / 0.92, 0, 1)));
+    const arcC     = arcColor(p);
+    const arcRGB   = arcArr(p);
+
+    // ── Temperature display
     tempDigits.textContent = temp;
     tempGhost.textContent  = temp;
 
-    // ── Arc fill
+    // ── Arc
     const arcFill = tempToArc(temp);
-    const arcColor = interpArcColor(p);
     thermoArc.setAttribute('stroke-dasharray', `${arcFill.toFixed(1)} ${CIRC}`);
-    thermoArc.setAttribute('stroke', arcColor);
+    thermoArc.setAttribute('stroke', arcC);
 
-    // ── SVG glow
-    const glowAlpha = lerp(0.35, 0.05, Math.min(1, (p - 0.6) / 0.3));
-    const glowCol = arcColor;
-    if (thermoSvg) thermoSvg.style.filter = `drop-shadow(0 0 48px ${glowCol.replace('rgb', 'rgba').replace(')', `,${glowAlpha.toFixed(2)})`)}`;
+    // ── Arc needle
+    updateNeedle(temp, arcC);
 
-    // ── Background
-    scene.style.background = interpBg(p);
+    // ── SVG drop-shadow glow
+    const glowA = lerp(0.45, 0.08, clamp((p-0.55)/0.35, 0, 1));
+    thermoSvg.style.filter = `drop-shadow(0 0 52px rgba(${arcRGB[0]},${arcRGB[1]},${arcRGB[2]},${glowA.toFixed(2)}))`;
 
-    // ── Heat shimmer opacity (fades out through phase 1)
-    const heatAlpha = Math.max(0, 1 - p / 0.45);
-    heatShimmer.style.opacity = heatAlpha;
+    // ── Scene background
+    scene.style.background = bgColor(p);
 
-    // ── AC schematic (fades in phase 2: p 0.35 → 0.65)
-    const schemaP = Math.max(0, Math.min(1, (p - 0.35) / 0.30));
-    acSchematic.style.opacity = schemaP;
+    // ── Halos color shift
+    const h1c=arcRGB, h2c=arcRGB, h3c=arcRGB;
+    halo1.style.background = `radial-gradient(circle,rgba(${h1c[0]},${h1c[1]},${h1c[2]},0.22) 0%,transparent 70%)`;
+    halo2.style.background = `radial-gradient(circle,rgba(${h2c[0]},${h2c[1]},${h2c[2]},0.10) 0%,transparent 70%)`;
+    halo3.style.background = `radial-gradient(circle,rgba(${h3c[0]},${h3c[1]},${h3c[2]},0.04) 0%,transparent 70%)`;
 
-    // ── Cool particles (active in phase 3: p 0.60+)
-    const coolP = Math.max(0, Math.min(1, (p - 0.60) / 0.20));
-    coolStreams.style.opacity = coolP;
+    // ── Orbital rings color shift
+    const orbAlpha1 = lerp(0.20, 0.35, clamp(p/0.5,0,1));
+    const orbAlpha2 = lerp(0.10, 0.20, clamp(p/0.5,0,1));
+    [orbit1,orbit2,orbit3].forEach((el,i) => {
+      const a = [orbAlpha1*0.9, orbAlpha2, orbAlpha2*0.5][i];
+      el.style.borderColor = `rgba(${arcRGB[0]},${arcRGB[1]},${arcRGB[2]},${a.toFixed(2)})`;
+    });
 
-    // ── Readouts
-    if (p < 0.35) {
-      readoutOD.textContent = `${temp}°F`;
-      readoutSt.textContent = 'STANDBY';
-    } else if (p < 0.65) {
-      readoutOD.textContent = `${temp}°F`;
-      readoutSt.textContent = 'COOLING';
+    // ── Pulse rings color
+    [pulseA,pulseB,pulseC].forEach(el => {
+      el.style.borderColor = `rgba(${arcRGB[0]},${arcRGB[1]},${arcRGB[2]},0.45)`;
+    });
+
+    // ── Ambient dots color shift (batch via opacity + hue)
+    const dotWarmness = clamp(1 - p / 0.6, 0, 1);
+    ambDots.forEach((el, i) => {
+      const warm = `rgba(${Math.round(lerp(56,220,dotWarmness))},${Math.round(lerp(189,80,dotWarmness))},${Math.round(lerp(248,20,dotWarmness))},0.65)`;
+      if (i % 8 === 0) el.style.background = warm; // throttle — not every dot every frame
+    });
+
+    // ── Heat shimmer opacity
+    heatShimmer.style.opacity = clamp(1 - p / 0.42, 0, 1);
+
+    // ── Data stream (hot phase only)
+    dataStream.style.opacity = clamp(1 - p / 0.38, 0, 1);
+
+    // ── Scan line color + phase visibility
+    const scanActive = clamp((p - 0.28) / 0.12, 0, 1);
+    scanLine.style.opacity = scanActive;
+    scanLine.style.background = `linear-gradient(90deg,transparent,rgba(${arcRGB[0]},${arcRGB[1]},${arcRGB[2]},0.4),transparent)`;
+
+    // ── AC schematic
+    acSchematic.style.opacity = clamp((p - 0.32) / 0.28, 0, 1);
+
+    // ── Cool streams
+    coolStreams.style.opacity = clamp((p - 0.58) / 0.18, 0, 1);
+
+    // ── Frost crystals
+    const frostP = clamp((p - 0.62) / 0.18, 0, 1);
+    frostLayer.style.opacity = frostP;
+
+    // ── HUD: outdoor temp
+    readoutOD.textContent = `${temp}°F`;
+    readoutOD.style.color = arcC;
+
+    // ── HUD: status
+    if (p < 0.30) {
+      readoutSt.textContent = 'STANDBY'; readoutSt.style.color = 'rgba(255,255,255,0.4)';
+    } else if (p < 0.62) {
+      readoutSt.textContent = 'COOLING'; readoutSt.style.color = arcC;
     } else {
-      readoutOD.textContent = `${temp}°F`;
-      readoutSt.textContent = 'SET POINT REACHED';
+      readoutSt.textContent = 'SET POINT'; readoutSt.style.color = 'rgb(56,189,248)';
+    }
+
+    // ── HUD: humidity (82% → 55% as cooling kicks in)
+    const hum = Math.round(lerp(82, 55, clamp((p-0.3)/0.55, 0, 1)));
+    readoutHum.textContent = `${hum}%`;
+    readoutHum.style.color = arcC;
+    humBar.style.width = hum + '%';
+    humBar.style.background = arcC;
+
+    // ── HUD: efficiency (— → 98 SEER as system runs)
+    const effP = clamp((p-0.30)/0.35, 0, 1);
+    if (effP > 0.05) {
+      const eff = Math.round(lerp(0, 98, effP));
+      readoutEff.textContent = eff + ' SEER';
+      readoutEff.style.color = arcC;
+      effBar.style.width = eff + '%';
+      effBar.style.background = arcC;
+    } else {
+      readoutEff.textContent = '—';
+    }
+
+    // ── HUD: PSI (— → 310 → 285 as system pressurizes then normalizes)
+    const psiP = clamp((p-0.30)/0.20, 0, 1);
+    if (psiP > 0.05) {
+      const psi = psiP < 0.6
+        ? Math.round(lerp(280, 315, psiP/0.6))
+        : Math.round(lerp(315, 285, (psiP-0.6)/0.4));
+      readoutPsi.textContent = psi + ' PSI';
+      readoutPsi.style.color = arcC;
+    } else {
+      readoutPsi.textContent = '—';
+    }
+
+    // ── HUD: compressor load (— → 95% → 72%)
+    const loadP = clamp((p-0.30)/0.20, 0, 1);
+    if (loadP > 0.05) {
+      const ld = loadP < 0.5
+        ? Math.round(lerp(60, 96, loadP/0.5))
+        : Math.round(lerp(96, 72, (loadP-0.5)/0.5));
+      readoutLoad.textContent = ld + '%';
+      readoutLoad.style.color = arcC;
+      loadBar.style.width = ld + '%';
+      loadBar.style.background = arcC;
+    } else {
+      readoutLoad.textContent = '—';
+    }
+
+    // ── HUD: runtime counter
+    const runP = clamp((p-0.30)/0.65, 0, 1);
+    if (runP > 0.02) {
+      const secs = Math.round(runP * 847); // max ~14 min of runtime
+      const mm = String(Math.floor(secs/60)).padStart(2,'0');
+      const ss = String(secs%60).padStart(2,'0');
+      readoutRun.textContent = `${mm}:${ss}`;
+      readoutRun.style.color = arcC;
+    } else {
+      readoutRun.textContent = '—';
     }
 
     // ── Phase label
-    if (p < 0.30) {
+    if (p < 0.28) {
       phaseLbl.textContent = 'South Florida — Indoor Temperature Critical';
-    } else if (p < 0.62) {
+    } else if (p < 0.60) {
       phaseLbl.textContent = 'AirPro System Engaged — Cooling Cycle Active';
     } else {
-      phaseLbl.textContent = 'Optimal Comfort Achieved — 68°F';
+      phaseLbl.textContent = 'Optimal Comfort Achieved — Target: 68°F';
     }
 
     // ── Scrub bar
-    const scrubColor = arcColor;
-    scrubFill.style.width   = `${(p * 100).toFixed(1)}%`;
-    scrubFill.style.background = `linear-gradient(90deg, ${scrubColor}, ${scrubColor})`;
+    scrubFill.style.width = `${(p*100).toFixed(1)}%`;
+    scrubFill.style.background = arcC;
 
-    // ── Scroll hint (fade out after 10% progress)
-    if (hintArrow) hintArrow.style.opacity = Math.max(0, 1 - p / 0.10);
+    // ── Scroll hint
+    if (hintArrow) hintArrow.style.opacity = clamp(1 - p/0.08, 0, 1);
 
-    // ── Final CTA fade in (p 0.82 → 0.92) + thermostat ring fade out
-    const finalP = Math.max(0, Math.min(1, (p - 0.82) / 0.10));
-    seqFinal.style.opacity      = finalP;
+    // ── Final CTA fade in
+    const finalP = clamp((p - 0.84) / 0.08, 0, 1);
+    seqFinal.style.opacity = finalP;
     seqFinal.style.pointerEvents = finalP > 0.5 ? 'auto' : 'none';
 
-    const ringP = Math.max(0, Math.min(1, 1 - (p - 0.78) / 0.12));
-    const ringWrap = document.querySelector('.thermo-ring-wrap');
-    if (ringWrap) ringWrap.style.opacity = ringP;
+    // ── Thermostat ring + orbits + pulses fade out before final
+    const ringAlpha = clamp(1 - (p - 0.76) / 0.12, 0, 1);
+    ringWrap.style.opacity   = ringAlpha;
+    document.getElementById('orbit-rings').style.opacity = ringAlpha;
+    document.getElementById('glow-halos').style.opacity  = ringAlpha;
+    [pulseA,pulseB,pulseC].forEach(el => el.style.opacity = ringAlpha);
   }
 
-  window.addEventListener('scroll', onScroll, { passive: true });
-  update(); // run once on load
+  window.addEventListener('scroll', () => {
+    if (!ticking) { ticking = true; requestAnimationFrame(update); }
+  }, { passive: true });
+
+  // Batch color all ambient dots once on load
+  ambDots.forEach(el => { el.style.background = 'rgba(220,80,20,0.6)'; });
+
+  update();
 })();
 </script>
 </body>
