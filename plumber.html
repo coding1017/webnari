@@ -381,40 +381,102 @@ body::before {
 .pw-top, .pw-bot {
   position: absolute; left: 0; right: 0; pointer-events: none; z-index: 2;
 }
-.pw-top { top: 0; height: 18vh; }
-.pw-bot { bottom: 0; height: 14vh; }
+.pw-top { top: 0; height: 22vh; }
+.pw-bot { bottom: 0; height: 16vh; }
 .pw-band {
   position: absolute; left: 0; right: 0; top: 0; bottom: 0;
 }
 .pw-top .pw-band {
-  background: linear-gradient(to bottom, #05091A 0%, #0A1428 50%, rgba(5,9,26,0.55) 80%, transparent 100%);
+  background: linear-gradient(to bottom,
+    #030810 0%, #07142A 30%, #0C1B38 55%,
+    rgba(6,14,30,0.60) 80%, transparent 100%);
 }
 .pw-bot .pw-band {
-  background: linear-gradient(to top, #05091A 0%, #0A1428 50%, rgba(5,9,26,0.55) 80%, transparent 100%);
+  background: linear-gradient(to top,
+    #030810 0%, #07142A 30%, #0C1B38 55%,
+    rgba(6,14,30,0.60) 80%, transparent 100%);
 }
+/* Inner steel edge stripe */
+.pw-edge {
+  position: absolute; left: 0; right: 0; height: 5px;
+  background: linear-gradient(to right,
+    rgba(20,44,72,0) 0%, rgba(20,44,72,0.55) 6%,
+    rgba(28,54,88,0.88) 50%, rgba(20,44,72,0.55) 94%, rgba(20,44,72,0) 100%);
+}
+.pw-top .pw-edge { bottom: 5px; }
+.pw-bot .pw-edge { top: 5px; }
 .pw-seam {
-  position: absolute; left: 0; right: 0; height: 2px;
-  background: rgba(14,165,233,0.55);
-  box-shadow: 0 0 10px 3px rgba(14,165,233,0.28), 0 0 24px 5px rgba(14,165,233,0.10);
+  position: absolute; left: 0; right: 0; height: 3px;
+  background: linear-gradient(to right,
+    rgba(14,165,233,0.12) 0%, rgba(14,165,233,0.85) 12%,
+    rgba(14,165,233,1.0) 50%, rgba(14,165,233,0.85) 88%, rgba(14,165,233,0.12) 100%);
+  box-shadow: 0 0 14px 4px rgba(14,165,233,0.40), 0 0 36px 8px rgba(14,165,233,0.14);
   animation: seamPulse 3.5s ease-in-out infinite;
 }
 .pw-top .pw-seam { bottom: 0; }
 .pw-bot .pw-seam { top: 0; }
 @keyframes seamPulse {
-  0%,100% { opacity: 0.5; }
+  0%,100% { opacity: 0.55; }
   50%     { opacity: 1.0; }
 }
 .pw-bolts {
   position: absolute; width: 100%; overflow: visible; pointer-events: none;
 }
-.pw-top .pw-bolts { bottom: 8px; height: 18px; }
-.pw-bot .pw-bolts { top: 8px; height: 18px; }
+.pw-top .pw-bolts { bottom: 12px; height: 24px; }
+.pw-bot .pw-bolts { top: 12px; height: 24px; }
+
+/* ── HUD panels ────────────────────────────────────────────────────────── */
+.hud-panel {
+  position: absolute; z-index: 5; pointer-events: none;
+  font-family: 'Barlow Condensed', sans-serif;
+  background: rgba(3,6,18,0.80); backdrop-filter: blur(8px);
+  border: 1px solid rgba(14,165,233,0.18); border-radius: 2px;
+  padding: 10px 13px; min-width: 155px;
+  transition: border-color 0.5s, opacity 0.5s;
+}
+.hud-panel.alert-active { border-color: rgba(239,68,68,0.42); }
+.hud-panel.restored     { border-color: rgba(34,197,94,0.38); }
+.hud-head {
+  font-size: 8px; font-weight: 700; letter-spacing: 0.30em; text-transform: uppercase;
+  color: rgba(14,165,233,0.65); margin-bottom: 8px; padding-bottom: 5px;
+  border-bottom: 1px solid rgba(14,165,233,0.10);
+  display: flex; align-items: center; gap: 6px;
+}
+.hud-dot {
+  width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0;
+  background: rgba(239,68,68,0.9); box-shadow: 0 0 4px rgba(239,68,68,0.8);
+  animation: hudBlink 0.9s step-start infinite;
+}
+.hud-dot.ok {
+  background: rgba(34,197,94,0.9); box-shadow: 0 0 4px rgba(34,197,94,0.8);
+  animation: none;
+}
+@keyframes hudBlink { 0%,49%{opacity:1} 50%,100%{opacity:0} }
+.hud-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  margin-bottom: 2px;
+}
+.hud-lbl { font-size: 8px; letter-spacing: 0.16em; text-transform: uppercase; color: rgba(110,155,200,0.55); }
+.hud-val { font-size: 15px; font-weight: 900; letter-spacing: 0.03em; color: rgba(210,230,245,0.92); }
+.hud-unit { font-size: 7px; font-weight: 700; color: rgba(110,155,200,0.45); margin-left: 2px; letter-spacing: 0.10em; }
+.hud-bar { height: 2px; background: rgba(14,165,233,0.10); border-radius: 1px; margin: 2px 0 7px; overflow: hidden; }
+.hud-fill { height: 100%; border-radius: 1px; transition: background 0.4s; }
+.hud-status {
+  font-size: 7px; letter-spacing: 0.14em; text-transform: uppercase;
+  line-height: 1.65; margin-top: 3px; padding-top: 5px;
+  border-top: 1px solid rgba(14,165,233,0.08);
+}
+.hud-status.danger { color: rgba(239,68,68,0.78); border-top-color: rgba(239,68,68,0.10); }
+.hud-status.warn   { color: rgba(234,179,8,0.75);  border-top-color: rgba(234,179,8,0.10); }
+.hud-status.ok     { color: rgba(34,197,94,0.75);  border-top-color: rgba(34,197,94,0.10); }
+@media (max-width: 560px) { .hud-panel { display: none; } }
+
 #plumb-flash {
   position: absolute; inset: 0; background: #fff; opacity: 0;
   pointer-events: none; z-index: 3; mix-blend-mode: overlay;
 }
 #plumb-badge {
-  position: absolute; top: calc(18vh + 14px); left: 50%; transform: translateX(-50%);
+  position: absolute; top: calc(22vh + 14px); left: 50%; transform: translateX(-50%);
   font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700;
   letter-spacing: 0.28em; text-transform: uppercase; white-space: nowrap;
   padding: 5px 16px 4px; border-radius: 2px; pointer-events: none; z-index: 4;
@@ -428,7 +490,7 @@ body::before {
   color: rgba(14,165,233,0.06); pointer-events: none; white-space: nowrap; z-index: 1;
 }
 .plumb-scroll-hint {
-  position: absolute; bottom: calc(14vh + 24px); left: 50%; transform: translateX(-50%);
+  position: absolute; bottom: calc(16vh + 24px); left: 50%; transform: translateX(-50%);
   font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 700;
   letter-spacing: 0.22em; color: rgba(176,200,224,0.40); text-align: center;
   animation: hintBob 2s ease-in-out infinite; pointer-events: none; z-index: 4;
@@ -1538,14 +1600,60 @@ body::before {
     <div class="pw-top">
       <div class="pw-band"></div>
       <svg class="pw-bolts" id="pw-bolts-top" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="pw-edge"></div>
       <div class="pw-seam"></div>
     </div>
 
     <!-- Pipe wall — bottom -->
     <div class="pw-bot">
       <div class="pw-seam"></div>
+      <div class="pw-edge"></div>
       <svg class="pw-bolts" id="pw-bolts-bot" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"></svg>
       <div class="pw-band"></div>
+    </div>
+
+    <!-- HUD — Water Analysis (left) -->
+    <div class="hud-panel alert-active" id="hud-left" style="left:20px;top:calc(22vh + 32px);">
+      <div class="hud-head">
+        <span class="hud-dot" id="hud-dot-l"></span>WATER ANALYSIS
+      </div>
+      <div class="hud-row">
+        <span class="hud-lbl">QUALITY INDEX</span>
+        <span><span class="hud-val" id="hud-qi">04</span><span class="hud-unit">%</span></span>
+      </div>
+      <div class="hud-bar"><div class="hud-fill" id="hud-qi-bar" style="width:4%;background:rgba(239,68,68,0.75)"></div></div>
+      <div class="hud-row">
+        <span class="hud-lbl">TURBIDITY</span>
+        <span><span class="hud-val" id="hud-ntu">850</span><span class="hud-unit">NTU</span></span>
+      </div>
+      <div class="hud-bar"><div class="hud-fill" id="hud-ntu-bar" style="width:100%;background:rgba(239,68,68,0.60)"></div></div>
+      <div class="hud-row">
+        <span class="hud-lbl">pH LEVEL</span>
+        <span class="hud-val" id="hud-ph">5.8</span>
+      </div>
+      <div class="hud-status danger" id="hud-l-status">&#x25CF; BACTERIA DETECTED<br>&#x25CF; SEDIMENT OVERLOAD</div>
+    </div>
+
+    <!-- HUD — System Status (right) -->
+    <div class="hud-panel alert-active" id="hud-right" style="right:20px;top:calc(22vh + 32px);">
+      <div class="hud-head">
+        <span class="hud-dot" id="hud-dot-r"></span>SYSTEM STATUS
+      </div>
+      <div class="hud-row">
+        <span class="hud-lbl">PRESSURE</span>
+        <span><span class="hud-val" id="hud-psi">148</span><span class="hud-unit">PSI</span></span>
+      </div>
+      <div class="hud-bar"><div class="hud-fill" id="hud-psi-bar" style="width:100%;background:rgba(239,68,68,0.65)"></div></div>
+      <div class="hud-row">
+        <span class="hud-lbl">SEAL INTEGRITY</span>
+        <span><span class="hud-val" id="hud-seal">02</span><span class="hud-unit">%</span></span>
+      </div>
+      <div class="hud-bar"><div class="hud-fill" id="hud-seal-bar" style="width:2%;background:rgba(239,68,68,0.70)"></div></div>
+      <div class="hud-row">
+        <span class="hud-lbl">FLOW RATE</span>
+        <span><span class="hud-val" id="hud-flow">38</span><span class="hud-unit">L/M</span></span>
+      </div>
+      <div class="hud-status danger" id="hud-r-status">&#x25CF; BOLT SEALS LEAKING<br>&#x25CF; HIGH PRESSURE ALERT</div>
     </div>
 
     <!-- Status badge -->
@@ -2202,15 +2310,15 @@ document.querySelectorAll('a[href^="#"]').forEach(function(anchor){
     return 'rgb('+Math.round(r)+','+Math.round(g)+','+Math.round(b)+')';
   }
 
-  // ── Water color palette (piecewise) ──────────────────────────────────────
+  // ── Water color palette ───────────────────────────────────────────────────
   var STOPS = [
-    [0.00,  48, 22,  8],
-    [0.30,  58, 32, 10],
-    [0.42,  44, 42, 38],
-    [0.54,  18, 58, 64],
-    [0.66,   8, 96,122],
-    [0.80,   5,130,190],
-    [1.00,   3,148,220],
+    [0.00, 48, 22,  8],
+    [0.30, 58, 32, 10],
+    [0.42, 44, 42, 38],
+    [0.54, 18, 58, 64],
+    [0.66,  8, 96,122],
+    [0.80,  5,130,190],
+    [1.00,  3,148,220],
   ];
   function waterRGB(p){
     for(var i=0;i<STOPS.length-1;i++){
@@ -2222,7 +2330,6 @@ document.querySelectorAll('a[href^="#"]').forEach(function(anchor){
     }
     return [3,148,220];
   }
-
   function turbMult(p){
     if(p<0.38) return lerp(1.4,2.0,p/0.38);
     if(p<0.52) return lerp(2.0,4.2,(p-0.38)/0.14);
@@ -2240,12 +2347,11 @@ document.querySelectorAll('a[href^="#"]').forEach(function(anchor){
   ];
 
   // ── Particles ────────────────────────────────────────────────────────────
-  var PTCL = [], PTCL_N = 72;
+  var PTCL=[], PTCL_N=72;
   function mkPtcl(p){
-    var dirty = p < 0.62;
+    var dirty=p<0.62;
     return {
-      x: Math.random()*W,
-      y: (0.18+Math.random()*0.64)*H,
+      x:Math.random()*W, y:(0.22+Math.random()*0.56)*H,
       vx:(Math.random()-0.5)*0.35,
       vy:dirty?(0.05+Math.random()*0.22):-(0.18+Math.random()*0.55),
       sz:dirty?(1.5+Math.random()*5.5):(1.2+Math.random()*3.5),
@@ -2262,55 +2368,164 @@ document.querySelectorAll('a[href^="#"]').forEach(function(anchor){
   // ── Caustics ─────────────────────────────────────────────────────────────
   var CAUSTICS=[];
   for(var ci=0;ci<22;ci++){
-    CAUSTICS.push({
-      xF:Math.random(), yF:0.22+Math.random()*0.56,
-      rx:12+Math.random()*45, ry:5+Math.random()*14,
-      ph:Math.random()*Math.PI*2, sp:0.22+Math.random()*0.65
-    });
+    CAUSTICS.push({xF:Math.random(),yF:0.22+Math.random()*0.56,
+      rx:12+Math.random()*45,ry:5+Math.random()*14,
+      ph:Math.random()*Math.PI*2,sp:0.22+Math.random()*0.65});
   }
 
   // ── Light shafts ──────────────────────────────────────────────────────────
   var SHAFTS=[];
   for(var si=0;si<9;si++){
-    SHAFTS.push({
-      xF:0.04+si*0.11+(Math.random()*0.05-0.025),
-      wF:0.010+Math.random()*0.028,
-      ang:(Math.random()-0.5)*0.10,
-      ph:Math.random()*Math.PI*2,
-      sp:0.14+Math.random()*0.32,
-      maxAl:0.022+Math.random()*0.058
-    });
+    SHAFTS.push({xF:0.04+si*0.11+(Math.random()*0.05-0.025),
+      wF:0.010+Math.random()*0.028,ang:(Math.random()-0.5)*0.10,
+      ph:Math.random()*Math.PI*2,sp:0.14+Math.random()*0.32,
+      maxAl:0.022+Math.random()*0.058});
   }
 
-  // ── Bolt generation ───────────────────────────────────────────────────────
+  // ── Bolt data ─────────────────────────────────────────────────────────────
+  var BOLT_XS=[], BOLT_LEAK=[];
+  var TOP_HEX=[], BOT_HEX=[], TOP_GLOW=[], BOT_GLOW=[];
+  var lastBoltP=-1;
+
   function genBolts(){
-    ['pw-bolts-top','pw-bolts-bot'].forEach(function(id){
+    TOP_HEX=[]; BOT_HEX=[]; TOP_GLOW=[]; BOT_GLOW=[]; BOLT_XS=[]; BOLT_LEAK=[];
+    ['pw-bolts-top','pw-bolts-bot'].forEach(function(id, wallIdx){
       var svg=document.getElementById(id);
       if(!svg) return;
       while(svg.firstChild) svg.removeChild(svg.firstChild);
-      svg.setAttribute('viewBox','0 0 '+W+' 18');
-      svg.setAttribute('width',W); svg.setAttribute('height','18');
+      svg.setAttribute('viewBox','0 0 '+W+' 24');
+      svg.setAttribute('width',W); svg.setAttribute('height','24');
       var sp=Math.max(58,Math.min(88,W/18));
       var n=Math.ceil(W/sp)+1;
       for(var bi=0;bi<n;bi++){
-        var bx=bi*sp+sp*0.5, by=9;
+        var bx=bi*sp+sp*0.5, by=12;
+        // Glow halo (behind bolt)
+        var glow=document.createElementNS('http://www.w3.org/2000/svg','circle');
+        glow.setAttribute('cx',bx); glow.setAttribute('cy',by);
+        glow.setAttribute('r','14'); glow.setAttribute('fill','rgba(239,68,68,0.16)');
+        svg.appendChild(glow);
+        (wallIdx===0?TOP_GLOW:BOT_GLOW).push(glow);
+        // Hex bolt
         var hex=document.createElementNS('http://www.w3.org/2000/svg','polygon');
         var pts=[];
         for(var a=0;a<6;a++){
           var ang=(a*60-30)*Math.PI/180;
-          pts.push((bx+7*Math.cos(ang)).toFixed(1)+','+(by+7*Math.sin(ang)).toFixed(1));
+          pts.push((bx+9*Math.cos(ang)).toFixed(1)+','+(by+9*Math.sin(ang)).toFixed(1));
         }
         hex.setAttribute('points',pts.join(' '));
-        hex.setAttribute('fill','#0C1828');
-        hex.setAttribute('stroke','#1C3252');
-        hex.setAttribute('stroke-width','1');
+        hex.setAttribute('fill','#240808'); hex.setAttribute('stroke','rgba(220,60,60,0.75)');
+        hex.setAttribute('stroke-width','1.2');
         svg.appendChild(hex);
+        (wallIdx===0?TOP_HEX:BOT_HEX).push(hex);
+        // Inner socket
         var inn=document.createElementNS('http://www.w3.org/2000/svg','circle');
         inn.setAttribute('cx',bx); inn.setAttribute('cy',by);
-        inn.setAttribute('r','2.8'); inn.setAttribute('fill','#101E38');
+        inn.setAttribute('r','3.5'); inn.setAttribute('fill','#180505');
         svg.appendChild(inn);
+        // Per-bolt leak data (top wall only — same x used for both)
+        if(wallIdx===0){
+          BOLT_XS.push(bx);
+          // ~65% of bolts leak, varying intensity
+          BOLT_LEAK.push(Math.random()<0.65 ? 0.30+Math.random()*0.70 : 0);
+        }
       }
     });
+  }
+
+  // ── Bolt color update (throttled) ─────────────────────────────────────────
+  function updateBolts(p){
+    var stress=clamp(1-sm(0.18,0.74,p),0,1);
+    var fill, stroke, glowFill;
+    if(stress>0.55){
+      fill='#240808'; stroke='rgba(220,55,55,'+(0.55+stress*0.28).toFixed(2)+')';
+      glowFill='rgba(220,55,55,'+(stress*0.20).toFixed(2)+')';
+    } else if(stress>0.15){
+      fill='#181014'; stroke='rgba(165,85,38,0.60)'; glowFill='rgba(165,85,38,0.08)';
+    } else {
+      fill='#0C1828'; stroke='rgba(14,165,233,0.55)'; glowFill='rgba(14,165,233,0.12)';
+    }
+    var aH=TOP_HEX.concat(BOT_HEX), aG=TOP_GLOW.concat(BOT_GLOW);
+    for(var i=0;i<aH.length;i++){
+      aH[i].setAttribute('fill',fill); aH[i].setAttribute('stroke',stroke);
+      aG[i].setAttribute('fill',glowFill);
+    }
+  }
+
+  // ── HUD elements (cached once) ────────────────────────────────────────────
+  var H_QI    = document.getElementById('hud-qi');
+  var H_QIbar = document.getElementById('hud-qi-bar');
+  var H_NTU   = document.getElementById('hud-ntu');
+  var H_NTUbar= document.getElementById('hud-ntu-bar');
+  var H_PH    = document.getElementById('hud-ph');
+  var H_PSI   = document.getElementById('hud-psi');
+  var H_PSIbar= document.getElementById('hud-psi-bar');
+  var H_SEAL  = document.getElementById('hud-seal');
+  var H_SEALb = document.getElementById('hud-seal-bar');
+  var H_FLOW  = document.getElementById('hud-flow');
+  var H_LP    = document.getElementById('hud-left');
+  var H_RP    = document.getElementById('hud-right');
+  var H_DL    = document.getElementById('hud-dot-l');
+  var H_DR    = document.getElementById('hud-dot-r');
+  var H_LS    = document.getElementById('hud-l-status');
+  var H_RS    = document.getElementById('hud-r-status');
+
+  function pad2(n){ return n<10?'0'+n:''+n; }
+
+  function updateHUD(p){
+    if(!H_QI) return;
+    var qi  = Math.round(lerp(4,100,sm(0.08,0.92,p)));
+    var ntu = Math.round(lerp(850,4,sm(0.0,0.88,p)));
+    var ph  = lerp(5.8,7.4,sm(0.25,0.88,p)).toFixed(1);
+    var psi = Math.round(lerp(148,62,sm(0.0,0.88,p)));
+    var seal= Math.round(lerp(2,100,sm(0.12,0.78,p)));
+    var flow= Math.round(lerp(38,11,sm(0.0,0.85,p)));
+
+    var qColor = p<0.45?'rgba(239,68,68,0.80)':p<0.65?'rgba(234,179,8,0.80)':'rgba(34,197,94,0.78)';
+    H_QI.textContent=pad2(qi);
+    H_QIbar.style.width=qi+'%'; H_QIbar.style.background=qColor;
+
+    var nPct=Math.round(ntu/850*100);
+    H_NTU.textContent=ntu;
+    H_NTUbar.style.width=nPct+'%';
+    H_NTUbar.style.background=nPct>50?'rgba(239,68,68,0.60)':nPct>18?'rgba(234,179,8,0.60)':'rgba(34,197,94,0.60)';
+
+    H_PH.textContent=ph;
+
+    var pPct=Math.round((psi-62)/(148-62)*100);
+    H_PSI.textContent=psi;
+    H_PSIbar.style.width=pPct+'%';
+    H_PSIbar.style.background=pPct>60?'rgba(239,68,68,0.70)':pPct>28?'rgba(234,179,8,0.70)':'rgba(34,197,94,0.70)';
+
+    H_SEAL.textContent=pad2(seal);
+    H_SEALb.style.width=seal+'%';
+    H_SEALb.style.background=seal<30?'rgba(239,68,68,0.75)':seal<70?'rgba(234,179,8,0.75)':'rgba(14,165,233,0.75)';
+
+    H_FLOW.textContent=flow;
+
+    // Panel class + dot
+    var cls = p<0.65?'hud-panel alert-active':'hud-panel restored';
+    if(H_LP) H_LP.className=cls;
+    if(H_RP) H_RP.className=cls;
+    if(H_DL) H_DL.className='hud-dot'+(p>=0.65?' ok':'');
+    if(H_DR) H_DR.className='hud-dot'+(p>=0.65?' ok':'');
+
+    // Status rows
+    var leakCount=Math.max(0,Math.ceil(BOLT_XS.length*clamp(1-p/0.55,0,1)*0.55));
+    if(p<0.40){
+      if(H_LS){ H_LS.className='hud-status danger'; H_LS.innerHTML='&#x25CF; BACTERIA DETECTED<br>&#x25CF; SEDIMENT OVERLOAD'; }
+      if(H_RS){ H_RS.className='hud-status danger'; H_RS.innerHTML='&#x25CF; '+leakCount+' BOLT SEALS LEAKING<br>&#x25CF; HIGH PRESSURE ALERT'; }
+    } else if(p<0.68){
+      if(H_LS){ H_LS.className='hud-status warn'; H_LS.innerHTML='&#x25B6; FILTRATION ACTIVE<br>&#x25B6; TURBIDITY DROPPING'; }
+      if(H_RS){ H_RS.className='hud-status warn'; H_RS.innerHTML='&#x25B6; SEALING IN PROGRESS<br>&#x25B6; PRESSURE NORMALIZING'; }
+    } else {
+      if(H_LS){ H_LS.className='hud-status ok'; H_LS.innerHTML='&#x25A0; ALL PARAMETERS NOMINAL<br>&#x25A0; WATER QUALITY OPTIMAL'; }
+      if(H_RS){ H_RS.className='hud-status ok'; H_RS.innerHTML='&#x25A0; ALL SEALS CONFIRMED<br>&#x25A0; SYSTEM NOMINAL'; }
+    }
+
+    // Fade HUDs out before hero
+    var hudOp=clamp(1-sm(0.80,0.90,p),0,1).toFixed(3);
+    if(H_LP) H_LP.style.opacity=hudOp;
+    if(H_RP) H_RP.style.opacity=hudOp;
   }
 
   function resize(){
@@ -2327,31 +2542,27 @@ document.querySelectorAll('a[href^="#"]').forEach(function(anchor){
     var turb=turbMult(p);
     var r=wc[0],g=wc[1],b=wc[2];
 
-    // 1. Background gradient — top bright, bottom deep
+    // 1. Background gradient
     var bg=ctx.createLinearGradient(0,0,0,H);
     bg.addColorStop(0,   rgb(r*1.35,g*1.50,b*1.65,1));
     bg.addColorStop(0.18,rgb(r*1.05,g*1.08,b*1.10,1));
     bg.addColorStop(0.55,rgb(r*0.90,g*0.88,b*0.92,1));
     bg.addColorStop(1,   rgb(r*0.40,g*0.36,b*0.35,1));
-    ctx.fillStyle=bg;
-    ctx.fillRect(0,0,W,H);
+    ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
 
-    // 2. Turbulence bands — horizontal sine-wave brightness bands
+    // 2. Turbulence bands
     var bAmp=lerp(30,9,sm(0.60,0.88,p))*turb*0.35;
-    var bAl =lerp(0.14,0.055,sm(0.55,0.82,p))*(0.5+turb/4);
+    var bAl=lerp(0.14,0.055,sm(0.55,0.82,p))*(0.5+turb/4);
     for(var band=0;band<7;band++){
       var bfr=0.003+band*0.0018;
       var bph=(band*1.35)+t*(0.28+band*0.10);
       var bY0=(band/7)*H+H*0.04;
       ctx.beginPath();
       for(var bx2=0;bx2<=W;bx2+=4){
-        var byv=bY0+Math.sin(bx2*bfr+bph)*bAmp
-                +Math.sin(bx2*bfr*2.2+bph*0.65)*(bAmp*0.38);
+        var byv=bY0+Math.sin(bx2*bfr+bph)*bAmp+Math.sin(bx2*bfr*2.2+bph*0.65)*(bAmp*0.38);
         if(bx2===0) ctx.moveTo(bx2,byv); else ctx.lineTo(bx2,byv);
       }
-      ctx.lineTo(W,bY0+H/7+bAmp*3);
-      ctx.lineTo(0,bY0+H/7+bAmp*3);
-      ctx.closePath();
+      ctx.lineTo(W,bY0+H/7+bAmp*3); ctx.lineTo(0,bY0+H/7+bAmp*3); ctx.closePath();
       ctx.fillStyle=rgb(Math.min(255,r*1.45),Math.min(255,g*1.45),Math.min(255,b*1.55),bAl);
       ctx.fill();
     }
@@ -2359,23 +2570,16 @@ document.querySelectorAll('a[href^="#"]').forEach(function(anchor){
     // 3. Caustics (clean phase)
     var cStr=sm(0.58,0.84,p);
     if(cStr>0.01){
-      ctx.save();
-      ctx.globalCompositeOperation='lighter';
+      ctx.save(); ctx.globalCompositeOperation='lighter';
       for(var cai=0;cai<CAUSTICS.length;cai++){
         var ca=CAUSTICS[cai];
         var cax=ca.xF*W+Math.sin(t*ca.sp+ca.ph)*52;
         var cay=ca.yF*H+Math.sin(t*ca.sp*0.68+ca.ph+1)*18;
         var caA=cStr*(0.016+0.024*Math.abs(Math.sin(t*ca.sp*1.4+ca.ph)));
         var cg2=ctx.createRadialGradient(cax,cay,0,cax,cay,ca.rx);
-        cg2.addColorStop(0,rgb(r*1.55,g*1.55,b*1.35,caA));
-        cg2.addColorStop(1,'rgba(0,0,0,0)');
-        ctx.save();
-        ctx.scale(1,ca.ry/ca.rx);
-        ctx.fillStyle=cg2;
-        ctx.beginPath();
-        ctx.arc(cax,cay*ca.rx/ca.ry,ca.rx,0,Math.PI*2);
-        ctx.fill();
-        ctx.restore();
+        cg2.addColorStop(0,rgb(r*1.55,g*1.55,b*1.35,caA)); cg2.addColorStop(1,'rgba(0,0,0,0)');
+        ctx.save(); ctx.scale(1,ca.ry/ca.rx); ctx.fillStyle=cg2;
+        ctx.beginPath(); ctx.arc(cax,cay*ca.rx/ca.ry,ca.rx,0,Math.PI*2); ctx.fill(); ctx.restore();
       }
       ctx.restore();
     }
@@ -2387,58 +2591,45 @@ document.querySelectorAll('a[href^="#"]').forEach(function(anchor){
       for(var shai=0;shai<SHAFTS.length;shai++){
         var sh=SHAFTS[shai];
         var shA=shStr*sh.maxAl*(0.38+0.62*Math.abs(Math.sin(t*sh.sp+sh.ph)));
-        var shX=sh.xF*W, shW=sh.wF*W;
-        var tY=H*0.18, bY=H*0.80;
-        ctx.save();
-        ctx.translate(shX,0); ctx.rotate(sh.ang);
-        var sg=ctx.createLinearGradient(0,tY,0,bY);
-        sg.addColorStop(0,  rgb(r*1.9,g*1.9,b*1.65,shA));
+        var shX=sh.xF*W,shW2=sh.wF*W,tY=H*0.22,bY2=H*0.82;
+        ctx.save(); ctx.translate(shX,0); ctx.rotate(sh.ang);
+        var sg=ctx.createLinearGradient(0,tY,0,bY2);
+        sg.addColorStop(0,rgb(r*1.9,g*1.9,b*1.65,shA));
         sg.addColorStop(0.5,rgb(r*1.6,g*1.6,b*1.45,shA*0.45));
-        sg.addColorStop(1,  'rgba(0,0,0,0)');
-        ctx.fillStyle=sg;
-        ctx.fillRect(-shW/2,tY,shW,bY-tY);
-        ctx.restore();
+        sg.addColorStop(1,'rgba(0,0,0,0)');
+        ctx.fillStyle=sg; ctx.fillRect(-shW2/2,tY,shW2,bY2-tY); ctx.restore();
       }
       ctx.restore();
     }
 
-    // 5. Wave fills — flowing water volume
+    // 5. Wave fills
     var midY=H*0.50;
     for(var wi=WAVES.length-1;wi>=0;wi--){
-      var wv=WAVES[wi];
-      var wA=wv.a*turb;
-      var wPh=wv.ph+t*wv.s;
+      var wv=WAVES[wi], wA=wv.a*turb, wPh=wv.ph+t*wv.s;
       ctx.beginPath();
       for(var wx=0;wx<=W;wx+=3){
-        var wy=midY+Math.sin(wx*wv.f+wPh)*wA
-               +Math.sin(wx*wv.f*1.75+wPh*0.85)*(wA*0.38);
+        var wy=midY+Math.sin(wx*wv.f+wPh)*wA+Math.sin(wx*wv.f*1.75+wPh*0.85)*(wA*0.38);
         if(wx===0) ctx.moveTo(wx,wy); else ctx.lineTo(wx,wy);
       }
       ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.closePath();
       var wGr=ctx.createLinearGradient(0,midY-wA*2,0,H);
-      wGr.addColorStop(0,  rgb(r*1.35,g*1.35,b*1.45,wv.al*0.42));
+      wGr.addColorStop(0,rgb(r*1.35,g*1.35,b*1.45,wv.al*0.42));
       wGr.addColorStop(0.1,rgb(r*1.12,g*1.12,b*1.18,wv.al*0.22));
-      wGr.addColorStop(1,  rgb(r*0.62,g*0.62,b*0.66,wv.al*0.08));
+      wGr.addColorStop(1,rgb(r*0.62,g*0.62,b*0.66,wv.al*0.08));
       ctx.fillStyle=wGr; ctx.fill();
     }
 
-    // 6. Foam strokes at wave crests
-    var mwv=WAVES[0];
-    var mPh=mwv.ph+t*mwv.s;
-    var mA=mwv.a*turb;
+    // 6. Foam strokes
+    var mwv=WAVES[0],mPh=mwv.ph+t*mwv.s,mA=mwv.a*turb;
     var foamAl=lerp(0.06,0.38,clamp(turb/4.5,0,1));
-    ctx.strokeStyle=rgb(255,255,255,foamAl);
-    ctx.lineWidth=1.2; ctx.lineCap='round';
+    ctx.strokeStyle=rgb(255,255,255,foamAl); ctx.lineWidth=1.2; ctx.lineCap='round';
     for(var fx=14;fx<W;fx+=34){
-      var fy=midY+Math.sin(fx*mwv.f+mPh)*mA
-             +Math.sin(fx*mwv.f*1.75+mPh*0.85)*(mA*0.38);
+      var fy=midY+Math.sin(fx*mwv.f+mPh)*mA+Math.sin(fx*mwv.f*1.75+mPh*0.85)*(mA*0.38);
       var cp=Math.sin(fx*mwv.f+mPh);
       if(cp>0.18){
         var fw=5+cp*14;
-        ctx.beginPath();
-        ctx.moveTo(fx-fw,fy+1);
-        ctx.bezierCurveTo(fx-fw*0.3,fy-2,fx+fw*0.3,fy-2,fx+fw,fy+1);
-        ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(fx-fw,fy+1);
+        ctx.bezierCurveTo(fx-fw*0.3,fy-2,fx+fw*0.3,fy-2,fx+fw,fy+1); ctx.stroke();
       }
     }
 
@@ -2448,9 +2639,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function(anchor){
       var pt=PTCL[pi];
       pt.x+=pt.vx; pt.y+=pt.vy; pt.life++;
       if(pt.x<-10) pt.x=W+10; if(pt.x>W+10) pt.x=-10;
-      if(pt.life>=pt.maxLife||pt.y>H+20||pt.y<-20){
-        PTCL[pi]=mkPtcl(p); continue;
-      }
+      if(pt.life>=pt.maxLife||pt.y>H+20||pt.y<-20){ PTCL[pi]=mkPtcl(p); continue; }
       var lr=pt.life/pt.maxLife;
       var pA=(lr<0.1?lr*10:lr>0.85?(1-lr)/0.15:1.0)*0.68;
       if(pt.dirty){
@@ -2460,52 +2649,86 @@ document.querySelectorAll('a[href^="#"]').forEach(function(anchor){
       } else {
         pA*=(1-dFrac); if(pA<0.01) continue;
         ctx.save(); ctx.globalAlpha=pA;
-        ctx.strokeStyle=rgb(r*1.85,g*1.65,255,0.78);
-        ctx.lineWidth=0.85;
+        ctx.strokeStyle=rgb(r*1.85,g*1.65,255,0.78); ctx.lineWidth=0.85;
         ctx.beginPath(); ctx.arc(pt.x,pt.y,pt.sz,0,Math.PI*2); ctx.stroke();
         ctx.fillStyle='rgba(255,255,255,0.20)';
-        ctx.beginPath();
-        ctx.arc(pt.x-pt.sz*0.28,pt.y-pt.sz*0.28,pt.sz*0.32,0,Math.PI*2);
-        ctx.fill(); ctx.restore();
+        ctx.beginPath(); ctx.arc(pt.x-pt.sz*0.28,pt.y-pt.sz*0.28,pt.sz*0.32,0,Math.PI*2); ctx.fill();
+        ctx.restore();
       }
     }
 
     // 8. Depth vignette
     var vg=ctx.createRadialGradient(W/2,H/2,H*0.22,W/2,H/2,H*0.78);
-    vg.addColorStop(0,'rgba(0,0,0,0)');
-    vg.addColorStop(1,'rgba(0,0,0,0.30)');
+    vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(0,0,0,0.30)');
     ctx.fillStyle=vg; ctx.fillRect(0,0,W,H);
 
-    // 9. Flash
+    // 9. Bolt leaks — drips from top pipe wall seam into water
+    var leakStr=clamp(1-sm(0.0,0.72,p),0,1);
+    if(leakStr>0.01&&BOLT_XS.length>0){
+      var seamY=H*0.22;
+      for(var li=0;li<BOLT_XS.length;li++){
+        var lx=BOLT_XS[li];
+        var lMax=BOLT_LEAK[li];
+        if(!lMax||lMax<0.01) continue;
+        var lAl=lMax*leakStr*0.88;
+        var lPh=li*2.37+0.8;
+        var lSp=0.32+(li%7)*0.068;
+        // Drip animation cycle 0→1
+        var dT=((t*lSp+lPh)%1.0);
+        var dLen=(18+lMax*58)*Math.sin(clamp(dT,0,0.82)*Math.PI);
+        if(dLen<2) continue;
+        // Drip color: dirty brown → clearing as quality improves
+        var lR=lerp(115,r*1.1,sm(0.28,0.68,p));
+        var lG=lerp(58,g*1.1,sm(0.28,0.68,p));
+        var lB=lerp(14,b*1.2,sm(0.28,0.68,p));
+        ctx.save();
+        ctx.lineWidth=1.4+lMax*1.8; ctx.lineCap='round';
+        var lg=ctx.createLinearGradient(lx,seamY,lx,seamY+dLen);
+        lg.addColorStop(0,rgb(lR,lG,lB,lAl*0.90));
+        lg.addColorStop(0.6,rgb(lR,lG,lB,lAl*0.55));
+        lg.addColorStop(1,'rgba(0,0,0,0)');
+        ctx.strokeStyle=lg;
+        ctx.beginPath(); ctx.moveTo(lx,seamY); ctx.lineTo(lx,seamY+dLen); ctx.stroke();
+        // Droplet bulb at drip end
+        if(dT>0.14&&dT<0.80){
+          ctx.fillStyle=rgb(lR,lG,lB,lAl*0.88);
+          ctx.beginPath(); ctx.arc(lx,seamY+dLen,1.8+lMax*2.8,0,Math.PI*2); ctx.fill();
+        }
+        ctx.restore();
+      }
+    }
+
+    // 10. Flash
     var flV=0;
     if(p>0.43&&p<0.57){ var fp=(p-0.43)/0.14; flV=Math.sin(fp*Math.PI)*0.12; }
     if(flashEl) flashEl.style.opacity=flV.toFixed(3);
 
-    // 10. Badge
+    // 11. Badge
     if(badgeEl){
       var bt,bc;
-      if(p<0.35)      { bt='CONTAMINATION DETECTED';    bc='rgba(239,68,68,0.82)'; }
-      else if(p<0.52) { bt='PURIFICATION IN PROGRESS';  bc='rgba(234,179,8,0.82)'; }
-      else if(p<0.72) { bt='FLUSHING SYSTEM';           bc='rgba(34,197,94,0.78)'; }
-      else            { bt='WATER QUALITY RESTORED';    bc='rgba(56,189,248,0.82)'; }
-      badgeEl.textContent=bt;
-      badgeEl.style.color=bc; badgeEl.style.borderColor=bc;
+      if(p<0.35)      { bt='CONTAMINATION DETECTED';   bc='rgba(239,68,68,0.82)'; }
+      else if(p<0.52) { bt='PURIFICATION IN PROGRESS'; bc='rgba(234,179,8,0.82)'; }
+      else if(p<0.72) { bt='FLUSHING SYSTEM';          bc='rgba(34,197,94,0.78)'; }
+      else            { bt='WATER QUALITY RESTORED';   bc='rgba(56,189,248,0.82)'; }
+      badgeEl.textContent=bt; badgeEl.style.color=bc; badgeEl.style.borderColor=bc;
     }
 
-    // 11. Watermark
-    if(wmEl){
-      var wmA=0.05+sm(0.70,0.92,p)*0.09;
-      wmEl.style.color=rgb(14,165,233,wmA);
-    }
+    // 12. Watermark
+    if(wmEl){ var wmA=0.05+sm(0.70,0.92,p)*0.09; wmEl.style.color=rgb(14,165,233,wmA); }
 
-    // 12. Scroll hint
+    // 13. Scroll hint
     if(hintEl) hintEl.style.opacity=clamp(1-p*10,0,1).toFixed(3);
 
-    // 13. Final hero
+    // 14. Final hero
     if(finalEl){
       var fo=sm(0.87,0.97,p);
       finalEl.style.opacity=fo.toFixed(3);
       finalEl.style.pointerEvents=fo>0.4?'auto':'none';
+    }
+
+    // 15. Bolt colors + HUD (throttled)
+    if(Math.abs(p-lastBoltP)>0.003){
+      updateBolts(p); updateHUD(p); lastBoltP=p;
     }
   }
 
