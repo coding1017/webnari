@@ -16,7 +16,7 @@ A **Website-as-a-Service (WaaS)** platform called **Webnari**. The agency landin
 |---|---|---|---|---|---|
 | Electrician | **VoltPro** | `electrician.html` | 12 subpages | Yellow `#FACC15` + dark navy | (305) 555-0101 |
 | HVAC | **AirPro** | `hvac.html` | 6 subpages | Ice blue `#38BDF8` + navy | (305) 555-0150 |
-| Plumber | **FlowPro** | `plumber.html` | 6 subpages | Water blue `#0EA5E9` + deep navy | (786) 555-0200 |
+| Plumber | **FlowPro** | `FlowPro.html` | 6 subpages | Water blue `#0EA5E9` + deep navy | (786) 555-0200 |
 | Pest Control | **PestPro** | `pestpro.html` | standalone | Green + dark | — |
 
 ### VoltPro Subpages (electrician)
@@ -42,7 +42,7 @@ A **Website-as-a-Service (WaaS)** platform called **Webnari**. The agency landin
 - **Mobile:** Hamburger nav with full mobile menu
 - **Forms:** Client-side validation (blur + submit)
 - **No external JS libraries** — vanilla JS only
-- Logo always links to its own main template page (e.g. `plumber.html`, not `index.html`)
+- Logo always links to its own main template page (e.g. `FlowPro.html`, not `index.html`)
 
 ## AirPro Design Tokens (hvac.html reference)
 ```css
@@ -51,7 +51,7 @@ A **Website-as-a-Service (WaaS)** platform called **Webnari**. The agency landin
 --cyan: #06B6D4; --white: #F0F9FF;
 ```
 
-## FlowPro Design Tokens (plumber.html reference)
+## FlowPro Design Tokens (FlowPro.html reference)
 ```css
 --black: #06080F; --dark: #0A1020; --surface: #0F1A30;
 --surface2: #162040; --border: #1E3050;
