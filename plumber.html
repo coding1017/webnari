@@ -2572,40 +2572,48 @@ document.querySelectorAll('a[href^="#"]').forEach(function(anchor){
   }
 
   // ── Bolt rotation + wrench update (throttled) ─────────────────────────────
-  var WRENCH_IDX = 0; // set on first call once BOLT_XS is populated
+  // Two target bolts — set once BOLT_XS is populated
+  var WRENCH_IDX_A = -1, WRENCH_IDX_B = -1;
 
   function updateBolts(p){
-    // Bolts are always metallic steel — rotation is the only visual change
+    // Bolts spin from the first scroll movement, staggered per bolt
     var allH=TOP_HEX.concat(BOT_HEX);
     for(var i=0;i<allH.length;i++){
       var bIdx=i % Math.max(1,BOLT_XS.length);
       var off=BOLT_TIGHTEN_OFFSET[bIdx]||0;
       var bx2=BOLT_XS[bIdx]||(bIdx*75+37);
-      // Each bolt does one full 360° turn, staggered slightly
-      var bAng=sm(0.14+off, 0.74, p)*360;
+      // Start at p=0, stagger by up to 0.12, complete by p=0.82
+      var bAng=sm(off*0.6, 0.82, p)*360;
       allH[i].setAttribute('transform','rotate('+bAng.toFixed(1)+','+bx2.toFixed(1)+',12)');
     }
 
-    // ── Wrench: fixed to one bolt, ratchet-rotates in place ─────────────────
+    // ── Wrench: on bolt A (first third), slides to bolt B (second third) ─────
     if(wrenchEl && BOLT_XS.length>0){
-      // Pick the target bolt (roughly 25% from left, past the HUD panel)
-      if(WRENCH_IDX===0) WRENCH_IDX=Math.min(Math.floor(BOLT_XS.length*0.25), Math.max(3,BOLT_XS.length-1));
-      var wVis=sm(0.13,0.20,p)*(1-sm(0.68,0.76,p));
+      // Pick two bolts: A at ~25%, B at ~62% across the bolt row
+      if(WRENCH_IDX_A<0){
+        WRENCH_IDX_A=Math.min(Math.max(Math.floor(BOLT_XS.length*0.25),3), BOLT_XS.length-1);
+        WRENCH_IDX_B=Math.min(Math.floor(BOLT_XS.length*0.62), BOLT_XS.length-1);
+      }
+      // Visible from first scroll; fades out as water becomes pristine
+      var wVis=sm(0.01,0.07,p)*(1-sm(0.68,0.76,p));
       wrenchEl.style.opacity=wVis.toFixed(3);
 
       if(wVis>0.005){
-        var wX=BOLT_XS[WRENCH_IDX]; // FIXED position — never moves
-        // 8 ratchet strokes: power +50°, return −35° (accumulating clockwise)
-        var wProg=sm(0.18,0.72,p)*8;
+        // Smooth slide from bolt A → bolt B between p=0.48 and p=0.55
+        var switchT=sm(0.48,0.55,p);
+        var wX=lerp(BOLT_XS[WRENCH_IDX_A], BOLT_XS[WRENCH_IDX_B], switchT);
+
+        // Continuous ratchet: 12 strokes across the full active range
+        var wProg=sm(0.03,0.72,p)*12;
         var wCycFrac=wProg%1.0;
         var wCycN=Math.floor(wProg);
         var wAng;
         if(wCycFrac<0.62){
-          wAng=wCycN*15+(wCycFrac/0.62)*50; // power stroke: +50°
+          wAng=wCycN*15+(wCycFrac/0.62)*50;   // power stroke +50°
         } else {
-          wAng=wCycN*15+50-((wCycFrac-0.62)/0.38)*35; // return: −35°
+          wAng=wCycN*15+50-((wCycFrac-0.62)/0.38)*35; // return −35°
         }
-        // Socket center is at cx=38,cy=40 in the 130×80 SVG
+        // Socket center sits at cx=38,cy=40 in the 130×80 SVG
         wrenchEl.style.left=(wX-38)+'px';
         wrenchEl.style.transform='rotate('+wAng.toFixed(1)+'deg)';
         wrenchEl.style.transformOrigin='38px 40px';
