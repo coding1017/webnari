@@ -471,6 +471,29 @@ body::before {
 .hud-status.ok     { color: rgba(34,197,94,0.75);  border-top-color: rgba(34,197,94,0.10); }
 @media (max-width: 560px) { .hud-panel { display: none; } }
 
+/* ── Mobile HUD strip (≤560px) ─────────────────────────────────── */
+#hud-mobile {
+  display: none;
+  position: absolute; z-index: 5; pointer-events: none;
+  bottom: calc(16vh + 56px); left: 50%; transform: translateX(-50%);
+  font-family: 'Barlow Condensed', sans-serif;
+  background: rgba(3,6,18,0.85); backdrop-filter: blur(8px);
+  border: 1px solid rgba(14,165,233,0.20); border-radius: 2px;
+  padding: 8px 16px; white-space: nowrap;
+  align-items: center; gap: 14px;
+  transition: border-color 0.5s, opacity 0.5s;
+}
+#hud-mobile.alert-active { border-color: rgba(239,68,68,0.42); }
+#hud-mobile.restored     { border-color: rgba(34,197,94,0.38); }
+.hud-mob-item { display: flex; flex-direction: column; align-items: center; gap: 1px; }
+.hud-mob-lbl  { font-size: 7px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(110,155,200,0.55); }
+.hud-mob-val  { font-size: 14px; font-weight: 900; letter-spacing: 0.04em; color: rgba(210,230,245,0.92); }
+.hud-mob-val.danger { color: rgba(239,68,68,0.90); }
+.hud-mob-val.warn   { color: rgba(234,179,8,0.90); }
+.hud-mob-val.ok     { color: rgba(34,197,94,0.90); }
+.hud-mob-sep  { width: 1px; height: 28px; background: rgba(14,165,233,0.15); flex-shrink: 0; }
+@media (max-width: 560px) { #hud-mobile { display: flex; } }
+
 /* Wrench */
 #plumb-wrench {
   position: absolute; z-index: 6; pointer-events: none; opacity: 0;
@@ -1661,6 +1684,29 @@ body::before {
       <div class="hud-status danger" id="hud-r-status">&#x25CF; BOLT SEALS LEAKING<br>&#x25CF; HIGH PRESSURE ALERT</div>
     </div>
 
+    <!-- HUD — Mobile compact strip (shown only on ≤560px) -->
+    <div id="hud-mobile" class="alert-active">
+      <div class="hud-mob-item">
+        <span class="hud-mob-lbl">QUALITY</span>
+        <span class="hud-mob-val danger" id="hud-mob-qi">04%</span>
+      </div>
+      <div class="hud-mob-sep"></div>
+      <div class="hud-mob-item">
+        <span class="hud-mob-lbl">TURBIDITY</span>
+        <span class="hud-mob-val danger" id="hud-mob-ntu">850 NTU</span>
+      </div>
+      <div class="hud-mob-sep"></div>
+      <div class="hud-mob-item">
+        <span class="hud-mob-lbl">PRESSURE</span>
+        <span class="hud-mob-val danger" id="hud-mob-psi">148 PSI</span>
+      </div>
+      <div class="hud-mob-sep"></div>
+      <div class="hud-mob-item">
+        <span class="hud-mob-lbl">STATUS</span>
+        <span class="hud-mob-val danger" id="hud-mob-status">ALERT</span>
+      </div>
+    </div>
+
     <!-- Wrench — stays on one bolt, ratchets as you scroll -->
     <div id="plumb-wrench">
       <!-- Socket center at cx=38, cy=40 — JS aligns this over the target bolt -->
@@ -2631,6 +2677,12 @@ document.querySelectorAll('a[href^="#"]').forEach(function(anchor){
   var H_LP=document.getElementById('hud-left'), H_RP=document.getElementById('hud-right');
   var H_DL=document.getElementById('hud-dot-l'), H_DR=document.getElementById('hud-dot-r');
   var H_LS=document.getElementById('hud-l-status'), H_RS=document.getElementById('hud-r-status');
+  // Mobile HUD refs
+  var H_MOB=document.getElementById('hud-mobile');
+  var H_MOB_QI=document.getElementById('hud-mob-qi');
+  var H_MOB_NTU=document.getElementById('hud-mob-ntu');
+  var H_MOB_PSI=document.getElementById('hud-mob-psi');
+  var H_MOB_STATUS=document.getElementById('hud-mob-status');
 
   function pad2(n){ return n<10?'0'+n:''+n; }
   function updateHUD(p){
@@ -2670,6 +2722,17 @@ document.querySelectorAll('a[href^="#"]').forEach(function(anchor){
     }
     var hudOp=clamp(1-sm(0.80,0.90,p),0,1).toFixed(3);
     if(H_LP) H_LP.style.opacity=hudOp; if(H_RP) H_RP.style.opacity=hudOp;
+    // Update mobile HUD strip
+    if(H_MOB){
+      var mobSt=p<0.45?'danger':p<0.65?'warn':'ok';
+      var mobStatTxt=p<0.40?'ALERT':p<0.65?'FIXING':p<0.88?'NOMINAL':'RESTORED';
+      H_MOB.className=p<0.65?'alert-active':'restored';
+      H_MOB.style.opacity=hudOp;
+      if(H_MOB_QI){ H_MOB_QI.textContent=pad2(Math.round(lerp(4,100,sm(0.08,0.92,p))))+'%'; H_MOB_QI.className='hud-mob-val '+mobSt; }
+      if(H_MOB_NTU){ H_MOB_NTU.textContent=Math.round(lerp(850,4,sm(0.0,0.88,p)))+' NTU'; H_MOB_NTU.className='hud-mob-val '+mobSt; }
+      if(H_MOB_PSI){ H_MOB_PSI.textContent=Math.round(lerp(148,62,sm(0.0,0.88,p)))+' PSI'; H_MOB_PSI.className='hud-mob-val '+mobSt; }
+      if(H_MOB_STATUS){ H_MOB_STATUS.textContent=mobStatTxt; H_MOB_STATUS.className='hud-mob-val '+mobSt; }
+    }
   }
 
   function resize(){
@@ -2882,8 +2945,21 @@ document.querySelectorAll('a[href^="#"]').forEach(function(anchor){
       badgeEl.textContent=bt2; badgeEl.style.color=bc2; badgeEl.style.borderColor=bc2;
     }
 
-    // 13. Watermark
-    if(wmEl){ var wmA2=0.05+sm(0.70,0.92,p)*0.09; wmEl.style.color=rgb(14,165,233,wmA2); }
+    // 13. Watermark — blue ghost → bold gold glow when water is clean
+    if(wmEl){
+      if(p>=0.82){
+        var goldT=sm(0.82,0.97,p);
+        var gR=Math.round(lerp(14,250,goldT)), gG=Math.round(lerp(165,204,goldT)), gB=Math.round(lerp(233,21,goldT));
+        var gA=lerp(0.12,0.80,goldT);
+        wmEl.style.color=rgb(gR,gG,gB,gA);
+        var gs=Math.round(lerp(0,52,goldT));
+        wmEl.style.textShadow='0 0 '+gs+'px rgba(250,204,21,'+lerp(0,0.90,goldT).toFixed(2)+'), 0 0 '+(gs*2)+'px rgba(250,204,21,'+lerp(0,0.45,goldT).toFixed(2)+'), 0 0 '+(gs*3.5)+'px rgba(250,150,0,'+lerp(0,0.25,goldT).toFixed(2)+')';
+      } else {
+        var wmA2=0.05+sm(0.70,0.82,p)*0.07;
+        wmEl.style.color=rgb(14,165,233,wmA2);
+        wmEl.style.textShadow='none';
+      }
+    }
 
     // 14. Scroll hint
     if(hintEl) hintEl.style.opacity=clamp(1-p*10,0,1).toFixed(3);

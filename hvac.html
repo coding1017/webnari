@@ -1366,8 +1366,18 @@ footer { background: var(--dark); border-top: 1px solid var(--border); padding: 
   transition: background 0.3s, box-shadow 0.3s;
 }
 @media (max-width: 768px) {
-  .hvac-sequence { display: none; }
-  .hero-mobile-fallback { display: flex !important; }
+  .hero-mobile-fallback { display: none !important; }
+  /* Scale thermostat & rings for mobile viewports */
+  .thermo-svg { width: 210px !important; height: 210px !important; }
+  .seq-temp-num { font-size: 52px !important; }
+  .orbit-ring-1 { width: 240px !important; height: 240px !important; }
+  .orbit-ring-2 { width: 310px !important; height: 310px !important; }
+  .orbit-ring-3 { width: 380px !important; height: 380px !important; }
+  .pulse-ring { width: 220px !important; height: 220px !important; }
+  .pulse-ring-b { width: 240px !important; height: 240px !important; }
+  .pulse-ring-c { width: 260px !important; height: 260px !important; }
+  .ac-schematic-layer { display: none !important; }
+  .hvac-scene .seq-final { padding: 60px 20px 80px !important; }
 }
 
 /* ── Sticky scene ── */
@@ -2629,7 +2639,7 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
 (function() {
   const seq = document.getElementById('hvac-seq');
   if (!seq) return;
-  if (window.matchMedia('(max-width: 768px)').matches) return;
+  /* parallax runs on all screen sizes */
 
   // ── DOM refs ─────────────────────────────────────────────────
   const scene        = document.getElementById('hvac-scene');

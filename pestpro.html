@@ -1102,8 +1102,8 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
 }
 /* ─── RESPONSIVE ─────────────────────────────────── */
 @media (max-width: 768px) {
-  .scroll-sequence { display: none; }
-  .hero-mobile { display: flex; }
+  .hero-mobile { display: none !important; }
+  /* Radar and HUD scale naturally via vw/vh, sequence runs on all sizes */
 }
 @media (max-width: 900px) {
   .hero-stats { display: none; }
@@ -1474,10 +1474,8 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
   const easeIn3 = t => t * t * t;
   const easeOut3= t => 1 - Math.pow(1 - t, 3);
 
-  const isMobile = window.matchMedia('(max-width: 768px)').matches;
-
-  if (!isMobile) {
-    const seqEl    = document.getElementById('hero');
+  /* Parallax runs on all screen sizes */
+  const seqEl    = document.getElementById('hero');
     const stickyEl = document.getElementById('seqSticky');
     if (seqEl && stickyEl) {
       const bg         = document.getElementById('seqBg');
@@ -1645,7 +1643,6 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
         io.observe(finalEl);
       }
     }
-  }
 
   /* Scroll reveal */
   const revealEls = document.querySelectorAll('.service-card, .why-item, .step-card, .review-card, .area-tag, .trust-item');
