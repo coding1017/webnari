@@ -884,22 +884,104 @@ td.bold { color: var(--white); font-weight: 600; }
   .templates-grid { grid-template-columns: 1fr 1fr; }
   .settings-layout { grid-template-columns: 1fr; }
 }
+
+/* ── MOBILE SIDEBAR OVERLAY ──────────────────────────── */
+.sidebar-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.65);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  z-index: 49;
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.sidebar-overlay.open { display: block; opacity: 1; }
+
+/* ── HAMBURGER BUTTON ────────────────────────────────── */
+.mob-menu-btn {
+  display: none;
+  align-items: center; justify-content: center;
+  width: 36px; height: 36px; flex-shrink: 0;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(255,255,255,0.09);
+  border-radius: 8px; cursor: pointer; color: var(--white);
+  transition: background 0.15s, border-color 0.15s;
+}
+.mob-menu-btn:hover { background: var(--indigo-bg); border-color: var(--indigo-border); }
+
 @media (max-width: 768px) {
-  .sidebar { transform: translateX(-100%); }
+  /* Sidebar becomes a slide-in drawer */
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 60;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+    box-shadow: 8px 0 64px rgba(0,0,0,0.7);
+  }
+
   .main { margin-left: 0; }
-  .kpi-grid { grid-template-columns: 1fr 1fr; }
+
+  /* Topbar: compact, show hamburger */
+  .mob-menu-btn { display: flex; }
+  .topbar { padding: 0 14px; gap: 10px; }
+  .search-wrap { display: none; }
+  /* Keep only the Add Client btn in topbar-actions on mobile */
+  .topbar-actions { gap: 6px; }
+  .topbar-actions .btn-ghost { display: none; }
+  .topbar-title { font-size: 15px; }
+
+  /* Pages: tighter padding */
+  .page { padding: 14px; }
+  .page-header { flex-direction: column; gap: 12px; }
+  .page-header-left h1 { font-size: 20px; }
+
+  /* Grid collapses */
+  .kpi-grid { grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
+  .grid-2, .grid-3 { grid-template-columns: 1fr; gap: 12px; }
+  .templates-grid { grid-template-columns: 1fr; }
+
+  /* Tables: side scroll */
+  .table-wrap { -webkit-overflow-scrolling: touch; }
+
+  /* Filter bar stacks */
+  .filter-bar { flex-direction: column; align-items: stretch; }
+  .filter-input, .filter-select { width: 100%; box-sizing: border-box; }
+
+  /* KPI values slightly smaller */
+  .kpi-value { font-size: 26px; }
+
+  /* Panel body */
+  .panel-body { padding: 14px; }
+
+  /* Modal full-width on mobile */
+  .modal { width: calc(100vw - 24px); margin: 12px; max-height: 92vh; }
+}
+
+@media (max-width: 480px) {
+  .kpi-grid { grid-template-columns: 1fr; }
+  .topbar-actions .btn-primary { padding: 7px 12px; font-size: 12px; }
+  .topbar-title { font-size: 14px; }
 }
 </style>
 </head>
 <body>
 
+<!-- Mobile sidebar overlay (tap to close) -->
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
+
 <!-- ═══════════════════════════════════════════
      SIDEBAR
 ═══════════════════════════════════════════ -->
-<aside class="sidebar">
+<aside class="sidebar" id="sidebar">
   <div class="sidebar-logo">
     <div class="logo-mark">W</div>
     <div class="logo-text">Web<span>nari</span></div>
+    <button onclick="closeSidebar()" aria-label="Close menu" style="display:none;margin-left:auto;background:none;border:none;cursor:pointer;color:var(--muted);padding:4px;border-radius:6px;align-items:center;" id="sidebar-close-btn" onmouseover="this.style.color='var(--white)'" onmouseout="this.style.color='var(--muted)'">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
   </div>
 
   <nav class="sidebar-nav">
@@ -961,6 +1043,9 @@ td.bold { color: var(--white); font-weight: 600; }
 
   <!-- TOPBAR -->
   <header class="topbar">
+    <button class="mob-menu-btn" onclick="openSidebar()" aria-label="Open menu">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
     <div class="topbar-title" id="topbar-title">Overview</div>
     <div class="search-wrap">
       <span style="color:var(--muted);font-size:13px;">🔎</span>
@@ -2372,6 +2457,22 @@ let DB = loadDB();
 // ════════════════════════════════════════════════════
 const TITLES = { overview:'Overview', clients:'Clients', templates:'Template Library', 'template-detail':'Template', seo:'SEO Manager', reputation:'Reputation Manager', analytics:'Analytics', leads:'Lead Tracker', ads:'Ad Campaigns', billing:'Billing', settings:'Settings' };
 
+// ── Mobile sidebar ────────────────────────────────────
+function openSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebar-overlay').classList.add('open');
+  const closeBtn = document.getElementById('sidebar-close-btn');
+  if (closeBtn) closeBtn.style.display = 'flex';
+  document.body.style.overflow = 'hidden';
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-overlay').classList.remove('open');
+  const closeBtn = document.getElementById('sidebar-close-btn');
+  if (closeBtn) closeBtn.style.display = 'none';
+  document.body.style.overflow = '';
+}
+
 function navigate(page, param) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -2385,6 +2486,8 @@ function navigate(page, param) {
   const renders = { overview: renderOverview, clients: renderClients, templates: renderTemplates, seo: renderSeoSelect, reputation: renderRepSelect, analytics: renderAnSelect, leads: renderLeadsSelect, ads: renderAdsSelect, billing: renderBilling, settings: loadSettings };
   if (page === 'template-detail') renderTemplateDetail(param);
   else renders[page]?.();
+  // Close sidebar on mobile after navigation
+  if (window.innerWidth <= 768) closeSidebar();
 }
 
 // ════════════════════════════════════════════════════
