@@ -371,7 +371,7 @@ body::before {
 }
 
 /* ─── INSIDE-THE-PIPE PARALLAX ──────────────────────────────────────────── */
-#plumb-seq { position: relative; height: 500vh; }
+#plumb-seq { position: relative; height: 620vh; }
 .plumb-sticky {
   position: sticky; top: 0; height: 100vh; overflow: hidden; background: #04080F;
 }
@@ -2720,7 +2720,7 @@ document.querySelectorAll('a[href^="#"]').forEach(function(anchor){
       if(H_LS){H_LS.className='hud-status ok';H_LS.innerHTML='&#x25A0; ALL PARAMETERS NOMINAL<br>&#x25A0; WATER QUALITY OPTIMAL';}
       if(H_RS){H_RS.className='hud-status ok';H_RS.innerHTML='&#x25A0; ALL SEALS CONFIRMED<br>&#x25A0; SYSTEM NOMINAL';}
     }
-    var hudOp=clamp(1-sm(0.80,0.90,p),0,1).toFixed(3);
+    var hudOp=clamp(1-sm(0.76,0.86,p),0,1).toFixed(3);
     if(H_LP) H_LP.style.opacity=hudOp; if(H_RP) H_RP.style.opacity=hudOp;
     // Update mobile HUD strip
     if(H_MOB){
@@ -2946,16 +2946,17 @@ document.querySelectorAll('a[href^="#"]').forEach(function(anchor){
     }
 
     // 13. Watermark — blue ghost → bold gold glow when water is clean
+    //     Gold builds p=0.74→0.89, holds max through p=0.98 (≈155vh at 620vh total)
     if(wmEl){
-      if(p>=0.82){
-        var goldT=sm(0.82,0.97,p);
+      if(p>=0.74){
+        var goldT=sm(0.74,0.89,p);   // ramp up
         var gR=Math.round(lerp(14,250,goldT)), gG=Math.round(lerp(165,204,goldT)), gB=Math.round(lerp(233,21,goldT));
-        var gA=lerp(0.12,0.80,goldT);
+        var gA=lerp(0.10,0.82,goldT);
         wmEl.style.color=rgb(gR,gG,gB,gA);
-        var gs=Math.round(lerp(0,52,goldT));
-        wmEl.style.textShadow='0 0 '+gs+'px rgba(250,204,21,'+lerp(0,0.90,goldT).toFixed(2)+'), 0 0 '+(gs*2)+'px rgba(250,204,21,'+lerp(0,0.45,goldT).toFixed(2)+'), 0 0 '+(gs*3.5)+'px rgba(250,150,0,'+lerp(0,0.25,goldT).toFixed(2)+')';
+        var gs=Math.round(lerp(0,54,goldT));
+        wmEl.style.textShadow='0 0 '+gs+'px rgba(250,204,21,'+lerp(0,0.92,goldT).toFixed(2)+'), 0 0 '+(gs*2)+'px rgba(250,204,21,'+lerp(0,0.48,goldT).toFixed(2)+'), 0 0 '+(gs*3.5)+'px rgba(250,150,0,'+lerp(0,0.28,goldT).toFixed(2)+')';
       } else {
-        var wmA2=0.05+sm(0.70,0.82,p)*0.07;
+        var wmA2=0.05+sm(0.68,0.74,p)*0.07;
         wmEl.style.color=rgb(14,165,233,wmA2);
         wmEl.style.textShadow='none';
       }
@@ -2964,9 +2965,9 @@ document.querySelectorAll('a[href^="#"]').forEach(function(anchor){
     // 14. Scroll hint
     if(hintEl) hintEl.style.opacity=clamp(1-p*10,0,1).toFixed(3);
 
-    // 15. Final hero
+    // 15. Final hero — delayed until after gold glow has peaked
     if(finalEl){
-      var fo=sm(0.87,0.97,p);
+      var fo=sm(0.91,0.99,p);
       finalEl.style.opacity=fo.toFixed(3);
       finalEl.style.pointerEvents=fo>0.4?'auto':'none';
     }
