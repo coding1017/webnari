@@ -370,98 +370,76 @@ body::before {
   flex-shrink: 0;
 }
 
-/* ─── PIPE BURST PARALLAX ────────────────────────────────────────────────── */
+/* ─── INSIDE-THE-PIPE PARALLAX ──────────────────────────────────────────── */
 #plumb-seq { position: relative; height: 500vh; }
 .plumb-sticky {
-  position: sticky; top: 0; height: 100vh; overflow: hidden; background: #0E0704;
+  position: sticky; top: 0; height: 100vh; overflow: hidden; background: #04080F;
 }
-.plumb-bg { position: absolute; inset: 0; }
-.dirty-overlay {
-  position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(ellipse 80% 65% at 50% 50%, rgba(48,26,6,0) 35%, rgba(36,18,4,0.55) 100%);
+#plumb-canvas {
+  position: absolute; inset: 0; width: 100%; height: 100%; display: block;
 }
-.dirty-ptcl {
-  position: absolute; border-radius: 50%;
-  animation: dirtySplat var(--dur) ease-out infinite var(--del);
+.pw-top, .pw-bot {
+  position: absolute; left: 0; right: 0; pointer-events: none; z-index: 2;
 }
-@keyframes dirtySplat {
-  0%   { transform: translate(0,0) scale(1); opacity: 0.88; }
-  60%  { opacity: 0.5; }
-  100% { transform: translate(var(--tx),var(--ty)) scale(0.12); opacity: 0; }
+.pw-top { top: 0; height: 18vh; }
+.pw-bot { bottom: 0; height: 14vh; }
+.pw-band {
+  position: absolute; left: 0; right: 0; top: 0; bottom: 0;
 }
-.drip {
-  position: absolute; top: -28px; width: var(--w); border-radius: 0 0 3px 3px;
-  background: linear-gradient(to bottom, rgba(82,48,10,0.9), rgba(60,34,7,0.4), transparent);
-  animation: dripFall var(--dur) ease-in infinite var(--del);
+.pw-top .pw-band {
+  background: linear-gradient(to bottom, #05091A 0%, #0A1428 50%, rgba(5,9,26,0.55) 80%, transparent 100%);
 }
-@keyframes dripFall {
-  0%   { transform: translateY(0); opacity: 1; }
-  85%  { opacity: 0.6; }
-  100% { transform: translateY(52vh); opacity: 0; }
+.pw-bot .pw-band {
+  background: linear-gradient(to top, #05091A 0%, #0A1428 50%, rgba(5,9,26,0.55) 80%, transparent 100%);
 }
-.pipe-scene {
-  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+.pw-seam {
+  position: absolute; left: 0; right: 0; height: 2px;
+  background: rgba(14,165,233,0.55);
+  box-shadow: 0 0 10px 3px rgba(14,165,233,0.28), 0 0 24px 5px rgba(14,165,233,0.10);
+  animation: seamPulse 3.5s ease-in-out infinite;
 }
-.pipe-scene > svg { width: min(860px, 94vw); pointer-events: none; }
-.spray-line {
-  stroke-dasharray: 200 200; stroke-dashoffset: 200;
-  animation: sprayPulse var(--sdur) ease-out infinite var(--sdel);
+.pw-top .pw-seam { bottom: 0; }
+.pw-bot .pw-seam { top: 0; }
+@keyframes seamPulse {
+  0%,100% { opacity: 0.5; }
+  50%     { opacity: 1.0; }
 }
-@keyframes sprayPulse {
-  0%   { stroke-dashoffset: 200; opacity: 0.9; }
-  35%  { stroke-dashoffset: 0;   opacity: 0.72; }
-  78%  { stroke-dashoffset: -150; opacity: 0.28; }
-  100% { stroke-dashoffset: -200; opacity: 0; }
+.pw-bolts {
+  position: absolute; width: 100%; overflow: visible; pointer-events: none;
 }
-.wrench-layer {
-  position: absolute; left: 50%; top: 50%; transform-origin: 13% 50%;
-  pointer-events: none;
+.pw-top .pw-bolts { bottom: 8px; height: 18px; }
+.pw-bot .pw-bolts { top: 8px; height: 18px; }
+#plumb-flash {
+  position: absolute; inset: 0; background: #fff; opacity: 0;
+  pointer-events: none; z-index: 3; mix-blend-mode: overlay;
 }
-.wrench-layer > svg { width: min(250px, 44vw); }
-.tunnel-layer {
-  position: absolute; inset: 0; opacity: 0; pointer-events: none;
-  display: flex; align-items: center; justify-content: center;
-}
-.tunnel-layer > svg { width: min(480px, 72vw); height: min(480px, 72vh); }
-.speed-line {
-  position: absolute; left: -100%; width: 300%; height: 1px;
-  background: linear-gradient(to right, transparent, rgba(14,165,233,0.22), transparent);
-  animation: speedRush var(--sl) linear infinite var(--sd);
-}
-@keyframes speedRush {
-  from { transform: translateX(0); }
-  to   { transform: translateX(66.7%); }
-}
-.faucet-layer {
-  position: absolute; inset: 0; opacity: 0; pointer-events: none;
-  display: flex; align-items: center; justify-content: center;
-}
-.faucet-layer > svg { width: min(300px, 54vw); overflow: visible; }
-.clean-ptcl {
-  position: absolute; border-radius: 50%; background: rgba(56,191,248,0.82);
-  animation: cleanFall var(--dur) ease-in infinite var(--del);
-}
-@keyframes cleanFall {
-  0%   { transform: translateY(0) translateX(0) scale(1); opacity: 0.9; }
-  100% { transform: translateY(var(--ty)) translateX(var(--tx)) scale(0.35); opacity: 0; }
-}
-.plumb-label {
-  position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
+#plumb-badge {
+  position: absolute; top: calc(18vh + 14px); left: 50%; transform: translateX(-50%);
   font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700;
-  letter-spacing: 0.28em; text-transform: uppercase; white-space: nowrap; pointer-events: none;
+  letter-spacing: 0.28em; text-transform: uppercase; white-space: nowrap;
+  padding: 5px 16px 4px; border-radius: 2px; pointer-events: none; z-index: 4;
+  border: 1px solid currentColor; transition: color 0.5s, border-color 0.5s;
+  background: rgba(4,8,15,0.65); backdrop-filter: blur(4px);
+}
+#plumb-watermark {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  font-family: 'Barlow Condensed', sans-serif; font-size: clamp(40px,9vw,100px);
+  font-weight: 900; letter-spacing: 0.15em; text-transform: uppercase;
+  color: rgba(14,165,233,0.06); pointer-events: none; white-space: nowrap; z-index: 1;
 }
 .plumb-scroll-hint {
-  position: absolute; bottom: 48px; left: 50%; transform: translateX(-50%);
-  font-family: 'Barlow Condensed', sans-serif; font-size: 11px; font-weight: 700;
-  letter-spacing: 0.2em; color: rgba(176,200,224,0.35); text-align: center;
-  animation: hintBob 2s ease-in-out infinite; pointer-events: none;
+  position: absolute; bottom: calc(14vh + 24px); left: 50%; transform: translateX(-50%);
+  font-family: 'Barlow Condensed', sans-serif; font-size: 10px; font-weight: 700;
+  letter-spacing: 0.22em; color: rgba(176,200,224,0.40); text-align: center;
+  animation: hintBob 2s ease-in-out infinite; pointer-events: none; z-index: 4;
 }
 @keyframes hintBob {
   0%,100% { transform: translateX(-50%) translateY(0); }
   50%     { transform: translateX(-50%) translateY(-5px); }
 }
 .plumb-final {
-  position: absolute; inset: 0; opacity: 0; pointer-events: none; background: var(--dark);
+  position: absolute; inset: 0; opacity: 0; pointer-events: none;
+  background: var(--dark); z-index: 10;
 }
 
 /* ─── HERO ────────────────────────────────────────────────────────────────── */
@@ -1543,219 +1521,43 @@ body::before {
   </div>
 </div>
 
-<!-- ── PIPE BURST PARALLAX ──────────────────────────────────────────────── -->
+<!-- ── INSIDE-THE-PIPE PARALLAX ──────────────────────────────────────── -->
 <div id="plumb-seq">
   <div class="plumb-sticky">
 
-    <!-- BG color layer -->
-    <div class="plumb-bg" id="plumb-bg"></div>
+    <!-- Canvas: full-screen water simulation -->
+    <canvas id="plumb-canvas"></canvas>
 
-    <!-- Murky dirty water overlay tint -->
-    <div class="dirty-overlay" id="dirty-overlay"></div>
+    <!-- Turbulent burst flash -->
+    <div id="plumb-flash"></div>
 
-    <!-- Screen-edge drips (JS-generated divs) -->
-    <div id="drip-layer" style="position:absolute;inset:0;overflow:hidden;pointer-events:none;"></div>
+    <!-- FLOWPRO watermark -->
+    <div id="plumb-watermark">FLOWPRO</div>
 
-    <!-- Dirty water particle burst (JS-generated divs) -->
-    <div id="dirty-layer" style="position:absolute;inset:0;overflow:hidden;pointer-events:none;"></div>
-
-    <!-- Main pipe burst scene -->
-    <div class="pipe-scene" id="pipe-scene">
-      <svg viewBox="0 0 860 220" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- ─── Left pipe section ─── -->
-        <rect x="0" y="80" width="340" height="60" fill="#1E2E3E" stroke="#2A3E54" stroke-width="1.5"/>
-        <rect x="0" y="80" width="340" height="10" fill="rgba(14,165,233,0.1)"/>
-        <rect x="0" y="130" width="340" height="10" fill="rgba(0,0,0,0.38)"/>
-        <rect x="0" y="92" width="340" height="36" fill="#141E2A"/>
-        <!-- Left end flange -->
-        <rect x="0" y="66" width="18" height="88" fill="#243040" stroke="#2A3E54" stroke-width="1"/>
-        <!-- Right flange + bolts -->
-        <rect x="318" y="64" width="24" height="92" fill="#243040" stroke="#2A3E54" stroke-width="1.5"/>
-        <circle cx="330" cy="80" r="4" fill="#162030" stroke="#3A5268" stroke-width="1"/>
-        <circle cx="330" cy="110" r="3" fill="#162030" stroke="#3A5268" stroke-width="1"/>
-        <circle cx="330" cy="140" r="4" fill="#162030" stroke="#3A5268" stroke-width="1"/>
-        <!-- ─── Right pipe section ─── -->
-        <rect x="520" y="80" width="340" height="60" fill="#1E2E3E" stroke="#2A3E54" stroke-width="1.5"/>
-        <rect x="520" y="80" width="340" height="10" fill="rgba(14,165,233,0.1)"/>
-        <rect x="520" y="130" width="340" height="10" fill="rgba(0,0,0,0.38)"/>
-        <rect x="520" y="92" width="340" height="36" fill="#141E2A"/>
-        <!-- Right end flange -->
-        <rect x="842" y="66" width="18" height="88" fill="#243040" stroke="#2A3E54" stroke-width="1"/>
-        <!-- Left flange of right pipe + bolts -->
-        <rect x="518" y="64" width="24" height="92" fill="#243040" stroke="#2A3E54" stroke-width="1.5"/>
-        <circle cx="530" cy="80" r="4" fill="#162030" stroke="#3A5268" stroke-width="1"/>
-        <circle cx="530" cy="110" r="3" fill="#162030" stroke="#3A5268" stroke-width="1"/>
-        <circle cx="530" cy="140" r="4" fill="#162030" stroke="#3A5268" stroke-width="1"/>
-        <!-- ─── Burst gap — dark exposed interior ─── -->
-        <rect x="340" y="80" width="180" height="60" fill="#08090E"/>
-        <rect x="340" y="92" width="180" height="36" fill="#040608"/>
-        <!-- Red damage glow -->
-        <rect x="316" y="62" width="228" height="96" fill="none" stroke="rgba(239,68,68,0.14)" stroke-width="4"/>
-        <!-- Left jagged crack edge -->
-        <path d="M342 80 L354 92 L336 104 L356 116 L338 128 L354 140 L342 140"
-          stroke="#2A3E54" stroke-width="1.5" fill="none" stroke-linejoin="bevel"/>
-        <path d="M342 80 L354 92 L336 104 L356 116 L338 128 L354 140 L342 140 L334 140 L334 80 Z"
-          fill="#1C2A38"/>
-        <path d="M342 80 L354 92 L336 104 L356 116 L338 128 L354 140 L342 140"
-          stroke="rgba(239,68,68,0.22)" stroke-width="1" fill="none"/>
-        <!-- Right jagged crack edge -->
-        <path d="M518 80 L506 92 L524 104 L504 116 L522 128 L506 140 L518 140"
-          stroke="#2A3E54" stroke-width="1.5" fill="none" stroke-linejoin="bevel"/>
-        <path d="M518 80 L506 92 L524 104 L504 116 L522 128 L506 140 L518 140 L526 140 L526 80 Z"
-          fill="#1C2A38"/>
-        <path d="M518 80 L506 92 L524 104 L504 116 L522 128 L506 140 L518 140"
-          stroke="rgba(239,68,68,0.22)" stroke-width="1" fill="none"/>
-        <!-- ─── Water spray lines from crack center (430, 110) ─── -->
-        <line x1="430" y1="110" x2="430" y2="-28"  stroke="rgba(88,54,12,0.78)" stroke-width="4"   stroke-linecap="round" class="spray-line" style="--sdur:0.70s;--sdel:0s"/>
-        <line x1="430" y1="110" x2="685" y2="-18"  stroke="rgba(78,48,11,0.65)" stroke-width="2.5" stroke-linecap="round" class="spray-line" style="--sdur:0.88s;--sdel:0.10s"/>
-        <line x1="430" y1="110" x2="860" y2="45"   stroke="rgba(100,60,14,0.72)" stroke-width="3.5" stroke-linecap="round" class="spray-line" style="--sdur:0.62s;--sdel:0.20s"/>
-        <line x1="430" y1="110" x2="825" y2="205"  stroke="rgba(84,52,12,0.62)" stroke-width="2.5" stroke-linecap="round" class="spray-line" style="--sdur:0.80s;--sdel:0.05s"/>
-        <line x1="430" y1="110" x2="430" y2="248"  stroke="rgba(94,57,13,0.72)" stroke-width="4"   stroke-linecap="round" class="spray-line" style="--sdur:0.68s;--sdel:0.15s"/>
-        <line x1="430" y1="110" x2="175" y2="215"  stroke="rgba(80,49,11,0.62)" stroke-width="2.5" stroke-linecap="round" class="spray-line" style="--sdur:0.85s;--sdel:0.08s"/>
-        <line x1="430" y1="110" x2="0"   y2="75"   stroke="rgba(90,55,13,0.74)" stroke-width="4"   stroke-linecap="round" class="spray-line" style="--sdur:0.72s;--sdel:0.12s"/>
-        <line x1="430" y1="110" x2="155" y2="-22"  stroke="rgba(83,51,12,0.66)" stroke-width="2.5" stroke-linecap="round" class="spray-line" style="--sdur:0.90s;--sdel:0.03s"/>
-        <line x1="430" y1="110" x2="580" y2="-28"  stroke="rgba(77,47,11,0.58)" stroke-width="2"   stroke-linecap="round" class="spray-line" style="--sdur:0.78s;--sdel:0.18s"/>
-        <line x1="430" y1="110" x2="280" y2="-28"  stroke="rgba(86,53,12,0.60)" stroke-width="2"   stroke-linecap="round" class="spray-line" style="--sdur:0.75s;--sdel:0.07s"/>
-        <!-- ─── Crack seal patch (JS controls opacity → appears as wrench tightens) ─── -->
-        <rect id="crack-seal"    x="340" y="80" width="180" height="60" fill="#1E2E3E" opacity="0"/>
-        <rect id="crack-seal-hi" x="340" y="80" width="180" height="10" fill="rgba(14,165,233,0.1)"  opacity="0"/>
-        <rect id="crack-seal-sh" x="340" y="130" width="180" height="10" fill="rgba(0,0,0,0.38)"     opacity="0"/>
-        <rect id="crack-seal-in" x="340" y="92" width="180" height="36" fill="#141E2A"               opacity="0"/>
-        <!-- Repair patch bolts (appear when sealed) -->
-        <circle id="seal-b1" cx="362" cy="74"  r="5.5" fill="#243040" stroke="#3A5268" stroke-width="1.2" opacity="0"/>
-        <circle id="seal-b2" cx="430" cy="74"  r="5.5" fill="#243040" stroke="#3A5268" stroke-width="1.2" opacity="0"/>
-        <circle id="seal-b3" cx="498" cy="74"  r="5.5" fill="#243040" stroke="#3A5268" stroke-width="1.2" opacity="0"/>
-        <circle id="seal-b4" cx="362" cy="146" r="5.5" fill="#243040" stroke="#3A5268" stroke-width="1.2" opacity="0"/>
-        <circle id="seal-b5" cx="430" cy="146" r="5.5" fill="#243040" stroke="#3A5268" stroke-width="1.2" opacity="0"/>
-        <circle id="seal-b6" cx="498" cy="146" r="5.5" fill="#243040" stroke="#3A5268" stroke-width="1.2" opacity="0"/>
-      </svg>
+    <!-- Pipe wall — top -->
+    <div class="pw-top">
+      <div class="pw-band"></div>
+      <svg class="pw-bolts" id="pw-bolts-top" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="pw-seam"></div>
     </div>
 
-    <!-- Wrench layer (slides in from above, ratchets to tighten) -->
-    <div class="wrench-layer" id="wrench-layer" style="opacity:0;transform:translate(-13%,-300px);">
-      <svg viewBox="0 0 250 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Handle body -->
-        <rect x="58" y="37" width="192" height="26" rx="13" fill="#2B3D52" stroke="#3C5470" stroke-width="1.5"/>
-        <rect x="62" y="39" width="188" height="7"  rx="3.5" fill="rgba(200,220,255,0.09)"/>
-        <rect x="62" y="57" width="188" height="5"  rx="2.5" fill="rgba(0,0,0,0.28)"/>
-        <!-- Handle end cap -->
-        <rect x="242" y="37" width="8" height="26" rx="4" fill="#243040" stroke="#3C5470" stroke-width="1"/>
-        <!-- Grip knurling -->
-        <line x1="90"  y1="39" x2="90"  y2="61" stroke="rgba(200,220,255,0.07)" stroke-width="2"/>
-        <line x1="106" y1="39" x2="106" y2="61" stroke="rgba(200,220,255,0.07)" stroke-width="2"/>
-        <line x1="122" y1="39" x2="122" y2="61" stroke="rgba(200,220,255,0.07)" stroke-width="2"/>
-        <line x1="138" y1="39" x2="138" y2="61" stroke="rgba(200,220,255,0.07)" stroke-width="2"/>
-        <line x1="154" y1="39" x2="154" y2="61" stroke="rgba(200,220,255,0.07)" stroke-width="2"/>
-        <line x1="170" y1="39" x2="170" y2="61" stroke="rgba(200,220,255,0.07)" stroke-width="2"/>
-        <line x1="186" y1="39" x2="186" y2="61" stroke="rgba(200,220,255,0.07)" stroke-width="2"/>
-        <line x1="202" y1="39" x2="202" y2="61" stroke="rgba(200,220,255,0.07)" stroke-width="2"/>
-        <line x1="218" y1="39" x2="218" y2="61" stroke="rgba(200,220,255,0.07)" stroke-width="2"/>
-        <!-- Adjustable jaw slot -->
-        <line x1="61" y1="47" x2="61" y2="53" stroke="#4C6485" stroke-width="1.5"/>
-        <rect x="58" y="48" width="15" height="4" rx="2" fill="#1A2A3C"/>
-        <!-- Open C-end head — thick stroke to create the C shape -->
-        <path d="M58 20 L28 20 C8 20 0 33 0 50 C0 67 8 80 28 80 L58 80 L58 63"
-          fill="none" stroke="#2B3D52" stroke-width="23" stroke-linecap="round" stroke-linejoin="round"/>
-        <!-- C opening cutout -->
-        <path d="M58 33 L32 33 C18 33 13 41 13 50 C13 59 18 67 32 67 L58 67"
-          fill="none" stroke="#0B1620" stroke-width="15" stroke-linecap="round"/>
-        <!-- C outer detail stroke -->
-        <path d="M58 20 L28 20 C8 20 0 33 0 50 C0 67 8 80 28 80 L58 80"
-          fill="none" stroke="#3C5470" stroke-width="1.5" stroke-linecap="round"/>
-        <!-- Chrome highlight arc on head -->
-        <path d="M58 24 L32 24 C14 24 5 36 5 50"
-          fill="none" stroke="rgba(200,220,255,0.09)" stroke-width="5" stroke-linecap="round"/>
-      </svg>
+    <!-- Pipe wall — bottom -->
+    <div class="pw-bot">
+      <div class="pw-seam"></div>
+      <svg class="pw-bolts" id="pw-bolts-bot" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg"></svg>
+      <div class="pw-band"></div>
     </div>
 
-    <!-- Tunnel travel layer (transition phase) -->
-    <div class="tunnel-layer" id="tunnel-layer">
-      <div id="tunnel-lines" style="position:absolute;inset:0;overflow:hidden;pointer-events:none;"></div>
-      <svg viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="200" cy="200" r="196" fill="#06080F" stroke="#1C2C40" stroke-width="2.5"/>
-        <circle cx="200" cy="200" r="180" fill="none" stroke="#162436" stroke-width="1.5"/>
-        <circle cx="200" cy="200" r="158" fill="none" stroke="#0E1C2E" stroke-width="1"/>
-        <circle cx="200" cy="200" r="130" fill="none" stroke="#0A1628" stroke-width="1"/>
-        <circle cx="200" cy="200" r="100" fill="none" stroke="rgba(14,165,233,0.08)" stroke-width="1"/>
-        <circle cx="200" cy="200" r="66"  fill="none" stroke="rgba(14,165,233,0.15)" stroke-width="1.5"/>
-        <circle cx="200" cy="200" r="36"  fill="none" stroke="rgba(14,165,233,0.28)" stroke-width="2"/>
-        <!-- Exit light -->
-        <circle cx="200" cy="200" r="16"  fill="rgba(56,191,248,0.12)" stroke="rgba(56,191,248,0.45)" stroke-width="2"/>
-        <circle cx="200" cy="200" r="6"   fill="rgba(125,211,252,0.7)"/>
-        <circle cx="200" cy="200" r="2.5" fill="rgba(255,255,255,0.95)"/>
-        <!-- Wall rivets -->
-        <circle cx="200" cy="4"   r="5" fill="#162436"/>
-        <circle cx="396" cy="200" r="5" fill="#162436"/>
-        <circle cx="200" cy="396" r="5" fill="#162436"/>
-        <circle cx="4"   cy="200" r="5" fill="#162436"/>
-        <circle cx="342" cy="58"  r="4" fill="#162436"/>
-        <circle cx="342" cy="342" r="4" fill="#162436"/>
-        <circle cx="58"  cy="342" r="4" fill="#162436"/>
-        <circle cx="58"  cy="58"  r="4" fill="#162436"/>
-      </svg>
-    </div>
-
-    <!-- Clean water faucet layer -->
-    <div class="faucet-layer" id="faucet-layer">
-      <div id="clean-layer" style="position:absolute;inset:0;overflow:hidden;pointer-events:none;"></div>
-      <svg viewBox="0 0 280 380" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Vertical supply pipe -->
-        <rect x="110" y="0" width="46" height="108" fill="#1E2E3E" stroke="#2A3E54" stroke-width="1.5"/>
-        <rect x="114" y="0" width="10" height="108" fill="rgba(200,230,255,0.07)"/>
-        <rect x="142" y="0" width="8"  height="108" fill="rgba(0,0,0,0.24)"/>
-        <!-- Elbow bend -->
-        <path d="M110 108 Q110 180 168 180" stroke="#1E2E3E" stroke-width="46" fill="none" stroke-linecap="square"/>
-        <path d="M110 108 Q110 180 168 180" stroke="#2A3E54" stroke-width="1.5" fill="none"/>
-        <path d="M116 108 Q116 174 168 174" stroke="rgba(200,230,255,0.06)" stroke-width="5" fill="none"/>
-        <!-- Horizontal spout arm -->
-        <rect x="162" y="158" width="96" height="46" fill="#1E2E3E" stroke="#2A3E54" stroke-width="1.5"/>
-        <rect x="162" y="158" width="96" height="10" fill="rgba(200,230,255,0.07)"/>
-        <rect x="162" y="194" width="96" height="10" fill="rgba(0,0,0,0.30)"/>
-        <!-- Aerator end piece -->
-        <rect x="250" y="152" width="26" height="58" rx="13" fill="#243040" stroke="#3A5268" stroke-width="1.5"/>
-        <circle cx="263" cy="164" r="2.5" fill="#0C1828"/>
-        <circle cx="256" cy="173" r="2.5" fill="#0C1828"/><circle cx="263" cy="173" r="2.5" fill="#0C1828"/><circle cx="270" cy="173" r="2.5" fill="#0C1828"/>
-        <circle cx="256" cy="182" r="2.5" fill="#0C1828"/><circle cx="263" cy="182" r="2.5" fill="#0C1828"/><circle cx="270" cy="182" r="2.5" fill="#0C1828"/>
-        <circle cx="263" cy="191" r="2.5" fill="#0C1828"/>
-        <!-- Valve handle -->
-        <ellipse cx="133" cy="116" rx="23" ry="15" fill="#243040" stroke="#3A5268" stroke-width="1.5"/>
-        <rect x="118" y="112" width="30" height="8" rx="4" fill="#1E2E3E" stroke="#3A5268" stroke-width="1"/>
-        <!-- Water streams (animated SVG) -->
-        <rect x="258" y="210" width="5" height="165" rx="2.5" fill="rgba(56,191,248,0.75)">
-          <animate attributeName="opacity" values="0.75;0.88;0.68;0.82;0.75" dur="0.75s" repeatCount="indefinite"/>
-          <animate attributeName="height"  values="165;155;172;158;165" dur="0.8s"  repeatCount="indefinite"/>
-        </rect>
-        <rect x="265" y="210" width="4" height="152" rx="2" fill="rgba(14,165,233,0.6)">
-          <animate attributeName="opacity" values="0.6;0.72;0.55;0.68;0.6"   dur="0.9s" repeatCount="indefinite"/>
-          <animate attributeName="height"  values="152;165;144;158;152" dur="0.95s" repeatCount="indefinite"/>
-        </rect>
-        <rect x="252" y="210" width="3" height="142" rx="1.5" fill="rgba(125,211,252,0.5)">
-          <animate attributeName="opacity" values="0.5;0.62;0.44;0.56;0.5"   dur="1.1s" repeatCount="indefinite"/>
-          <animate attributeName="height"  values="142;155;136;148;142" dur="1.0s"  repeatCount="indefinite"/>
-        </rect>
-        <!-- Splash pool at bottom -->
-        <ellipse cx="262" cy="372" rx="32" ry="7" fill="rgba(14,165,233,0.18)">
-          <animate attributeName="rx" values="30;38;27;36;30" dur="0.7s" repeatCount="indefinite"/>
-        </ellipse>
-        <circle cx="238" cy="365" r="3" fill="rgba(56,191,248,0.48)">
-          <animate attributeName="cy" values="365;360;367;362;365" dur="0.55s" repeatCount="indefinite"/>
-        </circle>
-        <circle cx="287" cy="363" r="2.5" fill="rgba(14,165,233,0.48)">
-          <animate attributeName="cy" values="363;358;366;361;363" dur="0.65s" repeatCount="indefinite"/>
-        </circle>
-      </svg>
-    </div>
-
-    <!-- Phase label -->
-    <div class="plumb-label" id="plumb-label" style="color:rgba(239,68,68,0.65)">EMERGENCY — PIPE BURST</div>
+    <!-- Status badge -->
+    <div id="plumb-badge" style="color:rgba(239,68,68,0.80);border-color:rgba(239,68,68,0.80)">CONTAMINATION DETECTED</div>
 
     <!-- Scroll hint -->
     <div class="plumb-scroll-hint" id="plumb-scroll-hint">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:block;margin:0 auto 4px"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-      SCROLL TO FIX
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:block;margin:0 auto 4px"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+      SCROLL TO RESTORE
     </div>
 
-    <!-- Final hero content (cross-fades in at end of sequence) -->
+    <!-- Final hero cross-fades in at end -->
     <div class="plumb-final" id="plumb-final">
       <section class="hero" id="home">
         <div class="hero-inner">
@@ -2377,150 +2179,350 @@ document.querySelectorAll('a[href^="#"]').forEach(function(anchor){
   });
 })();
 
-// ── PIPE BURST PARALLAX ──────────────────────────────────────────────────────
+// ── INSIDE-THE-PIPE PARALLAX ─────────────────────────────────────────────
 (function(){
   var seq = document.getElementById('plumb-seq');
-  if(!seq) return;
+  if (!seq) return;
 
-  var bg         = document.getElementById('plumb-bg');
-  var dirtyOvl   = document.getElementById('dirty-overlay');
-  var dirtyLayer = document.getElementById('dirty-layer');
-  var dripLayer  = document.getElementById('drip-layer');
-  var pipeScene  = document.getElementById('pipe-scene');
-  var sprayLines = document.querySelectorAll('.spray-line');
-  var crackSeal  = document.getElementById('crack-seal');
-  var crackSealH = document.getElementById('crack-seal-hi');
-  var crackSealS = document.getElementById('crack-seal-sh');
-  var crackSealI = document.getElementById('crack-seal-in');
-  var sealBolts  = [1,2,3,4,5,6].map(function(i){ return document.getElementById('seal-b'+i); });
-  var wrenchEl   = document.getElementById('wrench-layer');
-  var tunnelEl   = document.getElementById('tunnel-layer');
-  var tunnelLines= document.getElementById('tunnel-lines');
-  var faucetEl   = document.getElementById('faucet-layer');
-  var label      = document.getElementById('plumb-label');
-  var hint       = document.getElementById('plumb-scroll-hint');
-  var finalEl    = document.getElementById('plumb-final');
+  var canvas  = document.getElementById('plumb-canvas');
+  var ctx     = canvas.getContext('2d');
+  var flashEl = document.getElementById('plumb-flash');
+  var badgeEl = document.getElementById('plumb-badge');
+  var wmEl    = document.getElementById('plumb-watermark');
+  var hintEl  = document.getElementById('plumb-scroll-hint');
+  var finalEl = document.getElementById('plumb-final');
+
+  var W = 0, H = 0, t = 0, curP = 0, tgtP = 0;
 
   function lerp(a,b,t){ return a+(b-a)*t; }
   function clamp(v,lo,hi){ return Math.max(lo,Math.min(hi,v)); }
-
-  var bgS=[{r:22,g:10,b:5},{r:14,g:8,b:18},{r:6,g:8,b:22},{r:10,g:16,b:32}];
-  function lerpBg(t){
-    var n=bgS.length-1,si=clamp(Math.floor(t*n),0,n-1),lt=clamp(t*n-si,0,1);
-    var a=bgS[si],b=bgS[si+1];
-    return 'rgb('+Math.round(lerp(a.r,b.r,lt))+','+Math.round(lerp(a.g,b.g,lt))+','+Math.round(lerp(a.b,b.b,lt))+')';
+  function sm(a,b,x){ var t=clamp((x-a)/(b-a),0,1); return t*t*(3-2*t); }
+  function rgb(r,g,b,a){
+    if(a!==undefined) return 'rgba('+Math.round(r)+','+Math.round(g)+','+Math.round(b)+','+a.toFixed(3)+')';
+    return 'rgb('+Math.round(r)+','+Math.round(g)+','+Math.round(b)+')';
   }
 
-  // Dirty water particles burst from screen center (crack location)
-  for(var i=0;i<75;i++){
-    var dp=document.createElement('div'); dp.className='dirty-ptcl';
-    var ang=Math.random()*2*Math.PI;
-    var dist=70+Math.random()*300;
-    var tx=(Math.cos(ang)*dist).toFixed(1);
-    var ty=(Math.sin(ang)*dist+Math.random()*60).toFixed(1);
-    var sz=(3+Math.random()*10).toFixed(1);
-    var dur=(0.5+Math.random()*1.2).toFixed(2);
-    var del=(-Math.random()*2.8).toFixed(2);
-    var cols=['rgba(96,58,14,0.88)','rgba(74,45,10,0.82)','rgba(112,68,16,0.82)','rgba(58,36,8,0.76)','rgba(86,52,12,0.92)','rgba(48,30,6,0.72)','rgba(130,80,18,0.7)'];
-    dp.style.cssText='left:calc(50% + '+(Math.random()*6-3)+'px);top:calc(50%);width:'+sz+'px;height:'+sz+'px;background:'+cols[Math.floor(Math.random()*cols.length)]+';--tx:'+tx+'px;--ty:'+ty+'px;--dur:'+dur+'s;--del:'+del+'s;';
-    dirtyLayer.appendChild(dp);
-  }
-  // Screen edge drips
-  for(var j=0;j<18;j++){
-    var dr=document.createElement('div'); dr.className='drip';
-    dr.style.cssText='left:'+(Math.random()*100).toFixed(1)+'%;--w:'+(2+Math.random()*6).toFixed(1)+'px;--dur:'+(0.9+Math.random()*1.5).toFixed(2)+'s;--del:'+(-Math.random()*3.5).toFixed(2)+'s;height:'+(30+Math.random()*80)+'px;';
-    dripLayer.appendChild(dr);
-  }
-  // Tunnel speed lines
-  for(var k=0;k<26;k++){
-    var sl=document.createElement('div'); sl.className='speed-line';
-    sl.style.cssText='top:'+(Math.random()*100).toFixed(1)+'%;--sl:'+(0.35+Math.random()*0.55).toFixed(2)+'s;--sd:'+(-Math.random()*1.2).toFixed(2)+'s;';
-    tunnelLines.appendChild(sl);
-  }
-  // Clean water droplets (offset right of center = under faucet spout)
-  var cleanLayer=faucetEl?faucetEl.querySelector('#clean-layer'):null;
-  for(var m=0;cleanLayer&&m<28;m++){
-    var cp=document.createElement('div'); cp.className='clean-ptcl';
-    cp.style.cssText='left:calc(50% + '+(62+Math.random()*16-8).toFixed(1)+'px);top:calc(50% + 38px);width:'+(2+Math.random()*5).toFixed(1)+'px;height:'+(2+Math.random()*5).toFixed(1)+'px;--ty:'+(55+Math.random()*145).toFixed(1)+'px;--tx:'+(Math.random()*18-9).toFixed(1)+'px;--dur:'+(0.4+Math.random()*0.8).toFixed(2)+'s;--del:'+(-Math.random()*2.2).toFixed(2)+'s;';
-    cleanLayer.appendChild(cp);
+  // ── Water color palette (piecewise) ──────────────────────────────────────
+  var STOPS = [
+    [0.00,  48, 22,  8],
+    [0.30,  58, 32, 10],
+    [0.42,  44, 42, 38],
+    [0.54,  18, 58, 64],
+    [0.66,   8, 96,122],
+    [0.80,   5,130,190],
+    [1.00,   3,148,220],
+  ];
+  function waterRGB(p){
+    for(var i=0;i<STOPS.length-1;i++){
+      var s=STOPS[i],e=STOPS[i+1];
+      if(p>=s[0]&&p<=e[0]){
+        var f=(p-s[0])/(e[0]-s[0]);
+        return [lerp(s[1],e[1],f),lerp(s[2],e[2],f),lerp(s[3],e[3],f)];
+      }
+    }
+    return [3,148,220];
   }
 
-  var curP=0, tgtP=0;
+  function turbMult(p){
+    if(p<0.38) return lerp(1.4,2.0,p/0.38);
+    if(p<0.52) return lerp(2.0,4.2,(p-0.38)/0.14);
+    if(p<0.68) return lerp(4.2,0.7,(p-0.52)/0.16);
+    return lerp(0.7,0.42,clamp((p-0.68)/0.20,0,1));
+  }
 
-  function update(){
+  // ── Wave layers ───────────────────────────────────────────────────────────
+  var WAVES = [
+    {f:0.006, a:16, s:0.55, ph:0.0,  al:0.22},
+    {f:0.010, a:10, s:0.95, ph:2.4,  al:0.18},
+    {f:0.004, a:22, s:0.35, ph:5.1,  al:0.14},
+    {f:0.014, a: 7, s:1.60, ph:1.8,  al:0.11},
+    {f:0.008, a:13, s:0.70, ph:3.7,  al:0.09},
+  ];
+
+  // ── Particles ────────────────────────────────────────────────────────────
+  var PTCL = [], PTCL_N = 72;
+  function mkPtcl(p){
+    var dirty = p < 0.62;
+    return {
+      x: Math.random()*W,
+      y: (0.18+Math.random()*0.64)*H,
+      vx:(Math.random()-0.5)*0.35,
+      vy:dirty?(0.05+Math.random()*0.22):-(0.18+Math.random()*0.55),
+      sz:dirty?(1.5+Math.random()*5.5):(1.2+Math.random()*3.5),
+      life:Math.random()*200,
+      maxLife:dirty?180+Math.random()*200:110+Math.random()*160,
+      dirty:dirty,
+      cr:dirty?(62+Math.floor(Math.random()*22)):0,
+      cg:dirty?(35+Math.floor(Math.random()*14)):0,
+      cb:dirty?(8+Math.floor(Math.random()*8)):0,
+    };
+  }
+  function initPtcl(){ PTCL=[]; for(var i=0;i<PTCL_N;i++) PTCL.push(mkPtcl(0)); }
+
+  // ── Caustics ─────────────────────────────────────────────────────────────
+  var CAUSTICS=[];
+  for(var ci=0;ci<22;ci++){
+    CAUSTICS.push({
+      xF:Math.random(), yF:0.22+Math.random()*0.56,
+      rx:12+Math.random()*45, ry:5+Math.random()*14,
+      ph:Math.random()*Math.PI*2, sp:0.22+Math.random()*0.65
+    });
+  }
+
+  // ── Light shafts ──────────────────────────────────────────────────────────
+  var SHAFTS=[];
+  for(var si=0;si<9;si++){
+    SHAFTS.push({
+      xF:0.04+si*0.11+(Math.random()*0.05-0.025),
+      wF:0.010+Math.random()*0.028,
+      ang:(Math.random()-0.5)*0.10,
+      ph:Math.random()*Math.PI*2,
+      sp:0.14+Math.random()*0.32,
+      maxAl:0.022+Math.random()*0.058
+    });
+  }
+
+  // ── Bolt generation ───────────────────────────────────────────────────────
+  function genBolts(){
+    ['pw-bolts-top','pw-bolts-bot'].forEach(function(id){
+      var svg=document.getElementById(id);
+      if(!svg) return;
+      while(svg.firstChild) svg.removeChild(svg.firstChild);
+      svg.setAttribute('viewBox','0 0 '+W+' 18');
+      svg.setAttribute('width',W); svg.setAttribute('height','18');
+      var sp=Math.max(58,Math.min(88,W/18));
+      var n=Math.ceil(W/sp)+1;
+      for(var bi=0;bi<n;bi++){
+        var bx=bi*sp+sp*0.5, by=9;
+        var hex=document.createElementNS('http://www.w3.org/2000/svg','polygon');
+        var pts=[];
+        for(var a=0;a<6;a++){
+          var ang=(a*60-30)*Math.PI/180;
+          pts.push((bx+7*Math.cos(ang)).toFixed(1)+','+(by+7*Math.sin(ang)).toFixed(1));
+        }
+        hex.setAttribute('points',pts.join(' '));
+        hex.setAttribute('fill','#0C1828');
+        hex.setAttribute('stroke','#1C3252');
+        hex.setAttribute('stroke-width','1');
+        svg.appendChild(hex);
+        var inn=document.createElementNS('http://www.w3.org/2000/svg','circle');
+        inn.setAttribute('cx',bx); inn.setAttribute('cy',by);
+        inn.setAttribute('r','2.8'); inn.setAttribute('fill','#101E38');
+        svg.appendChild(inn);
+      }
+    });
+  }
+
+  function resize(){
+    W=canvas.width=window.innerWidth;
+    H=canvas.height=window.innerHeight;
+    genBolts(); initPtcl();
+  }
+
+  // ── Draw ─────────────────────────────────────────────────────────────────
+  function draw(){
+    if(!W||!H) return;
+    var p=curP;
+    var wc=waterRGB(p);
+    var turb=turbMult(p);
+    var r=wc[0],g=wc[1],b=wc[2];
+
+    // 1. Background gradient — top bright, bottom deep
+    var bg=ctx.createLinearGradient(0,0,0,H);
+    bg.addColorStop(0,   rgb(r*1.35,g*1.50,b*1.65,1));
+    bg.addColorStop(0.18,rgb(r*1.05,g*1.08,b*1.10,1));
+    bg.addColorStop(0.55,rgb(r*0.90,g*0.88,b*0.92,1));
+    bg.addColorStop(1,   rgb(r*0.40,g*0.36,b*0.35,1));
+    ctx.fillStyle=bg;
+    ctx.fillRect(0,0,W,H);
+
+    // 2. Turbulence bands — horizontal sine-wave brightness bands
+    var bAmp=lerp(30,9,sm(0.60,0.88,p))*turb*0.35;
+    var bAl =lerp(0.14,0.055,sm(0.55,0.82,p))*(0.5+turb/4);
+    for(var band=0;band<7;band++){
+      var bfr=0.003+band*0.0018;
+      var bph=(band*1.35)+t*(0.28+band*0.10);
+      var bY0=(band/7)*H+H*0.04;
+      ctx.beginPath();
+      for(var bx2=0;bx2<=W;bx2+=4){
+        var byv=bY0+Math.sin(bx2*bfr+bph)*bAmp
+                +Math.sin(bx2*bfr*2.2+bph*0.65)*(bAmp*0.38);
+        if(bx2===0) ctx.moveTo(bx2,byv); else ctx.lineTo(bx2,byv);
+      }
+      ctx.lineTo(W,bY0+H/7+bAmp*3);
+      ctx.lineTo(0,bY0+H/7+bAmp*3);
+      ctx.closePath();
+      ctx.fillStyle=rgb(Math.min(255,r*1.45),Math.min(255,g*1.45),Math.min(255,b*1.55),bAl);
+      ctx.fill();
+    }
+
+    // 3. Caustics (clean phase)
+    var cStr=sm(0.58,0.84,p);
+    if(cStr>0.01){
+      ctx.save();
+      ctx.globalCompositeOperation='lighter';
+      for(var cai=0;cai<CAUSTICS.length;cai++){
+        var ca=CAUSTICS[cai];
+        var cax=ca.xF*W+Math.sin(t*ca.sp+ca.ph)*52;
+        var cay=ca.yF*H+Math.sin(t*ca.sp*0.68+ca.ph+1)*18;
+        var caA=cStr*(0.016+0.024*Math.abs(Math.sin(t*ca.sp*1.4+ca.ph)));
+        var cg2=ctx.createRadialGradient(cax,cay,0,cax,cay,ca.rx);
+        cg2.addColorStop(0,rgb(r*1.55,g*1.55,b*1.35,caA));
+        cg2.addColorStop(1,'rgba(0,0,0,0)');
+        ctx.save();
+        ctx.scale(1,ca.ry/ca.rx);
+        ctx.fillStyle=cg2;
+        ctx.beginPath();
+        ctx.arc(cax,cay*ca.rx/ca.ry,ca.rx,0,Math.PI*2);
+        ctx.fill();
+        ctx.restore();
+      }
+      ctx.restore();
+    }
+
+    // 4. Light shafts (clean phase)
+    var shStr=sm(0.64,0.88,p);
+    if(shStr>0.01){
+      ctx.save();
+      for(var shai=0;shai<SHAFTS.length;shai++){
+        var sh=SHAFTS[shai];
+        var shA=shStr*sh.maxAl*(0.38+0.62*Math.abs(Math.sin(t*sh.sp+sh.ph)));
+        var shX=sh.xF*W, shW=sh.wF*W;
+        var tY=H*0.18, bY=H*0.80;
+        ctx.save();
+        ctx.translate(shX,0); ctx.rotate(sh.ang);
+        var sg=ctx.createLinearGradient(0,tY,0,bY);
+        sg.addColorStop(0,  rgb(r*1.9,g*1.9,b*1.65,shA));
+        sg.addColorStop(0.5,rgb(r*1.6,g*1.6,b*1.45,shA*0.45));
+        sg.addColorStop(1,  'rgba(0,0,0,0)');
+        ctx.fillStyle=sg;
+        ctx.fillRect(-shW/2,tY,shW,bY-tY);
+        ctx.restore();
+      }
+      ctx.restore();
+    }
+
+    // 5. Wave fills — flowing water volume
+    var midY=H*0.50;
+    for(var wi=WAVES.length-1;wi>=0;wi--){
+      var wv=WAVES[wi];
+      var wA=wv.a*turb;
+      var wPh=wv.ph+t*wv.s;
+      ctx.beginPath();
+      for(var wx=0;wx<=W;wx+=3){
+        var wy=midY+Math.sin(wx*wv.f+wPh)*wA
+               +Math.sin(wx*wv.f*1.75+wPh*0.85)*(wA*0.38);
+        if(wx===0) ctx.moveTo(wx,wy); else ctx.lineTo(wx,wy);
+      }
+      ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.closePath();
+      var wGr=ctx.createLinearGradient(0,midY-wA*2,0,H);
+      wGr.addColorStop(0,  rgb(r*1.35,g*1.35,b*1.45,wv.al*0.42));
+      wGr.addColorStop(0.1,rgb(r*1.12,g*1.12,b*1.18,wv.al*0.22));
+      wGr.addColorStop(1,  rgb(r*0.62,g*0.62,b*0.66,wv.al*0.08));
+      ctx.fillStyle=wGr; ctx.fill();
+    }
+
+    // 6. Foam strokes at wave crests
+    var mwv=WAVES[0];
+    var mPh=mwv.ph+t*mwv.s;
+    var mA=mwv.a*turb;
+    var foamAl=lerp(0.06,0.38,clamp(turb/4.5,0,1));
+    ctx.strokeStyle=rgb(255,255,255,foamAl);
+    ctx.lineWidth=1.2; ctx.lineCap='round';
+    for(var fx=14;fx<W;fx+=34){
+      var fy=midY+Math.sin(fx*mwv.f+mPh)*mA
+             +Math.sin(fx*mwv.f*1.75+mPh*0.85)*(mA*0.38);
+      var cp=Math.sin(fx*mwv.f+mPh);
+      if(cp>0.18){
+        var fw=5+cp*14;
+        ctx.beginPath();
+        ctx.moveTo(fx-fw,fy+1);
+        ctx.bezierCurveTo(fx-fw*0.3,fy-2,fx+fw*0.3,fy-2,fx+fw,fy+1);
+        ctx.stroke();
+      }
+    }
+
+    // 7. Particles (sediment / bubbles)
+    var dFrac=1-sm(0.50,0.70,p);
+    for(var pi=0;pi<PTCL.length;pi++){
+      var pt=PTCL[pi];
+      pt.x+=pt.vx; pt.y+=pt.vy; pt.life++;
+      if(pt.x<-10) pt.x=W+10; if(pt.x>W+10) pt.x=-10;
+      if(pt.life>=pt.maxLife||pt.y>H+20||pt.y<-20){
+        PTCL[pi]=mkPtcl(p); continue;
+      }
+      var lr=pt.life/pt.maxLife;
+      var pA=(lr<0.1?lr*10:lr>0.85?(1-lr)/0.15:1.0)*0.68;
+      if(pt.dirty){
+        pA*=dFrac; if(pA<0.01) continue;
+        ctx.fillStyle=rgb(pt.cr,pt.cg,pt.cb,pA);
+        ctx.beginPath(); ctx.arc(pt.x,pt.y,pt.sz,0,Math.PI*2); ctx.fill();
+      } else {
+        pA*=(1-dFrac); if(pA<0.01) continue;
+        ctx.save(); ctx.globalAlpha=pA;
+        ctx.strokeStyle=rgb(r*1.85,g*1.65,255,0.78);
+        ctx.lineWidth=0.85;
+        ctx.beginPath(); ctx.arc(pt.x,pt.y,pt.sz,0,Math.PI*2); ctx.stroke();
+        ctx.fillStyle='rgba(255,255,255,0.20)';
+        ctx.beginPath();
+        ctx.arc(pt.x-pt.sz*0.28,pt.y-pt.sz*0.28,pt.sz*0.32,0,Math.PI*2);
+        ctx.fill(); ctx.restore();
+      }
+    }
+
+    // 8. Depth vignette
+    var vg=ctx.createRadialGradient(W/2,H/2,H*0.22,W/2,H/2,H*0.78);
+    vg.addColorStop(0,'rgba(0,0,0,0)');
+    vg.addColorStop(1,'rgba(0,0,0,0.30)');
+    ctx.fillStyle=vg; ctx.fillRect(0,0,W,H);
+
+    // 9. Flash
+    var flV=0;
+    if(p>0.43&&p<0.57){ var fp=(p-0.43)/0.14; flV=Math.sin(fp*Math.PI)*0.12; }
+    if(flashEl) flashEl.style.opacity=flV.toFixed(3);
+
+    // 10. Badge
+    if(badgeEl){
+      var bt,bc;
+      if(p<0.35)      { bt='CONTAMINATION DETECTED';    bc='rgba(239,68,68,0.82)'; }
+      else if(p<0.52) { bt='PURIFICATION IN PROGRESS';  bc='rgba(234,179,8,0.82)'; }
+      else if(p<0.72) { bt='FLUSHING SYSTEM';           bc='rgba(34,197,94,0.78)'; }
+      else            { bt='WATER QUALITY RESTORED';    bc='rgba(56,189,248,0.82)'; }
+      badgeEl.textContent=bt;
+      badgeEl.style.color=bc; badgeEl.style.borderColor=bc;
+    }
+
+    // 11. Watermark
+    if(wmEl){
+      var wmA=0.05+sm(0.70,0.92,p)*0.09;
+      wmEl.style.color=rgb(14,165,233,wmA);
+    }
+
+    // 12. Scroll hint
+    if(hintEl) hintEl.style.opacity=clamp(1-p*10,0,1).toFixed(3);
+
+    // 13. Final hero
+    if(finalEl){
+      var fo=sm(0.87,0.97,p);
+      finalEl.style.opacity=fo.toFixed(3);
+      finalEl.style.pointerEvents=fo>0.4?'auto':'none';
+    }
+  }
+
+  function tick(){
+    t+=0.016;
     var rect=seq.getBoundingClientRect();
     tgtP=clamp(-rect.top/(seq.offsetHeight-window.innerHeight),0,1);
-    curP+=(tgtP-curP)*0.065;
-    var p=curP;
-
-    if(bg) bg.style.background=lerpBg(p);
-
-    // Phase 1: Burst
-    var burstFade=clamp(1-(p-0.30)/0.16,0,1);
-    if(dirtyOvl)   dirtyOvl.style.opacity=burstFade;
-    if(dirtyLayer) dirtyLayer.style.opacity=burstFade;
-    if(dripLayer)  dripLayer.style.opacity=burstFade;
-    sprayLines.forEach(function(l){ l.style.opacity=burstFade; });
-
-    // Pipe scene fades out during tunnel
-    if(pipeScene) pipeScene.style.opacity=clamp(1-(p-0.57)/0.13,0,1);
-
-    // Phase 2: Wrench
-    var wOp;
-    if(p<0.27)       wOp=0;
-    else if(p<0.39)  wOp=clamp((p-0.27)/0.12,0,1);
-    else if(p<0.56)  wOp=1;
-    else             wOp=clamp(1-(p-0.56)/0.10,0,1);
-
-    var wY;
-    if(p<0.27)       wY=-200;
-    else if(p<0.38)  wY=lerp(-200,-10,(p-0.27)/0.11);
-    else if(p<0.56)  wY=-10;
-    else             wY=lerp(-10,-200,(p-0.56)/0.10);
-
-    var wAng=0;
-    if(p>=0.38&&p<=0.56){
-      var rp=(p-0.38)/0.18, sp=rp*6, sf=sp-Math.floor(sp), cum=Math.floor(sp)*-12;
-      wAng=sf<0.6?cum+lerp(0,-55,sf/0.6):cum-55+lerp(0,43,(sf-0.6)/0.4);
-    } else if(p>0.56){ wAng=-72; }
-
-    if(wrenchEl){
-      wrenchEl.style.opacity=wOp;
-      wrenchEl.style.transform='translate(-13%, calc(-50% + '+wY.toFixed(1)+'px)) rotate('+wAng.toFixed(1)+'deg)';
-    }
-
-    // Crack seal
-    var sOp=clamp((p-0.38)/0.18,0,1);
-    [crackSeal,crackSealH,crackSealS,crackSealI].forEach(function(e){ if(e) e.setAttribute('opacity',sOp.toFixed(3)); });
-    sealBolts.forEach(function(b){ if(b) b.setAttribute('opacity',sOp.toFixed(3)); });
-
-    // Phase 3: Tunnel
-    var tOp=0;
-    if(p>=0.55&&p<0.63)      tOp=clamp((p-0.55)/0.08,0,1);
-    else if(p>=0.63&&p<0.73) tOp=1;
-    else if(p>=0.73)          tOp=clamp(1-(p-0.73)/0.09,0,1);
-    if(tunnelEl) tunnelEl.style.opacity=tOp;
-
-    // Phase 4: Clean water faucet
-    if(faucetEl) faucetEl.style.opacity=clamp((p-0.72)/0.13,0,1);
-
-    // Label
-    if(label){
-      if(p<0.30){      label.textContent='EMERGENCY — PIPE BURST'; label.style.color='rgba(239,68,68,0.70)'; }
-      else if(p<0.57){ label.textContent='REPAIR IN PROGRESS';      label.style.color='rgba(234,179,8,0.70)'; }
-      else if(p<0.75){ label.textContent='FLUSHING SYSTEM...';      label.style.color='rgba(14,165,233,0.70)'; }
-      else {           label.textContent='SYSTEM RESTORED';         label.style.color='rgba(34,197,94,0.70)'; }
-    }
-    if(hint)    hint.style.opacity=clamp(1-p*12,0,1);
-    if(finalEl){
-      var fo=clamp((p-0.87)/0.11,0,1);
-      finalEl.style.opacity=fo;
-      finalEl.style.pointerEvents=fo>0.5?'auto':'none';
-    }
-    requestAnimationFrame(update);
+    curP+=(tgtP-curP)*0.06;
+    draw();
+    requestAnimationFrame(tick);
   }
-  requestAnimationFrame(update);
+
+  window.addEventListener('resize',resize);
+  resize();
+  requestAnimationFrame(tick);
 })();
+
 </script>
 </body>
 </html>
