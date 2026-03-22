@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indoor Air Quality Solutions | AirPro HVAC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────────── */
+:root {
+  --black:    #070711;
+  --dark:     #0D1A2E;
+  --surface:  #0F1E32;
+  --surface2: #162540;
+  --border:   #1E3A5F;
+  --border2:  #254872;
+  --ice:      #38BDF8;
+  --ice2:     #7DD3FC;
+  --ice3:     #BAE6FD;
+  --cyan:     #06B6D4;
+  --white:    #EEF6FF;
+  --muted:    #5A7A9A;
+  --text:     #A8C4DC;
+  --font-head: 'Barlow Condensed', sans-serif;
+  --font-body: 'Barlow', sans-serif;
+  --radius:   4px;
+  --radius-lg: 8px;
+  --glow: 0 0 32px rgba(56,189,248,0.18);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-body); background: var(--black); color: var(--text); overflow-x: hidden; line-height: 1.6; }
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0; opacity: 0.4;
+}
+
+/* ─── UTILITY ────────────────────────────────────── */
+.container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+.section { padding: 96px 0; }
+.eyebrow {
+  font-family: var(--font-head); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.22em; text-transform: uppercase; color: var(--ice); margin-bottom: 12px;
+}
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-head); font-weight: 700; font-size: 15px;
+  letter-spacing: 0.06em; text-transform: uppercase; padding: 14px 28px;
+  border-radius: var(--radius); cursor: pointer; border: none; transition: all 0.2s ease;
+}
+.btn-primary { background: linear-gradient(135deg, var(--ice) 0%, var(--cyan) 100%); color: var(--black); }
+.btn-primary:hover { background: linear-gradient(135deg, var(--ice2) 0%, var(--ice) 100%); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(56,189,248,0.3); }
+.btn-outline { background: transparent; color: var(--white); border: 1.5px solid var(--border2); }
+.btn-outline:hover { border-color: var(--ice); color: var(--ice); }
+.section-title {
+  font-family: var(--font-head); font-size: clamp(32px, 4vw, 52px); font-weight: 900;
+  text-transform: uppercase; letter-spacing: -0.02em; color: var(--white);
+  margin-bottom: 16px; line-height: 1;
+}
+
+/* ─── NAV ────────────────────────────────────────── */
+nav { position: sticky; top: 0; z-index: 100; background: rgba(7,7,17,0.94); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); }
+.nav-inner { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+.logo { font-family: var(--font-head); font-size: 24px; font-weight: 900; letter-spacing: -0.01em; color: var(--white); }
+.logo span { color: var(--ice); }
+.nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+.nav-links > li > a {
+  font-family: var(--font-head); font-size: 13px; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--muted); transition: color 0.15s;
+  display: flex; align-items: center; gap: 4px;
+}
+.nav-links > li > a:hover { color: var(--white); }
+.nav-links li { position: relative; }
+.nav-dropdown {
+  display: none; position: absolute; top: calc(100% + 14px); left: 50%; transform: translateX(-50%);
+  background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-lg);
+  padding: 8px; min-width: 230px; z-index: 200; box-shadow: 0 20px 48px rgba(0,0,0,0.7), var(--glow);
+}
+.nav-dropdown::before {
+  content: ''; position: absolute; top: -6px; left: 50%; transform: translateX(-50%);
+  width: 10px; height: 10px; background: var(--surface);
+  border-left: 1px solid var(--border2); border-top: 1px solid var(--border2); rotate: 45deg;
+}
+.nav-dropdown a {
+  display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: var(--radius);
+  font-size: 13px; font-family: var(--font-head); font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--text); transition: background 0.15s, color 0.15s; white-space: nowrap;
+}
+.nav-dropdown a svg { flex-shrink: 0; opacity: 0.6; }
+.nav-dropdown a:hover { background: var(--surface2); color: var(--ice); }
+.nav-dropdown a:hover svg { opacity: 1; }
+.nav-has-dropdown > a::after {
+  content: ''; display: inline-block; width: 0; height: 0;
+  border-left: 4px solid transparent; border-right: 4px solid transparent;
+  border-top: 4px solid currentColor; opacity: 0.5; margin-left: 2px;
+}
+.nav-has-dropdown:hover .nav-dropdown { display: block; }
+.nav-cta { display: flex; align-items: center; gap: 16px; }
+.live-badge {
+  display: flex; align-items: center; gap: 8px; font-family: var(--font-head);
+  font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ice);
+}
+.pulse-dot { width: 7px; height: 7px; background: var(--ice); border-radius: 50%; animation: pulse 2s ease-in-out infinite; box-shadow: 0 0 6px var(--ice); }
+@keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.35; transform: scale(0.65); } }
+.nav-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
+.nav-toggle span { display: block; width: 22px; height: 2px; background: var(--white); border-radius: 2px; transition: all 0.25s; }
+.mobile-menu { display: none; flex-direction: column; background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 24px 24px; gap: 4px; }
+.mobile-menu a { font-family: var(--font-head); font-size: 14px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); padding: 10px 0; border-bottom: 1px solid rgba(30,58,95,0.5); transition: color 0.15s; }
+.mobile-menu a:hover { color: var(--ice); }
+.mobile-menu a:last-child { border-bottom: none; }
+.mobile-menu.open { display: flex; }
+
+/* ─── PAGE HERO ──────────────────────────────────── */
+.page-hero {
+  min-height: 62vh; display: flex; align-items: center;
+  background: linear-gradient(160deg, var(--black) 0%, #091525 55%, #0a1e35 100%);
+  position: relative; overflow: hidden; padding: 130px 0 90px;
+}
+.page-hero::before {
+  content: ''; position: absolute; top: -120px; right: -120px;
+  width: 640px; height: 640px;
+  background: radial-gradient(circle, rgba(56,189,248,0.10) 0%, transparent 70%);
+  border-radius: 50%; filter: blur(60px); pointer-events: none;
+}
+.page-hero::after {
+  content: ''; position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(56,189,248,0.04) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(56,189,248,0.04) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse 85% 85% at 65% 50%, black 15%, transparent 78%);
+  pointer-events: none;
+}
+.page-hero-inner { position: relative; z-index: 2; }
+.available-badge {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: rgba(56,189,248,0.07); border: 1px solid rgba(56,189,248,0.22);
+  border-radius: 40px; padding: 8px 18px; margin-bottom: 24px;
+}
+.available-badge-dot { width: 9px; height: 9px; background: var(--ice); border-radius: 50%; animation: availPulse 1.4s ease-in-out infinite; }
+@keyframes availPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(56,189,248,0.6); } 50% { box-shadow: 0 0 0 6px rgba(56,189,248,0); } }
+.available-badge-text { font-family: var(--font-head); font-size: 12px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ice); }
+.page-hero h1 {
+  font-family: var(--font-head); font-size: clamp(48px, 8vw, 96px); font-weight: 900;
+  text-transform: uppercase; letter-spacing: -0.02em; line-height: 0.92;
+  background: linear-gradient(135deg, var(--ice3) 0%, var(--ice) 45%, var(--cyan) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  margin-bottom: 22px;
+}
+.page-hero-sub { font-size: 18px; color: var(--muted); line-height: 1.65; max-width: 560px; margin-bottom: 36px; }
+.hero-actions { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+
+/* ─── PROBLEM GRID ───────────────────────────────── */
+.problem-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+.problem-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 28px 24px; display: flex; align-items: flex-start; gap: 16px;
+  transition: border-color 0.2s, transform 0.2s;
+}
+.problem-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+.problem-icon {
+  width: 48px; height: 48px; flex-shrink: 0; background: rgba(56,189,248,0.07);
+  border: 1px solid rgba(56,189,248,0.15); border-radius: var(--radius-lg);
+  display: flex; align-items: center; justify-content: center; color: var(--ice);
+}
+.problem-card h3 { font-family: var(--font-head); font-size: 18px; font-weight: 800; text-transform: uppercase; color: var(--white); margin-bottom: 8px; }
+.problem-card p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+/* ─── SOLUTIONS GRID ─────────────────────────────── */
+.solutions-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.solution-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 36px 28px; position: relative; overflow: hidden; transition: border-color 0.2s, transform 0.2s;
+}
+.solution-card::before {
+  content: ''; position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 60%; height: 2px; background: linear-gradient(90deg, transparent, var(--ice), transparent); opacity: 0; transition: opacity 0.2s;
+}
+.solution-card:hover { border-color: var(--border2); transform: translateY(-3px); }
+.solution-card:hover::before { opacity: 1; }
+.solution-num { font-family: var(--font-head); font-size: 52px; font-weight: 900; color: rgba(56,189,248,0.08); line-height: 1; margin-bottom: 16px; }
+.solution-icon { color: var(--ice); margin-bottom: 14px; }
+.solution-card h3 { font-family: var(--font-head); font-size: 20px; font-weight: 800; text-transform: uppercase; color: var(--white); margin-bottom: 10px; }
+.solution-card p { font-size: 14px; color: var(--muted); line-height: 1.65; }
+
+/* ─── COMPARISON TABLE ───────────────────────────── */
+.compare-table { width: 100%; border-collapse: collapse; border-radius: var(--radius-lg); overflow: hidden; }
+.compare-table thead tr { background: var(--surface2); }
+.compare-table th {
+  font-family: var(--font-head); font-size: 13px; font-weight: 700; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--white); padding: 18px 20px; text-align: left;
+}
+.compare-table th:not(:first-child) { text-align: center; }
+.compare-table tbody tr { border-top: 1px solid var(--border); transition: background 0.15s; }
+.compare-table tbody tr:hover { background: rgba(56,189,248,0.03); }
+.compare-table td { padding: 16px 20px; font-size: 14px; color: var(--muted); vertical-align: middle; }
+.compare-table td:not(:first-child) { text-align: center; }
+.compare-table td:first-child { font-weight: 600; color: var(--text); }
+.check-yes { color: var(--ice); display: inline-flex; }
+.check-no { color: #4a6080; display: inline-flex; }
+.col-before { color: var(--muted); font-size: 12px; font-family: var(--font-head); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+.col-after { color: var(--ice); font-size: 12px; font-family: var(--font-head); font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* ─── REVIEWS ────────────────────────────────────── */
+.reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.review-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px 28px; position: relative; transition: border-color 0.2s, transform 0.2s; }
+.review-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+.review-stars { display: flex; gap: 4px; margin-bottom: 16px; color: var(--ice); }
+.review-text { font-size: 14px; color: var(--text); line-height: 1.7; margin-bottom: 20px; font-style: italic; }
+.review-author { display: flex; align-items: center; gap: 12px; }
+.review-avatar { width: 40px; height: 40px; background: var(--surface2); border: 1px solid var(--border2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 16px; font-weight: 800; color: var(--ice); }
+.review-name { font-family: var(--font-head); font-size: 14px; font-weight: 700; text-transform: uppercase; color: var(--white); }
+.review-location { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+/* ─── CTA STRIP ──────────────────────────────────── */
+.cta-strip {
+  background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%);
+  border-top: 1px solid var(--border2); border-bottom: 1px solid var(--border2);
+  padding: 72px 0; text-align: center;
+}
+
+/* ─── SCROLL REVEAL ──────────────────────────────── */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ─── FOOTER ─────────────────────────────────────── */
+footer { background: var(--black); border-top: 1px solid var(--border); padding: 64px 0 32px; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 48px; margin-bottom: 56px; }
+.footer-brand .logo { font-size: 22px; margin-bottom: 12px; }
+.footer-brand p { font-size: 14px; color: var(--muted); line-height: 1.7; max-width: 280px; margin-bottom: 24px; }
+.footer-lic {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(56,189,248,0.06); border: 1px solid rgba(56,189,248,0.12);
+  border-radius: var(--radius); padding: 8px 12px;
+  font-family: var(--font-head); font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ice);
+}
+.footer-col h4 { font-family: var(--font-head); font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--white); margin-bottom: 18px; }
+.footer-links { display: flex; flex-direction: column; gap: 10px; list-style: none; }
+.footer-links a { font-size: 14px; color: var(--muted); transition: color 0.15s; }
+.footer-links a:hover { color: var(--ice); }
+.footer-contact { display: flex; flex-direction: column; gap: 14px; }
+.footer-contact-item { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--muted); line-height: 1.5; }
+.footer-contact-item svg { flex-shrink: 0; margin-top: 2px; color: var(--ice); }
+.footer-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.footer-copy { font-size: 13px; color: var(--muted); }
+.footer-legal { display: flex; gap: 20px; list-style: none; }
+.footer-legal a { font-size: 13px; color: var(--muted); transition: color 0.15s; }
+.footer-legal a:hover { color: var(--ice); }
+
+/* ─── RESPONSIVE ─────────────────────────────────── */
+@media (max-width: 1024px) {
+  .solutions-grid { grid-template-columns: repeat(2, 1fr); }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 36px; }
+}
+@media (max-width: 768px) {
+  .nav-links, .nav-cta .live-badge, .nav-cta .btn { display: none; }
+  .nav-toggle { display: flex; }
+  .problem-grid { grid-template-columns: 1fr; }
+  .solutions-grid { grid-template-columns: 1fr; }
+  .reviews-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+  .footer-bottom { flex-direction: column; align-items: flex-start; }
+  .section { padding: 64px 0; }
+  .compare-table { font-size: 13px; }
+}
+@media (max-width: 480px) {
+  .hero-actions { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════ NAV ═════════════════════════════════ -->
+<nav id="site-nav">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="hvac.html" class="logo">AIR<span>PRO</span></a>
+
+      <ul class="nav-links">
+        <li class="nav-has-dropdown">
+          <a href="#">Services</a>
+          <div class="nav-dropdown">
+            <a href="ac-repair.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+              AC Repair
+            </a>
+            <a href="ac-installation.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              AC Installation &amp; Replacement
+            </a>
+            <a href="heating.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+              Heating &amp; Heat Pumps
+            </a>
+            <a href="air-quality.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/></svg>
+              Air Quality &amp; Filtration
+            </a>
+            <a href="commercial-hvac.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
+              Commercial HVAC
+            </a>
+            <a href="emergency-hvac.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              Emergency Service
+            </a>
+          </div>
+        </li>
+        <li class="nav-has-dropdown">
+          <a href="#">Company</a>
+          <div class="nav-dropdown">
+            <a href="about.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              About AirPro
+            </a>
+            <a href="team.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Our Team
+            </a>
+            <a href="blog.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Blog &amp; Tips
+            </a>
+            <a href="reviews.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              Reviews
+            </a>
+            <a href="privacy.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Privacy Policy
+            </a>
+            <a href="contact.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Contact
+            </a>
+          </div>
+        </li>
+        <li><a href="hvac.html#areas">Service Areas</a></li>
+        <li><a href="reviews.html">Reviews</a></li>
+      </ul>
+
+      <div class="nav-cta">
+        <div class="live-badge">
+          <div class="pulse-dot"></div>
+          24/7 Service
+        </div>
+        <a href="tel:7865550100" class="btn btn-primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.45 2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          Call Now
+        </a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="ac-repair.html">AC Repair</a>
+    <a href="ac-installation.html">AC Installation &amp; Replacement</a>
+    <a href="heating.html">Heating &amp; Heat Pumps</a>
+    <a href="air-quality.html">Air Quality &amp; Filtration</a>
+    <a href="commercial-hvac.html">Commercial HVAC</a>
+    <a href="emergency-hvac.html">Emergency Service</a>
+    <a href="about.html">About AirPro</a>
+    <a href="reviews.html">Reviews</a>
+    <a href="contact.html">Contact</a>
+    <a href="tel:7865550100" style="color: var(--ice); margin-top: 4px;">(786) 555-0100 — Call Now</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════ PAGE HERO ════════════════════════════════ -->
+<section class="page-hero">
+  <div class="container page-hero-inner">
+    <div class="available-badge">
+      <div class="available-badge-dot"></div>
+      <span class="available-badge-text">Free Air Quality Assessment</span>
+    </div>
+    <div class="eyebrow">Indoor Air Quality Solutions</div>
+    <h1>Breathe<br>Cleaner Air</h1>
+    <p class="page-hero-sub">South Florida homes trap allergens, humidity, VOCs, and mold spores — problems your AC alone cannot fix. AirPro installs whole-home air quality systems that deliver measurably cleaner, healthier air every day.</p>
+    <div class="hero-actions">
+      <a href="contact.html" class="btn btn-primary">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.45 2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Get a Free Assessment
+      </a>
+      <a href="tel:7865550100" class="btn btn-outline">(786) 555-0100</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ SECTION 1: PROBLEMS ══════════════════════════════ -->
+<section class="section" style="background: var(--dark);">
+  <div class="container">
+    <div class="reveal" style="text-align: center; margin-bottom: 56px;">
+      <div class="eyebrow">What's Hiding in Your Air</div>
+      <h2 class="section-title">The Hidden Cost of<br>Poor Indoor Air Quality</h2>
+      <p style="font-size: 16px; color: var(--muted); max-width: 560px; margin: 0 auto;">The EPA ranks indoor air pollution among the top five environmental health risks. South Florida's heat and humidity make local homes especially vulnerable to these four core problems.</p>
+    </div>
+    <div class="problem-grid">
+      <div class="problem-card reveal">
+        <div class="problem-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/></svg>
+        </div>
+        <div>
+          <h3>Allergens &amp; Particulates</h3>
+          <p>Pollen, pet dander, dust mites, and fine particulate matter (PM2.5) circulate through your ductwork every time your system runs. Standard 1-inch filters capture less than 30% of these particles, leaving the rest to trigger allergies, asthma, and respiratory irritation.</p>
+        </div>
+      </div>
+      <div class="problem-card reveal reveal-delay-1">
+        <div class="problem-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48 2.83-2.83"/></svg>
+        </div>
+        <div>
+          <h3>Excess Humidity</h3>
+          <p>Miami-Dade humidity routinely exceeds 80% indoors without proper dehumidification. High moisture levels promote mold growth, make your home feel hotter, cause wood warping, and put extra strain on your AC system — raising energy bills and shortening equipment life.</p>
+        </div>
+      </div>
+      <div class="problem-card reveal reveal-delay-2">
+        <div class="problem-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18M3 6h18M3 18h12"/></svg>
+        </div>
+        <div>
+          <h3>VOCs &amp; Chemical Pollutants</h3>
+          <p>Volatile organic compounds off-gas from paint, cleaning products, furniture, and building materials. In a sealed Florida home, VOC concentrations can be 2 to 5 times higher than outdoor levels — linked to headaches, dizziness, and long-term respiratory damage.</p>
+        </div>
+      </div>
+      <div class="problem-card reveal reveal-delay-3">
+        <div class="problem-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        </div>
+        <div>
+          <h3>Mold &amp; Microbial Growth</h3>
+          <p>Florida's climate is ideal for mold colonization in ductwork, evaporator coils, and air handlers. Mold spores spread through every room the moment your fan turns on — causing musty odors, property damage, and serious health consequences for occupants.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ SECTION 2: SOLUTIONS ═════════════════════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="reveal" style="text-align: center; margin-bottom: 56px;">
+      <div class="eyebrow">Our Air Quality Systems</div>
+      <h2 class="section-title">Five Solutions for<br>Dramatically Cleaner Air</h2>
+      <p style="font-size: 16px; color: var(--muted); max-width: 560px; margin: 0 auto;">Every home is different. Our certified technicians assess your space and recommend a layered strategy — because clean air is the result of multiple systems working together.</p>
+    </div>
+    <div class="solutions-grid">
+      <div class="solution-card reveal">
+        <div class="solution-num">01</div>
+        <div class="solution-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/></svg>
+        </div>
+        <h3>HEPA Whole-Home Filtration</h3>
+        <p>True HEPA media filters integrate directly into your air handler and capture 99.97% of particles 0.3 microns or larger — including pollen, pet dander, dust mites, and most airborne bacteria. We size and install the correct filter box for your system's airflow requirements to avoid pressure-drop issues.</p>
+      </div>
+      <div class="solution-card reveal reveal-delay-1">
+        <div class="solution-num">02</div>
+        <div class="solution-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </div>
+        <h3>UV Air Purifiers</h3>
+        <p>Germicidal UV-C lights mounted inside your air handler neutralize mold spores, bacteria, and viruses on contact — including those too small for any filter. AirPro installs dual-lamp systems that treat both the coil surface and the airstream 24 hours a day, eliminating bio-growth at its source.</p>
+      </div>
+      <div class="solution-card reveal reveal-delay-2">
+        <div class="solution-num">03</div>
+        <div class="solution-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48 2.83-2.83"/></svg>
+        </div>
+        <h3>Whole-Home Dehumidifiers</h3>
+        <p>A dedicated whole-home dehumidifier works independently of your AC to pull moisture out of the air and maintain relative humidity between 45–55% year-round. Unlike portable units, it handles the entire home and drains automatically — no buckets, no guesswork, no wet-feeling rooms.</p>
+      </div>
+      <div class="solution-card reveal reveal-delay-1">
+        <div class="solution-num">04</div>
+        <div class="solution-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18M9 5l-6 7 6 7M15 5l6 7-6 7"/></svg>
+        </div>
+        <h3>Professional Duct Cleaning</h3>
+        <p>Years of dust, debris, pet hair, and microbial growth accumulate inside your ductwork. Our negative-pressure duct cleaning service vacuums and brushes your entire duct system, then applies an EPA-registered antimicrobial treatment — removing the reservoir of contaminants that standard filters never see.</p>
+      </div>
+      <div class="solution-card reveal reveal-delay-2">
+        <div class="solution-num">05</div>
+        <div class="solution-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+        </div>
+        <h3>Smart Thermostats &amp; IAQ Monitors</h3>
+        <p>See your air quality in real time. We install smart thermostats and connected indoor air quality monitors that track PM2.5, CO2, humidity, and VOC levels — then automatically adjust your HVAC system to keep readings in healthy ranges. Know exactly what you're breathing, every hour of the day.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ SECTION 3: COMPARISON TABLE ══════════════════════ -->
+<section class="section" style="background: var(--dark);">
+  <div class="container">
+    <div class="reveal" style="text-align: center; margin-bottom: 56px;">
+      <div class="eyebrow">Results You Can Measure</div>
+      <h2 class="section-title">Before vs. After<br>AirPro Treatment</h2>
+      <p style="font-size: 16px; color: var(--muted); max-width: 520px; margin: 0 auto;">Our customers report measurable improvements in every category. Here is what a full AirPro air quality system installation typically delivers within 30 days.</p>
+    </div>
+    <div class="reveal" style="background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden;">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Measurement</th>
+            <th><span class="col-before">Before AirPro</span></th>
+            <th><span class="col-after">After AirPro</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Airborne particle count (PM2.5)</td>
+            <td>High — standard filter misses most</td>
+            <td>Reduced by up to 97% with HEPA</td>
+          </tr>
+          <tr>
+            <td>Indoor relative humidity</td>
+            <td>70–90% during summer months</td>
+            <td>Maintained at 45–55% year-round</td>
+          </tr>
+          <tr>
+            <td>Mold &amp; bacteria on coil surface</td>
+            <td>Active colonies on evaporator coil</td>
+            <td>Eliminated by UV-C lamp treatment</td>
+          </tr>
+          <tr>
+            <td>VOC concentration</td>
+            <td>Elevated — sealed home traps gases</td>
+            <td>Reduced through improved ventilation and activated carbon media</td>
+          </tr>
+          <tr>
+            <td>Dust accumulation on surfaces</td>
+            <td>Weekly dusting needed</td>
+            <td>Significantly reduced — less frequent cleaning</td>
+          </tr>
+          <tr>
+            <td>Allergy and asthma symptom frequency</td>
+            <td>Daily triggers for sensitive occupants</td>
+            <td>Majority of customers report noticeable reduction</td>
+          </tr>
+          <tr>
+            <td>Musty odors</td>
+            <td>Present — especially in summer</td>
+            <td>Eliminated within 2–4 weeks of UV installation</td>
+          </tr>
+          <tr>
+            <td>AC system efficiency</td>
+            <td>Coil fouling raises energy use</td>
+            <td>Cleaner coil improves efficiency by 10–15%</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ SECTION 4: REVIEWS ═══════════════════════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="reveal" style="text-align: center; margin-bottom: 56px;">
+      <div class="eyebrow">Customer Reviews</div>
+      <h2 class="section-title">What Our Customers<br>Are Breathing</h2>
+    </div>
+    <div class="reviews-grid">
+      <div class="review-card reveal">
+        <div class="review-stars">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="review-text">"My daughter has had severe dust allergies her whole life. Within two weeks of AirPro installing the HEPA system and UV purifier, she stopped waking up with a stuffy nose entirely. I cannot recommend this enough to other parents dealing with the same thing."</p>
+        <div class="review-author">
+          <div class="review-avatar">MT</div>
+          <div>
+            <div class="review-name">Maria T.</div>
+            <div class="review-location">Kendall, FL</div>
+          </div>
+        </div>
+      </div>
+      <div class="review-card reveal reveal-delay-1">
+        <div class="review-stars">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="review-text">"We had a persistent musty smell for two years. Three different companies told us it was just 'South Florida humidity.' AirPro diagnosed mold on the evaporator coil in about ten minutes. UV lamp, coil clean, dehumidifier — the smell was gone in a week and has not come back."</p>
+        <div class="review-author">
+          <div class="review-avatar">JR</div>
+          <div>
+            <div class="review-name">James R.</div>
+            <div class="review-location">Coral Gables, FL</div>
+          </div>
+        </div>
+      </div>
+      <div class="review-card reveal reveal-delay-2">
+        <div class="review-stars">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="review-text">"The smart thermostat and IAQ monitor AirPro installed completely changed how I think about my home. Seeing real-time PM2.5 numbers on my phone made the investment obvious. My electricity bill dropped 12% the first month because the cleaner coil runs more efficiently."</p>
+        <div class="review-author">
+          <div class="review-avatar">SP</div>
+          <div>
+            <div class="review-name">Sandra P.</div>
+            <div class="review-location">Doral, FL</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ CTA STRIP ════════════════════════════════════════ -->
+<section class="cta-strip">
+  <div class="container">
+    <div class="reveal" style="text-align: center;">
+      <div class="eyebrow">Take the First Step</div>
+      <h2 class="section-title" style="max-width: 600px; margin: 0 auto 16px;">Ready to Breathe Better?</h2>
+      <p style="font-size: 17px; color: var(--muted); max-width: 500px; margin: 0 auto 32px; line-height: 1.65;">Book a free indoor air quality assessment. Our technician will test your home and give you a written recommendation — no pressure, no obligation.</p>
+      <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
+        <a href="contact.html" class="btn btn-primary" style="font-size: 16px; padding: 16px 36px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.45 2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          Book Free Assessment
+        </a>
+        <a href="tel:7865550100" class="btn btn-outline" style="font-size: 16px; padding: 16px 36px;">(786) 555-0100</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ FOOTER ═══════════════════════════════ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">AIR<span>PRO</span></div>
+        <p>South Florida's trusted HVAC experts since 2009. Licensed, insured, and committed to keeping your home perfectly comfortable year-round.</p>
+        <div class="footer-lic">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          HVAC License #CAC1818191
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul class="footer-links">
+          <li><a href="ac-repair.html">AC Repair</a></li>
+          <li><a href="ac-installation.html">AC Installation</a></li>
+          <li><a href="heating.html">Heating &amp; Heat Pumps</a></li>
+          <li><a href="air-quality.html">Air Quality</a></li>
+          <li><a href="commercial-hvac.html">Commercial HVAC</a></li>
+          <li><a href="emergency-hvac.html">Emergency Service</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul class="footer-links">
+          <li><a href="about.html">About AirPro</a></li>
+          <li><a href="team.html">Our Team</a></li>
+          <li><a href="blog.html">Blog &amp; Tips</a></li>
+          <li><a href="reviews.html">Reviews</a></li>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contact Info</h4>
+        <div class="footer-contact">
+          <div class="footer-contact-item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            8400 NW 36th St, Suite 450<br>Doral, FL 33166
+          </div>
+          <div class="footer-contact-item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.45 2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <a href="tel:7865550100" style="transition: color 0.15s;">(786) 555-0100</a>
+          </div>
+          <div class="footer-contact-item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            service@airprohvac.com
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="footer-copy">&copy; 2026 AirPro HVAC. All rights reserved. HVAC License #CAC1818191.</p>
+      <ul class="footer-legal">
+        <li><a href="privacy.html">Privacy Policy</a></li>
+        <li><a href="about.html#terms">Terms of Service</a></li>
+        <li><a href="sitemap.html">Sitemap</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ── Mobile nav toggle ── */
+const toggle = document.getElementById('nav-toggle');
+const mobileMenu = document.getElementById('mobile-menu');
+if (toggle && mobileMenu) {
+  toggle.addEventListener('click', () => { mobileMenu.classList.toggle('open'); });
+}
+
+/* ── Scroll reveal ── */
+(function () {
+  'use strict';
+  const reveals = document.querySelectorAll('.reveal');
+  if (!reveals.length) return;
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('visible'); io.unobserve(entry.target); }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -36px 0px' });
+  reveals.forEach(el => io.observe(el));
+})();
+</script>
+</body>
+</html>

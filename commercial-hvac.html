@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Commercial HVAC South Florida | AirPro HVAC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────────── */
+:root {
+  --black:    #070711;
+  --dark:     #0D1A2E;
+  --surface:  #0F1E32;
+  --surface2: #162540;
+  --border:   #1E3A5F;
+  --border2:  #254872;
+  --ice:      #38BDF8;
+  --ice2:     #7DD3FC;
+  --ice3:     #BAE6FD;
+  --cyan:     #06B6D4;
+  --white:    #EEF6FF;
+  --muted:    #5A7A9A;
+  --text:     #A8C4DC;
+  --font-head: 'Barlow Condensed', sans-serif;
+  --font-body: 'Barlow', sans-serif;
+  --radius:   4px;
+  --radius-lg: 8px;
+  --glow: 0 0 32px rgba(56,189,248,0.18);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-body); background: var(--black); color: var(--text); overflow-x: hidden; line-height: 1.6; }
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+body::before {
+  content: ''; position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0; opacity: 0.4;
+}
+
+/* ─── UTILITY ────────────────────────────────────── */
+.container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+.section { padding: 96px 0; }
+.eyebrow { font-family: var(--font-head); font-size: 12px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ice); margin-bottom: 12px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-head); font-weight: 700; font-size: 15px; letter-spacing: 0.06em; text-transform: uppercase; padding: 14px 28px; border-radius: var(--radius); cursor: pointer; border: none; transition: all 0.2s ease; }
+.btn-primary { background: linear-gradient(135deg, var(--ice) 0%, var(--cyan) 100%); color: var(--black); }
+.btn-primary:hover { background: linear-gradient(135deg, var(--ice2) 0%, var(--ice) 100%); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(56,189,248,0.3); }
+.btn-outline { background: transparent; color: var(--white); border: 1.5px solid var(--border2); }
+.btn-outline:hover { border-color: var(--ice); color: var(--ice); }
+.section-title { font-family: var(--font-head); font-size: clamp(32px, 4vw, 52px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em; color: var(--white); margin-bottom: 16px; line-height: 1; }
+
+/* ─── NAV ────────────────────────────────────────── */
+nav { position: sticky; top: 0; z-index: 100; background: rgba(7,7,17,0.94); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); }
+.nav-inner { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+.logo { font-family: var(--font-head); font-size: 24px; font-weight: 900; letter-spacing: -0.01em; color: var(--white); }
+.logo span { color: var(--ice); }
+.nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+.nav-links > li > a { font-family: var(--font-head); font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); transition: color 0.15s; display: flex; align-items: center; gap: 4px; }
+.nav-links > li > a:hover { color: var(--white); }
+.nav-links li { position: relative; }
+.nav-dropdown { display: none; position: absolute; top: calc(100% + 14px); left: 50%; transform: translateX(-50%); background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 8px; min-width: 230px; z-index: 200; box-shadow: 0 20px 48px rgba(0,0,0,0.7), var(--glow); }
+.nav-dropdown::before { content: ''; position: absolute; top: -6px; left: 50%; transform: translateX(-50%); width: 10px; height: 10px; background: var(--surface); border-left: 1px solid var(--border2); border-top: 1px solid var(--border2); rotate: 45deg; }
+.nav-dropdown a { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: var(--radius); font-size: 13px; font-family: var(--font-head); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); transition: background 0.15s, color 0.15s; white-space: nowrap; }
+.nav-dropdown a svg { flex-shrink: 0; opacity: 0.6; }
+.nav-dropdown a:hover { background: var(--surface2); color: var(--ice); }
+.nav-dropdown a:hover svg { opacity: 1; }
+.nav-has-dropdown > a::after { content: ''; display: inline-block; width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 4px solid currentColor; opacity: 0.5; margin-left: 2px; }
+.nav-has-dropdown:hover .nav-dropdown { display: block; }
+.nav-cta { display: flex; align-items: center; gap: 16px; }
+.live-badge { display: flex; align-items: center; gap: 8px; font-family: var(--font-head); font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ice); }
+.pulse-dot { width: 7px; height: 7px; background: var(--ice); border-radius: 50%; animation: pulse 2s ease-in-out infinite; box-shadow: 0 0 6px var(--ice); }
+@keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.35; transform: scale(0.65); } }
+.nav-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
+.nav-toggle span { display: block; width: 22px; height: 2px; background: var(--white); border-radius: 2px; transition: all 0.25s; }
+.mobile-menu { display: none; flex-direction: column; background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 24px 24px; gap: 4px; }
+.mobile-menu a { font-family: var(--font-head); font-size: 14px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); padding: 10px 0; border-bottom: 1px solid rgba(30,58,95,0.5); transition: color 0.15s; }
+.mobile-menu a:hover { color: var(--ice); }
+.mobile-menu a:last-child { border-bottom: none; }
+.mobile-menu.open { display: flex; }
+
+/* ─── PAGE HERO ──────────────────────────────────── */
+.page-hero { min-height: 62vh; display: flex; align-items: center; background: linear-gradient(160deg, var(--black) 0%, #091525 55%, #0a1e35 100%); position: relative; overflow: hidden; padding: 130px 0 90px; }
+.page-hero::before { content: ''; position: absolute; top: -120px; right: -120px; width: 640px; height: 640px; background: radial-gradient(circle, rgba(56,189,248,0.09) 0%, transparent 70%); border-radius: 50%; filter: blur(60px); pointer-events: none; }
+.page-hero::after { content: ''; position: absolute; inset: 0; background-image: linear-gradient(rgba(56,189,248,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(56,189,248,0.04) 1px, transparent 1px); background-size: 80px 80px; mask-image: radial-gradient(ellipse 85% 85% at 65% 50%, black 15%, transparent 78%); pointer-events: none; }
+.page-hero-inner { position: relative; z-index: 2; }
+.available-badge { display: inline-flex; align-items: center; gap: 10px; background: rgba(56,189,248,0.07); border: 1px solid rgba(56,189,248,0.22); border-radius: 40px; padding: 8px 18px; margin-bottom: 24px; }
+.available-badge-dot { width: 9px; height: 9px; background: var(--ice); border-radius: 50%; animation: availPulse 1.4s ease-in-out infinite; }
+@keyframes availPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(56,189,248,0.6); } 50% { box-shadow: 0 0 0 6px rgba(56,189,248,0); } }
+.available-badge-text { font-family: var(--font-head); font-size: 12px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ice); }
+.page-hero h1 { font-family: var(--font-head); font-size: clamp(48px, 8vw, 96px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em; line-height: 0.92; background: linear-gradient(135deg, var(--ice3) 0%, var(--ice) 45%, var(--cyan) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 22px; }
+.page-hero-sub { font-size: 18px; color: var(--muted); line-height: 1.65; max-width: 560px; margin-bottom: 36px; }
+.hero-actions { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+
+/* ─── STATS ROW ──────────────────────────────────── */
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+.stat-box { padding: 32px 24px; text-align: center; border-right: 1px solid var(--border); }
+.stat-box:last-child { border-right: none; }
+.stat-num { font-family: var(--font-head); font-size: 46px; font-weight: 900; color: var(--ice); line-height: 1; margin-bottom: 6px; }
+.stat-label { font-family: var(--font-head); font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+
+/* ─── INDUSTRIES GRID ────────────────────────────── */
+.industries-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.industry-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px 28px; position: relative; overflow: hidden; transition: border-color 0.2s, transform 0.2s; }
+.industry-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--ice), transparent); opacity: 0; transition: opacity 0.25s; }
+.industry-card:hover { border-color: var(--border2); transform: translateY(-3px); }
+.industry-card:hover::after { opacity: 1; }
+.industry-icon { width: 52px; height: 52px; background: rgba(56,189,248,0.07); border: 1px solid rgba(56,189,248,0.15); border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: var(--ice); margin-bottom: 18px; }
+.industry-card h3 { font-family: var(--font-head); font-size: 20px; font-weight: 800; text-transform: uppercase; color: var(--white); margin-bottom: 10px; }
+.industry-card p { font-size: 14px; color: var(--muted); line-height: 1.65; }
+
+/* ─── SERVICES LIST ──────────────────────────────── */
+.commercial-services { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.service-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px 28px; display: flex; gap: 18px; transition: border-color 0.2s; }
+.service-item:hover { border-color: var(--border2); }
+.service-item-num { font-family: var(--font-head); font-size: 40px; font-weight: 900; color: rgba(56,189,248,0.1); line-height: 1; flex-shrink: 0; width: 48px; }
+.service-item h3 { font-family: var(--font-head); font-size: 19px; font-weight: 800; text-transform: uppercase; color: var(--white); margin-bottom: 10px; }
+.service-item p { font-size: 14px; color: var(--muted); line-height: 1.65; }
+
+/* ─── MAINTENANCE PLANS ──────────────────────────── */
+.plans-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; align-items: start; }
+.plan-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; transition: border-color 0.2s, transform 0.2s; }
+.plan-card:hover { transform: translateY(-4px); }
+.plan-card.featured { border-color: var(--ice); box-shadow: 0 0 0 1px var(--ice), var(--glow); }
+.plan-header { padding: 28px 28px 24px; border-bottom: 1px solid var(--border); }
+.plan-badge { display: inline-block; font-family: var(--font-head); font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; background: rgba(56,189,248,0.12); border: 1px solid rgba(56,189,248,0.25); color: var(--ice); padding: 4px 10px; border-radius: 20px; margin-bottom: 12px; }
+.plan-badge.featured-badge { background: var(--ice); color: var(--black); border-color: var(--ice); }
+.plan-name { font-family: var(--font-head); font-size: 28px; font-weight: 900; text-transform: uppercase; color: var(--white); margin-bottom: 8px; }
+.plan-price { font-family: var(--font-head); font-size: 15px; font-weight: 700; color: var(--ice); letter-spacing: 0.04em; }
+.plan-body { padding: 24px 28px 28px; }
+.plan-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+.plan-features li { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--text); line-height: 1.5; }
+.plan-features li svg { flex-shrink: 0; margin-top: 2px; color: var(--ice); }
+.plan-cta { display: block; text-align: center; font-family: var(--font-head); font-size: 14px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 13px 24px; border-radius: var(--radius); border: 1.5px solid var(--border2); color: var(--text); transition: all 0.2s; }
+.plan-cta:hover { border-color: var(--ice); color: var(--ice); }
+.plan-cta.plan-cta-primary { background: linear-gradient(135deg, var(--ice) 0%, var(--cyan) 100%); color: var(--black); border-color: transparent; }
+.plan-cta.plan-cta-primary:hover { background: linear-gradient(135deg, var(--ice2) 0%, var(--ice) 100%); box-shadow: 0 8px 24px rgba(56,189,248,0.3); }
+
+/* ─── REVIEWS ────────────────────────────────────── */
+.reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.review-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px 28px; transition: border-color 0.2s, transform 0.2s; }
+.review-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+.review-stars { display: flex; gap: 4px; margin-bottom: 16px; color: var(--ice); }
+.review-text { font-size: 14px; color: var(--text); line-height: 1.7; margin-bottom: 20px; font-style: italic; }
+.review-author { display: flex; align-items: center; gap: 12px; }
+.review-avatar { width: 40px; height: 40px; background: var(--surface2); border: 1px solid var(--border2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 16px; font-weight: 800; color: var(--ice); }
+.review-name { font-family: var(--font-head); font-size: 14px; font-weight: 700; text-transform: uppercase; color: var(--white); }
+.review-biz { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+/* ─── SCROLL REVEAL ──────────────────────────────── */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ─── FOOTER ─────────────────────────────────────── */
+footer { background: var(--black); border-top: 1px solid var(--border); padding: 64px 0 32px; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 48px; margin-bottom: 56px; }
+.footer-brand .logo { font-size: 22px; margin-bottom: 12px; }
+.footer-brand p { font-size: 14px; color: var(--muted); line-height: 1.7; max-width: 280px; margin-bottom: 24px; }
+.footer-lic { display: inline-flex; align-items: center; gap: 8px; background: rgba(56,189,248,0.06); border: 1px solid rgba(56,189,248,0.12); border-radius: var(--radius); padding: 8px 12px; font-family: var(--font-head); font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ice); }
+.footer-col h4 { font-family: var(--font-head); font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--white); margin-bottom: 18px; }
+.footer-links { display: flex; flex-direction: column; gap: 10px; list-style: none; }
+.footer-links a { font-size: 14px; color: var(--muted); transition: color 0.15s; }
+.footer-links a:hover { color: var(--ice); }
+.footer-contact { display: flex; flex-direction: column; gap: 14px; }
+.footer-contact-item { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--muted); line-height: 1.5; }
+.footer-contact-item svg { flex-shrink: 0; margin-top: 2px; color: var(--ice); }
+.footer-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.footer-copy { font-size: 13px; color: var(--muted); }
+.footer-legal { display: flex; gap: 20px; list-style: none; }
+.footer-legal a { font-size: 13px; color: var(--muted); transition: color 0.15s; }
+.footer-legal a:hover { color: var(--ice); }
+
+/* ─── RESPONSIVE ─────────────────────────────────── */
+@media (max-width: 1024px) {
+  .industries-grid { grid-template-columns: repeat(2, 1fr); }
+  .plans-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 36px; }
+  .stats-row { grid-template-columns: repeat(2, 1fr); }
+  .stat-box:nth-child(2) { border-right: none; }
+  .stat-box:nth-child(3) { border-top: 1px solid var(--border); }
+  .stat-box:nth-child(4) { border-top: 1px solid var(--border); }
+}
+@media (max-width: 768px) {
+  .nav-links, .nav-cta .live-badge, .nav-cta .btn { display: none; }
+  .nav-toggle { display: flex; }
+  .industries-grid { grid-template-columns: 1fr; }
+  .commercial-services { grid-template-columns: 1fr; }
+  .reviews-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+  .footer-bottom { flex-direction: column; align-items: flex-start; }
+  .section { padding: 64px 0; }
+}
+@media (max-width: 480px) {
+  .hero-actions { flex-direction: column; align-items: flex-start; }
+  .stats-row { grid-template-columns: 1fr; }
+  .stat-box { border-right: none; border-bottom: 1px solid var(--border); }
+  .stat-box:last-child { border-bottom: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════ NAV ═════════════════════════════════ -->
+<nav id="site-nav">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="hvac.html" class="logo">AIR<span>PRO</span></a>
+
+      <ul class="nav-links">
+        <li class="nav-has-dropdown">
+          <a href="#">Services</a>
+          <div class="nav-dropdown">
+            <a href="ac-repair.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+              AC Repair
+            </a>
+            <a href="ac-installation.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              AC Installation &amp; Replacement
+            </a>
+            <a href="heating.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+              Heating &amp; Heat Pumps
+            </a>
+            <a href="air-quality.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/></svg>
+              Air Quality &amp; Filtration
+            </a>
+            <a href="commercial-hvac.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
+              Commercial HVAC
+            </a>
+            <a href="emergency-hvac.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              Emergency Service
+            </a>
+          </div>
+        </li>
+        <li class="nav-has-dropdown">
+          <a href="#">Company</a>
+          <div class="nav-dropdown">
+            <a href="about.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              About AirPro
+            </a>
+            <a href="team.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Our Team
+            </a>
+            <a href="blog.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Blog &amp; Tips
+            </a>
+            <a href="reviews.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              Reviews
+            </a>
+            <a href="privacy.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Privacy Policy
+            </a>
+            <a href="contact.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Contact
+            </a>
+          </div>
+        </li>
+        <li><a href="hvac.html#areas">Service Areas</a></li>
+        <li><a href="reviews.html">Reviews</a></li>
+      </ul>
+
+      <div class="nav-cta">
+        <div class="live-badge">
+          <div class="pulse-dot"></div>
+          24/7 Service
+        </div>
+        <a href="tel:7865550100" class="btn btn-primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.45 2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          Call Now
+        </a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="ac-repair.html">AC Repair</a>
+    <a href="ac-installation.html">AC Installation &amp; Replacement</a>
+    <a href="heating.html">Heating &amp; Heat Pumps</a>
+    <a href="air-quality.html">Air Quality &amp; Filtration</a>
+    <a href="commercial-hvac.html">Commercial HVAC</a>
+    <a href="emergency-hvac.html">Emergency Service</a>
+    <a href="about.html">About AirPro</a>
+    <a href="reviews.html">Reviews</a>
+    <a href="contact.html">Contact</a>
+    <a href="tel:7865550100" style="color: var(--ice); margin-top: 4px;">(786) 555-0100 — Call Now</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════ PAGE HERO ════════════════════════════════ -->
+<section class="page-hero">
+  <div class="container page-hero-inner">
+    <div class="available-badge">
+      <div class="available-badge-dot"></div>
+      <span class="available-badge-text">Free Commercial Site Survey</span>
+    </div>
+    <div class="eyebrow">Commercial HVAC South Florida</div>
+    <h1>Commercial<br>HVAC Experts</h1>
+    <p class="page-hero-sub">AirPro serves businesses across Miami-Dade, Broward, and Palm Beach. We install, maintain, and repair commercial HVAC systems of every scale — from boutique retail to multi-story office buildings — with the speed and professionalism your operation demands.</p>
+    <div class="hero-actions">
+      <a href="contact.html" class="btn btn-primary">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.45 2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Request a Site Survey
+      </a>
+      <a href="tel:7865550100" class="btn btn-outline">(786) 555-0100</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ STATS STRIP ══════════════════════════════════════ -->
+<section style="background: var(--surface); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 0;">
+  <div class="container">
+    <div class="stats-row reveal">
+      <div class="stat-box">
+        <div class="stat-num">340+</div>
+        <div class="stat-label">Commercial Clients Served</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">17</div>
+        <div class="stat-label">Years in Commercial HVAC</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">4hr</div>
+        <div class="stat-label">Max Commercial Response Time</div>
+      </div>
+      <div class="stat-box">
+        <div class="stat-num">98%</div>
+        <div class="stat-label">Maintenance Contract Renewal Rate</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ SECTION 1: INDUSTRIES ════════════════════════════ -->
+<section class="section" style="background: var(--dark);">
+  <div class="container">
+    <div class="reveal" style="text-align: center; margin-bottom: 56px;">
+      <div class="eyebrow">Industries We Serve</div>
+      <h2 class="section-title">HVAC Solutions for<br>Every Business Type</h2>
+      <p style="font-size: 16px; color: var(--muted); max-width: 560px; margin: 0 auto;">Commercial HVAC is not one-size-fits-all. Different business types have radically different load profiles, operating hours, and code requirements. We have the experience to design and maintain the right system for your specific environment.</p>
+    </div>
+    <div class="industries-grid">
+      <div class="industry-card reveal">
+        <div class="industry-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+        </div>
+        <h3>Retail Stores</h3>
+        <p>Customer comfort directly affects dwell time and sales. We design zoned systems for retail spaces that maintain consistent temperatures at peak foot traffic hours — even when doors open constantly in South Florida's heat.</p>
+      </div>
+      <div class="industry-card reveal reveal-delay-1">
+        <div class="industry-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l19-9-9 19-2-8-8-2z"/></svg>
+        </div>
+        <h3>Restaurants &amp; Food Service</h3>
+        <p>Kitchen exhaust, makeup air, and dining zone comfort must be balanced precisely. Improperly designed restaurant HVAC leads to hot kitchens, draft complaints, and health code violations. We spec and install systems that meet all commercial kitchen ventilation codes.</p>
+      </div>
+      <div class="industry-card reveal reveal-delay-2">
+        <div class="industry-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
+        </div>
+        <h3>Office Buildings</h3>
+        <p>Multi-tenant office buildings need flexible zone control, after-hours override capability, and energy management that keeps costs low without sacrificing tenant comfort. We integrate BAS-compatible systems and smart scheduling for maximum efficiency.</p>
+      </div>
+      <div class="industry-card reveal">
+        <div class="industry-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <h3>Medical &amp; Dental Offices</h3>
+        <p>Healthcare facilities require HEPA filtration, positive and negative pressure rooms, precise humidity control, and 24/7 reliability. We hold certifications for medical-grade HVAC installation and serve dozens of clinics across South Florida.</p>
+      </div>
+      <div class="industry-card reveal reveal-delay-1">
+        <div class="industry-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+        </div>
+        <h3>Warehouses &amp; Distribution</h3>
+        <p>Large open spaces, high ceilings, and industrial equipment create extreme heat loads. We deploy industrial makeup air units, destratification fans, and evaporative pre-cooling strategies to keep warehouse environments safe and productive for workers.</p>
+      </div>
+      <div class="industry-card reveal reveal-delay-2">
+        <div class="industry-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        </div>
+        <h3>Hotels &amp; Hospitality</h3>
+        <p>Guest satisfaction scores are directly tied to room temperature control. We install and maintain PTAC units, chilled water systems, and lobby cooling systems for hotels of all sizes — with priority service agreements to ensure zero guest complaints.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ SECTION 2: COMMERCIAL SERVICES ═══════════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="reveal" style="text-align: center; margin-bottom: 56px;">
+      <div class="eyebrow">What We Install and Service</div>
+      <h2 class="section-title">Commercial HVAC<br>Services</h2>
+      <p style="font-size: 16px; color: var(--muted); max-width: 560px; margin: 0 auto;">Our commercial team is factory-trained on major equipment brands and holds all required Florida commercial contractor licenses.</p>
+    </div>
+    <div class="commercial-services">
+      <div class="service-item reveal">
+        <div class="service-item-num">01</div>
+        <div>
+          <h3>Rooftop Package Units (RTUs)</h3>
+          <p>RTUs are the workhorse of commercial HVAC — cost-effective, easy to service, and suitable for most single-story commercial buildings. We handle complete RTU replacement, installation of new units on new construction, and mechanical curb adaptation for retrofits. All brands serviced: Carrier, Trane, Lennox, Daikin, York.</p>
+        </div>
+      </div>
+      <div class="service-item reveal reveal-delay-1">
+        <div class="service-item-num">02</div>
+        <div>
+          <h3>Variable Refrigerant Flow (VRF) Systems</h3>
+          <p>VRF and VRV systems offer unmatched zoning flexibility for multi-use commercial spaces. A single outdoor unit can serve dozens of individually controlled indoor units — delivering simultaneous heating and cooling in different zones while using significantly less energy than conventional systems.</p>
+        </div>
+      </div>
+      <div class="service-item reveal">
+        <div class="service-item-num">03</div>
+        <div>
+          <h3>Chiller Systems</h3>
+          <p>For buildings over 50,000 square feet, central chiller plants offer the most efficient large-scale cooling solution available. AirPro engineers and installs air-cooled and water-cooled chiller systems, cooling towers, and chilled water distribution piping — complete turnkey from engineering to commissioning.</p>
+        </div>
+      </div>
+      <div class="service-item reveal reveal-delay-1">
+        <div class="service-item-num">04</div>
+        <div>
+          <h3>Preventive Maintenance Contracts</h3>
+          <p>Commercial HVAC failures always happen at the worst possible time — a busy Saturday, a heat wave, a full hotel. Our PM contracts put AirPro technicians on a fixed schedule for inspections, coil cleaning, belt checks, refrigerant verification, and system performance logging — stopping failures before they start.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ SECTION 3: MAINTENANCE PLANS ═════════════════════ -->
+<section class="section" style="background: var(--dark);">
+  <div class="container">
+    <div class="reveal" style="text-align: center; margin-bottom: 56px;">
+      <div class="eyebrow">Maintenance Agreement Plans</div>
+      <h2 class="section-title">Choose Your<br>Coverage Level</h2>
+      <p style="font-size: 16px; color: var(--muted); max-width: 560px; margin: 0 auto;">All plans include priority scheduling and a dedicated account manager. Pricing is per system unit and billed annually. Multi-unit discounts available for 5 or more units.</p>
+    </div>
+    <div class="plans-grid">
+      <!-- Bronze -->
+      <div class="plan-card reveal">
+        <div class="plan-header">
+          <span class="plan-badge">Bronze</span>
+          <div class="plan-name">Bronze Plan</div>
+          <div class="plan-price">Bi-annual service visits included</div>
+        </div>
+        <div class="plan-body">
+          <ul class="plan-features">
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              2 scheduled PM visits per year
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Coil inspection and rinse
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Filter replacement (standard media)
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Electrical connection check
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Thermostat calibration
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              10% discount on repairs
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Priority scheduling (next business day)
+            </li>
+          </ul>
+          <a href="contact.html" class="plan-cta">Get Bronze Quote</a>
+        </div>
+      </div>
+      <!-- Silver (Featured) -->
+      <div class="plan-card featured reveal reveal-delay-1">
+        <div class="plan-header">
+          <span class="plan-badge featured-badge">Most Popular</span>
+          <div class="plan-name">Silver Plan</div>
+          <div class="plan-price">Quarterly service visits included</div>
+        </div>
+        <div class="plan-body">
+          <ul class="plan-features">
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              4 scheduled PM visits per year
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Deep coil cleaning (chemical treatment)
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Premium filter replacement included
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Refrigerant level verification
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Drain pan and condensate line flush
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              15% discount on all parts and labor
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Priority scheduling (same day available)
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Dedicated account manager
+            </li>
+          </ul>
+          <a href="contact.html" class="plan-cta plan-cta-primary">Get Silver Quote</a>
+        </div>
+      </div>
+      <!-- Gold -->
+      <div class="plan-card reveal reveal-delay-2">
+        <div class="plan-header">
+          <span class="plan-badge">Gold</span>
+          <div class="plan-name">Gold Plan</div>
+          <div class="plan-price">Monthly visits — full-coverage protection</div>
+        </div>
+        <div class="plan-body">
+          <ul class="plan-features">
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              12 scheduled PM visits per year
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              All filters and belts included at no charge
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Full refrigerant top-off coverage
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Remote monitoring and alerts
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Labor warranty on covered repairs
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              25% discount on all equipment
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              4-hour emergency response guarantee
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+              Annual system performance report
+            </li>
+          </ul>
+          <a href="contact.html" class="plan-cta">Get Gold Quote</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ SECTION 4: REVIEWS ═══════════════════════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="reveal" style="text-align: center; margin-bottom: 56px;">
+      <div class="eyebrow">Business Owner Reviews</div>
+      <h2 class="section-title">What Our Commercial<br>Clients Say</h2>
+    </div>
+    <div class="reviews-grid">
+      <div class="review-card reveal">
+        <div class="review-stars">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="review-text">"We run a 4,200 sq ft dental practice with strict temperature requirements in our sterilization and procedure rooms. AirPro designed a zoned VRF system that maintains exact temperatures in each room independently. Our patients have noticed and commented on the comfort. Worth every penny."</p>
+        <div class="review-author">
+          <div class="review-avatar">DK</div>
+          <div>
+            <div class="review-name">Dr. David K.</div>
+            <div class="review-biz">Brickell Dental Group, Miami</div>
+          </div>
+        </div>
+      </div>
+      <div class="review-card reveal reveal-delay-1">
+        <div class="review-stars">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="review-text">"I manage a 68-room boutique hotel in Wynwood. AirPro handles all 68 PTAC units plus our lobby and restaurant systems under a Gold maintenance contract. In three years we have had zero guest complaints about HVAC and two emergency repairs that were resolved before any guest noticed an issue."</p>
+        <div class="review-author">
+          <div class="review-avatar">RV</div>
+          <div>
+            <div class="review-name">Ricardo V.</div>
+            <div class="review-biz">General Manager, Wynwood Boutique Hotel</div>
+          </div>
+        </div>
+      </div>
+      <div class="review-card reveal reveal-delay-2">
+        <div class="review-stars">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="review-text">"Our warehouse workers were struggling with 95-degree conditions in summer. AirPro installed industrial makeup air handlers and a destratification system that brought the working area down to 78 degrees consistently. Worker productivity and morale improved immediately. The ROI was clear within the first season."</p>
+        <div class="review-author">
+          <div class="review-avatar">AL</div>
+          <div>
+            <div class="review-name">Ana L.</div>
+            <div class="review-biz">Operations Director, Doral Logistics Hub</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ CTA STRIP ════════════════════════════════════════ -->
+<section style="background: linear-gradient(135deg, var(--surface) 0%, var(--surface2) 100%); border-top: 1px solid var(--border2); border-bottom: 1px solid var(--border2); padding: 72px 0; text-align: center;">
+  <div class="container">
+    <div class="reveal">
+      <div class="eyebrow">Let's Talk About Your Building</div>
+      <h2 class="section-title" style="max-width: 600px; margin: 0 auto 16px;">Get a Free Commercial<br>Site Survey</h2>
+      <p style="font-size: 17px; color: var(--muted); max-width: 500px; margin: 0 auto 32px; line-height: 1.65;">Our commercial team will assess your facility, review your current system, and give you a written proposal with options at multiple budget levels — at no cost and no obligation.</p>
+      <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
+        <a href="contact.html" class="btn btn-primary" style="font-size: 16px; padding: 16px 36px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.45 2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          Schedule a Site Survey
+        </a>
+        <a href="tel:7865550100" class="btn btn-outline" style="font-size: 16px; padding: 16px 36px;">(786) 555-0100</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ FOOTER ═══════════════════════════════ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">AIR<span>PRO</span></div>
+        <p>South Florida's trusted HVAC experts since 2009. Licensed, insured, and committed to keeping your home perfectly comfortable year-round.</p>
+        <div class="footer-lic">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          HVAC License #CAC1818191
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul class="footer-links">
+          <li><a href="ac-repair.html">AC Repair</a></li>
+          <li><a href="ac-installation.html">AC Installation</a></li>
+          <li><a href="heating.html">Heating &amp; Heat Pumps</a></li>
+          <li><a href="air-quality.html">Air Quality</a></li>
+          <li><a href="commercial-hvac.html">Commercial HVAC</a></li>
+          <li><a href="emergency-hvac.html">Emergency Service</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul class="footer-links">
+          <li><a href="about.html">About AirPro</a></li>
+          <li><a href="team.html">Our Team</a></li>
+          <li><a href="blog.html">Blog &amp; Tips</a></li>
+          <li><a href="reviews.html">Reviews</a></li>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contact Info</h4>
+        <div class="footer-contact">
+          <div class="footer-contact-item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            8400 NW 36th St, Suite 450<br>Doral, FL 33166
+          </div>
+          <div class="footer-contact-item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.45 2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <a href="tel:7865550100" style="transition: color 0.15s;">(786) 555-0100</a>
+          </div>
+          <div class="footer-contact-item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            service@airprohvac.com
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="footer-copy">&copy; 2026 AirPro HVAC. All rights reserved. HVAC License #CAC1818191.</p>
+      <ul class="footer-legal">
+        <li><a href="privacy.html">Privacy Policy</a></li>
+        <li><a href="about.html#terms">Terms of Service</a></li>
+        <li><a href="sitemap.html">Sitemap</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ── Mobile nav toggle ── */
+const toggle = document.getElementById('nav-toggle');
+const mobileMenu = document.getElementById('mobile-menu');
+if (toggle && mobileMenu) {
+  toggle.addEventListener('click', () => { mobileMenu.classList.toggle('open'); });
+}
+
+/* ── Scroll reveal ── */
+(function () {
+  'use strict';
+  const reveals = document.querySelectorAll('.reveal');
+  if (!reveals.length) return;
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('visible'); io.unobserve(entry.target); }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -36px 0px' });
+  reveals.forEach(el => io.observe(el));
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>24/7 Emergency HVAC | AirPro HVAC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────────── */
+:root {
+  --black:    #070711;
+  --dark:     #0D1A2E;
+  --surface:  #0F1E32;
+  --surface2: #162540;
+  --border:   #1E3A5F;
+  --border2:  #254872;
+  --ice:      #38BDF8;
+  --ice2:     #7DD3FC;
+  --ice3:     #BAE6FD;
+  --cyan:     #06B6D4;
+  --white:    #EEF6FF;
+  --muted:    #5A7A9A;
+  --text:     #A8C4DC;
+  --font-head: 'Barlow Condensed', sans-serif;
+  --font-body: 'Barlow', sans-serif;
+  --radius:   4px;
+  --radius-lg: 8px;
+  --glow: 0 0 32px rgba(56,189,248,0.18);
+  /* Emergency accent colors */
+  --red:      #EF4444;
+  --red-dark: #B91C1C;
+  --red-glow: rgba(239,68,68,0.20);
+  --amber:    #F59E0B;
+  --amber2:   #FCD34D;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-body); background: var(--black); color: var(--text); overflow-x: hidden; line-height: 1.6; }
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+body::before {
+  content: ''; position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0; opacity: 0.4;
+}
+
+/* ─── UTILITY ────────────────────────────────────── */
+.container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+.section { padding: 96px 0; }
+.eyebrow { font-family: var(--font-head); font-size: 12px; font-weight: 700; letter-spacing: 0.22em; text-transform: uppercase; color: var(--ice); margin-bottom: 12px; }
+.eyebrow-red { color: var(--red); }
+.btn { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-head); font-weight: 700; font-size: 15px; letter-spacing: 0.06em; text-transform: uppercase; padding: 14px 28px; border-radius: var(--radius); cursor: pointer; border: none; transition: all 0.2s ease; }
+.btn-primary { background: linear-gradient(135deg, var(--ice) 0%, var(--cyan) 100%); color: var(--black); }
+.btn-primary:hover { background: linear-gradient(135deg, var(--ice2) 0%, var(--ice) 100%); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(56,189,248,0.3); }
+.btn-red { background: var(--red); color: #fff; }
+.btn-red:hover { background: #f87171; transform: translateY(-1px); box-shadow: 0 8px 24px var(--red-glow); }
+.btn-outline { background: transparent; color: var(--white); border: 1.5px solid var(--border2); }
+.btn-outline:hover { border-color: var(--ice); color: var(--ice); }
+.section-title { font-family: var(--font-head); font-size: clamp(32px, 4vw, 52px); font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em; color: var(--white); margin-bottom: 16px; line-height: 1; }
+
+/* ─── NAV ────────────────────────────────────────── */
+nav { position: sticky; top: 0; z-index: 100; background: rgba(7,7,17,0.94); backdrop-filter: blur(14px); border-bottom: 1px solid var(--border); }
+.nav-inner { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+.logo { font-family: var(--font-head); font-size: 24px; font-weight: 900; letter-spacing: -0.01em; color: var(--white); }
+.logo span { color: var(--ice); }
+.nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+.nav-links > li > a { font-family: var(--font-head); font-size: 13px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); transition: color 0.15s; display: flex; align-items: center; gap: 4px; }
+.nav-links > li > a:hover { color: var(--white); }
+.nav-links li { position: relative; }
+.nav-dropdown { display: none; position: absolute; top: calc(100% + 14px); left: 50%; transform: translateX(-50%); background: var(--surface); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 8px; min-width: 230px; z-index: 200; box-shadow: 0 20px 48px rgba(0,0,0,0.7), var(--glow); }
+.nav-dropdown::before { content: ''; position: absolute; top: -6px; left: 50%; transform: translateX(-50%); width: 10px; height: 10px; background: var(--surface); border-left: 1px solid var(--border2); border-top: 1px solid var(--border2); rotate: 45deg; }
+.nav-dropdown a { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: var(--radius); font-size: 13px; font-family: var(--font-head); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); transition: background 0.15s, color 0.15s; white-space: nowrap; }
+.nav-dropdown a svg { flex-shrink: 0; opacity: 0.6; }
+.nav-dropdown a:hover { background: var(--surface2); color: var(--ice); }
+.nav-dropdown a:hover svg { opacity: 1; }
+.nav-has-dropdown > a::after { content: ''; display: inline-block; width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-top: 4px solid currentColor; opacity: 0.5; margin-left: 2px; }
+.nav-has-dropdown:hover .nav-dropdown { display: block; }
+.nav-cta { display: flex; align-items: center; gap: 16px; }
+.live-badge { display: flex; align-items: center; gap: 8px; font-family: var(--font-head); font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ice); }
+.pulse-dot { width: 7px; height: 7px; background: var(--ice); border-radius: 50%; animation: pulse 2s ease-in-out infinite; box-shadow: 0 0 6px var(--ice); }
+@keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.35; transform: scale(0.65); } }
+.nav-toggle { display: none; flex-direction: column; gap: 5px; cursor: pointer; padding: 4px; background: none; border: none; }
+.nav-toggle span { display: block; width: 22px; height: 2px; background: var(--white); border-radius: 2px; transition: all 0.25s; }
+.mobile-menu { display: none; flex-direction: column; background: var(--surface); border-bottom: 1px solid var(--border); padding: 16px 24px 24px; gap: 4px; }
+.mobile-menu a { font-family: var(--font-head); font-size: 14px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--text); padding: 10px 0; border-bottom: 1px solid rgba(30,58,95,0.5); transition: color 0.15s; }
+.mobile-menu a:hover { color: var(--ice); }
+.mobile-menu a:last-child { border-bottom: none; }
+.mobile-menu.open { display: flex; }
+
+/* ─── EMERGENCY HERO ─────────────────────────────── */
+.emergency-hero {
+  min-height: 72vh; display: flex; align-items: center;
+  background: linear-gradient(160deg, #0a0005 0%, #160818 40%, #0a1624 100%);
+  position: relative; overflow: hidden; padding: 130px 0 90px;
+}
+.emergency-hero::before {
+  content: ''; position: absolute; top: -80px; left: -100px;
+  width: 700px; height: 700px;
+  background: radial-gradient(circle, rgba(239,68,68,0.07) 0%, transparent 65%);
+  border-radius: 50%; filter: blur(80px); pointer-events: none;
+}
+.emergency-hero::after {
+  content: ''; position: absolute; bottom: -100px; right: -100px;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(56,189,248,0.06) 0%, transparent 65%);
+  border-radius: 50%; filter: blur(70px); pointer-events: none;
+}
+.hero-grid-overlay {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(239,68,68,0.03) 1px, transparent 1px),
+                    linear-gradient(90deg, rgba(239,68,68,0.03) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse 90% 90% at 50% 40%, black 15%, transparent 78%);
+  pointer-events: none;
+}
+.emergency-hero-inner { position: relative; z-index: 2; }
+.alert-badge {
+  display: inline-flex; align-items: center; gap: 10px;
+  background: rgba(239,68,68,0.10); border: 1px solid rgba(239,68,68,0.35);
+  border-radius: 40px; padding: 8px 18px; margin-bottom: 24px;
+}
+.alert-dot { width: 9px; height: 9px; background: var(--red); border-radius: 50%; animation: alertPulse 1s ease-in-out infinite; }
+@keyframes alertPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0.7); } 50% { box-shadow: 0 0 0 7px rgba(239,68,68,0); } }
+.alert-badge-text { font-family: var(--font-head); font-size: 12px; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; color: var(--red); }
+.emergency-hero h1 {
+  font-family: var(--font-head); font-size: clamp(48px, 8vw, 96px); font-weight: 900;
+  text-transform: uppercase; letter-spacing: -0.02em; line-height: 0.9;
+  color: var(--white); margin-bottom: 22px;
+}
+.emergency-hero h1 span {
+  background: linear-gradient(135deg, #fb7185 0%, var(--red) 40%, var(--amber) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.emergency-hero-sub { font-size: 18px; color: var(--muted); line-height: 1.65; max-width: 580px; margin-bottom: 36px; }
+.hero-phone-display {
+  display: block; font-family: var(--font-head); font-size: clamp(40px, 7vw, 80px); font-weight: 900;
+  letter-spacing: -0.02em; line-height: 1; color: var(--amber); margin-bottom: 12px;
+  text-shadow: 0 0 48px rgba(245,158,11,0.35);
+}
+.hero-phone-display:hover { color: var(--amber2); }
+.hero-phone-label { font-family: var(--font-head); font-size: 13px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); margin-bottom: 28px; }
+.hero-actions { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+
+/* ─── GUARANTEE BANNER ───────────────────────────── */
+.guarantee-banner {
+  background: linear-gradient(135deg, rgba(239,68,68,0.08) 0%, rgba(245,158,11,0.06) 100%);
+  border-top: 1px solid rgba(239,68,68,0.2); border-bottom: 1px solid rgba(239,68,68,0.2);
+  padding: 40px 0;
+}
+.guarantee-inner { display: flex; align-items: center; justify-content: center; gap: 40px; flex-wrap: wrap; }
+.guarantee-item { display: flex; align-items: center; gap: 14px; }
+.guarantee-icon { width: 48px; height: 48px; background: rgba(245,158,11,0.1); border: 1px solid rgba(245,158,11,0.25); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--amber); flex-shrink: 0; }
+.guarantee-text-label { font-family: var(--font-head); font-size: 18px; font-weight: 900; text-transform: uppercase; color: var(--white); line-height: 1.1; }
+.guarantee-text-sub { font-size: 12px; color: var(--muted); margin-top: 3px; }
+.guarantee-divider { width: 1px; height: 48px; background: var(--border); }
+
+/* ─── EMERGENCY SITUATIONS GRID ─────────────────── */
+.emergencies-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; }
+.emergency-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 32px 28px; display: flex; gap: 18px;
+  border-left: 3px solid rgba(239,68,68,0.4); transition: border-color 0.2s, transform 0.2s;
+}
+.emergency-card:hover { border-left-color: var(--red); transform: translateY(-2px); }
+.emergency-card-icon {
+  width: 52px; height: 52px; background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2);
+  border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; color: var(--red); flex-shrink: 0;
+}
+.emergency-card h3 { font-family: var(--font-head); font-size: 19px; font-weight: 800; text-transform: uppercase; color: var(--white); margin-bottom: 8px; }
+.emergency-card p { font-size: 14px; color: var(--muted); line-height: 1.65; }
+
+/* ─── RESPONSE STEPS ─────────────────────────────── */
+.response-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; position: relative; }
+.response-steps::before {
+  content: ''; position: absolute; top: 48px; left: calc(12.5% + 4px); right: calc(12.5% + 4px);
+  height: 1px; background: linear-gradient(90deg, var(--border), var(--border2), var(--border));
+}
+.step-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px 24px; text-align: center; position: relative; transition: border-color 0.2s; }
+.step-card:hover { border-color: var(--border2); }
+.step-circle { width: 48px; height: 48px; background: var(--surface2); border: 1px solid var(--ice); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-family: var(--font-head); font-size: 18px; font-weight: 900; color: var(--ice); }
+.step-card h3 { font-family: var(--font-head); font-size: 17px; font-weight: 800; text-transform: uppercase; color: var(--white); margin-bottom: 10px; }
+.step-card p { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+/* ─── PHONE CALLOUT ──────────────────────────────── */
+.phone-callout { text-align: center; padding: 64px 0; }
+.callout-label { font-family: var(--font-head); font-size: 13px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
+.big-phone { display: block; font-family: var(--font-head); font-size: clamp(52px, 9vw, 100px); font-weight: 900; letter-spacing: -0.02em; color: var(--amber); line-height: 1; text-shadow: 0 0 60px rgba(245,158,11,0.3); transition: color 0.15s; }
+.big-phone:hover { color: var(--amber2); }
+.phone-sub { font-size: 16px; color: var(--muted); margin-top: 12px; }
+
+/* ─── PRICING BOX ────────────────────────────────── */
+.pricing-box {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 48px 48px; max-width: 840px; margin: 0 auto;
+  border-top: 3px solid var(--amber);
+}
+.pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 36px; }
+.pricing-item { text-align: center; padding: 24px 16px; background: rgba(56,189,248,0.04); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+.pricing-item-amount { font-family: var(--font-head); font-size: 36px; font-weight: 900; color: var(--ice); line-height: 1; margin-bottom: 8px; }
+.pricing-item-label { font-family: var(--font-head); font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--white); margin-bottom: 8px; }
+.pricing-item-note { font-size: 13px; color: var(--muted); line-height: 1.5; }
+
+/* ─── REVIEWS ────────────────────────────────────── */
+.reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.review-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px 28px; transition: border-color 0.2s, transform 0.2s; }
+.review-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+.review-stars { display: flex; gap: 4px; margin-bottom: 16px; color: var(--amber); }
+.review-text { font-size: 14px; color: var(--text); line-height: 1.7; margin-bottom: 20px; font-style: italic; }
+.review-author { display: flex; align-items: center; gap: 12px; }
+.review-avatar { width: 40px; height: 40px; background: var(--surface2); border: 1px solid var(--border2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 16px; font-weight: 800; color: var(--ice); }
+.review-name { font-family: var(--font-head); font-size: 14px; font-weight: 700; text-transform: uppercase; color: var(--white); }
+.review-location { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+/* ─── SCROLL REVEAL ──────────────────────────────── */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ─── FOOTER ─────────────────────────────────────── */
+footer { background: var(--black); border-top: 1px solid var(--border); padding: 64px 0 32px; }
+.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1.5fr; gap: 48px; margin-bottom: 56px; }
+.footer-brand .logo { font-size: 22px; margin-bottom: 12px; }
+.footer-brand p { font-size: 14px; color: var(--muted); line-height: 1.7; max-width: 280px; margin-bottom: 24px; }
+.footer-lic { display: inline-flex; align-items: center; gap: 8px; background: rgba(56,189,248,0.06); border: 1px solid rgba(56,189,248,0.12); border-radius: var(--radius); padding: 8px 12px; font-family: var(--font-head); font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ice); }
+.footer-col h4 { font-family: var(--font-head); font-size: 12px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--white); margin-bottom: 18px; }
+.footer-links { display: flex; flex-direction: column; gap: 10px; list-style: none; }
+.footer-links a { font-size: 14px; color: var(--muted); transition: color 0.15s; }
+.footer-links a:hover { color: var(--ice); }
+.footer-contact { display: flex; flex-direction: column; gap: 14px; }
+.footer-contact-item { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; color: var(--muted); line-height: 1.5; }
+.footer-contact-item svg { flex-shrink: 0; margin-top: 2px; color: var(--ice); }
+.footer-bottom { border-top: 1px solid var(--border); padding-top: 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.footer-copy { font-size: 13px; color: var(--muted); }
+.footer-legal { display: flex; gap: 20px; list-style: none; }
+.footer-legal a { font-size: 13px; color: var(--muted); transition: color 0.15s; }
+.footer-legal a:hover { color: var(--ice); }
+
+/* ─── RESPONSIVE ─────────────────────────────────── */
+@media (max-width: 1024px) {
+  .response-steps { grid-template-columns: repeat(2, 1fr); }
+  .response-steps::before { display: none; }
+  .pricing-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 36px; }
+  .guarantee-divider { display: none; }
+}
+@media (max-width: 768px) {
+  .nav-links, .nav-cta .live-badge, .nav-cta .btn { display: none; }
+  .nav-toggle { display: flex; }
+  .emergencies-grid { grid-template-columns: 1fr; }
+  .response-steps { grid-template-columns: 1fr 1fr; }
+  .reviews-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+  .footer-bottom { flex-direction: column; align-items: flex-start; }
+  .section { padding: 64px 0; }
+  .pricing-box { padding: 32px 24px; }
+}
+@media (max-width: 480px) {
+  .hero-actions { flex-direction: column; align-items: flex-start; }
+  .response-steps { grid-template-columns: 1fr; }
+  .guarantee-inner { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════ NAV ═════════════════════════════════ -->
+<nav id="site-nav">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="hvac.html" class="logo">AIR<span>PRO</span></a>
+
+      <ul class="nav-links">
+        <li class="nav-has-dropdown">
+          <a href="#">Services</a>
+          <div class="nav-dropdown">
+            <a href="ac-repair.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+              AC Repair
+            </a>
+            <a href="ac-installation.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              AC Installation &amp; Replacement
+            </a>
+            <a href="heating.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+              Heating &amp; Heat Pumps
+            </a>
+            <a href="air-quality.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/></svg>
+              Air Quality &amp; Filtration
+            </a>
+            <a href="commercial-hvac.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></svg>
+              Commercial HVAC
+            </a>
+            <a href="emergency-hvac.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              Emergency Service
+            </a>
+          </div>
+        </li>
+        <li class="nav-has-dropdown">
+          <a href="#">Company</a>
+          <div class="nav-dropdown">
+            <a href="about.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              About AirPro
+            </a>
+            <a href="team.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+              Our Team
+            </a>
+            <a href="blog.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Blog &amp; Tips
+            </a>
+            <a href="reviews.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              Reviews
+            </a>
+            <a href="privacy.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Privacy Policy
+            </a>
+            <a href="contact.html">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Contact
+            </a>
+          </div>
+        </li>
+        <li><a href="hvac.html#areas">Service Areas</a></li>
+        <li><a href="reviews.html">Reviews</a></li>
+      </ul>
+
+      <div class="nav-cta">
+        <div class="live-badge">
+          <div class="pulse-dot"></div>
+          24/7 Service
+        </div>
+        <a href="tel:7865550100" class="btn btn-primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.45 2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          Call Now
+        </a>
+        <button class="nav-toggle" id="nav-toggle" aria-label="Open menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="ac-repair.html">AC Repair</a>
+    <a href="ac-installation.html">AC Installation &amp; Replacement</a>
+    <a href="heating.html">Heating &amp; Heat Pumps</a>
+    <a href="air-quality.html">Air Quality &amp; Filtration</a>
+    <a href="commercial-hvac.html">Commercial HVAC</a>
+    <a href="emergency-hvac.html">Emergency Service</a>
+    <a href="about.html">About AirPro</a>
+    <a href="reviews.html">Reviews</a>
+    <a href="contact.html">Contact</a>
+    <a href="tel:7865550100" style="color: var(--ice); margin-top: 4px;">(786) 555-0100 — Call Now</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════ EMERGENCY HERO ═══════════════════════════ -->
+<section class="emergency-hero">
+  <div class="hero-grid-overlay"></div>
+  <div class="container emergency-hero-inner">
+    <div class="alert-badge">
+      <div class="alert-dot"></div>
+      <span class="alert-badge-text">Dispatching Now — Available 24/7</span>
+    </div>
+    <div class="eyebrow eyebrow-red">24/7 Emergency HVAC Service</div>
+    <h1>24/7<br><span>Emergency</span><br>Service</h1>
+    <p class="emergency-hero-sub">AC out in South Florida heat is a genuine emergency. AirPro dispatches technicians around the clock — nights, weekends, and holidays — with a 60-minute response time guarantee for Miami-Dade and Broward County.</p>
+    <div class="hero-phone-label">Emergency Line — Answered Live, Every Hour</div>
+    <a href="tel:7865550100" class="hero-phone-display">(786) 555-0100</a>
+    <div class="hero-actions">
+      <a href="tel:7865550100" class="btn btn-red" style="font-size: 17px; padding: 16px 36px;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.45 2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        Call Emergency Line
+      </a>
+      <a href="contact.html" class="btn btn-outline">Request Online</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ GUARANTEE BANNER ════════════════════════════════ -->
+<div class="guarantee-banner">
+  <div class="container">
+    <div class="guarantee-inner">
+      <div class="guarantee-item">
+        <div class="guarantee-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div>
+          <div class="guarantee-text-label">60 Minutes or Less</div>
+          <div class="guarantee-text-sub">Guaranteed response time — or we waive the call fee</div>
+        </div>
+      </div>
+      <div class="guarantee-divider"></div>
+      <div class="guarantee-item">
+        <div class="guarantee-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.45 2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        </div>
+        <div>
+          <div class="guarantee-text-label">Live Person Answers</div>
+          <div class="guarantee-text-sub">No voicemail, no answering service — ever</div>
+        </div>
+      </div>
+      <div class="guarantee-divider"></div>
+      <div class="guarantee-item">
+        <div class="guarantee-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div>
+          <div class="guarantee-text-label">Flat-Rate Pricing</div>
+          <div class="guarantee-text-sub">You approve every cost before work begins</div>
+        </div>
+      </div>
+      <div class="guarantee-divider"></div>
+      <div class="guarantee-item">
+        <div class="guarantee-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><path d="M1 10h22"/></svg>
+        </div>
+        <div>
+          <div class="guarantee-text-label">All Payment Types</div>
+          <div class="guarantee-text-sub">Cards, check, Zelle — paid on-site at completion</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════ SECTION 1: WHAT IS AN EMERGENCY ══════════════════ -->
+<section class="section" style="background: var(--dark);">
+  <div class="container">
+    <div class="reveal" style="text-align: center; margin-bottom: 56px;">
+      <div class="eyebrow eyebrow-red">Do Not Wait — Call Now</div>
+      <h2 class="section-title">These Four Situations<br>Are HVAC Emergencies</h2>
+      <p style="font-size: 16px; color: var(--muted); max-width: 560px; margin: 0 auto;">In South Florida, a failed AC system is more than an inconvenience — it is a health hazard. The following situations require an emergency call, not a next-day appointment.</p>
+    </div>
+    <div class="emergencies-grid">
+      <div class="emergency-card reveal">
+        <div class="emergency-card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+        </div>
+        <div>
+          <h3>Total AC Failure in Extreme Heat</h3>
+          <p>When outdoor temperatures exceed 90 degrees — the daily norm in South Florida summers — a complete loss of cooling becomes a medical emergency within hours, especially for children, elderly occupants, and people with respiratory conditions. Do not wait for a scheduled appointment. Call now.</p>
+        </div>
+      </div>
+      <div class="emergency-card reveal reveal-delay-1">
+        <div class="emergency-card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48 2.83-2.83"/></svg>
+        </div>
+        <div>
+          <h3>Water Leak or Active Flooding from Unit</h3>
+          <p>A clogged condensate drain line can overflow and release gallons of water into your walls, ceilings, and flooring within hours. Left unaddressed, water intrusion causes mold growth, structural damage, and electrical hazards. If water is actively dripping from your air handler, call immediately.</p>
+        </div>
+      </div>
+      <div class="emergency-card reveal">
+        <div class="emergency-card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <div>
+          <h3>Burning Smell from Air Handler or Vents</h3>
+          <p>A burning or electrical odor coming from your air handler, registers, or ductwork indicates a motor overheating, a wiring fault, or a component failure. Shut off your system at the thermostat and call immediately — do not attempt to restart the unit until a technician has inspected it.</p>
+        </div>
+      </div>
+      <div class="emergency-card reveal reveal-delay-1">
+        <div class="emergency-card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+        </div>
+        <div>
+          <h3>System Running Constantly with No Cooling</h3>
+          <p>If your AC runs without stopping but the indoor temperature keeps rising, your system has likely lost refrigerant, has a failed compressor, or has a blockage that is causing it to work without producing results. Continued operation in this state causes further damage and escalates repair costs significantly.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ SECTION 2: RESPONSE PROCESS ═════════════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="reveal" style="text-align: center; margin-bottom: 64px;">
+      <div class="eyebrow">Our Emergency Response Process</div>
+      <h2 class="section-title">What Happens After<br>You Call</h2>
+      <p style="font-size: 16px; color: var(--muted); max-width: 520px; margin: 0 auto;">Every AirPro emergency call follows the same four-step process — designed to get your system running as fast as possible with full transparency at every step.</p>
+    </div>
+    <div class="response-steps">
+      <div class="step-card reveal">
+        <div class="step-circle">1</div>
+        <h3>Live Dispatch</h3>
+        <p>A real AirPro technician answers your call within three rings, 24 hours a day. We log your address and symptom description immediately and begin dispatching the closest available technician.</p>
+      </div>
+      <div class="step-card reveal reveal-delay-1">
+        <div class="step-circle">2</div>
+        <h3>60-Minute Arrival</h3>
+        <p>Our technician arrives within 60 minutes anywhere in Miami-Dade and Broward County. You receive a text confirmation with the technician's name and ETA the moment they are dispatched.</p>
+      </div>
+      <div class="step-card reveal reveal-delay-2">
+        <div class="step-circle">3</div>
+        <h3>Honest Diagnosis</h3>
+        <p>We diagnose the issue completely before quoting a price. You receive a written flat-rate quote that covers all parts and labor to fix the problem — with no surprise charges after the work is done.</p>
+      </div>
+      <div class="step-card reveal reveal-delay-3">
+        <div class="step-circle">4</div>
+        <h3>Same-Visit Resolution</h3>
+        <p>Our trucks carry the most common parts for Florida HVAC systems. The majority of emergency calls are fully resolved in a single visit — we do not leave until you have cold air or a clear follow-up plan if parts must be ordered.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ SECTION 3: PHONE + PRICING ═══════════════════════ -->
+<section class="section" style="background: var(--dark);">
+  <div class="container">
+    <!-- Large Phone Number -->
+    <div class="phone-callout reveal">
+      <div class="callout-label">Emergency Line — Live Answer, Any Hour of the Day or Night</div>
+      <a href="tel:7865550100" class="big-phone">(786) 555-0100</a>
+      <p class="phone-sub">Real person answers. Every time. Including holidays.</p>
+    </div>
+
+    <!-- Pricing Transparency -->
+    <div class="reveal" style="text-align: center; margin-bottom: 40px;">
+      <div class="eyebrow">No Surprise Invoices</div>
+      <h2 class="section-title">Emergency Pricing<br>Explained Upfront</h2>
+      <p style="font-size: 16px; color: var(--muted); max-width: 560px; margin: 0 auto;">We believe you should know what you are paying before any work begins. Here is exactly how our emergency pricing works — with no hidden fees and no after-the-fact add-ons.</p>
+    </div>
+
+    <div class="pricing-box reveal">
+      <p style="font-size: 16px; color: var(--text); line-height: 1.75; margin-bottom: 8px;">Our dispatch fee covers the cost of sending a licensed technician to your location after hours. It is waived entirely if we do not arrive within 60 minutes. All repair work is priced separately as a flat-rate quote, which you approve before we begin.</p>
+      <p style="font-size: 14px; color: var(--muted); line-height: 1.65;">We accept Visa, Mastercard, American Express, Discover, personal check, and Zelle. Payment is collected on-site when the job is complete.</p>
+      <div class="pricing-grid">
+        <div class="pricing-item">
+          <div class="pricing-item-amount">$0</div>
+          <div class="pricing-item-label">Dispatch Fee</div>
+          <div class="pricing-item-note">Standard business hours (7am–6pm Mon–Sat). No call fee during normal hours.</div>
+        </div>
+        <div class="pricing-item">
+          <div class="pricing-item-amount">$125</div>
+          <div class="pricing-item-label">After-Hours Dispatch</div>
+          <div class="pricing-item-note">Evenings, nights, and Sundays. Waived if we exceed our 60-minute response guarantee.</div>
+        </div>
+        <div class="pricing-item">
+          <div class="pricing-item-amount">Flat</div>
+          <div class="pricing-item-label">All Repair Work</div>
+          <div class="pricing-item-note">Every job quoted flat-rate before work starts. You approve the price. No hourly billing.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ SECTION 4: REVIEWS ═══════════════════════════════ -->
+<section class="section">
+  <div class="container">
+    <div class="reveal" style="text-align: center; margin-bottom: 56px;">
+      <div class="eyebrow">Customer Reviews</div>
+      <h2 class="section-title">What Customers Say<br>About Our Response</h2>
+    </div>
+    <div class="reviews-grid">
+      <div class="review-card reveal">
+        <div class="review-stars">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="review-text">"AC died at 11pm on a Friday in July. Inside temperature hit 88 degrees within two hours with my kids trying to sleep. Called AirPro and a technician was at my door in 47 minutes. Diagnosed a blown capacitor, had the part on the truck, fixed it in 30 minutes. I was stunned. These guys are the real deal."</p>
+        <div class="review-author">
+          <div class="review-avatar">CM</div>
+          <div>
+            <div class="review-name">Carlos M.</div>
+            <div class="review-location">Hialeah, FL</div>
+          </div>
+        </div>
+      </div>
+      <div class="review-card reveal reveal-delay-1">
+        <div class="review-stars">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="review-text">"Water was pouring from my ceiling at 2am from a condensate overflow. AirPro answered immediately, arrived in 55 minutes, and cleared the drain blockage before my drywall was ruined. The technician also showed me how to prevent it in the future. Pricing was exactly what they quoted on the phone — no surprises."</p>
+        <div class="review-author">
+          <div class="review-avatar">LG</div>
+          <div>
+            <div class="review-name">Lisa G.</div>
+            <div class="review-location">Pembroke Pines, FL</div>
+          </div>
+        </div>
+      </div>
+      <div class="review-card reveal reveal-delay-2">
+        <div class="review-stars">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="review-text">"Smelled something burning from the vents on a Saturday evening. Called three companies — two went to voicemail, the third wanted to schedule Monday. AirPro picked up on the first ring and had a tech here in under an hour. Turned out to be a failing blower motor. Fixed that night. I will never use anyone else."</p>
+        <div class="review-author">
+          <div class="review-avatar">PO</div>
+          <div>
+            <div class="review-name">Patricia O.</div>
+            <div class="review-location">Aventura, FL</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ FINAL CTA ════════════════════════════════════════ -->
+<section style="background: rgba(239,68,68,0.05); border-top: 1px solid rgba(239,68,68,0.15); border-bottom: 1px solid rgba(239,68,68,0.15); padding: 72px 0; text-align: center;">
+  <div class="container">
+    <div class="reveal">
+      <div class="eyebrow eyebrow-red">AC Out Right Now?</div>
+      <h2 class="section-title" style="max-width: 600px; margin: 0 auto 16px;">Do Not Wait — Call the<br>Emergency Line Now</h2>
+      <p style="font-size: 17px; color: var(--muted); max-width: 480px; margin: 0 auto 32px; line-height: 1.65;">In South Florida heat, every hour without air conditioning matters. Our technicians are standing by right now.</p>
+      <a href="tel:7865550100" class="btn btn-red" style="font-size: 20px; padding: 20px 48px; margin-bottom: 16px;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.45 2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        (786) 555-0100
+      </a>
+      <p style="font-size: 13px; color: var(--muted);">60-minute response guarantee &middot; Live person answers &middot; Flat-rate pricing</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════ FOOTER ═══════════════════════════════ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">AIR<span>PRO</span></div>
+        <p>South Florida's trusted HVAC experts since 2009. Licensed, insured, and committed to keeping your home perfectly comfortable year-round.</p>
+        <div class="footer-lic">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          HVAC License #CAC1818191
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h4>Services</h4>
+        <ul class="footer-links">
+          <li><a href="ac-repair.html">AC Repair</a></li>
+          <li><a href="ac-installation.html">AC Installation</a></li>
+          <li><a href="heating.html">Heating &amp; Heat Pumps</a></li>
+          <li><a href="air-quality.html">Air Quality</a></li>
+          <li><a href="commercial-hvac.html">Commercial HVAC</a></li>
+          <li><a href="emergency-hvac.html">Emergency Service</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul class="footer-links">
+          <li><a href="about.html">About AirPro</a></li>
+          <li><a href="team.html">Our Team</a></li>
+          <li><a href="blog.html">Blog &amp; Tips</a></li>
+          <li><a href="reviews.html">Reviews</a></li>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contact Info</h4>
+        <div class="footer-contact">
+          <div class="footer-contact-item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            8400 NW 36th St, Suite 450<br>Doral, FL 33166
+          </div>
+          <div class="footer-contact-item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.45 2 2 0 0 1 3.6 1.27h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.96a16 16 0 0 0 6.13 6.13l.96-.96a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            <a href="tel:7865550100" style="transition: color 0.15s;">(786) 555-0100</a>
+          </div>
+          <div class="footer-contact-item">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            service@airprohvac.com
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p class="footer-copy">&copy; 2026 AirPro HVAC. All rights reserved. HVAC License #CAC1818191.</p>
+      <ul class="footer-legal">
+        <li><a href="privacy.html">Privacy Policy</a></li>
+        <li><a href="about.html#terms">Terms of Service</a></li>
+        <li><a href="sitemap.html">Sitemap</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ── Mobile nav toggle ── */
+const toggle = document.getElementById('nav-toggle');
+const mobileMenu = document.getElementById('mobile-menu');
+if (toggle && mobileMenu) {
+  toggle.addEventListener('click', () => { mobileMenu.classList.toggle('open'); });
+}
+
+/* ── Scroll reveal ── */
+(function () {
+  'use strict';
+  const reveals = document.querySelectorAll('.reveal');
+  if (!reveals.length) return;
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) { entry.target.classList.add('visible'); io.unobserve(entry.target); }
+    });
+  }, { threshold: 0.08, rootMargin: '0px 0px -36px 0px' });
+  reveals.forEach(el => io.observe(el));
+})();
+</script>
+</body>
+</html>
