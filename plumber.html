@@ -474,7 +474,7 @@ body::before {
 /* Wrench */
 #plumb-wrench {
   position: absolute; z-index: 6; pointer-events: none; opacity: 0;
-  top: calc(22vh - 46px); width: 70px; height: 44px;
+  top: calc(22vh - 68px); width: 130px; height: 80px;
 }
 #plumb-flash {
   position: absolute; inset: 0; background: #fff; opacity: 0;
@@ -1661,21 +1661,41 @@ body::before {
       <div class="hud-status danger" id="hud-r-status">&#x25CF; BOLT SEALS LEAKING<br>&#x25CF; HIGH PRESSURE ALERT</div>
     </div>
 
-    <!-- Wrench — tightens bolts as you scroll -->
+    <!-- Wrench — stays on one bolt, ratchets as you scroll -->
     <div id="plumb-wrench">
-      <svg width="70" height="44" viewBox="0 0 70 44" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Handle -->
-        <rect x="18" y="19" width="52" height="6" rx="3" fill="#253B55" stroke="#304E6A" stroke-width="1.2"/>
-        <line x1="32" y1="19.5" x2="32" y2="24.5" stroke="#3D5E78" stroke-width="0.8"/>
-        <line x1="40" y1="19.5" x2="40" y2="24.5" stroke="#3D5E78" stroke-width="0.8"/>
-        <line x1="48" y1="19.5" x2="48" y2="24.5" stroke="#3D5E78" stroke-width="0.8"/>
-        <line x1="56" y1="19.5" x2="56" y2="24.5" stroke="#3D5E78" stroke-width="0.8"/>
-        <!-- Socket head -->
-        <rect x="0" y="10" width="22" height="24" rx="3" fill="#1E3248" stroke="#304E6A" stroke-width="1.2"/>
-        <!-- Hex socket opening -->
-        <polygon points="11,14.5 15.5,12 20,14.5 20,19.5 15.5,22 11,19.5" fill="#0A1620" stroke="#253B55" stroke-width="0.8"/>
-        <circle cx="15.5" cy="17" r="1.8" fill="#1E3248"/>
-        <line x1="18" y1="22" x2="22" y2="22" stroke="#304E6A" stroke-width="1"/>
+      <!-- Socket center at cx=38, cy=40 — JS aligns this over the target bolt -->
+      <svg width="130" height="80" viewBox="0 0 130 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Handle depth shadow -->
+        <rect x="34" y="38" width="94" height="13" rx="6" fill="#05101C"/>
+        <!-- Handle body -->
+        <rect x="34" y="35" width="94" height="11" rx="5.5" fill="#1A2E44" stroke="#2A4560" stroke-width="1.4"/>
+        <!-- Handle top highlight -->
+        <rect x="40" y="35.5" width="84" height="2.5" rx="1.2" fill="rgba(100,155,200,0.20)"/>
+        <!-- Grip knurling -->
+        <line x1="58"  y1="35.5" x2="58"  y2="45.5" stroke="#243A54" stroke-width="1" opacity="0.75"/>
+        <line x1="70"  y1="35.5" x2="70"  y2="45.5" stroke="#243A54" stroke-width="1" opacity="0.75"/>
+        <line x1="82"  y1="35.5" x2="82"  y2="45.5" stroke="#243A54" stroke-width="1" opacity="0.75"/>
+        <line x1="94"  y1="35.5" x2="94"  y2="45.5" stroke="#243A54" stroke-width="1" opacity="0.75"/>
+        <line x1="106" y1="35.5" x2="106" y2="45.5" stroke="#243A54" stroke-width="1" opacity="0.75"/>
+        <!-- Socket head outer shadow -->
+        <circle cx="38" cy="40" r="26" fill="#05101C"/>
+        <!-- Socket head outer ring (machined steel) -->
+        <circle cx="38" cy="40" r="24" fill="#1A2E44" stroke="#3A5878" stroke-width="2.5"/>
+        <!-- Bevel highlight arc (top-left) -->
+        <path d="M 20 25 A 24 24 0 0 1 52 25" stroke="rgba(140,190,225,0.38)" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <!-- Inner machined bore ring -->
+        <circle cx="38" cy="40" r="18" fill="#0E1E2E" stroke="#243A52" stroke-width="1.2"/>
+        <!-- Hex socket opening — r=9 matching the bolt hex (vertices at ±30°,±90°,±150°) -->
+        <polygon points="38,31 45.8,35.5 45.8,44.5 38,49 30.2,44.5 30.2,35.5" fill="#050C16" stroke="#1E3248" stroke-width="1.2"/>
+        <!-- Socket highlight face (top-left facet, top-right facet) — gives depth to the recess -->
+        <polygon points="38,40 30.2,35.5 38,31 45.8,35.5" fill="rgba(110,160,200,0.14)"/>
+        <!-- Ratchet direction notch (top, points clockwise) -->
+        <path d="M38 18 L41.5 23.5 L34.5 23.5 Z" fill="rgba(14,165,233,0.50)"/>
+        <!-- Center pip -->
+        <circle cx="38" cy="40" r="2.8" fill="#0C1A28" stroke="#1E3248" stroke-width="0.8"/>
+        <!-- Torque label on handle -->
+        <text x="66" y="56" font-family="'Barlow Condensed',monospace" font-size="7" font-weight="700"
+              fill="rgba(14,165,233,0.45)" letter-spacing="1.5">45 NM</text>
       </svg>
     </div>
 
@@ -2336,10 +2356,10 @@ document.querySelectorAll('a[href^="#"]').forEach(function(anchor){
 
   // ── Water color palette ───────────────────────────────────────────────────
   var STOPS = [
-    [0.00, 36, 16,  5],
-    [0.30, 52, 28,  8],
-    [0.42, 40, 40, 34],
-    [0.54, 16, 55, 60],
+    [0.00, 92, 48, 14],
+    [0.30,108, 64, 20],
+    [0.42, 72, 68, 44],
+    [0.54, 18, 60, 68],
     [0.66,  8, 96,122],
     [0.80,  5,130,190],
     [1.00,  3,148,220],
@@ -2382,9 +2402,9 @@ document.querySelectorAll('a[href^="#"]').forEach(function(anchor){
       life:Math.random()*200,
       maxLife:dirty?180+Math.random()*200:110+Math.random()*160,
       dirty:dirty,
-      cr:dirty?(58+Math.floor(Math.random()*24)):0,
-      cg:dirty?(30+Math.floor(Math.random()*16)):0,
-      cb:dirty?(6+Math.floor(Math.random()*10)):0,
+      cr:dirty?(105+Math.floor(Math.random()*40)):0,
+      cg:dirty?(52+Math.floor(Math.random()*28)):0,
+      cb:dirty?(10+Math.floor(Math.random()*16)):0,
     };
   }
   function initPtcl(){ PTCL=[]; for(var i=0;i<PTCL_N;i++) PTCL.push(mkPtcl(0)); }
@@ -2392,11 +2412,11 @@ document.querySelectorAll('a[href^="#"]').forEach(function(anchor){
   // ── Sludge chunks (sewage blobs at start) ─────────────────────────────────
   var SLUDGE=[], SLUDGE_N=22;
   var SLUDGE_TYPES=[
-    {cr:32,cg:22,cb:7},   // dark brown
-    {cr:28,cg:34,cb:10},  // bile olive
-    {cr:20,cg:16,cb:6},   // near-black brown
-    {cr:40,cg:26,cb:5},   // rusty brown
-    {cr:18,cg:24,cb:8},   // dark swamp green
+    {cr:95, cg:55, cb:18},  // muddy brown
+    {cr:78, cg:80, cb:22},  // bile olive
+    {cr:70, cg:50, cb:20},  // murky brown
+    {cr:110,cg:65, cb:14},  // rusty brown
+    {cr:52, cg:75, cb:22},  // swamp green
   ];
   function mkSludge(){
     var tp=SLUDGE_TYPES[Math.floor(Math.random()*SLUDGE_TYPES.length)];
@@ -2406,9 +2426,9 @@ document.querySelectorAll('a[href^="#"]').forEach(function(anchor){
       w:14+Math.random()*28, h:8+Math.random()*16,
       rot:Math.random()*Math.PI*2, vrot:(Math.random()-0.5)*0.006,
       life:Math.random()*280, maxLife:320+Math.random()*280,
-      cr:tp.cr+Math.floor(Math.random()*10),
-      cg:tp.cg+Math.floor(Math.random()*8),
-      cb:tp.cb+Math.floor(Math.random()*5),
+      cr:tp.cr+Math.floor(Math.random()*18),
+      cg:tp.cg+Math.floor(Math.random()*14),
+      cb:tp.cb+Math.floor(Math.random()*8),
     };
   }
   function initSludge(){ SLUDGE=[]; for(var i=0;i<SLUDGE_N;i++) SLUDGE.push(mkSludge()); }
@@ -2449,9 +2469,19 @@ document.querySelectorAll('a[href^="#"]').forEach(function(anchor){
     {dx: 0.25,dy: 1.00}, // down-right
   ];
 
+  function hexPts(cx,cy,r){
+    var pts=[];
+    for(var a=0;a<6;a++){
+      var ang=(a*60-30)*Math.PI/180;
+      pts.push((cx+r*Math.cos(ang)).toFixed(2)+','+(cy+r*Math.sin(ang)).toFixed(2));
+    }
+    return pts.join(' ');
+  }
+
   function genBolts(){
     TOP_HEX=[]; BOT_HEX=[]; TOP_GLOW=[]; BOT_GLOW=[];
     BOLT_XS=[]; BOLT_LEAK=[]; BOLT_TIGHTEN_OFFSET=[];
+    var NS='http://www.w3.org/2000/svg';
     ['pw-bolts-top','pw-bolts-bot'].forEach(function(id,wallIdx){
       var svg=document.getElementById(id);
       if(!svg) return;
@@ -2462,92 +2492,123 @@ document.querySelectorAll('a[href^="#"]').forEach(function(anchor){
       var n=Math.ceil(W/sp)+1;
       for(var bi=0;bi<n;bi++){
         var bx=bi*sp+sp*0.5, by=12;
-        // Glow halo
-        var glow=document.createElementNS('http://www.w3.org/2000/svg','circle');
+
+        // Static ambient glow (no rotation, no color change)
+        var glow=document.createElementNS(NS,'circle');
         glow.setAttribute('cx',bx); glow.setAttribute('cy',by);
-        glow.setAttribute('r','15'); glow.setAttribute('fill','rgba(239,68,68,0.18)');
+        glow.setAttribute('r','16'); glow.setAttribute('fill','rgba(80,120,160,0.08)');
         svg.appendChild(glow);
         (wallIdx===0?TOP_GLOW:BOT_GLOW).push(glow);
-        // Hex bolt
-        var hex=document.createElementNS('http://www.w3.org/2000/svg','polygon');
-        var pts=[];
-        for(var a=0;a<6;a++){
-          var ang=(a*60-30)*Math.PI/180;
-          pts.push((bx+9*Math.cos(ang)).toFixed(1)+','+(by+9*Math.sin(ang)).toFixed(1));
-        }
-        hex.setAttribute('points',pts.join(' '));
-        hex.setAttribute('fill','#240808'); hex.setAttribute('stroke','rgba(220,60,60,0.82)');
-        hex.setAttribute('stroke-width','1.2');
-        svg.appendChild(hex);
-        (wallIdx===0?TOP_HEX:BOT_HEX).push(hex);
-        // Inner socket
-        var inn=document.createElementNS('http://www.w3.org/2000/svg','circle');
-        inn.setAttribute('cx',bx); inn.setAttribute('cy',by);
-        inn.setAttribute('r','3.5'); inn.setAttribute('fill','#180505');
-        svg.appendChild(inn);
-        // Store top wall data
+
+        // ── Spin group: all rotatable bevel layers ──────────────────────────
+        var g=document.createElementNS(NS,'g');
+
+        // 1. Outer rim — thick machined edge (steel highlight)
+        var rim=document.createElementNS(NS,'polygon');
+        rim.setAttribute('points', hexPts(bx,by,11));
+        rim.setAttribute('fill','#3C5268');
+        rim.setAttribute('stroke','#587A96');
+        rim.setAttribute('stroke-width','0.7');
+        g.appendChild(rim);
+
+        // 2. Body — main hex face (darker steel)
+        var body=document.createElementNS(NS,'polygon');
+        body.setAttribute('points', hexPts(bx,by,9));
+        body.setAttribute('fill','#1C2C3C');
+        body.setAttribute('stroke','none');
+        g.appendChild(body);
+
+        // 3. Highlight wedge — top-left two faces (bright steel reflection)
+        //    Vertices at angles 210°, 270°, 330° (=−30°) at r=9, plus center
+        var hlPts=[
+          bx.toFixed(2)+','+by.toFixed(2),
+          (bx+9*Math.cos(210*Math.PI/180)).toFixed(2)+','+(by+9*Math.sin(210*Math.PI/180)).toFixed(2),
+          (bx+9*Math.cos(270*Math.PI/180)).toFixed(2)+','+(by+9*Math.sin(270*Math.PI/180)).toFixed(2),
+          (bx+9*Math.cos(330*Math.PI/180)).toFixed(2)+','+(by+9*Math.sin(330*Math.PI/180)).toFixed(2),
+        ].join(' ');
+        var hl=document.createElementNS(NS,'polygon');
+        hl.setAttribute('points', hlPts);
+        hl.setAttribute('fill','rgba(160,200,230,0.30)');
+        hl.setAttribute('stroke','none');
+        g.appendChild(hl);
+
+        // 4. Shadow wedge — bottom-right two faces
+        var shPts=[
+          bx.toFixed(2)+','+by.toFixed(2),
+          (bx+9*Math.cos(30*Math.PI/180)).toFixed(2)+','+(by+9*Math.sin(30*Math.PI/180)).toFixed(2),
+          (bx+9*Math.cos(90*Math.PI/180)).toFixed(2)+','+(by+9*Math.sin(90*Math.PI/180)).toFixed(2),
+          (bx+9*Math.cos(150*Math.PI/180)).toFixed(2)+','+(by+9*Math.sin(150*Math.PI/180)).toFixed(2),
+        ].join(' ');
+        var sh=document.createElementNS(NS,'polygon');
+        sh.setAttribute('points', shPts);
+        sh.setAttribute('fill','rgba(0,0,0,0.38)');
+        sh.setAttribute('stroke','none');
+        g.appendChild(sh);
+
+        // 5. Inner socket hex recess
+        var sock=document.createElementNS(NS,'polygon');
+        sock.setAttribute('points', hexPts(bx,by,4.2));
+        sock.setAttribute('fill','#050C14');
+        sock.setAttribute('stroke','#1E3048');
+        sock.setAttribute('stroke-width','0.7');
+        g.appendChild(sock);
+
+        // 6. Center pip
+        var dot=document.createElementNS(NS,'circle');
+        dot.setAttribute('cx',bx); dot.setAttribute('cy',by);
+        dot.setAttribute('r','1.6'); dot.setAttribute('fill','#0C1A28');
+        g.appendChild(dot);
+
+        svg.appendChild(g);
+        (wallIdx===0?TOP_HEX:BOT_HEX).push(g);
+
         if(wallIdx===0){
           BOLT_XS.push(bx);
-          BOLT_LEAK.push(Math.random()<0.68 ? 0.28+Math.random()*0.72 : 0);
-          BOLT_TIGHTEN_OFFSET.push((bi%3)*0.08); // stagger tightening start
+          BOLT_LEAK.push(Math.random()<0.68 ? 0.30+Math.random()*0.70 : 0);
+          BOLT_TIGHTEN_OFFSET.push((bi%3)*0.08);
         }
       }
     });
   }
 
-  // ── Bolt color + rotation update (throttled) ──────────────────────────────
+  // ── Bolt rotation + wrench update (throttled) ─────────────────────────────
+  var WRENCH_IDX = 0; // set on first call once BOLT_XS is populated
+
   function updateBolts(p){
-    var stress=clamp(1-sm(0.18,0.74,p),0,1);
-    // Bolt rotation: 0→360° as p goes 0.16→0.72 (one full clockwise turn)
-    var boltAngle=sm(0.16,0.72,p)*360;
-
-    var fill,stroke,glowFill;
-    if(stress>0.55){
-      fill='#240808'; stroke='rgba(225,55,55,'+(0.55+stress*0.30).toFixed(2)+')';
-      glowFill='rgba(220,50,50,'+(stress*0.22).toFixed(2)+')';
-    } else if(stress>0.15){
-      fill='#181018'; stroke='rgba(170,88,38,0.62)'; glowFill='rgba(170,88,38,0.09)';
-    } else {
-      fill='#0C1828'; stroke='rgba(14,165,233,0.58)'; glowFill='rgba(14,165,233,0.14)';
-    }
-    // Update top and bottom bolts together
+    // Bolts are always metallic steel — rotation is the only visual change
     var allH=TOP_HEX.concat(BOT_HEX);
-    var allG=TOP_GLOW.concat(BOT_GLOW);
     for(var i=0;i<allH.length;i++){
-      var h=allH[i];
-      h.setAttribute('fill',fill); h.setAttribute('stroke',stroke);
-      // Rotation: stagger per bolt using BOLT_TIGHTEN_OFFSET
-      var bIdx=i % BOLT_XS.length;
+      var bIdx=i % Math.max(1,BOLT_XS.length);
       var off=BOLT_TIGHTEN_OFFSET[bIdx]||0;
-      var bAng=sm(0.16+off,0.72,p)*360;
       var bx2=BOLT_XS[bIdx]||(bIdx*75+37);
-      h.setAttribute('transform','rotate('+bAng.toFixed(1)+','+bx2.toFixed(1)+',12)');
-      allG[i].setAttribute('fill',glowFill);
+      // Each bolt does one full 360° turn, staggered slightly
+      var bAng=sm(0.14+off, 0.74, p)*360;
+      allH[i].setAttribute('transform','rotate('+bAng.toFixed(1)+','+bx2.toFixed(1)+',12)');
     }
 
-    // Wrench animation
-    if(wrenchEl&&BOLT_XS.length>0){
-      var wVis=sm(0.14,0.21,p)*(1-sm(0.68,0.74,p));
+    // ── Wrench: fixed to one bolt, ratchet-rotates in place ─────────────────
+    if(wrenchEl && BOLT_XS.length>0){
+      // Pick the target bolt (roughly 25% from left, past the HUD panel)
+      if(WRENCH_IDX===0) WRENCH_IDX=Math.min(Math.floor(BOLT_XS.length*0.25), Math.max(3,BOLT_XS.length-1));
+      var wVis=sm(0.13,0.20,p)*(1-sm(0.68,0.76,p));
       wrenchEl.style.opacity=wVis.toFixed(3);
-      if(wVis>0.01){
-        // Wrench moves smoothly along bolt row
-        var wFrac=sm(0.18,0.70,p)*(BOLT_XS.length-1);
-        var wI=Math.floor(wFrac);
-        var wSub=wFrac-wI;
-        var wX=lerp(BOLT_XS[Math.min(wI,BOLT_XS.length-1)],BOLT_XS[Math.min(wI+1,BOLT_XS.length-1)],wSub);
-        // Ratchet rotation: cycles of power stroke + return
-        var wProg=sm(0.18,0.70,p)*6; // 6 ratchet strokes
+
+      if(wVis>0.005){
+        var wX=BOLT_XS[WRENCH_IDX]; // FIXED position — never moves
+        // 8 ratchet strokes: power +50°, return −35° (accumulating clockwise)
+        var wProg=sm(0.18,0.72,p)*8;
         var wCycFrac=wProg%1.0;
         var wCycN=Math.floor(wProg);
         var wAng;
-        if(wCycFrac<0.65){
-          wAng=wCycN*22+(wCycFrac/0.65)*58; // power stroke: 58° forward
+        if(wCycFrac<0.62){
+          wAng=wCycN*15+(wCycFrac/0.62)*50; // power stroke: +50°
         } else {
-          wAng=wCycN*22+58-((wCycFrac-0.65)/0.35)*36; // return: 36° back
+          wAng=wCycN*15+50-((wCycFrac-0.62)/0.38)*35; // return: −35°
         }
-        wrenchEl.style.left=(wX-15.5)+'px';
+        // Socket center is at cx=38,cy=40 in the 130×80 SVG
+        wrenchEl.style.left=(wX-38)+'px';
         wrenchEl.style.transform='rotate('+wAng.toFixed(1)+'deg)';
-        wrenchEl.style.transformOrigin='15.5px 17px';
+        wrenchEl.style.transformOrigin='38px 40px';
       }
     }
   }
