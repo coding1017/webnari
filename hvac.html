@@ -1200,33 +1200,43 @@ footer { background: var(--dark); border-top: 1px solid var(--border); padding: 
 /* ── Weather particle system: steam → water droplets → snowflakes ── */
 .weather-particles { position: absolute; inset: 0; z-index: 3; pointer-events: none; overflow: hidden; }
 
-/* STEAM — rises from the bottom in the hot phase */
+/* STEAM — narrow wispy columns rising from the bottom */
 .steam-layer { position: absolute; inset: 0; }
 .steam-v2 {
   position: absolute;
   border-radius: 50%;
-  filter: blur(7px);
+  filter: blur(3.5px);
   will-change: transform, opacity;
+  /* Tall pill with transparent ends = recognizable steam column */
+  background: linear-gradient(to top,
+    transparent 0%,
+    rgba(215,230,242,0.55) 20%,
+    rgba(220,235,245,0.72) 50%,
+    rgba(215,230,242,0.55) 80%,
+    transparent 100%);
 }
 @keyframes steamWisp {
-  0%   { transform: translateY(0)     translateX(0)                   scaleX(1)    scaleY(1);   opacity: 0; }
-  7%   { opacity: var(--sop); }
-  40%  { transform: translateY(-36vh) translateX(var(--sx))            scaleX(1.8)  scaleY(0.6); }
-  82%  { opacity: calc(var(--sop) * 0.22); }
-  100% { transform: translateY(-92vh) translateX(calc(var(--sx)*-0.5)) scaleX(0.65) scaleY(3.2); opacity: 0; }
+  0%   { transform: translateY(0)      translateX(0)                   scaleX(1);   opacity: 0; }
+  8%   { opacity: var(--sop); }
+  35%  { transform: translateY(-32vh)  translateX(var(--sx))            scaleX(1.5); opacity: calc(var(--sop)*0.7); }
+  70%  { transform: translateY(-65vh)  translateX(calc(var(--sx)*-0.4)) scaleX(1.8); opacity: calc(var(--sop)*0.25); }
+  100% { transform: translateY(-100vh) translateX(var(--sx))            scaleX(0.6); opacity: 0; }
 }
 
-/* WATER DROPLETS — condensation scattered across the full screen */
+/* WATER DROPLETS — condensation drops sliding DOWN the screen */
 .droplet-layer { position: absolute; inset: 0; }
 .water-drop {
   position: absolute;
   will-change: transform, opacity;
-  filter: drop-shadow(0 2px 4px rgba(56,189,248,0.35));
 }
-@keyframes dropBob {
-  0%,100% { transform: translateY(0)    rotate(0deg)  scale(1); }
-  30%     { transform: translateY(-9px) rotate(5deg)  scale(1.06); }
-  65%     { transform: translateY(5px)  rotate(-4deg) scale(0.95); }
+@keyframes dropSlide {
+  0%   { transform: translateY(var(--dy-start)) translateX(0);              opacity: 0; }
+  6%   { opacity: var(--dop); }
+  /* slight hesitation — surface tension holding the drop */
+  18%  { transform: translateY(calc(var(--dy-start) + 4px)) translateX(2px);  opacity: var(--dop); }
+  /* break free and accelerate down */
+  85%  { opacity: calc(var(--dop)*0.7); }
+  100% { transform: translateY(110vh) translateX(var(--ddx));               opacity: 0; }
 }
 
 /* SNOWFLAKES — drift from top to bottom, sway, rotate */
@@ -2768,56 +2778,71 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
     }
   })();
 
-  // ── Build: steam wisps (rise from bottom) ────────────────────
-  for (let i = 0; i < 22; i++) {
+  // ── Build: steam wisps — tall narrow columns, NOT blobs ───────
+  for (let i = 0; i < 24; i++) {
     const el = document.createElement('div');
     el.className = 'steam-v2';
-    const lp   = 3 + Math.random() * 94;
-    const w    = 16 + Math.random() * 28;
-    const h    = 40 + Math.random() * 50;
-    const dur  = 2.0 + Math.random() * 2.5;
-    const del  = Math.random() * 4.5;
-    const sx   = (-22 + Math.random() * 44).toFixed(1);
-    const sop  = (0.28 + Math.random() * 0.42).toFixed(2);
+    const lp  = 2 + Math.random() * 96;
+    const w   = 5 + Math.random() * 8;          // narrow: 5–13px
+    const h   = 90 + Math.random() * 120;        // tall: 90–210px
+    const dur = 2.2 + Math.random() * 2.8;
+    const del = Math.random() * 5;
+    const sx  = (-18 + Math.random() * 36).toFixed(1);
+    const sop = (0.35 + Math.random() * 0.40).toFixed(2);
     el.style.cssText = `left:${lp}%;bottom:0;width:${w}px;height:${h}px;
       --sx:${sx}px;--sop:${sop};
-      background:radial-gradient(ellipse,rgba(210,228,242,0.7) 0%,transparent 68%);
       animation:steamWisp ${dur}s ${del}s ease-out infinite;`;
     steamLayer.appendChild(el);
   }
 
-  // ── Build: water droplets (scattered all over screen) ────────
+  // ── Build: condensation drops that SLIDE DOWN the screen ──────
   (function() {
     const ns2 = 'http://www.w3.org/2000/svg';
-    for (let i = 0; i < 42; i++) {
+    for (let i = 0; i < 38; i++) {
       const svg2 = document.createElementNS(ns2,'svg');
-      const sz   = 10 + Math.random() * 18;
-      const lp   = 2  + Math.random() * 96;
-      const tp   = 4  + Math.random() * 90;
-      const dur  = 3  + Math.random() * 4;
-      const del  = Math.random() * 5;
-      svg2.setAttribute('viewBox','-10 -14 20 24');
-      svg2.setAttribute('width', sz); svg2.setAttribute('height', sz * 1.2);
-      svg2.style.cssText = `position:absolute;left:${lp}%;top:${tp}%;
-        animation:dropBob ${dur}s ${del}s ease-in-out infinite;`;
-      // Teardrop body
-      const body = document.createElementNS(ns2,'path');
-      body.setAttribute('d','M0,-11 C5,-6 8,0 8,5 C8,9 4,11 0,11 C-4,11 -8,9 -8,5 C-8,0 -5,-6 0,-11 Z');
-      body.setAttribute('fill','rgba(56,160,220,0.55)');
-      svg2.appendChild(body);
-      // Inner highlight
-      const hl = document.createElementNS(ns2,'ellipse');
-      hl.setAttribute('cx','-2'); hl.setAttribute('cy','-3');
-      hl.setAttribute('rx','2.5'); hl.setAttribute('ry','3.8');
-      hl.setAttribute('fill','rgba(255,255,255,0.38)');
-      hl.setAttribute('transform','rotate(-20,-2,-3)');
+      // Drop body + trailing streak above
+      const bodyR  = 3 + Math.random() * 5;       // drop radius 3–8px
+      const trailH = bodyR * 3 + Math.random() * bodyR * 4; // streak height
+      const totalH = bodyR * 2 + trailH + 4;
+      const w      = bodyR * 2 + 4;
+      svg2.setAttribute('viewBox', `0 0 ${w} ${totalH}`);
+      svg2.setAttribute('width',  w);
+      svg2.setAttribute('height', totalH);
+
+      const cx = w / 2;
+      // Trailing streak (from top, fades into drop)
+      const streak = document.createElementNS(ns2,'line');
+      streak.setAttribute('x1', cx); streak.setAttribute('y1', 0);
+      streak.setAttribute('x2', cx); streak.setAttribute('y2', trailH);
+      streak.setAttribute('stroke','rgba(100,185,240,0.35)');
+      streak.setAttribute('stroke-width', (bodyR * 0.5).toFixed(1));
+      streak.setAttribute('stroke-linecap','round');
+      svg2.appendChild(streak);
+      // Drop body (circle at bottom)
+      const circle = document.createElementNS(ns2,'circle');
+      circle.setAttribute('cx', cx);
+      circle.setAttribute('cy', trailH + bodyR + 2);
+      circle.setAttribute('r',  bodyR);
+      circle.setAttribute('fill','rgba(56,165,225,0.65)');
+      svg2.appendChild(circle);
+      // Highlight
+      const hl = document.createElementNS(ns2,'circle');
+      hl.setAttribute('cx', cx - bodyR*0.3);
+      hl.setAttribute('cy', trailH + bodyR + 2 - bodyR*0.25);
+      hl.setAttribute('r',  bodyR * 0.38);
+      hl.setAttribute('fill','rgba(255,255,255,0.42)');
       svg2.appendChild(hl);
-      // Bottom reflection
-      const ref = document.createElementNS(ns2,'ellipse');
-      ref.setAttribute('cx','1'); ref.setAttribute('cy','7');
-      ref.setAttribute('rx','3'); ref.setAttribute('ry','1.5');
-      ref.setAttribute('fill','rgba(147,210,255,0.22)');
-      svg2.appendChild(ref);
+
+      const lp     = 2  + Math.random() * 96;
+      const dyStart= -(10 + Math.random() * 60); // start above its resting spot
+      const ddx    = (-30 + Math.random() * 60).toFixed(0); // slight X drift as it falls
+      const dur    = 3.5 + Math.random() * 5;
+      const del    = Math.random() * 7;
+      const dop    = (0.55 + Math.random() * 0.38).toFixed(2);
+      svg2.style.cssText = `position:absolute;left:${lp}%;top:${5+Math.random()*55}%;
+        --dy-start:${dyStart}px;--ddx:${ddx}px;--dop:${dop};
+        filter:drop-shadow(0 1px 3px rgba(56,189,248,0.25));
+        animation:dropSlide ${dur}s ${del}s ease-in infinite;`;
       dropletLayer.appendChild(svg2);
     }
   })();
@@ -3101,14 +3126,14 @@ document.querySelectorAll('a[href^="#"]').forEach(link => {
     }
 
     // ── Weather: steam → droplets → snowflakes ───────────────────
-    // Steam rises from bottom in hot phase, gone by p=0.40
-    steamLayer.style.opacity    = clamp(1 - p / 0.40, 0, 1);
-    // Droplets condense in as steam fades, then freeze out as snowflakes appear
-    const dropIn  = clamp((p - 0.22) / 0.20, 0, 1);
-    const dropOut = clamp(1 - (p - 0.55) / 0.17, 0, 1);
+    // Steam: visible when hot, start fading at p=0.18, gone by p=0.48
+    steamLayer.style.opacity    = clamp(1 - (p - 0.18) / 0.30, 0, 1);
+    // Drops: begin appearing mid-steam (p=0.15), peak at p=0.40, fade as snowflakes appear
+    const dropIn  = clamp((p - 0.15) / 0.22, 0, 1);
+    const dropOut = clamp(1 - (p - 0.52) / 0.20, 0, 1);
     dropletLayer.style.opacity  = Math.min(dropIn, dropOut);
-    // Snowflakes crystallize in as droplets freeze
-    snowLayer.style.opacity     = clamp((p - 0.58) / 0.20, 0, 1);
+    // Snowflakes crystallize in as drops freeze (p=0.58→0.76)
+    snowLayer.style.opacity     = clamp((p - 0.58) / 0.18, 0, 1);
 
     // ── Phase label
     if (p < 0.28) {
