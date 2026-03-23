@@ -384,6 +384,22 @@ nav {
     0 0 40px rgba(251,191,36,0.35),
     0 0 80px rgba(251,191,36,0.15);
 }
+/* — Power-on lights — */
+.power-light {
+  position: absolute;
+  border-radius: 4px;
+  background: rgba(251,191,36,0.0);
+  pointer-events: none;
+  z-index: 6;
+  will-change: opacity, background;
+  transition: none;
+}
+.pl-1 { top: 12%; left: 8%; width: 80px; height: 40px; }
+.pl-2 { top: 8%; right: 12%; width: 60px; height: 60px; }
+.pl-3 { bottom: 18%; left: 6%; width: 100px; height: 35px; }
+.pl-4 { bottom: 14%; right: 8%; width: 70px; height: 50px; }
+.pl-5 { top: 45%; left: 4%; width: 50px; height: 70px; }
+.pl-6 { top: 40%; right: 5%; width: 55px; height: 55px; }
 /* — Phase label — */
 .seq-phase {
   position: absolute;
@@ -1059,8 +1075,14 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
       <div class="panel-hud-item panel-hud-br" id="hudBr">Circuits: <span id="hudCircuits" style="color:#fde68a">0</span>/22 Landed<br>NEC 2023 Compliant</div>
     </div>
     <div class="panel-powered" id="panelPowered">
-      <span class="panel-powered-text">PANEL COMPLETE</span>
+      <span class="panel-powered-text">POWERED ON</span>
     </div>
+    <div class="power-light pl-1" id="pl1"></div>
+    <div class="power-light pl-2" id="pl2"></div>
+    <div class="power-light pl-3" id="pl3"></div>
+    <div class="power-light pl-4" id="pl4"></div>
+    <div class="power-light pl-5" id="pl5"></div>
+    <div class="power-light pl-6" id="pl6"></div>
     <div class="seq-intro" id="seqIntro">
       <div class="seq-intro-logo">VOLT<span>PRO</span></div>
       <div class="seq-intro-sub">South Florida's Premier Electrical Contractors</div>
@@ -1504,7 +1526,6 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
         { tx:386, row:2, idx:5 }
       ];
 
-      // Wire colors: mostly blue with some red accent circuits
       var wireColors = [
         '#2E86DE','#2E86DE','#DC2626','#2E86DE','#2E86DE',
         '#2E86DE','#2E86DE','#2E86DE','#DC2626','#2E86DE','#2E86DE',
@@ -1518,23 +1539,32 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
         var row = breakerRows[w.row];
         var totalW = row.count * 42 + (row.count - 1) * 5;
         var sx = (480 - totalW) / 2;
-        var bx = sx + w.idx * 47 + 21; // breaker center x
-        var by = row.y;                 // breaker top y
-        var tx = w.tx;                  // terminal strip x
-        var ty = 78;                    // terminal strip bottom
+        var bx = sx + w.idx * 47 + 21;
+        var by = row.y;
+        var tx = w.tx;
+        var ty = 78;
         var span = by - ty;
 
-        // Create main wire + companion neutral wire for dense bundle effect
-        var offsets = [0, -3.5]; // main wire + companion
-        var colors  = [wireColors[i] || '#2E86DE', '#5AADE2']; // hot + neutral blue
+        // TWO path definitions for morphing:
+        // Straight (hanging down to panel bottom)
+        var sEndY = 700;
+        var sCy1 = ty + (sEndY - ty) * 0.33;
+        var sCy2 = ty + (sEndY - ty) * 0.66;
+
+        // Curved (organized to breaker)
+        var cCy1 = ty + span * 0.6;
+        var cCy2 = by - span * 0.25;
+
+        var offsets = [0, -3.5];
+        var colors  = [wireColors[i] || '#2E86DE', '#5AADE2'];
         var widths  = [2.8, 2.2];
 
         offsets.forEach(function(off, oi) {
           var wtx = tx + off;
           var wbx = bx + off * 0.4;
-          var cy1 = ty + span * 0.6;
-          var cy2 = by - span * 0.25;
-          var d = 'M ' + wtx + ' ' + ty + ' C ' + wtx + ' ' + cy1 + ', ' + wbx + ' ' + cy2 + ', ' + wbx + ' ' + by;
+
+          // Start with STRAIGHT path (hanging down)
+          var d = 'M ' + wtx + ' ' + ty + ' C ' + wtx + ' ' + sCy1 + ', ' + wtx + ' ' + sCy2 + ', ' + wtx + ' ' + sEndY;
 
           var path = svgEl('path', {
             d: d,
@@ -1551,11 +1581,43 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
           path.style.strokeDasharray = totalLength;
           path.style.strokeDashoffset = totalLength;
 
-          panelWires.push({ el: path, totalLength: totalLength, row: w.row });
+          panelWires.push({
+            el: path,
+            totalLength: totalLength,
+            row: w.row,
+            wtx: wtx,
+            ty: ty,
+            // Straight coords
+            sCy1: sCy1, sCy2: sCy2, sEx: wtx, sEy: sEndY,
+            // Curved coords
+            cCy1: cCy1, cCy2: cCy2, cEx: wbx, cEy: by,
+            morphed: false
+          });
         });
       });
 
-      // ═══ SCROLL ANIMATION ═══
+      // Panel cover (SVG group)
+      var gCover = svgEl('g', { transform: 'translate(0, -750)' });
+      // Cover body
+      gCover.appendChild(svgEl('rect', { x:28, y:55, width:424, height:660, rx:4, fill:'#3E4048', stroke:'#555', 'stroke-width':1 }));
+      // Breaker knockout slots (3 rows of rectangles)
+      [175, 375, 565].forEach(function(cy) {
+        gCover.appendChild(svgEl('rect', { x:60, y:cy, width:360, height:22, rx:2, fill:'#333', stroke:'#555', 'stroke-width':0.5 }));
+      });
+      // Label
+      var coverLabel = svgEl('text', { x:240, y:40, 'text-anchor':'middle', fill:'#666', 'font-size':10, 'font-family':'var(--font-head)', 'font-weight':700, 'letter-spacing':'0.1em' });
+      coverLabel.textContent = '200A MAIN';
+      gCover.appendChild(coverLabel);
+      svg.appendChild(gCover);
+
+      // Power light elements
+      var powerLights = [];
+      for (var pli = 1; pli <= 6; pli++) {
+        var plEl = document.getElementById('pl' + pli);
+        if (plEl) powerLights.push(plEl);
+      }
+
+      // ═══ SCROLL ANIMATION v2 ═══
       function update() {
         var p = getProgress();
         scrubFill.style.width = (p * 100) + '%';
@@ -1564,16 +1626,16 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
         intro.style.opacity       = map(p, 0, 0.06, 1, 0);
         intro.style.pointerEvents = p > 0.03 ? 'none' : 'auto';
 
-        // Background subtle warm
-        var bgB = map(p, 0.05, 0.15, 0, 1) * (p < 0.82 ? 1 : map(p, 0.82, 1, 1, 0.3));
+        // Background
+        var bgB = map(p, 0.05, 0.15, 0, 1) * (p < 0.80 ? 1 : map(p, 0.80, 1, 1, 0.3));
         bg.style.background = 'rgb(' + Math.round(7 + bgB * 10) + ',' + Math.round(7 + bgB * 4) + ',' + Math.round(17 + bgB * 18) + ')';
 
-        // Panel container scale + opacity
+        // Panel container
         var pScale = map(p, 0.05, 0.14, 0.9, 1);
         var pOp = map(p, 0.05, 0.12, 0, 1);
-        var fadeOut = p < 0.82 ? 1 : map(p, 0.82, 0.92, 1, 0);
+        var fadeOut = p < 0.80 ? 1 : map(p, 0.80, 0.92, 1, 0);
         panelContainer.style.opacity = String(pOp * fadeOut);
-        panelContainer.style.transform = 'translate(-50%, -50%) scale(' + (pScale * (p < 0.82 ? 1 : map(p, 0.82, 0.92, 1, 0.88))) + ')';
+        panelContainer.style.transform = 'translate(-50%, -50%) scale(' + (pScale * (p < 0.80 ? 1 : map(p, 0.80, 0.92, 1, 0.88))) + ')';
 
         // SVG sizing
         var vh = stickyEl.offsetHeight;
@@ -1591,67 +1653,118 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
         // Terminal strip
         gTerminal.setAttribute('opacity', String(map(p, 0.10, 0.16, 0, 1) * fadeOut));
 
-        // DIN rails
-        gDinRails.setAttribute('opacity', String(map(p, 0.13, 0.19, 0, 1) * fadeOut));
+        // ═══ PHASE 1: WIRES DROP (draw straight down) ═══
+        var landed = 0;
+        panelWires.forEach(function(wire, i) {
+          // Draw phase: wires extend downward
+          var drawStart = 0.12 + i * 0.005;
+          var drawEnd = drawStart + 0.10;
+          var drawP = easeOut3(clamp((p - drawStart) / (drawEnd - drawStart), 0, 1));
 
-        // Breakers snap in (staggered by row)
+          // Morph phase: straight → curved
+          var morphStart = 0.28;
+          var morphEnd = 0.42;
+          var morphP = easeOut3(clamp((p - morphStart) / (morphEnd - morphStart), 0, 1));
+
+          if (morphP > 0 && morphP <= 1) {
+            // Interpolate control points
+            var cy1 = wire.sCy1 + (wire.cCy1 - wire.sCy1) * morphP;
+            var cy2 = wire.sCy2 + (wire.cCy2 - wire.sCy2) * morphP;
+            var ex  = wire.sEx  + (wire.cEx  - wire.sEx)  * morphP;
+            var ey  = wire.sEy  + (wire.cEy  - wire.sEy)  * morphP;
+            var d = 'M ' + wire.wtx + ' ' + wire.ty + ' C ' + wire.wtx + ' ' + cy1 + ', ' + ex + ' ' + cy2 + ', ' + ex + ' ' + ey;
+            wire.el.setAttribute('d', d);
+
+            if (morphP >= 0.99 && !wire.morphed) {
+              wire.morphed = true;
+              var newLen = wire.el.getTotalLength();
+              wire.el.style.strokeDasharray = newLen;
+              wire.el.style.strokeDashoffset = '0';
+            }
+          }
+
+          // Handle dashoffset (only during draw phase, before morph completes)
+          if (!wire.morphed) {
+            wire.el.style.strokeDashoffset = String(wire.totalLength * (1 - drawP));
+          }
+
+          wire.el.style.opacity = String(fadeOut);
+          if (drawP >= 0.95) landed++;
+        });
+
+        // HUD circuit count
+        if (hudCircuits) hudCircuits.textContent = String(Math.min(Math.floor(landed / 2), 22));
+
+        // Cable clips (appear during organize phase)
+        var clipOp = map(p, 0.32, 0.40, 0, 1) * fadeOut;
+
+        // ═══ PHASE 2: DIN RAILS (after wires organized) ═══
+        var dinOp = map(p, 0.40, 0.48, 0, 1) * fadeOut;
+        gDinRails.setAttribute('opacity', String(dinOp));
+
+        // ═══ PHASE 3: BREAKERS (after DIN rails) ═══
         breakerGroups.forEach(function(g, ri) {
-          var start = 0.18 + ri * 0.06;
-          var end = start + 0.08;
+          var start = 0.46 + ri * 0.04;
+          var end = start + 0.06;
           var bp = clamp((p - start) / (end - start), 0, 1);
           var bOp = easeOut3(bp);
           g.setAttribute('opacity', String(bOp * fadeOut));
-          var tx = (1 - easeOut3(bp)) * (ri % 2 === 0 ? -12 : 12);
-          g.setAttribute('transform', 'translate(' + tx + ', 0)');
+          var btx = (1 - easeOut3(bp)) * (ri % 2 === 0 ? -12 : 12);
+          g.setAttribute('transform', 'translate(' + btx + ', 0)');
         });
 
-        // Wire drawing (the money shot — satisfying parallel arcs)
-        var landed = 0;
-        panelWires.forEach(function(wire, i) {
-          var wStart = 0.34 + i * 0.012;
-          var wEnd = wStart + 0.14;
-          var wp = easeOut3(clamp((p - wStart) / (wEnd - wStart), 0, 1));
-          wire.el.style.strokeDashoffset = String(wire.totalLength * (1 - wp));
-          wire.el.style.opacity = String(fadeOut);
-          if (wp >= 0.95) landed++;
-        });
+        // ═══ PHASE 4: PANEL COVER SLIDES DOWN ═══
+        var coverStart = 0.54;
+        var coverEnd = 0.62;
+        var coverP = easeOut3(clamp((p - coverStart) / (coverEnd - coverStart), 0, 1));
+        var coverY = -750 + 750 * coverP;
+        gCover.setAttribute('transform', 'translate(0, ' + coverY + ')');
 
-        // HUD circuit count (each breaker has 2 wires, count unique breakers)
-        if (hudCircuits) hudCircuits.textContent = String(Math.min(Math.floor(landed / 2), 22));
-
-        // HUD panels
-        var hudIn  = map(p, 0.30, 0.42, 0, 1);
-        var hudOut = p < 0.78 ? 1 : map(p, 0.78, 0.86, 1, 0);
-        panelHud.style.opacity = String(clamp(hudIn * hudOut, 0, 1));
+        // ═══ PHASE 5: ENERGIZE (toggles + sweep) ═══
+        // Toggles flip ON after cover closes
+        var toggleDots = document.querySelectorAll('.toggle-on');
+        for (var tdi = 0; tdi < toggleDots.length; tdi++) {
+          var trigP = 0.63 + tdi * 0.004;
+          toggleDots[tdi].setAttribute('opacity', p >= trigP ? '1' : '0');
+        }
 
         // Panel golden glow
-        var glowVal = map(p, 0.55, 0.70, 0, 1) * (p < 0.80 ? 1 : map(p, 0.80, 0.88, 1, 0));
+        var glowVal = map(p, 0.62, 0.72, 0, 1) * (p < 0.78 ? 1 : map(p, 0.78, 0.88, 1, 0));
         panelGlow.style.opacity = String(Math.max(0, glowVal));
 
-        // Energize sweep (golden wipe)
-        if (p < 0.72) {
+        // Energize sweep
+        if (p < 0.64) {
           panelEnergize.style.clipPath = 'inset(0 100% 0 0)';
-        } else if (p < 0.82) {
-          var right = map(easeOut3((p - 0.72) / 0.10), 0, 1, 100, -2);
+        } else if (p < 0.72) {
+          var right = map(easeOut3((p - 0.64) / 0.08), 0, 1, 100, -2);
           panelEnergize.style.clipPath = 'inset(0 ' + right + '% 0 0)';
-        } else if (p < 0.90) {
-          var left = map(easeIn3((p - 0.82) / 0.08), 0, 1, 0, 102);
+        } else if (p < 0.78) {
+          var left = map(easeIn3((p - 0.72) / 0.06), 0, 1, 0, 102);
           panelEnergize.style.clipPath = 'inset(0 0 0 ' + left + '%)';
         } else {
           panelEnergize.style.clipPath = 'inset(0 0 0 102%)';
         }
 
-        // Toggle ON indicators during energize
-        var toggleDots = document.querySelectorAll('.toggle-on');
-        for (var tdi = 0; tdi < toggleDots.length; tdi++) {
-          var trigP = 0.72 + tdi * 0.004;
-          toggleDots[tdi].setAttribute('opacity', p >= trigP ? '1' : '0');
-        }
+        // ═══ PHASE 6: POWER ON (lights around viewport) ═══
+        powerLights.forEach(function(pl, li) {
+          var lightStart = 0.72 + li * 0.012;
+          var lightEnd = lightStart + 0.06;
+          var lightP = clamp((p - lightStart) / (lightEnd - lightStart), 0, 1);
+          var lightFade = p < 0.82 ? 1 : map(p, 0.82, 0.90, 1, 0);
+          var warmth = easeOut3(lightP) * lightFade;
+          pl.style.background = 'rgba(251,191,36,' + (warmth * 0.35) + ')';
+          pl.style.boxShadow = warmth > 0.1 ? '0 0 ' + Math.round(warmth * 40) + 'px ' + Math.round(warmth * 15) + 'px rgba(251,191,36,' + (warmth * 0.25) + ')' : 'none';
+        });
 
-        // PANEL COMPLETE text
-        var powP = map(p, 0.76, 0.80, 0, 1) * map(p, 0.84, 0.90, 1, 0);
+        // POWERED ON text
+        var powP = map(p, 0.70, 0.74, 0, 1) * map(p, 0.80, 0.88, 1, 0);
         panelPowered.style.opacity = String(Math.max(0, powP));
-        panelPowered.style.transform = 'scale(' + map(p, 0.76, 0.80, 0.8, 1) + ')';
+        panelPowered.style.transform = 'scale(' + map(p, 0.70, 0.74, 0.8, 1) + ')';
+
+        // HUD panels
+        var hudIn  = map(p, 0.14, 0.26, 0, 1);
+        var hudOut = p < 0.52 ? 1 : map(p, 0.52, 0.60, 1, 0);
+        panelHud.style.opacity = String(clamp(hudIn * hudOut, 0, 1));
 
         // Final hero
         var fP  = map(p, 0.88, 0.97, 0, 1);
@@ -1663,12 +1776,14 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
         // Phase labels
         if      (p < 0.04) setPhase('');
         else if (p < 0.12) setPhase('MOUNTING ENCLOSURE');
-        else if (p < 0.18) setPhase('INSTALLING DIN RAILS');
-        else if (p < 0.34) setPhase('SETTING BREAKERS');
-        else if (p < 0.60) setPhase('ROUTING CONDUCTORS');
-        else if (p < 0.72) setPhase('WIRE MANAGEMENT');
-        else if (p < 0.84) setPhase('ENERGIZING PANEL');
-        else               setPhase('PANEL COMPLETE');
+        else if (p < 0.28) setPhase('PULLING WIRE');
+        else if (p < 0.40) setPhase('ORGANIZING BUNDLES');
+        else if (p < 0.46) setPhase('MOUNTING DIN RAILS');
+        else if (p < 0.54) setPhase('SETTING BREAKERS');
+        else if (p < 0.62) setPhase('CLOSING PANEL');
+        else if (p < 0.74) setPhase('ENERGIZING');
+        else if (p < 0.82) setPhase('POWERED ON');
+        else               setPhase('');
       }
 
       function updateSticky() {
