@@ -154,6 +154,10 @@ body::before {
 .scene-glow { position: absolute; inset: 0; z-index: 2; background: radial-gradient(ellipse 60% 60% at 50% 60%, rgba(74,222,128,0.1), transparent 70%); opacity: 0; }
 .scene-container { position: absolute; inset: 0; z-index: 3; display: flex; align-items: flex-end; justify-content: center; }
 .scene-svg { width: 100%; height: auto; }
+@media (max-width: 767px) {
+  .scene-container { overflow: hidden; align-items: center !important; }
+  .scene-svg { width: auto !important; height: 70vh !important; max-width: none !important; max-height: none !important; }
+}
 .scene-energize { position: absolute; inset: 0; z-index: 4; background: linear-gradient(90deg, transparent, rgba(74,222,128,0.08), rgba(245,158,11,0.06), transparent); clip-path: inset(0 100% 0 0); pointer-events: none; }
 
 .scene-hud { position: absolute; z-index: 5; pointer-events: none; opacity: 0; }
@@ -1378,13 +1382,13 @@ body::before {
       var fadeOut=p<0.90?1:map(p,0.90,0.96,1,0);
       sceneContainer.style.opacity=String(map(p,0.05,0.10,0,1)*fadeOut);
 
-      // SVG viewBox — mobile crops tighter to the yard content so it fills more screen
+      // ViewBox and aspect ratio — mobile uses slice to fill height
       var vw=stickyEl.offsetWidth;
+      svg.setAttribute('viewBox','0 0 800 600');
       if(vw<768){
-        // Crop to just the yard area (y 40 to 600) — removes dead space above/below
-        svg.setAttribute('viewBox','10 40 780 560');
+        svg.setAttribute('preserveAspectRatio','xMidYMid slice');
       } else {
-        svg.setAttribute('viewBox','0 0 800 600');
+        svg.setAttribute('preserveAspectRatio','xMidYMid meet');
       }
 
       // Step counter
