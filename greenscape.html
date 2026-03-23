@@ -152,7 +152,7 @@ body::before {
 .sequence-sticky { position: absolute; top: 0; left: 0; right: 0; height: calc(100vh - 68px); overflow: hidden; background: var(--black); }
 .seq-bg { position: absolute; inset: 0; z-index: 1; transition: background 0.1s; }
 .scene-glow { position: absolute; inset: 0; z-index: 2; background: radial-gradient(ellipse 60% 60% at 50% 60%, rgba(74,222,128,0.1), transparent 70%); opacity: 0; }
-.scene-container { position: absolute; inset: 0; z-index: 3; display: flex; align-items: flex-end; justify-content: center; overflow: hidden; }
+.scene-container { position: absolute; inset: 0; z-index: 3; display: flex; align-items: flex-end; justify-content: center; }
 .scene-svg { width: 100%; max-width: 1000px; height: auto; }
 .scene-energize { position: absolute; inset: 0; z-index: 4; background: linear-gradient(90deg, transparent, rgba(74,222,128,0.08), rgba(245,158,11,0.06), transparent); clip-path: inset(0 100% 0 0); pointer-events: none; }
 
@@ -1357,6 +1357,82 @@ body::before {
     });
     svg.appendChild(gWater);
 
+    // 19. MOBILE EXTENDED YARD (y=560-950, only visible when viewBox is 800x1000)
+    // Extra lawn area extending the yard downward
+    var gMobileExt=svgEl('g',{opacity:0});
+    // Extended soil/lawn base
+    gMobileExt.appendChild(svgEl('rect',{x:YL,y:YB,width:YW,height:400,fill:'#2D8B46'}));
+    // More sod rows (extending the mowing stripes)
+    for(var mei=0;mei<12;mei++){
+      var mey=YB+mei*30;
+      var meColor=mei%2===0?'#35A050':'#2D8B46';
+      gMobileExt.appendChild(svgEl('rect',{x:YL,y:mey,width:YW,height:30,fill:meColor}));
+      if(mei%2===0){
+        gMobileExt.appendChild(svgEl('rect',{x:YL,y:mey,width:YW,height:30,fill:'#228B3A',opacity:0.2}));
+      }
+    }
+    // Extended mulch beds along sides
+    gMobileExt.appendChild(svgEl('rect',{x:YL+8,y:YB,width:38,height:320,fill:'#5A3A1A',rx:4}));
+    gMobileExt.appendChild(svgEl('rect',{x:YR-46,y:YB,width:38,height:320,fill:'#5A3A1A',rx:4}));
+    // Extended fences (sides continue down)
+    gMobileExt.appendChild(svgEl('rect',{x:YL-2,y:YB,width:8,height:350,fill:'#F0ECE4',stroke:'#E0DCD4','stroke-width':0.5}));
+    gMobileExt.appendChild(svgEl('rect',{x:YR-6,y:YB,width:8,height:350,fill:'#F0ECE4',stroke:'#E0DCD4','stroke-width':0.5}));
+    // More shrubs along extended sides
+    [{x:YL+26,y:YB+50,rx:24,ry:28},{x:YL+28,y:YB+120,rx:22,ry:26},{x:YL+24,y:YB+190,rx:24,ry:30},
+     {x:YR-26,y:YB+55,rx:24,ry:28},{x:YR-28,y:YB+125,rx:22,ry:26},{x:YR-24,y:YB+195,rx:24,ry:30}].forEach(function(ms){
+      gMobileExt.appendChild(svgEl('ellipse',{cx:ms.x,cy:ms.y,rx:ms.rx,ry:ms.ry,fill:'#1A6B30',stroke:'#15552A','stroke-width':0.5}));
+      gMobileExt.appendChild(svgEl('ellipse',{cx:ms.x-ms.rx*0.2,cy:ms.y-ms.ry*0.2,rx:ms.rx*0.55,ry:ms.ry*0.45,fill:'#228B3A',opacity:0.45}));
+    });
+    // More trees in the extended area
+    [{x:YL+45,y:YB+100,r:48},{x:YR-40,y:YB+110,r:44},{x:YL+50,y:YB+260,r:42}].forEach(function(mt){
+      gMobileExt.appendChild(svgEl('ellipse',{cx:mt.x+6,cy:mt.y+mt.r+10,rx:mt.r*0.8,ry:mt.r*0.3,fill:'#0A0F08',opacity:0.15}));
+      gMobileExt.appendChild(svgEl('rect',{x:mt.x-4,y:mt.y+mt.r*0.3,width:8,height:mt.r*0.8,fill:'#5A4030',rx:2}));
+      gMobileExt.appendChild(svgEl('circle',{cx:mt.x-4,cy:mt.y,r:mt.r*0.85,fill:'#145218'}));
+      gMobileExt.appendChild(svgEl('circle',{cx:mt.x,cy:mt.y,r:mt.r*0.75,fill:'#1A5A22'}));
+      gMobileExt.appendChild(svgEl('circle',{cx:mt.x-6,cy:mt.y-6,r:mt.r*0.45,fill:'#228B3A',opacity:0.4}));
+    });
+    // Flowers in extended side beds
+    var extFlowerColors=['#EF4444','#EC4899','#F59E0B','#A855F7','#F472B6','#FB923C','#FBBF24'];
+    for(var efi=0;efi<20;efi++){
+      var efSide=efi<10?YL+14:YR-34;
+      var efx=efSide+Math.random()*20;
+      var efy=YB+30+efi*28+Math.random()*10;
+      if(efi>=10) efy=YB+30+(efi-10)*28+Math.random()*10;
+      var efc=extFlowerColors[efi%7];
+      gMobileExt.appendChild(svgEl('circle',{cx:efx,cy:efy,r:5,fill:efc,opacity:0.85}));
+      gMobileExt.appendChild(svgEl('circle',{cx:efx,cy:efy,r:2.2,fill:'#FBBF24'}));
+    }
+    // Additional ornamental features in extended lawn
+    // Pergola/arbor structure
+    var pgx=400,pgy=YB+140;
+    gMobileExt.appendChild(svgEl('rect',{x:pgx-50,y:pgy-5,width:100,height:10,rx:2,fill:'#8A7060'}));// Top beam
+    gMobileExt.appendChild(svgEl('rect',{x:pgx-45,y:pgy-3,width:4,height:50,fill:'#7A6050',rx:1}));// Left post
+    gMobileExt.appendChild(svgEl('rect',{x:pgx+41,y:pgy-3,width:4,height:50,fill:'#7A6050',rx:1}));// Right post
+    // Cross beams
+    for(var pbi=0;pbi<5;pbi++){
+      gMobileExt.appendChild(svgEl('rect',{x:pgx-48+pbi*22,y:pgy-6,width:3,height:12,rx:1,fill:'#7A6050'}));
+    }
+    // Hanging plants on pergola
+    [{dx:-30},{dx:0},{dx:30}].forEach(function(hp){
+      gMobileExt.appendChild(svgEl('circle',{cx:pgx+hp.dx,cy:pgy+8,r:8,fill:'#1A6B30'}));
+      gMobileExt.appendChild(svgEl('circle',{cx:pgx+hp.dx-2,cy:pgy+5,r:5,fill:'#228B3A',opacity:0.5}));
+    });
+    // Adirondack chairs around a second firepit
+    var fp2x=550,fp2y=YB+200;
+    gMobileExt.appendChild(svgEl('ellipse',{cx:fp2x,cy:fp2y,rx:22,ry:14,fill:'#4A4A4A',stroke:'#3A3A3A','stroke-width':1}));
+    gMobileExt.appendChild(svgEl('ellipse',{cx:fp2x,cy:fp2y,rx:16,ry:10,fill:'#1A1A1A'}));
+    // Chairs (simple rectangles angled toward fire)
+    [{x:fp2x-40,y:fp2y-8},{x:fp2x+32,y:fp2y-6},{x:fp2x-10,y:fp2y+24}].forEach(function(ch){
+      gMobileExt.appendChild(svgEl('rect',{x:ch.x,y:ch.y,width:16,height:20,rx:3,fill:'#8A6A4A',stroke:'#6A4A2A','stroke-width':0.5}));
+    });
+    // Garden bench
+    gMobileExt.appendChild(svgEl('rect',{x:200,y:YB+240,width:60,height:18,rx:4,fill:'#6A5A4A',stroke:'#5A4A3A','stroke-width':1}));
+    gMobileExt.appendChild(svgEl('rect',{x:208,y:YB+232,width:4,height:12,fill:'#5A4A3A',rx:1}));
+    gMobileExt.appendChild(svgEl('rect',{x:248,y:YB+232,width:4,height:12,fill:'#5A4A3A',rx:1}));
+    // Bottom border/edge
+    gMobileExt.appendChild(svgEl('rect',{x:YL,y:YB+340,width:YW,height:4,fill:'#3A2A1A'}));
+    svg.appendChild(gMobileExt);
+
     // Power lights
     var powerLights=[];
     for(var pli=1;pli<=6;pli++){var plEl=document.getElementById('pl'+pli);if(plEl)powerLights.push(plEl);}
@@ -1376,21 +1452,12 @@ body::before {
       var fadeOut=p<0.90?1:map(p,0.90,0.96,1,0);
       sceneContainer.style.opacity=String(map(p,0.05,0.10,0,1)*fadeOut);
 
-      // SVG sizing — mobile: wider SVG so it's taller (sides clip). Desktop: unchanged.
-      var vh=stickyEl.offsetHeight;
+      // SVG viewBox — mobile gets taller yard with extra landscaping
       var vw=stickyEl.offsetWidth;
-      svg.setAttribute('viewBox','0 0 800 600');
       if(vw<768){
-        // On mobile: make SVG wider so it renders taller, clip sides
-        var targetH=vh*0.82;
-        var neededW=targetH*(800/600);
-        svg.style.width=neededW+'px';
-        svg.style.maxWidth='none';
-        sceneContainer.style.alignItems='center';
+        svg.setAttribute('viewBox','0 0 800 1000');
       } else {
-        svg.style.width='100%';
-        svg.style.maxWidth='1000px';
-        sceneContainer.style.alignItems='flex-end';
+        svg.setAttribute('viewBox','0 0 800 600');
       }
 
       // Step counter
@@ -1456,6 +1523,9 @@ body::before {
       });
       // Rake marks fade as sod covers
       if(p>=0.36) gRake.setAttribute('opacity',String(map(p,0.36,0.42,0.6,0)));
+      // Mobile extended yard appears with sod
+      var extP=easeOut3(clamp((p-0.36)/0.08,0,1));
+      gMobileExt.setAttribute('opacity',String(extP));
       if(p>=0.44) step=6;
 
       // ═══ 7. EDGING & BORDERS + NEW FENCE (44-50%) ═══
