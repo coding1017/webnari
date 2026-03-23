@@ -1914,54 +1914,55 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
         gCover.setAttribute('transform', 'translate(0, ' + (-750 + 750 * coverP) + ')');
 
         // ═══ PHASE 10: ENERGIZE + LET THERE BE LIGHT ═══
-        var glowVal = map(p, 0.86, 0.92, 0, 1) * (p < 0.93 ? 1 : map(p, 0.93, 0.97, 1, 0));
+        var glowVal = map(p, 0.84, 0.90, 0, 1) * (p < 0.97 ? 1 : map(p, 0.97, 1.0, 1, 0));
         panelGlow.style.opacity = String(Math.max(0, glowVal));
 
-        if (p < 0.87) {
+        if (p < 0.85) {
           panelEnergize.style.clipPath = 'inset(0 100% 0 0)';
-        } else if (p < 0.92) {
-          var right = map(easeOut3((p - 0.87) / 0.05), 0, 1, 100, -2);
+        } else if (p < 0.90) {
+          var right = map(easeOut3((p - 0.85) / 0.05), 0, 1, 100, -2);
           panelEnergize.style.clipPath = 'inset(0 ' + right + '% 0 0)';
-        } else if (p < 0.95) {
-          var left = map(easeIn3((p - 0.92) / 0.03), 0, 1, 0, 102);
+        } else if (p < 0.93) {
+          var left = map(easeIn3((p - 0.90) / 0.03), 0, 1, 0, 102);
           panelEnergize.style.clipPath = 'inset(0 0 0 ' + left + '%)';
         } else {
           panelEnergize.style.clipPath = 'inset(0 0 0 102%)';
         }
 
-        // Power-on lights — OVERPOWERED BRIGHT
+        // Power-on lights — OVERPOWERED BRIGHT (hold longer)
         powerLights.forEach(function(pl, li) {
-          var lightStart = 0.87 + li * 0.006;
+          var lightStart = 0.85 + li * 0.005;
           var lightEnd = lightStart + 0.04;
           var lightP = clamp((p - lightStart) / (lightEnd - lightStart), 0, 1);
-          var lightFade = p < 0.95 ? 1 : map(p, 0.95, 0.99, 1, 0);
+          var lightFade = p < 0.97 ? 1 : map(p, 0.97, 1.0, 1, 0);
           var warmth = easeOut3(lightP) * lightFade;
           pl.style.background = 'rgba(251,191,36,' + (warmth * 0.85) + ')';
           pl.style.boxShadow = warmth > 0.1 ? '0 0 ' + Math.round(warmth * 120) + 'px ' + Math.round(warmth * 60) + 'px rgba(251,191,36,' + (warmth * 0.6) + '), 0 0 ' + Math.round(warmth * 200) + 'px ' + Math.round(warmth * 100) + 'px rgba(250,204,21,' + (warmth * 0.25) + ')' : 'none';
         });
 
-        // Blast the background warm during power-on
-        if (p > 0.88 && p < 0.98) {
-          var blastP = easeOut3(map(p, 0.88, 0.93, 0, 1)) * map(p, 0.95, 0.98, 1, 0);
+        // Blast the background warm during power-on (hold longer)
+        if (p > 0.86 && p < 1.0) {
+          var blastP = easeOut3(map(p, 0.86, 0.91, 0, 1)) * map(p, 0.97, 1.0, 1, 0);
           bg.style.background = 'rgb(' + Math.round(7 + blastP * 80) + ',' + Math.round(7 + blastP * 50) + ',' + Math.round(17 + blastP * 10) + ')';
         }
 
-        // VOLTPRO text
-        var powP = map(p, 0.88, 0.92, 0, 1) * map(p, 0.95, 0.99, 1, 0);
-        panelPowered.style.opacity = String(Math.max(0, powP));
-        panelPowered.style.transform = 'scale(' + map(p, 0.88, 0.92, 0.85, 1.05) + ')';
+        // VOLTPRO text — fade in early, HOLD for a long time, fade out late
+        var powIn = easeOut3(clamp((p - 0.86) / 0.04, 0, 1));
+        var powOut = p < 0.97 ? 1 : map(p, 0.97, 1.0, 1, 0);
+        panelPowered.style.opacity = String(Math.max(0, powIn * powOut));
+        panelPowered.style.transform = 'scale(' + map(p, 0.86, 0.90, 0.85, 1.05) + ')';
 
         // HUD panels
         var hudIn  = map(p, 0.14, 0.26, 0, 1);
         var hudOut = p < 0.78 ? 1 : map(p, 0.78, 0.84, 1, 0);
         panelHud.style.opacity = String(clamp(hudIn * hudOut, 0, 1));
 
-        // Final hero
-        var fP  = map(p, 0.96, 1.0, 0, 1);
+        // Final hero — starts very late so VOLTPRO holds
+        var fP  = map(p, 0.98, 1.0, 0, 1);
         var fOp = easeOut3(fP);
         finalEl.style.opacity   = String(fOp);
         finalEl.style.transform = 'translateY(' + map(fP, 0, 1, 26, 0) + 'px)';
-        finalEl.classList.toggle('active', p > 0.96);
+        finalEl.classList.toggle('active', p > 0.98);
 
         // Phase labels
         if      (p < 0.05) setPhase('');
@@ -1973,8 +1974,8 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
         else if (p < 0.60) setPhase('MAKING CONNECTIONS');
         else if (p < 0.66) setPhase('FINISHING DETAILS');
         else if (p < 0.80) setPhase('FLIPPING BREAKERS');
-        else if (p < 0.86) setPhase('INSTALLING DEAD FRONT');
-        else if (p < 0.96) setPhase('LET THERE BE LIGHT');
+        else if (p < 0.84) setPhase('INSTALLING DEAD FRONT');
+        else if (p < 0.98) setPhase('LET THERE BE LIGHT');
         else               setPhase('');
       }
 
