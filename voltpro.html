@@ -975,8 +975,13 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
 }
 /* ─── RESPONSIVE ─────────────────────────────────── */
 @media (max-width: 768px) {
-  .scroll-sequence { display: none; }
-  .hero-mobile { display: flex; }
+  .hero-mobile { display: none; }
+  .seq-intro-logo { font-size: clamp(32px, 10vw, 60px); }
+  .seq-intro-sub { font-size: clamp(10px, 2.5vw, 14px); }
+  .panel-hud-item { font-size: 8px; padding: 4px 8px; }
+  .panel-hud-tl { top: 10px; left: 10px; }
+  .panel-hud-br { bottom: 30px; right: 10px; }
+  .seq-phase { font-size: 9px; letter-spacing: 0.15em; }
 }
 @media (max-width: 900px) {
   .hero-stats { display: none; }
@@ -1361,9 +1366,8 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
   const easeIn3 = t => t * t * t;
   const easeOut3= t => 1 - Math.pow(1 - t, 3);
 
-  const isMobile = window.matchMedia('(max-width: 768px)').matches;
-
-  if (!isMobile) {
+  // Parallax runs on all screen sizes
+  {
     const seqEl    = document.getElementById('hero');
     const stickyEl = document.getElementById('seqSticky');
     if (seqEl && stickyEl) {
