@@ -1605,19 +1605,20 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
       var gULoops = svgEl('g', {});
       var uLoopPaths = [];
 
-      // Downward U-loops (below each breaker row — wires hanging between rows)
+      // Pigtail-style connectors (below each breaker row — thick prominent U-curves)
       function makeULoops(rowDef, gapIdx, startY, loopDepth) {
         var totalW = rowDef.count * 42 + (rowDef.count - 1) * 5;
         var sx = (480 - totalW) / 2;
         for (var ui = 0; ui < rowDef.count; ui++) {
-          var ubx = sx + ui * 47 + 14;
+          var ubx = sx + ui * 47 + 16;
           var bottomY = startY + loopDepth;
           var isRedLoop = (ui % 3 === 2);
           var loopColor = isRedLoop ? '#DC2626' : '#2E86DE';
-          var d = 'M ' + ubx + ' ' + startY + ' C ' + ubx + ' ' + bottomY + ', ' + (ubx + 20) + ' ' + bottomY + ', ' + (ubx + 20) + ' ' + startY;
+          // Thick pigtail: drops straight down, curves wide U, comes back up
+          var d = 'M ' + ubx + ' ' + startY + ' L ' + ubx + ' ' + (startY + 8) + ' C ' + ubx + ' ' + bottomY + ', ' + (ubx + 24) + ' ' + bottomY + ', ' + (ubx + 24) + ' ' + (startY + 8) + ' L ' + (ubx + 24) + ' ' + startY;
           var uPath = svgEl('path', {
-            d: d, stroke: loopColor, 'stroke-width': 2.8, fill: 'none',
-            'stroke-linecap': 'round', class: 'panel-wire'
+            d: d, stroke: loopColor, 'stroke-width': 3.8, fill: 'none',
+            'stroke-linecap': 'round', 'stroke-linejoin': 'round', class: 'panel-wire'
           });
           gULoops.appendChild(uPath);
           var uLen = uPath.getTotalLength();
@@ -1627,19 +1628,19 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
         }
       }
 
-      // Upward U-loops (above each breaker row — wires arching UP from breaker top into channel)
+      // Upward pigtails (above each breaker row — thick arches from breaker top upward)
       function makeTopLoops(rowDef, gapIdx, endY, loopHeight) {
         var totalW = rowDef.count * 42 + (rowDef.count - 1) * 5;
         var sx = (480 - totalW) / 2;
         for (var ui = 0; ui < rowDef.count; ui++) {
-          var ubx = sx + ui * 47 + 14;
+          var ubx = sx + ui * 47 + 16;
           var isRedLoop = (ui % 4 === 1);
           var loopColor = isRedLoop ? '#DC2626' : '#2E86DE';
-          // Arch UP from breaker top — curve goes upward then back down
-          var d = 'M ' + ubx + ' ' + endY + ' C ' + ubx + ' ' + (endY - loopHeight) + ', ' + (ubx + 18) + ' ' + (endY - loopHeight) + ', ' + (ubx + 18) + ' ' + endY;
+          // Thick pigtail arching UP from breaker top
+          var d = 'M ' + ubx + ' ' + endY + ' L ' + ubx + ' ' + (endY - 6) + ' C ' + ubx + ' ' + (endY - loopHeight) + ', ' + (ubx + 22) + ' ' + (endY - loopHeight) + ', ' + (ubx + 22) + ' ' + (endY - 6) + ' L ' + (ubx + 22) + ' ' + endY;
           var uPath = svgEl('path', {
-            d: d, stroke: loopColor, 'stroke-width': 2.8, fill: 'none',
-            'stroke-linecap': 'round', class: 'panel-wire'
+            d: d, stroke: loopColor, 'stroke-width': 3.8, fill: 'none',
+            'stroke-linecap': 'round', 'stroke-linejoin': 'round', class: 'panel-wire'
           });
           gULoops.appendChild(uPath);
           var uLen = uPath.getTotalLength();
@@ -1649,15 +1650,15 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
         }
       }
 
-      // Below each row (bigger loops like the reference video)
-      makeULoops(breakerRows[0], 0, 236, 45);
-      makeULoops(breakerRows[1], 1, 436, 45);
-      makeULoops(breakerRows[2], 2, 626, 35);
+      // Below each row — deep pigtail curves (matching reference video)
+      makeULoops(breakerRows[0], 0, 230, 65);
+      makeULoops(breakerRows[1], 1, 430, 65);
+      makeULoops(breakerRows[2], 2, 622, 45);
 
-      // Above each row (arches from channel into breaker tops)
-      makeTopLoops(breakerRows[0], 3, 165, 30);
-      makeTopLoops(breakerRows[1], 4, 365, 30);
-      makeTopLoops(breakerRows[2], 5, 555, 30);
+      // Above each row — upward pigtail arches
+      makeTopLoops(breakerRows[0], 3, 165, 35);
+      makeTopLoops(breakerRows[1], 4, 365, 35);
+      makeTopLoops(breakerRows[2], 5, 555, 35);
 
       svg.appendChild(gULoops);
 
