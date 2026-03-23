@@ -14,7 +14,7 @@ A **Website-as-a-Service (WaaS)** platform called **Webnari**. The agency landin
 
 | Template | Brand | Main File | Subpages | Color Scheme | Phone |
 |---|---|---|---|---|---|
-| Electrician | **VoltPro** | `electrician.html` | 12 subpages | Yellow `#FACC15` + dark navy | (305) 555-0101 |
+| Electrician | **VoltPro** | `voltpro.html` | 12 subpages | Yellow `#FACC15` + dark navy | (305) 555-0101 |
 | HVAC | **AirPro** | `hvac.html` | 6 subpages | Ice blue `#38BDF8` + navy | (305) 555-0150 |
 | Plumber | **FlowPro** | `FlowPro.html` | 6 subpages | Water blue `#0EA5E9` + deep navy | (786) 555-0200 |
 | Pest Control | **PestPro** | `pestpro.html` | standalone | Green + dark | — |
