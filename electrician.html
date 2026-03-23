@@ -1491,120 +1491,179 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
         breakerGroups.push(g);
       });
 
-      // ═══ WIRE PATHS (the star of the show) ═══
-      var wireGroup = svgEl('g', {});
-      svg.appendChild(wireGroup);
+      // ═══ WIRE SYSTEM v3: Trunk wires + Cable trunking + U-loops ═══
 
-      // Wire assignments: terminal strip x → breaker
-      // Organized into 4 trunk bundles (like the real panel)
-      var wireMap = [
-        // Trunk 1 (x ~ 83-103)
-        { tx:83,  row:0, idx:0 },
-        { tx:87,  row:0, idx:1 },
-        { tx:91,  row:1, idx:0 },
-        { tx:95,  row:1, idx:1 },
-        { tx:99,  row:2, idx:0 },
-        // Trunk 2 (x ~ 175-199)
-        { tx:175, row:0, idx:2 },
-        { tx:179, row:0, idx:3 },
-        { tx:183, row:1, idx:2 },
-        { tx:187, row:1, idx:3 },
-        { tx:191, row:2, idx:1 },
-        { tx:195, row:2, idx:2 },
-        // Trunk 3 (x ~ 275-299)
-        { tx:275, row:0, idx:4 },
-        { tx:279, row:0, idx:5 },
-        { tx:283, row:1, idx:4 },
-        { tx:287, row:1, idx:5 },
-        { tx:291, row:2, idx:3 },
-        { tx:295, row:2, idx:4 },
-        // Trunk 4 (x ~ 370-390)
-        { tx:370, row:0, idx:6 },
-        { tx:374, row:0, idx:7 },
-        { tx:378, row:1, idx:6 },
-        { tx:382, row:1, idx:7 },
-        { tx:386, row:2, idx:5 }
+      // -- 1. TRUNK WIRES (4 groups of vertical wire bundles) --
+      var gTrunkWires = svgEl('g', {});
+      var trunkWires = [];
+      var trunkDefs = [
+        { cx: 85,  count: 6 },
+        { cx: 190, count: 6 },
+        { cx: 300, count: 6 },
+        { cx: 400, count: 5 }
       ];
+      var looseSpacing = 6;
+      var tightSpacing = 3;
 
-      var wireColors = [
-        '#2E86DE','#2E86DE','#DC2626','#2E86DE','#2E86DE',
-        '#2E86DE','#2E86DE','#2E86DE','#DC2626','#2E86DE','#2E86DE',
-        '#2E86DE','#2E86DE','#DC2626','#2E86DE','#2E86DE','#2E86DE',
-        '#2E86DE','#2E86DE','#2E86DE','#DC2626','#2E86DE'
-      ];
+      trunkDefs.forEach(function(trunk, ti) {
+        for (var wi = 0; wi < trunk.count; wi++) {
+          var looseX = trunk.cx + (wi - (trunk.count - 1) / 2) * looseSpacing;
+          var tightX = trunk.cx + (wi - (trunk.count - 1) / 2) * tightSpacing;
+          var isRed = (wi === 2);
+          var color = isRed ? '#DC2626' : '#2E86DE';
+          var companion = isRed ? '#E87070' : '#5AADE2';
 
-      var panelWires = [];
-
-      wireMap.forEach(function(w, i) {
-        var row = breakerRows[w.row];
-        var totalW = row.count * 42 + (row.count - 1) * 5;
-        var sx = (480 - totalW) / 2;
-        var bx = sx + w.idx * 47 + 21;
-        var by = row.y;
-        var tx = w.tx;
-        var ty = 78;
-        var span = by - ty;
-
-        // TWO path definitions for morphing:
-        // Straight (hanging down to panel bottom)
-        var sEndY = 700;
-        var sCy1 = ty + (sEndY - ty) * 0.33;
-        var sCy2 = ty + (sEndY - ty) * 0.66;
-
-        // Curved (organized to breaker)
-        var cCy1 = ty + span * 0.6;
-        var cCy2 = by - span * 0.25;
-
-        var offsets = [0, -3.5];
-        var colors  = [wireColors[i] || '#2E86DE', '#5AADE2'];
-        var widths  = [2.8, 2.2];
-
-        offsets.forEach(function(off, oi) {
-          var wtx = tx + off;
-          var wbx = bx + off * 0.4;
-
-          // Start with STRAIGHT path (hanging down)
-          var d = 'M ' + wtx + ' ' + ty + ' C ' + wtx + ' ' + sCy1 + ', ' + wtx + ' ' + sCy2 + ', ' + wtx + ' ' + sEndY;
-
+          var d = 'M ' + looseX + ' 78 L ' + looseX + ' 700';
           var path = svgEl('path', {
-            d: d,
-            stroke: colors[oi],
-            'stroke-width': widths[oi],
-            fill: 'none',
-            'stroke-linecap': 'round',
-            'stroke-linejoin': 'round',
-            class: 'panel-wire'
+            d: d, stroke: color, 'stroke-width': 2.4, fill: 'none',
+            'stroke-linecap': 'round', class: 'panel-wire'
           });
-          wireGroup.appendChild(path);
+          gTrunkWires.appendChild(path);
+          var len = path.getTotalLength();
+          path.style.strokeDasharray = len;
+          path.style.strokeDashoffset = len;
 
-          var totalLength = path.getTotalLength();
-          path.style.strokeDasharray = totalLength;
-          path.style.strokeDashoffset = totalLength;
-
-          panelWires.push({
-            el: path,
-            totalLength: totalLength,
-            row: w.row,
-            wtx: wtx,
-            ty: ty,
-            // Straight coords
-            sCy1: sCy1, sCy2: sCy2, sEx: wtx, sEy: sEndY,
-            // Curved coords
-            cCy1: cCy1, cCy2: cCy2, cEx: wbx, cEy: by,
-            morphed: false
+          var d2 = 'M ' + (looseX - 2) + ' 78 L ' + (looseX - 2) + ' 700';
+          var path2 = svgEl('path', {
+            d: d2, stroke: companion, 'stroke-width': 1.6, fill: 'none',
+            'stroke-linecap': 'round', class: 'panel-wire', opacity: 0.5
           });
+          gTrunkWires.appendChild(path2);
+          var len2 = path2.getTotalLength();
+          path2.style.strokeDasharray = len2;
+          path2.style.strokeDashoffset = len2;
+
+          trunkWires.push({
+            main: path, comp: path2,
+            mainLen: len, compLen: len2,
+            looseX: looseX, tightX: tightX
+          });
+        }
+      });
+      svg.insertBefore(gTrunkWires, gDinRails);
+
+      // -- 2. COLORED CABLE CLIPS --
+      var gClips = svgEl('g', { opacity: 0 });
+      var clipHeights = [180, 330, 500];
+      var clipColors = ['#3B82F6', '#EF4444', '#8B5CF6', '#10B981'];
+      trunkDefs.forEach(function(trunk, ti) {
+        var tw = trunk.count * tightSpacing;
+        clipHeights.forEach(function(cy, ci) {
+          gClips.appendChild(svgEl('rect', {
+            x: trunk.cx - tw / 2 - 2, y: cy, width: tw + 4, height: 3.5, rx: 1,
+            fill: clipColors[(ti + ci) % 4], opacity: 0.85
+          }));
         });
       });
+      svg.insertBefore(gClips, gDinRails);
 
-      // Panel cover (SVG group)
+      // -- 3. HORIZONTAL WIRE BUNDLES (visible between breaker rows) --
+      var gHBundles = svgEl('g', { opacity: 0 });
+      var hBundleYs = [252, 452, 640];
+      hBundleYs.forEach(function(by, ri) {
+        var wireCount = ri < 2 ? 10 : 7;
+        for (var hi = 0; hi < wireCount; hi++) {
+          gHBundles.appendChild(svgEl('line', {
+            x1: 48, y1: by + hi * 2.2, x2: 432, y2: by + hi * 2.2,
+            stroke: (hi === 3 || hi === 7) ? '#DC2626' : '#2E86DE',
+            'stroke-width': 2, 'stroke-linecap': 'round', opacity: 0.75
+          }));
+        }
+      });
+      svg.insertBefore(gHBundles, gDinRails);
+
+      // -- 4. CABLE TRUNKING CHANNELS (tan/beige plastic channels) --
+      var gTrunking = svgEl('g', { opacity: 0 });
+      // Vertical channels (left and right)
+      gTrunking.appendChild(svgEl('rect', { x:30, y:78, width:16, height:632, rx:2, fill:'#C8AD8A', stroke:'#A89070', 'stroke-width':0.7 }));
+      gTrunking.appendChild(svgEl('rect', { x:434, y:78, width:16, height:632, rx:2, fill:'#C8AD8A', stroke:'#A89070', 'stroke-width':0.7 }));
+      // Vertical channel detail lines
+      [30, 434].forEach(function(vx) {
+        gTrunking.appendChild(svgEl('line', { x1:vx+4, y1:78, x2:vx+4, y2:710, stroke:'#B89A78', 'stroke-width':0.5, opacity:0.6 }));
+        gTrunking.appendChild(svgEl('line', { x1:vx+12, y1:78, x2:vx+12, y2:710, stroke:'#B89A78', 'stroke-width':0.5, opacity:0.6 }));
+      });
+      // Horizontal channels between rows
+      var hChannelYs = [245, 445, 633];
+      hChannelYs.forEach(function(hy) {
+        gTrunking.appendChild(svgEl('rect', { x:30, y:hy, width:420, height:14, rx:2, fill:'#C8AD8A', stroke:'#A89070', 'stroke-width':0.7 }));
+        // Detail lines
+        gTrunking.appendChild(svgEl('line', { x1:30, y1:hy+4, x2:450, y2:hy+4, stroke:'#B89A78', 'stroke-width':0.5, opacity:0.6 }));
+        gTrunking.appendChild(svgEl('line', { x1:30, y1:hy+10, x2:450, y2:hy+10, stroke:'#B89A78', 'stroke-width':0.5, opacity:0.6 }));
+      });
+      // Black cable management clips on horizontal channels
+      hChannelYs.forEach(function(hy) {
+        for (var cx = 90; cx <= 400; cx += 80) {
+          gTrunking.appendChild(svgEl('rect', { x:cx-3, y:hy-1, width:6, height:16, rx:1, fill:'#1A1A1E' }));
+        }
+      });
+      svg.insertBefore(gTrunking, gDinRails);
+
+      // -- 5. U-LOOP CONNECTIONS (signature wiring between breaker rows) --
+      var gULoops = svgEl('g', {});
+      var uLoopPaths = [];
+
+      // Generate U-loops between each pair of rows
+      function makeULoops(rowDef, gapIdx, startY, loopDepth) {
+        var totalW = rowDef.count * 42 + (rowDef.count - 1) * 5;
+        var sx = (480 - totalW) / 2;
+        for (var ui = 0; ui < rowDef.count; ui++) {
+          var ubx = sx + ui * 47 + 14;
+          var bottomY = startY + loopDepth;
+          var isRedLoop = (ui % 3 === 2);
+          var loopColor = isRedLoop ? '#DC2626' : '#2E86DE';
+          var d = 'M ' + ubx + ' ' + startY + ' C ' + ubx + ' ' + bottomY + ', ' + (ubx + 18) + ' ' + bottomY + ', ' + (ubx + 18) + ' ' + startY;
+          var uPath = svgEl('path', {
+            d: d, stroke: loopColor, 'stroke-width': 2.6, fill: 'none',
+            'stroke-linecap': 'round', class: 'panel-wire'
+          });
+          gULoops.appendChild(uPath);
+          var uLen = uPath.getTotalLength();
+          uPath.style.strokeDasharray = uLen;
+          uPath.style.strokeDashoffset = uLen;
+          uLoopPaths.push({ el: uPath, totalLength: uLen, gapIdx: gapIdx });
+        }
+      }
+
+      // Row 0 bottom → gap (DIN rail at 220, loop starts below it)
+      makeULoops(breakerRows[0], 0, 236, 32);
+      // Row 1 bottom → gap
+      makeULoops(breakerRows[1], 1, 436, 32);
+      // Row 2 bottom → gap
+      makeULoops(breakerRows[2], 2, 626, 28);
+
+      svg.appendChild(gULoops);
+
+      // -- 6. COPPER BUS BAR COMBS (connect to breaker tops) --
+      var gBusBars = svgEl('g', { opacity: 0 });
+      breakerRows.forEach(function(row, ri) {
+        var totalW = row.count * 42 + (row.count - 1) * 5;
+        var sx = (480 - totalW) / 2;
+        // Bus bar strip across top of row
+        gBusBars.appendChild(svgEl('rect', {
+          x: sx, y: row.y - 6, width: totalW, height: 4, rx: 1,
+          fill: '#B87333', stroke: '#8B5A2B', 'stroke-width': 0.5
+        }));
+        // Individual prongs into each breaker
+        for (var bi = 0; bi < row.count; bi++) {
+          var bx = sx + bi * 47 + 18;
+          gBusBars.appendChild(svgEl('line', {
+            x1: bx, y1: row.y - 6, x2: bx, y2: row.y + 4,
+            stroke: '#B87333', 'stroke-width': 2.5, 'stroke-linecap': 'round'
+          }));
+          gBusBars.appendChild(svgEl('line', {
+            x1: bx + 6, y1: row.y - 6, x2: bx + 6, y2: row.y + 4,
+            stroke: '#B87333', 'stroke-width': 2.5, 'stroke-linecap': 'round'
+          }));
+        }
+      });
+      svg.appendChild(gBusBars);
+
+      // -- 7. PANEL COVER --
       var gCover = svgEl('g', { transform: 'translate(0, -750)' });
-      // Cover body
       gCover.appendChild(svgEl('rect', { x:28, y:55, width:424, height:660, rx:4, fill:'#3E4048', stroke:'#555', 'stroke-width':1 }));
-      // Breaker knockout slots (3 rows of rectangles)
       [175, 375, 565].forEach(function(cy) {
         gCover.appendChild(svgEl('rect', { x:60, y:cy, width:360, height:22, rx:2, fill:'#333', stroke:'#555', 'stroke-width':0.5 }));
       });
-      // Label
       var coverLabel = svgEl('text', { x:240, y:40, 'text-anchor':'middle', fill:'#666', 'font-size':10, 'font-family':'var(--font-head)', 'font-weight':700, 'letter-spacing':'0.1em' });
       coverLabel.textContent = '200A MAIN';
       gCover.appendChild(coverLabel);
@@ -1617,7 +1676,7 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
         if (plEl) powerLights.push(plEl);
       }
 
-      // ═══ SCROLL ANIMATION v2 ═══
+      // ═══ SCROLL ANIMATION v3 ═══
       function update() {
         var p = getProgress();
         scrubFill.style.width = (p * 100) + '%';
@@ -1653,58 +1712,41 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
         // Terminal strip
         gTerminal.setAttribute('opacity', String(map(p, 0.10, 0.16, 0, 1) * fadeOut));
 
-        // ═══ PHASE 1: WIRES DROP (draw straight down) ═══
-        var landed = 0;
-        panelWires.forEach(function(wire, i) {
-          // Draw phase: wires extend downward
-          var drawStart = 0.12 + i * 0.005;
-          var drawEnd = drawStart + 0.10;
+        // ═══ PHASE 1: TRUNK WIRES DROP (all blue wires straight down) ═══
+        trunkWires.forEach(function(wire, i) {
+          var drawStart = 0.10 + i * 0.004;
+          var drawEnd = drawStart + 0.12;
           var drawP = easeOut3(clamp((p - drawStart) / (drawEnd - drawStart), 0, 1));
 
-          // Morph phase: straight → curved
-          var morphStart = 0.28;
-          var morphEnd = 0.42;
-          var morphP = easeOut3(clamp((p - morphStart) / (morphEnd - morphStart), 0, 1));
+          wire.main.style.strokeDashoffset = String(wire.mainLen * (1 - drawP));
+          wire.comp.style.strokeDashoffset = String(wire.compLen * (1 - drawP));
 
-          if (morphP > 0 && morphP <= 1) {
-            // Interpolate control points
-            var cy1 = wire.sCy1 + (wire.cCy1 - wire.sCy1) * morphP;
-            var cy2 = wire.sCy2 + (wire.cCy2 - wire.sCy2) * morphP;
-            var ex  = wire.sEx  + (wire.cEx  - wire.sEx)  * morphP;
-            var ey  = wire.sEy  + (wire.cEy  - wire.sEy)  * morphP;
-            var d = 'M ' + wire.wtx + ' ' + wire.ty + ' C ' + wire.wtx + ' ' + cy1 + ', ' + ex + ' ' + cy2 + ', ' + ex + ' ' + ey;
-            wire.el.setAttribute('d', d);
+          // ═══ PHASE 2: ORGANIZE (tighten trunk spacing) ═══
+          var orgP = easeOut3(clamp((p - 0.26) / 0.08, 0, 1));
+          var currentX = wire.looseX + (wire.tightX - wire.looseX) * orgP;
+          wire.main.setAttribute('d', 'M ' + currentX + ' 78 L ' + currentX + ' 700');
+          wire.comp.setAttribute('d', 'M ' + (currentX - 2) + ' 78 L ' + (currentX - 2) + ' 700');
 
-            if (morphP >= 0.99 && !wire.morphed) {
-              wire.morphed = true;
-              var newLen = wire.el.getTotalLength();
-              wire.el.style.strokeDasharray = newLen;
-              wire.el.style.strokeDashoffset = '0';
-            }
-          }
-
-          // Handle dashoffset (only during draw phase, before morph completes)
-          if (!wire.morphed) {
-            wire.el.style.strokeDashoffset = String(wire.totalLength * (1 - drawP));
-          }
-
-          wire.el.style.opacity = String(fadeOut);
-          if (drawP >= 0.95) landed++;
+          wire.main.style.opacity = String(fadeOut);
+          wire.comp.style.opacity = String(0.5 * fadeOut);
         });
 
-        // HUD circuit count
-        if (hudCircuits) hudCircuits.textContent = String(Math.min(Math.floor(landed / 2), 22));
+        // Colored clips appear during organize
+        gClips.setAttribute('opacity', String(map(p, 0.28, 0.34, 0, 1) * fadeOut));
 
-        // Cable clips (appear during organize phase)
-        var clipOp = map(p, 0.32, 0.40, 0, 1) * fadeOut;
+        // ═══ PHASE 3: CABLE TRUNKING CHANNELS ═══
+        var trunkingP = map(p, 0.32, 0.38, 0, 1);
+        gTrunking.setAttribute('opacity', String(trunkingP * fadeOut));
 
-        // ═══ PHASE 2: DIN RAILS (after wires organized) ═══
-        var dinOp = map(p, 0.40, 0.48, 0, 1) * fadeOut;
-        gDinRails.setAttribute('opacity', String(dinOp));
+        // ═══ PHASE 4: DIN RAILS ═══
+        gDinRails.setAttribute('opacity', String(map(p, 0.36, 0.42, 0, 1) * fadeOut));
 
-        // ═══ PHASE 3: BREAKERS (after DIN rails) ═══
+        // Horizontal wire bundles (appear with DIN rails)
+        gHBundles.setAttribute('opacity', String(map(p, 0.34, 0.42, 0, 1) * fadeOut));
+
+        // ═══ PHASE 5: BREAKERS ═══
         breakerGroups.forEach(function(g, ri) {
-          var start = 0.46 + ri * 0.04;
+          var start = 0.40 + ri * 0.035;
           var end = start + 0.06;
           var bp = clamp((p - start) / (end - start), 0, 1);
           var bOp = easeOut3(bp);
@@ -1713,41 +1755,51 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
           g.setAttribute('transform', 'translate(' + btx + ', 0)');
         });
 
-        // ═══ PHASE 4: PANEL COVER SLIDES DOWN ═══
-        var coverStart = 0.54;
-        var coverEnd = 0.62;
-        var coverP = easeOut3(clamp((p - coverStart) / (coverEnd - coverStart), 0, 1));
-        var coverY = -750 + 750 * coverP;
-        gCover.setAttribute('transform', 'translate(0, ' + coverY + ')');
+        // ═══ PHASE 6: U-LOOP CONNECTIONS ═══
+        var uLanded = 0;
+        uLoopPaths.forEach(function(uLoop, ui) {
+          var uStart = 0.48 + uLoop.gapIdx * 0.025 + (ui % 8) * 0.004;
+          var uEnd = uStart + 0.06;
+          var uP = easeOut3(clamp((p - uStart) / (uEnd - uStart), 0, 1));
+          uLoop.el.style.strokeDashoffset = String(uLoop.totalLength * (1 - uP));
+          uLoop.el.style.opacity = String(fadeOut);
+          if (uP > 0.9) uLanded++;
+        });
 
-        // ═══ PHASE 5: ENERGIZE (toggles + sweep) ═══
-        // Toggles flip ON after cover closes
+        // HUD circuit count
+        if (hudCircuits) hudCircuits.textContent = String(Math.min(uLanded, 22));
+
+        // Copper bus bar combs (appear with U-loops)
+        gBusBars.setAttribute('opacity', String(map(p, 0.52, 0.58, 0, 1) * fadeOut));
+
+        // ═══ PHASE 7: PANEL COVER SLIDES DOWN ═══
+        var coverP = easeOut3(clamp((p - 0.58) / 0.06, 0, 1));
+        gCover.setAttribute('transform', 'translate(0, ' + (-750 + 750 * coverP) + ')');
+
+        // ═══ PHASE 8: ENERGIZE ═══
         var toggleDots = document.querySelectorAll('.toggle-on');
         for (var tdi = 0; tdi < toggleDots.length; tdi++) {
-          var trigP = 0.63 + tdi * 0.004;
-          toggleDots[tdi].setAttribute('opacity', p >= trigP ? '1' : '0');
+          toggleDots[tdi].setAttribute('opacity', p >= (0.65 + tdi * 0.004) ? '1' : '0');
         }
 
-        // Panel golden glow
-        var glowVal = map(p, 0.62, 0.72, 0, 1) * (p < 0.78 ? 1 : map(p, 0.78, 0.88, 1, 0));
+        var glowVal = map(p, 0.64, 0.74, 0, 1) * (p < 0.78 ? 1 : map(p, 0.78, 0.88, 1, 0));
         panelGlow.style.opacity = String(Math.max(0, glowVal));
 
-        // Energize sweep
-        if (p < 0.64) {
+        if (p < 0.66) {
           panelEnergize.style.clipPath = 'inset(0 100% 0 0)';
-        } else if (p < 0.72) {
-          var right = map(easeOut3((p - 0.64) / 0.08), 0, 1, 100, -2);
+        } else if (p < 0.74) {
+          var right = map(easeOut3((p - 0.66) / 0.08), 0, 1, 100, -2);
           panelEnergize.style.clipPath = 'inset(0 ' + right + '% 0 0)';
         } else if (p < 0.78) {
-          var left = map(easeIn3((p - 0.72) / 0.06), 0, 1, 0, 102);
+          var left = map(easeIn3((p - 0.74) / 0.04), 0, 1, 0, 102);
           panelEnergize.style.clipPath = 'inset(0 0 0 ' + left + '%)';
         } else {
           panelEnergize.style.clipPath = 'inset(0 0 0 102%)';
         }
 
-        // ═══ PHASE 6: POWER ON (lights around viewport) ═══
+        // ═══ PHASE 9: POWER ON ═══
         powerLights.forEach(function(pl, li) {
-          var lightStart = 0.72 + li * 0.012;
+          var lightStart = 0.74 + li * 0.012;
           var lightEnd = lightStart + 0.06;
           var lightP = clamp((p - lightStart) / (lightEnd - lightStart), 0, 1);
           var lightFade = p < 0.82 ? 1 : map(p, 0.82, 0.90, 1, 0);
@@ -1756,14 +1808,13 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
           pl.style.boxShadow = warmth > 0.1 ? '0 0 ' + Math.round(warmth * 40) + 'px ' + Math.round(warmth * 15) + 'px rgba(251,191,36,' + (warmth * 0.25) + ')' : 'none';
         });
 
-        // POWERED ON text
-        var powP = map(p, 0.70, 0.74, 0, 1) * map(p, 0.80, 0.88, 1, 0);
+        var powP = map(p, 0.72, 0.76, 0, 1) * map(p, 0.82, 0.90, 1, 0);
         panelPowered.style.opacity = String(Math.max(0, powP));
-        panelPowered.style.transform = 'scale(' + map(p, 0.70, 0.74, 0.8, 1) + ')';
+        panelPowered.style.transform = 'scale(' + map(p, 0.72, 0.76, 0.8, 1) + ')';
 
         // HUD panels
         var hudIn  = map(p, 0.14, 0.26, 0, 1);
-        var hudOut = p < 0.52 ? 1 : map(p, 0.52, 0.60, 1, 0);
+        var hudOut = p < 0.56 ? 1 : map(p, 0.56, 0.62, 1, 0);
         panelHud.style.opacity = String(clamp(hudIn * hudOut, 0, 1));
 
         // Final hero
@@ -1774,14 +1825,15 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
         finalEl.classList.toggle('active', p > 0.88);
 
         // Phase labels
-        if      (p < 0.04) setPhase('');
-        else if (p < 0.12) setPhase('MOUNTING ENCLOSURE');
-        else if (p < 0.28) setPhase('PULLING WIRE');
-        else if (p < 0.40) setPhase('ORGANIZING BUNDLES');
-        else if (p < 0.46) setPhase('MOUNTING DIN RAILS');
-        else if (p < 0.54) setPhase('SETTING BREAKERS');
-        else if (p < 0.62) setPhase('CLOSING PANEL');
-        else if (p < 0.74) setPhase('ENERGIZING');
+        if      (p < 0.05) setPhase('');
+        else if (p < 0.10) setPhase('MOUNTING ENCLOSURE');
+        else if (p < 0.26) setPhase('PULLING WIRE');
+        else if (p < 0.36) setPhase('ORGANIZING CONDUCTORS');
+        else if (p < 0.40) setPhase('INSTALLING CHANNELS');
+        else if (p < 0.48) setPhase('SETTING BREAKERS');
+        else if (p < 0.58) setPhase('MAKING CONNECTIONS');
+        else if (p < 0.64) setPhase('CLOSING PANEL');
+        else if (p < 0.76) setPhase('ENERGIZING');
         else if (p < 0.82) setPhase('POWERED ON');
         else               setPhase('');
       }
