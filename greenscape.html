@@ -152,8 +152,8 @@ body::before {
 .sequence-sticky { position: absolute; top: 0; left: 0; right: 0; height: calc(100vh - 68px); overflow: hidden; background: var(--black); }
 .seq-bg { position: absolute; inset: 0; z-index: 1; transition: background 0.1s; }
 .scene-glow { position: absolute; inset: 0; z-index: 2; background: radial-gradient(ellipse 60% 60% at 50% 60%, rgba(74,222,128,0.1), transparent 70%); opacity: 0; }
-.scene-container { position: absolute; inset: 0; z-index: 3; display: flex; align-items: center; justify-content: center; overflow: hidden; }
-.scene-svg { height: auto; }
+.scene-container { position: absolute; inset: 0; z-index: 3; display: flex; align-items: flex-end; justify-content: center; overflow: hidden; }
+.scene-svg { width: 100%; max-width: 1000px; height: auto; }
 .scene-energize { position: absolute; inset: 0; z-index: 4; background: linear-gradient(90deg, transparent, rgba(74,222,128,0.08), rgba(245,158,11,0.06), transparent); clip-path: inset(0 100% 0 0); pointer-events: none; }
 
 .scene-hud { position: absolute; z-index: 5; pointer-events: none; opacity: 0; }
@@ -442,7 +442,7 @@ body::before {
     <div class="seq-bg" id="seqBg"></div>
     <div class="scene-glow" id="sceneGlow"></div>
     <div class="scene-container" id="sceneContainer">
-      <svg id="sceneSvg" class="scene-svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet" style="overflow:visible;"></svg>
+      <svg id="sceneSvg" class="scene-svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet"></svg>
     </div>
     <div class="scene-energize" id="sceneEnergize"></div>
     <div class="scene-hud" id="sceneHud">
@@ -1376,25 +1376,22 @@ body::before {
       var fadeOut=p<0.90?1:map(p,0.90,0.96,1,0);
       sceneContainer.style.opacity=String(map(p,0.05,0.10,0,1)*fadeOut);
 
-      // SVG sizing — on mobile, fill more height by using slice mode
+      // SVG sizing — mobile: wider SVG so it's taller (sides clip). Desktop: unchanged.
       var vh=stickyEl.offsetHeight;
       var vw=stickyEl.offsetWidth;
-      var svgAspect=800/600;
-      var isMobile=vw<768;
-      var svgW,svgH;
-      if(isMobile){
-        // Make SVG fill most of the viewport height; width will overflow and get clipped
-        svgH=vh*0.75;
-        svgW=svgH*svgAspect;
-        svg.setAttribute('preserveAspectRatio','xMidYMid meet');
+      svg.setAttribute('viewBox','0 0 800 600');
+      if(vw<768){
+        // On mobile: make SVG wider so it renders taller, clip sides
+        var targetH=vh*0.82;
+        var neededW=targetH*(800/600);
+        svg.style.width=neededW+'px';
+        svg.style.maxWidth='none';
+        sceneContainer.style.alignItems='center';
       } else {
-        svgW=vw;
-        svgH=svgW/svgAspect;
-        if(svgH>vh*0.95){svgH=vh*0.95;svgW=svgH*svgAspect;}
-        svg.setAttribute('preserveAspectRatio','xMidYMid meet');
+        svg.style.width='100%';
+        svg.style.maxWidth='1000px';
+        sceneContainer.style.alignItems='flex-end';
       }
-      svg.setAttribute('width',svgW);
-      svg.setAttribute('height',svgH);
 
       // Step counter
       var step=0;
