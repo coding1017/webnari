@@ -1075,7 +1075,7 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
       <div class="panel-hud-item panel-hud-br" id="hudBr">Circuits: <span id="hudCircuits" style="color:#fde68a">0</span>/22 Landed<br>NEC 2023 Compliant</div>
     </div>
     <div class="panel-powered" id="panelPowered">
-      <span class="panel-powered-text">POWERED ON</span>
+      <span class="panel-powered-text">VOLT<span style="color:#FACC15">PRO</span></span>
     </div>
     <div class="power-light pl-1" id="pl1"></div>
     <div class="power-light pl-2" id="pl2"></div>
@@ -1605,6 +1605,7 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
       var gULoops = svgEl('g', {});
       var uLoopPaths = [];
 
+      // Downward U-loops (below each breaker row — wires hanging between rows)
       function makeULoops(rowDef, gapIdx, startY, loopDepth) {
         var totalW = rowDef.count * 42 + (rowDef.count - 1) * 5;
         var sx = (480 - totalW) / 2;
@@ -1613,9 +1614,9 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
           var bottomY = startY + loopDepth;
           var isRedLoop = (ui % 3 === 2);
           var loopColor = isRedLoop ? '#DC2626' : '#2E86DE';
-          var d = 'M ' + ubx + ' ' + startY + ' C ' + ubx + ' ' + bottomY + ', ' + (ubx + 18) + ' ' + bottomY + ', ' + (ubx + 18) + ' ' + startY;
+          var d = 'M ' + ubx + ' ' + startY + ' C ' + ubx + ' ' + bottomY + ', ' + (ubx + 20) + ' ' + bottomY + ', ' + (ubx + 20) + ' ' + startY;
           var uPath = svgEl('path', {
-            d: d, stroke: loopColor, 'stroke-width': 2.6, fill: 'none',
+            d: d, stroke: loopColor, 'stroke-width': 2.8, fill: 'none',
             'stroke-linecap': 'round', class: 'panel-wire'
           });
           gULoops.appendChild(uPath);
@@ -1626,9 +1627,39 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
         }
       }
 
-      makeULoops(breakerRows[0], 0, 236, 32);
-      makeULoops(breakerRows[1], 1, 436, 32);
-      makeULoops(breakerRows[2], 2, 626, 28);
+      // Upward U-loops (above each breaker row — wires arching from channel into breaker tops)
+      function makeTopLoops(rowDef, gapIdx, endY, loopHeight) {
+        var totalW = rowDef.count * 42 + (rowDef.count - 1) * 5;
+        var sx = (480 - totalW) / 2;
+        for (var ui = 0; ui < rowDef.count; ui++) {
+          var ubx = sx + ui * 47 + 14;
+          var topY = endY - loopHeight;
+          var isRedLoop = (ui % 4 === 1);
+          var loopColor = isRedLoop ? '#DC2626' : '#2E86DE';
+          // Arch from above, curving down into breaker top
+          var d = 'M ' + ubx + ' ' + topY + ' C ' + ubx + ' ' + (topY + loopHeight * 0.7) + ', ' + (ubx + 18) + ' ' + (topY + loopHeight * 0.7) + ', ' + (ubx + 18) + ' ' + topY;
+          var uPath = svgEl('path', {
+            d: d, stroke: loopColor, 'stroke-width': 2.8, fill: 'none',
+            'stroke-linecap': 'round', class: 'panel-wire'
+          });
+          gULoops.appendChild(uPath);
+          var uLen = uPath.getTotalLength();
+          uPath.style.strokeDasharray = uLen;
+          uPath.style.strokeDashoffset = uLen;
+          uLoopPaths.push({ el: uPath, totalLength: uLen, gapIdx: gapIdx });
+        }
+      }
+
+      // Below each row (bigger loops like the reference video)
+      makeULoops(breakerRows[0], 0, 236, 45);
+      makeULoops(breakerRows[1], 1, 436, 45);
+      makeULoops(breakerRows[2], 2, 626, 35);
+
+      // Above each row (arches from channel into breaker tops)
+      makeTopLoops(breakerRows[0], 3, 165, 30);
+      makeTopLoops(breakerRows[1], 4, 365, 30);
+      makeTopLoops(breakerRows[2], 5, 555, 30);
+
       svg.appendChild(gULoops);
 
       // -- 7. COPPER BUS BAR COMBS --
@@ -1894,21 +1925,27 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
           panelEnergize.style.clipPath = 'inset(0 0 0 102%)';
         }
 
-        // Power-on lights
+        // Power-on lights — OVERPOWERED BRIGHT
         powerLights.forEach(function(pl, li) {
-          var lightStart = 0.82 + li * 0.01;
-          var lightEnd = lightStart + 0.05;
+          var lightStart = 0.80 + li * 0.008;
+          var lightEnd = lightStart + 0.04;
           var lightP = clamp((p - lightStart) / (lightEnd - lightStart), 0, 1);
           var lightFade = p < 0.90 ? 1 : map(p, 0.90, 0.96, 1, 0);
           var warmth = easeOut3(lightP) * lightFade;
-          pl.style.background = 'rgba(251,191,36,' + (warmth * 0.4) + ')';
-          pl.style.boxShadow = warmth > 0.1 ? '0 0 ' + Math.round(warmth * 50) + 'px ' + Math.round(warmth * 20) + 'px rgba(251,191,36,' + (warmth * 0.3) + ')' : 'none';
+          pl.style.background = 'rgba(251,191,36,' + (warmth * 0.85) + ')';
+          pl.style.boxShadow = warmth > 0.1 ? '0 0 ' + Math.round(warmth * 120) + 'px ' + Math.round(warmth * 60) + 'px rgba(251,191,36,' + (warmth * 0.6) + '), 0 0 ' + Math.round(warmth * 200) + 'px ' + Math.round(warmth * 100) + 'px rgba(250,204,21,' + (warmth * 0.25) + ')' : 'none';
         });
 
-        // POWERED ON text
-        var powP = map(p, 0.82, 0.86, 0, 1) * map(p, 0.90, 0.96, 1, 0);
+        // Blast the background warm during power-on
+        if (p > 0.82 && p < 0.94) {
+          var blastP = easeOut3(map(p, 0.82, 0.88, 0, 1)) * map(p, 0.90, 0.94, 1, 0);
+          bg.style.background = 'rgb(' + Math.round(7 + blastP * 80) + ',' + Math.round(7 + blastP * 50) + ',' + Math.round(17 + blastP * 10) + ')';
+        }
+
+        // VOLTPRO text
+        var powP = map(p, 0.82, 0.86, 0, 1) * map(p, 0.92, 0.96, 1, 0);
         panelPowered.style.opacity = String(Math.max(0, powP));
-        panelPowered.style.transform = 'scale(' + map(p, 0.82, 0.86, 0.8, 1) + ')';
+        panelPowered.style.transform = 'scale(' + map(p, 0.82, 0.86, 0.85, 1.05) + ')';
 
         // HUD panels
         var hudIn  = map(p, 0.14, 0.26, 0, 1);
