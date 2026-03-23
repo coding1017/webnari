@@ -1449,12 +1449,7 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
         gDinRails.appendChild(svgEl('rect', { x:38, y:dy-2, width:404, height:3, rx:0.5, fill:'#AAA' }));
         gDinRails.appendChild(svgEl('rect', { x:38, y:dy+13, width:404, height:3, rx:0.5, fill:'#AAA' }));
       });
-      // Cable management clips between rows
-      [290, 490].forEach(function(cy) {
-        for (var cx = 75; cx <= 410; cx += 70) {
-          gDinRails.appendChild(svgEl('rect', { x:cx-8, y:cy, width:16, height:7, rx:1.5, fill:'#2A2A2E', stroke:'#555', 'stroke-width':0.5 }));
-        }
-      });
+      // (cable management removed - integrated into trunking)
       svg.appendChild(gDinRails);
 
       // Breakers (MCBs) on DIN rails
@@ -1505,13 +1500,14 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
       var gTrunkWires = svgEl('g', {});
       var trunkWires = [];
       var trunkDefs = [
-        { cx: 85,  count: 6 },
-        { cx: 190, count: 6 },
-        { cx: 300, count: 6 },
-        { cx: 400, count: 5 }
+        { cx: 68,  count: 6 },
+        { cx: 148, count: 6 },
+        { cx: 240, count: 7 },
+        { cx: 332, count: 6 },
+        { cx: 412, count: 6 }
       ];
-      var looseSpacing = 6;
-      var tightSpacing = 3;
+      var looseSpacing = 5.5;
+      var tightSpacing = 2.8;
 
       trunkDefs.forEach(function(trunk, ti) {
         for (var wi = 0; wi < trunk.count; wi++) {
@@ -1572,7 +1568,7 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
       var gHBundles = svgEl('g', { opacity: 0 });
       var hBundleYs = [252, 452, 640];
       hBundleYs.forEach(function(by, ri) {
-        var wireCount = ri < 2 ? 10 : 7;
+        var wireCount = ri < 2 ? 14 : 10;
         for (var hi = 0; hi < wireCount; hi++) {
           gHBundles.appendChild(svgEl('line', {
             x1: 48, y1: by + hi * 2.2, x2: 432, y2: by + hi * 2.2,
@@ -1650,6 +1646,36 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
         }
       });
       svg.appendChild(gBusBars);
+
+      // -- 7b. TOP-ENTRY BREAKER WIRES (organized cables into breaker tops) --
+      var gTopWires = svgEl('g', { opacity: 0 });
+      var topWirePaths = [];
+      breakerRows.forEach(function(row, ri) {
+        var totalW = row.count * 42 + (row.count - 1) * 5;
+        var sx = (480 - totalW) / 2;
+        for (var bi = 0; bi < row.count; bi++) {
+          var bx = sx + bi * 47 + 21;
+          var by = row.y;
+          // Wire comes down from above the breaker row, curves neatly into the top terminal
+          var wireStartY = by - 40;
+          var wireEndY = by - 2;
+          // Alternate entry from left/right side for organized look
+          var offsetX = (bi % 2 === 0) ? -8 : 8;
+          var isRed = (bi % 4 === 2);
+          var color = isRed ? '#DC2626' : '#2E86DE';
+          var d = 'M ' + (bx + offsetX) + ' ' + wireStartY + ' C ' + (bx + offsetX) + ' ' + (wireStartY + 20) + ', ' + bx + ' ' + (wireEndY - 10) + ', ' + bx + ' ' + wireEndY;
+          var twPath = svgEl('path', {
+            d: d, stroke: color, 'stroke-width': 2.2, fill: 'none',
+            'stroke-linecap': 'round', class: 'panel-wire'
+          });
+          gTopWires.appendChild(twPath);
+          var twLen = twPath.getTotalLength();
+          twPath.style.strokeDasharray = twLen;
+          twPath.style.strokeDashoffset = twLen;
+          topWirePaths.push({ el: twPath, totalLength: twLen, row: ri });
+        }
+      });
+      svg.appendChild(gTopWires);
 
       // -- 8. FERRULES (red caps on wire ends at breaker terminals) --
       var gFerrules = svgEl('g', { opacity: 0 });
@@ -1825,6 +1851,15 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
 
         if (hudCircuits) hudCircuits.textContent = String(Math.min(uLanded, 22));
         gBusBars.setAttribute('opacity', String(map(p, 0.54, 0.60, 0, 1) * fadeOut));
+
+        // Top-entry breaker wires (draw into breaker tops)
+        topWirePaths.forEach(function(tw, twi) {
+          var twStart = 0.52 + tw.row * 0.02 + (twi % 8) * 0.003;
+          var twEnd = twStart + 0.05;
+          var twP = easeOut3(clamp((p - twStart) / (twEnd - twStart), 0, 1));
+          tw.el.style.strokeDashoffset = String(tw.totalLength * (1 - twP));
+          tw.el.style.opacity = String(fadeOut);
+        });
 
         // ═══ PHASE 7: FERRULES + LABELS (detail touches) ═══
         gFerrules.setAttribute('opacity', String(map(p, 0.58, 0.64, 0, 1) * fadeOut));
