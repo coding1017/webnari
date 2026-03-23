@@ -1627,17 +1627,16 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
         }
       }
 
-      // Upward U-loops (above each breaker row — wires arching from channel into breaker tops)
+      // Upward U-loops (above each breaker row — wires arching UP from breaker top into channel)
       function makeTopLoops(rowDef, gapIdx, endY, loopHeight) {
         var totalW = rowDef.count * 42 + (rowDef.count - 1) * 5;
         var sx = (480 - totalW) / 2;
         for (var ui = 0; ui < rowDef.count; ui++) {
           var ubx = sx + ui * 47 + 14;
-          var topY = endY - loopHeight;
           var isRedLoop = (ui % 4 === 1);
           var loopColor = isRedLoop ? '#DC2626' : '#2E86DE';
-          // Arch from above, curving down into breaker top
-          var d = 'M ' + ubx + ' ' + topY + ' C ' + ubx + ' ' + (topY + loopHeight * 0.7) + ', ' + (ubx + 18) + ' ' + (topY + loopHeight * 0.7) + ', ' + (ubx + 18) + ' ' + topY;
+          // Arch UP from breaker top — curve goes upward then back down
+          var d = 'M ' + ubx + ' ' + endY + ' C ' + ubx + ' ' + (endY - loopHeight) + ', ' + (ubx + 18) + ' ' + (endY - loopHeight) + ', ' + (ubx + 18) + ' ' + endY;
           var uPath = svgEl('path', {
             d: d, stroke: loopColor, 'stroke-width': 2.8, fill: 'none',
             'stroke-linecap': 'round', class: 'panel-wire'
