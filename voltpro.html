@@ -1901,29 +1901,29 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
         gFerrules.setAttribute('opacity', String(map(p, 0.58, 0.64, 0, 1) * fadeOut));
         gLabels.setAttribute('opacity', String(map(p, 0.62, 0.68, 0, 1) * fadeOut));
 
-        // ═══ PHASE 8: DEAD FRONT PLATE SLIDES DOWN ═══
-        var coverP = easeOut3(clamp((p - 0.68) / 0.06, 0, 1));
-        gCover.setAttribute('transform', 'translate(0, ' + (-750 + 750 * coverP) + ')');
-
-        // ═══ PHASE 9: TOGGLE FLIP (one by one through dead front cutouts) ═══
+        // ═══ PHASE 8: TOGGLE FLIP ON OPEN PANEL (breakers go green) ═══
         toggleFlips.forEach(function(tf, tfi) {
-          var flipTrigger = 0.76 + tfi * 0.005;
+          var flipTrigger = 0.66 + tfi * 0.005;
           var isOn = p >= flipTrigger;
-          tf.lever.setAttribute('opacity', isOn ? '1' : '0');
-          tf.dot.setAttribute('opacity', isOn ? '1' : '0');
+          tf.lever.setAttribute('opacity', isOn ? String(fadeOut) : '0');
+          tf.dot.setAttribute('opacity', isOn ? String(fadeOut) : '0');
         });
 
+        // ═══ PHASE 9: DEAD FRONT SLIDES DOWN (after toggles are green) ═══
+        var coverP = easeOut3(clamp((p - 0.80) / 0.06, 0, 1));
+        gCover.setAttribute('transform', 'translate(0, ' + (-750 + 750 * coverP) + ')');
+
         // ═══ PHASE 10: ENERGIZE + LET THERE BE LIGHT ═══
-        var glowVal = map(p, 0.78, 0.86, 0, 1) * (p < 0.88 ? 1 : map(p, 0.88, 0.94, 1, 0));
+        var glowVal = map(p, 0.86, 0.92, 0, 1) * (p < 0.93 ? 1 : map(p, 0.93, 0.97, 1, 0));
         panelGlow.style.opacity = String(Math.max(0, glowVal));
 
-        if (p < 0.80) {
+        if (p < 0.87) {
           panelEnergize.style.clipPath = 'inset(0 100% 0 0)';
-        } else if (p < 0.86) {
-          var right = map(easeOut3((p - 0.80) / 0.06), 0, 1, 100, -2);
+        } else if (p < 0.92) {
+          var right = map(easeOut3((p - 0.87) / 0.05), 0, 1, 100, -2);
           panelEnergize.style.clipPath = 'inset(0 ' + right + '% 0 0)';
-        } else if (p < 0.90) {
-          var left = map(easeIn3((p - 0.86) / 0.04), 0, 1, 0, 102);
+        } else if (p < 0.95) {
+          var left = map(easeIn3((p - 0.92) / 0.03), 0, 1, 0, 102);
           panelEnergize.style.clipPath = 'inset(0 0 0 ' + left + '%)';
         } else {
           panelEnergize.style.clipPath = 'inset(0 0 0 102%)';
@@ -1931,37 +1931,37 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
 
         // Power-on lights — OVERPOWERED BRIGHT
         powerLights.forEach(function(pl, li) {
-          var lightStart = 0.80 + li * 0.008;
+          var lightStart = 0.87 + li * 0.006;
           var lightEnd = lightStart + 0.04;
           var lightP = clamp((p - lightStart) / (lightEnd - lightStart), 0, 1);
-          var lightFade = p < 0.90 ? 1 : map(p, 0.90, 0.96, 1, 0);
+          var lightFade = p < 0.95 ? 1 : map(p, 0.95, 0.99, 1, 0);
           var warmth = easeOut3(lightP) * lightFade;
           pl.style.background = 'rgba(251,191,36,' + (warmth * 0.85) + ')';
           pl.style.boxShadow = warmth > 0.1 ? '0 0 ' + Math.round(warmth * 120) + 'px ' + Math.round(warmth * 60) + 'px rgba(251,191,36,' + (warmth * 0.6) + '), 0 0 ' + Math.round(warmth * 200) + 'px ' + Math.round(warmth * 100) + 'px rgba(250,204,21,' + (warmth * 0.25) + ')' : 'none';
         });
 
         // Blast the background warm during power-on
-        if (p > 0.82 && p < 0.94) {
-          var blastP = easeOut3(map(p, 0.82, 0.88, 0, 1)) * map(p, 0.90, 0.94, 1, 0);
+        if (p > 0.88 && p < 0.98) {
+          var blastP = easeOut3(map(p, 0.88, 0.93, 0, 1)) * map(p, 0.95, 0.98, 1, 0);
           bg.style.background = 'rgb(' + Math.round(7 + blastP * 80) + ',' + Math.round(7 + blastP * 50) + ',' + Math.round(17 + blastP * 10) + ')';
         }
 
         // VOLTPRO text
-        var powP = map(p, 0.82, 0.86, 0, 1) * map(p, 0.92, 0.96, 1, 0);
+        var powP = map(p, 0.88, 0.92, 0, 1) * map(p, 0.95, 0.99, 1, 0);
         panelPowered.style.opacity = String(Math.max(0, powP));
-        panelPowered.style.transform = 'scale(' + map(p, 0.82, 0.86, 0.85, 1.05) + ')';
+        panelPowered.style.transform = 'scale(' + map(p, 0.88, 0.92, 0.85, 1.05) + ')';
 
         // HUD panels
         var hudIn  = map(p, 0.14, 0.26, 0, 1);
-        var hudOut = p < 0.66 ? 1 : map(p, 0.66, 0.72, 1, 0);
+        var hudOut = p < 0.78 ? 1 : map(p, 0.78, 0.84, 1, 0);
         panelHud.style.opacity = String(clamp(hudIn * hudOut, 0, 1));
 
         // Final hero
-        var fP  = map(p, 0.92, 0.98, 0, 1);
+        var fP  = map(p, 0.96, 1.0, 0, 1);
         var fOp = easeOut3(fP);
         finalEl.style.opacity   = String(fOp);
         finalEl.style.transform = 'translateY(' + map(fP, 0, 1, 26, 0) + 'px)';
-        finalEl.classList.toggle('active', p > 0.92);
+        finalEl.classList.toggle('active', p > 0.96);
 
         // Phase labels
         if      (p < 0.05) setPhase('');
@@ -1971,10 +1971,10 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
         else if (p < 0.42) setPhase('INSTALLING CHANNELS');
         else if (p < 0.50) setPhase('SETTING BREAKERS');
         else if (p < 0.60) setPhase('MAKING CONNECTIONS');
-        else if (p < 0.68) setPhase('FINISHING DETAILS');
-        else if (p < 0.76) setPhase('INSTALLING DEAD FRONT');
-        else if (p < 0.82) setPhase('FLIPPING BREAKERS');
-        else if (p < 0.90) setPhase('LET THERE BE LIGHT');
+        else if (p < 0.66) setPhase('FINISHING DETAILS');
+        else if (p < 0.80) setPhase('FLIPPING BREAKERS');
+        else if (p < 0.86) setPhase('INSTALLING DEAD FRONT');
+        else if (p < 0.96) setPhase('LET THERE BE LIGHT');
         else               setPhase('');
       }
 
