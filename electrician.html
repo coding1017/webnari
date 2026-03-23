@@ -1491,9 +1491,17 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
         breakerGroups.push(g);
       });
 
-      // ═══ WIRE SYSTEM v3: Trunk wires + Cable trunking + U-loops ═══
+      // ═══ WIRE SYSTEM v4: Simultaneous drops, dead front, toggle flips ═══
 
-      // -- 1. TRUNK WIRES (4 groups of vertical wire bundles) --
+      // -- 1. BOTTOM TERMINAL STRIP (wires terminate here) --
+      var gBottomTerminal = svgEl('g', { opacity: 0 });
+      gBottomTerminal.appendChild(svgEl('rect', { x:40, y:696, width:400, height:16, rx:2, fill:'#1A1A1E' }));
+      for (var bti = 0; bti < 26; bti++) {
+        gBottomTerminal.appendChild(svgEl('circle', { cx: 52 + bti * 15.2, cy: 704, r: 2, fill:'#444', stroke:'#666', 'stroke-width':0.5 }));
+      }
+      svg.insertBefore(gBottomTerminal, gDinRails);
+
+      // -- 2. TRUNK WIRES (4 groups, ALL drop simultaneously) --
       var gTrunkWires = svgEl('g', {});
       var trunkWires = [];
       var trunkDefs = [
@@ -1513,7 +1521,8 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
           var color = isRed ? '#DC2626' : '#2E86DE';
           var companion = isRed ? '#E87070' : '#5AADE2';
 
-          var d = 'M ' + looseX + ' 78 L ' + looseX + ' 700';
+          // Main wire (top terminal y=78 to bottom terminal y=696)
+          var d = 'M ' + looseX + ' 78 L ' + looseX + ' 696';
           var path = svgEl('path', {
             d: d, stroke: color, 'stroke-width': 2.4, fill: 'none',
             'stroke-linecap': 'round', class: 'panel-wire'
@@ -1523,7 +1532,8 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
           path.style.strokeDasharray = len;
           path.style.strokeDashoffset = len;
 
-          var d2 = 'M ' + (looseX - 2) + ' 78 L ' + (looseX - 2) + ' 700';
+          // Companion wire
+          var d2 = 'M ' + (looseX - 2) + ' 78 L ' + (looseX - 2) + ' 696';
           var path2 = svgEl('path', {
             d: d2, stroke: companion, 'stroke-width': 1.6, fill: 'none',
             'stroke-linecap': 'round', class: 'panel-wire', opacity: 0.5
@@ -1536,15 +1546,16 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
           trunkWires.push({
             main: path, comp: path2,
             mainLen: len, compLen: len2,
-            looseX: looseX, tightX: tightX
+            looseX: looseX, tightX: tightX,
+            wireIdx: wi
           });
         }
       });
       svg.insertBefore(gTrunkWires, gDinRails);
 
-      // -- 2. COLORED CABLE CLIPS --
+      // -- 3. COLORED CABLE CLIPS --
       var gClips = svgEl('g', { opacity: 0 });
-      var clipHeights = [180, 330, 500];
+      var clipHeights = [180, 330, 500, 650];
       var clipColors = ['#3B82F6', '#EF4444', '#8B5CF6', '#10B981'];
       trunkDefs.forEach(function(trunk, ti) {
         var tw = trunk.count * tightSpacing;
@@ -1557,7 +1568,7 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
       });
       svg.insertBefore(gClips, gDinRails);
 
-      // -- 3. HORIZONTAL WIRE BUNDLES (visible between breaker rows) --
+      // -- 4. HORIZONTAL WIRE BUNDLES --
       var gHBundles = svgEl('g', { opacity: 0 });
       var hBundleYs = [252, 452, 640];
       hBundleYs.forEach(function(by, ri) {
@@ -1572,25 +1583,20 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
       });
       svg.insertBefore(gHBundles, gDinRails);
 
-      // -- 4. CABLE TRUNKING CHANNELS (tan/beige plastic channels) --
+      // -- 5. CABLE TRUNKING CHANNELS --
       var gTrunking = svgEl('g', { opacity: 0 });
-      // Vertical channels (left and right)
       gTrunking.appendChild(svgEl('rect', { x:30, y:78, width:16, height:632, rx:2, fill:'#C8AD8A', stroke:'#A89070', 'stroke-width':0.7 }));
       gTrunking.appendChild(svgEl('rect', { x:434, y:78, width:16, height:632, rx:2, fill:'#C8AD8A', stroke:'#A89070', 'stroke-width':0.7 }));
-      // Vertical channel detail lines
       [30, 434].forEach(function(vx) {
         gTrunking.appendChild(svgEl('line', { x1:vx+4, y1:78, x2:vx+4, y2:710, stroke:'#B89A78', 'stroke-width':0.5, opacity:0.6 }));
         gTrunking.appendChild(svgEl('line', { x1:vx+12, y1:78, x2:vx+12, y2:710, stroke:'#B89A78', 'stroke-width':0.5, opacity:0.6 }));
       });
-      // Horizontal channels between rows
       var hChannelYs = [245, 445, 633];
       hChannelYs.forEach(function(hy) {
         gTrunking.appendChild(svgEl('rect', { x:30, y:hy, width:420, height:14, rx:2, fill:'#C8AD8A', stroke:'#A89070', 'stroke-width':0.7 }));
-        // Detail lines
         gTrunking.appendChild(svgEl('line', { x1:30, y1:hy+4, x2:450, y2:hy+4, stroke:'#B89A78', 'stroke-width':0.5, opacity:0.6 }));
         gTrunking.appendChild(svgEl('line', { x1:30, y1:hy+10, x2:450, y2:hy+10, stroke:'#B89A78', 'stroke-width':0.5, opacity:0.6 }));
       });
-      // Black cable management clips on horizontal channels
       hChannelYs.forEach(function(hy) {
         for (var cx = 90; cx <= 400; cx += 80) {
           gTrunking.appendChild(svgEl('rect', { x:cx-3, y:hy-1, width:6, height:16, rx:1, fill:'#1A1A1E' }));
@@ -1598,11 +1604,10 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
       });
       svg.insertBefore(gTrunking, gDinRails);
 
-      // -- 5. U-LOOP CONNECTIONS (signature wiring between breaker rows) --
+      // -- 6. U-LOOP CONNECTIONS --
       var gULoops = svgEl('g', {});
       var uLoopPaths = [];
 
-      // Generate U-loops between each pair of rows
       function makeULoops(rowDef, gapIdx, startY, loopDepth) {
         var totalW = rowDef.count * 42 + (rowDef.count - 1) * 5;
         var sx = (480 - totalW) / 2;
@@ -1624,50 +1629,103 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
         }
       }
 
-      // Row 0 bottom → gap (DIN rail at 220, loop starts below it)
       makeULoops(breakerRows[0], 0, 236, 32);
-      // Row 1 bottom → gap
       makeULoops(breakerRows[1], 1, 436, 32);
-      // Row 2 bottom → gap
       makeULoops(breakerRows[2], 2, 626, 28);
-
       svg.appendChild(gULoops);
 
-      // -- 6. COPPER BUS BAR COMBS (connect to breaker tops) --
+      // -- 7. COPPER BUS BAR COMBS --
       var gBusBars = svgEl('g', { opacity: 0 });
       breakerRows.forEach(function(row, ri) {
         var totalW = row.count * 42 + (row.count - 1) * 5;
         var sx = (480 - totalW) / 2;
-        // Bus bar strip across top of row
         gBusBars.appendChild(svgEl('rect', {
           x: sx, y: row.y - 6, width: totalW, height: 4, rx: 1,
           fill: '#B87333', stroke: '#8B5A2B', 'stroke-width': 0.5
         }));
-        // Individual prongs into each breaker
         for (var bi = 0; bi < row.count; bi++) {
           var bx = sx + bi * 47 + 18;
-          gBusBars.appendChild(svgEl('line', {
-            x1: bx, y1: row.y - 6, x2: bx, y2: row.y + 4,
-            stroke: '#B87333', 'stroke-width': 2.5, 'stroke-linecap': 'round'
-          }));
-          gBusBars.appendChild(svgEl('line', {
-            x1: bx + 6, y1: row.y - 6, x2: bx + 6, y2: row.y + 4,
-            stroke: '#B87333', 'stroke-width': 2.5, 'stroke-linecap': 'round'
-          }));
+          gBusBars.appendChild(svgEl('line', { x1:bx, y1:row.y-6, x2:bx, y2:row.y+4, stroke:'#B87333', 'stroke-width':2.5, 'stroke-linecap':'round' }));
+          gBusBars.appendChild(svgEl('line', { x1:bx+6, y1:row.y-6, x2:bx+6, y2:row.y+4, stroke:'#B87333', 'stroke-width':2.5, 'stroke-linecap':'round' }));
         }
       });
       svg.appendChild(gBusBars);
 
-      // -- 7. PANEL COVER --
-      var gCover = svgEl('g', { transform: 'translate(0, -750)' });
-      gCover.appendChild(svgEl('rect', { x:28, y:55, width:424, height:660, rx:4, fill:'#3E4048', stroke:'#555', 'stroke-width':1 }));
-      [175, 375, 565].forEach(function(cy) {
-        gCover.appendChild(svgEl('rect', { x:60, y:cy, width:360, height:22, rx:2, fill:'#333', stroke:'#555', 'stroke-width':0.5 }));
+      // -- 8. FERRULES (red caps on wire ends at breaker terminals) --
+      var gFerrules = svgEl('g', { opacity: 0 });
+      allBreakerPos.forEach(function(bp) {
+        // Top ferrule
+        gFerrules.appendChild(svgEl('rect', { x: bp.x - 3, y: bp.y - 2, width: 6, height: 6, rx: 1, fill: '#DC2626' }));
+        // Bottom ferrule
+        var rowH = 55;
+        gFerrules.appendChild(svgEl('rect', { x: bp.x - 3, y: bp.y + rowH - 4, width: 6, height: 6, rx: 1, fill: '#DC2626' }));
       });
-      var coverLabel = svgEl('text', { x:240, y:40, 'text-anchor':'middle', fill:'#666', 'font-size':10, 'font-family':'var(--font-head)', 'font-weight':700, 'letter-spacing':'0.1em' });
-      coverLabel.textContent = '200A MAIN';
-      gCover.appendChild(coverLabel);
+      svg.appendChild(gFerrules);
+
+      // -- 9. CIRCUIT LABELS (small numbered tags) --
+      var gLabels = svgEl('g', { opacity: 0 });
+      allBreakerPos.forEach(function(bp, li) {
+        var labelBg = svgEl('rect', { x: bp.x - 8, y: bp.y + 56, width: 16, height: 8, rx: 1, fill: '#FFF', opacity: 0.9 });
+        gLabels.appendChild(labelBg);
+        var labelTxt = svgEl('text', { x: bp.x, y: bp.y + 62.5, 'text-anchor': 'middle', fill: '#222', 'font-size': 5.5, 'font-family': 'var(--font-head)', 'font-weight': 700 });
+        labelTxt.textContent = 'C' + (li + 1);
+        gLabels.appendChild(labelTxt);
+      });
+      svg.appendChild(gLabels);
+
+      // -- 10. DEAD FRONT PLATE (with breaker cutouts) --
+      var gCover = svgEl('g', { transform: 'translate(0, -750)' });
+
+      // Create SVG mask for breaker cutouts
+      var coverDefs = svgEl('defs', {});
+      var coverMask = svgEl('mask', { id: 'deadFrontMask' });
+      coverMask.appendChild(svgEl('rect', { x:20, y:45, width:440, height:680, fill:'white' }));
+      // Cut out breaker toggle windows
+      breakerRows.forEach(function(row) {
+        var totalW = row.count * 42 + (row.count - 1) * 5;
+        var sx = (480 - totalW) / 2;
+        for (var bi = 0; bi < row.count; bi++) {
+          var bx = sx + bi * 47;
+          coverMask.appendChild(svgEl('rect', { x: bx - 1, y: row.y + 8, width: 44, height: 30, rx: 3, fill: 'black' }));
+        }
+      });
+      coverDefs.appendChild(coverMask);
+      gCover.appendChild(coverDefs);
+
+      // Dead front panel body (masked)
+      gCover.appendChild(svgEl('rect', { x:28, y:55, width:424, height:660, rx:4, fill:'#3A3C42', stroke:'#555', 'stroke-width':1.2, mask:'url(#deadFrontMask)' }));
+      // Screw details on dead front
+      [[80,80],[400,80],[80,680],[400,680],[240,80],[240,680]].forEach(function(sc) {
+        gCover.appendChild(svgEl('circle', { cx:sc[0], cy:sc[1], r:4, fill:'#555', stroke:'#666', 'stroke-width':0.5 }));
+        gCover.appendChild(svgEl('line', { x1:sc[0]-2.5, y1:sc[1], x2:sc[0]+2.5, y2:sc[1], stroke:'#777', 'stroke-width':0.8 }));
+      });
+      // Row labels on dead front
+      breakerRows.forEach(function(row, ri) {
+        var totalW = row.count * 42 + (row.count - 1) * 5;
+        var sx = (480 - totalW) / 2;
+        var labelEl = svgEl('text', { x: sx - 2, y: row.y + 28, fill:'#888', 'font-size':7, 'font-family':'var(--font-head)', 'font-weight':700 });
+        labelEl.textContent = ['MAIN','BRANCH','AUX'][ri];
+        gCover.appendChild(labelEl);
+      });
       svg.appendChild(gCover);
+
+      // -- 11. TOGGLE FLIP OVERLAYS (ON position, visible through dead front) --
+      var toggleFlips = [];
+      allBreakerPos.forEach(function(bp) {
+        // ON-position toggle lever (green, upper position)
+        var onLever = svgEl('rect', {
+          x: bp.x - 5, y: bp.y + 14, width: 10, height: 8, rx: 1.5,
+          fill: '#4CAF50', opacity: 0
+        });
+        svg.appendChild(onLever);
+        // Green glow dot
+        var onDot = svgEl('circle', {
+          cx: bp.x, cy: bp.y + 13, r: 2.5,
+          fill: '#4CAF50', opacity: 0
+        });
+        svg.appendChild(onDot);
+        toggleFlips.push({ lever: onLever, dot: onDot });
+      });
 
       // Power light elements
       var powerLights = [];
@@ -1676,7 +1734,7 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
         if (plEl) powerLights.push(plEl);
       }
 
-      // ═══ SCROLL ANIMATION v3 ═══
+      // ═══ SCROLL ANIMATION v4 ═══
       function update() {
         var p = getProgress();
         scrubFill.style.width = (p * 100) + '%';
@@ -1686,15 +1744,15 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
         intro.style.pointerEvents = p > 0.03 ? 'none' : 'auto';
 
         // Background
-        var bgB = map(p, 0.05, 0.15, 0, 1) * (p < 0.80 ? 1 : map(p, 0.80, 1, 1, 0.3));
+        var bgB = map(p, 0.05, 0.15, 0, 1) * (p < 0.82 ? 1 : map(p, 0.82, 1, 1, 0.3));
         bg.style.background = 'rgb(' + Math.round(7 + bgB * 10) + ',' + Math.round(7 + bgB * 4) + ',' + Math.round(17 + bgB * 18) + ')';
 
         // Panel container
         var pScale = map(p, 0.05, 0.14, 0.9, 1);
         var pOp = map(p, 0.05, 0.12, 0, 1);
-        var fadeOut = p < 0.80 ? 1 : map(p, 0.80, 0.92, 1, 0);
+        var fadeOut = p < 0.84 ? 1 : map(p, 0.84, 0.94, 1, 0);
         panelContainer.style.opacity = String(pOp * fadeOut);
-        panelContainer.style.transform = 'translate(-50%, -50%) scale(' + (pScale * (p < 0.80 ? 1 : map(p, 0.80, 0.92, 1, 0.88))) + ')';
+        panelContainer.style.transform = 'translate(-50%, -50%) scale(' + (pScale * (p < 0.84 ? 1 : map(p, 0.84, 0.94, 1, 0.88))) + ')';
 
         // SVG sizing
         var vh = stickyEl.offsetHeight;
@@ -1706,48 +1764,47 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
         // Enclosure
         gEnclosure.setAttribute('opacity', String(map(p, 0.05, 0.12, 0, 1)));
 
-        // Romex
+        // Romex + terminal
         gRomex.setAttribute('opacity', String(map(p, 0.08, 0.14, 0, 1) * fadeOut));
-
-        // Terminal strip
         gTerminal.setAttribute('opacity', String(map(p, 0.10, 0.16, 0, 1) * fadeOut));
 
-        // ═══ PHASE 1: TRUNK WIRES DROP (all blue wires straight down) ═══
+        // ═══ PHASE 1: ALL WIRES DROP SIMULTANEOUSLY ═══
         trunkWires.forEach(function(wire, i) {
-          var drawStart = 0.10 + i * 0.004;
-          var drawEnd = drawStart + 0.12;
+          // All trunks start at same time, slight stagger within trunk only
+          var drawStart = 0.10 + wire.wireIdx * 0.006;
+          var drawEnd = drawStart + 0.14;
           var drawP = easeOut3(clamp((p - drawStart) / (drawEnd - drawStart), 0, 1));
 
           wire.main.style.strokeDashoffset = String(wire.mainLen * (1 - drawP));
           wire.comp.style.strokeDashoffset = String(wire.compLen * (1 - drawP));
 
-          // ═══ PHASE 2: ORGANIZE (tighten trunk spacing) ═══
-          var orgP = easeOut3(clamp((p - 0.26) / 0.08, 0, 1));
+          // PHASE 2: ORGANIZE (tighten)
+          var orgP = easeOut3(clamp((p - 0.28) / 0.08, 0, 1));
           var currentX = wire.looseX + (wire.tightX - wire.looseX) * orgP;
-          wire.main.setAttribute('d', 'M ' + currentX + ' 78 L ' + currentX + ' 700');
-          wire.comp.setAttribute('d', 'M ' + (currentX - 2) + ' 78 L ' + (currentX - 2) + ' 700');
+          wire.main.setAttribute('d', 'M ' + currentX + ' 78 L ' + currentX + ' 696');
+          wire.comp.setAttribute('d', 'M ' + (currentX - 2) + ' 78 L ' + (currentX - 2) + ' 696');
 
           wire.main.style.opacity = String(fadeOut);
           wire.comp.style.opacity = String(0.5 * fadeOut);
         });
 
-        // Colored clips appear during organize
-        gClips.setAttribute('opacity', String(map(p, 0.28, 0.34, 0, 1) * fadeOut));
+        // Bottom terminal (appears when wires reach bottom)
+        gBottomTerminal.setAttribute('opacity', String(map(p, 0.22, 0.28, 0, 1) * fadeOut));
 
-        // ═══ PHASE 3: CABLE TRUNKING CHANNELS ═══
-        var trunkingP = map(p, 0.32, 0.38, 0, 1);
-        gTrunking.setAttribute('opacity', String(trunkingP * fadeOut));
+        // Clips
+        gClips.setAttribute('opacity', String(map(p, 0.30, 0.36, 0, 1) * fadeOut));
 
-        // ═══ PHASE 4: DIN RAILS ═══
-        gDinRails.setAttribute('opacity', String(map(p, 0.36, 0.42, 0, 1) * fadeOut));
+        // ═══ PHASE 3: CABLE TRUNKING ═══
+        gTrunking.setAttribute('opacity', String(map(p, 0.34, 0.40, 0, 1) * fadeOut));
 
-        // Horizontal wire bundles (appear with DIN rails)
-        gHBundles.setAttribute('opacity', String(map(p, 0.34, 0.42, 0, 1) * fadeOut));
+        // ═══ PHASE 4: DIN RAILS + HORIZONTAL BUNDLES ═══
+        gDinRails.setAttribute('opacity', String(map(p, 0.38, 0.44, 0, 1) * fadeOut));
+        gHBundles.setAttribute('opacity', String(map(p, 0.36, 0.44, 0, 1) * fadeOut));
 
         // ═══ PHASE 5: BREAKERS ═══
         breakerGroups.forEach(function(g, ri) {
-          var start = 0.40 + ri * 0.035;
-          var end = start + 0.06;
+          var start = 0.42 + ri * 0.03;
+          var end = start + 0.05;
           var bp = clamp((p - start) / (end - start), 0, 1);
           var bOp = easeOut3(bp);
           g.setAttribute('opacity', String(bOp * fadeOut));
@@ -1755,86 +1812,92 @@ footer { background: var(--black); border-top: 1px solid var(--border); padding:
           g.setAttribute('transform', 'translate(' + btx + ', 0)');
         });
 
-        // ═══ PHASE 6: U-LOOP CONNECTIONS ═══
+        // ═══ PHASE 6: U-LOOPS + BUS BARS ═══
         var uLanded = 0;
         uLoopPaths.forEach(function(uLoop, ui) {
-          var uStart = 0.48 + uLoop.gapIdx * 0.025 + (ui % 8) * 0.004;
-          var uEnd = uStart + 0.06;
+          var uStart = 0.50 + uLoop.gapIdx * 0.02 + (ui % 8) * 0.003;
+          var uEnd = uStart + 0.05;
           var uP = easeOut3(clamp((p - uStart) / (uEnd - uStart), 0, 1));
           uLoop.el.style.strokeDashoffset = String(uLoop.totalLength * (1 - uP));
           uLoop.el.style.opacity = String(fadeOut);
           if (uP > 0.9) uLanded++;
         });
 
-        // HUD circuit count
         if (hudCircuits) hudCircuits.textContent = String(Math.min(uLanded, 22));
+        gBusBars.setAttribute('opacity', String(map(p, 0.54, 0.60, 0, 1) * fadeOut));
 
-        // Copper bus bar combs (appear with U-loops)
-        gBusBars.setAttribute('opacity', String(map(p, 0.52, 0.58, 0, 1) * fadeOut));
+        // ═══ PHASE 7: FERRULES + LABELS (detail touches) ═══
+        gFerrules.setAttribute('opacity', String(map(p, 0.58, 0.64, 0, 1) * fadeOut));
+        gLabels.setAttribute('opacity', String(map(p, 0.62, 0.68, 0, 1) * fadeOut));
 
-        // ═══ PHASE 7: PANEL COVER SLIDES DOWN ═══
-        var coverP = easeOut3(clamp((p - 0.58) / 0.06, 0, 1));
+        // ═══ PHASE 8: DEAD FRONT PLATE SLIDES DOWN ═══
+        var coverP = easeOut3(clamp((p - 0.68) / 0.06, 0, 1));
         gCover.setAttribute('transform', 'translate(0, ' + (-750 + 750 * coverP) + ')');
 
-        // ═══ PHASE 8: ENERGIZE ═══
-        var toggleDots = document.querySelectorAll('.toggle-on');
-        for (var tdi = 0; tdi < toggleDots.length; tdi++) {
-          toggleDots[tdi].setAttribute('opacity', p >= (0.65 + tdi * 0.004) ? '1' : '0');
-        }
+        // ═══ PHASE 9: TOGGLE FLIP (one by one through dead front cutouts) ═══
+        toggleFlips.forEach(function(tf, tfi) {
+          var flipTrigger = 0.76 + tfi * 0.005;
+          var isOn = p >= flipTrigger;
+          tf.lever.setAttribute('opacity', isOn ? '1' : '0');
+          tf.dot.setAttribute('opacity', isOn ? '1' : '0');
+        });
 
-        var glowVal = map(p, 0.64, 0.74, 0, 1) * (p < 0.78 ? 1 : map(p, 0.78, 0.88, 1, 0));
+        // ═══ PHASE 10: ENERGIZE + LET THERE BE LIGHT ═══
+        var glowVal = map(p, 0.78, 0.86, 0, 1) * (p < 0.88 ? 1 : map(p, 0.88, 0.94, 1, 0));
         panelGlow.style.opacity = String(Math.max(0, glowVal));
 
-        if (p < 0.66) {
+        if (p < 0.80) {
           panelEnergize.style.clipPath = 'inset(0 100% 0 0)';
-        } else if (p < 0.74) {
-          var right = map(easeOut3((p - 0.66) / 0.08), 0, 1, 100, -2);
+        } else if (p < 0.86) {
+          var right = map(easeOut3((p - 0.80) / 0.06), 0, 1, 100, -2);
           panelEnergize.style.clipPath = 'inset(0 ' + right + '% 0 0)';
-        } else if (p < 0.78) {
-          var left = map(easeIn3((p - 0.74) / 0.04), 0, 1, 0, 102);
+        } else if (p < 0.90) {
+          var left = map(easeIn3((p - 0.86) / 0.04), 0, 1, 0, 102);
           panelEnergize.style.clipPath = 'inset(0 0 0 ' + left + '%)';
         } else {
           panelEnergize.style.clipPath = 'inset(0 0 0 102%)';
         }
 
-        // ═══ PHASE 9: POWER ON ═══
+        // Power-on lights
         powerLights.forEach(function(pl, li) {
-          var lightStart = 0.74 + li * 0.012;
-          var lightEnd = lightStart + 0.06;
+          var lightStart = 0.82 + li * 0.01;
+          var lightEnd = lightStart + 0.05;
           var lightP = clamp((p - lightStart) / (lightEnd - lightStart), 0, 1);
-          var lightFade = p < 0.82 ? 1 : map(p, 0.82, 0.90, 1, 0);
+          var lightFade = p < 0.90 ? 1 : map(p, 0.90, 0.96, 1, 0);
           var warmth = easeOut3(lightP) * lightFade;
-          pl.style.background = 'rgba(251,191,36,' + (warmth * 0.35) + ')';
-          pl.style.boxShadow = warmth > 0.1 ? '0 0 ' + Math.round(warmth * 40) + 'px ' + Math.round(warmth * 15) + 'px rgba(251,191,36,' + (warmth * 0.25) + ')' : 'none';
+          pl.style.background = 'rgba(251,191,36,' + (warmth * 0.4) + ')';
+          pl.style.boxShadow = warmth > 0.1 ? '0 0 ' + Math.round(warmth * 50) + 'px ' + Math.round(warmth * 20) + 'px rgba(251,191,36,' + (warmth * 0.3) + ')' : 'none';
         });
 
-        var powP = map(p, 0.72, 0.76, 0, 1) * map(p, 0.82, 0.90, 1, 0);
+        // POWERED ON text
+        var powP = map(p, 0.82, 0.86, 0, 1) * map(p, 0.90, 0.96, 1, 0);
         panelPowered.style.opacity = String(Math.max(0, powP));
-        panelPowered.style.transform = 'scale(' + map(p, 0.72, 0.76, 0.8, 1) + ')';
+        panelPowered.style.transform = 'scale(' + map(p, 0.82, 0.86, 0.8, 1) + ')';
 
         // HUD panels
         var hudIn  = map(p, 0.14, 0.26, 0, 1);
-        var hudOut = p < 0.56 ? 1 : map(p, 0.56, 0.62, 1, 0);
+        var hudOut = p < 0.66 ? 1 : map(p, 0.66, 0.72, 1, 0);
         panelHud.style.opacity = String(clamp(hudIn * hudOut, 0, 1));
 
         // Final hero
-        var fP  = map(p, 0.88, 0.97, 0, 1);
+        var fP  = map(p, 0.92, 0.98, 0, 1);
         var fOp = easeOut3(fP);
         finalEl.style.opacity   = String(fOp);
         finalEl.style.transform = 'translateY(' + map(fP, 0, 1, 26, 0) + 'px)';
-        finalEl.classList.toggle('active', p > 0.88);
+        finalEl.classList.toggle('active', p > 0.92);
 
         // Phase labels
         if      (p < 0.05) setPhase('');
         else if (p < 0.10) setPhase('MOUNTING ENCLOSURE');
-        else if (p < 0.26) setPhase('PULLING WIRE');
-        else if (p < 0.36) setPhase('ORGANIZING CONDUCTORS');
-        else if (p < 0.40) setPhase('INSTALLING CHANNELS');
-        else if (p < 0.48) setPhase('SETTING BREAKERS');
-        else if (p < 0.58) setPhase('MAKING CONNECTIONS');
-        else if (p < 0.64) setPhase('CLOSING PANEL');
-        else if (p < 0.76) setPhase('ENERGIZING');
-        else if (p < 0.82) setPhase('POWERED ON');
+        else if (p < 0.28) setPhase('PULLING WIRE');
+        else if (p < 0.38) setPhase('ORGANIZING CONDUCTORS');
+        else if (p < 0.42) setPhase('INSTALLING CHANNELS');
+        else if (p < 0.50) setPhase('SETTING BREAKERS');
+        else if (p < 0.60) setPhase('MAKING CONNECTIONS');
+        else if (p < 0.68) setPhase('FINISHING DETAILS');
+        else if (p < 0.76) setPhase('INSTALLING DEAD FRONT');
+        else if (p < 0.82) setPhase('FLIPPING BREAKERS');
+        else if (p < 0.90) setPhase('LET THERE BE LIGHT');
         else               setPhase('');
       }
 
