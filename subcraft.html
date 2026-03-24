@@ -449,8 +449,6 @@ a{color:inherit;text-decoration:none}
   for(var mp=0;mp<4;mp++){
     gClosed.appendChild(svgEl('rect',{x:subX+5+mp*130,y:subY-2,width:20,height:6,rx:2,fill:'#CC4444',opacity:0.5}));
   }
-  // Cheese drip
-  gClosed.appendChild(svgEl('path',{d:'M'+(subX+80)+' '+(subY+2)+' Q'+(subX+85)+' '+(subY+12)+' '+(subX+82)+' '+(subY+18),fill:'none',stroke:'#F8E8A0','stroke-width':2,'stroke-linecap':'round',opacity:0.6}));
   // Top half
   gClosed.appendChild(svgEl('path',{d:'M'+(subX+subH/2)+' '+(subY-2)+' L'+subX+' '+(subY-2)+' Q'+subX+' '+(subY-subH/2)+' '+(subX+subH/2)+' '+(subY-subH/2)+' L'+(subX+subW-subH/2)+' '+(subY-subH/2)+' Q'+(subX+subW)+' '+(subY-subH/2)+' '+(subX+subW)+' '+(subY-2)+' Z',fill:'url(#crustGrad)',stroke:'#906018','stroke-width':1}));
   // Score marks
@@ -518,29 +516,21 @@ a{color:inherit;text-decoration:none}
   var gWrap=svgEl('g',{opacity:0});
   var lhw=subW/2-8;
   var rhw=subW/2-8;
-  // Left half wrap — covers bottom 60%
+  // Left half wrap — covers LEFT half of the sub half (hold-to-eat)
   var wrapLeftG=svgEl('g',{opacity:0});
-  var lwx=subX, lwy=subY;
-  var wrapH=Math.round(subH*0.6);
-  var wrapTopY=lwy+subH/2-wrapH; // starts 60% up from bottom
-  // Paper base (bottom portion only)
-  wrapLeftG.appendChild(svgEl('rect',{x:lwx-10,y:wrapTopY,width:lhw+20,height:wrapH+10,rx:3,fill:'url(#checker)',opacity:0.9}));
-  // Left fold
-  var wrapLFold=svgEl('rect',{x:lwx-10,y:wrapTopY,width:0,height:wrapH+10,rx:2,fill:'url(#checker)',opacity:0.85});
-  wrapLeftG.appendChild(wrapLFold);
-  // Right fold
-  var wrapRFold=svgEl('rect',{x:lwx+lhw+10,y:wrapTopY,width:0,height:wrapH+10,rx:2,fill:'url(#checker)',opacity:0.85});
-  wrapLeftG.appendChild(wrapRFold);
+  var lwx=subX-25, lwy=subY;  // shifted left for separation
+  var wrapFullH=subH+20;
+  var wrapFullHalfW=lhw/2+15;  // covers left half of the sub
+  // Paper base (left portion only — from left end to middle)
+  wrapLeftG.appendChild(svgEl('rect',{x:lwx-5,y:lwy-subH/2-10,width:wrapFullHalfW,height:wrapFullH,rx:3,fill:'url(#checker)',opacity:0.9}));
   gWrap.appendChild(wrapLeftG);
 
-  // Right half wrap
+  // Right half wrap — covers RIGHT half of the sub half (hold-to-eat)
   var wrapRightG=svgEl('g',{opacity:0});
-  var rwx=cx+8, rwy=subY;
-  wrapRightG.appendChild(svgEl('rect',{x:rwx-10,y:wrapTopY,width:rhw+20,height:wrapH+10,rx:3,fill:'url(#checker)',opacity:0.9}));
-  var wrapRLFold=svgEl('rect',{x:rwx-10,y:wrapTopY,width:0,height:wrapH+10,rx:2,fill:'url(#checker)',opacity:0.85});
-  wrapRightG.appendChild(wrapRLFold);
-  var wrapRRFold=svgEl('rect',{x:rwx+rhw+10,y:wrapTopY,width:0,height:wrapH+10,rx:2,fill:'url(#checker)',opacity:0.85});
-  wrapRightG.appendChild(wrapRRFold);
+  var rwx=cx+33, rwy=subY;  // shifted right for separation
+  // Paper base (right portion only — from middle to right end)
+  var rwrapStartX=rwx+rhw/2-10;
+  wrapRightG.appendChild(svgEl('rect',{x:rwrapStartX,y:rwy-subH/2-10,width:wrapFullHalfW,height:wrapFullH,rx:3,fill:'url(#checker)',opacity:0.9}));
   gWrap.appendChild(wrapRightG);
   svg.appendChild(gWrap);
 
@@ -602,9 +592,9 @@ a{color:inherit;text-decoration:none}
   bSubRightG.setAttribute('transform','rotate(4,'+basketCX+','+basketCY+')');
   gBasketScene.appendChild(bSubRightG);
 
-  // Chips pile (right side of basket)
+  // Chips pile (inside basket, right side)
   var chipsG=svgEl('g',{});
-  var chipsCX=basketCX+basketRX+50, chipsCY=basketCY+10;
+  var chipsCX=basketCX+basketRX-60, chipsCY=basketCY-10;
   // Chip bag / pile of chips (golden irregular shapes)
   var chipShapes=[
     {dx:-18,dy:-12,rx:14,ry:8,rot:-15},
@@ -700,10 +690,7 @@ a{color:inherit;text-decoration:none}
     gWrap.setAttribute('opacity','0');
     wrapLeftG.setAttribute('opacity','0');wrapLeftG.setAttribute('transform','');
     wrapRightG.setAttribute('opacity','0');wrapRightG.setAttribute('transform','');
-    wrapLFold.setAttribute('width','0');
-    wrapRFold.setAttribute('width','0');
-    wrapRLFold.setAttribute('width','0');
-    wrapRRFold.setAttribute('width','0');
+    // (fold rects removed — wrap uses simple rect coverage now)
     gBasketScene.setAttribute('opacity','0');gBasketScene.setAttribute('transform','');
     scenePowered.style.opacity='0';
     scenePowered.style.transform='';
@@ -718,8 +705,8 @@ a{color:inherit;text-decoration:none}
     // Helper: show all open-sub layers fully visible (used by multiple ingredient phases)
     function showOpenSub(){
       gSliced.setAttribute('opacity','1');
-      topHalf.setAttribute('transform','translateY(-110)');
-      bottomHalf.setAttribute('transform','translateY(20)');
+      topHalf.setAttribute('transform','translateY(-160)');
+      bottomHalf.setAttribute('transform','translateY(30)');
     }
     function showAllLeaves(){
       gLettuce.setAttribute('opacity','1');
@@ -771,9 +758,9 @@ a{color:inherit;text-decoration:none}
       // Whole bread fades as sliced version appears
       gBread.setAttribute('opacity',1-ease3(clamp(sliceP/0.3,0,1)));
       gSliced.setAttribute('opacity',ease3(clamp(sliceP/0.4,0,1)));
-      // Top half lifts up 110px, bottom half drops 20px
-      var liftY=-ease3(sliceP)*110;
-      var dropY=ease3(sliceP)*20;
+      // Top half lifts up 160px (near 90-degree spread), bottom half drops 30px
+      var liftY=-ease3(sliceP)*160;
+      var dropY=ease3(sliceP)*30;
       topHalf.setAttribute('transform','translateY('+liftY+')');
       bottomHalf.setAttribute('transform','translateY('+dropY+')');
       if(p<0.22) setPhase('SLICING OPEN');
@@ -888,9 +875,9 @@ a{color:inherit;text-decoration:none}
     // ── 10. CLOSE THE SUB — top bread comes down, bottom comes up (57-63%) ──
     if(p>=0.57&&p<0.63){
       var closeP=clamp((p-0.57)/0.06,0,1);
-      // Animate bread halves closing: top from -110 to 0, bottom from +20 to 0
-      var topClose=lerp(-110,0,ease3(closeP));
-      var botClose=lerp(20,0,ease3(closeP));
+      // Animate bread halves closing: top from -160 to 0, bottom from +30 to 0
+      var topClose=lerp(-160,0,ease3(closeP));
+      var botClose=lerp(30,0,ease3(closeP));
       gSliced.setAttribute('opacity',String(1-ease3(clamp(closeP/0.7,0,1))));
       topHalf.setAttribute('transform','translateY('+topClose+')');
       bottomHalf.setAttribute('transform','translateY('+botClose+')');
@@ -947,35 +934,25 @@ a{color:inherit;text-decoration:none}
       var wrapP=clamp((p-0.70)/0.08,0,1);
       // Fade knife out
       gKnife.setAttribute('opacity',String(1-ease3(clamp(wrapP/0.2,0,1))));
+      // Sub halves separate further AND stay visible
+      var sepExtra=ease3(clamp(wrapP/0.4,0,1));
       gHalves.setAttribute('opacity','1');
-      leftHalf.setAttribute('transform','translateX(-25)');
-      rightHalf.setAttribute('transform','translateX(25)');
+      leftHalf.setAttribute('transform','translateX('+(-25-sepExtra*20)+')');
+      rightHalf.setAttribute('transform','translateX('+(25+sepExtra*20)+')');
       gWrap.setAttribute('opacity','1');
 
-      // Paper slides under each half
-      var paperUnder=ease3(clamp(wrapP/0.3,0,1));
-      wrapLeftG.setAttribute('opacity',String(paperUnder));
-      wrapRightG.setAttribute('opacity',String(paperUnder));
+      // Paper slides in from the outer ends
+      var paperIn=ease3(clamp(wrapP/0.4,0,1));
+      wrapLeftG.setAttribute('opacity',String(paperIn));
+      wrapRightG.setAttribute('opacity',String(paperIn));
 
       // Spin rotation during wrapping (subtle, like spinning the sub)
-      var spinAngle=ease3(clamp((wrapP-0.2)/0.6,0,1))*8;
-      var spinBack=ease3(clamp((wrapP-0.8)/0.2,0,1))*8;
+      var spinAngle=ease3(clamp((wrapP-0.2)/0.5,0,1))*10;
+      var spinBack=ease3(clamp((wrapP-0.7)/0.3,0,1))*10;
       var netSpin=spinAngle-spinBack;
-      wrapLeftG.setAttribute('transform','rotate('+netSpin+','+(lwx+lhw/2)+','+lwy+')');
-      wrapRightG.setAttribute('transform','rotate('+(-netSpin)+','+(rwx+rhw/2)+','+rwy+')');
-
-      // Folds wrap around (bottom 60% only)
-      var foldP=ease3(clamp((wrapP-0.3)/0.7,0,1));
-      var foldWidth=foldP*(lhw/2+10);
-      wrapLFold.setAttribute('width',String(foldWidth));
-      wrapRFold.setAttribute('x',String(lwx+lhw+10-foldWidth));
-      wrapRFold.setAttribute('width',String(foldWidth));
-      wrapRLFold.setAttribute('width',String(foldWidth));
-      wrapRRFold.setAttribute('x',String(rwx+rhw+10-foldWidth));
-      wrapRRFold.setAttribute('width',String(foldWidth));
-
-      // Fade sub halves slightly as paper covers
-      gHalves.setAttribute('opacity',String(1-foldP*0.3));
+      // Left wrap+sub spin together, right wrap+sub spin together
+      wrapLeftG.setAttribute('transform','translate('+(-25-sepExtra*20)+',0) rotate('+netSpin+','+(subX+lhw/2)+','+lwy+')');
+      wrapRightG.setAttribute('transform','translate('+(25+sepExtra*20)+',0) rotate('+(-netSpin)+','+(cx+8+rhw/2)+','+rwy+')');
 
       gBoard.setAttribute('opacity',String(Math.max(0,1-ease3(wrapP))));
       setPhase('WRAPPING UP');
