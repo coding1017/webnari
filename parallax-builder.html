@@ -642,6 +642,46 @@ option { background: var(--surface2); color: var(--white); }
 }
 .btn-start-over:hover { border-color: var(--red); color: var(--red); }
 
+/* Continue section */
+.continue-section {
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+}
+.continue-section.visible { display: flex; }
+.continue-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(245,166,35,0.08);
+  border: 1px solid rgba(245,166,35,0.2);
+  border-radius: var(--radius);
+  font-size: 12px;
+  font-weight: 600;
+  color: #F5A623;
+  line-height: 1.4;
+}
+.continue-alert svg { flex-shrink: 0; margin-top: 1px; }
+.btn-continue {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 20px;
+  background: rgba(245,166,35,0.12);
+  border: 1px solid rgba(245,166,35,0.3);
+  color: #F5A623;
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 800;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-continue:hover { background: rgba(245,166,35,0.18); border-color: rgba(245,166,35,0.5); }
+
 /* ── RIGHT PANEL ── */
 .panel-right {
   flex: 1;
@@ -1071,10 +1111,22 @@ Theme: Lock mechanism being assembled
     <div class="divider"></div>
 
     <!-- Tweak Section -->
+    <!-- Continue (shown when code is incomplete) -->
+    <div class="continue-section" id="continueSection">
+      <div class="continue-alert">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1L15 14H1L8 1Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><line x1="8" y1="6" x2="8" y2="9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="11.5" r="0.8" fill="currentColor"/></svg>
+        <span>Code appears incomplete — generation may have been cut off</span>
+      </div>
+      <button class="btn-continue" id="btnContinue">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h8M8 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Continue Generation
+      </button>
+    </div>
+
     <div class="tweak-section" id="tweakSection">
       <label>Tweak / Modify</label>
       <textarea id="tweakInput" placeholder="Describe changes, e.g. &quot;Make the glow red instead of blue&quot; or &quot;Add more detail to the springs phase&quot;"></textarea>
-      <div style="display:flex;gap:8px">
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn-tweak" id="btnTweak">Regenerate with Tweaks</button>
         <button class="btn-start-over" id="btnStartOver">Start Over</button>
       </div>
@@ -2085,6 +2137,31 @@ Theme: Lock mechanism being assembled
     startGeneration();
   });
 
+  // ═══ CONTINUE GENERATION ═══
+  document.getElementById('btnContinue').addEventListener('click', function() {
+    if (generating) return;
+    if (!fullCode.trim()) return;
+    hideError();
+
+    // Get the last ~800 chars of the incomplete code as context
+    var codeEnd = fullCode.slice(-800);
+
+    messages = [
+      { role: 'user', content: buildUserMessage() },
+      { role: 'assistant', content: fullCode },
+      { role: 'user', content: 'Your previous response was cut off. The code is incomplete — it ends with:\n\n```\n' + codeEnd + '\n```\n\nContinue writing the code from EXACTLY where you left off. Do NOT repeat any code that was already written. Start your response with the very next character after where the code was cut off. The code still needs the update() function, the requestAnimationFrame loop, updateSticky(), and the closing </script></body></html> tags (include whichever of these are missing). Output ONLY the remaining code, no explanations.' }
+    ];
+
+    // We'll append the new code to existing code
+    var previousCode = fullCode;
+    startGeneration();
+
+    // After generation, merge the codes
+    var originalOnComplete = onGenerationComplete;
+    // Use a flag to merge on next completion
+    window._continueMode = previousCode;
+  });
+
   // ═══ START OVER ═══
   btnStartOver.addEventListener('click', function() {
     if (generating && abortController) {
@@ -2095,6 +2172,8 @@ Theme: Lock mechanism being assembled
     generating = false;
     charCount = 0;
     tweakSection.classList.remove('visible');
+    document.getElementById('continueSection').classList.remove('visible');
+    window._continueMode = null;
     streamStatus.classList.remove('visible');
     tabActions.style.display = 'none';
     previewControls.style.display = 'none';
@@ -2237,11 +2316,27 @@ Theme: Lock mechanism being assembled
       // Clean up code: strip markdown fences if Claude added them
       fullCode = fullCode.replace(/^```html?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
 
+      // If in continue mode, merge with previous code
+      if (window._continueMode) {
+        fullCode = window._continueMode + '\n' + fullCode;
+        window._continueMode = null;
+      }
+
       updatePreview();
       updateCodeView();
       tabActions.style.display = 'flex';
       previewControls.style.display = 'flex';
       tweakSection.classList.add('visible');
+
+      // Check if code is incomplete
+      var isIncomplete = !fullCode.match(/<\/html>\s*$/i) || !fullCode.includes('requestAnimationFrame');
+      var continueSection = document.getElementById('continueSection');
+      if (isIncomplete) {
+        continueSection.classList.add('visible');
+        statusText.textContent = 'Incomplete — code was cut off';
+      } else {
+        continueSection.classList.remove('visible');
+      }
 
       // Auto-save to history
       saveToHistory(
