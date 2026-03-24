@@ -1,0 +1,2046 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parallax Builder — Webnari</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ── */
+:root {
+  --bg: #04060F;
+  --surface: #090D1C;
+  --surface2: #0F1527;
+  --surface3: #162036;
+  --surface4: #1D2A45;
+  --border: #182240;
+  --border2: #223257;
+  --border3: #2E4270;
+  --indigo: #7B6FFF;
+  --indigo2: #A99DFF;
+  --indigo-bg: rgba(123,111,255,0.09);
+  --indigo-border: rgba(123,111,255,0.22);
+  --indigo-glow: rgba(123,111,255,0.45);
+  --white: #EEF2FF;
+  --muted: #4A5E80;
+  --text: #7A91B8;
+  --green: #00C98D;
+  --red: #FF4D6D;
+  --font: 'Inter', sans-serif;
+  --radius: 10px;
+  --radius-lg: 14px;
+}
+
+/* ── RESET ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+a { color: inherit; text-decoration: none; }
+
+/* ── HEADER ── */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 28px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.header-logo {
+  font-family: var(--font);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: -0.02em;
+}
+.header-logo span { color: var(--indigo); }
+.header-sep {
+  width: 1px;
+  height: 20px;
+  background: var(--border2);
+}
+.header-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+.header-badge {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--indigo);
+  background: var(--indigo-bg);
+  border: 1px solid var(--indigo-border);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+/* ── LAYOUT ── */
+.app {
+  display: flex;
+  height: calc(100vh - 53px);
+}
+
+/* ── LEFT PANEL ── */
+.panel-left {
+  width: 420px;
+  min-width: 420px;
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.panel-left::-webkit-scrollbar { width: 4px; }
+.panel-left::-webkit-scrollbar-track { background: transparent; }
+.panel-left::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* ── INFO TOOLTIPS ── */
+.info-tip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--border);
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 800;
+  font-style: normal;
+  cursor: help;
+  position: relative;
+  vertical-align: middle;
+  margin-left: 5px;
+  flex-shrink: 0;
+  transition: background 0.15s, color 0.15s;
+  line-height: 1;
+}
+.info-tip:hover {
+  background: var(--indigo);
+  color: #fff;
+}
+.info-tip .tip-text {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 220px;
+  padding: 10px 12px;
+  background: var(--surface3);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 500;
+  font-style: normal;
+  color: var(--text);
+  line-height: 1.5;
+  letter-spacing: 0;
+  text-transform: none;
+  white-space: normal;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  z-index: 100;
+  pointer-events: none;
+}
+.info-tip .tip-text::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: var(--border2);
+}
+.info-tip:hover .tip-text { display: block; }
+
+/* ── FORM ── */
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field-row { display: flex; gap: 12px; }
+.field-row .field { flex: 1; }
+label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+input[type="text"],
+input[type="number"],
+textarea,
+select {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  font-family: var(--font);
+  font-size: 14px;
+  color: var(--white);
+  outline: none;
+  transition: border-color 0.15s;
+}
+input:focus, textarea:focus, select:focus {
+  border-color: var(--indigo);
+}
+textarea { resize: vertical; min-height: 200px; line-height: 1.6; }
+select { cursor: pointer; }
+option { background: var(--surface2); color: var(--white); }
+
+/* Color picker row */
+.color-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.color-swatch {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 2px solid var(--border2);
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.color-swatch input[type="color"] {
+  position: absolute;
+  inset: -8px;
+  width: calc(100% + 16px);
+  height: calc(100% + 16px);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+.color-hex {
+  flex: 1;
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 13px;
+}
+
+/* Presets */
+.presets {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.preset-btn {
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.preset-btn:hover { border-color: var(--indigo); color: var(--indigo); }
+
+/* Auto color button */
+.btn-auto-color {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 9px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  background: var(--surface2);
+  border: 1px dashed var(--border2);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-family: var(--font);
+  transition: all 0.2s;
+}
+.btn-auto-color:hover { border-color: var(--indigo); color: var(--indigo); border-style: solid; }
+.btn-auto-color.applied { border-color: var(--green); color: var(--green); border-style: solid; }
+
+/* Style grid */
+.style-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.style-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 6px 10px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: var(--font);
+  text-align: center;
+}
+.style-card:hover { border-color: var(--border3); }
+.style-card.active { border-color: var(--indigo); background: var(--indigo-bg); }
+.style-icon { color: var(--muted); transition: color 0.15s; }
+.style-card.active .style-icon { color: var(--indigo); }
+.style-card:hover .style-icon { color: var(--text); }
+.style-name {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text);
+  transition: color 0.15s;
+}
+.style-card.active .style-name { color: var(--indigo); }
+.style-desc {
+  font-size: 9px;
+  color: var(--muted);
+  line-height: 1.3;
+  display: none;
+}
+.style-card.active .style-desc { display: block; color: var(--indigo2); }
+@media (max-width: 900px) {
+  .style-grid { grid-template-columns: repeat(3, 1fr); }
+}
+.preset-btn.active { background: var(--indigo-bg); border-color: var(--indigo); color: var(--indigo); }
+
+/* Quality toggle */
+.toggle-row {
+  display: flex;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.toggle-opt {
+  flex: 1;
+  padding: 9px 16px;
+  font-size: 12px;
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.15s;
+  color: var(--muted);
+  border: none;
+  background: none;
+  font-family: var(--font);
+}
+.toggle-opt.active {
+  background: var(--indigo-bg);
+  color: var(--indigo);
+}
+
+/* Advanced toggle */
+.advanced-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-family: var(--font);
+  transition: all 0.15s;
+}
+.advanced-toggle:hover { color: var(--text); border-color: var(--border2); }
+.advanced-toggle.open { color: var(--indigo); border-color: var(--indigo-border); }
+.advanced-toggle.open svg { transform: rotate(180deg); }
+.advanced-toggle svg { transition: transform 0.2s; }
+
+/* Advanced panel */
+.advanced-panel {
+  display: none;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.advanced-panel.open { display: flex; }
+
+/* Label hint (inline value display) */
+.label-hint {
+  float: right;
+  font-weight: 600;
+  color: var(--indigo2);
+  font-size: 10px;
+  letter-spacing: 0.04em;
+  text-transform: none;
+}
+
+/* Range slider */
+.slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--border);
+  outline: none;
+  margin: 4px 0;
+}
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--indigo);
+  cursor: pointer;
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 6px rgba(123,111,255,0.4);
+}
+.slider::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--indigo);
+  cursor: pointer;
+  border: 2px solid var(--bg);
+}
+.slider-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+
+/* Chips */
+.template-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.chip {
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: all 0.15s;
+}
+.chip:hover { border-color: var(--indigo); color: var(--indigo); }
+
+/* Generate button */
+.btn-generate {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 24px;
+  background: var(--indigo);
+  color: #fff;
+  font-family: var(--font);
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-generate:hover { filter: brightness(1.1); transform: translateY(-1px); }
+.btn-generate:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  filter: none;
+}
+.btn-generate.generating {
+  background: var(--surface3);
+  border: 1px solid var(--indigo-border);
+  color: var(--indigo);
+  animation: genPulse 1.5s ease-in-out infinite;
+}
+@keyframes genPulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(123,111,255,0); }
+  50% { box-shadow: 0 0 20px 4px rgba(123,111,255,0.2); }
+}
+
+/* Stream status */
+.stream-status {
+  display: none;
+  padding: 12px 14px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.stream-status.visible { display: block; }
+.stream-status .val { color: var(--indigo2); font-weight: 600; }
+
+/* Divider */
+.divider {
+  height: 1px;
+  background: var(--border);
+  margin: 4px 0;
+}
+
+/* Tweak section */
+.tweak-section { display: none; }
+.tweak-section.visible { display: flex; flex-direction: column; gap: 12px; }
+.tweak-section textarea { min-height: 80px; }
+.btn-tweak {
+  padding: 10px 20px;
+  background: var(--surface3);
+  border: 1px solid var(--indigo-border);
+  color: var(--indigo);
+  font-family: var(--font);
+  font-size: 13px;
+  font-weight: 700;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-tweak:hover { background: var(--indigo-bg); }
+.btn-start-over {
+  padding: 8px 16px;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-family: var(--font);
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+.btn-start-over:hover { border-color: var(--red); color: var(--red); }
+
+/* ── RIGHT PANEL ── */
+.panel-right {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Tab bar */
+.tab-bar {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  padding: 0 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.tab-btn {
+  padding: 12px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+  border: none;
+  background: none;
+  cursor: pointer;
+  position: relative;
+  font-family: var(--font);
+  transition: color 0.15s;
+}
+.tab-btn:hover { color: var(--text); }
+.tab-btn.active { color: var(--indigo); }
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 12px;
+  right: 12px;
+  height: 2px;
+  background: var(--indigo);
+  border-radius: 1px 1px 0 0;
+}
+.tab-spacer { flex: 1; }
+.tab-actions { display: flex; gap: 8px; padding: 8px 0; }
+.btn-action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: all 0.15s;
+}
+.btn-action:hover { border-color: var(--indigo); color: var(--indigo); }
+.btn-action svg { width: 14px; height: 14px; }
+.btn-action.copied { color: var(--green); border-color: var(--green); }
+
+/* Preview + Code panels */
+.tab-content {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+.tab-pane {
+  position: absolute;
+  inset: 0;
+  display: none;
+}
+.tab-pane.active { display: flex; flex-direction: column; }
+
+/* Preview */
+.preview-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.device-btn {
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: all 0.15s;
+}
+.device-btn:hover { color: var(--text); }
+.device-btn.active { border-color: var(--indigo); color: var(--indigo); background: var(--indigo-bg); }
+.preview-spacer { flex: 1; }
+.btn-fullscreen {
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: var(--font);
+}
+.btn-fullscreen:hover { color: var(--indigo); border-color: var(--indigo); }
+
+.preview-frame-wrap {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  background: var(--bg);
+  overflow: hidden;
+  padding: 0;
+}
+.preview-frame {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: #000;
+}
+
+/* Placeholder */
+.preview-placeholder {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: var(--muted);
+}
+.preview-placeholder svg { opacity: 0.3; }
+.preview-placeholder p { font-size: 14px; font-weight: 500; }
+
+/* Code panel */
+.code-wrap {
+  flex: 1;
+  overflow: auto;
+  padding: 20px;
+  background: var(--bg);
+}
+.code-wrap::-webkit-scrollbar { width: 6px; height: 6px; }
+.code-wrap::-webkit-scrollbar-track { background: transparent; }
+.code-wrap::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+.code-block {
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--text);
+  white-space: pre;
+  tab-size: 2;
+}
+/* Syntax colors */
+.code-block .hl-tag { color: #FF6B8A; }
+.code-block .hl-attr { color: #C4A4FF; }
+.code-block .hl-str { color: #80D8A0; }
+.code-block .hl-kw { color: #7B6FFF; }
+.code-block .hl-num { color: #F5A623; }
+.code-block .hl-cmt { color: #4A5E80; font-style: italic; }
+.code-block .hl-css-prop { color: #38BDF8; }
+
+/* Error */
+.error-bar {
+  display: none;
+  padding: 12px 20px;
+  background: rgba(255,77,109,0.08);
+  border-bottom: 1px solid rgba(255,77,109,0.2);
+  color: var(--red);
+  font-size: 13px;
+  font-weight: 600;
+}
+.error-bar.visible { display: block; }
+
+/* ── MOBILE ── */
+@media (max-width: 900px) {
+  .app { flex-direction: column; height: auto; }
+  .panel-left {
+    width: 100%;
+    min-width: 0;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    max-height: none;
+  }
+  .panel-right { min-height: 70vh; }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-logo">Web<span>nari</span></div>
+  <div class="header-sep"></div>
+  <div class="header-title">Parallax Builder</div>
+  <div class="header-badge">Beta</div>
+</div>
+
+<!-- APP -->
+<div class="app">
+
+  <!-- LEFT PANEL: Input Form -->
+  <div class="panel-left">
+
+    <!-- Trade Name -->
+    <div class="field">
+      <label>Trade / Brand Name<span class="info-tip">i<span class="tip-text">The brand name that appears in the parallax intro and glow finale. Examples: LockPro, SushiRoll, AutoPro.</span></span></label>
+      <input type="text" id="tradeName" placeholder="e.g. LockPro, SushiBar, AutoPro">
+    </div>
+
+    <!-- Colors -->
+    <div class="field-row">
+      <div class="field">
+        <label>Accent Color<span class="info-tip">i<span class="tip-text">The primary brand color used for glows, highlights, buttons, and the powered-on finale effect.</span></span></label>
+        <div class="color-row">
+          <div class="color-swatch" id="accentSwatch" style="background:#7B6FFF">
+            <input type="color" id="accentColor" value="#7B6FFF">
+          </div>
+          <input type="text" class="color-hex" id="accentHex" value="#7B6FFF" maxlength="7">
+        </div>
+      </div>
+      <div class="field">
+        <label>Dark Base<span class="info-tip">i<span class="tip-text">The darkest background color. All other dark shades are derived from this. Keep it very dark for best contrast.</span></span></label>
+        <div class="color-row">
+          <div class="color-swatch" id="darkSwatch" style="background:#0A0E12">
+            <input type="color" id="darkColor" value="#0A0E12">
+          </div>
+          <input type="text" class="color-hex" id="darkHex" value="#0A0E12" maxlength="7">
+        </div>
+      </div>
+    </div>
+    <button class="btn-auto-color" id="btnAutoColor">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="4" cy="4" r="2.5" stroke="currentColor" stroke-width="1.3"/><circle cx="12" cy="4" r="2.5" stroke="currentColor" stroke-width="1.3"/><circle cx="4" cy="12" r="2.5" stroke="currentColor" stroke-width="1.3"/><circle cx="12" cy="12" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M6.5 4H9.5M4 6.5V9.5M12 6.5V9.5M6.5 12H9.5" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity="0.5"/></svg>
+      Auto-Generate Colors from Trade Name
+    </button>
+
+    <!-- ViewBox -->
+    <div class="field">
+      <label>SVG ViewBox<span class="info-tip">i<span class="tip-text">The canvas dimensions for the SVG animation. Wide (1050x600) works best for landscape scenes. Tall (480x750) is better for vertical builds like panels or towers.</span></span></label>
+      <div class="presets" id="viewboxPresets">
+        <button class="preset-btn active" data-w="1050" data-h="600">Wide 1050x600</button>
+        <button class="preset-btn" data-w="480" data-h="750">Tall 480x750</button>
+        <button class="preset-btn" data-w="800" data-h="600">Medium 800x600</button>
+      </div>
+      <div class="field-row" style="margin-top:8px">
+        <input type="number" id="viewW" value="1050" min="200" max="2000" style="text-align:center">
+        <span style="color:var(--muted);align-self:center;font-weight:700">x</span>
+        <input type="number" id="viewH" value="600" min="200" max="2000" style="text-align:center">
+      </div>
+    </div>
+
+    <!-- Build Sequence -->
+    <div class="field">
+      <label>Build Sequence Description<span class="info-tip">i<span class="tip-text">Describe step-by-step what gets built as the user scrolls. Each step becomes a scroll phase. Be specific about shapes, animations, and effects you want.</span></span></label>
+      <textarea id="buildSequence" placeholder="Describe the scroll animation step by step. Example:
+
+Theme: Lock mechanism being assembled
+1. Lock cylinder outline draws itself (stroke-dashoffset)
+2. Pin chambers appear one by one (6 pins)
+3. Springs drop into chambers with bounce
+4. Key pins of different heights slide in
+5. Driver pins stack on top
+6. Key profile draws from right to left
+7. Key inserts into cylinder (translateX)
+8. Key rotates 90 degrees, pins align
+9. Cylinder plug rotates, lock clicks open
+10. &quot;LOCKPRO&quot; glow blast + hero CTA"></textarea>
+    </div>
+
+    <!-- Art Style -->
+    <div class="field">
+      <label>Art Style<span class="info-tip">i<span class="tip-text">The visual style of the SVG animation. Auto lets the AI pick what works best. Each style dramatically changes the look — from clean blueprints to glowing neon cyberpunk.</span></span></label>
+      <div class="style-grid" id="styleGrid">
+        <button class="style-card active" data-style="auto">
+          <div class="style-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2L11.5 7H16.5L12.5 10L14 15L10 12L6 15L7.5 10L3.5 7H8.5L10 2Z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg></div>
+          <div class="style-name">Auto</div>
+          <div class="style-desc">AI picks the best style for your trade</div>
+        </button>
+        <button class="style-card" data-style="technical">
+          <div class="style-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="1" stroke="currentColor" stroke-width="1.3"/><line x1="3" y1="7" x2="17" y2="7" stroke="currentColor" stroke-width="1"/><line x1="7" y1="7" x2="7" y2="17" stroke="currentColor" stroke-width="1"/><circle cx="12" cy="12" r="2" stroke="currentColor" stroke-width="1"/></svg></div>
+          <div class="style-name">Technical</div>
+          <div class="style-desc">Blueprint precision, clean lines, engineering detail</div>
+        </button>
+        <button class="style-card" data-style="isometric-3d">
+          <div class="style-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2L18 7V14L10 19L2 14V7L10 2Z" stroke="currentColor" stroke-width="1.3"/><path d="M10 9V19M2 7L10 12L18 7" stroke="currentColor" stroke-width="1" opacity="0.5"/></svg></div>
+          <div class="style-name">Isometric 3D</div>
+          <div class="style-desc">3D perspective, depth layers, floating objects</div>
+        </button>
+        <button class="style-card" data-style="anime">
+          <div class="style-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="9" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M7 8.5C7 8.5 7.5 7 8.5 7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M13 8.5C13 8.5 12.5 7 11.5 7" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M8 11.5C8.8 12.3 11.2 12.3 12 11.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><path d="M4 14L2 18M16 14L18 18" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg></div>
+          <div class="style-name">Anime</div>
+          <div class="style-desc">Bold outlines, vibrant colors, dramatic effects</div>
+        </button>
+        <button class="style-card" data-style="lifelike">
+          <div class="style-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.3"/><path d="M6 10C6 10 7.5 13 10 13C12.5 13 14 10 14 10" stroke="currentColor" stroke-width="1" stroke-linecap="round"/><circle cx="10" cy="10" r="3" stroke="currentColor" stroke-width="0.8" opacity="0.4"/><circle cx="10" cy="10" r="1" fill="currentColor" opacity="0.3"/></svg></div>
+          <div class="style-name">Lifelike</div>
+          <div class="style-desc">Photorealistic gradients, material textures, shadows</div>
+        </button>
+        <button class="style-card" data-style="minimal">
+          <div class="style-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><line x1="4" y1="10" x2="16" y2="10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><circle cx="10" cy="10" r="2" stroke="currentColor" stroke-width="1.3"/></svg></div>
+          <div class="style-name">Minimal</div>
+          <div class="style-desc">Clean shapes, thin strokes, lots of whitespace</div>
+        </button>
+        <button class="style-card" data-style="retro">
+          <div class="style-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="5" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.3"/><line x1="3" y1="8" x2="17" y2="8" stroke="currentColor" stroke-width="1"/><circle cx="7" cy="12" r="1" fill="currentColor" opacity="0.5"/><rect x="10" y="10" width="4" height="3" rx="0.5" stroke="currentColor" stroke-width="0.8"/></svg></div>
+          <div class="style-name">Retro</div>
+          <div class="style-desc">Pixel art feel, neon glows, 80s/synthwave vibes</div>
+        </button>
+        <button class="style-card" data-style="watercolor">
+          <div class="style-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 3C10 3 5 8 5 12C5 14.8 7.2 17 10 17C12.8 17 15 14.8 15 12C15 8 10 3 10 3Z" stroke="currentColor" stroke-width="1.3"/><path d="M8 12C8 12 9 14 11 13" stroke="currentColor" stroke-width="0.8" opacity="0.5" stroke-linecap="round"/></svg></div>
+          <div class="style-name">Watercolor</div>
+          <div class="style-desc">Soft edges, paint splashes, organic flowing shapes</div>
+        </button>
+        <button class="style-card" data-style="neon">
+          <div class="style-icon"><svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 15L8 5L11 12L14 5L17 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 15L8 5L11 12L14 5L17 15" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="0.2"/></svg></div>
+          <div class="style-name">Neon</div>
+          <div class="style-desc">Glowing outlines, dark background, cyberpunk feel</div>
+        </button>
+      </div>
+    </div>
+
+    <!-- Quality -->
+    <div class="field">
+      <label>Quality Level<span class="info-tip">i<span class="tip-text">Standard is faster with simpler SVG elements. Premium adds detailed gradients, textures, shadows, and more SVG groups for a polished production look.</span></span></label>
+      <div class="toggle-row">
+        <button class="toggle-opt" data-val="standard" id="togStandard">Standard</button>
+        <button class="toggle-opt active" data-val="premium" id="togPremium">Premium</button>
+      </div>
+    </div>
+
+    <!-- Advanced Controls (collapsible) -->
+    <button class="advanced-toggle" id="advancedToggle">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M1 4.5L6 9.5L11 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Advanced Controls
+    </button>
+    <div class="advanced-panel" id="advancedPanel">
+
+      <!-- Creativity / Temperature -->
+      <div class="field">
+        <label>Creativity<span class="info-tip">i<span class="tip-text">Controls how closely the AI follows the architecture vs. adding its own creative ideas. Low = strict blueprint adherence. High = experimental effects, unique transitions, artistic surprises.</span></span> <span class="label-hint" id="creativityVal">0.7 — Balanced</span></label>
+        <input type="range" class="slider" id="creativity" min="0" max="100" value="70">
+        <div class="slider-labels">
+          <span>Precise</span>
+          <span>Balanced</span>
+          <span>Wild</span>
+        </div>
+      </div>
+
+      <!-- Scroll Depth -->
+      <div class="field">
+        <label>Scroll Depth<span class="info-tip">i<span class="tip-text">How tall the scroll container is. Shorter (300vh) = quick animation. Longer (800vh) = slow cinematic experience with more time per phase. 500vh is the sweet spot.</span></span> <span class="label-hint" id="scrollDepthVal">500vh — Standard</span></label>
+        <input type="range" class="slider" id="scrollDepth" min="300" max="800" value="500" step="50">
+        <div class="slider-labels">
+          <span>Short (300vh)</span>
+          <span>Long (800vh)</span>
+        </div>
+      </div>
+
+      <!-- Element Density -->
+      <div class="field">
+        <label>Element Density<span class="info-tip">i<span class="tip-text">How many SVG elements are generated. Low (8-12 groups) loads faster. High (18-30+ groups) has maximum detail with textures, gradients, and micro-details.</span></span> <span class="label-hint" id="densityVal">High</span></label>
+        <div class="toggle-row">
+          <button class="toggle-opt density-opt" data-val="low">Low</button>
+          <button class="toggle-opt density-opt" data-val="medium">Medium</button>
+          <button class="toggle-opt density-opt active" data-val="high">High</button>
+        </div>
+      </div>
+
+      <!-- Negative Prompt -->
+      <div class="field">
+        <label>Avoid (Negative Prompt)<span class="info-tip">i<span class="tip-text">Tell the AI what NOT to include. Works like Midjourney's --no flag. Example: "no particle effects, no text labels, no 3D transforms".</span></span></label>
+        <input type="text" id="negativePrompt" placeholder="e.g. no text labels, no particle effects, no gradients">
+      </div>
+
+      <!-- Reference URL -->
+      <div class="field">
+        <label>Reference / Inspiration URL<span class="info-tip">i<span class="tip-text">Paste a link to a parallax or website you like. The AI will try to match its quality and visual feel while building your specific theme.</span></span></label>
+        <input type="text" id="referenceUrl" placeholder="Paste a URL of a parallax you like (optional)">
+      </div>
+
+      <!-- Prompt Templates -->
+      <div class="field">
+        <label>Quick Templates<span class="info-tip">i<span class="tip-text">One-click presets that auto-fill the trade name, colors, and a detailed 10-step build sequence. Great starting points you can customize.</span></span></label>
+        <div class="template-chips" id="templateChips">
+          <button class="chip" data-template="locksmith">Locksmith</button>
+          <button class="chip" data-template="sushi">Sushi Bar</button>
+          <button class="chip" data-template="tattoo">Tattoo Shop</button>
+          <button class="chip" data-template="barbershop">Barbershop</button>
+          <button class="chip" data-template="coffeeshop">Coffee Shop</button>
+          <button class="chip" data-template="autorepair">Auto Repair</button>
+          <button class="chip" data-template="dental">Dental Office</button>
+          <button class="chip" data-template="gym">Gym / Fitness</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Generate -->
+    <button class="btn-generate" id="btnGenerate">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1L10 5.5L15 6.5L11.5 10L12.5 15L8 12.5L3.5 15L4.5 10L1 6.5L6 5.5L8 1Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+      Generate Parallax
+    </button>
+
+    <!-- Stream Status -->
+    <div class="stream-status" id="streamStatus">
+      <div>Status: <span class="val" id="statusText">Connecting...</span></div>
+      <div>Tokens: <span class="val" id="statusTokens">0</span> | Time: <span class="val" id="statusTime">0s</span></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Tweak Section -->
+    <div class="tweak-section" id="tweakSection">
+      <label>Tweak / Modify</label>
+      <textarea id="tweakInput" placeholder="Describe changes, e.g. &quot;Make the glow red instead of blue&quot; or &quot;Add more detail to the springs phase&quot;"></textarea>
+      <div style="display:flex;gap:8px">
+        <button class="btn-tweak" id="btnTweak">Regenerate with Tweaks</button>
+        <button class="btn-start-over" id="btnStartOver">Start Over</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT PANEL: Preview + Code -->
+  <div class="panel-right">
+
+    <!-- Error bar -->
+    <div class="error-bar" id="errorBar"></div>
+
+    <!-- Tabs -->
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="preview">Preview</button>
+      <button class="tab-btn" data-tab="code">Code</button>
+      <div class="tab-spacer"></div>
+      <div class="tab-actions" id="tabActions" style="display:none">
+        <button class="btn-action" id="btnCopy">
+          <svg viewBox="0 0 16 16" fill="none"><rect x="5" y="5" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.5"/><path d="M3 11V3a1.5 1.5 0 011.5-1.5H11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          Copy
+        </button>
+        <button class="btn-action" id="btnDownload">
+          <svg viewBox="0 0 16 16" fill="none"><path d="M8 2v8m0 0l-3-3m3 3l3-3M3 12v1.5h10V12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Download
+        </button>
+      </div>
+    </div>
+
+    <!-- Tab Content -->
+    <div class="tab-content">
+      <!-- Preview Pane -->
+      <div class="tab-pane active" id="panePreview">
+        <div class="preview-controls" id="previewControls" style="display:none">
+          <button class="device-btn active" data-width="100%">Desktop</button>
+          <button class="device-btn" data-width="768px">Tablet</button>
+          <button class="device-btn" data-width="375px">Mobile</button>
+          <div class="preview-spacer"></div>
+          <button class="btn-fullscreen" id="btnFullscreen">Fullscreen</button>
+        </div>
+        <div class="preview-placeholder" id="previewPlaceholder">
+          <svg width="64" height="64" viewBox="0 0 64 64" fill="none">
+            <rect x="8" y="8" width="48" height="48" rx="6" stroke="currentColor" stroke-width="2"/>
+            <path d="M24 32l6 6 10-12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <p>Your parallax preview will appear here</p>
+        </div>
+        <div class="preview-frame-wrap" id="previewWrap" style="display:none">
+          <iframe class="preview-frame" id="previewFrame" sandbox="allow-scripts"></iframe>
+        </div>
+      </div>
+      <!-- Code Pane -->
+      <div class="tab-pane" id="paneCode">
+        <div class="code-wrap">
+          <pre class="code-block" id="codeBlock"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function() {
+  // ═══ STATE ═══
+  var fullCode = '';
+  var messages = [];
+  var generating = false;
+  var startTime = 0;
+  var charCount = 0;
+  var abortController = null;
+
+  // ═══ DOM REFS ═══
+  var tradeName     = document.getElementById('tradeName');
+  var accentColor   = document.getElementById('accentColor');
+  var accentHex     = document.getElementById('accentHex');
+  var accentSwatch  = document.getElementById('accentSwatch');
+  var darkColor     = document.getElementById('darkColor');
+  var darkHex       = document.getElementById('darkHex');
+  var darkSwatch    = document.getElementById('darkSwatch');
+  var viewW         = document.getElementById('viewW');
+  var viewH         = document.getElementById('viewH');
+  var buildSequence = document.getElementById('buildSequence');
+  var btnGenerate   = document.getElementById('btnGenerate');
+  var streamStatus  = document.getElementById('streamStatus');
+  var statusText    = document.getElementById('statusText');
+  var statusTokens  = document.getElementById('statusTokens');
+  var statusTime    = document.getElementById('statusTime');
+  var tweakSection  = document.getElementById('tweakSection');
+  var tweakInput    = document.getElementById('tweakInput');
+  var btnTweak      = document.getElementById('btnTweak');
+  var btnStartOver  = document.getElementById('btnStartOver');
+  var errorBar      = document.getElementById('errorBar');
+  var tabActions    = document.getElementById('tabActions');
+  var btnCopy       = document.getElementById('btnCopy');
+  var btnDownload   = document.getElementById('btnDownload');
+  var codeBlock     = document.getElementById('codeBlock');
+  var previewFrame  = document.getElementById('previewFrame');
+  var previewWrap   = document.getElementById('previewWrap');
+  var previewPlaceholder = document.getElementById('previewPlaceholder');
+  var previewControls = document.getElementById('previewControls');
+  var btnFullscreen = document.getElementById('btnFullscreen');
+
+  // ═══ API CONFIG ═══
+  // For local dev, point to your worker. In production, same domain.
+  var API_URL = 'https://parallax-api.luissballen.workers.dev/api/generate';
+
+  // ═══ COLOR SYNC ═══
+  accentColor.addEventListener('input', function() {
+    accentHex.value = accentColor.value;
+    accentSwatch.style.background = accentColor.value;
+  });
+  accentHex.addEventListener('input', function() {
+    if (/^#[0-9a-fA-F]{6}$/.test(accentHex.value)) {
+      accentColor.value = accentHex.value;
+      accentSwatch.style.background = accentHex.value;
+    }
+  });
+  darkColor.addEventListener('input', function() {
+    darkHex.value = darkColor.value;
+    darkSwatch.style.background = darkColor.value;
+  });
+  darkHex.addEventListener('input', function() {
+    if (/^#[0-9a-fA-F]{6}$/.test(darkHex.value)) {
+      darkColor.value = darkHex.value;
+      darkSwatch.style.background = darkHex.value;
+    }
+  });
+
+  // ═══ AUTO-GENERATE COLORS ═══
+  var btnAutoColor = document.getElementById('btnAutoColor');
+
+  // Curated color + trade keyword database
+  // Priority 1: Color words (most obvious matches)
+  // Priority 2: Trade/industry keywords
+  // Priority 3: Material/element keywords
+  var tradePalettes = {
+    // ─── COLOR WORDS (highest priority — if the name contains a color, use it) ───
+    'aqua':      { accent: '#06B6D4', dark: '#061214' },
+    'blue':      { accent: '#3B82F6', dark: '#080C18' },
+    'navy':      { accent: '#1E40AF', dark: '#060814' },
+    'sky':       { accent: '#38BDF8', dark: '#0A1018' },
+    'azure':     { accent: '#0EA5E9', dark: '#060E16' },
+    'cyan':      { accent: '#06B6D4', dark: '#061214' },
+    'teal':      { accent: '#14B8A6', dark: '#061210' },
+    'turquoise': { accent: '#2DD4BF', dark: '#061210' },
+    'ocean':     { accent: '#0369A1', dark: '#060C14' },
+    'cobalt':    { accent: '#2563EB', dark: '#080A18' },
+    'indigo':    { accent: '#6366F1', dark: '#0A0A18' },
+    'red':       { accent: '#EF4444', dark: '#120808' },
+    'crimson':   { accent: '#DC2626', dark: '#120606' },
+    'scarlet':   { accent: '#E63946', dark: '#120608' },
+    'ruby':      { accent: '#E11D48', dark: '#120610' },
+    'rose':      { accent: '#F43F5E', dark: '#12080C' },
+    'pink':      { accent: '#EC4899', dark: '#120A0E' },
+    'magenta':   { accent: '#D946EF', dark: '#100A14' },
+    'fuchsia':   { accent: '#D946EF', dark: '#100A14' },
+    'coral':     { accent: '#FB7185', dark: '#120A0C' },
+    'orange':    { accent: '#F97316', dark: '#100A06' },
+    'amber':     { accent: '#F59E0B', dark: '#100C06' },
+    'tangerine': { accent: '#FB923C', dark: '#100A06' },
+    'peach':     { accent: '#FDBA74', dark: '#100C08' },
+    'yellow':    { accent: '#FACC15', dark: '#0E0C06' },
+    'gold':      { accent: '#D4AF37', dark: '#100C06' },
+    'golden':    { accent: '#D4AF37', dark: '#100C06' },
+    'bronze':    { accent: '#CD7F32', dark: '#0E0A06' },
+    'copper':    { accent: '#B87333', dark: '#0E0A06' },
+    'brass':     { accent: '#C5A33E', dark: '#0E0C06' },
+    'green':     { accent: '#22C55E', dark: '#0A120A' },
+    'lime':      { accent: '#84CC16', dark: '#0A1008' },
+    'emerald':   { accent: '#10B981', dark: '#081210' },
+    'jade':      { accent: '#00A86B', dark: '#081008' },
+    'mint':      { accent: '#34D399', dark: '#081210' },
+    'olive':     { accent: '#84CC16', dark: '#0A1008' },
+    'forest':    { accent: '#15803D', dark: '#081008' },
+    'sage':      { accent: '#86EFAC', dark: '#081008' },
+    'purple':    { accent: '#A855F7', dark: '#0E0814' },
+    'violet':    { accent: '#8B5CF6', dark: '#0C0A18' },
+    'lavender':  { accent: '#A78BFA', dark: '#0C0A14' },
+    'plum':      { accent: '#9333EA', dark: '#0E0814' },
+    'lilac':     { accent: '#C084FC', dark: '#0E0A14' },
+    'mauve':     { accent: '#C084FC', dark: '#0E0A12' },
+    'silver':    { accent: '#94A3B8', dark: '#0A0C10' },
+    'slate':     { accent: '#64748B', dark: '#0A0C10' },
+    'steel':     { accent: '#94A3B8', dark: '#0A0C12' },
+    'chrome':    { accent: '#CBD5E1', dark: '#0A0C10' },
+    'platinum':  { accent: '#E2E8F0', dark: '#0A0C10' },
+    'iron':      { accent: '#78716C', dark: '#0C0A08' },
+    'charcoal':  { accent: '#6B7280', dark: '#0A0A0E' },
+    'onyx':      { accent: '#475569', dark: '#08080C' },
+    'ivory':     { accent: '#FFFBEB', dark: '#0E0C08' },
+    'pearl':     { accent: '#F1F5F9', dark: '#0A0C10' },
+    'white':     { accent: '#F8FAFC', dark: '#0A0C10' },
+    'noir':      { accent: '#64748B', dark: '#080808' },
+    'midnight':  { accent: '#6366F1', dark: '#08081A' },
+    'neon':      { accent: '#00FF88', dark: '#060E0A' },
+    'electric':  { accent: '#FACC15', dark: '#070711' },
+    'bright':    { accent: '#FBBF24', dark: '#0E0C06' },
+    'dark':      { accent: '#64748B', dark: '#080810' },
+    'shadow':    { accent: '#475569', dark: '#080810' },
+
+    // ─── NATURE / ELEMENT WORDS ───
+    'sun':       { accent: '#FBBF24', dark: '#0E0C06' },
+    'solar':     { accent: '#F97316', dark: '#100A06' },
+    'moon':      { accent: '#CBD5E1', dark: '#0A0C12' },
+    'star':      { accent: '#FBBF24', dark: '#0C0A06' },
+    'flame':     { accent: '#EF4444', dark: '#120808' },
+    'fire':      { accent: '#EF4444', dark: '#120808' },
+    'blaze':     { accent: '#F97316', dark: '#120806' },
+    'ice':       { accent: '#67E8F9', dark: '#0A1014' },
+    'frost':     { accent: '#A5F3FC', dark: '#0A1014' },
+    'snow':      { accent: '#E0F2FE', dark: '#0A0E14' },
+    'arctic':    { accent: '#38BDF8', dark: '#0A0E18' },
+    'storm':     { accent: '#6366F1', dark: '#0A0A18' },
+    'thunder':   { accent: '#FACC15', dark: '#0A0A14' },
+    'lightning':  { accent: '#FBBF24', dark: '#0A0A14' },
+    'wave':      { accent: '#0EA5E9', dark: '#060E16' },
+    'water':     { accent: '#0EA5E9', dark: '#060C14' },
+    'rain':      { accent: '#60A5FA', dark: '#080C18' },
+    'river':     { accent: '#0284C7', dark: '#060C14' },
+    'creek':     { accent: '#0891B2', dark: '#060E12' },
+    'spring':    { accent: '#22D3EE', dark: '#061214' },
+    'terra':     { accent: '#B45309', dark: '#100C06' },
+    'earth':     { accent: '#92400E', dark: '#0E0A06' },
+    'stone':     { accent: '#78716C', dark: '#0C0A08' },
+    'rock':      { accent: '#6B7280', dark: '#0A0A0C' },
+    'crystal':   { accent: '#A78BFA', dark: '#0C0A18' },
+    'diamond':   { accent: '#67E8F9', dark: '#0A1014' },
+    'sand':      { accent: '#D4A574', dark: '#0E0C08' },
+    'desert':    { accent: '#F59E0B', dark: '#100C06' },
+    'mountain':  { accent: '#6B7280', dark: '#0A0A0E' },
+    'summit':    { accent: '#94A3B8', dark: '#0A0C10' },
+    'peak':      { accent: '#94A3B8', dark: '#0A0C12' },
+    'cloud':     { accent: '#38BDF8', dark: '#0A0E18' },
+    'leaf':      { accent: '#22C55E', dark: '#0A120A' },
+    'bloom':     { accent: '#F472B6', dark: '#120A0E' },
+    'petal':     { accent: '#F9A8D4', dark: '#120A0E' },
+    'wood':      { accent: '#92400E', dark: '#0E0A06' },
+    'cedar':     { accent: '#854D0E', dark: '#0E0A06' },
+    'oak':       { accent: '#78350F', dark: '#0E0A06' },
+    'maple':     { accent: '#DC2626', dark: '#120808' },
+    'pine':      { accent: '#15803D', dark: '#081008' },
+
+    // ─── EXISTING TEMPLATES ───
+    'volt':      { accent: '#FACC15', dark: '#070711' },
+    'air':       { accent: '#38BDF8', dark: '#0D1A2E' },
+    'hvac':      { accent: '#38BDF8', dark: '#0D1A2E' },
+    'flow':      { accent: '#0EA5E9', dark: '#06080F' },
+    'plumb':     { accent: '#0EA5E9', dark: '#06080F' },
+    'pipe':      { accent: '#0EA5E9', dark: '#06080F' },
+    'drain':     { accent: '#0891B2', dark: '#060E12' },
+    'roof':      { accent: '#E63946', dark: '#0A0E12' },
+    'shingle':   { accent: '#64748B', dark: '#0A0C10' },
+    'pest':      { accent: '#22C55E', dark: '#0A1210' },
+    'bug':       { accent: '#22C55E', dark: '#0A1210' },
+    'termite':   { accent: '#22C55E', dark: '#0A1210' },
+    'lawn':      { accent: '#22C55E', dark: '#0A120A' },
+    'landscape': { accent: '#22C55E', dark: '#0A120A' },
+    'mow':       { accent: '#16A34A', dark: '#081008' },
+    'turf':      { accent: '#22C55E', dark: '#0A120A' },
+    'yard':      { accent: '#22C55E', dark: '#0A120A' },
+
+    // ─── TRADES & SERVICES ───
+    'lock':      { accent: '#9B59B6', dark: '#0C0A14' },
+    'key':       { accent: '#D4AF37', dark: '#100C06' },
+    'safe':      { accent: '#6B7280', dark: '#0A0A0E' },
+    'security':  { accent: '#9B59B6', dark: '#0C0A14' },
+    'alarm':     { accent: '#EF4444', dark: '#120808' },
+    'camera':    { accent: '#6366F1', dark: '#0A0A18' },
+    'auto':      { accent: '#F59E0B', dark: '#0F0A06' },
+    'car':       { accent: '#F59E0B', dark: '#0F0A06' },
+    'mechanic':  { accent: '#F59E0B', dark: '#0F0A06' },
+    'tire':      { accent: '#6B7280', dark: '#0A0A0E' },
+    'brake':     { accent: '#EF4444', dark: '#120808' },
+    'tow':       { accent: '#F59E0B', dark: '#100A06' },
+    'body':      { accent: '#3B82F6', dark: '#080C18' },
+    'detail':    { accent: '#3B82F6', dark: '#080C18' },
+    'wash':      { accent: '#38BDF8', dark: '#0A0E18' },
+    'paint':     { accent: '#EC4899', dark: '#120A0E' },
+    'clean':     { accent: '#06B6D4', dark: '#060F12' },
+    'maid':      { accent: '#38BDF8', dark: '#0A1018' },
+    'janitor':   { accent: '#06B6D4', dark: '#061214' },
+    'pool':      { accent: '#06B6D4', dark: '#060F12' },
+    'swim':      { accent: '#0EA5E9', dark: '#060E16' },
+    'dental':    { accent: '#60A5FA', dark: '#080C14' },
+    'tooth':     { accent: '#F8FAFC', dark: '#0A0C10' },
+    'ortho':     { accent: '#38BDF8', dark: '#0A0E18' },
+    'medical':   { accent: '#34D399', dark: '#081210' },
+    'health':    { accent: '#10B981', dark: '#081210' },
+    'nurse':     { accent: '#F43F5E', dark: '#12080C' },
+    'pharma':    { accent: '#22C55E', dark: '#0A120A' },
+    'chiro':     { accent: '#14B8A6', dark: '#061210' },
+    'therapy':   { accent: '#14B8A6', dark: '#061210' },
+    'spa':       { accent: '#C084FC', dark: '#0E0A14' },
+    'massage':   { accent: '#C084FC', dark: '#0E0A14' },
+    'beauty':    { accent: '#F472B6', dark: '#120A0E' },
+    'salon':     { accent: '#F472B6', dark: '#120A0E' },
+    'nail':      { accent: '#F472B6', dark: '#120A0E' },
+    'lash':      { accent: '#EC4899', dark: '#120A0E' },
+    'brow':      { accent: '#D4AF37', dark: '#100C06' },
+    'hair':      { accent: '#F472B6', dark: '#120A0E' },
+    'barber':    { accent: '#B45309', dark: '#100C06' },
+    'tattoo':    { accent: '#EF4444', dark: '#120606' },
+    'ink':       { accent: '#475569', dark: '#08080C' },
+    'piercing':  { accent: '#CBD5E1', dark: '#0A0C10' },
+    'gym':       { accent: '#EF4444', dark: '#120808' },
+    'fitness':   { accent: '#EF4444', dark: '#120808' },
+    'cross':     { accent: '#EF4444', dark: '#120808' },
+    'yoga':      { accent: '#A78BFA', dark: '#0C0A14' },
+    'pilates':   { accent: '#C084FC', dark: '#0E0A14' },
+    'martial':   { accent: '#EF4444', dark: '#120808' },
+    'box':       { accent: '#EF4444', dark: '#120808' },
+    'pet':       { accent: '#FB923C', dark: '#100A06' },
+    'groom':     { accent: '#F472B6', dark: '#120A0E' },
+    'dog':       { accent: '#FB923C', dark: '#100A06' },
+    'cat':       { accent: '#A78BFA', dark: '#0C0A14' },
+    'vet':       { accent: '#4ADE80', dark: '#081208' },
+    'photo':     { accent: '#FBBF24', dark: '#0F0C06' },
+    'studio':    { accent: '#8B5CF6', dark: '#0C0A18' },
+    'video':     { accent: '#818CF8', dark: '#0A0A14' },
+    'film':      { accent: '#6366F1', dark: '#0A0A18' },
+    'media':     { accent: '#7B6FFF', dark: '#08081A' },
+    'music':     { accent: '#A855F7', dark: '#0E0814' },
+    'dj':        { accent: '#A855F7', dark: '#0E0814' },
+    'sound':     { accent: '#6366F1', dark: '#0A0A18' },
+    'event':     { accent: '#D946EF', dark: '#100A14' },
+    'party':     { accent: '#EC4899', dark: '#120A0E' },
+    'wedding':   { accent: '#F9A8D4', dark: '#120A0E' },
+    'catering':  { accent: '#F97316', dark: '#100A06' },
+
+    // ─── FOOD & DRINK ───
+    'food':      { accent: '#F97316', dark: '#100A06' },
+    'sushi':     { accent: '#EF4444', dark: '#120606' },
+    'ramen':     { accent: '#F59E0B', dark: '#100A06' },
+    'wok':       { accent: '#EF4444', dark: '#120606' },
+    'noodle':    { accent: '#F59E0B', dark: '#100A06' },
+    'taco':      { accent: '#F97316', dark: '#100A06' },
+    'burrito':   { accent: '#F59E0B', dark: '#100A06' },
+    'pizza':     { accent: '#F59E0B', dark: '#100A06' },
+    'burger':    { accent: '#DC2626', dark: '#120606' },
+    'grill':     { accent: '#F97316', dark: '#100A06' },
+    'bbq':       { accent: '#DC2626', dark: '#120606' },
+    'smoke':     { accent: '#78716C', dark: '#0C0A08' },
+    'steak':     { accent: '#DC2626', dark: '#120606' },
+    'seafood':   { accent: '#0EA5E9', dark: '#060C14' },
+    'fish':      { accent: '#0EA5E9', dark: '#060C14' },
+    'poke':      { accent: '#F43F5E', dark: '#12080C' },
+    'thai':      { accent: '#F97316', dark: '#100A06' },
+    'indian':    { accent: '#F59E0B', dark: '#100A06' },
+    'curry':     { accent: '#F59E0B', dark: '#100A06' },
+    'chinese':   { accent: '#DC2626', dark: '#120606' },
+    'italian':   { accent: '#16A34A', dark: '#081008' },
+    'pasta':     { accent: '#F59E0B', dark: '#100A06' },
+    'french':    { accent: '#1E40AF', dark: '#060814' },
+    'bistro':    { accent: '#881337', dark: '#120610' },
+    'cafe':      { accent: '#92400E', dark: '#0E0A06' },
+    'coffee':    { accent: '#92400E', dark: '#0E0A06' },
+    'tea':       { accent: '#15803D', dark: '#081008' },
+    'boba':      { accent: '#A855F7', dark: '#0E0814' },
+    'juice':     { accent: '#F97316', dark: '#100A06' },
+    'smoothie':  { accent: '#22C55E', dark: '#0A120A' },
+    'bakery':    { accent: '#D97706', dark: '#0E0A06' },
+    'cake':      { accent: '#F472B6', dark: '#120A0E' },
+    'donut':     { accent: '#F472B6', dark: '#120A0E' },
+    'pastry':    { accent: '#D97706', dark: '#0E0A06' },
+    'bread':     { accent: '#D97706', dark: '#0E0A06' },
+    'candy':     { accent: '#EC4899', dark: '#120A0E' },
+    'sweet':     { accent: '#F472B6', dark: '#120A0E' },
+    'chocolate': { accent: '#78350F', dark: '#0E0A06' },
+    'ice cream': { accent: '#F9A8D4', dark: '#120A0E' },
+    'gelato':    { accent: '#FB923C', dark: '#100A06' },
+    'restaurant':{ accent: '#DC2626', dark: '#120606' },
+    'diner':     { accent: '#F59E0B', dark: '#100A06' },
+    'kitchen':   { accent: '#F97316', dark: '#100A06' },
+    'chef':      { accent: '#F8FAFC', dark: '#0A0C10' },
+    'bar':       { accent: '#7C3AED', dark: '#0C0814' },
+    'pub':       { accent: '#D97706', dark: '#100A06' },
+    'lounge':    { accent: '#7C3AED', dark: '#0C0814' },
+    'club':      { accent: '#D946EF', dark: '#100A14' },
+    'wine':      { accent: '#881337', dark: '#120610' },
+    'brew':      { accent: '#D97706', dark: '#100A06' },
+    'beer':      { accent: '#D97706', dark: '#100A06' },
+    'cocktail':  { accent: '#F43F5E', dark: '#12080C' },
+    'spirit':    { accent: '#D4AF37', dark: '#100C06' },
+    'distill':   { accent: '#B45309', dark: '#100C06' },
+    'vegan':     { accent: '#22C55E', dark: '#0A120A' },
+    'organic':   { accent: '#16A34A', dark: '#081008' },
+    'acai':      { accent: '#7C3AED', dark: '#0C0814' },
+
+    // ─── RETAIL & BUSINESS ───
+    'retail':    { accent: '#8B5CF6', dark: '#0C0A14' },
+    'shop':      { accent: '#8B5CF6', dark: '#0C0A14' },
+    'store':     { accent: '#3B82F6', dark: '#080C18' },
+    'boutique':  { accent: '#EC4899', dark: '#120A0E' },
+    'fashion':   { accent: '#EC4899', dark: '#120A0E' },
+    'style':     { accent: '#EC4899', dark: '#120A0E' },
+    'cloth':     { accent: '#8B5CF6', dark: '#0C0A14' },
+    'wear':      { accent: '#6366F1', dark: '#0A0A18' },
+    'shoe':      { accent: '#F59E0B', dark: '#100A06' },
+    'jewel':     { accent: '#D4AF37', dark: '#100C06' },
+    'gem':       { accent: '#A855F7', dark: '#0E0814' },
+    'watch':     { accent: '#D4AF37', dark: '#100C06' },
+    'luxury':    { accent: '#D4AF37', dark: '#100C06' },
+    'premium':   { accent: '#D4AF37', dark: '#100C06' },
+    'elite':     { accent: '#D4AF37', dark: '#100C06' },
+    'real':      { accent: '#2563EB', dark: '#080A14' },
+    'realty':    { accent: '#2563EB', dark: '#080A14' },
+    'property':  { accent: '#2563EB', dark: '#080A14' },
+    'home':      { accent: '#3B82F6', dark: '#080C18' },
+    'house':     { accent: '#3B82F6', dark: '#080C18' },
+    'apart':     { accent: '#6366F1', dark: '#0A0A18' },
+    'condo':     { accent: '#3B82F6', dark: '#080C18' },
+    'mortgage':  { accent: '#16A34A', dark: '#081008' },
+    'insur':     { accent: '#2563EB', dark: '#080A14' },
+    'finance':   { accent: '#16A34A', dark: '#081008' },
+    'bank':      { accent: '#1E40AF', dark: '#060814' },
+    'invest':    { accent: '#16A34A', dark: '#081008' },
+    'account':   { accent: '#3B82F6', dark: '#080C18' },
+    'tax':       { accent: '#22C55E', dark: '#0A120A' },
+    'law':       { accent: '#1E3A5F', dark: '#060A10' },
+    'legal':     { accent: '#1E3A5F', dark: '#060A10' },
+    'attorney':  { accent: '#1E3A5F', dark: '#060A10' },
+    'consult':   { accent: '#6366F1', dark: '#0A0A18' },
+
+    // ─── TECH & DIGITAL ───
+    'tech':      { accent: '#7B6FFF', dark: '#08081A' },
+    'digital':   { accent: '#7B6FFF', dark: '#08081A' },
+    'cyber':     { accent: '#00FF88', dark: '#060E0A' },
+    'data':      { accent: '#3B82F6', dark: '#080C18' },
+    'cloud':     { accent: '#38BDF8', dark: '#0A0E18' },
+    'code':      { accent: '#22C55E', dark: '#0A120A' },
+    'dev':       { accent: '#7B6FFF', dark: '#08081A' },
+    'app':       { accent: '#6366F1', dark: '#0A0A18' },
+    'web':       { accent: '#7B6FFF', dark: '#08081A' },
+    'pixel':     { accent: '#EC4899', dark: '#120A0E' },
+    'byte':      { accent: '#22C55E', dark: '#0A120A' },
+    'bit':       { accent: '#3B82F6', dark: '#080C18' },
+    'ai':        { accent: '#A855F7', dark: '#0E0814' },
+    'robot':     { accent: '#6366F1', dark: '#0A0A18' },
+    'smart':     { accent: '#7B6FFF', dark: '#08081A' },
+    'game':      { accent: '#A855F7', dark: '#0E0814' },
+    'esport':    { accent: '#EF4444', dark: '#120808' },
+
+    // ─── CONSTRUCTION & TRADES ───
+    'build':     { accent: '#F59E0B', dark: '#100A06' },
+    'construct': { accent: '#F59E0B', dark: '#100A06' },
+    'hammer':    { accent: '#F59E0B', dark: '#100A06' },
+    'weld':      { accent: '#F97316', dark: '#100A06' },
+    'concrete':  { accent: '#94A3B8', dark: '#0A0C10' },
+    'cement':    { accent: '#94A3B8', dark: '#0A0C10' },
+    'mason':     { accent: '#B45309', dark: '#100C06' },
+    'brick':     { accent: '#DC2626', dark: '#120606' },
+    'tile':      { accent: '#0891B2', dark: '#060E12' },
+    'floor':     { accent: '#B45309', dark: '#100C06' },
+    'carpet':    { accent: '#92400E', dark: '#0E0A06' },
+    'hard':      { accent: '#B45309', dark: '#100C06' },
+    'window':    { accent: '#38BDF8', dark: '#0A0E14' },
+    'glass':     { accent: '#67E8F9', dark: '#0A1014' },
+    'door':      { accent: '#78716C', dark: '#0C0A08' },
+    'fence':     { accent: '#78716C', dark: '#0C0A08' },
+    'deck':      { accent: '#B45309', dark: '#100C06' },
+    'patio':     { accent: '#92400E', dark: '#0E0A06' },
+    'garage':    { accent: '#6B7280', dark: '#0A0A0E' },
+    'drive':     { accent: '#6B7280', dark: '#0A0A0E' },
+    'pave':      { accent: '#6B7280', dark: '#0A0A0E' },
+    'asphalt':   { accent: '#475569', dark: '#08080C' },
+    'excavat':   { accent: '#F59E0B', dark: '#100A06' },
+    'demo':      { accent: '#EF4444', dark: '#120808' },
+    'crane':     { accent: '#F59E0B', dark: '#100A06' },
+    'scaffold':  { accent: '#F59E0B', dark: '#100A06' },
+    'move':      { accent: '#F59E0B', dark: '#100A06' },
+    'haul':      { accent: '#F59E0B', dark: '#100A06' },
+    'truck':     { accent: '#F59E0B', dark: '#100A06' },
+    'storage':   { accent: '#6366F1', dark: '#0A0A14' },
+    'insul':     { accent: '#FB923C', dark: '#100A06' },
+    'gutter':    { accent: '#64748B', dark: '#0A0C10' },
+    'siding':    { accent: '#78716C', dark: '#0C0A08' },
+    'stucco':    { accent: '#D4A574', dark: '#0E0C08' },
+    'drywall':   { accent: '#F8FAFC', dark: '#0A0C10' },
+    'cabinet':   { accent: '#B45309', dark: '#100C06' },
+    'counter':   { accent: '#94A3B8', dark: '#0A0C10' },
+    'kitchen':   { accent: '#F97316', dark: '#100A06' },
+    'bath':      { accent: '#38BDF8', dark: '#0A0E18' },
+    'remodel':   { accent: '#3B82F6', dark: '#080C18' },
+    'renovate':  { accent: '#3B82F6', dark: '#080C18' },
+
+    // ─── MARINE / OUTDOOR ───
+    'marine':    { accent: '#0284C7', dark: '#060C14' },
+    'boat':      { accent: '#0EA5E9', dark: '#060C14' },
+    'yacht':     { accent: '#D4AF37', dark: '#100C06' },
+    'sail':      { accent: '#38BDF8', dark: '#0A0E18' },
+    'surf':      { accent: '#06B6D4', dark: '#061214' },
+    'dive':      { accent: '#0284C7', dark: '#060C14' },
+    'fish':      { accent: '#0EA5E9', dark: '#060C14' },
+    'anchor':    { accent: '#1E40AF', dark: '#060814' },
+    'dock':      { accent: '#78716C', dark: '#0C0A08' },
+    'camp':      { accent: '#22C55E', dark: '#0A120A' },
+    'hike':      { accent: '#22C55E', dark: '#0A120A' },
+    'trail':     { accent: '#854D0E', dark: '#0E0A06' },
+    'hunt':      { accent: '#854D0E', dark: '#0E0A06' },
+
+    // ─── GARDEN & LANDSCAPE ───
+    'tree':      { accent: '#15803D', dark: '#081008' },
+    'garden':    { accent: '#16A34A', dark: '#081008' },
+    'florist':   { accent: '#F472B6', dark: '#120A0E' },
+    'flower':    { accent: '#F472B6', dark: '#120A0E' },
+    'nursery':   { accent: '#22C55E', dark: '#0A120A' },
+    'sprinkler': { accent: '#0EA5E9', dark: '#060C14' },
+    'irrigat':   { accent: '#0EA5E9', dark: '#060C14' },
+
+    // ─── EDUCATION & SERVICES ───
+    'school':    { accent: '#3B82F6', dark: '#080C18' },
+    'tutor':     { accent: '#6366F1', dark: '#0A0A18' },
+    'academy':   { accent: '#1E40AF', dark: '#060814' },
+    'learn':     { accent: '#3B82F6', dark: '#080C18' },
+    'daycare':   { accent: '#FBBF24', dark: '#0E0C06' },
+    'child':     { accent: '#FB923C', dark: '#100A06' },
+    'kid':       { accent: '#F97316', dark: '#100A06' },
+    'senior':    { accent: '#14B8A6', dark: '#061210' },
+    'care':      { accent: '#38BDF8', dark: '#0A0E18' },
+
+    // ─── TRANSPORT ───
+    'taxi':      { accent: '#FACC15', dark: '#0E0C06' },
+    'uber':      { accent: '#475569', dark: '#08080C' },
+    'limo':      { accent: '#D4AF37', dark: '#100C06' },
+    'charter':   { accent: '#1E40AF', dark: '#060814' },
+    'courier':   { accent: '#F59E0B', dark: '#100A06' },
+    'deliver':   { accent: '#22C55E', dark: '#0A120A' },
+    'freight':   { accent: '#F59E0B', dark: '#100A06' },
+    'logistic':  { accent: '#3B82F6', dark: '#080C18' },
+    'ship':      { accent: '#0EA5E9', dark: '#060C14' },
+    'cargo':     { accent: '#F59E0B', dark: '#100A06' },
+    'aero':      { accent: '#38BDF8', dark: '#0A0E18' },
+    'flight':    { accent: '#38BDF8', dark: '#0A0E18' },
+    'jet':       { accent: '#6B7280', dark: '#0A0A0E' },
+  };
+
+  // Fallback: generate colors from a hash of the trade name
+  function hashColor(name) {
+    var hash = 0;
+    for (var i = 0; i < name.length; i++) {
+      hash = name.charCodeAt(i) + ((hash << 5) - hash);
+      hash = hash & hash;
+    }
+    // Generate a vibrant hue (avoid muddy middle saturations)
+    var hue = Math.abs(hash) % 360;
+    var accent = hslToHex(hue, 75, 55);
+    // Dark base tinted toward the accent hue
+    var dark = hslToHex(hue, 30, 5);
+    return { accent: accent, dark: dark };
+  }
+
+  function hslToHex(h, s, l) {
+    s /= 100; l /= 100;
+    var a = s * Math.min(l, 1 - l);
+    function f(n) {
+      var k = (n + h / 30) % 12;
+      var color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+      return Math.round(255 * color).toString(16).padStart(2, '0');
+    }
+    return '#' + f(0) + f(8) + f(4);
+  }
+
+  function applyColors(accent, dark) {
+    accentColor.value = accent;
+    accentHex.value = accent;
+    accentSwatch.style.background = accent;
+    darkColor.value = dark;
+    darkHex.value = dark;
+    darkSwatch.style.background = dark;
+  }
+
+  btnAutoColor.addEventListener('click', function() {
+    var name = tradeName.value.trim().toLowerCase();
+    if (!name) {
+      showError('Enter a trade name first so I can pick colors for it');
+      return;
+    }
+    hideError();
+
+    // Check curated palettes first (partial match)
+    var palette = null;
+    var keys = Object.keys(tradePalettes);
+    for (var i = 0; i < keys.length; i++) {
+      if (name.indexOf(keys[i]) !== -1) {
+        palette = tradePalettes[keys[i]];
+        break;
+      }
+    }
+
+    // Fallback to hash-based generation
+    if (!palette) {
+      palette = hashColor(name);
+    }
+
+    applyColors(palette.accent, palette.dark);
+
+    // Visual feedback
+    btnAutoColor.classList.add('applied');
+    btnAutoColor.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6.5 12L13 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg> Colors Applied!';
+    setTimeout(function() {
+      btnAutoColor.classList.remove('applied');
+      btnAutoColor.innerHTML = '<svg width="14" height="14" viewBox="0 0 16 16" fill="none"><circle cx="4" cy="4" r="2.5" stroke="currentColor" stroke-width="1.3"/><circle cx="12" cy="4" r="2.5" stroke="currentColor" stroke-width="1.3"/><circle cx="4" cy="12" r="2.5" stroke="currentColor" stroke-width="1.3"/><circle cx="12" cy="12" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M6.5 4H9.5M4 6.5V9.5M12 6.5V9.5M6.5 12H9.5" stroke="currentColor" stroke-width="1" stroke-linecap="round" opacity="0.5"/></svg> Auto-Generate Colors from Trade Name';
+    }, 2000);
+  });
+
+  // ═══ VIEWBOX PRESETS ═══
+  document.getElementById('viewboxPresets').addEventListener('click', function(e) {
+    var btn = e.target.closest('.preset-btn');
+    if (!btn) return;
+    document.querySelectorAll('#viewboxPresets .preset-btn').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    viewW.value = btn.dataset.w;
+    viewH.value = btn.dataset.h;
+  });
+
+  // ═══ ART STYLE GRID ═══
+  document.getElementById('styleGrid').addEventListener('click', function(e) {
+    var card = e.target.closest('.style-card');
+    if (!card) return;
+    document.querySelectorAll('.style-card').forEach(function(c) { c.classList.remove('active'); });
+    card.classList.add('active');
+  });
+
+  function getSelectedStyle() {
+    var active = document.querySelector('.style-card.active');
+    return active ? active.dataset.style : 'technical';
+  }
+
+  // Style descriptions for the prompt
+  var styleDescriptions = {
+    'auto':         'You are the creative director — choose the best art style for this trade/theme based on what would look most impressive and fitting. Consider the subject matter and pick the ideal visual approach (technical, isometric 3D, anime, lifelike, minimal, retro, watercolor, or neon). Do NOT default to technical — genuinely pick what works best. State your chosen style in an HTML comment at the top of the file.',
+    'technical':    'Technical/blueprint style: precise geometric shapes, clean straight lines, engineering-grade detail, orthographic views, measurement annotations, grid patterns, monochromatic with accent highlights. Think: architectural drawings, circuit schematics, CAD renders.',
+    'isometric-3d': 'Isometric 3D style: use isometric projection (30-degree angles), create depth with layered planes, floating 3D objects with subtle shadows, use isoX/isoY helper functions for coordinate transforms, multiple depth layers moving at different parallax speeds. Think: isometric game art, 3D product exploded views.',
+    'anime':        'Anime/manga style: bold thick outlines (stroke-width 2-3px), vibrant saturated colors, dramatic speed lines during transitions, exaggerated glow effects, comic-style impact frames, chibi-proportioned objects, screentone-style SVG patterns for shading, dynamic action poses. Think: shonen manga panels, Studio Ghibli backgrounds.',
+    'lifelike':     'Photorealistic/lifelike style: complex multi-stop SVG gradients for material surfaces (metal, wood, glass, fabric), realistic shadow casting with feGaussianBlur filters, specular highlights, ambient occlusion using layered semi-transparent shapes, physically accurate proportions, subtle noise textures via SVG feTurbulence. Think: product renders, architectural visualization.',
+    'minimal':      'Minimalist style: thin 1px strokes, maximum negative space, simple geometric primitives (circles, lines, rectangles), limited color palette (accent + 2 grays), no gradients, no shadows, elegant typography-forward design, breathing room between elements. Think: Apple product pages, Dieter Rams.',
+    'retro':        'Retro/synthwave style: neon glow effects with multiple layered box-shadows, dark purple/navy backgrounds, pixelated grid patterns, scanline overlays using repeating-linear-gradient, 80s color palette (hot pink, electric blue, neon green), chrome/metallic text effects, CRT screen curvature feel. Think: Tron, synthwave album art, retro arcade.',
+    'watercolor':   'Watercolor/organic style: soft feathered edges using SVG feGaussianBlur, paint splash shapes with irregular bezier curves, color bleeding effects with overlapping semi-transparent fills, organic flowing motion, hand-drawn imperfect lines using slightly randomized path coordinates, muted pastel palette with occasional vivid accents. Think: studio art, illustrated book covers.',
+    'neon':         'Neon/cyberpunk style: everything glows — use double-stroke technique (thick blurred stroke behind thin bright stroke), pure black (#000) background, electric bright accent colors, holographic/iridescent color shifts, digital glitch effects, circuit-board patterns, rain/particle effects, futuristic UI elements. Think: Blade Runner, cyberpunk cityscapes, LED signage.'
+  };
+
+  // ═══ QUALITY TOGGLE ═══
+  document.querySelectorAll('.toggle-opt').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.toggle-opt').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+    });
+  });
+
+  // ═══ TABS ═══
+  document.querySelectorAll('.tab-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      document.querySelectorAll('.tab-pane').forEach(function(p) { p.classList.remove('active'); });
+      document.getElementById('pane' + capitalize(btn.dataset.tab)).classList.add('active');
+    });
+  });
+  function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+  // ═══ DEVICE BUTTONS ═══
+  document.querySelectorAll('.device-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.device-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      previewFrame.style.width = btn.dataset.width;
+    });
+  });
+
+  // ═══ FULLSCREEN ═══
+  btnFullscreen.addEventListener('click', function() {
+    if (!fullCode) return;
+    var win = window.open('', '_blank');
+    win.document.write(fullCode);
+    win.document.close();
+  });
+
+  // ═══ COPY ═══
+  btnCopy.addEventListener('click', function() {
+    if (!fullCode) return;
+    navigator.clipboard.writeText(fullCode).then(function() {
+      btnCopy.classList.add('copied');
+      btnCopy.querySelector('svg').nextSibling.textContent = ' Copied!';
+      setTimeout(function() {
+        btnCopy.classList.remove('copied');
+        btnCopy.querySelector('svg').nextSibling.textContent = ' Copy';
+      }, 2000);
+    });
+  });
+
+  // ═══ DOWNLOAD ═══
+  btnDownload.addEventListener('click', function() {
+    if (!fullCode) return;
+    var name = (tradeName.value || 'parallax').toLowerCase().replace(/[^a-z0-9]/g, '-') + '-parallax.html';
+    var blob = new Blob([fullCode], { type: 'text/html' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+
+  // ═══ ADVANCED CONTROLS ═══
+  var advancedToggle = document.getElementById('advancedToggle');
+  var advancedPanel = document.getElementById('advancedPanel');
+  var creativitySlider = document.getElementById('creativity');
+  var creativityVal = document.getElementById('creativityVal');
+  var scrollDepthSlider = document.getElementById('scrollDepth');
+  var scrollDepthVal = document.getElementById('scrollDepthVal');
+  var densityVal = document.getElementById('densityVal');
+  var negativePrompt = document.getElementById('negativePrompt');
+  var referenceUrl = document.getElementById('referenceUrl');
+
+  advancedToggle.addEventListener('click', function() {
+    advancedToggle.classList.toggle('open');
+    advancedPanel.classList.toggle('open');
+  });
+
+  // Creativity slider
+  var creativityLabels = [
+    [0, 'Precise — follows architecture exactly'],
+    [30, 'Conservative — minor creative touches'],
+    [50, 'Balanced — good mix of structure and flair'],
+    [70, 'Creative — adds unique visual ideas'],
+    [90, 'Wild — maximum artistic freedom']
+  ];
+  creativitySlider.addEventListener('input', function() {
+    var v = parseInt(creativitySlider.value);
+    var label = creativityLabels[0][1];
+    for (var i = creativityLabels.length - 1; i >= 0; i--) {
+      if (v >= creativityLabels[i][0]) { label = creativityLabels[i][1]; break; }
+    }
+    creativityVal.textContent = (v / 100).toFixed(1) + ' — ' + label.split(' — ')[1];
+  });
+
+  // Scroll depth slider
+  scrollDepthSlider.addEventListener('input', function() {
+    var v = parseInt(scrollDepthSlider.value);
+    var label = v <= 400 ? 'Quick' : v <= 550 ? 'Standard' : v <= 650 ? 'Long' : 'Epic';
+    scrollDepthVal.textContent = v + 'vh — ' + label;
+  });
+
+  // Density toggle
+  document.querySelectorAll('.density-opt').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.density-opt').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      densityVal.textContent = btn.dataset.val.charAt(0).toUpperCase() + btn.dataset.val.slice(1);
+    });
+  });
+
+  // Quick Templates
+  var templates = {
+    'locksmith': {
+      name: 'LockPro',
+      accent: '#9B59B6',
+      dark: '#0C0A14',
+      sequence: 'Theme: Lock mechanism being assembled piece by piece\n1. Lock cylinder outer housing draws itself (stroke-dashoffset)\n2. Pin chambers appear one by one inside the cylinder (6 chambers)\n3. Coiled springs drop into each chamber with slight bounce\n4. Key pins of different heights slide up into position\n5. Driver pins stack on top of key pins\n6. A key profile draws itself from right to left\n7. Key inserts into the keyway (smooth translateX animation)\n8. Key rotates 90 degrees — pins align perfectly at the shear line\n9. Cylinder plug rotates, lock mechanism clicks open\n10. "LOCKPRO" glow blast + hero CTA transition'
+    },
+    'sushi': {
+      name: 'SushiRoll',
+      accent: '#EF4444',
+      dark: '#120606',
+      sequence: 'Theme: Sushi roll being assembled by a master chef\n1. Bamboo rolling mat appears with texture lines\n2. Nori (seaweed sheet) lays flat on the mat — dark green rectangle\n3. Sushi rice spreads across the nori in a smooth wave\n4. Thin line of wasabi draws across the center\n5. Fish slices (salmon, tuna) lay down one by one with highlights\n6. Avocado slices fan out next to the fish\n7. Cucumber strips and cream cheese placed precisely\n8. The mat rolls up — nori wraps around (path morphing animation)\n9. Chef knife appears and cuts into 8 perfect pieces (they separate)\n10. Chopsticks pick up one piece, soy sauce splash — "SUSHIROLL" glow blast + hero CTA'
+    },
+    'tattoo': {
+      name: 'InkPro',
+      accent: '#EF4444',
+      dark: '#120606',
+      sequence: 'Theme: Tattoo machine being assembled and creating art\n1. Tattoo machine frame outline draws itself (stroke-dashoffset)\n2. Electromagnetic coils wind into place\n3. Armature bar and spring assembly snaps in\n4. Needle bar and grip tube slide together\n5. Ink caps appear in a row — different colors fill up\n6. Machine powers on — coils buzz with glow effect\n7. Needle dips into ink, pulls up with color\n8. A tattoo design starts drawing itself on skin-textured surface\n9. Detail fills and shading appear progressively\n10. "INKPRO" glow blast + hero CTA transition'
+    },
+    'barbershop': {
+      name: 'CutPro',
+      accent: '#B45309',
+      dark: '#100C06',
+      sequence: 'Theme: Classic barber tools being laid out and used\n1. Barber chair silhouette draws itself with chrome accents\n2. Leather strop appears and straightens out\n3. Straight razor unfolds with metallic gleam\n4. Scissors appear with chrome highlights, blades open\n5. Comb slides in next to scissors\n6. Clipper guards line up in a row (different sizes)\n7. Electric clippers power on — subtle vibration effect\n8. Hot towel rolls out with steam wisps rising\n9. Barber pole stripes animate (rotating spiral)\n10. "CUTPRO" glow blast + hero CTA transition'
+    },
+    'coffeeshop': {
+      name: 'BrewCo',
+      accent: '#92400E',
+      dark: '#0E0A06',
+      sequence: 'Theme: Espresso being crafted from bean to cup\n1. Coffee beans scatter and settle into a pile\n2. Grinder burrs appear and beans funnel in\n3. Ground coffee flows into a portafilter basket\n4. Tamper presses down with satisfying compression\n5. Portafilter locks into espresso machine group head\n6. Machine powers on — pressure gauge needle climbs\n7. Espresso streams out in twin golden lines — crema forms\n8. Steamed milk pitcher appears, micro-foam swirls\n9. Latte art pours — a rosetta pattern forms in the cup\n10. "BREWCO" glow blast + hero CTA transition'
+    },
+    'autorepair': {
+      name: 'AutoPro',
+      accent: '#F59E0B',
+      dark: '#0F0A06',
+      sequence: 'Theme: Engine being rebuilt piece by piece\n1. Engine block outline draws itself (cross-section view)\n2. Cylinder bores appear inside the block\n3. Crankshaft drops into the bottom end\n4. Pistons slide into cylinders one by one with connecting rods\n5. Cylinder head lowers onto the block — head gasket visible\n6. Camshaft and valve train assembly\n7. Timing chain wraps around sprockets\n8. Intake manifold and fuel injectors attach\n9. Engine turns over — pistons start cycling, exhaust pulses\n10. "AUTOPRO" glow blast + hero CTA transition'
+    },
+    'dental': {
+      name: 'SmilePro',
+      accent: '#60A5FA',
+      dark: '#080C14',
+      sequence: 'Theme: Dental tools and a perfect smile being revealed\n1. Dental chair reclines into position (side view)\n2. Overhead light swings down and illuminates\n3. Mirror and explorer tools appear crossed\n4. Tooth cross-section draws itself showing layers (enamel, dentin, pulp)\n5. Dental drill approaches — precision work on cavity\n6. Composite filling material flows in and hardens (UV light flash)\n7. Polishing tool buffs the surface smooth\n8. Row of teeth appears — each one brightens progressively\n9. Full smile reveals with sparkle/gleam effects\n10. "SMILEPRO" glow blast + hero CTA transition'
+    },
+    'gym': {
+      name: 'FitPro',
+      accent: '#EF4444',
+      dark: '#120808',
+      sequence: 'Theme: Gym equipment being assembled and activated\n1. Barbell bar draws itself horizontally\n2. Weight plates slide on from each side — 45lb, 25lb, 10lb\n3. Collar clips lock the plates in place\n4. Dumbbell rack appears with dumbbells filling in\n5. Pull-up bar mounts to the top\n6. Kettlebells line up in ascending size\n7. Battle ropes appear and start waving motion\n8. Timer display counts down 3-2-1 — "GO" flash\n9. Heart rate monitor pulses with increasing BPM\n10. "FITPRO" glow blast + hero CTA transition'
+    }
+  };
+
+  document.getElementById('templateChips').addEventListener('click', function(e) {
+    var chip = e.target.closest('.chip');
+    if (!chip) return;
+    var t = templates[chip.dataset.template];
+    if (!t) return;
+    tradeName.value = t.name;
+    buildSequence.value = t.sequence;
+    applyColors(t.accent, t.dark);
+    // Brief flash on the chip
+    chip.style.background = 'var(--indigo-bg)';
+    chip.style.borderColor = 'var(--indigo)';
+    chip.style.color = 'var(--indigo)';
+    setTimeout(function() {
+      chip.style.background = '';
+      chip.style.borderColor = '';
+      chip.style.color = '';
+    }, 800);
+  });
+
+  // ═══ BUILD USER MESSAGE ═══
+  function buildUserMessage() {
+    var quality = document.querySelector('.toggle-opt.active:not(.density-opt)').dataset.val;
+    var style = getSelectedStyle();
+    var styleDesc = styleDescriptions[style] || '';
+    var creativity = parseInt(creativitySlider.value) / 100;
+    var scrollDepth = scrollDepthSlider.value + 'vh';
+    var density = document.querySelector('.density-opt.active').dataset.val;
+    var negative = negativePrompt.value.trim();
+    var refUrl = referenceUrl.value.trim();
+
+    var msg = 'Generate a scroll-driven parallax animation for "' + tradeName.value.trim() + '".\n\n';
+    msg += 'Accent color: ' + accentHex.value + '\n';
+    msg += 'Base dark color: ' + darkHex.value + '\n';
+    msg += 'SVG viewBox: 0 0 ' + viewW.value + ' ' + viewH.value + '\n';
+    msg += 'Quality: ' + quality + '\n';
+    msg += 'Art style: ' + style + '\n';
+    msg += 'Style direction: ' + styleDesc + '\n';
+    msg += 'Scroll container height: ' + scrollDepth + '\n';
+    msg += 'Element density: ' + density + ' (';
+    if (density === 'low') msg += '8-12 SVG groups, simpler shapes, faster generation';
+    else if (density === 'medium') msg += '12-18 SVG groups, moderate detail';
+    else msg += '18-30+ SVG groups, maximum detail, textures, gradients';
+    msg += ')\n';
+    msg += 'Creativity level: ' + creativity.toFixed(1) + ' (';
+    if (creativity < 0.3) msg += 'stick very closely to the architecture spec, minimal creative deviation';
+    else if (creativity < 0.6) msg += 'follow the architecture but add tasteful creative touches';
+    else if (creativity < 0.8) msg += 'be creative with visual effects, add unique ideas while keeping the core architecture';
+    else msg += 'maximum artistic freedom — surprise me with unique effects, unconventional transitions, experimental techniques';
+    msg += ')\n';
+    if (negative) msg += '\nAVOID these in the output: ' + negative + '\n';
+    if (refUrl) msg += '\nUse this as visual inspiration (match the quality/feel, not the content): ' + refUrl + '\n';
+    msg += '\nBuild sequence:\n' + buildSequence.value.trim() + '\n\n';
+    msg += 'Generate the complete HTML file now. Follow the art style direction closely — it should be visually obvious which style was chosen.';
+    return msg;
+  }
+
+  // ═══ GENERATE ═══
+  btnGenerate.addEventListener('click', function() {
+    if (generating) return;
+    if (!tradeName.value.trim()) { showError('Please enter a trade/brand name'); return; }
+    if (!buildSequence.value.trim()) { showError('Please describe the build sequence'); return; }
+    hideError();
+
+    messages = [{ role: 'user', content: buildUserMessage() }];
+    startGeneration();
+  });
+
+  // ═══ TWEAK ═══
+  btnTweak.addEventListener('click', function() {
+    if (generating) return;
+    if (!tweakInput.value.trim()) return;
+    hideError();
+
+    messages.push({ role: 'assistant', content: fullCode });
+    messages.push({ role: 'user', content: 'Modify the parallax with these changes:\n\n' + tweakInput.value.trim() + '\n\nReturn the complete updated HTML file.' });
+
+    // Limit conversation to 3 rounds
+    if (messages.length > 6) {
+      messages = messages.slice(-4);
+    }
+
+    tweakInput.value = '';
+    startGeneration();
+  });
+
+  // ═══ START OVER ═══
+  btnStartOver.addEventListener('click', function() {
+    if (generating && abortController) {
+      abortController.abort();
+    }
+    fullCode = '';
+    messages = [];
+    generating = false;
+    charCount = 0;
+    tweakSection.classList.remove('visible');
+    streamStatus.classList.remove('visible');
+    tabActions.style.display = 'none';
+    previewControls.style.display = 'none';
+    previewWrap.style.display = 'none';
+    previewPlaceholder.style.display = 'flex';
+    codeBlock.textContent = '';
+    btnGenerate.disabled = false;
+    btnGenerate.classList.remove('generating');
+    btnGenerate.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1L10 5.5L15 6.5L11.5 10L12.5 15L8 12.5L3.5 15L4.5 10L1 6.5L6 5.5L8 1Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg> Generate Parallax';
+    hideError();
+  });
+
+  // ═══ STREAMING ENGINE ═══
+  function startGeneration() {
+    generating = true;
+    fullCode = '';
+    charCount = 0;
+    startTime = Date.now();
+
+    btnGenerate.disabled = true;
+    btnGenerate.classList.add('generating');
+    btnGenerate.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none" style="animation:spin 1s linear infinite"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5" stroke-dasharray="28" stroke-dashoffset="8"/></svg> Generating...';
+    streamStatus.classList.add('visible');
+    statusText.textContent = 'Connecting...';
+    statusTokens.textContent = '0';
+    statusTime.textContent = '0s';
+    tweakSection.classList.remove('visible');
+
+    // Add spin animation if not exists
+    if (!document.getElementById('spinStyle')) {
+      var s = document.createElement('style');
+      s.id = 'spinStyle';
+      s.textContent = '@keyframes spin { to { transform: rotate(360deg); } }';
+      document.head.appendChild(s);
+    }
+
+    abortController = new AbortController();
+
+    var timerInterval = setInterval(function() {
+      if (!generating) { clearInterval(timerInterval); return; }
+      var elapsed = Math.round((Date.now() - startTime) / 1000);
+      statusTime.textContent = elapsed + 's';
+    }, 1000);
+
+    fetch(API_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: messages }),
+      signal: abortController.signal,
+    })
+    .then(function(response) {
+      if (!response.ok) {
+        return response.json().then(function(err) {
+          throw new Error(err.error || 'API request failed (' + response.status + ')');
+        });
+      }
+      statusText.textContent = 'Streaming...';
+      return readStream(response.body);
+    })
+    .then(function() {
+      onGenerationComplete();
+    })
+    .catch(function(err) {
+      if (err.name === 'AbortError') return;
+      showError(err.message);
+      onGenerationComplete();
+    });
+  }
+
+  function readStream(body) {
+    var reader = body.getReader();
+    var decoder = new TextDecoder();
+    var buffer = '';
+    var previewTimer = null;
+
+    function schedulePreview() {
+      if (previewTimer) return;
+      previewTimer = setTimeout(function() {
+        previewTimer = null;
+        if (fullCode.length > 200) {
+          updatePreview();
+        }
+      }, 2500);
+    }
+
+    function processChunk() {
+      return reader.read().then(function(result) {
+        if (result.done) {
+          // Process remaining buffer
+          if (buffer.trim()) processLines(buffer);
+          if (previewTimer) { clearTimeout(previewTimer); previewTimer = null; }
+          return;
+        }
+
+        buffer += decoder.decode(result.value, { stream: true });
+        processLines(buffer);
+        // Keep only the incomplete last line
+        var lastNewline = buffer.lastIndexOf('\n');
+        if (lastNewline >= 0) {
+          buffer = buffer.slice(lastNewline + 1);
+        }
+
+        schedulePreview();
+        return processChunk();
+      });
+    }
+
+    function processLines(text) {
+      var lines = text.split('\n');
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].trim();
+        if (!line.startsWith('data: ')) continue;
+        var data = line.slice(6);
+        if (data === '[DONE]') continue;
+        try {
+          var evt = JSON.parse(data);
+          if (evt.type === 'content_block_delta' && evt.delta && evt.delta.type === 'text_delta') {
+            fullCode += evt.delta.text;
+            charCount += evt.delta.text.length;
+            statusTokens.textContent = charCount.toLocaleString();
+          }
+        } catch (e) { /* skip malformed events */ }
+      }
+    }
+
+    return processChunk();
+  }
+
+  function onGenerationComplete() {
+    generating = false;
+    btnGenerate.disabled = false;
+    btnGenerate.classList.remove('generating');
+    btnGenerate.innerHTML = '<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1L10 5.5L15 6.5L11.5 10L12.5 15L8 12.5L3.5 15L4.5 10L1 6.5L6 5.5L8 1Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg> Generate Parallax';
+
+    var elapsed = Math.round((Date.now() - startTime) / 1000);
+    statusText.textContent = 'Complete';
+    statusTime.textContent = elapsed + 's';
+
+    if (fullCode.trim()) {
+      // Clean up code: strip markdown fences if Claude added them
+      fullCode = fullCode.replace(/^```html?\s*\n?/i, '').replace(/\n?```\s*$/i, '').trim();
+
+      updatePreview();
+      updateCodeView();
+      tabActions.style.display = 'flex';
+      previewControls.style.display = 'flex';
+      tweakSection.classList.add('visible');
+    }
+  }
+
+  // ═══ PREVIEW ═══
+  function updatePreview() {
+    previewPlaceholder.style.display = 'none';
+    previewWrap.style.display = 'flex';
+    previewFrame.srcdoc = fullCode;
+  }
+
+  // ═══ CODE VIEW ═══
+  function updateCodeView() {
+    codeBlock.innerHTML = highlightSyntax(escapeHtml(fullCode));
+  }
+
+  function escapeHtml(s) {
+    return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  function highlightSyntax(html) {
+    // Comments
+    html = html.replace(/(\/\/.*)$/gm, '<span class="hl-cmt">$1</span>');
+    html = html.replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="hl-cmt">$1</span>');
+    html = html.replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="hl-cmt">$1</span>');
+    // HTML tags
+    html = html.replace(/(&lt;\/?)([\w-]+)/g, '$1<span class="hl-tag">$2</span>');
+    // Strings
+    html = html.replace(/(["'])(?:(?!\1)[^\\]|\\.)*?\1/g, '<span class="hl-str">$&</span>');
+    // Numbers
+    html = html.replace(/\b(\d+\.?\d*)\b/g, '<span class="hl-num">$1</span>');
+    // JS keywords
+    html = html.replace(/\b(var|let|const|function|return|if|else|for|while|new|this|typeof|null|true|false|undefined)\b/g, '<span class="hl-kw">$1</span>');
+    return html;
+  }
+
+  // ═══ ERROR ═══
+  function showError(msg) {
+    errorBar.textContent = msg;
+    errorBar.classList.add('visible');
+  }
+  function hideError() {
+    errorBar.classList.remove('visible');
+  }
+
+})();
+</script>
+</body>
+</html>
