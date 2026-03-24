@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SushiRoll | Premium Sushi Bar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #120606; --dark: #1A0A0A; --surface: #221212;
+  --surface2: #2C1818; --border: #3A2020;
+  --red: #EF4444; --red2: #F87171; --red3: #FCA5A5;
+  --white: #FFF5F5; --muted: #8A6B6B; --text: #C8A0A0;
+  --font-head: 'Barlow Condensed', sans-serif;
+  --font-body: 'Barlow', sans-serif;
+  --radius: 8px; --radius-lg: 16px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-body);background:var(--black);color:var(--text);overflow-x:hidden;line-height:1.6}
+a{color:inherit;text-decoration:none}
+
+/* ── SCROLL SEQUENCE ── */
+.scroll-sequence{height:500vh;position:relative}
+.sequence-sticky{position:absolute;top:0;left:0;right:0;height:100vh;overflow:hidden;background:var(--black)}
+.seq-bg{position:absolute;inset:0;z-index:1;transition:background 0.1s}
+.scene-glow{position:absolute;inset:0;z-index:2;background:radial-gradient(ellipse 70% 70% at 50% 55%,rgba(239,68,68,0.18),rgba(239,68,68,0.06) 50%,transparent 75%);opacity:0}
+.scene-container{position:absolute;inset:0;z-index:3;display:flex;align-items:center;justify-content:center}
+.scene-svg{width:100%;height:auto;max-height:100vh}
+.scene-energize{position:absolute;inset:0;z-index:4;background:linear-gradient(90deg,transparent,rgba(239,68,68,0.08),rgba(248,113,113,0.06),transparent);clip-path:inset(0 100% 0 0);pointer-events:none}
+.scene-powered{position:absolute;inset:0;z-index:6;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0}
+.scene-powered-text{font-family:var(--font-head);font-weight:900;font-size:clamp(72px,12vw,150px);letter-spacing:0.04em;color:#fff;text-shadow:0 0 60px rgba(239,68,68,0.7),0 0 120px rgba(239,68,68,0.4),0 0 200px rgba(239,68,68,0.2),0 2px 4px rgba(0,0,0,0.5)}
+.scene-powered-text span{color:var(--red);text-shadow:0 0 60px rgba(239,68,68,0.9),0 0 120px rgba(239,68,68,0.5),0 0 200px rgba(239,68,68,0.3)}
+.seq-intro{position:absolute;inset:0;z-index:7;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;pointer-events:none}
+.seq-intro-logo{font-family:var(--font-head);font-weight:900;font-size:clamp(52px,9vw,100px);letter-spacing:0.02em;color:var(--white)}
+.seq-intro-logo span{color:var(--red)}
+.seq-intro-sub{font-family:var(--font-head);font-size:clamp(14px,2.2vw,22px);font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted)}
+.seq-scroll-hint{display:flex;flex-direction:column;align-items:center;gap:8px;margin-top:40px;animation:hintBounce 2s infinite}
+.seq-scroll-hint span{font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted)}
+.seq-scroll-line{width:1px;height:32px;background:linear-gradient(to bottom,var(--red),transparent)}
+@keyframes hintBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+.seq-phase{position:absolute;bottom:80px;left:50%;transform:translateX(-50%);z-index:7;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--red);opacity:0;transition:opacity 0.2s,transform 0.2s;white-space:nowrap}
+.seq-scrub{position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--border);z-index:7}
+.seq-scrub-fill{height:100%;width:0;background:var(--red);transition:width 0.05s linear}
+.power-light{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--red);opacity:0;z-index:5;box-shadow:0 0 8px var(--red)}
+.pl-1{top:15%;left:12%}.pl-2{top:20%;right:15%}.pl-3{top:70%;left:8%}
+.pl-4{top:75%;right:10%}.pl-5{top:45%;left:5%}.pl-6{top:50%;right:7%}
+
+/* ── HERO CTA ── */
+.seq-final{position:absolute;inset:0;z-index:8;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px;opacity:0;pointer-events:none}
+.seq-final.show{opacity:1;pointer-events:auto}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;font-family:var(--font-head);font-size:12px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:var(--red);margin-bottom:20px}
+.pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--red);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.5)}50%{box-shadow:0 0 0 8px rgba(239,68,68,0)}}
+.hero-h1{font-family:var(--font-head);font-weight:900;font-size:clamp(40px,6vw,72px);line-height:1.05;color:var(--white);margin-bottom:20px}
+.hero-h1 .accent{color:var(--red);display:block}
+.hero-sub{font-size:clamp(16px,2vw,20px);color:var(--text);max-width:600px;margin:0 auto 32px;line-height:1.5}
+.hero-actions{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.btn-primary{display:inline-flex;align-items:center;gap:10px;padding:16px 36px;background:var(--red);color:var(--white);font-family:var(--font-head);font-size:15px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;border-radius:var(--radius);border:none;cursor:pointer;transition:all 0.2s}
+.btn-primary:hover{filter:brightness(1.1);transform:translateY(-2px)}
+.hero-stats{display:flex;gap:32px;margin-top:48px;flex-wrap:wrap;justify-content:center}
+.stat-block{text-align:center}
+.stat-block .num{font-family:var(--font-head);font-weight:900;font-size:clamp(28px,4vw,42px);color:var(--white)}
+.stat-block .num span{color:var(--red)}
+.stat-block .label{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase;margin-top:4px}
+</style>
+</head>
+<body>
+
+<div class="scroll-sequence" id="hero">
+  <div class="sequence-sticky" id="seqSticky">
+    <div class="seq-bg" id="seqBg"></div>
+    <div class="scene-glow" id="sceneGlow"></div>
+    <div class="scene-container" id="sceneContainer">
+      <svg id="sceneSvg" class="scene-svg" viewBox="0 0 1050 600" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+    <div class="scene-energize" id="sceneEnergize"></div>
+    <div class="scene-powered" id="scenePowered"><span class="scene-powered-text">SUSHI<span>ROLL</span></span></div>
+    <div class="power-light pl-1" id="pl1"></div><div class="power-light pl-2" id="pl2"></div>
+    <div class="power-light pl-3" id="pl3"></div><div class="power-light pl-4" id="pl4"></div>
+    <div class="power-light pl-5" id="pl5"></div><div class="power-light pl-6" id="pl6"></div>
+    <div class="seq-intro" id="seqIntro">
+      <div class="seq-intro-logo">SUSHI<span>ROLL</span></div>
+      <div class="seq-intro-sub">Master Crafted Sushi Experience</div>
+      <div class="seq-scroll-hint"><span>Scroll</span><div class="seq-scroll-line"></div></div>
+    </div>
+    <div class="seq-phase" id="seqPhase"></div>
+    <div class="seq-scrub"><div class="seq-scrub-fill" id="seqScrubFill"></div></div>
+    <div class="seq-final" id="seqFinal">
+      <div class="hero-tag"><span class="pulse-dot"></span>Miami's Premium Sushi Bar</div>
+      <h1 class="hero-h1"><span class="accent">Hand-Rolled Perfection.</span><span>Every Single Piece.</span></h1>
+      <p class="hero-sub">Experience authentic Japanese sushi crafted by master chefs using the freshest fish flown in daily. Omakase, rolls, sashimi, and more.</p>
+      <div class="hero-actions">
+        <a href="#" class="btn-primary">Reserve a Table</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-block"><div class="num">12<span>+</span></div><div class="label">Years Experience</div></div>
+        <div class="stat-block"><div class="num">4.9<span>/5</span></div><div class="label">Star Rating</div></div>
+        <div class="stat-block"><div class="num">50<span>+</span></div><div class="label">Roll Varieties</div></div>
+        <div class="stat-block"><div class="num">Daily</div><div class="label">Fresh Fish</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="height:100vh;display:flex;align-items:center;justify-content:center;background:var(--black)">
+  <p style="font-size:20px;color:var(--muted);font-family:var(--font-head);letter-spacing:0.1em">Page content continues here...</p>
+</div>
+
+<script>
+(function(){
+  var seqEl=document.getElementById('hero'),stickyEl=document.getElementById('seqSticky');
+  if(!seqEl||!stickyEl)return;
+
+  var bg=document.getElementById('seqBg');
+  var sceneGlow=document.getElementById('sceneGlow');
+  var sceneEnergize=document.getElementById('sceneEnergize');
+  var scenePowered=document.getElementById('scenePowered');
+  var intro=document.getElementById('seqIntro');
+  var phaseEl=document.getElementById('seqPhase');
+  var scrubFill=document.getElementById('seqScrubFill');
+  var finalEl=document.getElementById('seqFinal');
+  var svg=document.getElementById('sceneSvg');
+  var ns='http://www.w3.org/2000/svg';
+
+  function clamp(v,a,b){return v<a?a:v>b?b:v}
+  function lerp(a,b,t){return a+(b-a)*t}
+  function ease3(t){return 1-Math.pow(1-t,3)}
+  function easeIn3(t){return t*t*t}
+  function getProgress(){var s=-seqEl.getBoundingClientRect().top;var t=seqEl.offsetHeight-stickyEl.offsetHeight;return clamp(s/t,0,1)}
+
+  var lastPhase='';
+  function setPhase(t){if(t===lastPhase)return;lastPhase=t;phaseEl.style.opacity='0';phaseEl.style.transform='translateY(7px)';setTimeout(function(){phaseEl.textContent=t;phaseEl.style.opacity='1';phaseEl.style.transform='translateY(0)'},190)}
+
+  function svgEl(tag,attrs){var e=document.createElementNS(ns,tag);for(var k in attrs){if(attrs.hasOwnProperty(k))e.setAttribute(k,String(attrs[k]))}return e}
+
+  // ═══ DEFS ═══
+  var defs=svgEl('defs',{});
+
+  // Wood grain gradient for bamboo mat
+  var gBamboo=svgEl('linearGradient',{id:'bambooGrad',x1:'0',y1:'0',x2:'0',y2:'1'});
+  gBamboo.appendChild(svgEl('stop',{offset:'0%','stop-color':'#C4956A'}));
+  gBamboo.appendChild(svgEl('stop',{offset:'50%','stop-color':'#A67B5B'}));
+  gBamboo.appendChild(svgEl('stop',{offset:'100%','stop-color':'#8B6344'}));
+  defs.appendChild(gBamboo);
+
+  // Nori gradient
+  var gNori=svgEl('linearGradient',{id:'noriGrad',x1:'0',y1:'0',x2:'1',y2:'1'});
+  gNori.appendChild(svgEl('stop',{offset:'0%','stop-color':'#1A3A1A'}));
+  gNori.appendChild(svgEl('stop',{offset:'100%','stop-color':'#0D2B0D'}));
+  defs.appendChild(gNori);
+
+  // Rice grain filter
+  var fRice=svgEl('filter',{id:'riceTexture',x:'-5%',y:'-5%',width:'110%',height:'110%'});
+  fRice.appendChild(svgEl('feTurbulence',{type:'fractalNoise',baseFrequency:'0.8',numOctaves:'3',result:'noise'}));
+  fRice.appendChild(svgEl('feColorMatrix',{type:'saturate',values:'0',in:'noise',result:'gray'}));
+  var feMerge=svgEl('feMerge',{});
+  feMerge.appendChild(svgEl('feMergeNode',{in:'SourceGraphic'}));
+  feMerge.appendChild(svgEl('feMergeNode',{in:'gray'}));
+  fRice.appendChild(feMerge);
+  defs.appendChild(fRice);
+
+  // Salmon gradient
+  var gSalmon=svgEl('linearGradient',{id:'salmonGrad',x1:'0',y1:'0',x2:'1',y2:'0.5'});
+  gSalmon.appendChild(svgEl('stop',{offset:'0%','stop-color':'#FA8072'}));
+  gSalmon.appendChild(svgEl('stop',{offset:'40%','stop-color':'#FF6B5B'}));
+  gSalmon.appendChild(svgEl('stop',{offset:'100%','stop-color':'#E8524A'}));
+  defs.appendChild(gSalmon);
+
+  // Tuna gradient
+  var gTuna=svgEl('linearGradient',{id:'tunaGrad',x1:'0',y1:'0',x2:'1',y2:'0.5'});
+  gTuna.appendChild(svgEl('stop',{offset:'0%','stop-color':'#CC3333'}));
+  gTuna.appendChild(svgEl('stop',{offset:'100%','stop-color':'#8B1A1A'}));
+  defs.appendChild(gTuna);
+
+  // Avocado gradient
+  var gAvo=svgEl('linearGradient',{id:'avoGrad',x1:'0',y1:'0',x2:'0',y2:'1'});
+  gAvo.appendChild(svgEl('stop',{offset:'0%','stop-color':'#7CB342'}));
+  gAvo.appendChild(svgEl('stop',{offset:'100%','stop-color':'#558B2F'}));
+  defs.appendChild(gAvo);
+
+  // Glow filter
+  var fGlow=svgEl('filter',{id:'glow',x:'-50%',y:'-50%',width:'200%',height:'200%'});
+  fGlow.appendChild(svgEl('feGaussianBlur',{in:'SourceGraphic',stdDeviation:'3',result:'blur'}));
+  var feMergeG=svgEl('feMerge',{});
+  feMergeG.appendChild(svgEl('feMergeNode',{in:'blur'}));
+  feMergeG.appendChild(svgEl('feMergeNode',{in:'SourceGraphic'}));
+  fGlow.appendChild(feMergeG);
+  defs.appendChild(fGlow);
+
+  svg.appendChild(defs);
+
+  // ═══ SCENE LAYOUT ═══
+  // Center of the scene
+  var cx=525, cy=300;
+  var matW=600, matH=400;
+  var matX=cx-matW/2, matY=cy-matH/2+40;
+
+  // ─── 1. BAMBOO MAT ───
+  var gMat=svgEl('g',{opacity:0});
+  // Mat background
+  gMat.appendChild(svgEl('rect',{x:matX,y:matY,width:matW,height:matH,rx:6,fill:'url(#bambooGrad)',stroke:'#7A5A3A','stroke-width':1.5}));
+  // Bamboo slats (horizontal lines)
+  for(var i=0;i<20;i++){
+    var sy=matY+i*(matH/20);
+    gMat.appendChild(svgEl('line',{x1:matX+2,y1:sy,x2:matX+matW-2,y2:sy,stroke:'#8B6914','stroke-width':0.5,opacity:0.3}));
+  }
+  // Stitching threads (3 vertical lines)
+  for(var s=0;s<3;s++){
+    var sx=matX+matW*0.25*(s+1);
+    gMat.appendChild(svgEl('line',{x1:sx,y1:matY+4,x2:sx,y2:matY+matH-4,stroke:'#D4B896','stroke-width':1,opacity:0.4,'stroke-dasharray':'6,8'}));
+  }
+  svg.appendChild(gMat);
+
+  // ─── 2. NORI SHEET ───
+  var noriPad=50;
+  var noriX=matX+noriPad,noriY=matY+noriPad,noriW=matW-noriPad*2,noriH=matH-noriPad*2;
+  var gNoriSheet=svgEl('g',{opacity:0});
+  var noriRect=svgEl('rect',{x:noriX,y:noriY,width:noriW,height:noriH,rx:2,fill:'url(#noriGrad)',stroke:'#0A1F0A','stroke-width':1});
+  gNoriSheet.appendChild(noriRect);
+  // Nori texture lines
+  for(var ni=0;ni<12;ni++){
+    gNoriSheet.appendChild(svgEl('line',{x1:noriX+ni*(noriW/12),y1:noriY,x2:noriX+ni*(noriW/12)+10,y2:noriY+noriH,stroke:'#1E4E1E','stroke-width':0.5,opacity:0.3}));
+  }
+  svg.appendChild(gNoriSheet);
+
+  // ─── 3. SUSHI RICE ───
+  var gRice=svgEl('g',{opacity:0});
+  var riceRect=svgEl('rect',{x:noriX+8,y:noriY+8,width:0,height:noriH-16,rx:2,fill:'#F5F0E8',opacity:0.92});
+  gRice.appendChild(riceRect);
+  // Individual rice grains (scattered on top)
+  var riceGrains=[];
+  for(var ri=0;ri<40;ri++){
+    var gx=noriX+15+Math.random()*(noriW-30);
+    var gy=noriY+15+Math.random()*(noriH-30);
+    var grain=svgEl('ellipse',{cx:gx,cy:gy,rx:3+Math.random()*2,ry:1.5+Math.random(),fill:'#FFFEF8',opacity:0,transform:'rotate('+(Math.random()*180)+' '+gx+' '+gy+')'});
+    gRice.appendChild(grain);
+    riceGrains.push(grain);
+  }
+  svg.appendChild(gRice);
+
+  // ─── 4. WASABI LINE ───
+  var gWasabi=svgEl('g',{opacity:0});
+  var wasabiLine=svgEl('line',{x1:noriX+20,y1:cy+40,x2:noriX+20,y2:cy+40,stroke:'#7FBF3F','stroke-width':4,'stroke-linecap':'round'});
+  gWasabi.appendChild(wasabiLine);
+  // Wasabi dollop at the start
+  var wasabiDot=svgEl('circle',{cx:noriX+20,cy:cy+40,r:6,fill:'#7FBF3F',opacity:0});
+  gWasabi.appendChild(wasabiDot);
+  svg.appendChild(gWasabi);
+
+  // ─── 5. FISH SLICES (salmon + tuna) ───
+  var gFish=svgEl('g',{opacity:0});
+  var fishSlices=[];
+  var fishColors=['url(#salmonGrad)','url(#tunaGrad)','url(#salmonGrad)','url(#tunaGrad)','url(#salmonGrad)'];
+  var fishY=cy+40;
+  for(var fi=0;fi<5;fi++){
+    var fx=noriX+60+fi*80;
+    var slice=svgEl('rect',{x:fx,y:fishY-12,width:60,height:24,rx:4,fill:fishColors[fi],opacity:0,transform:'translateY(-20)'});
+    gFish.appendChild(slice);
+    fishSlices.push(slice);
+    // White fat lines on salmon
+    if(fi%2===0){
+      var fatLine=svgEl('line',{x1:fx+8,y1:fishY-4,x2:fx+52,y2:fishY-4,stroke:'#FFB6A8','stroke-width':1.5,opacity:0,'stroke-linecap':'round'});
+      gFish.appendChild(fatLine);
+      fishSlices.push(fatLine);
+    }
+  }
+  svg.appendChild(gFish);
+
+  // ─── 6. AVOCADO SLICES ───
+  var gAvo_g=svgEl('g',{opacity:0});
+  var avoSlices=[];
+  for(var ai=0;ai<6;ai++){
+    var ax=noriX+40+ai*70;
+    var ay=cy+40-30;
+    // Fan shape (arc)
+    var avoPath=svgEl('path',{d:'M'+ax+' '+ay+' Q'+(ax+20)+' '+(ay-25)+' '+(ax+40)+' '+ay+' Q'+(ax+20)+' '+(ay+8)+' '+ax+' '+ay,fill:'url(#avoGrad)',opacity:0,stroke:'#4A7A2E','stroke-width':0.5});
+    gAvo_g.appendChild(avoPath);
+    avoSlices.push(avoPath);
+  }
+  svg.appendChild(gAvo_g);
+
+  // ─── 7. CUCUMBER + CREAM CHEESE ───
+  var gFillings=svgEl('g',{opacity:0});
+  // Cucumber strips
+  var cucY=cy+40+18;
+  for(var ci=0;ci<4;ci++){
+    var ccx=noriX+50+ci*100;
+    gFillings.appendChild(svgEl('rect',{x:ccx,y:cucY,width:70,height:8,rx:2,fill:'#66BB6A',opacity:0.85,stroke:'#388E3C','stroke-width':0.5}));
+    // Seeds
+    gFillings.appendChild(svgEl('circle',{cx:ccx+20,cy:cucY+4,r:1.5,fill:'#A5D6A7',opacity:0.6}));
+    gFillings.appendChild(svgEl('circle',{cx:ccx+45,cy:cucY+4,r:1.5,fill:'#A5D6A7',opacity:0.6}));
+  }
+  // Cream cheese strip
+  gFillings.appendChild(svgEl('rect',{x:noriX+30,y:cucY+14,width:noriW-60,height:10,rx:3,fill:'#FFF8E1',opacity:0.9,stroke:'#F5E6C8','stroke-width':0.5}));
+  svg.appendChild(gFillings);
+
+  // ─── 8. ROLLING ANIMATION ───
+  // The roll forms at the TOP as the nori curls upward from the bottom edge
+  var gRolling=svgEl('g',{opacity:0});
+  // Remaining flat nori+rice (shrinks from top as bottom curls up)
+  var rollFlatRect=svgEl('rect',{x:noriX,y:noriY,width:noriW,height:noriH,rx:2,fill:'url(#noriGrad)',stroke:'#0A1F0A','stroke-width':1});
+  gRolling.appendChild(rollFlatRect);
+  var rollFlatRice=svgEl('rect',{x:noriX+6,y:noriY+6,width:noriW-12,height:noriH-12,rx:1,fill:'#F5F0E8',opacity:0.85});
+  gRolling.appendChild(rollFlatRice);
+  // The forming roll (rounded rect, not ellipse — looks like a sushi roll from side)
+  var rollForm=svgEl('rect',{x:cx-200,y:noriY-30,width:400,height:0,rx:0,fill:'#0D2B0D',stroke:'#1A3A1A','stroke-width':1.5,opacity:0});
+  gRolling.appendChild(rollForm);
+  // Rice ring inside the forming roll
+  var rollFormRice=svgEl('rect',{x:cx-196,y:noriY-28,width:392,height:0,rx:0,fill:'none',stroke:'#E8E0D0','stroke-width':1.5,opacity:0});
+  gRolling.appendChild(rollFormRice);
+  // Top highlight
+  var rollFormHL=svgEl('rect',{x:cx-130,y:noriY-28,width:260,height:0,rx:0,fill:'#2A4A2A',opacity:0});
+  gRolling.appendChild(rollFormHL);
+  svg.appendChild(gRolling);
+
+  // ─── 9. COMPLETED ROLL (sitting on mat) ───
+  var gRoll=svgEl('g',{opacity:0});
+  var rollCx=cx, rollCy=cy+30, rollW=420, rollH=55;
+  // Main body (long cylinder from side view)
+  gRoll.appendChild(svgEl('rect',{x:rollCx-rollW/2,y:rollCy-rollH/2,width:rollW,height:rollH,rx:rollH/2,fill:'#0D2B0D',stroke:'#1A3A1A','stroke-width':2}));
+  // Rice visible through nori texture
+  gRoll.appendChild(svgEl('rect',{x:rollCx-rollW/2+4,y:rollCy-rollH/2+4,width:rollW-8,height:rollH-8,rx:(rollH-8)/2,fill:'none',stroke:'#E8E0D0','stroke-width':2,opacity:0.3}));
+  // Top highlight
+  gRoll.appendChild(svgEl('rect',{x:rollCx-rollW/3,y:rollCy-rollH/2+4,width:rollW*2/3,height:8,rx:4,fill:'#2A4A2A',opacity:0.25}));
+  // Left end cap (cross-section)
+  gRoll.appendChild(svgEl('ellipse',{cx:rollCx-rollW/2,cy:rollCy,rx:10,ry:rollH/2,fill:'#1A3A1A',stroke:'#0A1F0A','stroke-width':1}));
+  // Right end cap
+  gRoll.appendChild(svgEl('ellipse',{cx:rollCx+rollW/2,cy:rollCy,rx:10,ry:rollH/2,fill:'#1A3A1A',stroke:'#0A1F0A','stroke-width':1}));
+  // Right cross-section filling detail
+  gRoll.appendChild(svgEl('ellipse',{cx:rollCx+rollW/2,cy:rollCy,rx:7,ry:rollH/2-4,fill:'#F5F0E8',opacity:0.5}));
+  gRoll.appendChild(svgEl('ellipse',{cx:rollCx+rollW/2,cy:rollCy,rx:4,ry:rollH/4,fill:'#FA8072',opacity:0.6}));
+  // Shadow beneath
+  gRoll.appendChild(svgEl('ellipse',{cx:rollCx,cy:rollCy+rollH/2+8,rx:rollW/2-20,ry:6,fill:'#000',opacity:0.15}));
+  svg.appendChild(gRoll);
+
+  // ─── 10. KNIFE ───
+  var gKnife=svgEl('g',{opacity:0});
+  // Blade — wider sushi knife (yanagiba style)
+  var knifeX=cx, knifeBaseY=cy-30;
+  gKnife.appendChild(svgEl('path',{d:'M'+(knifeX-8)+' '+(knifeBaseY)+' L'+(knifeX+4)+' '+(knifeBaseY-140)+' L'+(knifeX+14)+' '+(knifeBaseY)+' Z',fill:'#D0D0D0',stroke:'#A0A0A0','stroke-width':1}));
+  // Blade highlight
+  gKnife.appendChild(svgEl('path',{d:'M'+(knifeX-2)+' '+(knifeBaseY-5)+' L'+(knifeX+5)+' '+(knifeBaseY-135)+' L'+(knifeX+8)+' '+(knifeBaseY-5)+' Z',fill:'#E8E8E8',opacity:0.35}));
+  // Handle
+  gKnife.appendChild(svgEl('rect',{x:knifeX-8,y:knifeBaseY,width:22,height:55,rx:4,fill:'#3A2518',stroke:'#2A1508','stroke-width':1}));
+  // Handle band
+  gKnife.appendChild(svgEl('rect',{x:knifeX-8,y:knifeBaseY,width:22,height:8,rx:2,fill:'#C0C0C0'}));
+  // Rivets
+  gKnife.appendChild(svgEl('circle',{cx:knifeX+3,cy:knifeBaseY+22,r:2,fill:'#B0B0B0'}));
+  gKnife.appendChild(svgEl('circle',{cx:knifeX+3,cy:knifeBaseY+40,r:2,fill:'#B0B0B0'}));
+  svg.appendChild(gKnife);
+
+  // ─── 11. CUT PIECES (8 pieces) ───
+  var gPieces=svgEl('g',{opacity:0});
+  var pieces=[];
+  // Initial positions (in a line on the roll, then move to star on plate)
+  function makePiece(idx){
+    var g=svgEl('g',{opacity:0});
+    var r=32;
+    // Nori exterior
+    g.appendChild(svgEl('circle',{cx:0,cy:0,r:r,fill:'#0D2B0D',stroke:'#1A3A1A','stroke-width':1.5}));
+    // Rice ring
+    g.appendChild(svgEl('circle',{cx:0,cy:0,r:r-5,fill:'#F5F0E8',stroke:'#E0D8C8','stroke-width':0.5}));
+    // Fish center
+    var fc=idx%2===0?'#FA8072':'#CC3333';
+    g.appendChild(svgEl('circle',{cx:0,cy:0,r:r-14,fill:fc}));
+    // Avocado crescent
+    g.appendChild(svgEl('path',{d:'M-9,-11 Q0,-18 9,-11 Q3,-6 -3,-6 Z',fill:'#7CB342',opacity:0.8}));
+    // Cucumber
+    g.appendChild(svgEl('circle',{cx:5,cy:7,r:4.5,fill:'#66BB6A',opacity:0.7}));
+    // Cream cheese
+    g.appendChild(svgEl('circle',{cx:-4,cy:4,r:3.5,fill:'#FFF8E1',opacity:0.7}));
+    return g;
+  }
+  // Star positions on plate — alternating outer/inner radii for star shape
+  // Offset upward to avoid wasabi (bottom-left) and ginger (bottom-right)
+  var starOuter=155, starInner=85;
+  var starPositions=[];
+  for(var si=0;si<8;si++){
+    var ang=-Math.PI/2+si*(Math.PI*2/8);
+    var r=si%2===0?starOuter:starInner;
+    starPositions.push({x:Math.cos(ang)*r, y:Math.sin(ang)*r-10});
+  }
+  // Cut positions (along the roll, evenly spaced)
+  var cutStartX=rollCx-rollW/2+30;
+  var cutSpacing=rollW/8-2;
+  for(var pi=0;pi<8;pi++){
+    var piece=makePiece(pi);
+    gPieces.appendChild(piece);
+    pieces.push({
+      el:piece,
+      // Start: on the roll
+      sx:cutStartX+pi*cutSpacing, sy:rollCy,
+      // End: star position on plate
+      ex:cx+starPositions[pi].x, ey:cy+starPositions[pi].y
+    });
+  }
+  // gPieces appended after plate below
+
+  // ─── 12. PLATE + GARNISH ───
+  var gPlate=svgEl('g',{opacity:0});
+  // Plate (large circle)
+  var plateCx=cx, plateCy=cy;
+  gPlate.appendChild(svgEl('ellipse',{cx:plateCx,cy:plateCy,rx:220,ry:200,fill:'#1C1C1C',stroke:'#333','stroke-width':2}));
+  // Plate inner ring
+  gPlate.appendChild(svgEl('ellipse',{cx:plateCx,cy:plateCy,rx:200,ry:182,fill:'none',stroke:'#2A2A2A','stroke-width':1}));
+  // Plate sheen
+  gPlate.appendChild(svgEl('ellipse',{cx:plateCx-40,cy:plateCy-60,rx:80,ry:30,fill:'#333',opacity:0.3}));
+  svg.appendChild(gPlate);
+
+  // Garnish group (on top of plate, under pieces)
+  var gGarnish=svgEl('g',{opacity:0});
+  // Wasabi dollop (bottom-left of plate)
+  gGarnish.appendChild(svgEl('ellipse',{cx:plateCx-100,cy:plateCy+100,rx:22,ry:14,fill:'#5D8A2F'}));
+  gGarnish.appendChild(svgEl('ellipse',{cx:plateCx-100,cy:plateCy+96,rx:18,ry:10,fill:'#7FBF3F'}));
+  gGarnish.appendChild(svgEl('ellipse',{cx:plateCx-105,cy:plateCy+93,rx:8,ry:4,fill:'#9AD84A',opacity:0.5}));
+  // Ginger pile (bottom-right of plate)
+  for(var gi=0;gi<6;gi++){
+    var gx=plateCx+80+gi*8-20;
+    var gy=plateCy+95+Math.sin(gi*1.2)*6;
+    gGarnish.appendChild(svgEl('ellipse',{cx:gx,cy:gy,rx:14-gi%2*3,ry:5+gi%2*2,fill:gi%2===0?'#FFD4B8':'#FFC4A0',opacity:0.85,transform:'rotate('+(gi*12-30)+' '+gx+' '+gy+')'}));
+  }
+  // Soy sauce small dish (top of plate)
+  gGarnish.appendChild(svgEl('ellipse',{cx:plateCx+160,cy:plateCy-80,rx:30,ry:12,fill:'#2A1F1F',stroke:'#3A2A2A','stroke-width':1}));
+  gGarnish.appendChild(svgEl('ellipse',{cx:plateCx+160,cy:plateCy-82,rx:25,ry:9,fill:'#1A0808'}));
+  gGarnish.appendChild(svgEl('ellipse',{cx:plateCx+160,cy:plateCy-82,rx:20,ry:7,fill:'#2A1010',opacity:0.8}));
+  svg.appendChild(gGarnish);
+
+  // Pieces on top of plate
+  svg.appendChild(gPieces);
+
+  // ═══ ANIMATION UPDATE ═══
+  function update(){
+    var p=getProgress();
+    scrubFill.style.width=(p*100)+'%';
+
+    // Intro fade (0-6%)
+    var introP=clamp(p/0.06,0,1);
+    intro.style.opacity=1-ease3(introP);
+    intro.style.transform='scale('+(1+introP*0.05)+')';
+
+    // ── 1. BAMBOO MAT (6-14%) ──
+    var matP=clamp((p-0.06)/0.08,0,1);
+    gMat.setAttribute('opacity',ease3(matP));
+    if(matP>0){
+      gMat.setAttribute('transform','scale('+(0.9+ease3(matP)*0.1)+') translate('+(1-ease3(matP))*20+',0)');
+      if(p<0.14) setPhase('PREPARING THE MAT');
+    } else {
+      gMat.setAttribute('transform','');
+    }
+
+    // ── 2. NORI SHEET (14-22%) ──
+    var noriP=clamp((p-0.14)/0.08,0,1);
+    gNoriSheet.setAttribute('opacity',ease3(noriP));
+    if(noriP>0){
+      gNoriSheet.setAttribute('transform','translateY('+(1-ease3(noriP))*-30+')');
+      if(p>=0.14&&p<0.22) setPhase('LAYING THE NORI');
+    } else {
+      gNoriSheet.setAttribute('transform','');
+    }
+
+    // ── 3. RICE SPREAD (22-34%) ──
+    var riceP=clamp((p-0.22)/0.12,0,1);
+    gRice.setAttribute('opacity',riceP>0?1:0);
+    if(riceP>0){
+      riceRect.setAttribute('width',ease3(riceP)*(noriW-16));
+      for(var ri=0;ri<riceGrains.length;ri++){
+        var grainP=clamp((riceP-ri*0.015)/0.3,0,1);
+        riceGrains[ri].setAttribute('opacity',ease3(grainP)*0.7);
+      }
+      if(p>=0.22&&p<0.34) setPhase('SPREADING RICE');
+    } else {
+      riceRect.setAttribute('width',0);
+    }
+
+    // ── 4. WASABI (34-40%) ──
+    var wasabiP=clamp((p-0.34)/0.06,0,1);
+    gWasabi.setAttribute('opacity',wasabiP>0?1:0);
+    if(wasabiP>0){
+      var wEndX=noriX+noriW-20;
+      wasabiLine.setAttribute('x2',noriX+20+ease3(wasabiP)*(wEndX-noriX-20));
+      wasabiDot.setAttribute('opacity',ease3(clamp(wasabiP/0.3,0,1)));
+      if(p>=0.34&&p<0.40) setPhase('WASABI LINE');
+    } else {
+      wasabiLine.setAttribute('x2',noriX+20);
+      wasabiDot.setAttribute('opacity',0);
+    }
+
+    // ── 5. FISH SLICES (40-52%) ──
+    var fishP=clamp((p-0.40)/0.12,0,1);
+    gFish.setAttribute('opacity',fishP>0?1:0);
+    if(fishP>0){
+      for(var fi=0;fi<fishSlices.length;fi++){
+        var fSliceP=clamp((fishP-fi*0.05)/0.3,0,1);
+        fishSlices[fi].setAttribute('opacity',ease3(fSliceP));
+        fishSlices[fi].setAttribute('transform','translateY('+(1-ease3(fSliceP))*-20+')');
+      }
+      if(p>=0.40&&p<0.52) setPhase('SLICING FISH');
+    }
+
+    // ── 6. AVOCADO (52-60%) ──
+    var avoP=clamp((p-0.52)/0.08,0,1);
+    gAvo_g.setAttribute('opacity',avoP>0?1:0);
+    if(avoP>0){
+      for(var ai=0;ai<avoSlices.length;ai++){
+        var aSliceP=clamp((avoP-ai*0.04)/0.25,0,1);
+        avoSlices[ai].setAttribute('opacity',ease3(aSliceP));
+      }
+      if(p>=0.52&&p<0.60) setPhase('FANNING AVOCADO');
+    }
+
+    // ── 7. CUCUMBER + CREAM CHEESE (60-68%) ──
+    var fillP=clamp((p-0.60)/0.08,0,1);
+    gFillings.setAttribute('opacity',ease3(fillP));
+    if(fillP>0){
+      gFillings.setAttribute('transform','translateY('+(1-ease3(fillP))*15+')');
+      if(p>=0.60&&p<0.68) setPhase('ADDING FILLINGS');
+    } else {
+      gFillings.setAttribute('transform','');
+    }
+
+    // ════════ MASTER RESET — runs EVERY frame to ensure clean state ════════
+    // Late-phase elements: hidden when before their phase
+    if(p<0.64){
+      gRolling.setAttribute('opacity',0);
+      rollForm.setAttribute('opacity',0);
+      rollFormRice.setAttribute('opacity',0);
+      rollFormHL.setAttribute('opacity',0);
+    }
+    if(p<0.74){
+      gRoll.setAttribute('opacity',0);
+      gRoll.setAttribute('transform','');
+      gRoll.setAttribute('clip-path','none');
+    }
+    if(p<0.78){
+      gKnife.setAttribute('opacity',0);
+      gPieces.setAttribute('opacity',0);
+      for(var rpi=0;rpi<pieces.length;rpi++) pieces[rpi].el.setAttribute('opacity',0);
+    }
+    if(p<0.90){
+      gPlate.setAttribute('opacity',0);
+      gGarnish.setAttribute('opacity',0);
+    }
+    if(p<0.91){
+      scenePowered.style.opacity=0;
+      sceneGlow.style.opacity=0;
+      sceneEnergize.style.clipPath='inset(0 100% 0 0)';
+      bg.style.background='';
+      var pls2=[document.getElementById('pl1'),document.getElementById('pl2'),document.getElementById('pl3'),document.getElementById('pl4'),document.getElementById('pl5'),document.getElementById('pl6')];
+      for(var li2=0;li2<pls2.length;li2++) pls2[li2].style.opacity=0;
+    }
+    if(p<0.98){
+      finalEl.style.opacity=0;
+      finalEl.classList.remove('show');
+    }
+
+    // Flat ingredients: force hidden from rolling onward (p>=0.74)
+    // AND force VISIBLE before rolling (their own phases handle fade-in)
+    if(p>=0.74){
+      gNoriSheet.setAttribute('opacity',0);
+      gRice.setAttribute('opacity',0);
+      gWasabi.setAttribute('opacity',0);
+      gFish.setAttribute('opacity',0);
+      gAvo_g.setAttribute('opacity',0);
+      gFillings.setAttribute('opacity',0);
+      gRolling.setAttribute('opacity',0);
+    } else if(p<0.64){
+      // Before rolling — let early phases control these (they run above)
+      // But also reset mat transform in case it was modified
+      gMat.setAttribute('opacity',p>=0.06?1:0);
+    }
+
+    // ── 8. ROLLING — nori curls up from bottom, roll forms at TOP (64-74%) ──
+    var rollAnimP=clamp((p-0.64)/0.10,0,1);
+    if(p>=0.64&&p<0.74){
+      // Fade flat ingredients as they get "wrapped in"
+      var flatFade=1-ease3(clamp(rollAnimP/0.4,0,1));
+      gNoriSheet.setAttribute('opacity',flatFade);
+      gRice.setAttribute('opacity',flatFade);
+      gWasabi.setAttribute('opacity',flatFade);
+      gFish.setAttribute('opacity',flatFade);
+      gAvo_g.setAttribute('opacity',flatFade);
+      gFillings.setAttribute('opacity',flatFade);
+
+      gRolling.setAttribute('opacity',1);
+      var rp=ease3(rollAnimP);
+
+      // Flat nori+rice shrinks from BOTTOM (bottom edge rises = nori curling up)
+      var remainH=noriH*(1-rp);
+      var newBottom=noriY+noriH;  // bottom stays fixed
+      var newTop=newBottom-remainH;  // top descends as we shrink
+      rollFlatRect.setAttribute('y',newTop);
+      rollFlatRect.setAttribute('height',Math.max(0,remainH));
+      rollFlatRice.setAttribute('y',newTop+6);
+      rollFlatRice.setAttribute('height',Math.max(0,remainH-12));
+
+      // Roll forms at TOP — rounded rect growing in height
+      var formH=rp*rollH;  // grows to full roll height
+      var formW=100+rp*320;  // width grows to ~420
+      var formY=newTop-formH-4;  // sits just above the shrinking flat
+      rollForm.setAttribute('x',cx-formW/2);
+      rollForm.setAttribute('y',formY);
+      rollForm.setAttribute('width',formW);
+      rollForm.setAttribute('height',formH);
+      rollForm.setAttribute('rx',formH/2);
+      rollForm.setAttribute('opacity',rp);
+      rollFormRice.setAttribute('x',cx-formW/2+4);
+      rollFormRice.setAttribute('y',formY+4);
+      rollFormRice.setAttribute('width',Math.max(0,formW-8));
+      rollFormRice.setAttribute('height',Math.max(0,formH-8));
+      rollFormRice.setAttribute('rx',Math.max(0,(formH-8)/2));
+      rollFormRice.setAttribute('opacity',rp*0.4);
+      rollFormHL.setAttribute('x',cx-formW/3);
+      rollFormHL.setAttribute('y',formY+3);
+      rollFormHL.setAttribute('width',formW*2/3);
+      rollFormHL.setAttribute('height',Math.min(6,formH*0.15));
+      rollFormHL.setAttribute('rx',3);
+      rollFormHL.setAttribute('opacity',rp*0.25);
+
+      gMat.setAttribute('opacity',Math.max(0.3,1-rp*0.7));
+      setPhase('ROLLING');
+    }
+
+    // ── 9. ROLL DROPS DOWN onto mat (74-78%) ──
+    var dropP=clamp((p-0.74)/0.04,0,1);
+    if(p>=0.74&&p<0.78){
+      // Hide flat ingredients fully + rolling animation
+      gNoriSheet.setAttribute('opacity',0);
+      gRice.setAttribute('opacity',0);
+      gWasabi.setAttribute('opacity',0);
+      gFish.setAttribute('opacity',0);
+      gAvo_g.setAttribute('opacity',0);
+      gFillings.setAttribute('opacity',0);
+      gRolling.setAttribute('opacity',1-ease3(dropP));
+
+      // Completed roll drops from where it formed to its resting position
+      gRoll.setAttribute('opacity',ease3(dropP));
+      var formTopY=noriY-rollH-4;  // where rolling form ended
+      var dropOffset=(1-ease3(dropP))*(formTopY-rollCy+rollH/2);
+      gRoll.setAttribute('transform','translateY('+dropOffset+')');
+      gMat.setAttribute('opacity',Math.max(0.2,0.3));
+      setPhase('THE ROLL');
+    }
+
+    // ── 10. KNIFE CUTTING — knife chops, piece appears when knife LIFTS (78-90%) ──
+    var cutP=clamp((p-0.78)/0.12,0,1);
+    if(p>=0.78&&p<0.90){
+      // HIDE all flat ingredient backgrounds during cutting
+      gNoriSheet.setAttribute('opacity',0);
+      gRice.setAttribute('opacity',0);
+      gWasabi.setAttribute('opacity',0);
+      gFish.setAttribute('opacity',0);
+      gAvo_g.setAttribute('opacity',0);
+      gFillings.setAttribute('opacity',0);
+      gRolling.setAttribute('opacity',0);
+
+      gRoll.setAttribute('opacity',1);
+      gRoll.setAttribute('transform','translateY(0)');
+      gPieces.setAttribute('opacity',1);
+      gKnife.setAttribute('opacity',1);
+
+      // 8 cuts, each takes 1/8 of the phase
+      var cutSlice=1/8;
+      var currentCut=Math.min(7,Math.floor(cutP/cutSlice));
+      var withinCut=(cutP-currentCut*cutSlice)/cutSlice;
+
+      // Position knife at current cut position
+      var knifeTargetX=pieces[currentCut].sx;
+      var kx=knifeTargetX-knifeX+3;
+      // Knife: up → chop DOWN → pause → lift UP → slide to next
+      var chopDown=clamp(withinCut/0.35,0,1);
+      var chopUp=clamp((withinCut-0.5)/0.25,0,1);
+      var ky=-70+ease3(chopDown)*70-ease3(chopUp)*50;
+      gKnife.setAttribute('transform','translate('+kx+','+ky+')');
+
+      // Piece appears ONLY after knife lifts (withinCut > 0.55)
+      for(var pi=0;pi<8;pi++){
+        var pp=pieces[pi];
+        if(pi<currentCut||(pi===currentCut&&withinCut>0.55)){
+          var popP=pi<currentCut?1:ease3(clamp((withinCut-0.55)/0.4,0,1));
+          pp.el.setAttribute('opacity',popP);
+          var popY=pp.sy-50*popP;
+          var sepX=pp.sx+(pi-3.5)*3*popP;
+          pp.el.setAttribute('transform','translate('+sepX+','+popY+') scale('+(0.4+popP*0.6)+')');
+        } else {
+          pp.el.setAttribute('opacity',0);
+        }
+      }
+
+      // Roll fades LEFT to RIGHT as pieces are cut (clip from left)
+      var cutFraction=(currentCut+withinCut)/8;
+      var clipLeft=cutFraction*100;
+      gRoll.setAttribute('clip-path','inset(0 0 0 '+clipLeft+'%)');
+
+      gMat.setAttribute('opacity',Math.max(0,0.2*(1-ease3(cutP))));
+      setPhase('PRECISION CUTS');
+
+    } else if(p<0.78){
+      gKnife.setAttribute('opacity',0);
+      gPieces.setAttribute('opacity',0);
+      gRoll.setAttribute('clip-path','none');
+    }
+
+    // ── 11. PLATING — plate appears, pieces glide to STAR pattern (90-95%) ──
+    var plateP=clamp((p-0.90)/0.05,0,1);
+    if(p>=0.90){
+      gPlate.setAttribute('opacity',ease3(clamp(plateP/0.25,0,1)));
+      gGarnish.setAttribute('opacity',ease3(clamp((plateP-0.3)/0.4,0,1)));
+      gMat.setAttribute('opacity',0);
+      gRoll.setAttribute('opacity',0);
+      gRoll.setAttribute('clip-path','none');
+      gKnife.setAttribute('opacity',0);
+      gRolling.setAttribute('opacity',0);
+      gNoriSheet.setAttribute('opacity',0);
+      gRice.setAttribute('opacity',0);
+      gPieces.setAttribute('opacity',1);
+
+      // Each piece glides from popped position to star position
+      for(var pi=0;pi<pieces.length;pi++){
+        var pp=pieces[pi];
+        var moveP=ease3(clamp((plateP-pi*0.02)/0.6,0,1));
+        var startX=pp.sx+(pi-3.5)*3;
+        var startY=pp.sy-50;
+        var px=lerp(startX, pp.ex, moveP);
+        var py=lerp(startY, pp.ey, moveP);
+        pp.el.setAttribute('opacity',1);
+        pp.el.setAttribute('transform','translate('+px+','+py+') scale(1)');
+      }
+
+      if(p<0.95) setPhase('PLATING');
+    }
+
+    // ── 12. FINALE: GLOW BLAST (91-98%) — longer, brighter ──
+    var finaleP=clamp((p-0.91)/0.07,0,1);
+    sceneGlow.style.opacity=ease3(finaleP)*0.8;
+    sceneEnergize.style.clipPath='inset(0 '+(100-ease3(finaleP)*100)+'% 0 0)';
+
+    var pls=[document.getElementById('pl1'),document.getElementById('pl2'),document.getElementById('pl3'),document.getElementById('pl4'),document.getElementById('pl5'),document.getElementById('pl6')];
+    for(var li=0;li<pls.length;li++){
+      var lightP=clamp((finaleP-li*0.05)/0.25,0,1);
+      pls[li].style.opacity=ease3(lightP);
+    }
+
+    // Brand appears early and holds strong
+    var brandP=clamp((finaleP-0.1)/0.5,0,1);
+    scenePowered.style.opacity=ease3(brandP);
+    scenePowered.style.transform='scale('+(0.92+ease3(brandP)*0.13)+')';
+
+    // Scene fades for brand
+    if(finaleP>0.15){
+      var sceneFade=1-ease3((finaleP-0.15)/0.4);
+      gPieces.setAttribute('opacity',Math.max(0,sceneFade));
+      gPlate.setAttribute('opacity',Math.max(0,sceneFade));
+      gGarnish.setAttribute('opacity',Math.max(0,sceneFade));
+    }
+
+    if(p>=0.91&&p<0.98) setPhase('SUSHIROLL');
+
+    // Background warm up — more intense
+    if(finaleP>0){
+      var r=Math.round(18+finaleP*35);
+      var g=Math.round(6+finaleP*8);
+      var b=Math.round(6+finaleP*4);
+      bg.style.background='rgb('+r+','+g+','+b+')';
+    } else if(p<0.91){
+      bg.style.background='';
+    }
+
+    // ── HERO CTA (98-100%) ──
+    var heroP=clamp((p-0.98)/0.02,0,1);
+    if(heroP>0){
+      finalEl.classList.add('show');
+      finalEl.style.opacity=ease3(heroP);
+      scenePowered.style.opacity=(1-ease3(heroP));
+      sceneGlow.style.opacity=0.8*(1-ease3(heroP));
+      gPieces.setAttribute('opacity',0);
+      gPlate.setAttribute('opacity',0);
+      gGarnish.setAttribute('opacity',0);
+    } else if(p<0.98){
+      finalEl.classList.remove('show');
+      finalEl.style.opacity=0;
+    }
+
+    // Phase label visibility
+    if(p<0.06||p>0.98){
+      phaseEl.style.opacity='0';
+    }
+  }
+
+  function updateSticky(){
+    var r=seqEl.getBoundingClientRect(),sH=stickyEl.offsetHeight;
+    if(r.top>0){stickyEl.style.position='absolute';stickyEl.style.top='0';stickyEl.style.bottom='auto';}
+    else if(r.bottom<=sH){stickyEl.style.position='absolute';stickyEl.style.top='auto';stickyEl.style.bottom='0';}
+    else{stickyEl.style.position='fixed';stickyEl.style.top='0';stickyEl.style.bottom='auto';}
+  }
+
+  (function loop(){requestAnimationFrame(loop);updateSticky();try{update()}catch(e){}})();
+})();
+</script>
+</body>
+</html>
