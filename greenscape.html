@@ -231,12 +231,14 @@ body::before {
 .ba-container { position: relative; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); aspect-ratio: 16/9; background: var(--surface); cursor: col-resize; user-select: none; }
 .ba-layer { position: absolute; inset: 0; }
 .ba-before { z-index: 1; }
-.ba-after { z-index: 2; clip-path: inset(0 50% 0 0); }
+.ba-after { z-index: 2; clip-path: inset(0 0 0 50%); }
 .ba-handle { position: absolute; top: 0; bottom: 0; left: 50%; z-index: 3; width: 4px; background: var(--white); transform: translateX(-50%); cursor: col-resize; }
 .ba-handle::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 40px; height: 40px; border-radius: 50%; background: var(--white); box-shadow: 0 2px 12px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; }
-.ba-label { position: absolute; bottom: 12px; padding: 4px 12px; background: rgba(0,0,0,0.6); border-radius: 12px; font-family: var(--font-head); font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--white); z-index: 4; }
-.ba-label-before { left: 12px; }
-.ba-label-after { right: 12px; }
+.ba-label { position: absolute; top: 14px; padding: 6px 18px; border-radius: 8px; font-family: var(--font-head); font-size: 13px; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; color: var(--white); z-index: 4; transition: all 0.3s ease; }
+.ba-label-before { left: 14px; background: rgba(220,50,50,0.7); }
+.ba-label-before.active { background: rgba(220,50,50,0.95); box-shadow: 0 0 20px rgba(220,50,50,0.5), 0 0 40px rgba(220,50,50,0.2); }
+.ba-label-after { right: 14px; background: rgba(34,180,60,0.7); }
+.ba-label-after.active { background: rgba(34,180,60,0.95); box-shadow: 0 0 20px rgba(34,180,60,0.5), 0 0 40px rgba(34,180,60,0.2); }
 
 /* ─── CALCULATOR ──────────────────────────────────────────────────────────── */
 .calculator { padding: 100px 0; }
@@ -525,38 +527,310 @@ body::before {
       <h2 class="section-heading" style="text-align:center;">See the <span class="accent">Difference.</span></h2>
     </div>
     <div class="ba-container" id="baContainer">
-      <svg class="ba-layer ba-before" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
-        <rect width="800" height="200" fill="#87CEEB"/><rect y="200" width="800" height="250" fill="#8B7355"/>
-        <ellipse cx="200" cy="230" rx="80" ry="30" fill="#6B5B3A"/>
-        <ellipse cx="500" cy="220" rx="60" ry="20" fill="#6B5B3A"/>
-        <path d="M100 250 Q120 200 140 250 Q160 210 180 250" fill="#7A6B4A" stroke="#6B5B3A" stroke-width="1"/>
-        <path d="M400 230 Q420 180 440 230 Q460 190 480 230 Q500 185 520 230" fill="#7A6B4A" stroke="#6B5B3A" stroke-width="1"/>
-        <rect x="300" y="120" width="200" height="130" fill="#D4C4A8" stroke="#B8A888" stroke-width="1"/>
-        <path d="M280 120 L400 60 L520 120" fill="#8B4513" stroke="#6B3410" stroke-width="1"/>
-        <rect x="340" y="160" width="40" height="50" fill="#5A4A3A"/><rect x="420" y="160" width="40" height="40" fill="#6A9BC7" opacity="0.4"/>
-        <line x1="0" y1="250" x2="800" y2="250" stroke="#5A4A30" stroke-width="1" stroke-dasharray="8 4"/>
+      <!-- ═══ BEFORE SVG — Neglected yard ═══ -->
+      <svg class="ba-layer ba-before" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <linearGradient id="bSkyGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#9CA3AF"/><stop offset="100%" stop-color="#B8BCC5"/></linearGradient>
+          <linearGradient id="bDirtGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8B7355"/><stop offset="40%" stop-color="#7A6244"/><stop offset="100%" stop-color="#6B5336"/></linearGradient>
+          <linearGradient id="bWallGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C8B898"/><stop offset="100%" stop-color="#B8A880"/></linearGradient>
+          <linearGradient id="bRoofGr" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6B4020"/><stop offset="100%" stop-color="#5A3018"/></linearGradient>
+          <linearGradient id="bSideGrad" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#B0A078"/><stop offset="100%" stop-color="#A89870"/></linearGradient>
+        </defs>
+        <!-- Overcast sky -->
+        <rect width="800" height="240" fill="url(#bSkyGrad)"/>
+        <!-- Gray clouds -->
+        <ellipse cx="180" cy="60" rx="90" ry="30" fill="#A8ADB5" opacity="0.6"/>
+        <ellipse cx="250" cy="55" rx="60" ry="22" fill="#B0B5BC" opacity="0.5"/>
+        <ellipse cx="580" cy="80" rx="70" ry="25" fill="#A0A5AD" opacity="0.5"/>
+        <ellipse cx="650" cy="75" rx="50" ry="18" fill="#B0B5BC" opacity="0.4"/>
+
+        <!-- Dead/patchy ground -->
+        <rect y="240" width="800" height="260" fill="url(#bDirtGrad)"/>
+        <!-- Dead grass patches -->
+        <ellipse cx="120" cy="310" rx="70" ry="25" fill="#7A6842" opacity="0.6"/>
+        <ellipse cx="350" cy="360" rx="90" ry="30" fill="#6B5832" opacity="0.5"/>
+        <ellipse cx="600" cy="300" rx="60" ry="22" fill="#8A7852" opacity="0.4"/>
+        <ellipse cx="680" cy="380" rx="80" ry="28" fill="#6B5832" opacity="0.5"/>
+        <!-- Bare dirt spots -->
+        <ellipse cx="500" cy="330" rx="45" ry="18" fill="#5A4A30" opacity="0.4"/>
+        <ellipse cx="200" cy="400" rx="55" ry="20" fill="#5A4A30" opacity="0.35"/>
+        <!-- Sparse yellow dead weeds -->
+        <path d="M80 295 Q82 275 78 260" fill="none" stroke="#9A8A50" stroke-width="1.5" opacity="0.6"/>
+        <path d="M85 298 Q90 278 87 258" fill="none" stroke="#8A7A42" stroke-width="1.2" opacity="0.5"/>
+        <path d="M650 280 Q648 260 652 245" fill="none" stroke="#9A8A50" stroke-width="1.5" opacity="0.6"/>
+        <path d="M655 283 Q660 265 657 248" fill="none" stroke="#8A7A42" stroke-width="1.2" opacity="0.5"/>
+        <path d="M420 340 Q418 325 422 310" fill="none" stroke="#9A8A50" stroke-width="1" opacity="0.4"/>
+
+        <!-- House — worn/faded -->
+        <!-- Side wall (perspective) -->
+        <path d="M520 155 L680 185 L680 340 L520 310 Z" fill="url(#bSideGrad)" stroke="#9A8A68" stroke-width="1"/>
+        <!-- Horizontal siding on side -->
+        <line x1="520" y1="180" x2="680" y2="207" stroke="#A09068" stroke-width="0.5" opacity="0.4"/>
+        <line x1="520" y1="205" x2="680" y2="228" stroke="#A09068" stroke-width="0.5" opacity="0.4"/>
+        <line x1="520" y1="230" x2="680" y2="249" stroke="#A09068" stroke-width="0.5" opacity="0.4"/>
+        <line x1="520" y1="255" x2="680" y2="270" stroke="#A09068" stroke-width="0.5" opacity="0.4"/>
+        <line x1="520" y1="280" x2="680" y2="291" stroke="#A09068" stroke-width="0.5" opacity="0.4"/>
+        <!-- Side windows (faded) -->
+        <rect x="555" y="200" width="35" height="30" fill="#5A6A5A" stroke="#8A7A60" stroke-width="1" opacity="0.7"/>
+        <line x1="572" y1="200" x2="572" y2="230" stroke="#7A7A68" stroke-width="0.5"/>
+        <line x1="555" y1="215" x2="590" y2="215" stroke="#7A7A68" stroke-width="0.5"/>
+        <rect x="620" y="210" width="35" height="30" fill="#5A6A5A" stroke="#8A7A60" stroke-width="1" opacity="0.7"/>
+        <line x1="637" y1="210" x2="637" y2="240" stroke="#7A7A68" stroke-width="0.5"/>
+        <line x1="620" y1="225" x2="655" y2="225" stroke="#7A7A68" stroke-width="0.5"/>
+
+        <!-- Front wall -->
+        <rect x="280" y="155" width="240" height="155" fill="url(#bWallGrad)" stroke="#A8986A" stroke-width="1"/>
+        <!-- Siding lines -->
+        <line x1="280" y1="180" x2="520" y2="180" stroke="#B8A87A" stroke-width="0.5" opacity="0.4"/>
+        <line x1="280" y1="205" x2="520" y2="205" stroke="#B8A87A" stroke-width="0.5" opacity="0.4"/>
+        <line x1="280" y1="230" x2="520" y2="230" stroke="#B8A87A" stroke-width="0.5" opacity="0.4"/>
+        <line x1="280" y1="255" x2="520" y2="255" stroke="#B8A87A" stroke-width="0.5" opacity="0.4"/>
+        <line x1="280" y1="280" x2="520" y2="280" stroke="#B8A87A" stroke-width="0.5" opacity="0.4"/>
+        <!-- Water stains -->
+        <path d="M350 155 Q352 175 348 195" fill="none" stroke="#9A8A60" stroke-width="3" opacity="0.2"/>
+        <path d="M470 155 Q472 180 468 210" fill="none" stroke="#9A8A60" stroke-width="4" opacity="0.15"/>
+
+        <!-- Front windows (dirty/dark) -->
+        <rect x="300" y="185" width="45" height="38" fill="#4A5A4A" stroke="#8A7A60" stroke-width="1"/>
+        <line x1="322" y1="185" x2="322" y2="223" stroke="#6A6A58" stroke-width="0.6"/>
+        <line x1="300" y1="204" x2="345" y2="204" stroke="#6A6A58" stroke-width="0.6"/>
+        <rect x="460" y="185" width="45" height="38" fill="#4A5A4A" stroke="#8A7A60" stroke-width="1"/>
+        <line x1="482" y1="185" x2="482" y2="223" stroke="#6A6A58" stroke-width="0.6"/>
+        <line x1="460" y1="204" x2="505" y2="204" stroke="#6A6A58" stroke-width="0.6"/>
+
+        <!-- Front door (worn) -->
+        <rect x="375" y="240" width="50" height="70" fill="#4A3A28" stroke="#3A2A18" stroke-width="1"/>
+        <circle cx="418" cy="278" r="3" fill="#8A7A58"/>
+        <!-- Cracked step -->
+        <rect x="370" y="310" width="60" height="8" fill="#9A8A6A" stroke="#7A6A4A" stroke-width="0.5"/>
+        <line x1="395" y1="310" x2="397" y2="318" stroke="#6A5A3A" stroke-width="0.5" opacity="0.5"/>
+
+        <!-- Roof (old shingles, slight sag) -->
+        <path d="M270 155 L400 80 L530 155" fill="url(#bRoofGr)" stroke="#4A2A10" stroke-width="1.2"/>
+        <!-- Side roof -->
+        <path d="M530 155 L400 80 L680 125 L680 185" fill="#5A3518" stroke="#4A2A10" stroke-width="1"/>
+        <!-- Worn shingle lines -->
+        <line x1="280" y1="145" x2="525" y2="145" stroke="#4A2A10" stroke-width="0.4" opacity="0.4"/>
+        <line x1="290" y1="135" x2="520" y2="135" stroke="#4A2A10" stroke-width="0.4" opacity="0.4"/>
+        <line x1="300" y1="125" x2="510" y2="125" stroke="#4A2A10" stroke-width="0.4" opacity="0.4"/>
+        <line x1="310" y1="115" x2="500" y2="115" stroke="#4A2A10" stroke-width="0.4" opacity="0.4"/>
+        <!-- Missing shingle patches -->
+        <rect x="340" y="120" width="15" height="8" fill="#3A2010" opacity="0.5"/>
+        <rect x="460" y="135" width="12" height="7" fill="#3A2010" opacity="0.5"/>
+
+        <!-- Overgrown dead bushes by house -->
+        <ellipse cx="290" cy="295" rx="25" ry="18" fill="#5A5030" opacity="0.7"/>
+        <ellipse cx="310" cy="300" rx="20" ry="14" fill="#4A4020" opacity="0.6"/>
+        <ellipse cx="520" cy="300" rx="22" ry="16" fill="#5A5030" opacity="0.7"/>
+
+        <!-- Broken/leaning fence -->
+        <line x1="40" y1="240" x2="40" y2="310" stroke="#7A6A4A" stroke-width="3" opacity="0.7"/>
+        <line x1="70" y1="238" x2="73" y2="315" stroke="#7A6A4A" stroke-width="3" opacity="0.6" transform="rotate(5,70,238)"/>
+        <line x1="100" y1="240" x2="100" y2="308" stroke="#7A6A4A" stroke-width="3" opacity="0.7"/>
+        <line x1="40" y1="255" x2="100" y2="253" stroke="#7A6A4A" stroke-width="2.5" opacity="0.5"/>
+        <line x1="40" y1="285" x2="100" y2="288" stroke="#7A6A4A" stroke-width="2.5" opacity="0.4"/>
+        <!-- Missing fence board -->
+        <line x1="130" y1="242" x2="135" y2="300" stroke="#7A6A4A" stroke-width="3" opacity="0.3" transform="rotate(15,130,242)"/>
+
+        <!-- Scattered debris -->
+        <ellipse cx="180" cy="350" rx="8" ry="4" fill="#6A5A3A" opacity="0.5"/>
+        <ellipse cx="550" cy="370" rx="6" ry="3" fill="#5A4A2A" opacity="0.4"/>
+        <rect x="720" y="310" width="15" height="8" fill="#6A5A3A" opacity="0.3" transform="rotate(12,727,314)"/>
       </svg>
-      <svg class="ba-layer ba-after" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
-        <rect width="800" height="200" fill="#87CEEB"/>
-        <rect y="200" width="800" height="250" fill="#2D8B46"/>
-        <rect x="300" y="120" width="200" height="130" fill="#F5F0E8" stroke="#D4C8B0" stroke-width="1"/>
-        <path d="M280 120 L400 60 L520 120" fill="#6B3410" stroke="#5A2A08" stroke-width="1"/>
-        <rect x="340" y="160" width="40" height="50" fill="#5A4A3A"/><rect x="420" y="160" width="40" height="40" fill="#87CEEB" opacity="0.6"/>
-        <rect x="100" y="210" width="120" height="40" rx="20" fill="#1A6B30"/>
-        <rect x="580" y="210" width="120" height="40" rx="20" fill="#1A6B30"/>
-        <path d="M350 250 L350 350 L450 350 L450 250" fill="#C4A882" stroke="#A88A62" stroke-width="1"/>
-        <circle cx="150" cy="280" r="8" fill="#EF4444"/><circle cx="170" cy="275" r="6" fill="#F59E0B"/>
-        <circle cx="140" cy="290" r="7" fill="#A855F7"/><circle cx="660" cy="280" r="8" fill="#F59E0B"/>
-        <circle cx="640" cy="285" r="6" fill="#EC4899"/><circle cx="680" cy="275" r="7" fill="#EF4444"/>
-        <line x1="80" y1="195" x2="80" y2="260" stroke="#FFF" stroke-width="3"/>
-        <line x1="110" y1="195" x2="110" y2="260" stroke="#FFF" stroke-width="3"/>
-        <line x1="140" y1="195" x2="140" y2="260" stroke="#FFF" stroke-width="3"/>
-        <line x1="80" y1="195" x2="140" y2="195" stroke="#FFF" stroke-width="3"/>
-        <line x1="80" y1="230" x2="140" y2="230" stroke="#FFF" stroke-width="3"/>
+
+      <!-- ═══ AFTER SVG — Professionally landscaped ═══ -->
+      <svg class="ba-layer ba-after" viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <linearGradient id="aSkyGr" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#60B5E8"/><stop offset="100%" stop-color="#8DD0F5"/></linearGradient>
+          <linearGradient id="aLawnGr" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#2D8B46"/><stop offset="30%" stop-color="#259A3C"/><stop offset="100%" stop-color="#1E7A32"/></linearGradient>
+          <linearGradient id="aWallGr" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F5F0E8"/><stop offset="100%" stop-color="#EDE5D8"/></linearGradient>
+          <linearGradient id="aRoofGr2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4A5568"/><stop offset="100%" stop-color="#3D4A5C"/></linearGradient>
+          <linearGradient id="aSideGr" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#E8E0D0"/><stop offset="100%" stop-color="#DDD5C5"/></linearGradient>
+          <linearGradient id="aWinGlass" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#6BA3C8"/><stop offset="50%" stop-color="#5A95BA"/><stop offset="100%" stop-color="#7BB5D5"/></linearGradient>
+          <linearGradient id="aMulch" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5A3A1A"/><stop offset="100%" stop-color="#4A2A10"/></linearGradient>
+        </defs>
+
+        <!-- Bright blue sky -->
+        <rect width="800" height="240" fill="url(#aSkyGr)"/>
+        <!-- White fluffy clouds -->
+        <ellipse cx="160" cy="55" rx="70" ry="25" fill="#FFF" opacity="0.7"/>
+        <ellipse cx="220" cy="50" rx="50" ry="20" fill="#FFF" opacity="0.6"/>
+        <ellipse cx="130" cy="60" rx="40" ry="15" fill="#FFF" opacity="0.5"/>
+        <ellipse cx="600" cy="70" rx="65" ry="22" fill="#FFF" opacity="0.65"/>
+        <ellipse cx="660" cy="65" rx="45" ry="18" fill="#FFF" opacity="0.55"/>
+        <!-- Sun glow -->
+        <circle cx="720" cy="45" r="30" fill="#FFF9E0" opacity="0.4"/>
+        <circle cx="720" cy="45" r="18" fill="#FFE87C" opacity="0.6"/>
+
+        <!-- Lush green lawn with mow stripes -->
+        <rect y="240" width="800" height="260" fill="url(#aLawnGr)"/>
+        <!-- Mowing stripes -->
+        <rect y="250" width="800" height="12" fill="#2A9244" opacity="0.3"/>
+        <rect y="274" width="800" height="12" fill="#2A9244" opacity="0.3"/>
+        <rect y="298" width="800" height="12" fill="#2A9244" opacity="0.3"/>
+        <rect y="322" width="800" height="12" fill="#2A9244" opacity="0.3"/>
+        <rect y="346" width="800" height="12" fill="#2A9244" opacity="0.3"/>
+        <rect y="370" width="800" height="12" fill="#2A9244" opacity="0.3"/>
+        <rect y="394" width="800" height="12" fill="#2A9244" opacity="0.3"/>
+        <rect y="418" width="800" height="12" fill="#2A9244" opacity="0.3"/>
+
+        <!-- House — fresh paint, clean -->
+        <!-- Side wall -->
+        <path d="M520 155 L680 185 L680 340 L520 310 Z" fill="url(#aSideGr)" stroke="#C8C0B0" stroke-width="1"/>
+        <line x1="520" y1="180" x2="680" y2="207" stroke="#D8D0C0" stroke-width="0.5" opacity="0.4"/>
+        <line x1="520" y1="205" x2="680" y2="228" stroke="#D8D0C0" stroke-width="0.5" opacity="0.4"/>
+        <line x1="520" y1="230" x2="680" y2="249" stroke="#D8D0C0" stroke-width="0.5" opacity="0.4"/>
+        <line x1="520" y1="255" x2="680" y2="270" stroke="#D8D0C0" stroke-width="0.5" opacity="0.4"/>
+        <line x1="520" y1="280" x2="680" y2="291" stroke="#D8D0C0" stroke-width="0.5" opacity="0.4"/>
+        <!-- Side windows (clean blue glass) -->
+        <rect x="555" y="200" width="35" height="30" fill="url(#aWinGlass)" stroke="#B8B0A0" stroke-width="1"/>
+        <line x1="572" y1="200" x2="572" y2="230" stroke="#8AABBF" stroke-width="0.5"/>
+        <line x1="555" y1="215" x2="590" y2="215" stroke="#8AABBF" stroke-width="0.5"/>
+        <rect x="620" y="210" width="35" height="30" fill="url(#aWinGlass)" stroke="#B8B0A0" stroke-width="1"/>
+        <line x1="637" y1="210" x2="637" y2="240" stroke="#8AABBF" stroke-width="0.5"/>
+        <line x1="620" y1="225" x2="655" y2="225" stroke="#8AABBF" stroke-width="0.5"/>
+
+        <!-- Front wall -->
+        <rect x="280" y="155" width="240" height="155" fill="url(#aWallGr)" stroke="#D0C8B8" stroke-width="1"/>
+        <line x1="280" y1="180" x2="520" y2="180" stroke="#E0D8C8" stroke-width="0.5" opacity="0.4"/>
+        <line x1="280" y1="205" x2="520" y2="205" stroke="#E0D8C8" stroke-width="0.5" opacity="0.4"/>
+        <line x1="280" y1="230" x2="520" y2="230" stroke="#E0D8C8" stroke-width="0.5" opacity="0.4"/>
+        <line x1="280" y1="255" x2="520" y2="255" stroke="#E0D8C8" stroke-width="0.5" opacity="0.4"/>
+        <line x1="280" y1="280" x2="520" y2="280" stroke="#E0D8C8" stroke-width="0.5" opacity="0.4"/>
+
+        <!-- Front windows (clean blue glass with white trim) -->
+        <rect x="297" y="183" width="50" height="40" fill="#FFF" stroke="#D0C8B8" stroke-width="1.5" rx="1"/>
+        <rect x="300" y="186" width="44" height="34" fill="url(#aWinGlass)" rx="1"/>
+        <line x1="322" y1="186" x2="322" y2="220" stroke="#8AABBF" stroke-width="0.6"/>
+        <line x1="300" y1="203" x2="344" y2="203" stroke="#8AABBF" stroke-width="0.6"/>
+
+        <rect x="457" y="183" width="50" height="40" fill="#FFF" stroke="#D0C8B8" stroke-width="1.5" rx="1"/>
+        <rect x="460" y="186" width="44" height="34" fill="url(#aWinGlass)" rx="1"/>
+        <line x1="482" y1="186" x2="482" y2="220" stroke="#8AABBF" stroke-width="0.6"/>
+        <line x1="460" y1="203" x2="504" y2="203" stroke="#8AABBF" stroke-width="0.6"/>
+
+        <!-- Front door (elegant dark with sidelights) -->
+        <rect x="373" y="235" width="54" height="75" fill="#2A1A0A" stroke="#1A0A00" stroke-width="1" rx="2"/>
+        <rect x="376" y="240" width="20" height="28" fill="#3A2A18" rx="1"/>
+        <rect x="404" y="240" width="20" height="28" fill="#3A2A18" rx="1"/>
+        <rect x="376" y="272" width="20" height="28" fill="#3A2A18" rx="1"/>
+        <rect x="404" y="272" width="20" height="28" fill="#3A2A18" rx="1"/>
+        <circle cx="421" cy="275" r="2.5" fill="#D4A650"/>
+        <!-- Clean stone step -->
+        <rect x="365" y="310" width="70" height="10" fill="#D0C8B8" stroke="#B8B0A0" stroke-width="0.5" rx="2"/>
+        <rect x="358" y="318" width="84" height="8" fill="#C8C0B0" stroke="#B0A898" stroke-width="0.5" rx="2"/>
+
+        <!-- Roof (clean architectural shingles) -->
+        <path d="M270 155 L400 80 L530 155" fill="url(#aRoofGr2)" stroke="#2A3444" stroke-width="1.2"/>
+        <path d="M530 155 L400 80 L680 125 L680 185" fill="#3D4A5C" stroke="#2A3444" stroke-width="1"/>
+        <!-- Clean shingle lines -->
+        <line x1="278" y1="148" x2="525" y2="148" stroke="#354860" stroke-width="0.4" opacity="0.3"/>
+        <line x1="286" y1="140" x2="520" y2="140" stroke="#354860" stroke-width="0.4" opacity="0.3"/>
+        <line x1="294" y1="132" x2="515" y2="132" stroke="#354860" stroke-width="0.4" opacity="0.3"/>
+        <line x1="302" y1="124" x2="508" y2="124" stroke="#354860" stroke-width="0.4" opacity="0.3"/>
+        <line x1="310" y1="116" x2="500" y2="116" stroke="#354860" stroke-width="0.4" opacity="0.3"/>
+        <!-- Ridge cap -->
+        <line x1="270" y1="155" x2="400" y2="80" stroke="#505F72" stroke-width="2.5"/>
+        <line x1="400" y1="80" x2="530" y2="155" stroke="#505F72" stroke-width="2"/>
+        <!-- Gutters (clean white) -->
+        <line x1="268" y1="156" x2="532" y2="156" stroke="#F0EDE8" stroke-width="3"/>
+        <line x1="530" y1="156" x2="682" y2="186" stroke="#F0EDE8" stroke-width="2.5"/>
+        <!-- Downspout -->
+        <rect x="270" y="156" width="4" height="155" fill="#F0EDE8"/>
+
+        <!-- White PVC privacy fence (left side) -->
+        <rect x="35" y="235" width="8" height="75" fill="#F8F5F0" stroke="#E8E0D5" stroke-width="0.5"/>
+        <rect x="35" y="230" width="8" height="8" fill="#F0EDE5" stroke="#E0D8CC" stroke-width="0.5"/>
+        <rect x="43" y="240" width="35" height="68" fill="#F5F2ED" stroke="#E8E0D5" stroke-width="0.5"/>
+        <rect x="78" y="235" width="8" height="75" fill="#F8F5F0" stroke="#E8E0D5" stroke-width="0.5"/>
+        <rect x="78" y="230" width="8" height="8" fill="#F0EDE5" stroke="#E0D8CC" stroke-width="0.5"/>
+        <rect x="86" y="240" width="35" height="68" fill="#F5F2ED" stroke="#E8E0D5" stroke-width="0.5"/>
+        <rect x="121" y="235" width="8" height="75" fill="#F8F5F0" stroke="#E8E0D5" stroke-width="0.5"/>
+        <rect x="121" y="230" width="8" height="8" fill="#F0EDE5" stroke="#E0D8CC" stroke-width="0.5"/>
+
+        <!-- Mulch beds along fence -->
+        <ellipse cx="90" cy="310" rx="55" ry="18" fill="url(#aMulch)"/>
+
+        <!-- Landscaping shrubs (left bed) -->
+        <ellipse cx="55" cy="290" rx="22" ry="16" fill="#1A6B30"/>
+        <ellipse cx="55" cy="288" rx="18" ry="12" fill="#228B3A"/>
+        <ellipse cx="90" cy="286" rx="25" ry="18" fill="#1E7A34"/>
+        <ellipse cx="90" cy="283" rx="20" ry="14" fill="#28A040"/>
+        <ellipse cx="125" cy="292" rx="20" ry="15" fill="#1A6B30"/>
+        <ellipse cx="125" cy="289" rx="16" ry="11" fill="#228B3A"/>
+
+        <!-- Colorful flower clusters (left bed) -->
+        <circle cx="48" cy="298" r="4" fill="#EF4444"/><circle cx="56" cy="296" r="3.5" fill="#F59E0B"/>
+        <circle cx="42" cy="302" r="3" fill="#EC4899"/><circle cx="62" cy="300" r="3" fill="#A855F7"/>
+        <circle cx="85" cy="296" r="4" fill="#F59E0B"/><circle cx="95" cy="294" r="3.5" fill="#EF4444"/>
+        <circle cx="78" cy="300" r="3" fill="#EC4899"/><circle cx="102" cy="298" r="3" fill="#A855F7"/>
+        <circle cx="120" cy="300" r="3.5" fill="#EF4444"/><circle cx="130" cy="298" r="3" fill="#F59E0B"/>
+
+        <!-- Trees -->
+        <!-- Left tree -->
+        <rect x="175" y="270" width="6" height="50" fill="#6B4A2A"/>
+        <ellipse cx="178" cy="258" rx="28" ry="22" fill="#1A6B30"/>
+        <ellipse cx="178" cy="254" rx="22" ry="16" fill="#228B3A"/>
+        <ellipse cx="185" cy="248" rx="15" ry="12" fill="#2D9A44"/>
+        <!-- Tree shadow -->
+        <ellipse cx="195" cy="320" rx="30" ry="8" fill="#1A5A28" opacity="0.2"/>
+
+        <!-- Right tree (by house corner) -->
+        <rect x="695" y="275" width="6" height="45" fill="#6B4A2A"/>
+        <ellipse cx="698" cy="263" rx="30" ry="24" fill="#1A6B30"/>
+        <ellipse cx="698" cy="259" rx="24" ry="18" fill="#228B3A"/>
+        <ellipse cx="703" cy="253" rx="16" ry="13" fill="#2D9A44"/>
+
+        <!-- Foundation shrubs along house front -->
+        <ellipse cx="310" cy="314" rx="18" ry="12" fill="#1E7A34"/>
+        <ellipse cx="310" cy="311" rx="14" ry="9" fill="#28A040"/>
+        <ellipse cx="350" cy="316" rx="15" ry="10" fill="#1A6B30"/>
+        <ellipse cx="350" cy="313" rx="12" ry="8" fill="#228B3A"/>
+        <ellipse cx="450" cy="316" rx="15" ry="10" fill="#1A6B30"/>
+        <ellipse cx="450" cy="313" rx="12" ry="8" fill="#228B3A"/>
+        <ellipse cx="490" cy="314" rx="18" ry="12" fill="#1E7A34"/>
+        <ellipse cx="490" cy="311" rx="14" ry="9" fill="#28A040"/>
+        <!-- Foundation flowers -->
+        <circle cx="330" cy="318" r="3" fill="#EF4444"/>
+        <circle cx="338" cy="316" r="2.5" fill="#F59E0B"/>
+        <circle cx="470" cy="318" r="3" fill="#EC4899"/>
+        <circle cx="478" cy="316" r="2.5" fill="#A855F7"/>
+
+        <!-- Right side landscaping -->
+        <ellipse cx="720" cy="310" rx="40" ry="14" fill="url(#aMulch)"/>
+        <ellipse cx="700" cy="295" rx="20" ry="15" fill="#1E7A34"/>
+        <ellipse cx="700" cy="292" rx="16" ry="11" fill="#228B3A"/>
+        <ellipse cx="735" cy="298" rx="18" ry="13" fill="#1A6B30"/>
+        <ellipse cx="735" cy="295" rx="14" ry="10" fill="#228B3A"/>
+        <circle cx="710" cy="302" r="3.5" fill="#EF4444"/>
+        <circle cx="718" cy="300" r="3" fill="#F59E0B"/>
+        <circle cx="740" cy="304" r="3" fill="#EC4899"/>
+        <circle cx="748" cy="302" r="2.5" fill="#A855F7"/>
+
+        <!-- Paver walkway to front door -->
+        <rect x="380" y="328" width="40" height="14" fill="#C8B898" stroke="#B0A080" stroke-width="0.5" rx="1"/>
+        <rect x="378" y="345" width="44" height="14" fill="#D0C0A0" stroke="#B0A080" stroke-width="0.5" rx="1"/>
+        <rect x="380" y="362" width="40" height="14" fill="#C8B898" stroke="#B0A080" stroke-width="0.5" rx="1"/>
+        <rect x="378" y="379" width="44" height="14" fill="#D0C0A0" stroke="#B0A080" stroke-width="0.5" rx="1"/>
+        <rect x="380" y="396" width="40" height="14" fill="#C8B898" stroke="#B0A080" stroke-width="0.5" rx="1"/>
+        <rect x="378" y="413" width="44" height="14" fill="#D0C0A0" stroke="#B0A080" stroke-width="0.5" rx="1"/>
+
+        <!-- Landscape lighting (warm glow) -->
+        <circle cx="295" cy="318" r="3" fill="#FFE87C" opacity="0.6"/>
+        <circle cx="295" cy="318" r="8" fill="#FFE87C" opacity="0.12"/>
+        <circle cx="505" cy="318" r="3" fill="#FFE87C" opacity="0.6"/>
+        <circle cx="505" cy="318" r="8" fill="#FFE87C" opacity="0.12"/>
+        <circle cx="375" cy="400" r="2.5" fill="#FFE87C" opacity="0.5"/>
+        <circle cx="375" cy="400" r="7" fill="#FFE87C" opacity="0.1"/>
+        <circle cx="425" cy="400" r="2.5" fill="#FFE87C" opacity="0.5"/>
+        <circle cx="425" cy="400" r="7" fill="#FFE87C" opacity="0.1"/>
+
+        <!-- Clean edging line -->
+        <line x1="270" y1="310" x2="520" y2="310" stroke="#1A5A28" stroke-width="1.5" opacity="0.4"/>
       </svg>
       <div class="ba-handle" id="baHandle"></div>
-      <div class="ba-label ba-label-before">Before</div>
-      <div class="ba-label ba-label-after">After</div>
+      <div class="ba-label ba-label-before">BEFORE</div>
+      <div class="ba-label ba-label-after">AFTER</div>
     </div>
   </div>
 </section>
@@ -732,11 +1006,15 @@ body::before {
   var baContainer=document.getElementById('baContainer'), baHandle=document.getElementById('baHandle');
   if(baContainer&&baHandle){
     var dragging=false;
+    var bLabel=baContainer.querySelector('.ba-label-before'), aLabel=baContainer.querySelector('.ba-label-after');
     function setSliderPos(x){
       var rect=baContainer.getBoundingClientRect();
       var pct=clamp((x-rect.left)/rect.width,0,1);
       baHandle.style.left=(pct*100)+'%';
-      baContainer.querySelector('.ba-after').style.clipPath='inset(0 '+(100-pct*100)+'% 0 0)';
+      baContainer.querySelector('.ba-after').style.clipPath='inset(0 0 0 '+(pct*100)+'%)';
+      if(pct>0.51){bLabel.classList.add('active');aLabel.classList.remove('active');}
+      else if(pct<0.49){aLabel.classList.add('active');bLabel.classList.remove('active');}
+      else{bLabel.classList.remove('active');aLabel.classList.remove('active');}
     }
     baHandle.addEventListener('mousedown',function(){dragging=true;});
     baContainer.addEventListener('mousedown',function(e){dragging=true;setSliderPos(e.clientX);});
