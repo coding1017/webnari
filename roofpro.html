@@ -230,13 +230,16 @@ body::before {
 .ba-head { text-align: center; margin-bottom: 48px; }
 .ba-container { position: relative; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border); aspect-ratio: 16/9; background: var(--surface); cursor: col-resize; user-select: none; }
 .ba-layer { position: absolute; inset: 0; }
-.ba-before { z-index: 1; }
-.ba-after { z-index: 2; clip-path: inset(0 50% 0 0); }
+.ba-before { z-index: 2; clip-path: inset(0 50% 0 0); }
+.ba-after { z-index: 1; }
 .ba-handle { position: absolute; top: 0; bottom: 0; left: 50%; z-index: 3; width: 4px; background: var(--white); transform: translateX(-50%); cursor: col-resize; }
 .ba-handle::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 40px; height: 40px; border-radius: 50%; background: var(--white); box-shadow: 0 2px 12px rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; }
-.ba-label { position: absolute; bottom: 12px; padding: 4px 12px; background: rgba(0,0,0,0.6); border-radius: 12px; font-family: var(--font-head); font-size: 10px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--white); z-index: 4; }
-.ba-label-before { left: 12px; }
-.ba-label-after { right: 12px; }
+.ba-label { position: absolute; top: 14px; padding: 8px 24px; border-radius: 8px; font-family: var(--font-head); font-size: 13px; font-weight: 800; letter-spacing: 0.14em; text-transform: uppercase; color: var(--white); z-index: 4; transition: all 0.3s ease; opacity: 0.5; }
+.ba-label.active { opacity: 1; }
+.ba-label-before { left: 14px; background: rgba(230,57,70,0.85); }
+.ba-label-before.active { box-shadow: 0 0 20px rgba(230,57,70,0.6), 0 0 40px rgba(230,57,70,0.3); }
+.ba-label-after { right: 14px; background: rgba(74,222,128,0.85); color: #000; }
+.ba-label-after.active { box-shadow: 0 0 20px rgba(74,222,128,0.6), 0 0 40px rgba(74,222,128,0.3); }
 
 /* ─── CALCULATOR ──────────────────────────────────────────────────────────── */
 .calculator { padding: 100px 0; }
@@ -585,7 +588,7 @@ body::before {
             <feGaussianBlur in="SourceGraphic" stdDeviation="2"/>
           </filter>
           <!-- Clip paths for NEW roof geometry -->
-          <clipPath id="bRoofClipF"><path d="M140 198 L345 90 L550 198 Z"/></clipPath>
+          <clipPath id="bRoofClipF"><path d="M140 218 L345 90 L550 198 Z"/></clipPath>
           <clipPath id="bRoofClipS"><path d="M535 195 L345 90 L600 90 L725 155 Z"/></clipPath>
           <!-- Cross gable clip -->
           <clipPath id="bCrossGableClip"><path d="M620 155 L670 105 L725 135 Z"/></clipPath>
@@ -702,7 +705,7 @@ body::before {
 
         <!-- ════════ FRONT ROOF (damaged) ════════ -->
         <!-- Front gable: triangle from left eave to peak to right eave -->
-        <path d="M140 198 L345 90 L550 198 Z" fill="url(#bRoofFront)" stroke="#6a5838" stroke-width="1.2"/>
+        <path d="M140 218 L345 90 L550 198 Z" fill="url(#bRoofFront)" stroke="#6a5838" stroke-width="1.2"/>
         <!-- Sagging ridge feel -->
         <path d="M140 198 Q250 92 345 86 Q440 92 550 198" fill="none" stroke="#5a4828" stroke-width="0.5" opacity="0.3"/>
         <!-- Shingle rows on front face -->
@@ -905,7 +908,7 @@ body::before {
         <path d="M362 418 L368 423" fill="none" stroke="#1a1808" stroke-width="0.8" opacity="0.4"/>
 
         <!-- Gable trim (damaged) -->
-        <path d="M155 198 L345 90 L535 198" fill="none" stroke="#7a6a50" stroke-width="2.5" opacity="0.6"/>
+        <path d="M155 218 L345 90 L535 198" fill="none" stroke="#7a6a50" stroke-width="2.5" opacity="0.6"/>
         <!-- Hip edge line -->
         <line x1="600" y1="90" x2="725" y2="155" stroke="#7a6a50" stroke-width="1.8" opacity="0.5"/>
         <!-- Back eave line -->
@@ -982,7 +985,7 @@ body::before {
             <feGaussianBlur in="SourceGraphic" stdDeviation="6"/>
           </filter>
           <!-- Clip paths matching new roof geometry -->
-          <clipPath id="aRoofClipF"><path d="M140 198 L345 90 L550 198 Z"/></clipPath>
+          <clipPath id="aRoofClipF"><path d="M140 218 L345 90 L550 198 Z"/></clipPath>
           <clipPath id="aRoofClipS"><path d="M535 195 L345 90 L600 90 L725 155 Z"/></clipPath>
           <clipPath id="aCrossGableClip"><path d="M620 155 L670 105 L725 135 Z"/></clipPath>
         </defs>
@@ -1066,7 +1069,7 @@ body::before {
         </g>
 
         <!-- ════════ FRONT ROOF (new architectural shingles) ════════ -->
-        <path d="M140 198 L345 90 L550 198 Z" fill="url(#aRoofFront)" stroke="#5A6878" stroke-width="1.2"/>
+        <path d="M140 218 L345 90 L550 198 Z" fill="url(#aRoofFront)" stroke="#5A6878" stroke-width="1.2"/>
         <g clip-path="url(#aRoofClipF)">
           <line x1="145" y1="196" x2="545" y2="196" stroke="#4E5C6C" stroke-width="0.6" opacity="0.5"/>
           <line x1="153" y1="189" x2="537" y2="189" stroke="#445060" stroke-width="0.6" opacity="0.45"/>
@@ -1119,7 +1122,7 @@ body::before {
         <line x1="345" y1="90" x2="600" y2="90" stroke="#8A9AB0" stroke-width="3"/>
         <line x1="345" y1="90" x2="600" y2="90" stroke="#A0B8D0" stroke-width="1.2" opacity="0.5"/>
         <!-- Gable trim -->
-        <path d="M155 198 L345 90 L535 198" fill="none" stroke="#5A6878" stroke-width="2.5"/>
+        <path d="M155 218 L345 90 L535 198" fill="none" stroke="#5A6878" stroke-width="2.5"/>
         <!-- Hip edge line (ridge end to back corner) -->
         <line x1="600" y1="90" x2="725" y2="155" stroke="#5A6878" stroke-width="2"/>
         <!-- Back eave line -->
@@ -1251,7 +1254,7 @@ body::before {
         <line x1="690" y1="293" x2="713" y2="289" stroke="#8a9aaa" stroke-width="0.5"/>
 
         <!-- ════════ CLEAN GUTTERS + DOWNSPOUT ════════ -->
-        <line x1="138" y1="198" x2="538" y2="198" stroke="#F0EDE8" stroke-width="5"/>
+        <line x1="138" y1="218" x2="538" y2="198" stroke="#F0EDE8" stroke-width="5"/>
         <line x1="138" y1="200" x2="538" y2="200" stroke="#C8C0B5" stroke-width="1.5" opacity="0.5"/>
         <line x1="200" y1="195" x2="200" y2="199" stroke="#B8B0A8" stroke-width="1.2"/>
         <line x1="280" y1="195" x2="280" y2="199" stroke="#B8B0A8" stroke-width="1.2"/>
@@ -1318,8 +1321,8 @@ body::before {
       <!-- SLIDER HANDLE -->
       <div class="ba-handle" id="baHandle"></div>
       <!-- LABELS -->
-      <div class="ba-label ba-label-before" style="background:rgba(230,57,70,0.9);backdrop-filter:blur(8px);padding:8px 20px;border-radius:6px;font-size:12px;">BEFORE</div>
-      <div class="ba-label ba-label-after" style="background:rgba(74,222,128,0.9);color:#000;backdrop-filter:blur(8px);padding:8px 20px;border-radius:6px;font-size:12px;">AFTER</div>
+      <div class="ba-label ba-label-before" id="baLabelBefore">BEFORE</div>
+      <div class="ba-label ba-label-after active" id="baLabelAfter">AFTER</div>
     </div>
   </div>
 </section>
@@ -1496,11 +1499,21 @@ body::before {
   var baContainer=document.getElementById('baContainer'), baHandle=document.getElementById('baHandle');
   if(baContainer&&baHandle){
     var dragging=false;
+    var baLabelBefore=document.getElementById('baLabelBefore');
+    var baLabelAfter=document.getElementById('baLabelAfter');
     function setSliderPos(x){
       var rect=baContainer.getBoundingClientRect();
       var pct=clamp((x-rect.left)/rect.width,0,1);
       baHandle.style.left=(pct*100)+'%';
-      baContainer.querySelector('.ba-after').style.clipPath='inset(0 '+(100-pct*100)+'% 0 0)';
+      baContainer.querySelector('.ba-before').style.clipPath='inset(0 '+(100-pct*100)+'% 0 0)';
+      // Glow the active label based on which side has more visibility
+      if(pct>0.51){
+        baLabelBefore.classList.add('active');
+        baLabelAfter.classList.remove('active');
+      } else {
+        baLabelBefore.classList.remove('active');
+        baLabelAfter.classList.add('active');
+      }
     }
     baHandle.addEventListener('mousedown',function(){dragging=true;});
     baContainer.addEventListener('mousedown',function(e){dragging=true;setSliderPos(e.clientX);});
