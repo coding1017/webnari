@@ -153,7 +153,7 @@ body::before {
 .seq-bg { position: absolute; inset: 0; z-index: 1; transition: background 0.1s; }
 .scene-glow { position: absolute; inset: 0; z-index: 2; background: radial-gradient(ellipse 60% 60% at 50% 60%, rgba(74,222,128,0.1), transparent 70%); opacity: 0; }
 .scene-container { position: absolute; inset: 0; z-index: 3; display: flex; align-items: center; justify-content: center; }
-.scene-svg { width: 100%; max-width: 1200px; height: auto; max-height: calc(100vh - 68px); }
+.scene-svg { width: 100%; height: auto; max-height: calc(100vh - 68px); }
 .scene-energize { position: absolute; inset: 0; z-index: 4; background: linear-gradient(90deg, transparent, rgba(74,222,128,0.08), rgba(245,158,11,0.06), transparent); clip-path: inset(0 100% 0 0); pointer-events: none; }
 
 .scene-hud { position: absolute; z-index: 5; pointer-events: none; opacity: 0; }
@@ -442,7 +442,7 @@ body::before {
     <div class="seq-bg" id="seqBg"></div>
     <div class="scene-glow" id="sceneGlow"></div>
     <div class="scene-container" id="sceneContainer">
-      <svg id="sceneSvg" class="scene-svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid meet"></svg>
+      <svg id="sceneSvg" class="scene-svg" viewBox="0 0 1050 600" preserveAspectRatio="xMidYMid meet"></svg>
     </div>
     <div class="scene-energize" id="sceneEnergize"></div>
     <div class="scene-hud" id="sceneHud">
@@ -802,7 +802,7 @@ body::before {
 
     // ═══ BUILD BACKYARD SVG (Bird's-eye Realistic View) ═══
     // Yard boundaries: wider, no wasted black space
-    var YT=70, YB=560, YL=20, YR=780, YW=YR-YL, YH=YB-YT;
+    var YT=70, YB=560, YL=20, YR=1030, YW=YR-YL, YH=YB-YT;
     // Lawn area inset from beds: 30px margins
     var LT=YT+50, LB=YB-80, LL=YL+50, LR=YR-50;
 
@@ -814,15 +814,15 @@ body::before {
     var gSoil=svgEl('g',{opacity:0});
     gSoil.appendChild(svgEl('rect',{x:YL,y:YT,width:YW,height:YH,fill:'#8B7355',rx:4}));
     // Dead/bare patches
-    var patches=[{x:200,y:200,rx:60,ry:25},{x:450,y:300,rx:50,ry:20},{x:350,y:160,rx:40,ry:18},{x:550,y:400,rx:55,ry:22},{x:150,y:380,rx:45,ry:16},{x:600,y:180,rx:35,ry:20}];
+    var patches=[{x:200,y:200,rx:60,ry:25},{x:525,y:300,rx:50,ry:20},{x:450,y:160,rx:40,ry:18},{x:750,y:400,rx:55,ry:22},{x:150,y:380,rx:45,ry:16},{x:850,y:180,rx:35,ry:20}];
     patches.forEach(function(pt){gSoil.appendChild(svgEl('ellipse',{cx:pt.x,cy:pt.y,rx:pt.rx,ry:pt.ry,fill:'#6B5B3A',opacity:0.7}));});
     // Dry yellow spots
-    [{x:300,y:250,r:20},{x:500,y:350,r:18},{x:180,y:300,r:15}].forEach(function(d){gSoil.appendChild(svgEl('circle',{cx:d.x,cy:d.y,r:d.r,fill:'#A09060',opacity:0.5}));});
+    [{x:350,y:250,r:20},{x:700,y:350,r:18},{x:180,y:300,r:15}].forEach(function(d){gSoil.appendChild(svgEl('circle',{cx:d.x,cy:d.y,r:d.r,fill:'#A09060',opacity:0.5}));});
     svg.appendChild(gSoil);
 
     // 2. WEEDS & OVERGROWTH
     var gWeeds=svgEl('g',{opacity:0});
-    var weedPositions=[100,180,260,340,420,500,580,660,150,300,450,600,220,380,520];
+    var weedPositions=[100,180,260,400,500,650,780,900,150,350,525,800,280,460,700];
     weedPositions.forEach(function(wx){
       var wy=YT+40+Math.random()*360;
       // Scraggly weed paths
@@ -861,7 +861,7 @@ body::before {
     // 5. IRRIGATION TRENCHES
     var gTrenches=svgEl('g',{opacity:0});
     // Main supply line (vertical center)
-    var trenchMain=svgEl('line',{x1:400,y1:YB,x2:400,y2:YT+30,stroke:'#5A4A32','stroke-width':3});
+    var trenchMain=svgEl('line',{x1:525,y1:YB,x2:525,y2:YT+30,stroke:'#5A4A32','stroke-width':3});
     gTrenches.appendChild(trenchMain);
     var tmLen=YB-(YT+30);// Manual length for vertical line
     trenchMain.style.strokeDasharray=tmLen;trenchMain.style.strokeDashoffset=tmLen;
@@ -878,14 +878,14 @@ body::before {
 
     // 6. IRRIGATION PIPES
     var gPipes=svgEl('g',{opacity:0});
-    gPipes.appendChild(svgEl('line',{x1:400,y1:YB-10,x2:400,y2:YT+40,stroke:'#607890','stroke-width':2.5}));
+    gPipes.appendChild(svgEl('line',{x1:525,y1:YB-10,x2:525,y2:YT+40,stroke:'#607890','stroke-width':2.5}));
     [150,250,350,450].forEach(function(py){
       gPipes.appendChild(svgEl('line',{x1:LL+20,y1:py,x2:LR-20,y2:py,stroke:'#607890','stroke-width':2}));
     });
     // Sprinkler heads at intersections
     var sprinklerData=[];
     [150,250,350,450].forEach(function(sy){
-      [LL+40,300,400,500,LR-40].forEach(function(sx){
+      [LL+40,300,525,750,LR-40].forEach(function(sx){
         var sh=svgEl('circle',{cx:sx,cy:sy,r:4,fill:'#556B7A',stroke:'#405060','stroke-width':0.8,opacity:0});
         gPipes.appendChild(sh);
         sprinklerData.push({el:sh,x:sx,y:sy});
@@ -991,7 +991,7 @@ body::before {
     var shrubData=[
       // Back fence shrubs (large, overlapping for dense hedge look)
       {x:YL+60,y:YT+20,rx:40,ry:28},{x:YL+140,y:YT+16,rx:44,ry:30},{x:YL+230,y:YT+18,rx:38,ry:26},
-      {x:400,y:YT+16,rx:42,ry:28},{x:480,y:YT+20,rx:40,ry:27},{x:560,y:YT+14,rx:46,ry:30},
+      {x:475,y:YT+16,rx:42,ry:28},{x:580,y:YT+20,rx:40,ry:27},{x:700,y:YT+14,rx:46,ry:30},
       {x:YR-100,y:YT+18,rx:38,ry:26},{x:YR-40,y:YT+16,rx:42,ry:28},
       // Left side shrubs (positioned at mulch bed center)
       {x:YL+26,y:YT+90,rx:26,ry:32},{x:YL+28,y:YT+155,rx:24,ry:30},{x:YL+24,y:YT+220,rx:26,ry:34},
@@ -1037,17 +1037,17 @@ body::before {
 
     // STAGE A: Brown bed areas (laid out first with pavers)
     var gBedAreas=svgEl('g',{opacity:0});
-    var islandCx=480,islandCy=300,islandR=45;
+    var islandCx=605,islandCy=300,islandR=45;
     // Circular garden island mulch
     gBedAreas.appendChild(svgEl('circle',{cx:islandCx,cy:islandCy,r:islandR+4,fill:'#3A2A1A'}));
     gBedAreas.appendChild(svgEl('circle',{cx:islandCx,cy:islandCy,r:islandR,fill:'#5A3A1A'}));
     // Kidney-shaped bed — moved higher-left, thicker border
     gBedAreas.appendChild(svgEl('path',{d:'M140 280 Q165 250 210 260 Q245 270 235 300 Q225 330 185 320 Q148 310 140 280Z',fill:'#5A3A1A',stroke:'#3A2A1A','stroke-width':3.5}));
     // Retaining wall structure
-    gBedAreas.appendChild(svgEl('path',{d:'M540 180 Q580 170 620 185 Q640 195 630 210 Q620 225 580 220 Q540 210 540 180Z',fill:'#7A6A5A',stroke:'#5A4A3A','stroke-width':1.5}));
-    gBedAreas.appendChild(svgEl('path',{d:'M545 183 Q580 175 618 188 Q635 196 627 208 Q618 220 578 216 Q545 208 545 183Z',fill:'#5A3A1A'}));
+    gBedAreas.appendChild(svgEl('path',{d:'M790 180 Q830 170 870 185 Q890 195 880 210 Q870 225 830 220 Q790 210 790 180Z',fill:'#7A6A5A',stroke:'#5A4A3A','stroke-width':1.5}));
+    gBedAreas.appendChild(svgEl('path',{d:'M795 183 Q830 175 868 188 Q885 196 877 208 Q868 220 828 216 Q795 208 795 183Z',fill:'#5A3A1A'}));
     // Boulder bases
-    [{x:580,y:380,rx:18,ry:12},{x:595,y:390,rx:12,ry:8},{x:570,y:392,rx:10,ry:7}].forEach(function(bld){
+    [{x:830,y:380,rx:18,ry:12},{x:845,y:390,rx:12,ry:8},{x:820,y:392,rx:10,ry:7}].forEach(function(bld){
       gBedAreas.appendChild(svgEl('ellipse',{cx:bld.x+2,cy:bld.y+bld.ry*0.6,rx:bld.rx*0.9,ry:bld.ry*0.4,fill:'#0A0F08',opacity:0.12}));
       gBedAreas.appendChild(svgEl('ellipse',{cx:bld.x,cy:bld.y,rx:bld.rx,ry:bld.ry,fill:'#8A8078',stroke:'#706860','stroke-width':0.5}));
       gBedAreas.appendChild(svgEl('ellipse',{cx:bld.x-bld.rx*0.2,cy:bld.y-bld.ry*0.25,rx:bld.rx*0.5,ry:bld.ry*0.4,fill:'#9A908A',opacity:0.4}));
@@ -1056,7 +1056,7 @@ body::before {
 
     // FOUNTAIN — now on the RIGHT side (swapped with firepit), moved down/right for spacing
     var gFountain=svgEl('g',{opacity:0});
-    var bbx=600,bby=350;
+    var bbx=850,bby=350;
     // Ground shadow
     gFountain.appendChild(svgEl('ellipse',{cx:bbx+4,cy:bby+42,rx:52,ry:16,fill:'#0A0F08',opacity:0.15}));
     // Bottom basin
@@ -1184,7 +1184,7 @@ body::before {
       gFeaturePlants.push(gGrass2);
     });
     // Raised bed plants (each one separate)
-    [{x:560,y:195,r:12},{x:585,y:192,r:14},{x:608,y:198,r:11}].forEach(function(rp){
+    [{x:810,y:195,r:12},{x:835,y:192,r:14},{x:858,y:198,r:11}].forEach(function(rp){
       var gRaisedPlant=svgEl('g',{opacity:0});
       gRaisedPlant.appendChild(svgEl('circle',{cx:rp.x,cy:rp.y,r:rp.r,fill:'#1A6B30'}));
       gRaisedPlant.appendChild(svgEl('circle',{cx:rp.x-2,cy:rp.y-2,r:rp.r*0.6,fill:'#228B3A',opacity:0.5}));
@@ -1241,7 +1241,7 @@ body::before {
     var flowerList=[];
     // Back bed — dense flower border (LARGER size 6-10)
     for(var bfi=0;bfi<28;bfi++){
-      var bfx=95+bfi*23+Math.random()*8-4;
+      var bfx=95+bfi*32+Math.random()*8-4;
       var bfy=88+Math.random()*18;
       var bfs=6+Math.random()*4;
       var bfc=flowerColors[bfi%flowerColors.length];
@@ -1298,7 +1298,7 @@ body::before {
     var paverColors=['#C4A882','#B89A72','#D4B892','#C8A478'];
     var paverList=[];
     for(var pr=0;pr<2;pr++){
-      for(var pc=0;pc<15;pc++){
+      for(var pc=0;pc<28;pc++){
         var pvx=YL+20+pc*(paverW+paverGap)+((pr%2)*20);
         var pvy=patioY+pr*(paverH+paverGap);
         if(pvx+paverW<YR-10){
@@ -1314,7 +1314,7 @@ body::before {
     var gStones=svgEl('g',{opacity:0});
     var stoneList=[];
     for(var sti=0;sti<6;sti++){
-      var stx=380+Math.sin(sti*0.5)*15;
+      var stx=505+Math.sin(sti*0.5)*15;
       var sty=patioY-20-sti*40;
       var st=svgEl('ellipse',{cx:stx,cy:sty,rx:16,ry:10,fill:'#C4A882',stroke:'#A88A62','stroke-width':0.5,opacity:0});
       gStones.appendChild(st);
@@ -1336,7 +1336,7 @@ body::before {
       lightPositions.push(light);
     });
     // Along back bed edge
-    [150,300,500,650].forEach(function(lx){
+    [150,350,700,900].forEach(function(lx){
       var light=svgEl('circle',{cx:lx,cy:LT-8,r:3,fill:'#F59E0B',opacity:0});
       gLights.appendChild(light);
       lightPositions.push(light);
@@ -1381,7 +1381,7 @@ body::before {
       // SVG sizing — fill viewport, cap at 95% height
       var vh=stickyEl.offsetHeight;
       var vw=stickyEl.offsetWidth;
-      var svgAspect=800/600;
+      var svgAspect=1050/600;
       var svgW=vw;
       var svgH=svgW/svgAspect;
       if(svgH>vh*0.95){svgH=vh*0.95;svgW=svgH*svgAspect;}
