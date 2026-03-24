@@ -1359,21 +1359,38 @@ body::before {
     });
     svg.appendChild(gStones);
 
-    // 14b. FLOWERS ALONG STEPPING STONES (both sides, bigger, detailed)
+    // 14b. FLOWERS ALONG STEPPING STONES (both sides, perpendicular to path direction)
     var gPathFlowers=svgEl('g',{opacity:0});
     var pathFlowerList=[];
     var pfColors=['#FF6B8A','#FFB347','#DDA0DD','#FF69B4','#E066FF','#FF4500','#FF1493','#FFD700','#DA70D6','#FF7F50','#9370DB','#F08080'];
     var pfCenterColors=['#FFE066','#FFF5CC','#FFFFFF','#FFD700'];
-    stoneList.forEach(function(s,i){
-      var scx=parseFloat(s.getAttribute('cx'));
-      var scy=parseFloat(s.getAttribute('cy'));
-      // Right side flowers
+    // Build position array from stone elements
+    var stonePosArr=[];
+    stoneList.forEach(function(s){
+      stonePosArr.push({x:parseFloat(s.getAttribute('cx')),y:parseFloat(s.getAttribute('cy'))});
+    });
+    stonePosArr.forEach(function(sp,i){
+      // Calculate perpendicular direction based on path tangent
+      var dx=0, dy=-1;// Default: path goes straight up
+      if(i<stonePosArr.length-1){
+        dx=stonePosArr[i+1].x-sp.x;
+        dy=stonePosArr[i+1].y-sp.y;
+      } else if(i>0){
+        dx=sp.x-stonePosArr[i-1].x;
+        dy=sp.y-stonePosArr[i-1].y;
+      }
+      // Normalize
+      var len=Math.sqrt(dx*dx+dy*dy)||1;
+      dx/=len; dy/=len;
+      // Perpendicular (rotate 90 degrees): right=(-dy, dx), left=(dy, -dx)
+      var perpRx=-dy, perpRy=dx;
+      // Place flowers on right side (perpendicular out)
       for(var pfi=0;pfi<3;pfi++){
-        var rfx=scx+28+pfi*14+Math.random()*6;
-        var rfy=scy-6+Math.random()*12;
+        var dist=28+pfi*14+Math.random()*6;
+        var rfx=sp.x+perpRx*dist;
+        var rfy=sp.y+perpRy*dist-3+Math.random()*6;
         var rfr=5+Math.random()*3;
         var rfCol=pfColors[(i*3+pfi)%pfColors.length];
-        // Petals (5 around center)
         for(var pp=0;pp<5;pp++){
           var pa=pp*Math.PI*2/5;
           var ppx=rfx+Math.cos(pa)*rfr*0.6;
@@ -1382,14 +1399,14 @@ body::before {
           gPathFlowers.appendChild(petal);
           pathFlowerList.push(petal);
         }
-        // Center
         gPathFlowers.appendChild(svgEl('circle',{cx:rfx,cy:rfy,r:rfr*0.35,fill:pfCenterColors[pfi%4]}));
         pathFlowerList.push(gPathFlowers.lastChild);
       }
-      // Left side flowers
+      // Place flowers on left side (opposite perpendicular)
       for(var pfi2=0;pfi2<3;pfi2++){
-        var lfx=scx-28-pfi2*14-Math.random()*6;
-        var lfy=scy-6+Math.random()*12;
+        var dist2=28+pfi2*14+Math.random()*6;
+        var lfx=sp.x-perpRx*dist2;
+        var lfy=sp.y-perpRy*dist2-3+Math.random()*6;
         var lfr=5+Math.random()*3;
         var lfCol=pfColors[(i*3+pfi2+6)%pfColors.length];
         for(var pp2=0;pp2<5;pp2++){
