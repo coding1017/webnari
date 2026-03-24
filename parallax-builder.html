@@ -105,6 +105,123 @@ a { color: inherit; text-decoration: none; }
 .panel-left::-webkit-scrollbar-track { background: transparent; }
 .panel-left::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
 
+/* ── HISTORY PANEL ── */
+.history-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-family: var(--font);
+  transition: all 0.15s;
+}
+.history-toggle:hover { color: var(--text); border-color: var(--border2); }
+.history-toggle.open { color: var(--indigo); border-color: var(--indigo-border); }
+.history-count {
+  margin-left: auto;
+  background: var(--surface2);
+  color: var(--muted);
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 10px;
+  min-width: 20px;
+  text-align: center;
+}
+.history-toggle.open .history-count { background: var(--indigo-bg); color: var(--indigo); }
+.history-panel {
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+}
+.history-panel.open { display: flex; }
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+  max-height: 240px;
+  padding-right: 4px;
+}
+.history-list::-webkit-scrollbar { width: 3px; }
+.history-list::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+.history-empty {
+  padding: 16px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--muted);
+}
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.history-item:hover { border-color: var(--indigo-border); background: var(--surface3); }
+.history-item-color {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.history-item-info { flex: 1; min-width: 0; }
+.history-item-name {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.history-item-meta {
+  font-size: 10px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.history-item-actions {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.history-btn {
+  padding: 4px 6px;
+  font-size: 9px;
+  font-weight: 700;
+  color: var(--muted);
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: all 0.15s;
+}
+.history-btn:hover { color: var(--indigo); border-color: var(--indigo); }
+.history-btn.del:hover { color: var(--red); border-color: var(--red); }
+.btn-clear-history {
+  padding: 6px 12px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--font);
+  text-align: center;
+}
+.btn-clear-history:hover { color: var(--red); }
+
 /* ── INFO TOOLTIPS ── */
 .info-tip {
   display: inline-flex;
@@ -734,6 +851,18 @@ option { background: var(--surface2); color: var(--white); }
   <!-- LEFT PANEL: Input Form -->
   <div class="panel-left">
 
+    <!-- History -->
+    <button class="history-toggle" id="historyToggle">
+      <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M8 3v5l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="8" r="6.5" stroke="currentColor" stroke-width="1.5"/></svg>
+      Recent Generations <span class="history-count" id="historyCount">0</span>
+    </button>
+    <div class="history-panel" id="historyPanel">
+      <div class="history-list" id="historyList">
+        <div class="history-empty">No generations yet</div>
+      </div>
+      <button class="btn-clear-history" id="btnClearHistory">Clear All History</button>
+    </div>
+
     <!-- Trade Name -->
     <div class="field">
       <label>Trade / Brand Name<span class="info-tip">i<span class="tip-text">The brand name that appears in the parallax intro and glow finale. Examples: LockPro, SushiRoll, AutoPro.</span></span></label>
@@ -1019,6 +1148,101 @@ Theme: Lock mechanism being assembled
   var charCount = 0;
   var abortController = null;
 
+  // ═══ HISTORY (localStorage) ═══
+  var HISTORY_KEY = 'parallax-builder-history';
+  var MAX_HISTORY = 20;
+
+  function getHistory() {
+    try {
+      return JSON.parse(localStorage.getItem(HISTORY_KEY) || '[]');
+    } catch(e) { return []; }
+  }
+
+  function saveToHistory(name, accent, style, code, tokens, time) {
+    var history = getHistory();
+    history.unshift({
+      id: Date.now(),
+      name: name,
+      accent: accent,
+      style: style,
+      code: code,
+      tokens: tokens,
+      time: time,
+      date: new Date().toISOString()
+    });
+    if (history.length > MAX_HISTORY) history = history.slice(0, MAX_HISTORY);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    renderHistory();
+  }
+
+  function deleteFromHistory(id) {
+    var history = getHistory().filter(function(h) { return h.id !== id; });
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history));
+    renderHistory();
+  }
+
+  function clearHistory() {
+    localStorage.removeItem(HISTORY_KEY);
+    renderHistory();
+  }
+
+  function loadFromHistory(id) {
+    var history = getHistory();
+    var item = null;
+    for (var i = 0; i < history.length; i++) {
+      if (history[i].id === id) { item = history[i]; break; }
+    }
+    if (!item) return;
+    fullCode = item.code;
+    updatePreview();
+    updateCodeView();
+    tabActions.style.display = 'flex';
+    previewControls.style.display = 'flex';
+    tweakSection.classList.add('visible');
+    // Switch to preview tab
+    document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+    document.querySelector('.tab-btn[data-tab="preview"]').classList.add('active');
+    document.querySelectorAll('.tab-pane').forEach(function(p) { p.classList.remove('active'); });
+    document.getElementById('panePreview').classList.add('active');
+    // Close history panel
+    document.getElementById('historyToggle').classList.remove('open');
+    document.getElementById('historyPanel').classList.remove('open');
+  }
+
+  function renderHistory() {
+    var history = getHistory();
+    var list = document.getElementById('historyList');
+    var count = document.getElementById('historyCount');
+    count.textContent = history.length;
+
+    if (history.length === 0) {
+      list.innerHTML = '<div class="history-empty">No generations yet</div>';
+      return;
+    }
+
+    var html = '';
+    history.forEach(function(item) {
+      var date = new Date(item.date);
+      var timeStr = date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' ' + date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+      var tokens = item.tokens ? item.tokens.toLocaleString() : '?';
+      html += '<div class="history-item" data-id="' + item.id + '">';
+      html += '<div class="history-item-color" style="background:' + (item.accent || '#7B6FFF') + '"></div>';
+      html += '<div class="history-item-info">';
+      html += '<div class="history-item-name">' + (item.name || 'Untitled') + '</div>';
+      html += '<div class="history-item-meta">' + timeStr + ' · ' + tokens + ' tokens · ' + (item.style || 'auto') + '</div>';
+      html += '</div>';
+      html += '<div class="history-item-actions">';
+      html += '<button class="history-btn load-btn" data-id="' + item.id + '">Load</button>';
+      html += '<button class="history-btn del" data-id="' + item.id + '">X</button>';
+      html += '</div>';
+      html += '</div>';
+    });
+    list.innerHTML = html;
+  }
+
+  // Init history on page load
+  renderHistory();
+
   // ═══ DOM REFS ═══
   var tradeName     = document.getElementById('tradeName');
   var accentColor   = document.getElementById('accentColor');
@@ -1053,6 +1277,28 @@ Theme: Lock mechanism being assembled
   // ═══ API CONFIG ═══
   // For local dev, point to your worker. In production, same domain.
   var API_URL = 'https://parallax-api.luissballen.workers.dev/api/generate';
+
+  // ═══ HISTORY EVENTS ═══
+  document.getElementById('historyToggle').addEventListener('click', function() {
+    this.classList.toggle('open');
+    document.getElementById('historyPanel').classList.toggle('open');
+  });
+
+  document.getElementById('historyList').addEventListener('click', function(e) {
+    var loadBtn = e.target.closest('.load-btn');
+    var delBtn = e.target.closest('.del');
+    if (loadBtn) {
+      loadFromHistory(parseInt(loadBtn.dataset.id));
+    } else if (delBtn) {
+      e.stopPropagation();
+      deleteFromHistory(parseInt(delBtn.dataset.id));
+    }
+  });
+
+  document.getElementById('btnClearHistory').addEventListener('click', function() {
+    if (getHistory().length === 0) return;
+    clearHistory();
+  });
 
   // ═══ COLOR SYNC ═══
   accentColor.addEventListener('input', function() {
@@ -1996,6 +2242,16 @@ Theme: Lock mechanism being assembled
       tabActions.style.display = 'flex';
       previewControls.style.display = 'flex';
       tweakSection.classList.add('visible');
+
+      // Auto-save to history
+      saveToHistory(
+        tradeName.value.trim() || 'Untitled',
+        accentHex.value,
+        getSelectedStyle(),
+        fullCode,
+        charCount,
+        elapsed
+      );
     }
   }
 
