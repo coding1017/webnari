@@ -526,7 +526,6 @@ body::before {
       <!-- ════════════════════════════════════════════════════════════════════════ -->
       <svg class="ba-layer ba-before" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
         <defs>
-          <!-- Sky gradients -->
           <linearGradient id="bSky" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="#1a1a24"/><stop offset="40%" stop-color="#252530"/>
             <stop offset="70%" stop-color="#2e2e38"/><stop offset="100%" stop-color="#333340"/>
@@ -543,12 +542,10 @@ body::before {
             <stop offset="0%" stop-color="#383850" stop-opacity="0.45"/>
             <stop offset="100%" stop-color="#222230" stop-opacity="0"/>
           </radialGradient>
-          <!-- Ground -->
           <linearGradient id="bGround" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="#2a2818"/><stop offset="40%" stop-color="#222014"/>
             <stop offset="100%" stop-color="#1a1810"/>
           </linearGradient>
-          <!-- Walls -->
           <linearGradient id="bFrontWall" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="#C4B8A0"/><stop offset="30%" stop-color="#B8AA90"/>
             <stop offset="70%" stop-color="#A89878"/><stop offset="100%" stop-color="#9A8A68"/>
@@ -556,7 +553,6 @@ body::before {
           <linearGradient id="bSideWall" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0%" stop-color="#9A8A68"/><stop offset="100%" stop-color="#887858"/>
           </linearGradient>
-          <!-- Roof -->
           <linearGradient id="bRoofFront" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="#6a5838"/><stop offset="50%" stop-color="#5a4828"/>
             <stop offset="100%" stop-color="#4a3818"/>
@@ -564,7 +560,6 @@ body::before {
           <linearGradient id="bRoofSide" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0%" stop-color="#4a3818"/><stop offset="100%" stop-color="#3a2808"/>
           </linearGradient>
-          <!-- Algae stain -->
           <radialGradient id="bAlgae1" cx="0.5" cy="0.5" r="0.5">
             <stop offset="0%" stop-color="#3a4a28" stop-opacity="0.6"/>
             <stop offset="100%" stop-color="#4a3818" stop-opacity="0"/>
@@ -573,15 +568,12 @@ body::before {
             <stop offset="0%" stop-color="#2a3818" stop-opacity="0.5"/>
             <stop offset="100%" stop-color="#5a4828" stop-opacity="0"/>
           </radialGradient>
-          <!-- Window glass -->
           <linearGradient id="bGlass" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0%" stop-color="#0a0e18"/><stop offset="100%" stop-color="#141820"/>
           </linearGradient>
-          <!-- Walkway -->
           <linearGradient id="bWalk" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="#4a4840"/><stop offset="100%" stop-color="#3a3830"/>
           </linearGradient>
-          <!-- Filters -->
           <filter id="bShadow" x="-10%" y="-10%" width="130%" height="140%">
             <feGaussianBlur in="SourceAlpha" stdDeviation="4" result="blur"/>
             <feOffset dx="3" dy="5" result="offset"/>
@@ -592,14 +584,15 @@ body::before {
           <filter id="bGlow" x="-20%" y="-20%" width="140%" height="140%">
             <feGaussianBlur in="SourceGraphic" stdDeviation="2"/>
           </filter>
-          <!-- Clip for front roof -->
-          <clipPath id="bRoofClipF"><path d="M135 195 L345 90 L555 195 Z"/></clipPath>
-          <clipPath id="bRoofClipS"><path d="M535 195 L345 90 L725 152 Z"/></clipPath>
+          <!-- Clip paths for NEW roof geometry -->
+          <clipPath id="bRoofClipF"><path d="M140 198 L345 90 L550 198 Z"/></clipPath>
+          <clipPath id="bRoofClipS"><path d="M535 195 L345 90 L725 90 L725 155 Z"/></clipPath>
+          <!-- Cross gable clip -->
+          <clipPath id="bCrossGableClip"><path d="M620 155 L670 105 L725 155 Z"/></clipPath>
         </defs>
 
-        <!-- ── SKY ── -->
+        <!-- SKY -->
         <rect width="800" height="450" fill="url(#bSky)"/>
-        <!-- Storm clouds -->
         <ellipse cx="120" cy="40" rx="140" ry="35" fill="url(#bCloud1)"/>
         <ellipse cx="300" cy="30" rx="160" ry="40" fill="url(#bCloud2)"/>
         <ellipse cx="500" cy="50" rx="130" ry="30" fill="url(#bCloud1)"/>
@@ -618,9 +611,8 @@ body::before {
         <line x1="150" y1="55" x2="145" y2="125" stroke="#3a3a50" stroke-width="0.3" opacity="0.12"/>
         <line x1="450" y1="10" x2="445" y2="80" stroke="#3a3a50" stroke-width="0.4" opacity="0.15"/>
 
-        <!-- ── GROUND (dead brown lawn) ── -->
+        <!-- GROUND (dead brown lawn) -->
         <rect x="0" y="362" width="800" height="88" fill="url(#bGround)"/>
-        <!-- Dead grass texture blades -->
         <line x1="30" y1="372" x2="34" y2="365" stroke="#3a3818" stroke-width="0.7" opacity="0.4"/>
         <line x1="55" y1="375" x2="58" y2="367" stroke="#34321a" stroke-width="0.6" opacity="0.35"/>
         <line x1="80" y1="378" x2="84" y2="370" stroke="#3a3818" stroke-width="0.7" opacity="0.4"/>
@@ -641,9 +633,8 @@ body::before {
         <rect x="140" y="398" width="16" height="2.5" fill="#5a4830" rx="1" opacity="0.35"/>
         <path d="M710 390 L718 386 L722 392 Z" fill="#4a3a20" opacity="0.3"/>
         <ellipse cx="300" cy="400" rx="10" ry="3" fill="#3a3020" opacity="0.25"/>
-        <path d="M50" y1="395" d="M50 395 L58 392 L55 399 Z" fill="#4a3a20" opacity="0.3"/>
 
-        <!-- ── BARE TREE (left side) ── -->
+        <!-- BARE TREE (left side) -->
         <path d="M70 365 L68 310 Q66 290 60 270" fill="none" stroke="#3a3020" stroke-width="3" opacity="0.6"/>
         <path d="M68 310 Q72 295 80 280" fill="none" stroke="#3a3020" stroke-width="2" opacity="0.5"/>
         <path d="M66 330 Q58 318 50 305" fill="none" stroke="#3a3020" stroke-width="1.5" opacity="0.45"/>
@@ -651,91 +642,86 @@ body::before {
         <path d="M80 280 Q85 268 90 260" fill="none" stroke="#3a3020" stroke-width="1" opacity="0.4"/>
         <path d="M60 270 Q62 262 68 255" fill="none" stroke="#3a3020" stroke-width="0.8" opacity="0.35"/>
 
-        <!-- ── HOUSE SHADOW on ground ── -->
-        <path d="M150 362 L150 410 L710 410 L710 362 Z" fill="#0a0c08" opacity="0.35"/>
+        <!-- HOUSE SHADOW on ground -->
+        <path d="M150 362 L150 410 L730 410 L730 362 Z" fill="#0a0c08" opacity="0.35"/>
 
         <!-- ════════ HOUSE STRUCTURE ════════ -->
         <g filter="url(#bShadow)">
         <!-- Foundation -->
-        <rect x="155" y="355" width="380" height="12" fill="#6a6458" stroke="#5a5448" stroke-width="0.5"/>
-        <path d="M535 355 L535 367 L700 327 L700 315 Z" fill="#5a5448" stroke="#4a4438" stroke-width="0.5"/>
+        <rect x="155" y="395" width="380" height="12" fill="#6a6458" stroke="#5a5448" stroke-width="0.5"/>
+        <path d="M535 395 L535 407 L725 362 L725 350 Z" fill="#5a5448" stroke="#4a4438" stroke-width="0.5"/>
         <!-- Foundation cracks -->
-        <path d="M200 358 L203 365" fill="none" stroke="#4a4438" stroke-width="0.8" opacity="0.4"/>
-        <path d="M350 360 L354 367" fill="none" stroke="#4a4438" stroke-width="0.6" opacity="0.35"/>
+        <path d="M200 398 L203 405" fill="none" stroke="#4a4438" stroke-width="0.8" opacity="0.4"/>
+        <path d="M350 400 L354 407" fill="none" stroke="#4a4438" stroke-width="0.6" opacity="0.35"/>
 
-        <!-- Front wall -->
-        <path d="M155 355 L155 192 L535 192 L535 355 Z" fill="url(#bFrontWall)"/>
-        <path d="M155 355 L155 192 L535 192 L535 355 Z" fill="none" stroke="#8a7a60" stroke-width="1"/>
+        <!-- Front wall: x=155..535, y=195..395 -->
+        <path d="M155 395 L155 195 L535 195 L535 395 Z" fill="url(#bFrontWall)"/>
+        <path d="M155 395 L155 195 L535 195 L535 395 Z" fill="none" stroke="#8a7a60" stroke-width="1"/>
         <!-- Horizontal siding lines -->
-        <line x1="155" y1="207" x2="535" y2="207" stroke="#A09070" stroke-width="0.5" opacity="0.4"/>
-        <line x1="155" y1="222" x2="535" y2="222" stroke="#A09070" stroke-width="0.5" opacity="0.35"/>
-        <line x1="155" y1="237" x2="535" y2="237" stroke="#A09070" stroke-width="0.5" opacity="0.4"/>
-        <line x1="155" y1="252" x2="535" y2="252" stroke="#A09070" stroke-width="0.5" opacity="0.35"/>
-        <line x1="155" y1="267" x2="535" y2="267" stroke="#A09070" stroke-width="0.5" opacity="0.4"/>
-        <line x1="155" y1="282" x2="535" y2="282" stroke="#A09070" stroke-width="0.5" opacity="0.35"/>
-        <line x1="155" y1="297" x2="535" y2="297" stroke="#A09070" stroke-width="0.5" opacity="0.4"/>
-        <line x1="155" y1="312" x2="535" y2="312" stroke="#A09070" stroke-width="0.5" opacity="0.35"/>
-        <line x1="155" y1="327" x2="535" y2="327" stroke="#A09070" stroke-width="0.5" opacity="0.4"/>
-        <line x1="155" y1="342" x2="535" y2="342" stroke="#A09070" stroke-width="0.5" opacity="0.35"/>
-        <!-- Water damage streaks from roof -->
-        <path d="M218 192 Q220 225 224 280 Q226 310 228 350" fill="none" stroke="#7a6848" stroke-width="4" opacity="0.3"/>
-        <path d="M220 192 Q222 230 226 285 Q228 315 230 355" fill="none" stroke="#685838" stroke-width="2" opacity="0.25"/>
-        <path d="M418 192 Q422 240 428 300 Q432 330 435 355" fill="none" stroke="#7a6848" stroke-width="5" opacity="0.25"/>
-        <path d="M420 192 Q424 245 430 305" fill="none" stroke="#685838" stroke-width="2.5" opacity="0.2"/>
-        <path d="M338 192 Q340 218 343 260 Q345 290 347 320" fill="none" stroke="#7a6848" stroke-width="3" opacity="0.2"/>
-        <path d="M478 192 Q481 222 484 268 Q486 300 488 340" fill="none" stroke="#7a6848" stroke-width="3.5" opacity="0.22"/>
-        <path d="M168 192 Q170 215 172 250" fill="none" stroke="#7a6848" stroke-width="2.5" opacity="0.2"/>
-        <path d="M510 192 Q512 220 515 260" fill="none" stroke="#7a6848" stroke-width="2" opacity="0.18"/>
-        <!-- Mildew/discoloration patches on wall -->
-        <ellipse cx="180" cy="340" rx="15" ry="10" fill="#8a7a58" opacity="0.2"/>
-        <ellipse cx="500" cy="330" rx="12" ry="8" fill="#8a7a58" opacity="0.18"/>
+        <line x1="155" y1="210" x2="535" y2="210" stroke="#A09070" stroke-width="0.5" opacity="0.4"/>
+        <line x1="155" y1="225" x2="535" y2="225" stroke="#A09070" stroke-width="0.5" opacity="0.35"/>
+        <line x1="155" y1="240" x2="535" y2="240" stroke="#A09070" stroke-width="0.5" opacity="0.4"/>
+        <line x1="155" y1="255" x2="535" y2="255" stroke="#A09070" stroke-width="0.5" opacity="0.35"/>
+        <line x1="155" y1="270" x2="535" y2="270" stroke="#A09070" stroke-width="0.5" opacity="0.4"/>
+        <line x1="155" y1="285" x2="535" y2="285" stroke="#A09070" stroke-width="0.5" opacity="0.35"/>
+        <line x1="155" y1="300" x2="535" y2="300" stroke="#A09070" stroke-width="0.5" opacity="0.4"/>
+        <line x1="155" y1="315" x2="535" y2="315" stroke="#A09070" stroke-width="0.5" opacity="0.35"/>
+        <line x1="155" y1="330" x2="535" y2="330" stroke="#A09070" stroke-width="0.5" opacity="0.4"/>
+        <line x1="155" y1="345" x2="535" y2="345" stroke="#A09070" stroke-width="0.5" opacity="0.35"/>
+        <line x1="155" y1="360" x2="535" y2="360" stroke="#A09070" stroke-width="0.5" opacity="0.4"/>
+        <line x1="155" y1="375" x2="535" y2="375" stroke="#A09070" stroke-width="0.5" opacity="0.35"/>
+        <line x1="155" y1="390" x2="535" y2="390" stroke="#A09070" stroke-width="0.5" opacity="0.4"/>
+        <!-- Water damage streaks -->
+        <path d="M218 195 Q220 230 224 290 Q226 330 228 390" fill="none" stroke="#7a6848" stroke-width="4" opacity="0.3"/>
+        <path d="M220 195 Q222 235 226 295 Q228 330 230 395" fill="none" stroke="#685838" stroke-width="2" opacity="0.25"/>
+        <path d="M418 195 Q422 250 428 320 Q432 360 435 395" fill="none" stroke="#7a6848" stroke-width="5" opacity="0.25"/>
+        <path d="M420 195 Q424 255 430 325" fill="none" stroke="#685838" stroke-width="2.5" opacity="0.2"/>
+        <path d="M338 195 Q340 225 343 275 Q345 310 347 350" fill="none" stroke="#7a6848" stroke-width="3" opacity="0.2"/>
+        <path d="M478 195 Q481 230 484 280 Q486 320 488 370" fill="none" stroke="#7a6848" stroke-width="3.5" opacity="0.22"/>
+        <path d="M168 195 Q170 220 172 260" fill="none" stroke="#7a6848" stroke-width="2.5" opacity="0.2"/>
+        <path d="M510 195 Q512 225 515 270" fill="none" stroke="#7a6848" stroke-width="2" opacity="0.18"/>
+        <!-- Mildew/discoloration -->
+        <ellipse cx="180" cy="370" rx="15" ry="10" fill="#8a7a58" opacity="0.2"/>
+        <ellipse cx="500" cy="365" rx="12" ry="8" fill="#8a7a58" opacity="0.18"/>
 
-        <!-- Side wall -->
-        <path d="M535 355 L535 192 L700 152 L700 315 Z" fill="url(#bSideWall)"/>
-        <path d="M535 355 L535 192 L700 152 L700 315 Z" fill="none" stroke="#7a6a50" stroke-width="0.8"/>
-        <!-- Side siding lines -->
-        <line x1="535" y1="212" x2="700" y2="172" stroke="#80704a" stroke-width="0.4" opacity="0.35"/>
-        <line x1="535" y1="232" x2="700" y2="192" stroke="#80704a" stroke-width="0.4" opacity="0.3"/>
-        <line x1="535" y1="252" x2="700" y2="212" stroke="#80704a" stroke-width="0.4" opacity="0.35"/>
-        <line x1="535" y1="272" x2="700" y2="232" stroke="#80704a" stroke-width="0.4" opacity="0.3"/>
-        <line x1="535" y1="292" x2="700" y2="252" stroke="#80704a" stroke-width="0.4" opacity="0.35"/>
-        <line x1="535" y1="312" x2="700" y2="272" stroke="#80704a" stroke-width="0.4" opacity="0.3"/>
-        <line x1="535" y1="332" x2="700" y2="292" stroke="#80704a" stroke-width="0.4" opacity="0.35"/>
+        <!-- Side wall: (535,195) to (725,155) top, (535,395) to (725,350) bottom -->
+        <path d="M535 395 L535 195 L725 155 L725 350 Z" fill="url(#bSideWall)"/>
+        <path d="M535 395 L535 195 L725 155 L725 350 Z" fill="none" stroke="#7a6a50" stroke-width="0.8"/>
+        <!-- Side siding lines (perspective: left y to right y with offset) -->
+        <line x1="535" y1="215" x2="725" y2="170" stroke="#80704a" stroke-width="0.4" opacity="0.35"/>
+        <line x1="535" y1="235" x2="725" y2="185" stroke="#80704a" stroke-width="0.4" opacity="0.3"/>
+        <line x1="535" y1="255" x2="725" y2="200" stroke="#80704a" stroke-width="0.4" opacity="0.35"/>
+        <line x1="535" y1="275" x2="725" y2="215" stroke="#80704a" stroke-width="0.4" opacity="0.3"/>
+        <line x1="535" y1="295" x2="725" y2="235" stroke="#80704a" stroke-width="0.4" opacity="0.35"/>
+        <line x1="535" y1="315" x2="725" y2="250" stroke="#80704a" stroke-width="0.4" opacity="0.3"/>
+        <line x1="535" y1="335" x2="725" y2="265" stroke="#80704a" stroke-width="0.4" opacity="0.35"/>
+        <line x1="535" y1="355" x2="725" y2="280" stroke="#80704a" stroke-width="0.4" opacity="0.3"/>
+        <line x1="535" y1="375" x2="725" y2="295" stroke="#80704a" stroke-width="0.4" opacity="0.35"/>
+        <line x1="535" y1="390" x2="725" y2="340" stroke="#80704a" stroke-width="0.4" opacity="0.3"/>
         </g>
 
         <!-- ════════ FRONT ROOF (damaged) ════════ -->
-        <path d="M135 195 L345 90 L555 195 Z" fill="url(#bRoofFront)" stroke="#6a5838" stroke-width="1.2"/>
-        <!-- Sagging ridge line (slightly curved) -->
-        <path d="M135 195 Q250 90 345 84 Q440 90 555 195" fill="none" stroke="#5a4828" stroke-width="0.5" opacity="0.3"/>
-        <!-- Shingle rows (18 rows) -->
+        <!-- Front gable: triangle from left eave to peak to right eave -->
+        <path d="M140 198 L345 90 L550 198 Z" fill="url(#bRoofFront)" stroke="#6a5838" stroke-width="1.2"/>
+        <!-- Sagging ridge feel -->
+        <path d="M140 198 Q250 92 345 86 Q440 92 550 198" fill="none" stroke="#5a4828" stroke-width="0.5" opacity="0.3"/>
+        <!-- Shingle rows on front face -->
         <g clip-path="url(#bRoofClipF)">
-          <line x1="140" y1="193" x2="550" y2="193" stroke="#5a4828" stroke-width="0.6" opacity="0.5"/>
-          <line x1="150" y1="186" x2="540" y2="186" stroke="#4a3818" stroke-width="0.6" opacity="0.45"/>
-          <line x1="160" y1="179" x2="530" y2="179" stroke="#5a4828" stroke-width="0.6" opacity="0.5"/>
-          <line x1="170" y1="172" x2="520" y2="172" stroke="#4a3818" stroke-width="0.6" opacity="0.45"/>
-          <line x1="180" y1="165" x2="510" y2="165" stroke="#5a4828" stroke-width="0.6" opacity="0.5"/>
-          <line x1="190" y1="158" x2="500" y2="158" stroke="#4a3818" stroke-width="0.6" opacity="0.45"/>
-          <line x1="200" y1="151" x2="490" y2="151" stroke="#5a4828" stroke-width="0.6" opacity="0.5"/>
-          <line x1="210" y1="144" x2="480" y2="144" stroke="#4a3818" stroke-width="0.6" opacity="0.45"/>
-          <line x1="220" y1="137" x2="470" y2="137" stroke="#5a4828" stroke-width="0.6" opacity="0.5"/>
-          <line x1="230" y1="130" x2="460" y2="130" stroke="#4a3818" stroke-width="0.6" opacity="0.45"/>
-          <line x1="240" y1="123" x2="450" y2="123" stroke="#5a4828" stroke-width="0.6" opacity="0.5"/>
-          <line x1="250" y1="116" x2="440" y2="116" stroke="#4a3818" stroke-width="0.6" opacity="0.45"/>
-          <line x1="260" y1="109" x2="430" y2="109" stroke="#5a4828" stroke-width="0.6" opacity="0.5"/>
-          <line x1="270" y1="102" x2="420" y2="102" stroke="#4a3818" stroke-width="0.6" opacity="0.45"/>
-          <line x1="280" y1="95" x2="410" y2="95" stroke="#5a4828" stroke-width="0.6" opacity="0.5"/>
-          <line x1="290" y1="88" x2="400" y2="88" stroke="#4a3818" stroke-width="0.6" opacity="0.45"/>
-          <!-- Vertical tab lines for shingle texture -->
-          <line x1="220" y1="193" x2="225" y2="179" stroke="#4a3818" stroke-width="0.3" opacity="0.25"/>
-          <line x1="300" y1="193" x2="302" y2="179" stroke="#4a3818" stroke-width="0.3" opacity="0.25"/>
-          <line x1="380" y1="193" x2="378" y2="179" stroke="#4a3818" stroke-width="0.3" opacity="0.25"/>
-          <line x1="460" y1="193" x2="456" y2="179" stroke="#4a3818" stroke-width="0.3" opacity="0.25"/>
-          <line x1="250" y1="172" x2="254" y2="158" stroke="#4a3818" stroke-width="0.3" opacity="0.22"/>
-          <line x1="345" y1="172" x2="345" y2="158" stroke="#4a3818" stroke-width="0.3" opacity="0.22"/>
-          <line x1="440" y1="172" x2="436" y2="158" stroke="#4a3818" stroke-width="0.3" opacity="0.22"/>
-          <line x1="280" y1="151" x2="283" y2="137" stroke="#4a3818" stroke-width="0.3" opacity="0.2"/>
-          <line x1="345" y1="151" x2="345" y2="137" stroke="#4a3818" stroke-width="0.3" opacity="0.2"/>
-          <line x1="410" y1="151" x2="407" y2="137" stroke="#4a3818" stroke-width="0.3" opacity="0.2"/>
+          <line x1="145" y1="196" x2="545" y2="196" stroke="#5a4828" stroke-width="0.6" opacity="0.5"/>
+          <line x1="153" y1="189" x2="537" y2="189" stroke="#4a3818" stroke-width="0.6" opacity="0.45"/>
+          <line x1="161" y1="182" x2="529" y2="182" stroke="#5a4828" stroke-width="0.6" opacity="0.5"/>
+          <line x1="169" y1="175" x2="521" y2="175" stroke="#4a3818" stroke-width="0.6" opacity="0.45"/>
+          <line x1="177" y1="168" x2="513" y2="168" stroke="#5a4828" stroke-width="0.6" opacity="0.5"/>
+          <line x1="185" y1="161" x2="505" y2="161" stroke="#4a3818" stroke-width="0.6" opacity="0.45"/>
+          <line x1="193" y1="154" x2="497" y2="154" stroke="#5a4828" stroke-width="0.6" opacity="0.5"/>
+          <line x1="201" y1="147" x2="489" y2="147" stroke="#4a3818" stroke-width="0.6" opacity="0.45"/>
+          <line x1="209" y1="140" x2="481" y2="140" stroke="#5a4828" stroke-width="0.6" opacity="0.5"/>
+          <line x1="217" y1="133" x2="473" y2="133" stroke="#4a3818" stroke-width="0.6" opacity="0.45"/>
+          <line x1="225" y1="126" x2="465" y2="126" stroke="#5a4828" stroke-width="0.6" opacity="0.5"/>
+          <line x1="233" y1="119" x2="457" y2="119" stroke="#4a3818" stroke-width="0.6" opacity="0.45"/>
+          <line x1="241" y1="112" x2="449" y2="112" stroke="#5a4828" stroke-width="0.6" opacity="0.5"/>
+          <line x1="249" y1="105" x2="441" y2="105" stroke="#4a3818" stroke-width="0.6" opacity="0.45"/>
+          <line x1="257" y1="98" x2="433" y2="98" stroke="#5a4828" stroke-width="0.6" opacity="0.5"/>
           <!-- Missing shingle patches (exposed wood) -->
           <rect x="225" y="160" width="35" height="10" fill="#C9A060" opacity="0.5" rx="1"/>
           <rect x="285" y="173" width="40" height="9" fill="#B89050" opacity="0.4" rx="1"/>
@@ -753,169 +739,192 @@ body::before {
           <path d="M380 152 Q386 145 392 152" fill="none" stroke="#7a6838" stroke-width="1.5" opacity="0.5"/>
           <path d="M195 183 Q200 176 205 183" fill="none" stroke="#7a6838" stroke-width="1.6" opacity="0.55"/>
           <path d="M468 160 Q474 153 480 160" fill="none" stroke="#7a6838" stroke-width="1.4" opacity="0.5"/>
-          <path d="M310 140 Q315 133 320 140" fill="none" stroke="#7a6838" stroke-width="1.3" opacity="0.45"/>
-          <path d="M430 175 Q435 168 440 175" fill="none" stroke="#7a6838" stroke-width="1.5" opacity="0.5"/>
         </g>
 
-        <!-- ════════ SIDE ROOF (damaged) ════════ -->
-        <path d="M535 195 L345 90 L725 152 Z" fill="url(#bRoofSide)" stroke="#4a3818" stroke-width="1"/>
+        <!-- ════════ SIDE ROOF — ridge goes BACK horizontally (345,90) to (725,90) ════════ -->
+        <path d="M535 195 L345 90 L725 90 L725 155 Z" fill="url(#bRoofSide)" stroke="#4a3818" stroke-width="1"/>
         <g clip-path="url(#bRoofClipS)">
-          <line x1="540" y1="190" x2="710" y2="155" stroke="#3a2808" stroke-width="0.5" opacity="0.4"/>
-          <line x1="535" y1="182" x2="702" y2="150" stroke="#3a2808" stroke-width="0.5" opacity="0.35"/>
-          <line x1="525" y1="174" x2="694" y2="145" stroke="#3a2808" stroke-width="0.5" opacity="0.4"/>
-          <line x1="510" y1="166" x2="686" y2="140" stroke="#3a2808" stroke-width="0.5" opacity="0.35"/>
-          <line x1="495" y1="158" x2="678" y2="135" stroke="#3a2808" stroke-width="0.5" opacity="0.4"/>
-          <line x1="480" y1="150" x2="670" y2="130" stroke="#3a2808" stroke-width="0.5" opacity="0.35"/>
-          <line x1="465" y1="142" x2="662" y2="125" stroke="#3a2808" stroke-width="0.5" opacity="0.4"/>
-          <line x1="450" y1="134" x2="654" y2="120" stroke="#3a2808" stroke-width="0.5" opacity="0.35"/>
+          <!-- Shingle rows on side face — lines follow the perspective plane -->
+          <line x1="535" y1="192" x2="725" y2="152" stroke="#3a2808" stroke-width="0.5" opacity="0.4"/>
+          <line x1="530" y1="185" x2="725" y2="147" stroke="#3a2808" stroke-width="0.5" opacity="0.35"/>
+          <line x1="522" y1="178" x2="725" y2="142" stroke="#3a2808" stroke-width="0.5" opacity="0.4"/>
+          <line x1="514" y1="171" x2="725" y2="137" stroke="#3a2808" stroke-width="0.5" opacity="0.35"/>
+          <line x1="506" y1="164" x2="725" y2="132" stroke="#3a2808" stroke-width="0.5" opacity="0.4"/>
+          <line x1="498" y1="157" x2="725" y2="127" stroke="#3a2808" stroke-width="0.5" opacity="0.35"/>
+          <line x1="490" y1="150" x2="725" y2="122" stroke="#3a2808" stroke-width="0.5" opacity="0.4"/>
+          <line x1="482" y1="143" x2="725" y2="117" stroke="#3a2808" stroke-width="0.5" opacity="0.35"/>
+          <line x1="474" y1="136" x2="725" y2="112" stroke="#3a2808" stroke-width="0.5" opacity="0.4"/>
+          <line x1="466" y1="129" x2="725" y2="107" stroke="#3a2808" stroke-width="0.5" opacity="0.35"/>
+          <line x1="458" y1="122" x2="725" y2="102" stroke="#3a2808" stroke-width="0.5" opacity="0.4"/>
+          <line x1="450" y1="115" x2="725" y2="97" stroke="#3a2808" stroke-width="0.5" opacity="0.35"/>
           <!-- Missing patch on side -->
-          <path d="M580 168 L610 162 L608 155 L578 161 Z" fill="#C9A060" opacity="0.35"/>
-          <ellipse cx="620" cy="145" rx="18" ry="7" fill="url(#bAlgae1)"/>
+          <path d="M580 148 L620 140 L618 133 L578 141 Z" fill="#C9A060" opacity="0.35"/>
+          <ellipse cx="650" cy="120" rx="18" ry="7" fill="url(#bAlgae1)"/>
         </g>
 
-        <!-- (chimney removed) -->
+        <!-- ════════ CROSS GABLE (secondary peak on side) ════════ -->
+        <!-- Cross gable projects forward from side wall around x=620-725, peak at (670,105) -->
+        <path d="M620 155 L670 105 L725 155 Z" fill="url(#bRoofFront)" stroke="#6a5838" stroke-width="1"/>
+        <g clip-path="url(#bCrossGableClip)">
+          <line x1="625" y1="152" x2="720" y2="152" stroke="#5a4828" stroke-width="0.5" opacity="0.4"/>
+          <line x1="630" y1="147" x2="715" y2="147" stroke="#4a3818" stroke-width="0.5" opacity="0.35"/>
+          <line x1="636" y1="142" x2="709" y2="142" stroke="#5a4828" stroke-width="0.5" opacity="0.4"/>
+          <line x1="642" y1="137" x2="703" y2="137" stroke="#4a3818" stroke-width="0.5" opacity="0.35"/>
+          <line x1="648" y1="132" x2="697" y2="132" stroke="#5a4828" stroke-width="0.5" opacity="0.4"/>
+          <line x1="654" y1="127" x2="691" y2="127" stroke="#4a3818" stroke-width="0.5" opacity="0.35"/>
+          <line x1="660" y1="122" x2="685" y2="122" stroke="#5a4828" stroke-width="0.5" opacity="0.4"/>
+          <line x1="664" y1="117" x2="681" y2="117" stroke="#4a3818" stroke-width="0.5" opacity="0.35"/>
+          <!-- Algae on cross gable -->
+          <ellipse cx="670" cy="138" rx="15" ry="6" fill="url(#bAlgae2)"/>
+        </g>
+        <!-- Cross gable front wall below it -->
+        <path d="M620 155 L620 270 L725 238 L725 155 Z" fill="url(#bSideWall)" stroke="#7a6a50" stroke-width="0.6"/>
 
-        <!-- ════════ WINDOWS — FRONT, 1st FLOOR ════════ -->
+        <!-- Ridge cap line (from front peak going back to rear) -->
+        <line x1="345" y1="90" x2="725" y2="90" stroke="#5a4828" stroke-width="2.5" opacity="0.6"/>
+
+        <!-- ════════ WINDOWS -- FRONT, 1st FLOOR ════════ -->
+        <!-- Layout: Win1 x=180, Win2 x=265, DOOR x=335 w=40, Win3 x=405, Win4 x=490 -->
         <!-- Window 1 (boarded up) -->
-        <rect x="193" y="265" width="60" height="58" fill="url(#bGlass)" stroke="#8a7a60" stroke-width="1.5"/>
-        <rect x="196" y="268" width="54" height="52" fill="#0a0e14"/>
-        <line x1="193" y1="272" x2="253" y2="312" stroke="#6a5838" stroke-width="3.5" opacity="0.7"/>
-        <line x1="193" y1="312" x2="253" y2="272" stroke="#6a5838" stroke-width="3.5" opacity="0.7"/>
-        <rect x="198" y="288" width="50" height="4" fill="#6a5838" opacity="0.5"/>
-        <rect x="190" y="323" width="66" height="5" fill="#8a7a60"/>
+        <rect x="180" y="300" width="55" height="55" fill="url(#bGlass)" stroke="#8a7a60" stroke-width="1.5"/>
+        <rect x="183" y="303" width="49" height="49" fill="#0a0e14"/>
+        <line x1="180" y1="305" x2="235" y2="350" stroke="#6a5838" stroke-width="3.5" opacity="0.7"/>
+        <line x1="180" y1="350" x2="235" y2="305" stroke="#6a5838" stroke-width="3.5" opacity="0.7"/>
+        <rect x="183" y="325" width="49" height="4" fill="#6a5838" opacity="0.5"/>
+        <rect x="177" y="355" width="61" height="5" fill="#8a7a60"/>
         <!-- Water stain below window -->
-        <path d="M210 328 Q212 335 213 345" fill="none" stroke="#7a6848" stroke-width="1.5" opacity="0.2"/>
+        <path d="M200 360 Q202 370 203 385" fill="none" stroke="#7a6848" stroke-width="1.5" opacity="0.2"/>
 
         <!-- Window 2 -->
-        <rect x="288" y="265" width="60" height="58" fill="url(#bGlass)" stroke="#8a7a60" stroke-width="1.5"/>
-        <rect x="291" y="268" width="54" height="52" fill="#0a0e14"/>
-        <line x1="318" y1="268" x2="318" y2="320" stroke="#6a5a40" stroke-width="1"/>
-        <line x1="291" y1="294" x2="345" y2="294" stroke="#6a5a40" stroke-width="1"/>
-        <!-- Dim reflection -->
-        <path d="M294 271 L308 271 L294 286 Z" fill="#1a2030" opacity="0.12"/>
-        <rect x="285" y="323" width="66" height="5" fill="#8a7a60"/>
+        <rect x="265" y="300" width="55" height="55" fill="url(#bGlass)" stroke="#8a7a60" stroke-width="1.5"/>
+        <rect x="268" y="303" width="49" height="49" fill="#0a0e14"/>
+        <line x1="293" y1="303" x2="293" y2="352" stroke="#6a5a40" stroke-width="1"/>
+        <line x1="268" y1="328" x2="317" y2="328" stroke="#6a5a40" stroke-width="1"/>
+        <path d="M271 306 L284 306 L271 320 Z" fill="#1a2030" opacity="0.12"/>
+        <rect x="262" y="355" width="61" height="5" fill="#8a7a60"/>
+
+        <!-- FRONT DOOR -->
+        <rect x="340" y="318" width="40" height="80" fill="#2a2218" stroke="#8a7a60" stroke-width="1.5" rx="1"/>
+        <rect x="344" y="323" width="32" height="30" fill="#1a1508" stroke="#6a5a40" stroke-width="0.5"/>
+        <rect x="344" y="357" width="32" height="30" fill="#1a1508" stroke="#6a5a40" stroke-width="0.5"/>
+        <circle cx="373" cy="360" r="2.8" fill="#8a7a50" stroke="#6a5a38" stroke-width="0.5"/>
+        <!-- Door step (cracked) -->
+        <rect x="335" y="395" width="50" height="7" fill="#5a5448"/>
+        <path d="M350 396 L352 402" fill="none" stroke="#3a3428" stroke-width="0.8" opacity="0.5"/>
 
         <!-- Window 3 (cracked glass) -->
-        <rect x="388" y="265" width="60" height="58" fill="url(#bGlass)" stroke="#8a7a60" stroke-width="1.5"/>
-        <rect x="391" y="268" width="54" height="52" fill="#0a0e14"/>
-        <line x1="418" y1="268" x2="418" y2="320" stroke="#6a5a40" stroke-width="1"/>
-        <line x1="391" y1="294" x2="445" y2="294" stroke="#6a5a40" stroke-width="1"/>
+        <rect x="405" y="300" width="55" height="55" fill="url(#bGlass)" stroke="#8a7a60" stroke-width="1.5"/>
+        <rect x="408" y="303" width="49" height="49" fill="#0a0e14"/>
+        <line x1="433" y1="303" x2="433" y2="352" stroke="#6a5a40" stroke-width="1"/>
+        <line x1="408" y1="328" x2="457" y2="328" stroke="#6a5a40" stroke-width="1"/>
         <!-- Crack pattern -->
-        <path d="M405 275 L418 294 L408 312" fill="none" stroke="#5a6070" stroke-width="0.8" opacity="0.6"/>
-        <path d="M418 294 L428 282" fill="none" stroke="#5a6070" stroke-width="0.6" opacity="0.4"/>
-        <path d="M418 294 L430 306" fill="none" stroke="#5a6070" stroke-width="0.5" opacity="0.35"/>
-        <rect x="385" y="323" width="66" height="5" fill="#8a7a60"/>
+        <path d="M420 310 L433 328 L423 345" fill="none" stroke="#5a6070" stroke-width="0.8" opacity="0.6"/>
+        <path d="M433 328 L443 316" fill="none" stroke="#5a6070" stroke-width="0.6" opacity="0.4"/>
+        <path d="M433 328 L445 340" fill="none" stroke="#5a6070" stroke-width="0.5" opacity="0.35"/>
+        <rect x="402" y="355" width="61" height="5" fill="#8a7a60"/>
 
-        <!-- Window 4 (smaller, right) -->
-        <rect x="478" y="265" width="44" height="58" fill="url(#bGlass)" stroke="#8a7a60" stroke-width="1.5"/>
-        <rect x="481" y="268" width="38" height="52" fill="#0a0e14"/>
-        <line x1="500" y1="268" x2="500" y2="320" stroke="#6a5a40" stroke-width="1"/>
-        <line x1="481" y1="294" x2="519" y2="294" stroke="#6a5a40" stroke-width="1"/>
-        <rect x="475" y="323" width="50" height="5" fill="#8a7a60"/>
+        <!-- Window 4 -->
+        <rect x="490" y="300" width="55" height="55" fill="url(#bGlass)" stroke="#8a7a60" stroke-width="1.5"/>
+        <rect x="493" y="303" width="49" height="49" fill="#0a0e14"/>
+        <line x1="518" y1="303" x2="518" y2="352" stroke="#6a5a40" stroke-width="1"/>
+        <line x1="493" y1="328" x2="542" y2="328" stroke="#6a5a40" stroke-width="1"/>
+        <rect x="487" y="355" width="61" height="5" fill="#8a7a60"/>
         <!-- Damaged frame -->
-        <path d="M478 275 L475 278" fill="none" stroke="#7a6848" stroke-width="1" opacity="0.4"/>
+        <path d="M490 310 L487 313" fill="none" stroke="#7a6848" stroke-width="1" opacity="0.4"/>
 
-        <!-- ════════ WINDOWS — FRONT, 2nd FLOOR ════════ -->
-        <!-- Upper window 1 -->
-        <rect x="218" y="208" width="52" height="44" fill="url(#bGlass)" stroke="#8a7a60" stroke-width="1.2"/>
-        <rect x="221" y="211" width="46" height="38" fill="#0a0e14"/>
-        <line x1="244" y1="211" x2="244" y2="249" stroke="#6a5a40" stroke-width="0.8"/>
-        <line x1="221" y1="230" x2="267" y2="230" stroke="#6a5a40" stroke-width="0.8"/>
-        <rect x="215" y="252" width="58" height="4" fill="#8a7a60"/>
-        <!-- Upper window 2 -->
-        <rect x="318" y="208" width="52" height="44" fill="url(#bGlass)" stroke="#8a7a60" stroke-width="1.2"/>
-        <rect x="321" y="211" width="46" height="38" fill="#0a0e14"/>
-        <line x1="344" y1="211" x2="344" y2="249" stroke="#6a5a40" stroke-width="0.8"/>
-        <line x1="321" y1="230" x2="367" y2="230" stroke="#6a5a40" stroke-width="0.8"/>
-        <rect x="315" y="252" width="58" height="4" fill="#8a7a60"/>
-        <!-- Upper window 3 -->
-        <rect x="418" y="208" width="52" height="44" fill="url(#bGlass)" stroke="#8a7a60" stroke-width="1.2"/>
-        <rect x="421" y="211" width="46" height="38" fill="#0a0e14"/>
-        <line x1="444" y1="211" x2="444" y2="249" stroke="#6a5a40" stroke-width="0.8"/>
-        <line x1="421" y1="230" x2="467" y2="230" stroke="#6a5a40" stroke-width="0.8"/>
-        <rect x="415" y="252" width="58" height="4" fill="#8a7a60"/>
+        <!-- ════════ WINDOWS -- FRONT, 2nd FLOOR ════════ -->
+        <!-- 4 windows evenly spaced: x=185, x=280, x=375, x=470, each w=55 h=50 -->
+        <rect x="185" y="218" width="55" height="50" fill="url(#bGlass)" stroke="#8a7a60" stroke-width="1.2"/>
+        <rect x="188" y="221" width="49" height="44" fill="#0a0e14"/>
+        <line x1="213" y1="221" x2="213" y2="265" stroke="#6a5a40" stroke-width="0.8"/>
+        <line x1="188" y1="243" x2="237" y2="243" stroke="#6a5a40" stroke-width="0.8"/>
+        <rect x="182" y="268" width="61" height="4" fill="#8a7a60"/>
+
+        <rect x="280" y="218" width="55" height="50" fill="url(#bGlass)" stroke="#8a7a60" stroke-width="1.2"/>
+        <rect x="283" y="221" width="49" height="44" fill="#0a0e14"/>
+        <line x1="308" y1="221" x2="308" y2="265" stroke="#6a5a40" stroke-width="0.8"/>
+        <line x1="283" y1="243" x2="332" y2="243" stroke="#6a5a40" stroke-width="0.8"/>
+        <rect x="277" y="268" width="61" height="4" fill="#8a7a60"/>
+
+        <rect x="375" y="218" width="55" height="50" fill="url(#bGlass)" stroke="#8a7a60" stroke-width="1.2"/>
+        <rect x="378" y="221" width="49" height="44" fill="#0a0e14"/>
+        <line x1="403" y1="221" x2="403" y2="265" stroke="#6a5a40" stroke-width="0.8"/>
+        <line x1="378" y1="243" x2="427" y2="243" stroke="#6a5a40" stroke-width="0.8"/>
+        <rect x="372" y="268" width="61" height="4" fill="#8a7a60"/>
+
+        <rect x="470" y="218" width="55" height="50" fill="url(#bGlass)" stroke="#8a7a60" stroke-width="1.2"/>
+        <rect x="473" y="221" width="49" height="44" fill="#0a0e14"/>
+        <line x1="498" y1="221" x2="498" y2="265" stroke="#6a5a40" stroke-width="0.8"/>
+        <line x1="473" y1="243" x2="522" y2="243" stroke="#6a5a40" stroke-width="0.8"/>
+        <rect x="467" y="268" width="61" height="4" fill="#8a7a60"/>
 
         <!-- ════════ SIDE WALL WINDOWS ════════ -->
-        <!-- Side upper 1 -->
-        <path d="M568 188 L568 218 L628 204 L628 174 Z" fill="#0a0e14" stroke="#7a6a50" stroke-width="1"/>
-        <line x1="598" y1="181" x2="598" y2="211" stroke="#6a5a40" stroke-width="0.6"/>
-        <line x1="568" y1="203" x2="628" y2="189" stroke="#6a5a40" stroke-width="0.6"/>
-        <!-- Side upper 2 -->
-        <path d="M643 170 L643 200 L688 190 L688 160 Z" fill="#0a0e14" stroke="#7a6a50" stroke-width="1"/>
-        <line x1="666" y1="165" x2="666" y2="195" stroke="#6a5a40" stroke-width="0.6"/>
-        <line x1="643" y1="185" x2="688" y2="175" stroke="#6a5a40" stroke-width="0.6"/>
-        <!-- Side lower 1 -->
-        <path d="M568 250 L568 293 L628 276 L628 233 Z" fill="#0a0e14" stroke="#7a6a50" stroke-width="1"/>
-        <line x1="598" y1="242" x2="598" y2="284" stroke="#6a5a40" stroke-width="0.6"/>
-        <line x1="568" y1="272" x2="628" y2="255" stroke="#6a5a40" stroke-width="0.6"/>
-        <!-- Side lower 2 -->
-        <path d="M643 233 L643 276 L688 263 L688 220 Z" fill="#0a0e14" stroke="#7a6a50" stroke-width="1"/>
-        <line x1="666" y1="226" x2="666" y2="270" stroke="#6a5a40" stroke-width="0.6"/>
-        <line x1="643" y1="255" x2="688" y2="242" stroke="#6a5a40" stroke-width="0.6"/>
-
-        <!-- ════════ FRONT DOOR ════════ -->
-        <rect x="328" y="290" width="46" height="68" fill="#2a2218" stroke="#8a7a60" stroke-width="1.5" rx="1"/>
-        <rect x="332" y="295" width="38" height="26" fill="#1a1508" stroke="#6a5a40" stroke-width="0.5"/>
-        <rect x="332" y="325" width="38" height="26" fill="#1a1508" stroke="#6a5a40" stroke-width="0.5"/>
-        <circle cx="366" cy="326" r="2.8" fill="#8a7a50" stroke="#6a5a38" stroke-width="0.5"/>
-        <!-- Door step (cracked) -->
-        <rect x="323" y="355" width="56" height="7" fill="#5a5448"/>
-        <path d="M340 356 L342 362" fill="none" stroke="#3a3428" stroke-width="0.8" opacity="0.5"/>
+        <!-- Side wall: front-top(535,195) back-top(725,155) front-bot(535,395) back-bot(725,350) -->
+        <!-- For depth fraction f: topY = 195 + f*(155-195) = 195 - f*40, botY = 395 + f*(350-395) = 395 - f*45 -->
+        <!-- x = 535 + f*190 -->
+        <!-- Upper row: 3 windows, inset 30px below eave line, each ~40w x 40h in perspective -->
+        <!-- Window at f=0.15 (x=563.5), f=0.45 (x=620.5), f=0.75 (x=677.5) -->
+        <!-- Side upper 1 (f~0.15): x=564, topEave~189, window top ~219 -->
+        <path d="M554 230 L554 270 L594 264 L594 224 Z" fill="#0a0e14" stroke="#7a6a50" stroke-width="1"/>
+        <line x1="574" y1="227" x2="574" y2="267" stroke="#6a5a40" stroke-width="0.6"/>
+        <line x1="554" y1="250" x2="594" y2="244" stroke="#6a5a40" stroke-width="0.6"/>
+        <!-- Side upper 2 (f~0.45): x=620 -->
+        <path d="M610 220 L610 260 L650 254 L650 214 Z" fill="#0a0e14" stroke="#7a6a50" stroke-width="1"/>
+        <line x1="630" y1="217" x2="630" y2="257" stroke="#6a5a40" stroke-width="0.6"/>
+        <line x1="610" y1="240" x2="650" y2="234" stroke="#6a5a40" stroke-width="0.6"/>
+        <!-- Side upper 3 (f~0.75): x=678 -->
+        <path d="M668 210 L668 250 L708 244 L708 204 Z" fill="#0a0e14" stroke="#7a6a50" stroke-width="1"/>
+        <line x1="688" y1="207" x2="688" y2="247" stroke="#6a5a40" stroke-width="0.6"/>
+        <line x1="668" y1="230" x2="708" y2="224" stroke="#6a5a40" stroke-width="0.6"/>
+        <!-- Side lower 1 (f~0.15) -->
+        <path d="M554 295 L554 340 L594 333 L594 288 Z" fill="#0a0e14" stroke="#7a6a50" stroke-width="1"/>
+        <line x1="574" y1="292" x2="574" y2="337" stroke="#6a5a40" stroke-width="0.6"/>
+        <line x1="554" y1="318" x2="594" y2="311" stroke="#6a5a40" stroke-width="0.6"/>
+        <!-- Side lower 2 (f~0.45) -->
+        <path d="M610 283 L610 328 L650 321 L650 276 Z" fill="#0a0e14" stroke="#7a6a50" stroke-width="1"/>
+        <line x1="630" y1="280" x2="630" y2="325" stroke="#6a5a40" stroke-width="0.6"/>
+        <line x1="610" y1="306" x2="650" y2="299" stroke="#6a5a40" stroke-width="0.6"/>
+        <!-- Side lower 3 (f~0.75) -->
+        <path d="M668 273 L668 318 L708 311 L708 266 Z" fill="#0a0e14" stroke="#7a6a50" stroke-width="1"/>
+        <line x1="688" y1="270" x2="688" y2="315" stroke="#6a5a40" stroke-width="0.6"/>
+        <line x1="668" y1="296" x2="708" y2="289" stroke="#6a5a40" stroke-width="0.6"/>
 
         <!-- ════════ SAGGING GUTTER ════════ -->
-        <path d="M138 194 C200 198 280 210 348 216 C416 210 500 202 558 194" fill="none" stroke="#7a6a50" stroke-width="3.5" opacity="0.8"/>
-        <!-- Gutter brackets pulling away -->
-        <line x1="278" y1="209" x2="280" y2="218" stroke="#7a6a50" stroke-width="1.5" opacity="0.5"/>
-        <line x1="358" y1="216" x2="360" y2="225" stroke="#7a6a50" stroke-width="1.5" opacity="0.5"/>
-        <line x1="198" y1="200" x2="199" y2="207" stroke="#7a6a50" stroke-width="1.2" opacity="0.4"/>
-        <!-- Bent/crooked downspout -->
-        <path d="M143 194 L146 250 Q148 280 154 320 L158 358" fill="none" stroke="#6a5a40" stroke-width="3" opacity="0.7"/>
+        <path d="M138 197 C200 201 280 213 348 219 C416 213 500 205 558 197" fill="none" stroke="#7a6a50" stroke-width="3.5" opacity="0.8"/>
+        <line x1="278" y1="212" x2="280" y2="221" stroke="#7a6a50" stroke-width="1.5" opacity="0.5"/>
+        <line x1="358" y1="219" x2="360" y2="228" stroke="#7a6a50" stroke-width="1.5" opacity="0.5"/>
+        <line x1="198" y1="203" x2="199" y2="210" stroke="#7a6a50" stroke-width="1.2" opacity="0.4"/>
+        <!-- Bent downspout -->
+        <path d="M143 197 L146 260 Q148 290 154 350 L158 398" fill="none" stroke="#6a5a40" stroke-width="3" opacity="0.7"/>
         <!-- Gutter overflow stain -->
-        <path d="M348 216 Q350 220 351 228" fill="none" stroke="#5a4828" stroke-width="2" opacity="0.3"/>
+        <path d="M348 219 Q350 223 351 231" fill="none" stroke="#5a4828" stroke-width="2" opacity="0.3"/>
 
         <!-- ════════ DEAD LANDSCAPING ════════ -->
-        <!-- Dead bushes left -->
-        <ellipse cx="173" cy="352" rx="20" ry="11" fill="#4a3818" opacity="0.7"/>
-        <ellipse cx="195" cy="349" rx="17" ry="13" fill="#3a2a14" opacity="0.65"/>
-        <ellipse cx="158" cy="350" rx="12" ry="9" fill="#443618" opacity="0.6"/>
-        <path d="M168 345 Q173 330 177 345" fill="none" stroke="#5a4820" stroke-width="1.2" opacity="0.5"/>
-        <path d="M183 342 Q188 325 192 342" fill="none" stroke="#5a4820" stroke-width="1" opacity="0.45"/>
-        <path d="M155 346 Q158 335 161 346" fill="none" stroke="#5a4820" stroke-width="0.8" opacity="0.4"/>
-        <path d="M198 344 Q202 332 205 344" fill="none" stroke="#5a4820" stroke-width="0.9" opacity="0.4"/>
-        <!-- Dead bushes right -->
-        <ellipse cx="510" cy="352" rx="18" ry="10" fill="#4a3818" opacity="0.7"/>
-        <ellipse cx="530" cy="349" rx="15" ry="12" fill="#3a2a14" opacity="0.65"/>
-        <ellipse cx="548" cy="351" rx="11" ry="8" fill="#443618" opacity="0.6"/>
-        <path d="M506 345 Q510 332 514 345" fill="none" stroke="#5a4820" stroke-width="1" opacity="0.45"/>
-        <path d="M524 343 Q528 328 532 343" fill="none" stroke="#5a4820" stroke-width="0.9" opacity="0.4"/>
-        <path d="M542 346 Q545 335 548 346" fill="none" stroke="#5a4820" stroke-width="0.8" opacity="0.35"/>
-        <!-- Weeds growing through -->
-        <path d="M260 360 Q262 352 264 360" fill="none" stroke="#3a4018" stroke-width="0.6" opacity="0.4"/>
-        <path d="M480 358 Q482 350 484 358" fill="none" stroke="#3a4018" stroke-width="0.6" opacity="0.35"/>
+        <ellipse cx="173" cy="388" rx="20" ry="11" fill="#4a3818" opacity="0.7"/>
+        <ellipse cx="195" cy="385" rx="17" ry="13" fill="#3a2a14" opacity="0.65"/>
+        <ellipse cx="158" cy="386" rx="12" ry="9" fill="#443618" opacity="0.6"/>
+        <path d="M168 381 Q173 366 177 381" fill="none" stroke="#5a4820" stroke-width="1.2" opacity="0.5"/>
+        <path d="M183 378 Q188 361 192 378" fill="none" stroke="#5a4820" stroke-width="1" opacity="0.45"/>
+        <path d="M155 382 Q158 371 161 382" fill="none" stroke="#5a4820" stroke-width="0.8" opacity="0.4"/>
+        <ellipse cx="510" cy="388" rx="18" ry="10" fill="#4a3818" opacity="0.7"/>
+        <ellipse cx="530" cy="385" rx="15" ry="12" fill="#3a2a14" opacity="0.65"/>
+        <ellipse cx="548" cy="387" rx="11" ry="8" fill="#443618" opacity="0.6"/>
+        <path d="M506 381 Q510 368 514 381" fill="none" stroke="#5a4820" stroke-width="1" opacity="0.45"/>
+        <path d="M524 379 Q528 364 532 379" fill="none" stroke="#5a4820" stroke-width="0.9" opacity="0.4"/>
 
         <!-- ════════ CRACKED WALKWAY ════════ -->
-        <path d="M338 362 L338 440 L366 440 L366 362 Z" fill="url(#bWalk)" opacity="0.6"/>
-        <!-- Walkway joint lines -->
-        <line x1="338" y1="380" x2="366" y2="378" stroke="#2a2820" stroke-width="1" opacity="0.5"/>
-        <line x1="338" y1="398" x2="366" y2="396" stroke="#2a2820" stroke-width="1" opacity="0.5"/>
-        <line x1="338" y1="416" x2="366" y2="414" stroke="#2a2820" stroke-width="1" opacity="0.45"/>
-        <!-- Major crack running through -->
-        <path d="M349 365 L352 380 L347 395 L353 410 L348 425 L352 440" fill="none" stroke="#1a1808" stroke-width="1.5" opacity="0.6"/>
-        <!-- Smaller cracks branching off -->
-        <path d="M352 380 L358 385" fill="none" stroke="#1a1808" stroke-width="0.8" opacity="0.4"/>
-        <path d="M347 395 L340 400" fill="none" stroke="#1a1808" stroke-width="0.8" opacity="0.35"/>
-        <path d="M353 410 L360 408" fill="none" stroke="#1a1808" stroke-width="0.7" opacity="0.3"/>
-        <!-- Grass growing in cracks -->
-        <path d="M350 388 Q351 385 352 388" fill="none" stroke="#3a4018" stroke-width="0.5" opacity="0.3"/>
-        <path d="M349 408 Q350 405 351 408" fill="none" stroke="#3a4018" stroke-width="0.5" opacity="0.25"/>
+        <path d="M348 402 L348 440 L376 440 L376 402 Z" fill="url(#bWalk)" opacity="0.6"/>
+        <line x1="348" y1="415" x2="376" y2="413" stroke="#2a2820" stroke-width="1" opacity="0.5"/>
+        <line x1="348" y1="428" x2="376" y2="426" stroke="#2a2820" stroke-width="1" opacity="0.5"/>
+        <path d="M359 405 L362 418 L357 430 L362 440" fill="none" stroke="#1a1808" stroke-width="1.5" opacity="0.6"/>
+        <path d="M362 418 L368 423" fill="none" stroke="#1a1808" stroke-width="0.8" opacity="0.4"/>
 
-        <!-- Gable trim (damaged/peeling) -->
-        <path d="M155 195 L345 90 L535 195" fill="none" stroke="#7a6a50" stroke-width="2.5" opacity="0.6"/>
-        <!-- Peeling paint on trim -->
+        <!-- Gable trim (damaged) -->
+        <path d="M155 198 L345 90 L535 198" fill="none" stroke="#7a6a50" stroke-width="2.5" opacity="0.6"/>
         <path d="M250 140 Q253 137 256 140" fill="none" stroke="#9a8a68" stroke-width="1" opacity="0.3"/>
         <path d="M420 155 Q423 152 426 155" fill="none" stroke="#9a8a68" stroke-width="1" opacity="0.3"/>
 
-        <!-- ── Puddle on ground ── -->
+        <!-- Puddle on ground -->
         <ellipse cx="130" cy="395" rx="22" ry="5" fill="#1a2028" opacity="0.25"/>
         <ellipse cx="130" cy="395" rx="15" ry="3" fill="#1a2530" opacity="0.15"/>
       </svg>
@@ -925,7 +934,6 @@ body::before {
       <!-- ════════════════════════════════════════════════════════════════════════ -->
       <svg class="ba-layer ba-after" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice">
         <defs>
-          <!-- Sky gradients (golden hour evening) -->
           <linearGradient id="aSky" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="#0a1628"/><stop offset="30%" stop-color="#0E1A30"/>
             <stop offset="60%" stop-color="#121E38"/><stop offset="100%" stop-color="#182848"/>
@@ -934,17 +942,14 @@ body::before {
             <stop offset="0%" stop-color="#3a2818" stop-opacity="0.15"/>
             <stop offset="100%" stop-color="#0a1628" stop-opacity="0"/>
           </radialGradient>
-          <!-- Ambient house glow -->
           <radialGradient id="aHouseGlow" cx="0.45" cy="0.65" r="0.4">
             <stop offset="0%" stop-color="#F0D890" stop-opacity="0.06"/>
             <stop offset="100%" stop-color="#0a1628" stop-opacity="0"/>
           </radialGradient>
-          <!-- Ground -->
           <linearGradient id="aGround" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="#1a2818"/><stop offset="40%" stop-color="#152214"/>
             <stop offset="100%" stop-color="#101a10"/>
           </linearGradient>
-          <!-- Walls -->
           <linearGradient id="aFrontWall" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="#E8E0D8"/><stop offset="30%" stop-color="#DED6CC"/>
             <stop offset="70%" stop-color="#D4CCC0"/><stop offset="100%" stop-color="#C8C0B4"/>
@@ -952,7 +957,6 @@ body::before {
           <linearGradient id="aSideWall" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0%" stop-color="#C0B8AA"/><stop offset="100%" stop-color="#B0A898"/>
           </linearGradient>
-          <!-- Roof -->
           <linearGradient id="aRoofFront" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="#5A6878"/><stop offset="50%" stop-color="#4E5C6C"/>
             <stop offset="100%" stop-color="#445060"/>
@@ -960,26 +964,21 @@ body::before {
           <linearGradient id="aRoofSide" x1="0" y1="0" x2="1" y2="0">
             <stop offset="0%" stop-color="#445060"/><stop offset="100%" stop-color="#3A4656"/>
           </linearGradient>
-          <!-- Glass -->
           <linearGradient id="aGlass" x1="0" y1="0" x2="1" y2="1">
             <stop offset="0%" stop-color="#1a3050"/><stop offset="30%" stop-color="#0E1828"/>
             <stop offset="70%" stop-color="#122040"/><stop offset="100%" stop-color="#1a3858"/>
           </linearGradient>
-          <!-- Window warm interior -->
           <linearGradient id="aWarmInt" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="#F0D890" stop-opacity="0.08"/>
             <stop offset="100%" stop-color="#E8C870" stop-opacity="0.04"/>
           </linearGradient>
-          <!-- Solar panel -->
           <linearGradient id="aSolar" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="#0D1B2A"/><stop offset="40%" stop-color="#162840"/>
             <stop offset="60%" stop-color="#1a3050"/><stop offset="100%" stop-color="#0D1B2A"/>
           </linearGradient>
-          <!-- Walkway -->
           <linearGradient id="aWalk" x1="0" y1="0" x2="0" y2="1">
             <stop offset="0%" stop-color="#8a8880"/><stop offset="100%" stop-color="#7a7870"/>
           </linearGradient>
-          <!-- Filters -->
           <filter id="aShadow" x="-10%" y="-10%" width="130%" height="140%">
             <feGaussianBlur in="SourceAlpha" stdDeviation="5" result="blur"/>
             <feOffset dx="3" dy="6" result="offset"/>
@@ -993,12 +992,13 @@ body::before {
           <filter id="aLightGlow" x="-100%" y="-100%" width="300%" height="300%">
             <feGaussianBlur in="SourceGraphic" stdDeviation="6"/>
           </filter>
-          <!-- Clip paths -->
-          <clipPath id="aRoofClipF"><path d="M135 195 L345 90 L555 195 Z"/></clipPath>
-          <clipPath id="aRoofClipS"><path d="M535 195 L345 90 L725 152 Z"/></clipPath>
+          <!-- Clip paths matching new roof geometry -->
+          <clipPath id="aRoofClipF"><path d="M140 198 L345 90 L550 198 Z"/></clipPath>
+          <clipPath id="aRoofClipS"><path d="M535 195 L345 90 L725 90 L725 155 Z"/></clipPath>
+          <clipPath id="aCrossGableClip"><path d="M620 155 L670 105 L725 155 Z"/></clipPath>
         </defs>
 
-        <!-- ── SKY ── -->
+        <!-- SKY -->
         <rect width="800" height="450" fill="url(#aSky)"/>
         <rect width="800" height="450" fill="url(#aGoldenGlow)"/>
         <!-- Stars -->
@@ -1015,9 +1015,8 @@ body::before {
         <circle cx="440" cy="8" r="0.7" fill="#7a9ac0" opacity="0.4"/>
         <circle cx="780" cy="30" r="0.5" fill="#5a7a9a" opacity="0.35"/>
 
-        <!-- ── GROUND (manicured green lawn) ── -->
+        <!-- GROUND (manicured green lawn) -->
         <rect x="0" y="362" width="800" height="88" fill="url(#aGround)"/>
-        <!-- Grass blade texture -->
         <line x1="30" y1="372" x2="33" y2="366" stroke="#1e3218" stroke-width="0.6" opacity="0.35"/>
         <line x1="60" y1="375" x2="63" y2="369" stroke="#1a2e16" stroke-width="0.5" opacity="0.3"/>
         <line x1="90" y1="374" x2="93" y2="368" stroke="#1e3218" stroke-width="0.6" opacity="0.35"/>
@@ -1028,10 +1027,10 @@ body::before {
         <line x1="740" y1="376" x2="743" y2="370" stroke="#1a2e16" stroke-width="0.5" opacity="0.28"/>
         <line x1="770" y1="374" x2="773" y2="368" stroke="#1e3218" stroke-width="0.6" opacity="0.25"/>
 
-        <!-- ── Ambient house glow ── -->
+        <!-- Ambient house glow -->
         <rect width="800" height="450" fill="url(#aHouseGlow)"/>
 
-        <!-- ── Healthy tree (left) ── -->
+        <!-- Healthy tree (left) -->
         <path d="M70 365 L68 305 Q66 285 64 270" fill="none" stroke="#2a3820" stroke-width="3.5" opacity="0.6"/>
         <path d="M68 305 Q72 290 80 275" fill="none" stroke="#2a3820" stroke-width="2.5" opacity="0.5"/>
         <path d="M66 325 Q58 312 52 300" fill="none" stroke="#2a3820" stroke-width="2" opacity="0.45"/>
@@ -1042,292 +1041,309 @@ body::before {
         <ellipse cx="85" cy="258" rx="14" ry="11" fill="#1e4522" opacity="0.45"/>
         <ellipse cx="55" cy="250" rx="15" ry="12" fill="#1a4020" opacity="0.45"/>
 
-        <!-- ── House shadow on ground ── -->
-        <path d="M150 362 L150 405 L710 405 L710 362 Z" fill="#080c08" opacity="0.3"/>
+        <!-- House shadow on ground -->
+        <path d="M150 362 L150 405 L730 405 L730 362 Z" fill="#080c08" opacity="0.3"/>
 
         <!-- ════════ HOUSE STRUCTURE ════════ -->
         <g filter="url(#aShadow)">
         <!-- Foundation -->
-        <rect x="155" y="355" width="380" height="12" fill="#8a8880" stroke="#7a7870" stroke-width="0.5"/>
-        <path d="M535 355 L535 367 L700 327 L700 315 Z" fill="#7a7870" stroke="#6a6860" stroke-width="0.5"/>
+        <rect x="155" y="395" width="380" height="12" fill="#8a8880" stroke="#7a7870" stroke-width="0.5"/>
+        <path d="M535 395 L535 407 L725 362 L725 350 Z" fill="#7a7870" stroke="#6a6860" stroke-width="0.5"/>
 
-        <!-- Front wall (clean, fresh paint) -->
-        <path d="M155 355 L155 192 L535 192 L535 355 Z" fill="url(#aFrontWall)"/>
-        <path d="M155 355 L155 192 L535 192 L535 355 Z" fill="none" stroke="#C0B8A8" stroke-width="1"/>
+        <!-- Front wall: x=155..535, y=195..395 -->
+        <path d="M155 395 L155 195 L535 195 L535 395 Z" fill="url(#aFrontWall)"/>
+        <path d="M155 395 L155 195 L535 195 L535 395 Z" fill="none" stroke="#C0B8A8" stroke-width="1"/>
         <!-- Clean siding lines -->
-        <line x1="155" y1="207" x2="535" y2="207" stroke="#C8C0B0" stroke-width="0.5" opacity="0.4"/>
-        <line x1="155" y1="222" x2="535" y2="222" stroke="#C8C0B0" stroke-width="0.5" opacity="0.35"/>
-        <line x1="155" y1="237" x2="535" y2="237" stroke="#C8C0B0" stroke-width="0.5" opacity="0.4"/>
-        <line x1="155" y1="252" x2="535" y2="252" stroke="#C8C0B0" stroke-width="0.5" opacity="0.35"/>
-        <line x1="155" y1="267" x2="535" y2="267" stroke="#C8C0B0" stroke-width="0.5" opacity="0.4"/>
-        <line x1="155" y1="282" x2="535" y2="282" stroke="#C8C0B0" stroke-width="0.5" opacity="0.35"/>
-        <line x1="155" y1="297" x2="535" y2="297" stroke="#C8C0B0" stroke-width="0.5" opacity="0.4"/>
-        <line x1="155" y1="312" x2="535" y2="312" stroke="#C8C0B0" stroke-width="0.5" opacity="0.35"/>
-        <line x1="155" y1="327" x2="535" y2="327" stroke="#C8C0B0" stroke-width="0.5" opacity="0.4"/>
-        <line x1="155" y1="342" x2="535" y2="342" stroke="#C8C0B0" stroke-width="0.5" opacity="0.35"/>
+        <line x1="155" y1="210" x2="535" y2="210" stroke="#C8C0B0" stroke-width="0.5" opacity="0.4"/>
+        <line x1="155" y1="225" x2="535" y2="225" stroke="#C8C0B0" stroke-width="0.5" opacity="0.35"/>
+        <line x1="155" y1="240" x2="535" y2="240" stroke="#C8C0B0" stroke-width="0.5" opacity="0.4"/>
+        <line x1="155" y1="255" x2="535" y2="255" stroke="#C8C0B0" stroke-width="0.5" opacity="0.35"/>
+        <line x1="155" y1="270" x2="535" y2="270" stroke="#C8C0B0" stroke-width="0.5" opacity="0.4"/>
+        <line x1="155" y1="285" x2="535" y2="285" stroke="#C8C0B0" stroke-width="0.5" opacity="0.35"/>
+        <line x1="155" y1="300" x2="535" y2="300" stroke="#C8C0B0" stroke-width="0.5" opacity="0.4"/>
+        <line x1="155" y1="315" x2="535" y2="315" stroke="#C8C0B0" stroke-width="0.5" opacity="0.35"/>
+        <line x1="155" y1="330" x2="535" y2="330" stroke="#C8C0B0" stroke-width="0.5" opacity="0.4"/>
+        <line x1="155" y1="345" x2="535" y2="345" stroke="#C8C0B0" stroke-width="0.5" opacity="0.35"/>
+        <line x1="155" y1="360" x2="535" y2="360" stroke="#C8C0B0" stroke-width="0.5" opacity="0.4"/>
+        <line x1="155" y1="375" x2="535" y2="375" stroke="#C8C0B0" stroke-width="0.5" opacity="0.35"/>
+        <line x1="155" y1="390" x2="535" y2="390" stroke="#C8C0B0" stroke-width="0.5" opacity="0.4"/>
 
-        <!-- Side wall -->
-        <path d="M535 355 L535 192 L700 152 L700 315 Z" fill="url(#aSideWall)"/>
-        <path d="M535 355 L535 192 L700 152 L700 315 Z" fill="none" stroke="#A8A090" stroke-width="0.8"/>
+        <!-- Side wall: (535,195) to (725,155) top, (535,395) to (725,350) bottom -->
+        <path d="M535 395 L535 195 L725 155 L725 350 Z" fill="url(#aSideWall)"/>
+        <path d="M535 395 L535 195 L725 155 L725 350 Z" fill="none" stroke="#A8A090" stroke-width="0.8"/>
         <!-- Side siding lines -->
-        <line x1="535" y1="212" x2="700" y2="172" stroke="#B0A898" stroke-width="0.4" opacity="0.35"/>
-        <line x1="535" y1="232" x2="700" y2="192" stroke="#B0A898" stroke-width="0.4" opacity="0.3"/>
-        <line x1="535" y1="252" x2="700" y2="212" stroke="#B0A898" stroke-width="0.4" opacity="0.35"/>
-        <line x1="535" y1="272" x2="700" y2="232" stroke="#B0A898" stroke-width="0.4" opacity="0.3"/>
-        <line x1="535" y1="292" x2="700" y2="252" stroke="#B0A898" stroke-width="0.4" opacity="0.35"/>
-        <line x1="535" y1="312" x2="700" y2="272" stroke="#B0A898" stroke-width="0.4" opacity="0.3"/>
-        <line x1="535" y1="332" x2="700" y2="292" stroke="#B0A898" stroke-width="0.4" opacity="0.35"/>
+        <line x1="535" y1="215" x2="725" y2="170" stroke="#B0A898" stroke-width="0.4" opacity="0.35"/>
+        <line x1="535" y1="235" x2="725" y2="185" stroke="#B0A898" stroke-width="0.4" opacity="0.3"/>
+        <line x1="535" y1="255" x2="725" y2="200" stroke="#B0A898" stroke-width="0.4" opacity="0.35"/>
+        <line x1="535" y1="275" x2="725" y2="215" stroke="#B0A898" stroke-width="0.4" opacity="0.3"/>
+        <line x1="535" y1="295" x2="725" y2="235" stroke="#B0A898" stroke-width="0.4" opacity="0.35"/>
+        <line x1="535" y1="315" x2="725" y2="250" stroke="#B0A898" stroke-width="0.4" opacity="0.3"/>
+        <line x1="535" y1="335" x2="725" y2="265" stroke="#B0A898" stroke-width="0.4" opacity="0.35"/>
+        <line x1="535" y1="355" x2="725" y2="280" stroke="#B0A898" stroke-width="0.4" opacity="0.3"/>
+        <line x1="535" y1="375" x2="725" y2="295" stroke="#B0A898" stroke-width="0.4" opacity="0.35"/>
+        <line x1="535" y1="390" x2="725" y2="340" stroke="#B0A898" stroke-width="0.4" opacity="0.3"/>
         </g>
 
         <!-- ════════ FRONT ROOF (new architectural shingles) ════════ -->
-        <path d="M135 195 L345 90 L555 195 Z" fill="url(#aRoofFront)" stroke="#5A6878" stroke-width="1.2"/>
+        <path d="M140 198 L345 90 L550 198 Z" fill="url(#aRoofFront)" stroke="#5A6878" stroke-width="1.2"/>
         <g clip-path="url(#aRoofClipF)">
-          <!-- 18 shingle rows with alternating shade -->
-          <line x1="140" y1="193" x2="550" y2="193" stroke="#4E5C6C" stroke-width="0.6" opacity="0.5"/>
-          <line x1="150" y1="186" x2="540" y2="186" stroke="#445060" stroke-width="0.6" opacity="0.45"/>
-          <line x1="160" y1="179" x2="530" y2="179" stroke="#4E5C6C" stroke-width="0.6" opacity="0.5"/>
-          <line x1="170" y1="172" x2="520" y2="172" stroke="#445060" stroke-width="0.6" opacity="0.45"/>
-          <line x1="180" y1="165" x2="510" y2="165" stroke="#4E5C6C" stroke-width="0.6" opacity="0.5"/>
-          <line x1="190" y1="158" x2="500" y2="158" stroke="#445060" stroke-width="0.6" opacity="0.45"/>
-          <line x1="200" y1="151" x2="490" y2="151" stroke="#4E5C6C" stroke-width="0.6" opacity="0.5"/>
-          <line x1="210" y1="144" x2="480" y2="144" stroke="#445060" stroke-width="0.6" opacity="0.45"/>
-          <line x1="220" y1="137" x2="470" y2="137" stroke="#4E5C6C" stroke-width="0.6" opacity="0.5"/>
-          <line x1="230" y1="130" x2="460" y2="130" stroke="#445060" stroke-width="0.6" opacity="0.45"/>
-          <line x1="240" y1="123" x2="450" y2="123" stroke="#4E5C6C" stroke-width="0.6" opacity="0.5"/>
-          <line x1="250" y1="116" x2="440" y2="116" stroke="#445060" stroke-width="0.6" opacity="0.45"/>
-          <line x1="260" y1="109" x2="430" y2="109" stroke="#4E5C6C" stroke-width="0.6" opacity="0.5"/>
-          <line x1="270" y1="102" x2="420" y2="102" stroke="#445060" stroke-width="0.6" opacity="0.45"/>
-          <line x1="280" y1="95" x2="410" y2="95" stroke="#4E5C6C" stroke-width="0.6" opacity="0.5"/>
-          <line x1="290" y1="88" x2="400" y2="88" stroke="#445060" stroke-width="0.6" opacity="0.45"/>
+          <line x1="145" y1="196" x2="545" y2="196" stroke="#4E5C6C" stroke-width="0.6" opacity="0.5"/>
+          <line x1="153" y1="189" x2="537" y2="189" stroke="#445060" stroke-width="0.6" opacity="0.45"/>
+          <line x1="161" y1="182" x2="529" y2="182" stroke="#4E5C6C" stroke-width="0.6" opacity="0.5"/>
+          <line x1="169" y1="175" x2="521" y2="175" stroke="#445060" stroke-width="0.6" opacity="0.45"/>
+          <line x1="177" y1="168" x2="513" y2="168" stroke="#4E5C6C" stroke-width="0.6" opacity="0.5"/>
+          <line x1="185" y1="161" x2="505" y2="161" stroke="#445060" stroke-width="0.6" opacity="0.45"/>
+          <line x1="193" y1="154" x2="497" y2="154" stroke="#4E5C6C" stroke-width="0.6" opacity="0.5"/>
+          <line x1="201" y1="147" x2="489" y2="147" stroke="#445060" stroke-width="0.6" opacity="0.45"/>
+          <line x1="209" y1="140" x2="481" y2="140" stroke="#4E5C6C" stroke-width="0.6" opacity="0.5"/>
+          <line x1="217" y1="133" x2="473" y2="133" stroke="#445060" stroke-width="0.6" opacity="0.45"/>
+          <line x1="225" y1="126" x2="465" y2="126" stroke="#4E5C6C" stroke-width="0.6" opacity="0.5"/>
+          <line x1="233" y1="119" x2="457" y2="119" stroke="#445060" stroke-width="0.6" opacity="0.45"/>
+          <line x1="241" y1="112" x2="449" y2="112" stroke="#4E5C6C" stroke-width="0.6" opacity="0.5"/>
+          <line x1="249" y1="105" x2="441" y2="105" stroke="#445060" stroke-width="0.6" opacity="0.45"/>
+          <line x1="257" y1="98" x2="433" y2="98" stroke="#4E5C6C" stroke-width="0.6" opacity="0.5"/>
           <!-- Vertical tab lines (architectural detail) -->
-          <line x1="220" y1="193" x2="225" y2="179" stroke="#445060" stroke-width="0.35" opacity="0.25"/>
-          <line x1="300" y1="193" x2="302" y2="179" stroke="#445060" stroke-width="0.35" opacity="0.25"/>
-          <line x1="380" y1="193" x2="378" y2="179" stroke="#445060" stroke-width="0.35" opacity="0.25"/>
-          <line x1="460" y1="193" x2="456" y2="179" stroke="#445060" stroke-width="0.35" opacity="0.25"/>
-          <line x1="250" y1="172" x2="254" y2="158" stroke="#445060" stroke-width="0.35" opacity="0.22"/>
-          <line x1="345" y1="172" x2="345" y2="158" stroke="#445060" stroke-width="0.35" opacity="0.22"/>
-          <line x1="440" y1="172" x2="436" y2="158" stroke="#445060" stroke-width="0.35" opacity="0.22"/>
-          <line x1="280" y1="151" x2="283" y2="137" stroke="#445060" stroke-width="0.35" opacity="0.2"/>
-          <line x1="345" y1="151" x2="345" y2="137" stroke="#445060" stroke-width="0.35" opacity="0.2"/>
-          <line x1="410" y1="151" x2="407" y2="137" stroke="#445060" stroke-width="0.35" opacity="0.2"/>
-          <line x1="310" y1="130" x2="312" y2="116" stroke="#445060" stroke-width="0.3" opacity="0.18"/>
-          <line x1="380" y1="130" x2="378" y2="116" stroke="#445060" stroke-width="0.3" opacity="0.18"/>
-          <line x1="300" y1="109" x2="302" y2="95" stroke="#445060" stroke-width="0.3" opacity="0.15"/>
-          <line x1="370" y1="109" x2="368" y2="95" stroke="#445060" stroke-width="0.3" opacity="0.15"/>
+          <line x1="220" y1="196" x2="224" y2="182" stroke="#445060" stroke-width="0.35" opacity="0.25"/>
+          <line x1="300" y1="196" x2="302" y2="182" stroke="#445060" stroke-width="0.35" opacity="0.25"/>
+          <line x1="380" y1="196" x2="378" y2="182" stroke="#445060" stroke-width="0.35" opacity="0.25"/>
+          <line x1="460" y1="196" x2="456" y2="182" stroke="#445060" stroke-width="0.35" opacity="0.25"/>
+          <line x1="250" y1="175" x2="254" y2="161" stroke="#445060" stroke-width="0.35" opacity="0.22"/>
+          <line x1="345" y1="175" x2="345" y2="161" stroke="#445060" stroke-width="0.35" opacity="0.22"/>
+          <line x1="440" y1="175" x2="436" y2="161" stroke="#445060" stroke-width="0.35" opacity="0.22"/>
+          <line x1="280" y1="154" x2="283" y2="140" stroke="#445060" stroke-width="0.35" opacity="0.2"/>
+          <line x1="345" y1="154" x2="345" y2="140" stroke="#445060" stroke-width="0.35" opacity="0.2"/>
+          <line x1="410" y1="154" x2="407" y2="140" stroke="#445060" stroke-width="0.35" opacity="0.2"/>
         </g>
 
-        <!-- ════════ SIDE ROOF (new shingles) ════════ -->
-        <path d="M535 195 L345 90 L725 152 Z" fill="url(#aRoofSide)" stroke="#3A4656" stroke-width="1"/>
+        <!-- ════════ SIDE ROOF — ridge horizontal (345,90) to (725,90) ════════ -->
+        <path d="M535 195 L345 90 L725 90 L725 155 Z" fill="url(#aRoofSide)" stroke="#3A4656" stroke-width="1"/>
         <g clip-path="url(#aRoofClipS)">
-          <line x1="540" y1="190" x2="712" y2="155" stroke="#3A4656" stroke-width="0.5" opacity="0.45"/>
-          <line x1="535" y1="182" x2="704" y2="150" stroke="#3A4656" stroke-width="0.5" opacity="0.4"/>
-          <line x1="525" y1="174" x2="696" y2="145" stroke="#3A4656" stroke-width="0.5" opacity="0.45"/>
-          <line x1="510" y1="166" x2="688" y2="140" stroke="#3A4656" stroke-width="0.5" opacity="0.4"/>
-          <line x1="495" y1="158" x2="680" y2="135" stroke="#3A4656" stroke-width="0.5" opacity="0.45"/>
-          <line x1="480" y1="150" x2="672" y2="130" stroke="#3A4656" stroke-width="0.5" opacity="0.4"/>
-          <line x1="465" y1="142" x2="664" y2="125" stroke="#3A4656" stroke-width="0.5" opacity="0.45"/>
-          <line x1="450" y1="134" x2="656" y2="120" stroke="#3A4656" stroke-width="0.5" opacity="0.4"/>
-          <line x1="435" y1="126" x2="648" y2="115" stroke="#3A4656" stroke-width="0.5" opacity="0.45"/>
-          <line x1="420" y1="118" x2="640" y2="110" stroke="#3A4656" stroke-width="0.5" opacity="0.4"/>
+          <line x1="535" y1="192" x2="725" y2="152" stroke="#3A4656" stroke-width="0.5" opacity="0.45"/>
+          <line x1="530" y1="185" x2="725" y2="147" stroke="#3A4656" stroke-width="0.5" opacity="0.4"/>
+          <line x1="522" y1="178" x2="725" y2="142" stroke="#3A4656" stroke-width="0.5" opacity="0.45"/>
+          <line x1="514" y1="171" x2="725" y2="137" stroke="#3A4656" stroke-width="0.5" opacity="0.4"/>
+          <line x1="506" y1="164" x2="725" y2="132" stroke="#3A4656" stroke-width="0.5" opacity="0.45"/>
+          <line x1="498" y1="157" x2="725" y2="127" stroke="#3A4656" stroke-width="0.5" opacity="0.4"/>
+          <line x1="490" y1="150" x2="725" y2="122" stroke="#3A4656" stroke-width="0.5" opacity="0.45"/>
+          <line x1="482" y1="143" x2="725" y2="117" stroke="#3A4656" stroke-width="0.5" opacity="0.4"/>
+          <line x1="474" y1="136" x2="725" y2="112" stroke="#3A4656" stroke-width="0.5" opacity="0.45"/>
+          <line x1="466" y1="129" x2="725" y2="107" stroke="#3A4656" stroke-width="0.5" opacity="0.4"/>
+          <line x1="458" y1="122" x2="725" y2="102" stroke="#3A4656" stroke-width="0.5" opacity="0.45"/>
+          <line x1="450" y1="115" x2="725" y2="97" stroke="#3A4656" stroke-width="0.5" opacity="0.4"/>
         </g>
-        <!-- Ridge cap (metallic) -->
-        <line x1="345" y1="82" x2="725" y2="152" stroke="#8A9AB0" stroke-width="3"/>
-        <line x1="345" y1="82" x2="725" y2="152" stroke="#A0B8D0" stroke-width="1.2" opacity="0.5"/>
+
+        <!-- ════════ CROSS GABLE (matching before) ════════ -->
+        <path d="M620 155 L670 105 L725 155 Z" fill="url(#aRoofFront)" stroke="#5A6878" stroke-width="1"/>
+        <g clip-path="url(#aCrossGableClip)">
+          <line x1="625" y1="152" x2="720" y2="152" stroke="#4E5C6C" stroke-width="0.5" opacity="0.45"/>
+          <line x1="630" y1="147" x2="715" y2="147" stroke="#445060" stroke-width="0.5" opacity="0.4"/>
+          <line x1="636" y1="142" x2="709" y2="142" stroke="#4E5C6C" stroke-width="0.5" opacity="0.45"/>
+          <line x1="642" y1="137" x2="703" y2="137" stroke="#445060" stroke-width="0.5" opacity="0.4"/>
+          <line x1="648" y1="132" x2="697" y2="132" stroke="#4E5C6C" stroke-width="0.5" opacity="0.45"/>
+          <line x1="654" y1="127" x2="691" y2="127" stroke="#445060" stroke-width="0.5" opacity="0.4"/>
+          <line x1="660" y1="122" x2="685" y2="122" stroke="#4E5C6C" stroke-width="0.5" opacity="0.45"/>
+          <line x1="664" y1="117" x2="681" y2="117" stroke="#445060" stroke-width="0.5" opacity="0.4"/>
+        </g>
+        <!-- Cross gable front wall below it -->
+        <path d="M620 155 L620 270 L725 238 L725 155 Z" fill="url(#aSideWall)" stroke="#A8A090" stroke-width="0.6"/>
+
+        <!-- Ridge cap (metallic) — horizontal from peak to back -->
+        <line x1="345" y1="90" x2="725" y2="90" stroke="#8A9AB0" stroke-width="3"/>
+        <line x1="345" y1="90" x2="725" y2="90" stroke="#A0B8D0" stroke-width="1.2" opacity="0.5"/>
+        <!-- Cross gable ridge cap -->
+        <line x1="670" y1="105" x2="670" y2="90" stroke="#8A9AB0" stroke-width="2" opacity="0.7"/>
         <!-- Gable trim -->
-        <path d="M155 195 L345 90 L535 195" fill="none" stroke="#5A6878" stroke-width="2.5"/>
+        <path d="M155 198 L345 90 L535 198" fill="none" stroke="#5A6878" stroke-width="2.5"/>
 
-        <!-- (chimney removed) -->
-
-        <!-- (solar panels removed for cleaner look) -->
-
-        <!-- ════════ WINDOWS — FRONT, 1st FLOOR ════════ -->
+        <!-- ════════ WINDOWS -- FRONT, 1st FLOOR ════════ -->
+        <!-- Same positions as before: Win1 x=180, Win2 x=265, DOOR x=340, Win3 x=405, Win4 x=490 -->
         <!-- Window 1 -->
-        <rect x="193" y="265" width="60" height="58" fill="url(#aGlass)" stroke="#C0B8A8" stroke-width="1.5"/>
-        <rect x="196" y="268" width="54" height="52" fill="url(#aGlass)"/>
-        <rect x="196" y="268" width="54" height="52" fill="url(#aWarmInt)"/>
-        <line x1="223" y1="268" x2="223" y2="320" stroke="#8a9aaa" stroke-width="1"/>
-        <line x1="196" y1="294" x2="250" y2="294" stroke="#8a9aaa" stroke-width="1"/>
-        <path d="M199 271 L214 271 L199 288 Z" fill="#2a4868" opacity="0.15"/>
-        <rect x="190" y="323" width="66" height="5" fill="#C8C0B0"/>
+        <rect x="180" y="300" width="55" height="55" fill="url(#aGlass)" stroke="#C0B8A8" stroke-width="1.5"/>
+        <rect x="183" y="303" width="49" height="49" fill="url(#aGlass)"/>
+        <rect x="183" y="303" width="49" height="49" fill="url(#aWarmInt)"/>
+        <line x1="208" y1="303" x2="208" y2="352" stroke="#8a9aaa" stroke-width="1"/>
+        <line x1="183" y1="328" x2="232" y2="328" stroke="#8a9aaa" stroke-width="1"/>
+        <path d="M186 306 L200 306 L186 322 Z" fill="#2a4868" opacity="0.15"/>
+        <rect x="177" y="355" width="61" height="5" fill="#C8C0B0"/>
 
         <!-- Window 2 -->
-        <rect x="288" y="265" width="60" height="58" fill="url(#aGlass)" stroke="#C0B8A8" stroke-width="1.5"/>
-        <rect x="291" y="268" width="54" height="52" fill="url(#aGlass)"/>
-        <rect x="291" y="268" width="54" height="52" fill="url(#aWarmInt)"/>
-        <line x1="318" y1="268" x2="318" y2="320" stroke="#8a9aaa" stroke-width="1"/>
-        <line x1="291" y1="294" x2="345" y2="294" stroke="#8a9aaa" stroke-width="1"/>
-        <path d="M294 271 L309 271 L294 288 Z" fill="#2a4868" opacity="0.15"/>
-        <rect x="285" y="323" width="66" height="5" fill="#C8C0B0"/>
+        <rect x="265" y="300" width="55" height="55" fill="url(#aGlass)" stroke="#C0B8A8" stroke-width="1.5"/>
+        <rect x="268" y="303" width="49" height="49" fill="url(#aGlass)"/>
+        <rect x="268" y="303" width="49" height="49" fill="url(#aWarmInt)"/>
+        <line x1="293" y1="303" x2="293" y2="352" stroke="#8a9aaa" stroke-width="1"/>
+        <line x1="268" y1="328" x2="317" y2="328" stroke="#8a9aaa" stroke-width="1"/>
+        <path d="M271 306 L285 306 L271 322 Z" fill="#2a4868" opacity="0.15"/>
+        <rect x="262" y="355" width="61" height="5" fill="#C8C0B0"/>
+
+        <!-- FRONT DOOR (premium) -->
+        <rect x="340" y="318" width="40" height="80" fill="#2a2838" stroke="#C0B8A8" stroke-width="1.5" rx="1"/>
+        <rect x="344" y="323" width="32" height="30" fill="#1E1C28" stroke="#8a9aaa" stroke-width="0.5"/>
+        <rect x="344" y="357" width="32" height="30" fill="#1E1C28" stroke="#8a9aaa" stroke-width="0.5"/>
+        <!-- Door handle (brushed nickel) -->
+        <circle cx="373" cy="360" r="3" fill="#A0B0C0" stroke="#8A9AB0" stroke-width="0.5"/>
+        <circle cx="373" cy="360" r="1.2" fill="#B8C8D8"/>
+        <!-- Door step -->
+        <rect x="335" y="395" width="50" height="7" fill="#8a8880"/>
+        <!-- Welcome mat -->
+        <rect x="345" y="397" width="30" height="5" fill="#5a4838" rx="1" opacity="0.5"/>
+        <!-- (house numbers removed) -->
+        <!-- Porch lights -->
+        <circle cx="332" cy="310" r="5" fill="#F0D890" opacity="0.15" filter="url(#aLightGlow)"/>
+        <circle cx="332" cy="310" r="2" fill="#F0D890" opacity="0.4"/>
+        <circle cx="332" cy="310" r="1" fill="#FFF8E0" opacity="0.7"/>
+        <circle cx="388" cy="310" r="5" fill="#F0D890" opacity="0.15" filter="url(#aLightGlow)"/>
+        <circle cx="388" cy="310" r="2" fill="#F0D890" opacity="0.4"/>
+        <circle cx="388" cy="310" r="1" fill="#FFF8E0" opacity="0.7"/>
 
         <!-- Window 3 -->
-        <rect x="388" y="265" width="60" height="58" fill="url(#aGlass)" stroke="#C0B8A8" stroke-width="1.5"/>
-        <rect x="391" y="268" width="54" height="52" fill="url(#aGlass)"/>
-        <rect x="391" y="268" width="54" height="52" fill="url(#aWarmInt)"/>
-        <line x1="418" y1="268" x2="418" y2="320" stroke="#8a9aaa" stroke-width="1"/>
-        <line x1="391" y1="294" x2="445" y2="294" stroke="#8a9aaa" stroke-width="1"/>
-        <path d="M394 271 L409 271 L394 288 Z" fill="#2a4868" opacity="0.15"/>
-        <rect x="385" y="323" width="66" height="5" fill="#C8C0B0"/>
+        <rect x="405" y="300" width="55" height="55" fill="url(#aGlass)" stroke="#C0B8A8" stroke-width="1.5"/>
+        <rect x="408" y="303" width="49" height="49" fill="url(#aGlass)"/>
+        <rect x="408" y="303" width="49" height="49" fill="url(#aWarmInt)"/>
+        <line x1="433" y1="303" x2="433" y2="352" stroke="#8a9aaa" stroke-width="1"/>
+        <line x1="408" y1="328" x2="457" y2="328" stroke="#8a9aaa" stroke-width="1"/>
+        <path d="M411 306 L425 306 L411 322 Z" fill="#2a4868" opacity="0.15"/>
+        <rect x="402" y="355" width="61" height="5" fill="#C8C0B0"/>
 
         <!-- Window 4 -->
-        <rect x="478" y="265" width="44" height="58" fill="url(#aGlass)" stroke="#C0B8A8" stroke-width="1.5"/>
-        <rect x="481" y="268" width="38" height="52" fill="url(#aGlass)"/>
-        <rect x="481" y="268" width="38" height="52" fill="url(#aWarmInt)"/>
-        <line x1="500" y1="268" x2="500" y2="320" stroke="#8a9aaa" stroke-width="1"/>
-        <line x1="481" y1="294" x2="519" y2="294" stroke="#8a9aaa" stroke-width="1"/>
-        <rect x="475" y="323" width="50" height="5" fill="#C8C0B0"/>
+        <rect x="490" y="300" width="55" height="55" fill="url(#aGlass)" stroke="#C0B8A8" stroke-width="1.5"/>
+        <rect x="493" y="303" width="49" height="49" fill="url(#aGlass)"/>
+        <rect x="493" y="303" width="49" height="49" fill="url(#aWarmInt)"/>
+        <line x1="518" y1="303" x2="518" y2="352" stroke="#8a9aaa" stroke-width="1"/>
+        <line x1="493" y1="328" x2="542" y2="328" stroke="#8a9aaa" stroke-width="1"/>
+        <path d="M496 306 L510 306 L496 322 Z" fill="#2a4868" opacity="0.15"/>
+        <rect x="487" y="355" width="61" height="5" fill="#C8C0B0"/>
 
-        <!-- ════════ WINDOWS — FRONT, 2nd FLOOR ════════ -->
-        <!-- Upper window 1 -->
-        <rect x="218" y="208" width="52" height="44" fill="url(#aGlass)" stroke="#C0B8A8" stroke-width="1.2"/>
-        <rect x="221" y="211" width="46" height="38" fill="url(#aGlass)"/>
-        <rect x="221" y="211" width="46" height="38" fill="url(#aWarmInt)"/>
-        <line x1="244" y1="211" x2="244" y2="249" stroke="#8a9aaa" stroke-width="0.8"/>
-        <line x1="221" y1="230" x2="267" y2="230" stroke="#8a9aaa" stroke-width="0.8"/>
-        <path d="M224 214 L236 214 L224 226 Z" fill="#2a4868" opacity="0.12"/>
-        <rect x="215" y="252" width="58" height="4" fill="#C8C0B0"/>
+        <!-- ════════ WINDOWS -- FRONT, 2nd FLOOR ════════ -->
+        <!-- 4 windows: x=185, x=280, x=375, x=470, each w=55 h=50 -->
+        <rect x="185" y="218" width="55" height="50" fill="url(#aGlass)" stroke="#C0B8A8" stroke-width="1.2"/>
+        <rect x="188" y="221" width="49" height="44" fill="url(#aGlass)"/>
+        <rect x="188" y="221" width="49" height="44" fill="url(#aWarmInt)"/>
+        <line x1="213" y1="221" x2="213" y2="265" stroke="#8a9aaa" stroke-width="0.8"/>
+        <line x1="188" y1="243" x2="237" y2="243" stroke="#8a9aaa" stroke-width="0.8"/>
+        <path d="M191 224 L203 224 L191 236 Z" fill="#2a4868" opacity="0.12"/>
+        <rect x="182" y="268" width="61" height="4" fill="#C8C0B0"/>
 
-        <!-- Upper window 2 -->
-        <rect x="318" y="208" width="52" height="44" fill="url(#aGlass)" stroke="#C0B8A8" stroke-width="1.2"/>
-        <rect x="321" y="211" width="46" height="38" fill="url(#aGlass)"/>
-        <rect x="321" y="211" width="46" height="38" fill="url(#aWarmInt)"/>
-        <line x1="344" y1="211" x2="344" y2="249" stroke="#8a9aaa" stroke-width="0.8"/>
-        <line x1="321" y1="230" x2="367" y2="230" stroke="#8a9aaa" stroke-width="0.8"/>
-        <path d="M324 214 L336 214 L324 226 Z" fill="#2a4868" opacity="0.12"/>
-        <rect x="315" y="252" width="58" height="4" fill="#C8C0B0"/>
+        <rect x="280" y="218" width="55" height="50" fill="url(#aGlass)" stroke="#C0B8A8" stroke-width="1.2"/>
+        <rect x="283" y="221" width="49" height="44" fill="url(#aGlass)"/>
+        <rect x="283" y="221" width="49" height="44" fill="url(#aWarmInt)"/>
+        <line x1="308" y1="221" x2="308" y2="265" stroke="#8a9aaa" stroke-width="0.8"/>
+        <line x1="283" y1="243" x2="332" y2="243" stroke="#8a9aaa" stroke-width="0.8"/>
+        <path d="M286 224 L298 224 L286 236 Z" fill="#2a4868" opacity="0.12"/>
+        <rect x="277" y="268" width="61" height="4" fill="#C8C0B0"/>
 
-        <!-- Upper window 3 -->
-        <rect x="418" y="208" width="52" height="44" fill="url(#aGlass)" stroke="#C0B8A8" stroke-width="1.2"/>
-        <rect x="421" y="211" width="46" height="38" fill="url(#aGlass)"/>
-        <rect x="421" y="211" width="46" height="38" fill="url(#aWarmInt)"/>
-        <line x1="444" y1="211" x2="444" y2="249" stroke="#8a9aaa" stroke-width="0.8"/>
-        <line x1="421" y1="230" x2="467" y2="230" stroke="#8a9aaa" stroke-width="0.8"/>
-        <path d="M424 214 L436 214 L424 226 Z" fill="#2a4868" opacity="0.12"/>
-        <rect x="415" y="252" width="58" height="4" fill="#C8C0B0"/>
+        <rect x="375" y="218" width="55" height="50" fill="url(#aGlass)" stroke="#C0B8A8" stroke-width="1.2"/>
+        <rect x="378" y="221" width="49" height="44" fill="url(#aGlass)"/>
+        <rect x="378" y="221" width="49" height="44" fill="url(#aWarmInt)"/>
+        <line x1="403" y1="221" x2="403" y2="265" stroke="#8a9aaa" stroke-width="0.8"/>
+        <line x1="378" y1="243" x2="427" y2="243" stroke="#8a9aaa" stroke-width="0.8"/>
+        <path d="M381 224 L393 224 L381 236 Z" fill="#2a4868" opacity="0.12"/>
+        <rect x="372" y="268" width="61" height="4" fill="#C8C0B0"/>
+
+        <rect x="470" y="218" width="55" height="50" fill="url(#aGlass)" stroke="#C0B8A8" stroke-width="1.2"/>
+        <rect x="473" y="221" width="49" height="44" fill="url(#aGlass)"/>
+        <rect x="473" y="221" width="49" height="44" fill="url(#aWarmInt)"/>
+        <line x1="498" y1="221" x2="498" y2="265" stroke="#8a9aaa" stroke-width="0.8"/>
+        <line x1="473" y1="243" x2="522" y2="243" stroke="#8a9aaa" stroke-width="0.8"/>
+        <path d="M476 224 L488 224 L476 236 Z" fill="#2a4868" opacity="0.12"/>
+        <rect x="467" y="268" width="61" height="4" fill="#C8C0B0"/>
 
         <!-- ════════ SIDE WALL WINDOWS ════════ -->
-        <!-- Side upper 1 -->
-        <path d="M568 188 L568 218 L628 204 L628 174 Z" fill="url(#aGlass)" stroke="#B0A898" stroke-width="1"/>
-        <path d="M568 188 L568 218 L628 204 L628 174 Z" fill="url(#aWarmInt)"/>
-        <line x1="598" y1="181" x2="598" y2="211" stroke="#8a9aaa" stroke-width="0.6"/>
-        <line x1="568" y1="203" x2="628" y2="189" stroke="#8a9aaa" stroke-width="0.6"/>
-        <!-- Side upper 2 -->
-        <path d="M643 170 L643 200 L688 190 L688 160 Z" fill="url(#aGlass)" stroke="#B0A898" stroke-width="1"/>
-        <path d="M643 170 L643 200 L688 190 L688 160 Z" fill="url(#aWarmInt)"/>
-        <line x1="666" y1="165" x2="666" y2="195" stroke="#8a9aaa" stroke-width="0.6"/>
-        <line x1="643" y1="185" x2="688" y2="175" stroke="#8a9aaa" stroke-width="0.6"/>
+        <!-- Same geometry as before SVG -->
+        <!-- Side upper 1 (f~0.15) -->
+        <path d="M554 230 L554 270 L594 264 L594 224 Z" fill="url(#aGlass)" stroke="#B0A898" stroke-width="1"/>
+        <path d="M554 230 L554 270 L594 264 L594 224 Z" fill="url(#aWarmInt)"/>
+        <line x1="574" y1="227" x2="574" y2="267" stroke="#8a9aaa" stroke-width="0.6"/>
+        <line x1="554" y1="250" x2="594" y2="244" stroke="#8a9aaa" stroke-width="0.6"/>
+        <!-- Side upper 2 (f~0.45) -->
+        <path d="M610 220 L610 260 L650 254 L650 214 Z" fill="url(#aGlass)" stroke="#B0A898" stroke-width="1"/>
+        <path d="M610 220 L610 260 L650 254 L650 214 Z" fill="url(#aWarmInt)"/>
+        <line x1="630" y1="217" x2="630" y2="257" stroke="#8a9aaa" stroke-width="0.6"/>
+        <line x1="610" y1="240" x2="650" y2="234" stroke="#8a9aaa" stroke-width="0.6"/>
+        <!-- Side upper 3 (f~0.75) -->
+        <path d="M668 210 L668 250 L708 244 L708 204 Z" fill="url(#aGlass)" stroke="#B0A898" stroke-width="1"/>
+        <path d="M668 210 L668 250 L708 244 L708 204 Z" fill="url(#aWarmInt)"/>
+        <line x1="688" y1="207" x2="688" y2="247" stroke="#8a9aaa" stroke-width="0.6"/>
+        <line x1="668" y1="230" x2="708" y2="224" stroke="#8a9aaa" stroke-width="0.6"/>
         <!-- Side lower 1 -->
-        <path d="M568 250 L568 293 L628 276 L628 233 Z" fill="url(#aGlass)" stroke="#B0A898" stroke-width="1"/>
-        <path d="M568 250 L568 293 L628 276 L628 233 Z" fill="url(#aWarmInt)"/>
-        <line x1="598" y1="242" x2="598" y2="284" stroke="#8a9aaa" stroke-width="0.6"/>
-        <line x1="568" y1="272" x2="628" y2="255" stroke="#8a9aaa" stroke-width="0.6"/>
+        <path d="M554 295 L554 340 L594 333 L594 288 Z" fill="url(#aGlass)" stroke="#B0A898" stroke-width="1"/>
+        <path d="M554 295 L554 340 L594 333 L594 288 Z" fill="url(#aWarmInt)"/>
+        <line x1="574" y1="292" x2="574" y2="337" stroke="#8a9aaa" stroke-width="0.6"/>
+        <line x1="554" y1="318" x2="594" y2="311" stroke="#8a9aaa" stroke-width="0.6"/>
         <!-- Side lower 2 -->
-        <path d="M643 233 L643 276 L688 263 L688 220 Z" fill="url(#aGlass)" stroke="#B0A898" stroke-width="1"/>
-        <path d="M643 233 L643 276 L688 263 L688 220 Z" fill="url(#aWarmInt)"/>
-        <line x1="666" y1="226" x2="666" y2="270" stroke="#8a9aaa" stroke-width="0.6"/>
-        <line x1="643" y1="255" x2="688" y2="242" stroke="#8a9aaa" stroke-width="0.6"/>
-
-        <!-- ════════ FRONT DOOR (premium) ════════ -->
-        <rect x="328" y="290" width="46" height="68" fill="#2a2838" stroke="#C0B8A8" stroke-width="1.5" rx="1"/>
-        <rect x="332" y="295" width="38" height="26" fill="#1E1C28" stroke="#8a9aaa" stroke-width="0.5"/>
-        <rect x="332" y="325" width="38" height="26" fill="#1E1C28" stroke="#8a9aaa" stroke-width="0.5"/>
-        <!-- Door handle (brushed nickel) -->
-        <circle cx="366" cy="326" r="3" fill="#A0B0C0" stroke="#8A9AB0" stroke-width="0.5"/>
-        <circle cx="366" cy="326" r="1.2" fill="#B8C8D8"/>
-        <!-- Door step -->
-        <rect x="323" y="355" width="56" height="7" fill="#8a8880"/>
-        <!-- Welcome mat -->
-        <rect x="333" y="357" width="36" height="5" fill="#5a4838" rx="1" opacity="0.5"/>
-        <!-- House numbers -->
-        <text x="338" y="287" font-family="var(--font-head)" font-size="7" font-weight="700" fill="#C8C0B0" opacity="0.6">1247</text>
-        <!-- Porch lights -->
-        <circle cx="320" cy="283" r="5" fill="#F0D890" opacity="0.15" filter="url(#aLightGlow)"/>
-        <circle cx="320" cy="283" r="2" fill="#F0D890" opacity="0.4"/>
-        <circle cx="320" cy="283" r="1" fill="#FFF8E0" opacity="0.7"/>
-        <circle cx="382" cy="283" r="5" fill="#F0D890" opacity="0.15" filter="url(#aLightGlow)"/>
-        <circle cx="382" cy="283" r="2" fill="#F0D890" opacity="0.4"/>
-        <circle cx="382" cy="283" r="1" fill="#FFF8E0" opacity="0.7"/>
+        <path d="M610 283 L610 328 L650 321 L650 276 Z" fill="url(#aGlass)" stroke="#B0A898" stroke-width="1"/>
+        <path d="M610 283 L610 328 L650 321 L650 276 Z" fill="url(#aWarmInt)"/>
+        <line x1="630" y1="280" x2="630" y2="325" stroke="#8a9aaa" stroke-width="0.6"/>
+        <line x1="610" y1="306" x2="650" y2="299" stroke="#8a9aaa" stroke-width="0.6"/>
+        <!-- Side lower 3 -->
+        <path d="M668 273 L668 318 L708 311 L708 266 Z" fill="url(#aGlass)" stroke="#B0A898" stroke-width="1"/>
+        <path d="M668 273 L668 318 L708 311 L708 266 Z" fill="url(#aWarmInt)"/>
+        <line x1="688" y1="270" x2="688" y2="315" stroke="#8a9aaa" stroke-width="0.6"/>
+        <line x1="668" y1="296" x2="708" y2="289" stroke="#8a9aaa" stroke-width="0.6"/>
 
         <!-- ════════ CLEAN GUTTERS + DOWNSPOUT ════════ -->
-        <line x1="138" y1="194" x2="558" y2="194" stroke="#D0C8C0" stroke-width="3.5"/>
-        <!-- Gutter brackets -->
-        <line x1="200" y1="192" x2="200" y2="196" stroke="#B8B0A8" stroke-width="1.2"/>
-        <line x1="280" y1="192" x2="280" y2="196" stroke="#B8B0A8" stroke-width="1.2"/>
-        <line x1="360" y1="192" x2="360" y2="196" stroke="#B8B0A8" stroke-width="1.2"/>
-        <line x1="440" y1="192" x2="440" y2="196" stroke="#B8B0A8" stroke-width="1.2"/>
-        <line x1="520" y1="192" x2="520" y2="196" stroke="#B8B0A8" stroke-width="1.2"/>
-        <!-- Downspout (straight, clean) -->
-        <rect x="147" y="194" width="5" height="166" fill="#D0C8C0" opacity="0.8"/>
+        <line x1="138" y1="197" x2="558" y2="197" stroke="#D0C8C0" stroke-width="3.5"/>
+        <line x1="200" y1="195" x2="200" y2="199" stroke="#B8B0A8" stroke-width="1.2"/>
+        <line x1="280" y1="195" x2="280" y2="199" stroke="#B8B0A8" stroke-width="1.2"/>
+        <line x1="360" y1="195" x2="360" y2="199" stroke="#B8B0A8" stroke-width="1.2"/>
+        <line x1="440" y1="195" x2="440" y2="199" stroke="#B8B0A8" stroke-width="1.2"/>
+        <line x1="520" y1="195" x2="520" y2="199" stroke="#B8B0A8" stroke-width="1.2"/>
+        <!-- Downspout (straight) -->
+        <rect x="147" y="197" width="5" height="203" fill="#D0C8C0" opacity="0.8"/>
         <!-- Downspout elbow -->
-        <path d="M147 356 Q147 364 155 364" fill="none" stroke="#D0C8C0" stroke-width="4.5"/>
+        <path d="M147 396 Q147 404 155 404" fill="none" stroke="#D0C8C0" stroke-width="4.5"/>
 
         <!-- ════════ MANICURED LANDSCAPING ════════ -->
-        <!-- Bushes left cluster -->
-        <ellipse cx="173" cy="352" rx="22" ry="12" fill="#1a4020" opacity="0.8"/>
-        <ellipse cx="195" cy="349" rx="19" ry="14" fill="#1e4828" opacity="0.75"/>
-        <ellipse cx="155" cy="350" rx="14" ry="10" fill="#1a3a1a" opacity="0.7"/>
-        <ellipse cx="210" cy="351" rx="12" ry="9" fill="#1e4828" opacity="0.65"/>
-        <!-- Leaf highlights -->
-        <circle cx="168" cy="347" r="3.5" fill="#225830" opacity="0.45"/>
-        <circle cx="183" cy="345" r="4" fill="#225830" opacity="0.4"/>
-        <circle cx="198" cy="346" r="3" fill="#225830" opacity="0.45"/>
-        <circle cx="155" cy="346" r="2.5" fill="#225830" opacity="0.4"/>
-        <circle cx="210" cy="347" r="2.5" fill="#225830" opacity="0.35"/>
-        <!-- Bushes right cluster -->
-        <ellipse cx="512" cy="352" rx="20" ry="11" fill="#1a4020" opacity="0.8"/>
-        <ellipse cx="533" cy="349" rx="18" ry="13" fill="#1e4828" opacity="0.75"/>
-        <ellipse cx="550" cy="351" rx="13" ry="9" fill="#1a3a1a" opacity="0.7"/>
-        <ellipse cx="498" cy="351" rx="11" ry="8" fill="#1e4828" opacity="0.65"/>
-        <circle cx="516" cy="348" r="3" fill="#225830" opacity="0.45"/>
-        <circle cx="535" cy="346" r="3.5" fill="#225830" opacity="0.4"/>
-        <circle cx="548" cy="347" r="2.5" fill="#225830" opacity="0.4"/>
-        <!-- Small ornamental shrub far right -->
+        <ellipse cx="173" cy="388" rx="22" ry="12" fill="#1a4020" opacity="0.8"/>
+        <ellipse cx="195" cy="385" rx="19" ry="14" fill="#1e4828" opacity="0.75"/>
+        <ellipse cx="155" cy="386" rx="14" ry="10" fill="#1a3a1a" opacity="0.7"/>
+        <ellipse cx="210" cy="387" rx="12" ry="9" fill="#1e4828" opacity="0.65"/>
+        <circle cx="168" cy="383" r="3.5" fill="#225830" opacity="0.45"/>
+        <circle cx="183" cy="381" r="4" fill="#225830" opacity="0.4"/>
+        <circle cx="198" cy="382" r="3" fill="#225830" opacity="0.45"/>
+        <circle cx="155" cy="382" r="2.5" fill="#225830" opacity="0.4"/>
+        <circle cx="210" cy="383" r="2.5" fill="#225830" opacity="0.35"/>
+        <ellipse cx="512" cy="388" rx="20" ry="11" fill="#1a4020" opacity="0.8"/>
+        <ellipse cx="533" cy="385" rx="18" ry="13" fill="#1e4828" opacity="0.75"/>
+        <ellipse cx="550" cy="387" rx="13" ry="9" fill="#1a3a1a" opacity="0.7"/>
+        <ellipse cx="498" cy="387" rx="11" ry="8" fill="#1e4828" opacity="0.65"/>
+        <circle cx="516" cy="384" r="3" fill="#225830" opacity="0.45"/>
+        <circle cx="535" cy="382" r="3.5" fill="#225830" opacity="0.4"/>
+        <circle cx="548" cy="383" r="2.5" fill="#225830" opacity="0.4"/>
+        <!-- Small ornamental shrubs -->
         <ellipse cx="730" cy="365" rx="14" ry="8" fill="#1a3a1a" opacity="0.5"/>
         <ellipse cx="742" cy="363" rx="10" ry="7" fill="#1e4828" opacity="0.45"/>
-        <!-- Small ornamental shrub far left -->
         <ellipse cx="110" cy="367" rx="12" ry="7" fill="#1a3a1a" opacity="0.45"/>
         <ellipse cx="122" cy="366" rx="9" ry="6" fill="#1e4828" opacity="0.4"/>
 
         <!-- ════════ CLEAN WALKWAY ════════ -->
-        <rect x="336" y="362" width="30" height="78" fill="url(#aWalk)" rx="1" opacity="0.55"/>
-        <!-- Joint lines -->
-        <line x1="336" y1="378" x2="366" y2="378" stroke="#6a6860" stroke-width="0.8" opacity="0.35"/>
-        <line x1="336" y1="394" x2="366" y2="394" stroke="#6a6860" stroke-width="0.8" opacity="0.35"/>
-        <line x1="336" y1="410" x2="366" y2="410" stroke="#6a6860" stroke-width="0.8" opacity="0.35"/>
-        <line x1="336" y1="426" x2="366" y2="426" stroke="#6a6860" stroke-width="0.8" opacity="0.35"/>
-        <!-- Subtle texture -->
-        <rect x="338" y="364" width="26" height="74" fill="#8a8a80" opacity="0.05" rx="1"/>
+        <rect x="348" y="402" width="28" height="38" fill="url(#aWalk)" rx="1" opacity="0.55"/>
+        <line x1="348" y1="415" x2="376" y2="415" stroke="#6a6860" stroke-width="0.8" opacity="0.35"/>
+        <line x1="348" y1="428" x2="376" y2="428" stroke="#6a6860" stroke-width="0.8" opacity="0.35"/>
+        <rect x="350" y="404" width="24" height="34" fill="#8a8a80" opacity="0.05" rx="1"/>
 
         <!-- ════════ LANDSCAPE LIGHTING ════════ -->
-        <!-- Left side path lights -->
-        <circle cx="333" cy="370" r="4" fill="#F0D890" opacity="0.1" filter="url(#aGlowFilter)"/>
-        <circle cx="333" cy="370" r="1.5" fill="#F0D890" opacity="0.4"/>
-        <circle cx="333" cy="370" r="0.7" fill="#FFF8E0" opacity="0.6"/>
-        <circle cx="333" cy="390" r="3.5" fill="#F0D890" opacity="0.08" filter="url(#aGlowFilter)"/>
-        <circle cx="333" cy="390" r="1.3" fill="#F0D890" opacity="0.35"/>
-        <circle cx="333" cy="390" r="0.6" fill="#FFF8E0" opacity="0.55"/>
-        <circle cx="333" cy="410" r="3" fill="#F0D890" opacity="0.07" filter="url(#aGlowFilter)"/>
-        <circle cx="333" cy="410" r="1.2" fill="#F0D890" opacity="0.3"/>
-        <circle cx="333" cy="410" r="0.6" fill="#FFF8E0" opacity="0.5"/>
-        <!-- Right side path lights -->
-        <circle cx="369" cy="370" r="4" fill="#F0D890" opacity="0.1" filter="url(#aGlowFilter)"/>
-        <circle cx="369" cy="370" r="1.5" fill="#F0D890" opacity="0.4"/>
-        <circle cx="369" cy="370" r="0.7" fill="#FFF8E0" opacity="0.6"/>
-        <circle cx="369" cy="390" r="3.5" fill="#F0D890" opacity="0.08" filter="url(#aGlowFilter)"/>
-        <circle cx="369" cy="390" r="1.3" fill="#F0D890" opacity="0.35"/>
-        <circle cx="369" cy="390" r="0.6" fill="#FFF8E0" opacity="0.55"/>
-        <circle cx="369" cy="410" r="3" fill="#F0D890" opacity="0.07" filter="url(#aGlowFilter)"/>
-        <circle cx="369" cy="410" r="1.2" fill="#F0D890" opacity="0.3"/>
-        <circle cx="369" cy="410" r="0.6" fill="#FFF8E0" opacity="0.5"/>
-        <!-- Garden accent lights on bushes -->
-        <circle cx="175" cy="355" r="3" fill="#F0D890" opacity="0.06" filter="url(#aGlowFilter)"/>
-        <circle cx="175" cy="355" r="1" fill="#F0D890" opacity="0.25"/>
-        <circle cx="530" cy="352" r="3" fill="#F0D890" opacity="0.06" filter="url(#aGlowFilter)"/>
-        <circle cx="530" cy="352" r="1" fill="#F0D890" opacity="0.25"/>
+        <circle cx="345" cy="408" r="4" fill="#F0D890" opacity="0.1" filter="url(#aGlowFilter)"/>
+        <circle cx="345" cy="408" r="1.5" fill="#F0D890" opacity="0.4"/>
+        <circle cx="345" cy="408" r="0.7" fill="#FFF8E0" opacity="0.6"/>
+        <circle cx="345" cy="425" r="3.5" fill="#F0D890" opacity="0.08" filter="url(#aGlowFilter)"/>
+        <circle cx="345" cy="425" r="1.3" fill="#F0D890" opacity="0.35"/>
+        <circle cx="345" cy="425" r="0.6" fill="#FFF8E0" opacity="0.55"/>
+        <circle cx="379" cy="408" r="4" fill="#F0D890" opacity="0.1" filter="url(#aGlowFilter)"/>
+        <circle cx="379" cy="408" r="1.5" fill="#F0D890" opacity="0.4"/>
+        <circle cx="379" cy="408" r="0.7" fill="#FFF8E0" opacity="0.6"/>
+        <circle cx="379" cy="425" r="3.5" fill="#F0D890" opacity="0.08" filter="url(#aGlowFilter)"/>
+        <circle cx="379" cy="425" r="1.3" fill="#F0D890" opacity="0.35"/>
+        <circle cx="379" cy="425" r="0.6" fill="#FFF8E0" opacity="0.55"/>
+        <!-- Garden accent lights -->
+        <circle cx="175" cy="391" r="3" fill="#F0D890" opacity="0.06" filter="url(#aGlowFilter)"/>
+        <circle cx="175" cy="391" r="1" fill="#F0D890" opacity="0.25"/>
+        <circle cx="530" cy="388" r="3" fill="#F0D890" opacity="0.06" filter="url(#aGlowFilter)"/>
+        <circle cx="530" cy="388" r="1" fill="#F0D890" opacity="0.25"/>
       </svg>
 
-      <!-- ── SLIDER HANDLE ── -->
+      <!-- SLIDER HANDLE -->
       <div class="ba-handle" id="baHandle"></div>
-      <!-- ── LABELS ── -->
+      <!-- LABELS -->
       <div class="ba-label ba-label-before" style="background:rgba(230,57,70,0.9);backdrop-filter:blur(8px);padding:8px 20px;border-radius:6px;font-size:12px;">BEFORE</div>
       <div class="ba-label ba-label-after" style="background:rgba(74,222,128,0.9);color:#000;backdrop-filter:blur(8px);padding:8px 20px;border-radius:6px;font-size:12px;">AFTER</div>
     </div>
