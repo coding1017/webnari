@@ -815,41 +815,94 @@ body::before {
     // All individual pieces go here for per-piece animation
     var allPieces=[]; // {el, phase, index, zOff}
 
-    // ─── 0. HOUSE WALLS (visible from start, partial view below roof) ───
+    // ─── 0. HOUSE WALLS (right side wall only — extends below viewport) ───
     var gHouse=svgEl('g',{opacity:0});
-    var wallH=120; // height of walls below eave line
-    // Front wall (viewer side, at y=hd)
-    var fwTL=isoX(-roofW,hd), fwTLy=isoY(-roofW,hd,0);
-    var fwTR=isoX(roofW,hd), fwTRy=isoY(roofW,hd,0);
-    var fwBL=isoX(-roofW,hd), fwBLy=isoY(-roofW,hd,-wallH);
-    var fwBR=isoX(roofW,hd), fwBRy=isoY(roofW,hd,-wallH);
-    gHouse.appendChild(svgEl('path',{d:'M'+fwTL+' '+fwTLy+' L'+fwTR+' '+fwTRy+' L'+fwBR+' '+fwBRy+' L'+fwBL+' '+fwBLy+' Z',fill:'#2A2A35',stroke:'#3A3A48','stroke-width':0.8}));
-    // Front gable wall (triangle above front wall line up to peak)
-    gHouse.appendChild(svgEl('path',{d:'M'+fwTL+' '+fwTLy+' L'+isoX(0,hd)+' '+isoY(0,hd,peakH)+' L'+fwTR+' '+fwTRy+' Z',fill:'#252530',stroke:'#3A3A48','stroke-width':0.5}));
-    // Right side wall (at x=roofW, from front to back)
+    var wallH=400; // tall enough to go off-screen (multi-story feel)
+    // Right side wall (at x=roofW, from front hd to back -hd, extends way down)
     var rwTF=isoX(roofW,hd), rwTFy=isoY(roofW,hd,0);
     var rwTB=isoX(roofW,-hd), rwTBy=isoY(roofW,-hd,0);
     var rwBF=isoX(roofW,hd), rwBFy=isoY(roofW,hd,-wallH);
     var rwBB=isoX(roofW,-hd), rwBBy=isoY(roofW,-hd,-wallH);
-    gHouse.appendChild(svgEl('path',{d:'M'+rwTF+' '+rwTFy+' L'+rwTB+' '+rwTBy+' L'+rwBB+' '+rwBBy+' L'+rwBF+' '+rwBFy+' Z',fill:'#222230',stroke:'#3A3A48','stroke-width':0.8}));
-    // Windows on front wall (2 windows)
-    for(var wi=0;wi<2;wi++){
-      var wx=isoX(-roofW*0.5+wi*roofW,hd), wy=isoY(-roofW*0.5+wi*roofW,hd,-wallH*0.35);
-      var winW=36, winH=28;
-      gHouse.appendChild(svgEl('rect',{x:wx-winW/2,y:wy-winH/2,width:winW,height:winH,fill:'#1A3A5A',stroke:'#4A5A6A','stroke-width':1,rx:1}));
-      // Window cross
-      gHouse.appendChild(svgEl('line',{x1:wx,y1:wy-winH/2,x2:wx,y2:wy+winH/2,stroke:'#4A5A6A','stroke-width':0.8}));
-      gHouse.appendChild(svgEl('line',{x1:wx-winW/2,y1:wy,x2:wx+winW/2,y2:wy,stroke:'#4A5A6A','stroke-width':0.8}));
+    // Main wall surface (subtle gradient with stucco texture feel)
+    gHouse.appendChild(svgEl('path',{d:'M'+rwTF+' '+rwTFy+' L'+rwTB+' '+rwTBy+' L'+rwBB+' '+rwBBy+' L'+rwBF+' '+rwBFy+' Z',fill:'#1E2028',stroke:'#2A2C38','stroke-width':0.8}));
+    // Horizontal siding lines for texture (every ~30px of wall height)
+    for(var sl=1;sl<10;sl++){
+      var slZ=-sl*35;
+      var slx1=isoX(roofW,hd), sly1=isoY(roofW,hd,slZ);
+      var slx2=isoX(roofW,-hd), sly2=isoY(roofW,-hd,slZ);
+      gHouse.appendChild(svgEl('line',{x1:slx1,y1:sly1,x2:slx2,y2:sly2,stroke:'#252830','stroke-width':0.5}));
     }
-    // Front door (center)
-    var doorX=isoX(0,hd), doorY=isoY(0,hd,-wallH*0.05);
-    gHouse.appendChild(svgEl('rect',{x:doorX-14,y:doorY-40,width:28,height:40,fill:'#1E1E28',stroke:'#4A4A58','stroke-width':1,rx:1}));
-    gHouse.appendChild(svgEl('circle',{cx:doorX+8,cy:doorY-20,r:2,fill:'#8A8A9A'}));
-    // Foundation line
-    gHouse.appendChild(svgEl('line',{x1:fwBL,y1:fwBLy,x2:fwBR,y2:fwBRy,stroke:'#4A4A58','stroke-width':2}));
-    gHouse.appendChild(svgEl('line',{x1:rwBF,y1:rwBFy,x2:rwBB,y2:rwBBy,stroke:'#4A4A58','stroke-width':1.5}));
+    // Elegant windows on right side wall (3 evenly spaced)
+    for(var wi=0;wi<3;wi++){
+      var wDepth=-hd+(wi+1)*roofD/4; // spread across depth
+      var wZ=-50; // window center height below eave
+      var wcx=isoX(roofW,wDepth), wcy=isoY(roofW,wDepth,wZ);
+      // Window outer frame (tall elegant proportion)
+      var wW=22, wH=38;
+      // Window frame mapped to isometric (parallelogram on side wall)
+      // Top-left, top-right, bottom-right, bottom-left of window on side wall
+      var wtl=isoX(roofW,wDepth-wW/2), wtly=isoY(roofW,wDepth-wW/2,wZ+wH/2);
+      var wtr=isoX(roofW,wDepth+wW/2), wtry=isoY(roofW,wDepth+wW/2,wZ+wH/2);
+      var wbr=isoX(roofW,wDepth+wW/2), wbry=isoY(roofW,wDepth+wW/2,wZ-wH/2);
+      var wbl=isoX(roofW,wDepth-wW/2), wbly=isoY(roofW,wDepth-wW/2,wZ-wH/2);
+      // Window recess (slightly darker)
+      gHouse.appendChild(svgEl('path',{d:'M'+wtl+' '+wtly+' L'+wtr+' '+wtry+' L'+wbr+' '+wbry+' L'+wbl+' '+wbly+' Z',fill:'#0A1828'}));
+      // Glass panes (2x2 grid)
+      var wmx=isoX(roofW,wDepth), wmy=isoY(roofW,wDepth,wZ);
+      var wmtx=isoX(roofW,wDepth), wmty=isoY(roofW,wDepth,wZ+wH/2);
+      var wmbx=isoX(roofW,wDepth), wmby=isoY(roofW,wDepth,wZ-wH/2);
+      var wmlx=isoX(roofW,wDepth-wW/2), wmly=isoY(roofW,wDepth-wW/2,wZ);
+      var wmrx=isoX(roofW,wDepth+wW/2), wmry=isoY(roofW,wDepth+wW/2,wZ);
+      // Horizontal mullion
+      gHouse.appendChild(svgEl('line',{x1:wmlx,y1:wmly,x2:wmrx,y2:wmry,stroke:'#3A4A5A','stroke-width':1}));
+      // Vertical mullion
+      gHouse.appendChild(svgEl('line',{x1:wmtx,y1:wmty,x2:wmbx,y2:wmby,stroke:'#3A4A5A','stroke-width':1}));
+      // Outer frame
+      gHouse.appendChild(svgEl('path',{d:'M'+wtl+' '+wtly+' L'+wtr+' '+wtry+' L'+wbr+' '+wbry+' L'+wbl+' '+wbly+' Z',fill:'none',stroke:'#4A5A6A','stroke-width':1.5}));
+      // Window sill (bottom ledge, slightly protruding)
+      gHouse.appendChild(svgEl('line',{x1:isoX(roofW+2,wDepth-wW/2-2),y1:isoY(roofW+2,wDepth-wW/2-2,wZ-wH/2),x2:isoX(roofW+2,wDepth+wW/2+2),y2:isoY(roofW+2,wDepth+wW/2+2,wZ-wH/2),stroke:'#5A6A7A','stroke-width':2}));
+      // Subtle glass reflection
+      gHouse.appendChild(svgEl('path',{d:'M'+wtl+' '+wtly+' L'+wtr+' '+wtry+' L'+wmrx+' '+wmry+' L'+wmlx+' '+wmly+' Z',fill:'rgba(100,160,220,0.06)'}));
+    }
+    // Left side wall (at x=-roofW, only the front-facing portion visible)
+    var lwTF=isoX(-roofW,hd), lwTFy=isoY(-roofW,hd,0);
+    var lwBF=isoX(-roofW,hd), lwBFy=isoY(-roofW,hd,-wallH);
+    // Just a thin edge line (barely visible from this angle)
+    gHouse.appendChild(svgEl('line',{x1:lwTF,y1:lwTFy,x2:lwBF,y2:lwBFy,stroke:'#2A2C38','stroke-width':1.5}));
+    // Front wall (below gable, extends down off screen — viewer facing)
+    var fwTL=isoX(-roofW,hd), fwTLy=isoY(-roofW,hd,0);
+    var fwTR=isoX(roofW,hd), fwTRy=isoY(roofW,hd,0);
+    var fwBL=isoX(-roofW,hd), fwBLy=isoY(-roofW,hd,-wallH);
+    var fwBR=isoX(roofW,hd), fwBRy=isoY(roofW,hd,-wallH);
+    gHouse.appendChild(svgEl('path',{d:'M'+fwTL+' '+fwTLy+' L'+fwTR+' '+fwTRy+' L'+fwBR+' '+fwBRy+' L'+fwBL+' '+fwBLy+' Z',fill:'#1C1E28',stroke:'#2A2C38','stroke-width':0.5}));
+    // Horizontal siding lines on front wall
+    for(var fsl=1;fsl<10;fsl++){
+      var fslZ=-fsl*35;
+      gHouse.appendChild(svgEl('line',{x1:isoX(-roofW,hd),y1:isoY(-roofW,hd,fslZ),x2:isoX(roofW,hd),y2:isoY(roofW,hd,fslZ),stroke:'#22242E','stroke-width':0.5}));
+    }
+    // Elegant windows on front wall (4 windows, evenly spaced)
+    for(var fwi=0;fwi<4;fwi++){
+      var fwx_pos=-roofW*0.75+fwi*roofW*0.5; // spread across front
+      var fwZ=-55;
+      var fwtl=isoX(fwx_pos-18,hd), fwtly=isoY(fwx_pos-18,hd,fwZ+22);
+      var fwtr=isoX(fwx_pos+18,hd), fwtry=isoY(fwx_pos+18,hd,fwZ+22);
+      var fwbr=isoX(fwx_pos+18,hd), fwbry=isoY(fwx_pos+18,hd,fwZ-22);
+      var fwbl=isoX(fwx_pos-18,hd), fwbly=isoY(fwx_pos-18,hd,fwZ-22);
+      // Glass
+      gHouse.appendChild(svgEl('path',{d:'M'+fwtl+' '+fwtly+' L'+fwtr+' '+fwtry+' L'+fwbr+' '+fwbry+' L'+fwbl+' '+fwbly+' Z',fill:'#0A1828'}));
+      // Mullions (cross)
+      var fmx=isoX(fwx_pos,hd), fmy=isoY(fwx_pos,hd,fwZ);
+      gHouse.appendChild(svgEl('line',{x1:fwtl,y1:(fwtly+fwbly)/2,x2:fwtr,y2:(fwtry+fwbry)/2,stroke:'#3A4A5A','stroke-width':0.8}));
+      gHouse.appendChild(svgEl('line',{x1:fmx,y1:fwtly,x2:fmx,y2:fwbly,stroke:'#3A4A5A','stroke-width':0.8}));
+      // Frame
+      gHouse.appendChild(svgEl('path',{d:'M'+fwtl+' '+fwtly+' L'+fwtr+' '+fwtry+' L'+fwbr+' '+fwbry+' L'+fwbl+' '+fwbly+' Z',fill:'none',stroke:'#4A5A6A','stroke-width':1.2}));
+      // Sill
+      gHouse.appendChild(svgEl('line',{x1:fwbl-2,y1:fwbly+1,x2:fwbr+2,y2:fwbry+1,stroke:'#5A6A7A','stroke-width':1.5}));
+      // Glass reflection
+      gHouse.appendChild(svgEl('path',{d:'M'+fwtl+' '+fwtly+' L'+fwtr+' '+fwtry+' L'+fmx+' '+fmy+' L'+(fwtl)+' '+((fwtly+fwbly)/2)+' Z',fill:'rgba(100,160,220,0.05)'}));
+    }
     svg.appendChild(gHouse);
-    allPieces.push({el:gHouse,phase:0,index:0,total:numT+2}); // appears with first truss
+    allPieces.push({el:gHouse,phase:0,index:0,total:numT+2});
 
     // ─── 1. TRUSSES (individual triangular frames + ridge beam + eave beams) ───
     var gTrusses=svgEl('g',{});
