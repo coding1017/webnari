@@ -1296,7 +1296,10 @@ Theme: Lock mechanism being assembled
       <div class="modal-title">Resume Incomplete Code</div>
       <button class="modal-close" id="resumeClose">&times;</button>
     </div>
-    <p class="modal-desc">Paste your incomplete/broken parallax code below. The AI will scan it, pick up where it left off, and finish the missing parts.</p>
+    <p class="modal-desc">Paste your incomplete/broken parallax code below. Add a brief description so the AI knows what you were building and can finish it properly.</p>
+    <label style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)">What were you building?</label>
+    <input type="text" id="resumePrompt" placeholder="e.g. Sushi roll assembly parallax with lifelike style, 10 build phases" style="margin-bottom:4px">
+    <label style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted)">Incomplete Code</label>
     <textarea class="modal-textarea" id="resumeCode" placeholder="Paste your incomplete HTML code here..."></textarea>
     <div class="modal-footer">
       <button class="btn-start-over" id="resumeCancel">Cancel</button>
@@ -2280,7 +2283,11 @@ Theme: Lock mechanism being assembled
   document.getElementById('resumeSubmit').addEventListener('click', function() {
     var code = resumeCode.value.trim();
     if (!code) return;
+    var resumePromptVal = document.getElementById('resumePrompt').value.trim();
     resumeModal.classList.remove('open');
+
+    // Store the resume context for the continue handler
+    window._resumeContext = resumePromptVal || null;
 
     // Load the incomplete code into the editor
     fullCode = code;
@@ -2309,8 +2316,17 @@ Theme: Lock mechanism being assembled
     // Get the last ~800 chars of the incomplete code as context
     var codeEnd = fullCode.slice(-800);
 
+    // Build the first message — use resume context if available, otherwise use the form
+    var firstMsg;
+    if (window._resumeContext) {
+      firstMsg = 'Generate a scroll-driven parallax animation. Context: ' + window._resumeContext;
+      window._resumeContext = null;
+    } else {
+      firstMsg = buildUserMessage();
+    }
+
     messages = [
-      { role: 'user', content: buildUserMessage() },
+      { role: 'user', content: firstMsg },
       { role: 'assistant', content: fullCode },
       { role: 'user', content: 'Your previous response was cut off. The code is incomplete — it ends with:\n\n```\n' + codeEnd + '\n```\n\nContinue writing the code from EXACTLY where you left off. Do NOT repeat any code that was already written. Start your response with the very next character after where the code was cut off. The code still needs the update() function, the requestAnimationFrame loop, updateSticky(), and the closing <\/script><\/body><\/html> tags (include whichever of these are missing). Output ONLY the remaining code, no explanations.' }
     ];
@@ -2319,8 +2335,6 @@ Theme: Lock mechanism being assembled
     var previousCode = fullCode;
     startGeneration();
 
-    // After generation, merge the codes
-    var originalOnComplete = onGenerationComplete;
     // Use a flag to merge on next completion
     window._continueMode = previousCode;
   });
