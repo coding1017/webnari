@@ -804,8 +804,8 @@ body::before {
 
     // ═══ BUILD ISOMETRIC ROOF — PIECE BY PIECE ═══
     // Every layer is built incrementally as you scroll, not dropped in
-    var cx=525, baseY=440;
-    var roofW=300, roofD=260, peakH=95;
+    var cx=525, baseY=380;
+    var roofW=300, roofD=300, peakH=95;
     var hd=roofD/2;
 
     // Isometric helpers
@@ -817,7 +817,7 @@ body::before {
 
     // ─── 1. TRUSSES (6 individual triangular frames + ridge beam + eave beams) ───
     var gTrusses=svgEl('g',{});
-    var numT=12;
+    var numT=18;
     for(var ti=0;ti<numT;ti++){
       var tg=svgEl('g',{opacity:0});
       var frac=(ti+0.5)/numT;
@@ -872,6 +872,11 @@ body::before {
       allPieces.push({el:bR,phase:1,index:di*2+1,total:numBoards*2});
     }
     svg.appendChild(gDeck);
+    // Front gable decking face (triangle covering the front)
+    var deckFront=svgEl('path',{opacity:0,fill:'#B89A5F',stroke:'#A08A52','stroke-width':0.5});
+    deckFront.setAttribute('d','M'+isoX(-roofW,-hd)+' '+isoY(-roofW,-hd,0)+' L'+isoX(0,-hd)+' '+isoY(0,-hd,peakH)+' L'+isoX(roofW,-hd)+' '+isoY(roofW,-hd,0)+' Z');
+    svg.appendChild(deckFront);
+    allPieces.push({el:deckFront,phase:1,index:numBoards*2,total:numBoards*2+1});
 
     // ─── 3. ICE & WATER SHIELD (8 strips covering FULL slope) ───
     var gIce=svgEl('g',{});
@@ -891,6 +896,11 @@ body::before {
       allPieces.push({el:icR,phase:2,index:ii*2+1,total:iceStrips*2});
     }
     svg.appendChild(gIce);
+    // Front gable ice shield face
+    var iceFront=svgEl('path',{opacity:0,fill:'rgba(56,189,248,0.5)'});
+    iceFront.setAttribute('d','M'+isoX(-roofW,-hd)+' '+isoY(-roofW,-hd,0)+' L'+isoX(0,-hd)+' '+isoY(0,-hd,peakH)+' L'+isoX(roofW,-hd)+' '+isoY(roofW,-hd,0)+' Z');
+    svg.appendChild(iceFront);
+    allPieces.push({el:iceFront,phase:2,index:iceStrips*2,total:iceStrips*2+1});
 
     // ─── 4. FELT UNDERLAYMENT (rolled out in 4 strips across full slope) ───
     var gFelt=svgEl('g',{});
@@ -907,6 +917,11 @@ body::before {
       allPieces.push({el:fR,phase:3,index:fi*2+1,total:feltStrips*2});
     }
     svg.appendChild(gFelt);
+    // Front gable felt face
+    var feltFront=svgEl('path',{opacity:0,fill:'#707880'});
+    feltFront.setAttribute('d','M'+isoX(-roofW,-hd)+' '+isoY(-roofW,-hd,0)+' L'+isoX(0,-hd)+' '+isoY(0,-hd,peakH)+' L'+isoX(roofW,-hd)+' '+isoY(roofW,-hd,0)+' Z');
+    svg.appendChild(feltFront);
+    allPieces.push({el:feltFront,phase:3,index:feltStrips*2,total:feltStrips*2+1});
 
     // ─── 5. SHINGLES (rows with individual tabs for elegant detail) ───
     var gShingles=svgEl('g',{});
@@ -966,6 +981,18 @@ body::before {
       allPieces.push({el:rowR,phase:4,index:shPieceIdx++,total:shTotal});
     }
     svg.appendChild(gShingles);
+    // Front gable shingles face (with horizontal shingle lines)
+    var shingleFront=svgEl('g',{opacity:0});
+    shingleFront.appendChild(svgEl('path',{d:'M'+isoX(-roofW,-hd)+' '+isoY(-roofW,-hd,0)+' L'+isoX(0,-hd)+' '+isoY(0,-hd,peakH)+' L'+isoX(roofW,-hd)+' '+isoY(roofW,-hd,0)+' Z',fill:'#4A5568'}));
+    // Horizontal shingle lines on front gable
+    for(var gsi=1;gsi<10;gsi++){
+      var gf=gsi/10;
+      var glx=isoX(-roofW*(1-gf),-hd), gly=isoY(-roofW*(1-gf),-hd,peakH*gf);
+      var grx=isoX(roofW*(1-gf),-hd), gry=isoY(roofW*(1-gf),-hd,peakH*gf);
+      shingleFront.appendChild(svgEl('line',{x1:glx,y1:gly,x2:grx,y2:gry,stroke:'#2D3748','stroke-width':0.6,opacity:0.5}));
+    }
+    svg.appendChild(shingleFront);
+    allPieces.push({el:shingleFront,phase:4,index:shTotal,total:shTotal+1});
 
     // ─── 6. RIDGE CAP (individual pieces along peak) ───
     var gRidge=svgEl('g',{});
