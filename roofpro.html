@@ -872,11 +872,19 @@ body::before {
       allPieces.push({el:bR,phase:1,index:di*2+1,total:numBoards*2});
     }
     svg.appendChild(gDeck);
-    // Front gable decking face (triangle covering the front)
-    var deckFront=svgEl('path',{opacity:0,fill:'#B89A5F',stroke:'#A08A52','stroke-width':0.5});
-    deckFront.setAttribute('d','M'+isoX(-roofW,hd)+' '+isoY(-roofW,hd,0)+' L'+isoX(0,hd)+' '+isoY(0,hd,peakH)+' L'+isoX(roofW,hd)+' '+isoY(roofW,hd,0)+' Z');
-    svg.appendChild(deckFront);
-    allPieces.push({el:deckFront,phase:1,index:numBoards*2,total:numBoards*2+1});
+    // Front gable decking face (built in strips from eave up to peak)
+    var deckFrontStrips=8;
+    for(var dfi=0;dfi<deckFrontStrips;dfi++){
+      var df1=dfi/deckFrontStrips, df2=(dfi+1)/deckFrontStrips;
+      var dfEl=svgEl('path',{opacity:0,fill:deckColors[dfi%4],stroke:'#A08A52','stroke-width':0.4});
+      var dfl1x=isoX(-roofW*(1-df1),hd), dfl1y=isoY(-roofW*(1-df1),hd,peakH*df1);
+      var dfr1x=isoX(roofW*(1-df1),hd), dfr1y=isoY(roofW*(1-df1),hd,peakH*df1);
+      var dfl2x=isoX(-roofW*(1-df2),hd), dfl2y=isoY(-roofW*(1-df2),hd,peakH*df2);
+      var dfr2x=isoX(roofW*(1-df2),hd), dfr2y=isoY(roofW*(1-df2),hd,peakH*df2);
+      dfEl.setAttribute('d','M'+dfl1x+' '+dfl1y+' L'+dfl2x+' '+dfl2y+' L'+dfr2x+' '+dfr2y+' L'+dfr1x+' '+dfr1y+' Z');
+      svg.appendChild(dfEl);
+      allPieces.push({el:dfEl,phase:1,index:numBoards*2+dfi,total:numBoards*2+deckFrontStrips});
+    }
 
     // ─── 3. ICE & WATER SHIELD (8 strips covering FULL slope) ───
     var gIce=svgEl('g',{});
@@ -896,11 +904,15 @@ body::before {
       allPieces.push({el:icR,phase:2,index:ii*2+1,total:iceStrips*2});
     }
     svg.appendChild(gIce);
-    // Front gable ice shield face
-    var iceFront=svgEl('path',{opacity:0,fill:'rgba(56,189,248,0.5)'});
-    iceFront.setAttribute('d','M'+isoX(-roofW,hd)+' '+isoY(-roofW,hd,0)+' L'+isoX(0,hd)+' '+isoY(0,hd,peakH)+' L'+isoX(roofW,hd)+' '+isoY(roofW,hd,0)+' Z');
-    svg.appendChild(iceFront);
-    allPieces.push({el:iceFront,phase:2,index:iceStrips*2,total:iceStrips*2+1});
+    // Front gable ice shield face (strips from eave up)
+    var iceFrontStrips=6;
+    for(var ifi=0;ifi<iceFrontStrips;ifi++){
+      var if1=ifi/iceFrontStrips, if2=(ifi+1)/iceFrontStrips;
+      var ifEl=svgEl('path',{opacity:0,fill:'rgba(56,189,248,0.5)'});
+      ifEl.setAttribute('d','M'+isoX(-roofW*(1-if1),hd)+' '+isoY(-roofW*(1-if1),hd,peakH*if1)+' L'+isoX(-roofW*(1-if2),hd)+' '+isoY(-roofW*(1-if2),hd,peakH*if2)+' L'+isoX(roofW*(1-if2),hd)+' '+isoY(roofW*(1-if2),hd,peakH*if2)+' L'+isoX(roofW*(1-if1),hd)+' '+isoY(roofW*(1-if1),hd,peakH*if1)+' Z');
+      svg.appendChild(ifEl);
+      allPieces.push({el:ifEl,phase:2,index:iceStrips*2+ifi,total:iceStrips*2+iceFrontStrips});
+    }
 
     // ─── 4. FELT UNDERLAYMENT (rolled out in 4 strips across full slope) ───
     var gFelt=svgEl('g',{});
@@ -917,11 +929,15 @@ body::before {
       allPieces.push({el:fR,phase:3,index:fi*2+1,total:feltStrips*2});
     }
     svg.appendChild(gFelt);
-    // Front gable felt face
-    var feltFront=svgEl('path',{opacity:0,fill:'#707880'});
-    feltFront.setAttribute('d','M'+isoX(-roofW,hd)+' '+isoY(-roofW,hd,0)+' L'+isoX(0,hd)+' '+isoY(0,hd,peakH)+' L'+isoX(roofW,hd)+' '+isoY(roofW,hd,0)+' Z');
-    svg.appendChild(feltFront);
-    allPieces.push({el:feltFront,phase:3,index:feltStrips*2,total:feltStrips*2+1});
+    // Front gable felt face (strips from eave up)
+    var feltFrontStrips=4;
+    for(var ffi=0;ffi<feltFrontStrips;ffi++){
+      var ff1=ffi/feltFrontStrips, ff2=(ffi+1)/feltFrontStrips;
+      var ffEl=svgEl('path',{opacity:0,fill:ffi%2===0?'#707880':'#808890'});
+      ffEl.setAttribute('d','M'+isoX(-roofW*(1-ff1),hd)+' '+isoY(-roofW*(1-ff1),hd,peakH*ff1)+' L'+isoX(-roofW*(1-ff2),hd)+' '+isoY(-roofW*(1-ff2),hd,peakH*ff2)+' L'+isoX(roofW*(1-ff2),hd)+' '+isoY(roofW*(1-ff2),hd,peakH*ff2)+' L'+isoX(roofW*(1-ff1),hd)+' '+isoY(roofW*(1-ff1),hd,peakH*ff1)+' Z');
+      svg.appendChild(ffEl);
+      allPieces.push({el:ffEl,phase:3,index:feltStrips*2+ffi,total:feltStrips*2+feltFrontStrips});
+    }
 
     // ─── 5. SHINGLES (rows with individual tabs for elegant detail) ───
     var gShingles=svgEl('g',{});
@@ -981,18 +997,32 @@ body::before {
       allPieces.push({el:rowR,phase:4,index:shPieceIdx++,total:shTotal});
     }
     svg.appendChild(gShingles);
-    // Front gable shingles face (with horizontal shingle lines)
-    var shingleFront=svgEl('g',{opacity:0});
-    shingleFront.appendChild(svgEl('path',{d:'M'+isoX(-roofW,hd)+' '+isoY(-roofW,hd,0)+' L'+isoX(0,hd)+' '+isoY(0,hd,peakH)+' L'+isoX(roofW,hd)+' '+isoY(roofW,hd,0)+' Z',fill:'#4A5568'}));
-    // Horizontal shingle lines on front gable
-    for(var gsi=1;gsi<10;gsi++){
-      var gf=gsi/10;
-      var glx=isoX(-roofW*(1-gf),hd), gly=isoY(-roofW*(1-gf),hd,peakH*gf);
-      var grx=isoX(roofW*(1-gf),hd), gry=isoY(roofW*(1-gf),hd,peakH*gf);
-      shingleFront.appendChild(svgEl('line',{x1:glx,y1:gly,x2:grx,y2:gry,stroke:'#2D3748','stroke-width':0.6,opacity:0.5}));
+    // Front gable shingles face (strips with matching colors + tab details)
+    var shFrontRows=12;
+    for(var sfi=0;sfi<shFrontRows;sfi++){
+      var sfg=svgEl('g',{opacity:0});
+      var sf1=sfi/shFrontRows, sf2=(sfi+1)/shFrontRows;
+      var sfl1x=isoX(-roofW*(1-sf1),hd), sfl1y=isoY(-roofW*(1-sf1),hd,peakH*sf1);
+      var sfr1x=isoX(roofW*(1-sf1),hd), sfr1y=isoY(roofW*(1-sf1),hd,peakH*sf1);
+      var sfl2x=isoX(-roofW*(1-sf2),hd), sfl2y=isoY(-roofW*(1-sf2),hd,peakH*sf2);
+      var sfr2x=isoX(roofW*(1-sf2),hd), sfr2y=isoY(roofW*(1-sf2),hd,peakH*sf2);
+      // Base strip with matching shingle color
+      sfg.appendChild(svgEl('path',{d:'M'+sfl1x+' '+sfl1y+' L'+sfl2x+' '+sfl2y+' L'+sfr2x+' '+sfr2y+' L'+sfr1x+' '+sfr1y+' Z',fill:shCols[sfi%shCols.length],stroke:'#2D3748','stroke-width':0.3}));
+      // Vertical tab lines (individual shingles)
+      var tabCount=Math.max(3,Math.round((sfr1x-sfl1x)/25));
+      var offset=(sfi%2)*0.5/tabCount;
+      for(var vt=1;vt<tabCount;vt++){
+        var vtf=vt/tabCount+offset;
+        if(vtf>1) continue;
+        var vtx1=sfl1x+(sfr1x-sfl1x)*vtf, vty1=sfl1y+(sfr1y-sfl1y)*vtf;
+        var vtx2=sfl2x+(sfr2x-sfl2x)*vtf, vty2=sfl2y+(sfr2y-sfl2y)*vtf;
+        sfg.appendChild(svgEl('line',{x1:vtx1,y1:vty1,x2:vtx2,y2:vty2,stroke:'#2D3748','stroke-width':0.5,opacity:0.5}));
+      }
+      // Shadow line at bottom
+      sfg.appendChild(svgEl('line',{x1:sfl1x,y1:sfl1y,x2:sfr1x,y2:sfr1y,stroke:'rgba(0,0,0,0.25)','stroke-width':0.7}));
+      svg.appendChild(sfg);
+      allPieces.push({el:sfg,phase:4,index:shTotal+sfi,total:shTotal+shFrontRows});
     }
-    svg.appendChild(shingleFront);
-    allPieces.push({el:shingleFront,phase:4,index:shTotal,total:shTotal+1});
 
     // ─── 6. RIDGE CAP (individual pieces along peak) ───
     var gRidge=svgEl('g',{});
