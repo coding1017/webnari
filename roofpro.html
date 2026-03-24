@@ -804,8 +804,8 @@ body::before {
 
     // ═══ BUILD ISOMETRIC ROOF — PIECE BY PIECE ═══
     // Every layer is built incrementally as you scroll, not dropped in
-    var cx=525, baseY=420;
-    var roofW=280, roofD=140, peakH=90;
+    var cx=525, baseY=440;
+    var roofW=300, roofD=260, peakH=95;
     var hd=roofD/2;
 
     // Isometric helpers
@@ -817,7 +817,7 @@ body::before {
 
     // ─── 1. TRUSSES (6 individual triangular frames + ridge beam + eave beams) ───
     var gTrusses=svgEl('g',{});
-    var numT=6;
+    var numT=12;
     for(var ti=0;ti<numT;ti++){
       var tg=svgEl('g',{opacity:0});
       var frac=(ti+0.5)/numT;
@@ -873,12 +873,12 @@ body::before {
     }
     svg.appendChild(gDeck);
 
-    // ─── 3. ICE & WATER SHIELD (6 strips covering bottom third of each slope) ───
+    // ─── 3. ICE & WATER SHIELD (8 strips covering FULL slope) ───
     var gIce=svgEl('g',{});
-    var iceStrips=6;
+    var iceStrips=8;
     for(var ii=0;ii<iceStrips;ii++){
-      // Each strip covers 1/6th of the bottom third (0 to 0.33 of slope)
-      var sf=ii*0.33/iceStrips, sfn=(ii+1)*0.33/iceStrips;
+      // Each strip covers 1/8th of the full slope (0 to 1.0)
+      var sf=ii/iceStrips, sfn=(ii+1)/iceStrips;
       // Left slope
       var icL=svgEl('path',{opacity:0,fill:'rgba(56,189,248,0.5)'});
       icL.setAttribute('d','M'+isoX(-roofW*(1-sf),-hd)+' '+isoY(-roofW*(1-sf),-hd,peakH*sf)+' L'+isoX(-roofW*(1-sfn),-hd)+' '+isoY(-roofW*(1-sfn),-hd,peakH*sfn)+' L'+isoX(-roofW*(1-sfn),hd)+' '+isoY(-roofW*(1-sfn),hd,peakH*sfn)+' L'+isoX(-roofW*(1-sf),hd)+' '+isoY(-roofW*(1-sf),hd,peakH*sf)+' Z');
@@ -908,22 +908,62 @@ body::before {
     }
     svg.appendChild(gFelt);
 
-    // ─── 5. SHINGLES (rows laid from eave up to ridge, staggered) ───
+    // ─── 5. SHINGLES (rows with individual tabs for elegant detail) ───
     var gShingles=svgEl('g',{});
-    var shingleRows=12;
-    var shCols=['#4A5568','#5A6577','#3D4A5C','#475569','#4F5B6B'];
+    var shingleRows=16;
+    var shCols=['#4A5568','#546374','#3D4A5C','#475569','#4F5B6B','#5A6577'];
+    var shPieceIdx=0, shTotal=shingleRows*2;
     for(var si=0;si<shingleRows;si++){
       var sf2=si/shingleRows, sfn2=(si+1)/shingleRows;
-      // Left slope shingle row
-      var sL=svgEl('path',{opacity:0,fill:shCols[si%shCols.length],stroke:'#2D3748','stroke-width':0.4});
-      sL.setAttribute('d','M'+isoX(-roofW*(1-sf2),-hd)+' '+isoY(-roofW*(1-sf2),-hd,peakH*sf2)+' L'+isoX(-roofW*(1-sfn2),-hd)+' '+isoY(-roofW*(1-sfn2),-hd,peakH*sfn2)+' L'+isoX(-roofW*(1-sfn2),hd)+' '+isoY(-roofW*(1-sfn2),hd,peakH*sfn2)+' L'+isoX(-roofW*(1-sf2),hd)+' '+isoY(-roofW*(1-sf2),hd,peakH*sf2)+' Z');
-      gShingles.appendChild(sL);
-      allPieces.push({el:sL,phase:4,index:si*2,total:shingleRows*2});
-      // Right slope shingle row
-      var sR=svgEl('path',{opacity:0,fill:shCols[(si+2)%shCols.length],stroke:'#2D3748','stroke-width':0.4});
-      sR.setAttribute('d','M'+isoX(roofW*(1-sf2),-hd)+' '+isoY(roofW*(1-sf2),-hd,peakH*sf2)+' L'+isoX(roofW*(1-sfn2),-hd)+' '+isoY(roofW*(1-sfn2),-hd,peakH*sfn2)+' L'+isoX(roofW*(1-sfn2),hd)+' '+isoY(roofW*(1-sfn2),hd,peakH*sfn2)+' L'+isoX(roofW*(1-sf2),hd)+' '+isoY(roofW*(1-sf2),hd,peakH*sf2)+' Z');
-      gShingles.appendChild(sR);
-      allPieces.push({el:sR,phase:4,index:si*2+1,total:shingleRows*2});
+      // LEFT slope — row group with individual shingle tabs
+      var rowL=svgEl('g',{opacity:0});
+      // Base strip
+      rowL.appendChild(svgEl('path',{
+        d:'M'+isoX(-roofW*(1-sf2),-hd)+' '+isoY(-roofW*(1-sf2),-hd,peakH*sf2)+' L'+isoX(-roofW*(1-sfn2),-hd)+' '+isoY(-roofW*(1-sfn2),-hd,peakH*sfn2)+' L'+isoX(-roofW*(1-sfn2),hd)+' '+isoY(-roofW*(1-sfn2),hd,peakH*sfn2)+' L'+isoX(-roofW*(1-sf2),hd)+' '+isoY(-roofW*(1-sf2),hd,peakH*sf2)+' Z',
+        fill:shCols[si%shCols.length],stroke:'#2D3748','stroke-width':0.3
+      }));
+      // Individual tab lines across the row (depth direction)
+      var numTabs=8;
+      for(var tab=1;tab<numTabs;tab++){
+        var tFrac=tab/numTabs;
+        var offset=(si%2)*0.5/numTabs; // stagger every other row
+        var adjFrac=tFrac+offset;
+        if(adjFrac>1) continue;
+        var tabD=-hd+adjFrac*roofD;
+        var t1x=isoX(-roofW*(1-sf2),tabD), t1y=isoY(-roofW*(1-sf2),tabD,peakH*sf2);
+        var t2x=isoX(-roofW*(1-sfn2),tabD), t2y=isoY(-roofW*(1-sfn2),tabD,peakH*sfn2);
+        rowL.appendChild(svgEl('line',{x1:t1x,y1:t1y,x2:t2x,y2:t2y,stroke:'#2D3748','stroke-width':0.5,opacity:0.6}));
+      }
+      // Shadow line at bottom edge of row
+      rowL.appendChild(svgEl('path',{
+        d:'M'+isoX(-roofW*(1-sf2),-hd)+' '+isoY(-roofW*(1-sf2),-hd,peakH*sf2)+' L'+isoX(-roofW*(1-sf2),hd)+' '+isoY(-roofW*(1-sf2),hd,peakH*sf2),
+        fill:'none',stroke:'rgba(0,0,0,0.3)','stroke-width':0.8
+      }));
+      gShingles.appendChild(rowL);
+      allPieces.push({el:rowL,phase:4,index:shPieceIdx++,total:shTotal});
+
+      // RIGHT slope
+      var rowR=svgEl('g',{opacity:0});
+      rowR.appendChild(svgEl('path',{
+        d:'M'+isoX(roofW*(1-sf2),-hd)+' '+isoY(roofW*(1-sf2),-hd,peakH*sf2)+' L'+isoX(roofW*(1-sfn2),-hd)+' '+isoY(roofW*(1-sfn2),-hd,peakH*sfn2)+' L'+isoX(roofW*(1-sfn2),hd)+' '+isoY(roofW*(1-sfn2),hd,peakH*sfn2)+' L'+isoX(roofW*(1-sf2),hd)+' '+isoY(roofW*(1-sf2),hd,peakH*sf2)+' Z',
+        fill:shCols[(si+3)%shCols.length],stroke:'#2D3748','stroke-width':0.3
+      }));
+      for(var tab2=1;tab2<numTabs;tab2++){
+        var tFrac2=tab2/numTabs;
+        var offset2=(si%2)*0.5/numTabs;
+        var adjFrac2=tFrac2+offset2;
+        if(adjFrac2>1) continue;
+        var tabD2=-hd+adjFrac2*roofD;
+        var t3x=isoX(roofW*(1-sf2),tabD2), t3y=isoY(roofW*(1-sf2),tabD2,peakH*sf2);
+        var t4x=isoX(roofW*(1-sfn2),tabD2), t4y=isoY(roofW*(1-sfn2),tabD2,peakH*sfn2);
+        rowR.appendChild(svgEl('line',{x1:t3x,y1:t3y,x2:t4x,y2:t4y,stroke:'#2D3748','stroke-width':0.5,opacity:0.5}));
+      }
+      rowR.appendChild(svgEl('path',{
+        d:'M'+isoX(roofW*(1-sf2),-hd)+' '+isoY(roofW*(1-sf2),-hd,peakH*sf2)+' L'+isoX(roofW*(1-sf2),hd)+' '+isoY(roofW*(1-sf2),hd,peakH*sf2),
+        fill:'none',stroke:'rgba(0,0,0,0.2)','stroke-width':0.6
+      }));
+      gShingles.appendChild(rowR);
+      allPieces.push({el:rowR,phase:4,index:shPieceIdx++,total:shTotal});
     }
     svg.appendChild(gShingles);
 
