@@ -298,27 +298,27 @@ a{color:inherit;text-decoration:none}
 
   // ─── 4. OIL & VINEGAR DRIZZLE ───
   var gOil=svgEl('g',{opacity:0});
-  // Oil line (golden) — positioned on bottom bread surface
-  var oilLine=svgEl('line',{x1:subX+30,y1:subY+18,x2:subX+30,y2:subY+18,stroke:'#C8A830','stroke-width':2.5,'stroke-linecap':'round',opacity:0.7});
+  // Oil line (golden) — positioned on bottom bread surface (subY+28)
+  var oilLine=svgEl('line',{x1:subX+30,y1:subY+28,x2:subX+30,y2:subY+28,stroke:'#C8A830','stroke-width':2.5,'stroke-linecap':'round',opacity:0.7});
   gOil.appendChild(oilLine);
-  // Vinegar line (darker)
-  var vinegarLine=svgEl('line',{x1:subX+30,y1:subY+22,x2:subX+30,y2:subY+22,stroke:'#8B4513','stroke-width':2,'stroke-linecap':'round',opacity:0.5});
+  // Vinegar line (darker) (subY+32)
+  var vinegarLine=svgEl('line',{x1:subX+30,y1:subY+32,x2:subX+30,y2:subY+32,stroke:'#8B4513','stroke-width':2,'stroke-linecap':'round',opacity:0.5});
   gOil.appendChild(vinegarLine);
-  // Oil droplets
+  // Oil droplets (subY+29+random)
   var oilDrops=[];
   for(var oi=0;oi<6;oi++){
-    var od=svgEl('circle',{cx:subX+50+oi*80,cy:subY+19+Math.random()*4,r:2+Math.random()*2,fill:'#D4A830',opacity:0});
+    var od=svgEl('circle',{cx:subX+50+oi*80,cy:subY+29+Math.random()*4,r:2+Math.random()*2,fill:'#D4A830',opacity:0});
     gOil.appendChild(od);
     oilDrops.push(od);
   }
   svg.appendChild(gOil);
 
-  // ─── 5. LETTUCE LEAVES ───  (subY+10 — sitting on bottom bread)
+  // ─── 5. LETTUCE LEAVES ───  (subY+22 — resting on bread above oil)
   var gLettuce=svgEl('g',{opacity:0});
   var lettuceLeaves=[];
   for(var li=0;li<7;li++){
     var lx=subX+20+li*72;
-    var ly=subY+10;
+    var ly=subY+22;
     // Ruffled leaf shape
     var leafPath='M'+lx+' '+ly+' Q'+(lx+10)+' '+(ly-18)+' '+(lx+25)+' '+(ly-12)+' Q'+(lx+35)+' '+(ly-22)+' '+(lx+50)+' '+(ly-10)+' Q'+(lx+60)+' '+(ly-18)+' '+(lx+70)+' '+(ly-6)+' Q'+(lx+55)+' '+(ly+4)+' '+(lx+35)+' '+(ly+2)+' Q'+(lx+15)+' '+(ly+6)+' '+lx+' '+ly;
     var leaf=svgEl('path',{d:leafPath,fill:li%2===0?'#4CAF50':'#66BB6A',stroke:'#2E7D32','stroke-width':0.5,opacity:0});
@@ -330,14 +330,14 @@ a{color:inherit;text-decoration:none}
   }
   svg.appendChild(gLettuce);
 
-  // ─── 6. DELI MEATS — salami, ham, capicola (folded slices) ───  (subY+2)
+  // ─── 6. DELI MEATS — salami, ham, capicola (folded slices) ───  (subY+14)
   var gMeats=svgEl('g',{opacity:0});
   var meatSlices=[];
   var meatTypes=['salami','ham','cap','salami','ham','cap','salami','ham'];
   var meatFills={'salami':'url(#salamiGrad)','ham':'url(#hamGrad)','cap':'url(#capGrad)'};
   for(var mi=0;mi<8;mi++){
     var mx=subX+20+mi*62;
-    var my=subY+2;
+    var my=subY+14;
     var mType=meatTypes[mi];
     var mFill=meatFills[mType];
     var meatG=svgEl('g',{opacity:0});
@@ -359,12 +359,12 @@ a{color:inherit;text-decoration:none}
   }
   svg.appendChild(gMeats);
 
-  // ─── 7. PROVOLONE CHEESE SLICES ───  (subY-8)
+  // ─── 7. PROVOLONE CHEESE SLICES ───  (subY+6)
   var gCheese_g=svgEl('g',{opacity:0});
   var cheeseSlices=[];
   for(var ci=0;ci<5;ci++){
     var ccx=subX+30+ci*100;
-    var ccy=subY-8;
+    var ccy=subY+6;
     // Triangular fold (provolone draped over meats)
     var cheesePath='M'+ccx+' '+(ccy+5)+' L'+(ccx+35)+' '+(ccy-20)+' L'+(ccx+70)+' '+(ccy+5)+' Q'+(ccx+50)+' '+(ccy+12)+' '+(ccx+20)+' '+(ccy+10)+' Z';
     var cs=svgEl('path',{d:cheesePath,fill:'url(#cheeseGrad)',stroke:'#C8B860','stroke-width':0.5,opacity:0});
@@ -373,12 +373,12 @@ a{color:inherit;text-decoration:none}
   }
   svg.appendChild(gCheese_g);
 
-  // ─── 8. TOMATO SLICES ───  (subY-18)
+  // ─── 8. TOMATO SLICES ───  (subY-2)
   var gTomato=svgEl('g',{opacity:0});
   var tomatoSlices=[];
   for(var ti=0;ti<6;ti++){
     var tx=subX+40+ti*82;
-    var ty=subY-18;
+    var ty=subY-2;
     var tg=svgEl('g',{opacity:0});
     // Main circle
     tg.appendChild(svgEl('circle',{cx:tx,cy:ty,r:16,fill:'#E53935',stroke:'#C62828','stroke-width':0.8}));
@@ -394,12 +394,12 @@ a{color:inherit;text-decoration:none}
   }
   svg.appendChild(gTomato);
 
-  // ─── 9. ONION RINGS ───  (subY-28)
+  // ─── 9. ONION RINGS ───  (subY-10)
   var gOnion=svgEl('g',{opacity:0});
   var onionRings=[];
   for(var oni=0;oni<5;oni++){
     var ox=subX+55+oni*100;
-    var oy=subY-28;
+    var oy=subY-10;
     var og=svgEl('g',{opacity:0});
     og.appendChild(svgEl('circle',{cx:ox,cy:oy,r:12,fill:'none',stroke:'#9C27B0','stroke-width':3,opacity:0.6}));
     og.appendChild(svgEl('circle',{cx:ox,cy:oy,r:9,fill:'none',stroke:'#CE93D8','stroke-width':1.5,opacity:0.3}));
@@ -410,13 +410,13 @@ a{color:inherit;text-decoration:none}
   }
   svg.appendChild(gOnion);
 
-  // ─── 10. PEPPERS + OREGANO ───  (subY-36)
+  // ─── 10. PEPPERS + OREGANO ───  (subY-18)
   var gToppings=svgEl('g',{opacity:0});
   // Banana pepper rings (yellow-green)
   var pepperPieces=[];
   for(var pi=0;pi<7;pi++){
     var px=subX+35+pi*70;
-    var py=subY-36+Math.random()*4;
+    var py=subY-18+Math.random()*4;
     var pg=svgEl('g',{opacity:0});
     pg.appendChild(svgEl('circle',{cx:px,cy:py,r:8,fill:'none',stroke:'#CDDC39','stroke-width':3,opacity:0.75}));
     pg.appendChild(svgEl('circle',{cx:px,cy:py,r:4,fill:'#F0F4C3',opacity:0.3}));
@@ -427,7 +427,7 @@ a{color:inherit;text-decoration:none}
   var oreganoDots=[];
   for(var oi2=0;oi2<30;oi2++){
     var ox2=subX+25+Math.random()*(subW-50);
-    var oy2=subY-38+Math.random()*30;
+    var oy2=subY-16+Math.random()*36;
     var odot=svgEl('circle',{cx:ox2,cy:oy2,r:0.8+Math.random()*0.8,fill:'#558B2F',opacity:0});
     gToppings.appendChild(odot);
     oreganoDots.push(odot);
@@ -518,19 +518,19 @@ a{color:inherit;text-decoration:none}
   var rhw=subW/2-8;
   // Left half wrap — covers LEFT half of the sub half (hold-to-eat)
   var wrapLeftG=svgEl('g',{opacity:0});
-  var lwx=subX-25, lwy=subY;  // shifted left for separation
-  var wrapFullH=subH+20;
-  var wrapFullHalfW=lhw/2+15;  // covers left half of the sub
-  // Paper base (left portion only — from left end to middle)
-  wrapLeftG.appendChild(svgEl('rect',{x:lwx-5,y:lwy-subH/2-10,width:wrapFullHalfW,height:wrapFullH,rx:3,fill:'url(#checker)',opacity:0.9}));
+  var lwy=subY;
+  var wrapFullH=subH+6;
+  var wrapHalfW=lhw/2;
+  // Paper base (from left end of left half, covering half the sub's width)
+  wrapLeftG.appendChild(svgEl('rect',{x:subX-25,y:subY-subH/2-3,width:wrapHalfW,height:wrapFullH,rx:3,fill:'url(#checker)',opacity:0.9}));
   gWrap.appendChild(wrapLeftG);
 
   // Right half wrap — covers RIGHT half of the sub half (hold-to-eat)
   var wrapRightG=svgEl('g',{opacity:0});
-  var rwx=cx+33, rwy=subY;  // shifted right for separation
-  // Paper base (right portion only — from middle to right end)
-  var rwrapStartX=rwx+rhw/2-10;
-  wrapRightG.appendChild(svgEl('rect',{x:rwrapStartX,y:rwy-subH/2-10,width:wrapFullHalfW,height:wrapFullH,rx:3,fill:'url(#checker)',opacity:0.9}));
+  var rwy=subY;
+  // Paper base (from middle of right half to its right end)
+  var rwrapStartX=cx+8+25+rhw/2;
+  wrapRightG.appendChild(svgEl('rect',{x:rwrapStartX,y:subY-subH/2-3,width:rhw/2,height:wrapFullH,rx:3,fill:'url(#checker)',opacity:0.9}));
   gWrap.appendChild(wrapRightG);
   svg.appendChild(gWrap);
 
@@ -574,10 +574,12 @@ a{color:inherit;text-decoration:none}
   // Wrapped left half in basket (angled slightly)
   var bSubLeftG=svgEl('g',{});
   var bslx=basketCX-basketRX+30, bsly=basketCY-25;
-  // Sub body
-  bSubLeftG.appendChild(svgEl('rect',{x:bslx,y:bsly-18,width:lhw-10,height:subH-6,rx:(subH-6)/2,fill:'url(#crustGrad)',stroke:'#906018','stroke-width':0.8}));
-  // Checker wrap on bottom 60%
-  bSubLeftG.appendChild(svgEl('rect',{x:bslx,y:bsly+2,width:lhw-10,height:subH*0.45,rx:8,fill:'url(#checker)',opacity:0.85}));
+  var bsubH=subH-6, bsubR=bsubH/2;
+  var bslw=lhw-10;
+  // Sub body — rounded left end, flat right end (cut side)
+  bSubLeftG.appendChild(svgEl('path',{d:'M'+(bslx+bsubR)+' '+(bsly-18)+' L'+(bslx+bslw)+' '+(bsly-18)+' L'+(bslx+bslw)+' '+(bsly-18+bsubH)+' L'+(bslx+bsubR)+' '+(bsly-18+bsubH)+' A'+bsubR+' '+bsubR+' 0 0 1 '+(bslx)+' '+(bsly-18+bsubR)+' A'+bsubR+' '+bsubR+' 0 0 1 '+(bslx+bsubR)+' '+(bsly-18)+' Z',fill:'url(#crustGrad)',stroke:'#906018','stroke-width':0.8}));
+  // Checker wrap on LEFT half of the sub
+  bSubLeftG.appendChild(svgEl('rect',{x:bslx,y:bsly+2,width:bslw/2,height:subH*0.45,rx:8,fill:'url(#checker)',opacity:0.85}));
   // Filling peek
   bSubLeftG.appendChild(svgEl('path',{d:'M'+(bslx+5)+' '+(bsly)+' Q'+(bslx+30)+' '+(bsly-5)+' '+(bslx+55)+' '+(bsly),fill:'#4CAF50',opacity:0.5}));
   bSubLeftG.setAttribute('transform','rotate(-3,'+basketCX+','+basketCY+')');
@@ -586,15 +588,18 @@ a{color:inherit;text-decoration:none}
   // Wrapped right half in basket (angled opposite)
   var bSubRightG=svgEl('g',{});
   var bsrx=basketCX-20, bsry=basketCY-30;
-  bSubRightG.appendChild(svgEl('rect',{x:bsrx,y:bsry-18,width:rhw-10,height:subH-6,rx:(subH-6)/2,fill:'url(#crustGrad)',stroke:'#906018','stroke-width':0.8}));
-  bSubRightG.appendChild(svgEl('rect',{x:bsrx,y:bsry+2,width:rhw-10,height:subH*0.45,rx:8,fill:'url(#checker)',opacity:0.85}));
+  var bsrw=rhw-10;
+  // Sub body — flat left end (cut side), rounded right end
+  bSubRightG.appendChild(svgEl('path',{d:'M'+bsrx+' '+(bsry-18)+' L'+(bsrx+bsrw-bsubR)+' '+(bsry-18)+' A'+bsubR+' '+bsubR+' 0 0 1 '+(bsrx+bsrw)+' '+(bsry-18+bsubR)+' A'+bsubR+' '+bsubR+' 0 0 1 '+(bsrx+bsrw-bsubR)+' '+(bsry-18+bsubH)+' L'+bsrx+' '+(bsry-18+bsubH)+' Z',fill:'url(#crustGrad)',stroke:'#906018','stroke-width':0.8}));
+  // Checker wrap on RIGHT half of the sub
+  bSubRightG.appendChild(svgEl('rect',{x:bsrx+bsrw/2,y:bsry+2,width:bsrw/2,height:subH*0.45,rx:8,fill:'url(#checker)',opacity:0.85}));
   bSubRightG.appendChild(svgEl('path',{d:'M'+(bsrx+5)+' '+(bsry)+' Q'+(bsrx+30)+' '+(bsry-5)+' '+(bsrx+55)+' '+(bsry),fill:'#4CAF50',opacity:0.5}));
   bSubRightG.setAttribute('transform','rotate(4,'+basketCX+','+basketCY+')');
   gBasketScene.appendChild(bSubRightG);
 
   // Chips pile (inside basket, right side)
   var chipsG=svgEl('g',{});
-  var chipsCX=basketCX+basketRX-60, chipsCY=basketCY-10;
+  var chipsCX=basketCX+basketRX-45, chipsCY=basketCY+15;
   // Chip bag / pile of chips (golden irregular shapes)
   var chipShapes=[
     {dx:-18,dy:-12,rx:14,ry:8,rot:-15},
@@ -609,7 +614,7 @@ a{color:inherit;text-decoration:none}
   ];
   for(var chi=0;chi<chipShapes.length;chi++){
     var ch=chipShapes[chi];
-    var chipEl=svgEl('ellipse',{cx:chipsCX+ch.dx,cy:chipsCY+ch.dy,rx:ch.rx,ry:ch.ry,fill:chi%3===0?'#E8C840':'#D4A830',stroke:'#B08820','stroke-width':0.5,opacity:0.9,transform:'rotate('+ch.rot+','+(chipsCX+ch.dx)+','+(chipsCY+ch.dy)+')'});
+    var chipEl=svgEl('ellipse',{cx:chipsCX+ch.dx,cy:chipsCY+ch.dy,rx:ch.rx*0.7,ry:ch.ry*0.7,fill:chi%3===0?'#E8C840':'#D4A830',stroke:'#B08820','stroke-width':0.5,opacity:0.9,transform:'rotate('+ch.rot+','+(chipsCX+ch.dx)+','+(chipsCY+ch.dy)+')'});
     chipsG.appendChild(chipEl);
   }
   // Brown crispy spots on some chips
