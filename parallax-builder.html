@@ -2226,6 +2226,10 @@ Theme: Lock mechanism being assembled
     if (refUrl) msg += '\nUse this as visual inspiration (match the quality/feel, not the content): ' + refUrl + '\n';
     msg += '\nBuild sequence:\n' + buildSequence.value.trim() + '\n\n';
     msg += 'Generate the complete HTML file now. Follow the art style direction closely — it should be visually obvious which style was chosen.';
+    // If the build sequence is very long, add efficiency reminder
+    if (buildSequence.value.length > 1500) {
+      msg += '\n\nIMPORTANT: This is a detailed spec. Use for-loops, helper functions, and config arrays to keep the code compact. Do NOT hand-code every single element — generate repetitive elements programmatically. The total output MUST be under 16,000 tokens or it will get cut off. Prioritize finishing the complete file (including update(), requestAnimationFrame loop, and closing tags) over adding extra SVG detail.';
+    }
     return msg;
   }
 

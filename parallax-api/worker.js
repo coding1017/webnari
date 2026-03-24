@@ -12,6 +12,18 @@ OUTPUT FORMAT:
 - Use vanilla JS only — zero external libraries
 - Use Google Fonts: Barlow Condensed (headings, 900) + Barlow (body)
 
+CRITICAL — CODE EFFICIENCY:
+- Keep total output under 16,000 tokens. This is a HARD constraint.
+- Use loops and helper functions to generate repetitive SVG elements — NEVER hand-code 30+ similar elements individually
+- Example: Instead of 20 individual svgEl() calls for rice grains, write a for-loop that generates them
+- Use arrays of config data + loops: var items = [{x:10,y:20,color:'#fff'}, ...]; items.forEach(function(item) { ... })
+- Reuse SVG groups with cloneNode(true) and transform offsets instead of rebuilding similar elements
+- Keep SVG paths concise — use relative commands (m, l, q) instead of absolute when possible
+- For textures and patterns, use SVG <pattern> elements instead of individual shapes
+- Aim for 8-12 animation phases maximum, each driven by compact map() calls
+- The update() function should be tight — avoid deeply nested conditionals
+- Prioritize visual impact over element count. 15 well-designed SVG groups look better than 40 crude ones
+
 ═══ PARALLAX ARCHITECTURE (MANDATORY — follow exactly) ═══
 
 CSS STRUCTURE:
