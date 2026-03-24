@@ -802,177 +802,151 @@ body::before {
     function setPhase(t){if(t===lastPhase)return;lastPhase=t;phaseEl.style.opacity='0';phaseEl.style.transform='translateX(-50%) translateY(7px)';setTimeout(function(){phaseEl.textContent=t;phaseEl.style.opacity='1';phaseEl.style.transform='translateX(-50%) translateY(0)';},190);}
     function svgEl(tag,attrs){var e=document.createElementNS(ns,tag);for(var k in attrs){if(attrs.hasOwnProperty(k))e.setAttribute(k,String(attrs[k]));}return e;}
 
-    // ═══ BUILD ISOMETRIC EXPLODED ROOF LAYERS ═══
-    // Like the 3D reference: each layer is an isometric parallelogram
-    // that floats down and stacks as you scroll
-    // Isometric projection: 30-deg angle, x-skew for depth
-    var IX=0.866, IY=0.5; // cos(30), sin(30) for isometric
-    var cx=525, baseY=520; // center x, bottom of stack
-    var layerW=380, layerD=220; // width and depth of each slab
-    var layerGap=58; // vertical gap between exploded layers
-    var stackH=12; // thickness of each layer slab
+    // ═══ BUILD ISOMETRIC PEAKED ROOF LAYERS ═══
+    // Each layer is a gable-shaped (peaked) roof section viewed isometrically
+    // Layers stack from trusses at bottom to shingles at top
+    // Isometric projection helpers
+    var cx=525, baseY=530; // center, base of stack
+    var roofW=420; // half-width of roof from center to eave
+    var roofD=180; // depth (front to back)
+    var peakH=120; // height from eave to ridge peak
+    var layerGap=52; // gap between exploded layers
 
-    // Isometric quad helper: returns path for a parallelogram slab
-    // at position (cx, y) with width w, depth d, thickness t
-    function isoTop(y,w,d){
-      // Top face of the slab
-      var hw=w/2, hd=d/2;
-      var x0=cx-hw*IX+hd*IX, y0=y-hw*IY-hd*IY;
-      var x1=cx+hw*IX+hd*IX, y1=y+hw*IY-hd*IY;
-      var x2=cx+hw*IX-hd*IX, y2=y+hw*IY+hd*IY;
-      var x3=cx-hw*IX-hd*IX, y3=y-hw*IY+hd*IY;
-      return 'M'+x0+' '+y0+' L'+x1+' '+y1+' L'+x2+' '+y2+' L'+x3+' '+y3+' Z';
-    }
-    function isoRight(y,w,d,t){
-      var hw=w/2, hd=d/2;
-      var x1=cx+hw*IX+hd*IX, y1=y+hw*IY-hd*IY;
-      var x2=cx+hw*IX-hd*IX, y2=y+hw*IY+hd*IY;
-      return 'M'+x1+' '+y1+' L'+x2+' '+y2+' L'+x2+' '+(y2+t)+' L'+x1+' '+(y1+t)+' Z';
-    }
-    function isoFront(y,w,d,t){
-      var hw=w/2, hd=d/2;
-      var x2=cx+hw*IX-hd*IX, y2=y+hw*IY+hd*IY;
-      var x3=cx-hw*IX-hd*IX, y3=y-hw*IY+hd*IY;
-      return 'M'+x3+' '+y3+' L'+x2+' '+y2+' L'+x2+' '+(y2+t)+' L'+x3+' '+(y3+t)+' Z';
+    // Isometric transform: x,y,z → screen x,y
+    // x = left-right, y = depth (into screen), z = up
+    function isoX(x,y){return cx+x*0.82+y*0.82;}
+    function isoY(x,y,z){return baseY-z-x*0.38+y*0.38;}
+
+    // Build a peaked roof layer (gable shape)
+    // The "top" surface is two sloped planes meeting at the ridge
+    function buildPeakedLayer(fill,fillDark,fillSide,thickness,name,detailFn){
+      var g=svgEl('g',{opacity:0});
+      var hd=roofD/2;
+      // 4 eave corners + 2 ridge points (front & back)
+      // Front-left eave, front-right eave, back-left eave, back-right eave
+      // Front ridge, back ridge
+      var flX=isoX(-roofW,-hd), flY=isoY(-roofW,-hd,0);
+      var frX=isoX(roofW,-hd), frY=isoY(roofW,-hd,0);
+      var blX=isoX(-roofW,hd), blY=isoY(-roofW,hd,0);
+      var brX=isoX(roofW,hd), brY=isoY(roofW,hd,0);
+      var fpX=isoX(0,-hd), fpY=isoY(0,-hd,peakH);
+      var bpX=isoX(0,hd), bpY=isoY(0,hd,peakH);
+      // Bottom versions (thickness below)
+      var flYb=flY+thickness, frYb=frY+thickness;
+      var blYb=blY+thickness, brYb=brY+thickness;
+      var fpYb=fpY+thickness, bpYb=bpY+thickness;
+
+      // LEFT slope (top face) — front-left, front-peak, back-peak, back-left
+      g.appendChild(svgEl('path',{d:'M'+flX+' '+flY+' L'+fpX+' '+fpY+' L'+bpX+' '+bpY+' L'+blX+' '+blY+' Z',fill:fill}));
+      // RIGHT slope (top face) — front-right, front-peak, back-peak, back-right
+      g.appendChild(svgEl('path',{d:'M'+frX+' '+frY+' L'+fpX+' '+fpY+' L'+bpX+' '+bpY+' L'+brX+' '+brY+' Z',fill:fillDark}));
+      // Front gable face (triangle: front-left, front-peak, front-right + thickness)
+      g.appendChild(svgEl('path',{d:'M'+flX+' '+flY+' L'+fpX+' '+fpY+' L'+frX+' '+frY+' L'+frX+' '+frYb+' L'+fpX+' '+fpYb+' L'+flX+' '+flYb+' Z',fill:fillSide}));
+      // Right eave edge (front-right to back-right, thickness)
+      g.appendChild(svgEl('path',{d:'M'+frX+' '+frY+' L'+brX+' '+brY+' L'+brX+' '+brYb+' L'+frX+' '+frYb+' Z',fill:fillDark,opacity:0.7}));
+      // Bottom of right slope visible
+      g.appendChild(svgEl('path',{d:'M'+frX+' '+frYb+' L'+fpX+' '+fpYb+' L'+bpX+' '+bpYb+' L'+brX+' '+brYb+' Z',fill:fillDark,opacity:0.5}));
+      // Edge highlights
+      g.appendChild(svgEl('line',{x1:fpX,y1:fpY,x2:bpX,y2:bpY,stroke:'rgba(255,255,255,0.25)','stroke-width':1.2}));// ridge line
+      g.appendChild(svgEl('path',{d:'M'+flX+' '+flY+' L'+fpX+' '+fpY+' L'+frX+' '+frY,fill:'none',stroke:'rgba(255,255,255,0.15)','stroke-width':0.8}));
+      // Label on front gable
+      var labelX=(flX+frX)/2, labelY=(flY+fpY)/2+thickness/2+6;
+      var label=svgEl('text',{x:labelX,y:labelY,'font-family':'Barlow Condensed, sans-serif','font-size':'10','font-weight':'700',fill:'rgba(255,255,255,0.9)','letter-spacing':'0.12em','text-anchor':'middle'});
+      label.textContent=name;
+      g.appendChild(label);
+      // Detail texture
+      if(detailFn) detailFn(g,{flX:flX,flY:flY,frX:frX,frY:frY,blX:blX,blY:blY,brX:brX,brY:brY,fpX:fpX,fpY:fpY,bpX:bpX,bpY:bpY});
+      return g;
     }
 
-    // Define layers bottom-to-top (order they appear in the stack)
-    // Each layer: {name, topFill, rightFill, frontFill, thickness, details}
-    var layers=[
-      {name:'Roof Deck',topFill:'#C9A96E',rightFill:'#A08A52',frontFill:'#B89A5F',t:14,
-        detail:function(g,y){
-          // Wood plank lines on top face
-          for(var i=1;i<8;i++){
-            var frac=i/8;
-            var hw=layerW/2,hd=layerD/2;
-            var sx=cx-hw*IX+hd*IX+(cx+hw*IX+hd*IX-(cx-hw*IX+hd*IX))*frac;
-            var sy=(y-hw*IY-hd*IY)+((y+hw*IY-hd*IY)-(y-hw*IY-hd*IY))*frac;
-            var ex=cx-hw*IX-hd*IX+(cx+hw*IX-hd*IX-(cx-hw*IX-hd*IX))*frac;
-            var ey=(y-hw*IY+hd*IY)+((y+hw*IY+hd*IY)-(y-hw*IY+hd*IY))*frac;
-            g.appendChild(svgEl('line',{x1:sx,y1:sy,x2:ex,y2:ey,stroke:'#A08A52','stroke-width':0.8,opacity:0.6}));
+    // Build trusses (bottom layer — structural frame, not a solid peaked shape)
+    function buildTrusses(){
+      var g=svgEl('g',{opacity:0});
+      var hd=roofD/2;
+      var numT=6;
+      for(var ti=0;ti<numT;ti++){
+        var frac=(ti+0.5)/numT;
+        var ty=-hd+frac*roofD;
+        // Each truss: triangle from left eave to peak to right eave
+        var lx=isoX(-roofW,ty), ly=isoY(-roofW,ty,0);
+        var rx=isoX(roofW,ty), ry=isoY(roofW,ty,0);
+        var px=isoX(0,ty), py=isoY(0,ty,peakH);
+        // Rafter left
+        g.appendChild(svgEl('line',{x1:lx,y1:ly,x2:px,y2:py,stroke:'#D4A574','stroke-width':3,'stroke-linecap':'round'}));
+        // Rafter right
+        g.appendChild(svgEl('line',{x1:rx,y1:ry,x2:px,y2:py,stroke:'#D4A574','stroke-width':3,'stroke-linecap':'round'}));
+        // Bottom chord
+        g.appendChild(svgEl('line',{x1:lx,y1:ly,x2:rx,y2:ry,stroke:'#C49A64','stroke-width':2.5,'stroke-linecap':'round'}));
+        // King post (vertical center)
+        var mx=isoX(0,ty), my=isoY(0,ty,0);
+        g.appendChild(svgEl('line',{x1:mx,y1:my,x2:px,y2:py,stroke:'#B8895A','stroke-width':2}));
+        // Web members (diagonal braces)
+        var qlx=isoX(-roofW*0.5,ty), qly=isoY(-roofW*0.5,ty,0);
+        var qrx=isoX(roofW*0.5,ty), qry=isoY(roofW*0.5,ty,0);
+        var qlpx=isoX(-roofW*0.25,ty), qlpy=isoY(-roofW*0.25,ty,peakH*0.75);
+        var qrpx=isoX(roofW*0.25,ty), qrpy=isoY(roofW*0.25,ty,peakH*0.75);
+        g.appendChild(svgEl('line',{x1:qlx,y1:qly,x2:qlpx,y2:qlpy,stroke:'#B8895A','stroke-width':1.5}));
+        g.appendChild(svgEl('line',{x1:qrx,y1:qry,x2:qrpx,y2:qrpy,stroke:'#B8895A','stroke-width':1.5}));
+      }
+      // Ridge beam (connects all peaks front to back)
+      var rfx=isoX(0,-hd), rfy=isoY(0,-hd,peakH);
+      var rbx=isoX(0,hd), rby=isoY(0,hd,peakH);
+      g.appendChild(svgEl('line',{x1:rfx,y1:rfy,x2:rbx,y2:rby,stroke:'#D4A574','stroke-width':3.5,'stroke-linecap':'round'}));
+      // Eave beams (connect eave corners)
+      var ef1x=isoX(-roofW,-hd),ef1y=isoY(-roofW,-hd,0);
+      var eb1x=isoX(-roofW,hd),eb1y=isoY(-roofW,hd,0);
+      var ef2x=isoX(roofW,-hd),ef2y=isoY(roofW,-hd,0);
+      var eb2x=isoX(roofW,hd),eb2y=isoY(roofW,hd,0);
+      g.appendChild(svgEl('line',{x1:ef1x,y1:ef1y,x2:eb1x,y2:eb1y,stroke:'#C49A64','stroke-width':2.5}));
+      g.appendChild(svgEl('line',{x1:ef2x,y1:ef2y,x2:eb2x,y2:eb2y,stroke:'#C49A64','stroke-width':2.5}));
+      // Label
+      var labelX=(ef1x+ef2x)/2, labelY=(ef1y+ef2y)/2+20;
+      var label=svgEl('text',{x:labelX,y:labelY,'font-family':'Barlow Condensed, sans-serif','font-size':'10','font-weight':'700',fill:'rgba(255,255,255,0.9)','letter-spacing':'0.12em','text-anchor':'middle'});
+      label.textContent='TRUSSES';
+      g.appendChild(label);
+      return g;
+    }
+
+    // Define all layers (bottom to top)
+    var layerDefs=[
+      {name:'TRUSSES',isTruss:true},
+      {name:'ROOF DECK',fill:'#C9A96E',dark:'#A08A52',side:'#B89A5F',t:8},
+      {name:'ICE & WATER SHIELD',fill:'#60BFF0',dark:'#38A8E0',side:'#4DB8E8',t:5},
+      {name:'FELT UNDERLAYMENT',fill:'#808890',dark:'#606870',side:'#707880',t:4},
+      {name:'INSULATION',fill:'#FDE68A',dark:'#E8C850',side:'#F0D860',t:14},
+      {name:'SHEATHING',fill:'#A3896B',dark:'#8B7355',side:'#957D62',t:7},
+      {name:'SHINGLES',fill:'#5A6577',dark:'#3D4A5C',side:'#4A5568',t:6,
+        detail:function(g,pts){
+          // Shingle tab lines on left slope
+          for(var r=1;r<8;r++){
+            var f=r/8;
+            var x1=pts.flX+(pts.fpX-pts.flX)*f, y1=pts.flY+(pts.fpY-pts.flY)*f;
+            var x2=pts.blX+(pts.bpX-pts.blX)*f, y2=pts.blY+(pts.bpY-pts.blY)*f;
+            g.appendChild(svgEl('line',{x1:x1,y1:y1,x2:x2,y2:y2,stroke:'#2D3748','stroke-width':0.6,opacity:0.5}));
           }
-        }},
-      {name:'Ice & Water Shield',topFill:'#38BDF8',rightFill:'#0E87C0',frontFill:'#1A9AD8',t:8,topOpacity:0.7,
-        detail:function(g,y){
-          // Subtle texture lines
-          for(var i=0;i<5;i++){
-            var frac=(i+0.5)/5;
-            var hw=layerW/2,hd=layerD/2;
-            var sx=cx-hw*IX+hd*IX+(cx+hw*IX+hd*IX-(cx-hw*IX+hd*IX))*frac;
-            var sy=(y-hw*IY-hd*IY)+((y+hw*IY-hd*IY)-(y-hw*IY-hd*IY))*frac;
-            var ex=cx-hw*IX-hd*IX+(cx+hw*IX-hd*IX-(cx-hw*IX-hd*IX))*frac;
-            var ey=(y-hw*IY+hd*IY)+((y+hw*IY+hd*IY)-(y-hw*IY+hd*IY))*frac;
-            g.appendChild(svgEl('line',{x1:sx,y1:sy,x2:ex,y2:ey,stroke:'#0284C7','stroke-width':0.5,opacity:0.3}));
-          }
-        }},
-      {name:'Felt Underlayment',topFill:'#6B7280',rightFill:'#4B5563',frontFill:'#555E6B',t:6,
-        detail:function(g,y){
-          // Felt texture: small dots
-          var hw=layerW/2,hd=layerD/2;
-          for(var r=0;r<4;r++){for(var c=0;c<6;c++){
-            var fx=(c+0.5)/6,fy=(r+0.5)/4;
-            var px=cx+(-hw+fx*layerW*2)*IX*0.5+(-hd+fy*layerD*2)*IX*0.5;
-            var py=y+(-hw+fx*layerW*2)*IY*0.5+(-hd+fy*layerD*2)*(-IY)*0.5;
-            g.appendChild(svgEl('circle',{cx:px,cy:py,r:1.5,fill:'#555E6B',opacity:0.4}));
-          }}
-        }},
-      {name:'Insulation',topFill:'#FDE68A',rightFill:'#D4A520',frontFill:'#E5B82A',t:20,
-        detail:function(g,y){
-          // Cross-hatch pattern for fiberglass
-          for(var i=0;i<6;i++){
-            var frac=(i+0.5)/6;
-            var hw=layerW/2,hd=layerD/2;
-            var sx=cx-hw*IX+hd*IX+(cx+hw*IX+hd*IX-(cx-hw*IX+hd*IX))*frac;
-            var sy=(y-hw*IY-hd*IY)+((y+hw*IY-hd*IY)-(y-hw*IY-hd*IY))*frac;
-            var ex=cx-hw*IX-hd*IX+(cx+hw*IX-hd*IX-(cx-hw*IX-hd*IX))*frac;
-            var ey=(y-hw*IY+hd*IY)+((y+hw*IY+hd*IY)-(y-hw*IY+hd*IY))*frac;
-            g.appendChild(svgEl('line',{x1:sx,y1:sy,x2:ex,y2:ey,stroke:'#D4A520','stroke-width':0.6,opacity:0.3}));
-          }
-          for(var j=0;j<4;j++){
-            var frac2=(j+0.5)/4;
-            var hw2=layerW/2,hd2=layerD/2;
-            var sx2=cx-hw2*IX+hd2*IX*frac2*2-hd2*IX+((cx-hw2*IX-hd2*IX)-(cx-hw2*IX+hd2*IX))*0;
-            var sy2=y-hw2*IY-hd2*IY*frac2*2+hd2*IY;
-            var ex2=cx+hw2*IX+hd2*IX*frac2*2-hd2*IX;
-            var ey2=y+hw2*IY-hd2*IY*frac2*2+hd2*IY;
-            g.appendChild(svgEl('line',{x1:cx-hw2*IX+(cx+hw2*IX-(cx-hw2*IX))*0,y1:y-hw2*IY+(y+hw2*IY-(y-hw2*IY))*0+frac2*layerD*IY,
-              x2:cx-hw2*IX+(cx+hw2*IX-(cx-hw2*IX))*1,y2:y-hw2*IY+(y+hw2*IY-(y-hw2*IY))*1+frac2*layerD*IY-layerD*IY,
-              stroke:'#D4A520','stroke-width':0.4,opacity:0.25}));
-          }
-        }},
-      {name:'Vapor Barrier',topFill:'#94A3B8',rightFill:'#64748B',frontFill:'#7A8A9E',t:5,topOpacity:0.85,
-        detail:function(g,y){}},
-      {name:'Roof Sheathing',topFill:'#A3896B',rightFill:'#8B7355',frontFill:'#957D62',t:12,
-        detail:function(g,y){
-          // OSB board pattern
-          for(var i=1;i<6;i++){
-            var frac=i/6;
-            var hw=layerW/2,hd=layerD/2;
-            var sx=cx-hw*IX+hd*IX+(cx+hw*IX+hd*IX-(cx-hw*IX+hd*IX))*frac;
-            var sy=(y-hw*IY-hd*IY)+((y+hw*IY-hd*IY)-(y-hw*IY-hd*IY))*frac;
-            var ex=cx-hw*IX-hd*IX+(cx+hw*IX-hd*IX-(cx-hw*IX-hd*IX))*frac;
-            var ey=(y-hw*IY+hd*IY)+((y+hw*IY+hd*IY)-(y-hw*IY+hd*IY))*frac;
-            g.appendChild(svgEl('line',{x1:sx,y1:sy,x2:ex,y2:ey,stroke:'#7A6345','stroke-width':0.7,opacity:0.5}));
-          }
-        }},
-      {name:'Shingles',topFill:'#4A5568',rightFill:'#2D3748',frontFill:'#374151',t:10,
-        detail:function(g,y){
-          // Shingle tab pattern on top face — staggered rows
-          var hw=layerW/2,hd=layerD/2;
-          var cols=['#3D4A5C','#5A6577','#475569','#4F5B6B','#4A5568'];
-          for(var row=0;row<7;row++){
-            var fy=(row+0.3)/7;
-            for(var col=0;col<10;col++){
-              var fx=(col+(row%2)*0.5)/10;
-              if(fx>1) continue;
-              // Map fx,fy to isometric coordinates
-              var px=cx+(-hw+fx*layerW)*IX+(-hd+fy*layerD)*IX;
-              var py=y+(-hw+fx*layerW)*IY+(-hd+fy*layerD)*(-IY);
-              var sw=layerW/10*IX*0.9, sh=layerD/7*IY*0.7;
-              g.appendChild(svgEl('rect',{x:px-sw/2,y:py-sh/2,width:sw,height:sh,
-                fill:cols[(row+col)%cols.length],rx:0.5,opacity:0.7,stroke:'#2D3748','stroke-width':0.3}));
-            }
+          for(var r2=1;r2<8;r2++){
+            var f2=r2/8;
+            var x3=pts.frX+(pts.fpX-pts.frX)*f2, y3=pts.frY+(pts.fpY-pts.frY)*f2;
+            var x4=pts.brX+(pts.bpX-pts.brX)*f2, y4=pts.brY+(pts.bpY-pts.brY)*f2;
+            g.appendChild(svgEl('line',{x1:x3,y1:y3,x2:x4,y2:y4,stroke:'#4A5568','stroke-width':0.5,opacity:0.4}));
           }
         }}
     ];
 
-    // Build all layer groups
+    // Build all layers
     var layerGroups=[];
-    var totalStackH=0;
-    layers.forEach(function(L){totalStackH+=L.t+4;}); // total compressed height
-    var explodedH=layers.length*layerGap; // total exploded height
-
-    layers.forEach(function(L,li){
-      var g=svgEl('g',{opacity:0});
-      // Calculate stacked Y (compressed, bottom of stack)
-      var stackY=baseY;
-      for(var si=0;si<li;si++) stackY-=(layers[si].t+4);
-      stackY-=L.t;
-      // Calculate exploded Y (spread out, higher up)
-      var explY=baseY-li*layerGap-L.t;
-
-      // Top face
-      var topPath=svgEl('path',{d:isoTop(0,layerW,layerD),fill:L.topFill,opacity:L.topOpacity||1});
-      g.appendChild(topPath);
-      // Right face
-      g.appendChild(svgEl('path',{d:isoRight(0,layerW,layerD,L.t),fill:L.rightFill}));
-      // Front face
-      g.appendChild(svgEl('path',{d:isoFront(0,layerW,layerD,L.t),fill:L.frontFill}));
-      // Edge highlights
-      g.appendChild(svgEl('path',{d:isoTop(0,layerW,layerD),fill:'none',stroke:'rgba(255,255,255,0.15)','stroke-width':0.8}));
-      // Detail texture
-      if(L.detail) L.detail(g,0);
-
-      // Label on front face
-      var hw=layerW/2,hd=layerD/2;
-      var lx=cx-hd*IX*0.3;
-      var ly=L.t/2+hd*IY*0.3+4;
-      var label=svgEl('text',{x:lx,y:ly,'font-family':'Barlow Condensed, sans-serif','font-size':'9','font-weight':'700',fill:'rgba(255,255,255,0.85)','letter-spacing':'0.1em','text-anchor':'middle'});
-      label.textContent=L.name.toUpperCase();
-      g.appendChild(label);
-
+    layerDefs.forEach(function(L,li){
+      var g;
+      if(L.isTruss){
+        g=buildTrusses();
+      } else {
+        g=buildPeakedLayer(L.fill,L.dark,L.side,L.t,L.name,L.detail||null);
+      }
       svg.appendChild(g);
-      layerGroups.push({g:g,stackY:stackY,explY:explY,thickness:L.t,idx:li});
+      // Stacked Y offset: each layer sits on top of previous
+      var stackOff=0;
+      for(var si=0;si<li;si++) stackOff+=(layerDefs[si].isTruss?0:(layerDefs[si].t+2));
+      layerGroups.push({g:g,stackOff:stackOff,explOff:li*layerGap,idx:li});
     });
 
     // Power lights
@@ -1005,32 +979,27 @@ body::before {
       svg.setAttribute('height',svgH);
 
       // ═══ LAYER ANIMATION ═══
-      // Each layer: fades in from above (exploded), then slides down to stack
+      // Each layer floats down from above and settles into the stack
       var numL=layerGroups.length; // 7 layers
-      var perLayer=0.10; // 10% scroll per layer
-      var startAt=0.06; // start after intro
+      var perLayer=0.105; // ~10.5% scroll per layer
+      var startAt=0.06;
 
       layerGroups.forEach(function(L){
         var li=L.idx;
         var layerStart=startAt+li*perLayer;
-        var fadeIn=layerStart;
-        var fadeEnd=fadeIn+0.03;
-        var moveEnd=fadeIn+perLayer*0.8;
+        var moveEnd=layerStart+perLayer*0.85;
 
-        // Opacity: fade in
-        var op=easeOut3(clamp((p-fadeIn)/0.03,0,1));
-        // Don't show if not started
-        if(p<fadeIn){
+        if(p<layerStart){
           L.g.setAttribute('opacity','0');
           return;
         }
 
-        // Position: start high (exploded), settle to stacked
-        var moveP=easeOut3(clamp((p-fadeIn)/(moveEnd-fadeIn),0,1));
-        // Start Y = exploded position (high up, spread apart)
-        var startY=L.explY-80; // extra offset above for dramatic entrance
-        // End Y = stacked position
-        var endY=L.stackY;
+        var op=easeOut3(clamp((p-layerStart)/0.04,0,1));
+        var moveP=easeOut3(clamp((p-layerStart)/(moveEnd-layerStart),0,1));
+        // Start position: high up with extra gap (exploded)
+        var startY=-L.explOff-100;
+        // End position: stacked on previous layers
+        var endY=-L.stackOff;
         var currentY=startY+(endY-startY)*moveP;
 
         L.g.setAttribute('opacity',String(op));
@@ -1082,7 +1051,7 @@ body::before {
       // Phase labels
       var currentLayer=Math.floor((p-startAt)/perLayer);
       if(p<0.06) setPhase('');
-      else if(currentLayer>=0&&currentLayer<numL) setPhase(layers[currentLayer].name.toUpperCase());
+      else if(currentLayer>=0&&currentLayer<numL) setPhase(layerDefs[currentLayer].name);
       else if(p>=0.88&&p<0.94) setPhase('ROOFPRO');
       else setPhase('');
     }
