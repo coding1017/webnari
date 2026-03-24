@@ -1343,13 +1343,13 @@ body::before {
     for(var sti=0;sti<6;sti++){
       stonePositions.push({x:505+Math.sin(sti*0.5)*15, y:patioY-20-sti*40});
     }
-    // Curve left toward zen garden (4 more stones, starting higher to avoid flower overlap)
-    var lastSx=stonePositions[5].x, lastSy=stonePositions[5].y-30;
-    var zenEdgeX=310+90, zenEdgeY=185+65;// Just outside zen garden bottom edge
-    for(var sti2=1;sti2<=4;sti2++){
-      var t2=sti2/5;
-      stonePositions.push({x:lastSx+(zenEdgeX-lastSx)*t2, y:lastSy+(zenEdgeY-lastSy)*t2});
-    }
+    // Gentle 45-degree curve toward zen garden (3 stones, matching spacing)
+    var lastSp=stonePositions[5];
+    // Target: near zen garden edge (zcx=310, zcy=185, zry=60 → bottom at y:245)
+    // 3 stones curving at ~45 degrees up-left with ~40px spacing
+    stonePositions.push({x:lastSp.x-25, y:lastSp.y-35});
+    stonePositions.push({x:lastSp.x-60, y:lastSp.y-65});
+    stonePositions.push({x:lastSp.x-95, y:lastSp.y-85});
     stonePositions.forEach(function(sp){
       var stx=sp.x;
       var sty=sp.y;
