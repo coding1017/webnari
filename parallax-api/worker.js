@@ -360,7 +360,7 @@ async function handleGenerate(request, env) {
   // Build the API request
   const apiBody = {
     model: body.model || 'claude-sonnet-4-20250514',
-    max_tokens: body.max_tokens || 16000,
+    max_tokens: body.max_tokens || 64000,
     stream: true,
     system: SYSTEM_PROMPT,
     messages: body.messages,
