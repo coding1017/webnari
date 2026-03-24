@@ -998,7 +998,7 @@ body::before {
       {x:YL+26,y:YT+285,rx:24,ry:30},{x:YL+28,y:YT+350,rx:22,ry:28},
       // Right side shrubs
       {x:YR-26,y:YT+95,rx:26,ry:32},{x:YR-28,y:YT+160,rx:24,ry:30},{x:YR-24,y:YT+225,rx:26,ry:34},
-      {x:YR-26,y:YT+290,rx:24,ry:30},{x:YR-28,y:YT+355,rx:22,ry:28}
+      {x:YR-26,y:YT+290,rx:24,ry:30},{x:YR-28,y:YT+345,rx:22,ry:28},{x:YR-26,y:YT+405,rx:24,ry:30}
     ];
     shrubData.forEach(function(sd){
       // Shadow beneath
@@ -1078,7 +1078,7 @@ body::before {
     gFountain.appendChild(svgEl('rect',{x:bbx-4,y:bby-60,width:8,height:24,fill:'#9A908A',rx:3}));
     gFountain.appendChild(svgEl('circle',{cx:bbx,cy:bby-62,r:8,fill:'#9A908A',stroke:'#8A8078','stroke-width':1}));
     gFountain.appendChild(svgEl('circle',{cx:bbx,cy:bby-62,r:4,fill:'#A09888'}));
-    gFountain.appendChild(svgEl('ellipse',{cx:bbx,cy:bby+38,rx:65,ry:32,fill:'none',stroke:'#A09888','stroke-width':1,'stroke-dasharray':'4 3'}));
+    // (removed dashed outline for cleaner look)
     svg.appendChild(gFountain);
 
     // Fountain water
@@ -1274,19 +1274,19 @@ body::before {
       var bf=makeFlower(bfx,bfy,bfc,bfs,bfPetals);
       gFlowers.appendChild(bf);flowerList.push(bf);
     }
-    // Left bed flowers (LARGER — positioned at left mulch bed)
-    for(var lfi=0;lfi<14;lfi++){
+    // Left bed flowers (LARGER — positioned at left mulch bed, stop before pavers)
+    for(var lfi=0;lfi<12;lfi++){
       var lfx=YL+12+Math.random()*24;
-      var lfy=YT+60+lfi*28+Math.random()*10;
+      var lfy=YT+60+lfi*30+Math.random()*10;
       var lfs=5+Math.random()*3.5;
       var lfc=flowerColors[(lfi+3)%flowerColors.length];
       var lf=makeFlower(lfx,lfy,lfc,lfs,5);
       gFlowers.appendChild(lf);flowerList.push(lf);
     }
-    // Right bed flowers (LARGER — positioned at right mulch bed)
-    for(var rfi=0;rfi<14;rfi++){
+    // Right bed flowers (LARGER — positioned at right mulch bed, stop before pavers)
+    for(var rfi=0;rfi<12;rfi++){
       var rfx=YR-36+Math.random()*24;
-      var rfy=YT+60+rfi*28+Math.random()*10;
+      var rfy=YT+60+rfi*30+Math.random()*10;
       var rfs=5+Math.random()*3.5;
       var rfc=flowerColors[(rfi+6)%flowerColors.length];
       var rf=makeFlower(rfx,rfy,rfc,rfs,5);
@@ -1343,11 +1343,11 @@ body::before {
     for(var sti=0;sti<6;sti++){
       stonePositions.push({x:505+Math.sin(sti*0.5)*15, y:patioY-20-sti*40});
     }
-    // Curve left toward zen garden (4 more stones)
-    var lastSx=stonePositions[5].x, lastSy=stonePositions[5].y;
-    var zenEdgeX=310, zenEdgeY=185+65;// Just outside zen garden bottom edge
+    // Curve left toward zen garden (4 more stones, starting higher to avoid flower overlap)
+    var lastSx=stonePositions[5].x, lastSy=stonePositions[5].y-30;
+    var zenEdgeX=310+90, zenEdgeY=185+65;// Just outside zen garden bottom edge
     for(var sti2=1;sti2<=4;sti2++){
-      var t2=sti2/4.5;
+      var t2=sti2/5;
       stonePositions.push({x:lastSx+(zenEdgeX-lastSx)*t2, y:lastSy+(zenEdgeY-lastSy)*t2});
     }
     stonePositions.forEach(function(sp){
