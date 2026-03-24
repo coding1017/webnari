@@ -815,7 +815,43 @@ body::before {
     // All individual pieces go here for per-piece animation
     var allPieces=[]; // {el, phase, index, zOff}
 
-    // ─── 1. TRUSSES (6 individual triangular frames + ridge beam + eave beams) ───
+    // ─── 0. HOUSE WALLS (visible from start, partial view below roof) ───
+    var gHouse=svgEl('g',{opacity:0});
+    var wallH=120; // height of walls below eave line
+    // Front wall (viewer side, at y=hd)
+    var fwTL=isoX(-roofW,hd), fwTLy=isoY(-roofW,hd,0);
+    var fwTR=isoX(roofW,hd), fwTRy=isoY(roofW,hd,0);
+    var fwBL=isoX(-roofW,hd), fwBLy=isoY(-roofW,hd,-wallH);
+    var fwBR=isoX(roofW,hd), fwBRy=isoY(roofW,hd,-wallH);
+    gHouse.appendChild(svgEl('path',{d:'M'+fwTL+' '+fwTLy+' L'+fwTR+' '+fwTRy+' L'+fwBR+' '+fwBRy+' L'+fwBL+' '+fwBLy+' Z',fill:'#2A2A35',stroke:'#3A3A48','stroke-width':0.8}));
+    // Front gable wall (triangle above front wall line up to peak)
+    gHouse.appendChild(svgEl('path',{d:'M'+fwTL+' '+fwTLy+' L'+isoX(0,hd)+' '+isoY(0,hd,peakH)+' L'+fwTR+' '+fwTRy+' Z',fill:'#252530',stroke:'#3A3A48','stroke-width':0.5}));
+    // Right side wall (at x=roofW, from front to back)
+    var rwTF=isoX(roofW,hd), rwTFy=isoY(roofW,hd,0);
+    var rwTB=isoX(roofW,-hd), rwTBy=isoY(roofW,-hd,0);
+    var rwBF=isoX(roofW,hd), rwBFy=isoY(roofW,hd,-wallH);
+    var rwBB=isoX(roofW,-hd), rwBBy=isoY(roofW,-hd,-wallH);
+    gHouse.appendChild(svgEl('path',{d:'M'+rwTF+' '+rwTFy+' L'+rwTB+' '+rwTBy+' L'+rwBB+' '+rwBBy+' L'+rwBF+' '+rwBFy+' Z',fill:'#222230',stroke:'#3A3A48','stroke-width':0.8}));
+    // Windows on front wall (2 windows)
+    for(var wi=0;wi<2;wi++){
+      var wx=isoX(-roofW*0.5+wi*roofW,hd), wy=isoY(-roofW*0.5+wi*roofW,hd,-wallH*0.35);
+      var winW=36, winH=28;
+      gHouse.appendChild(svgEl('rect',{x:wx-winW/2,y:wy-winH/2,width:winW,height:winH,fill:'#1A3A5A',stroke:'#4A5A6A','stroke-width':1,rx:1}));
+      // Window cross
+      gHouse.appendChild(svgEl('line',{x1:wx,y1:wy-winH/2,x2:wx,y2:wy+winH/2,stroke:'#4A5A6A','stroke-width':0.8}));
+      gHouse.appendChild(svgEl('line',{x1:wx-winW/2,y1:wy,x2:wx+winW/2,y2:wy,stroke:'#4A5A6A','stroke-width':0.8}));
+    }
+    // Front door (center)
+    var doorX=isoX(0,hd), doorY=isoY(0,hd,-wallH*0.05);
+    gHouse.appendChild(svgEl('rect',{x:doorX-14,y:doorY-40,width:28,height:40,fill:'#1E1E28',stroke:'#4A4A58','stroke-width':1,rx:1}));
+    gHouse.appendChild(svgEl('circle',{cx:doorX+8,cy:doorY-20,r:2,fill:'#8A8A9A'}));
+    // Foundation line
+    gHouse.appendChild(svgEl('line',{x1:fwBL,y1:fwBLy,x2:fwBR,y2:fwBRy,stroke:'#4A4A58','stroke-width':2}));
+    gHouse.appendChild(svgEl('line',{x1:rwBF,y1:rwBFy,x2:rwBB,y2:rwBBy,stroke:'#4A4A58','stroke-width':1.5}));
+    svg.appendChild(gHouse);
+    allPieces.push({el:gHouse,phase:0,index:0,total:numT+2}); // appears with first truss
+
+    // ─── 1. TRUSSES (individual triangular frames + ridge beam + eave beams) ───
     var gTrusses=svgEl('g',{});
     var numT=36;
     for(var ti=0;ti<numT;ti++){
