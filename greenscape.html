@@ -1096,7 +1096,7 @@ body::before {
 
     // ZEN GARDEN — oval shape, smaller, better spaced in top-left
     var gZenGarden=svgEl('g',{opacity:0});
-    var zcx=260,zcy=185,zrx=85,zry=60;// Oval center and radii
+    var zcx=310,zcy=185,zrx=85,zry=60;// Oval center and radii
     // Sand base (oval)
     gZenGarden.appendChild(svgEl('ellipse',{cx:zcx,cy:zcy,rx:zrx+4,ry:zry+4,fill:'#8A7A62'}));// Stone border
     gZenGarden.appendChild(svgEl('ellipse',{cx:zcx,cy:zcy,rx:zrx,ry:zry,fill:'#D4C8A8'}));
@@ -1126,43 +1126,59 @@ body::before {
     // Top rock (smallest, rounded)
     gZenGarden.appendChild(svgEl('ellipse',{cx:srx,cy:sry-14,rx:7,ry:6,fill:'#5A5A58',stroke:'#3A3A38','stroke-width':0.8}));
     gZenGarden.appendChild(svgEl('ellipse',{cx:srx-1,cy:sry-16,rx:4,ry:3,fill:'#6A6A68',opacity:0.4}));
-    // Small moss accent
-    gZenGarden.appendChild(svgEl('circle',{cx:zcx-25,cy:zcy+10,r:5,fill:'#4A8A3A',opacity:0.5}));
-    gZenGarden.appendChild(svgEl('circle',{cx:zcx+35,cy:zcy-8,r:3,fill:'#4A8A3A',opacity:0.4}));
+    // (moss removed for cleaner look)
     svg.appendChild(gZenGarden);
 
-    // FIREPIT — modern rectangular fire table, center-left of lawn, away from everything
+    // FIREPIT — large circular fire pit with seating around it
     var gFirepit=svgEl('g',{opacity:0});
-    var fpx=340,fpy=430;
-    var fpW=85,fpH=55;
+    var fpx=330,fpy=400;
+    var fpR=45;// Circular radius
+    // Patio pad under firepit area
+    gFirepit.appendChild(svgEl('circle',{cx:fpx,cy:fpy,r:fpR+30,fill:'#B0A080',opacity:0.15}));
+    // Seating — 4 curved Adirondack-style chairs around the pit
+    var seatR=fpR+22;
+    // Each chair: arc-shaped back + seat cushion + armrests
+    [{a:-Math.PI/2},{a:0},{a:Math.PI/2},{a:Math.PI}].forEach(function(s){
+      var sx=fpx+Math.cos(s.a)*seatR;
+      var sy=fpy+Math.sin(s.a)*(seatR*0.65);
+      var sAngle=s.a*180/Math.PI+90;
+      // Chair back (arc shape using thick stroke)
+      var backPath='M'+(sx-14)+','+(sy-8)+' Q'+(sx)+','+(sy-18)+' '+(sx+14)+','+(sy-8);
+      gFirepit.appendChild(svgEl('path',{d:backPath,fill:'none',stroke:'#5A4530',transform:'rotate('+sAngle+','+sx+','+sy+')','stroke-width':4,'stroke-linecap':'round'}));
+      // Seat base (rounded rect)
+      gFirepit.appendChild(svgEl('rect',{x:sx-14,y:sy-8,width:28,height:18,rx:5,fill:'#6A5A4A',stroke:'#5A4A3A','stroke-width':1,transform:'rotate('+sAngle+','+sx+','+sy+')'}));
+      // Cushion (softer color)
+      gFirepit.appendChild(svgEl('rect',{x:sx-11,y:sy-5,width:22,height:12,rx:4,fill:'#A89478',transform:'rotate('+sAngle+','+sx+','+sy+')'}));
+      // Armrests
+      gFirepit.appendChild(svgEl('rect',{x:sx-16,y:sy-6,width:5,height:14,rx:2,fill:'#5A4530',transform:'rotate('+sAngle+','+sx+','+sy+')'}));
+      gFirepit.appendChild(svgEl('rect',{x:sx+11,y:sy-6,width:5,height:14,rx:2,fill:'#5A4530',transform:'rotate('+sAngle+','+sx+','+sy+')'}));
+    });
     // Ground shadow
-    gFirepit.appendChild(svgEl('ellipse',{cx:fpx+3,cy:fpy+fpH/2+8,rx:fpW/2+6,ry:10,fill:'#0A0F08',opacity:0.1}));
-    // Outer body (sleek dark concrete/stone)
-    gFirepit.appendChild(svgEl('rect',{x:fpx-fpW/2,y:fpy-fpH/2,width:fpW,height:fpH,rx:6,fill:'#4A4A4A',stroke:'#3A3A3A','stroke-width':1.5}));
-    // Inner lip/rim (lighter)
-    gFirepit.appendChild(svgEl('rect',{x:fpx-fpW/2+4,y:fpy-fpH/2+4,width:fpW-8,height:fpH-8,rx:4,fill:'#555555',stroke:'#4A4A4A','stroke-width':0.5}));
-    // Fire glass bed (dark with sparkle)
-    gFirepit.appendChild(svgEl('rect',{x:fpx-fpW/2+8,y:fpy-fpH/2+8,width:fpW-16,height:fpH-16,rx:3,fill:'#1A1A1A'}));
+    gFirepit.appendChild(svgEl('ellipse',{cx:fpx+3,cy:fpy+fpR*0.4+8,rx:fpR+8,ry:12,fill:'#0A0F08',opacity:0.1}));
+    // Outer ring (stone surround)
+    gFirepit.appendChild(svgEl('circle',{cx:fpx,cy:fpy,r:fpR,fill:'#5A5A5A',stroke:'#4A4A4A','stroke-width':2}));
+    // Inner ring (stone lip)
+    gFirepit.appendChild(svgEl('circle',{cx:fpx,cy:fpy,r:fpR-6,fill:'#4A4A4A',stroke:'#3A3A3A','stroke-width':1}));
+    // Fire glass bed
+    gFirepit.appendChild(svgEl('circle',{cx:fpx,cy:fpy,r:fpR-12,fill:'#1A1A1A'}));
     // Glass pebble accents
-    for(var gpi=0;gpi<12;gpi++){
-      var gpx=fpx-fpW/2+12+Math.random()*(fpW-24);
-      var gpy=fpy-fpH/2+12+Math.random()*(fpH-24);
-      gFirepit.appendChild(svgEl('circle',{cx:gpx,cy:gpy,r:1.5,fill:'#3A3A3A',opacity:0.6}));
+    for(var gpi=0;gpi<18;gpi++){
+      var gpAngle=gpi*Math.PI*2/18;
+      var gpDist=Math.random()*(fpR-18);
+      var gpx=fpx+Math.cos(gpAngle)*gpDist;
+      var gpy=fpy+Math.sin(gpAngle)*gpDist;
+      gFirepit.appendChild(svgEl('circle',{cx:gpx,cy:gpy,r:1.8,fill:'#3A3A3A',opacity:0.6}));
     }
-    // Cap/ledge seating edge
-    gFirepit.appendChild(svgEl('rect',{x:fpx-fpW/2-3,y:fpy-fpH/2-2,width:fpW+6,height:3,rx:2,fill:'#5A5A5A'}));
-    gFirepit.appendChild(svgEl('rect',{x:fpx-fpW/2-3,y:fpy+fpH/2-1,width:fpW+6,height:3,rx:2,fill:'#5A5A5A'}));
     svg.appendChild(gFirepit);
 
-    // Modern flames (cleaner, more uniform)
+    // Modern flames (cleaner, more uniform, circular arrangement)
     var gFlames=svgEl('g',{opacity:0});
-    // Multiple flame tongues
-    [{dx:-12,h:14},{dx:-6,h:18},{dx:0,h:20},{dx:6,h:16},{dx:12,h:12},{dx:-3,h:15},{dx:8,h:13}].forEach(function(fl){
-      gFlames.appendChild(svgEl('ellipse',{cx:fpx+fl.dx,cy:fpy-fl.h/2,rx:4,ry:fl.h/2,fill:'#FBBF24',opacity:0.7}));
-      gFlames.appendChild(svgEl('ellipse',{cx:fpx+fl.dx,cy:fpy-fl.h/2-2,rx:2.5,ry:fl.h/3,fill:'#FFF',opacity:0.25}));
+    [{dx:-18,h:16},{dx:-10,h:22},{dx:-4,h:26},{dx:4,h:24},{dx:10,h:20},{dx:18,h:14},{dx:-14,h:18},{dx:0,h:28},{dx:14,h:16}].forEach(function(fl){
+      gFlames.appendChild(svgEl('ellipse',{cx:fpx+fl.dx,cy:fpy-fl.h/2,rx:5,ry:fl.h/2,fill:'#FBBF24',opacity:0.7}));
+      gFlames.appendChild(svgEl('ellipse',{cx:fpx+fl.dx,cy:fpy-fl.h/2-2,rx:3,ry:fl.h/3,fill:'#FFF',opacity:0.25}));
     });
     // Warm ambient glow
-    gFlames.appendChild(svgEl('ellipse',{cx:fpx,cy:fpy,rx:fpW/2+10,ry:fpH/2+8,fill:'#F59E0B',opacity:0.06}));
+    gFlames.appendChild(svgEl('circle',{cx:fpx,cy:fpy,r:fpR+20,fill:'#F59E0B',opacity:0.05}));
     svg.appendChild(gFlames);
 
     // STAGE D: Feature trees/shrubs (one at a time)
@@ -1192,22 +1208,31 @@ body::before {
       gFeaturePlants.push(gRaisedPlant);
     });
 
-    // STAGE E: Island flowers — cover the brown mulch area (NOT inside tree)
+    // STAGE E: Island flowers — detailed petaled flowers (matching rest of yard)
     var gIslandFlowers=svgEl('g',{opacity:0});
     var islandFlowerList=[];
+    var islandFlColors=['#EF4444','#EC4899','#FBBF24','#A855F7','#F472B6','#FB923C','#FF6B8A','#DDA0DD','#FF4500','#FFD700'];
+    var islandFlCenters=['#FFE066','#FFF5CC','#FFFFFF','#FFD700'];
     for(var ifi=0;ifi<16;ifi++){
       var ifa=(ifi/16)*Math.PI*2;
-      // Flowers in outer ring of mulch (between edge and tree)
       var ifRad=islandR-8-Math.random()*12;
       var ifx2=islandCx+Math.cos(ifa)*ifRad;
       var ify2=islandCy+Math.sin(ifa)*ifRad;
-      // Skip if too close to tree center
-      var distToCenter=Math.sqrt((ifx2-islandCx)*(ifx2-islandCx)+(ify2-(islandCy-18))*(ify2-(islandCy-18)));
-      if(distToCenter<26) continue;
-      var ifc2=['#EF4444','#EC4899','#FBBF24','#A855F7','#F472B6','#FB923C'][ifi%6];
-      var isf=svgEl('circle',{cx:ifx2,cy:ify2,r:0,fill:ifc2});
-      gIslandFlowers.appendChild(isf);
-      islandFlowerList.push(isf);
+      var distToCenter=Math.sqrt((ifx2-islandCx)*(ifx2-islandCx)+(ify2-(islandCy-22))*(ify2-(islandCy-22)));
+      if(distToCenter<30) continue;
+      var ifc2=islandFlColors[ifi%islandFlColors.length];
+      var ifSize=5+Math.random()*2.5;
+      // Create petaled flower like makeFlower
+      var ifg=svgEl('g',{opacity:0});
+      for(var ifp=0;ifp<5;ifp++){
+        var ifpa=ifp*Math.PI*2/5;
+        var ifpx=ifx2+Math.cos(ifpa)*ifSize*0.6;
+        var ifpy=ify2+Math.sin(ifpa)*ifSize*0.6;
+        ifg.appendChild(svgEl('circle',{cx:ifpx,cy:ifpy,r:ifSize*0.5,fill:ifc2,opacity:0.85}));
+      }
+      ifg.appendChild(svgEl('circle',{cx:ifx2,cy:ify2,r:ifSize*0.35,fill:islandFlCenters[ifi%4]}));
+      gIslandFlowers.appendChild(ifg);
+      islandFlowerList.push(ifg);
     }
     svg.appendChild(gIslandFlowers);
 
@@ -1268,7 +1293,7 @@ body::before {
       gFlowers.appendChild(rf);flowerList.push(rf);
     }
     // Corner accent clusters (BIGGER, positioned at fence corners)
-    [{x:YL+50,y:YT+70,n:8},{x:YR-50,y:YT+75,n:7},{x:YL+55,y:YB-150,n:7},{x:YR-45,y:YB-140,n:6}].forEach(function(cl){
+    [{x:YL+50,y:YT+70,n:8},{x:YR-50,y:YT+75,n:7}].forEach(function(cl){
       for(var ci2=0;ci2<cl.n;ci2++){
         var cfx=cl.x+Math.cos(ci2*1.1)*22+Math.random()*10;
         var cfy=cl.y+Math.sin(ci2*1.1)*18+Math.random()*10;
@@ -1310,31 +1335,82 @@ body::before {
     }
     svg.appendChild(gPatio);
 
-    // 14. STEPPING STONES (patio to lawn)
+    // 14. STEPPING STONES (patio to lawn, curving to zen garden)
     var gStones=svgEl('g',{opacity:0});
     var stoneList=[];
+    // Main path stones (6 straight up)
+    var stonePositions=[];
     for(var sti=0;sti<6;sti++){
-      var stx=505+Math.sin(sti*0.5)*15;
-      var sty=patioY-20-sti*40;
+      stonePositions.push({x:505+Math.sin(sti*0.5)*15, y:patioY-20-sti*40});
+    }
+    // Curve left toward zen garden (4 more stones)
+    var lastSx=stonePositions[5].x, lastSy=stonePositions[5].y;
+    var zenEdgeX=310, zenEdgeY=185+65;// Just outside zen garden bottom edge
+    for(var sti2=1;sti2<=4;sti2++){
+      var t2=sti2/4.5;
+      stonePositions.push({x:lastSx+(zenEdgeX-lastSx)*t2, y:lastSy+(zenEdgeY-lastSy)*t2});
+    }
+    stonePositions.forEach(function(sp){
+      var stx=sp.x;
+      var sty=sp.y;
       var st=svgEl('ellipse',{cx:stx,cy:sty,rx:16,ry:10,fill:'#C4A882',stroke:'#A88A62','stroke-width':0.5,opacity:0});
       gStones.appendChild(st);
       stoneList.push(st);
-    }
+    });
     svg.appendChild(gStones);
+
+    // 14b. FLOWERS ALONG STEPPING STONES (both sides, bigger, detailed)
+    var gPathFlowers=svgEl('g',{opacity:0});
+    var pathFlowerList=[];
+    var pfColors=['#FF6B8A','#FFB347','#DDA0DD','#FF69B4','#E066FF','#FF4500','#FF1493','#FFD700','#DA70D6','#FF7F50','#9370DB','#F08080'];
+    var pfCenterColors=['#FFE066','#FFF5CC','#FFFFFF','#FFD700'];
+    stoneList.forEach(function(s,i){
+      var scx=parseFloat(s.getAttribute('cx'));
+      var scy=parseFloat(s.getAttribute('cy'));
+      // Right side flowers
+      for(var pfi=0;pfi<3;pfi++){
+        var rfx=scx+28+pfi*14+Math.random()*6;
+        var rfy=scy-6+Math.random()*12;
+        var rfr=5+Math.random()*3;
+        var rfCol=pfColors[(i*3+pfi)%pfColors.length];
+        // Petals (5 around center)
+        for(var pp=0;pp<5;pp++){
+          var pa=pp*Math.PI*2/5;
+          var ppx=rfx+Math.cos(pa)*rfr*0.6;
+          var ppy=rfy+Math.sin(pa)*rfr*0.6;
+          var petal=svgEl('circle',{cx:ppx,cy:ppy,r:rfr*0.5,fill:rfCol,opacity:0.85});
+          gPathFlowers.appendChild(petal);
+          pathFlowerList.push(petal);
+        }
+        // Center
+        gPathFlowers.appendChild(svgEl('circle',{cx:rfx,cy:rfy,r:rfr*0.35,fill:pfCenterColors[pfi%4]}));
+        pathFlowerList.push(gPathFlowers.lastChild);
+      }
+      // Left side flowers
+      for(var pfi2=0;pfi2<3;pfi2++){
+        var lfx=scx-28-pfi2*14-Math.random()*6;
+        var lfy=scy-6+Math.random()*12;
+        var lfr=5+Math.random()*3;
+        var lfCol=pfColors[(i*3+pfi2+6)%pfColors.length];
+        for(var pp2=0;pp2<5;pp2++){
+          var pa2=pp2*Math.PI*2/5;
+          var ppx2=lfx+Math.cos(pa2)*lfr*0.6;
+          var ppy2=lfy+Math.sin(pa2)*lfr*0.6;
+          var petal2=svgEl('circle',{cx:ppx2,cy:ppy2,r:lfr*0.5,fill:lfCol,opacity:0.85});
+          gPathFlowers.appendChild(petal2);
+          pathFlowerList.push(petal2);
+        }
+        gPathFlowers.appendChild(svgEl('circle',{cx:lfx,cy:lfy,r:lfr*0.35,fill:pfCenterColors[pfi2%4]}));
+        pathFlowerList.push(gPathFlowers.lastChild);
+      }
+    });
+    svg.appendChild(gPathFlowers);
 
     // 15. (NEW FENCE already appended before shrubs — see 10a above)
 
     // 16. LANDSCAPE LIGHTS
     var gLights=svgEl('g',{opacity:0});
     var lightPositions=[];
-    // Along stepping stones
-    stoneList.forEach(function(s,i){
-      var lx=parseFloat(s.getAttribute('cx'))+22;
-      var ly=parseFloat(s.getAttribute('cy'));
-      var light=svgEl('circle',{cx:lx,cy:ly,r:3,fill:'#F59E0B',opacity:0});
-      gLights.appendChild(light);
-      lightPositions.push(light);
-    });
     // Along back bed edge
     [150,350,700,900].forEach(function(lx){
       var light=svgEl('circle',{cx:lx,cy:LT-8,r:3,fill:'#F59E0B',opacity:0});
@@ -1502,6 +1578,9 @@ body::before {
         var stP=easeOut3(clamp((p-0.73-sti2*0.008)/0.02,0,1));
         st.setAttribute('opacity',String(stP));
       });
+      // Path flowers appear with stepping stones
+      var pfP=easeOut3(clamp((p-0.75)/0.03,0,1));
+      gPathFlowers.setAttribute('opacity',String(pfP));
       // Brown bed areas appear alongside pavers
       var bedP=easeOut3(clamp((p-0.73)/0.04,0,1));
       gBedAreas.setAttribute('opacity',String(bedP));
@@ -1532,7 +1611,7 @@ body::before {
       gIslandFlowers.setAttribute('opacity','1');
       islandFlowerList.forEach(function(isf,isi){
         var isfP=easeOut3(clamp((p-0.81-isi*0.002)/0.02,0,1));
-        isf.setAttribute('r',String(isfP*6));
+        isf.setAttribute('opacity',String(isfP));
       });
       if(p>=0.82) step=13;
 
