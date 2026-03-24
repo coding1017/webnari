@@ -1366,6 +1366,12 @@ Theme: Lock mechanism being assembled
     }
     if (!item) return;
     fullCode = item.code;
+    // Populate form fields from history entry so Continue has context
+    tradeName.value = item.name || '';
+    if (item.accent) applyColors(item.accent, darkHex.value);
+    // Store resume context for Continue
+    window._resumeContext = item.name ? ('Continue the "' + item.name + '" parallax (' + (item.style || 'auto') + ' style)') : null;
+
     updatePreview();
     updateCodeView();
     tabActions.style.display = 'flex';
@@ -2328,22 +2334,31 @@ Theme: Lock mechanism being assembled
     if (!fullCode.trim()) return;
     hideError();
 
-    // Get the last ~800 chars of the incomplete code as context
-    var codeEnd = fullCode.slice(-800);
+    // Get the last ~2000 chars for context (enough to understand where we left off)
+    var codeEnd = fullCode.slice(-2000);
 
-    // Build the first message — use resume context if available, otherwise use the form
-    var firstMsg;
+    // Build context message
+    var context;
     if (window._resumeContext) {
-      firstMsg = 'Generate a scroll-driven parallax animation. Context: ' + window._resumeContext;
+      context = window._resumeContext;
       window._resumeContext = null;
     } else {
-      firstMsg = buildUserMessage();
+      context = 'A "' + (tradeName.value.trim() || 'parallax') + '" scroll-driven parallax animation';
     }
 
+    // Analyze what's missing
+    var missingParts = [];
+    if (!fullCode.includes('function update')) missingParts.push('the update() function that animates all SVG elements based on scroll progress p (0 to 1)');
+    if (!fullCode.includes('requestAnimationFrame')) missingParts.push('the requestAnimationFrame loop');
+    if (!fullCode.includes('function updateSticky')) missingParts.push('the updateSticky() function');
+    if (!fullCode.includes('setPhase')) missingParts.push('phase label calls inside update()');
+    if (!fullCode.match(/<\/script>/i)) missingParts.push('the closing script tag');
+    if (!fullCode.match(/<\/html>/i)) missingParts.push('the closing html/body tags');
+
+    var missingDesc = missingParts.length > 0 ? '\n\nSpecifically, the code is MISSING:\n- ' + missingParts.join('\n- ') : '';
+
     messages = [
-      { role: 'user', content: firstMsg },
-      { role: 'assistant', content: fullCode },
-      { role: 'user', content: 'Your previous response was cut off. The code is incomplete — it ends with:\n\n```\n' + codeEnd + '\n```\n\nContinue writing the code from EXACTLY where you left off. Do NOT repeat any code that was already written. Start your response with the very next character after where the code was cut off. The code still needs the update() function, the requestAnimationFrame loop, updateSticky(), and the closing <\/script><\/body><\/html> tags (include whichever of these are missing). Output ONLY the remaining code, no explanations.' }
+      { role: 'user', content: 'I am building ' + context + '. I have incomplete code that was cut off mid-generation. I need you to write ONLY the remaining code to complete it.\n\nHere are the LAST 2000 characters of my incomplete code:\n\n```\n' + codeEnd + '\n```' + missingDesc + '\n\nRules:\n1. Start your response with the EXACT next characters after where the code was cut off\n2. Do NOT repeat any code — no duplicate variable declarations, no duplicate SVG elements\n3. Write the complete update() function that animates ALL the SVG groups/elements created earlier based on scroll progress p\n4. Include updateSticky(), the requestAnimationFrame loop, and closing tags\n5. Output ONLY code, zero explanations or markdown\n6. The update() function should reference ALL SVG variables created in the initialization code above (look at the variable names in the code snippet)' }
     ];
 
     // We'll append the new code to existing code
