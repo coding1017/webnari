@@ -805,7 +805,7 @@ body::before {
     // ═══ BUILD ISOMETRIC ROOF — PIECE BY PIECE ═══
     // Every layer is built incrementally as you scroll, not dropped in
     var cx=525, baseY=300;
-    var roofW=300, roofD=500, peakH=95;
+    var roofW=340, roofD=600, peakH=105;
     var hd=roofD/2;
 
     // Isometric helpers
@@ -906,7 +906,7 @@ body::before {
 
     // ─── 1. TRUSSES (individual triangular frames + ridge beam + eave beams) ───
     var gTrusses=svgEl('g',{});
-    var numT=36;
+    var numT=45;
     for(var ti=0;ti<numT;ti++){
       var tg=svgEl('g',{opacity:0});
       var frac=(ti+0.5)/numT;
@@ -1175,14 +1175,14 @@ body::before {
 
     // ─── 9. SOLAR PANELS (3 rows x 2 cols on BOTH slopes — 12 panels total) ───
     var gSolar=svgEl('g',{});
-    var panelIdx=0, totalPanels=24;
+    var panelIdx=0, totalPanels=30;
     // Helper: place a sleek panel on a slope
     function addPanel(side,row,col){
       var spg=svgEl('g',{opacity:0});
-      var rows=3, cols=4;
+      var rows=3, cols=5;
       // Panel position on slope: row determines height (eave→ridge), col determines depth (front→back)
       var yStart=0.12+row*0.24, yEnd=yStart+0.19; // height band on slope
-      var dStart=0.04+col*0.235, dEnd=dStart+0.20; // depth band (4 cols)
+      var dStart=0.03+col*0.19, dEnd=dStart+0.16; // depth band (5 cols)
       var d1=-hd+dStart*roofD, d2=-hd+dEnd*roofD;
       var sign=side==='left'?-1:1;
       // Four corners mapped to slope surface
@@ -1219,10 +1219,10 @@ body::before {
       gSolar.appendChild(spg);
       allPieces.push({el:spg,phase:8,index:panelIdx++,total:totalPanels});
     }
-    // Left slope: 3 rows x 4 cols
-    for(var lr=0;lr<3;lr++) for(var lc=0;lc<4;lc++) addPanel('left',lr,lc);
-    // Right slope: 3 rows x 4 cols
-    for(var rr=0;rr<3;rr++) for(var rc2=0;rc2<4;rc2++) addPanel('right',rr,rc2);
+    // Left slope: 3 rows x 5 cols
+    for(var lr=0;lr<3;lr++) for(var lc=0;lc<5;lc++) addPanel('left',lr,lc);
+    // Right slope: 3 rows x 5 cols
+    for(var rr=0;rr<3;rr++) for(var rc2=0;rc2<5;rc2++) addPanel('right',rr,rc2);
     svg.appendChild(gSolar);
 
     // Phase names for labeling
