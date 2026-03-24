@@ -873,20 +873,19 @@ body::before {
     }
     svg.appendChild(gDeck);
 
-    // ─── 3. ICE & WATER SHIELD (rolls across bottom third, 3 strips) ───
+    // ─── 3. ICE & WATER SHIELD (6 strips covering bottom third of each slope) ───
     var gIce=svgEl('g',{});
-    var iceStrips=3;
+    var iceStrips=6;
     for(var ii=0;ii<iceStrips;ii++){
-      var idf=ii/iceStrips, idfn=(ii+1)/iceStrips;
-      // Only bottom third of each slope (frac 0 to 0.33)
-      var sf=idf*0.33, sfn=idfn*0.33;
-      // Left
-      var icL=svgEl('path',{opacity:0,fill:'rgba(56,189,248,0.45)'});
+      // Each strip covers 1/6th of the bottom third (0 to 0.33 of slope)
+      var sf=ii*0.33/iceStrips, sfn=(ii+1)*0.33/iceStrips;
+      // Left slope
+      var icL=svgEl('path',{opacity:0,fill:'rgba(56,189,248,0.5)'});
       icL.setAttribute('d','M'+isoX(-roofW*(1-sf),-hd)+' '+isoY(-roofW*(1-sf),-hd,peakH*sf)+' L'+isoX(-roofW*(1-sfn),-hd)+' '+isoY(-roofW*(1-sfn),-hd,peakH*sfn)+' L'+isoX(-roofW*(1-sfn),hd)+' '+isoY(-roofW*(1-sfn),hd,peakH*sfn)+' L'+isoX(-roofW*(1-sf),hd)+' '+isoY(-roofW*(1-sf),hd,peakH*sf)+' Z');
       gIce.appendChild(icL);
       allPieces.push({el:icL,phase:2,index:ii*2,total:iceStrips*2});
-      // Right
-      var icR=svgEl('path',{opacity:0,fill:'rgba(56,189,248,0.45)'});
+      // Right slope
+      var icR=svgEl('path',{opacity:0,fill:'rgba(56,189,248,0.5)'});
       icR.setAttribute('d','M'+isoX(roofW*(1-sf),-hd)+' '+isoY(roofW*(1-sf),-hd,peakH*sf)+' L'+isoX(roofW*(1-sfn),-hd)+' '+isoY(roofW*(1-sfn),-hd,peakH*sfn)+' L'+isoX(roofW*(1-sfn),hd)+' '+isoY(roofW*(1-sfn),hd,peakH*sfn)+' L'+isoX(roofW*(1-sf),hd)+' '+isoY(roofW*(1-sf),hd,peakH*sf)+' Z');
       gIce.appendChild(icR);
       allPieces.push({el:icR,phase:2,index:ii*2+1,total:iceStrips*2});
@@ -948,30 +947,82 @@ body::before {
     }
     svg.appendChild(gRidge);
 
-    // ─── 7. FLASHING + GUTTERS (final details, 6 pieces) ───
-    var gDetails=svgEl('g',{});
-    // Drip edges (2)
+    // ─── 7. FLASHING (drip edges + ridge flashing + vent) ───
+    var gFlashing=svgEl('g',{});
     var de1=svgEl('line',{x1:isoX(-roofW,-hd),y1:isoY(-roofW,-hd,0),x2:isoX(-roofW,hd),y2:isoY(-roofW,hd,0),stroke:'#A0AEC0','stroke-width':2.5,opacity:0});
-    gDetails.appendChild(de1); allPieces.push({el:de1,phase:6,index:0,total:6});
+    gFlashing.appendChild(de1); allPieces.push({el:de1,phase:6,index:0,total:4});
     var de2=svgEl('line',{x1:isoX(roofW,-hd),y1:isoY(roofW,-hd,0),x2:isoX(roofW,hd),y2:isoY(roofW,hd,0),stroke:'#A0AEC0','stroke-width':2.5,opacity:0});
-    gDetails.appendChild(de2); allPieces.push({el:de2,phase:6,index:1,total:6});
-    // Ridge flashing
+    gFlashing.appendChild(de2); allPieces.push({el:de2,phase:6,index:1,total:4});
     var rf2=svgEl('line',{x1:isoX(0,-hd),y1:isoY(0,-hd,peakH),x2:isoX(0,hd),y2:isoY(0,hd,peakH),stroke:'#B0BEC5','stroke-width':2,opacity:0});
-    gDetails.appendChild(rf2); allPieces.push({el:rf2,phase:6,index:2,total:6});
-    // Gutter left
-    var gl=svgEl('line',{x1:isoX(-roofW-8,-hd),y1:isoY(-roofW-8,-hd,-4),x2:isoX(-roofW-8,hd),y2:isoY(-roofW-8,hd,-4),stroke:'#718096','stroke-width':4,'stroke-linecap':'round',opacity:0});
-    gDetails.appendChild(gl); allPieces.push({el:gl,phase:6,index:3,total:6});
-    // Gutter right
-    var gr=svgEl('line',{x1:isoX(roofW+8,-hd),y1:isoY(roofW+8,-hd,-4),x2:isoX(roofW+8,hd),y2:isoY(roofW+8,hd,-4),stroke:'#718096','stroke-width':4,'stroke-linecap':'round',opacity:0});
-    gDetails.appendChild(gr); allPieces.push({el:gr,phase:6,index:4,total:6});
-    // Vent
+    gFlashing.appendChild(rf2); allPieces.push({el:rf2,phase:6,index:2,total:4});
     var vx=isoX(-roofW*0.4,0),vy=isoY(-roofW*0.4,0,peakH*0.45);
     var vent=svgEl('rect',{x:vx-10,y:vy-8,width:20,height:14,fill:'#64748B',stroke:'#4A5568','stroke-width':1,rx:2,opacity:0});
-    gDetails.appendChild(vent); allPieces.push({el:vent,phase:6,index:5,total:6});
-    svg.appendChild(gDetails);
+    gFlashing.appendChild(vent); allPieces.push({el:vent,phase:6,index:3,total:4});
+    svg.appendChild(gFlashing);
+
+    // ─── 8. GUTTERS (L-profile channels + downspouts, installed piece by piece) ───
+    var gGutters=svgEl('g',{});
+    // Left gutter channel (thick line along left eave)
+    var gl=svgEl('line',{x1:isoX(-roofW-8,-hd),y1:isoY(-roofW-8,-hd,-4),x2:isoX(-roofW-8,hd),y2:isoY(-roofW-8,hd,-4),stroke:'#718096','stroke-width':5,'stroke-linecap':'round',opacity:0});
+    gGutters.appendChild(gl); allPieces.push({el:gl,phase:7,index:0,total:6});
+    // Right gutter channel
+    var gr=svgEl('line',{x1:isoX(roofW+8,-hd),y1:isoY(roofW+8,-hd,-4),x2:isoX(roofW+8,hd),y2:isoY(roofW+8,hd,-4),stroke:'#718096','stroke-width':5,'stroke-linecap':'round',opacity:0});
+    gGutters.appendChild(gr); allPieces.push({el:gr,phase:7,index:1,total:6});
+    // Left downspout (vertical pipe at front-left corner)
+    var ds1x=isoX(-roofW-8,-hd),ds1y=isoY(-roofW-8,-hd,-4);
+    var ds1=svgEl('line',{x1:ds1x,y1:ds1y,x2:ds1x,y2:ds1y+80,stroke:'#64748B','stroke-width':4,'stroke-linecap':'round',opacity:0});
+    gGutters.appendChild(ds1); allPieces.push({el:ds1,phase:7,index:2,total:6});
+    // Right downspout
+    var ds2x=isoX(roofW+8,-hd),ds2y=isoY(roofW+8,-hd,-4);
+    var ds2=svgEl('line',{x1:ds2x,y1:ds2y,x2:ds2x,y2:ds2y+80,stroke:'#64748B','stroke-width':4,'stroke-linecap':'round',opacity:0});
+    gGutters.appendChild(ds2); allPieces.push({el:ds2,phase:7,index:3,total:6});
+    // Gutter brackets (small details)
+    for(var gi=0;gi<2;gi++){
+      var gby=-hd+(gi+1)*roofD/3;
+      var gbL=svgEl('line',{x1:isoX(-roofW,gby),y1:isoY(-roofW,gby,0),x2:isoX(-roofW-8,gby),y2:isoY(-roofW-8,gby,-4),stroke:'#8A9AAA','stroke-width':1.5,opacity:0});
+      gGutters.appendChild(gbL); allPieces.push({el:gbL,phase:7,index:4+gi,total:6});
+    }
+    svg.appendChild(gGutters);
+
+    // ─── 9. SOLAR PANELS (4 panels on the right slope, installed one by one) ───
+    var gSolar=svgEl('g',{});
+    var numPanels=4;
+    for(var spi=0;spi<numPanels;spi++){
+      var spg=svgEl('g',{opacity:0});
+      // Panel positioned on right slope, from ~30% to ~80% up
+      var spRow=Math.floor(spi/2), spCol=spi%2;
+      var spFracY=0.25+spRow*0.28; // vertical position on slope
+      var spFracD=0.15+spCol*0.45; // depth position (front to back)
+      var spW=roofW*0.18; // panel half-width along slope
+      var spD=roofD*0.32; // panel depth
+
+      // Four corners on the right slope surface
+      var c1f=spFracY, c2f=spFracY+0.18;
+      var d1=-hd+spFracD*roofD, d2=-hd+(spFracD+0.32)*roofD;
+      var sp1x=isoX(roofW*(1-c1f),d1), sp1y=isoY(roofW*(1-c1f),d1,peakH*c1f);
+      var sp2x=isoX(roofW*(1-c2f),d1), sp2y=isoY(roofW*(1-c2f),d1,peakH*c2f);
+      var sp3x=isoX(roofW*(1-c2f),d2), sp3y=isoY(roofW*(1-c2f),d2,peakH*c2f);
+      var sp4x=isoX(roofW*(1-c1f),d2), sp4y=isoY(roofW*(1-c1f),d2,peakH*c1f);
+
+      // Panel body (dark blue/black)
+      spg.appendChild(svgEl('path',{d:'M'+sp1x+' '+sp1y+' L'+sp2x+' '+sp2y+' L'+sp3x+' '+sp3y+' L'+sp4x+' '+sp4y+' Z',fill:'#1a237e',stroke:'#90CAF9','stroke-width':1}));
+      // Grid lines (solar cell pattern)
+      var mx12=(sp1x+sp2x)/2, my12=(sp1y+sp2y)/2;
+      var mx34=(sp4x+sp3x)/2, my34=(sp4y+sp3y)/2;
+      spg.appendChild(svgEl('line',{x1:mx12,y1:my12,x2:mx34,y2:my34,stroke:'#283593','stroke-width':0.6}));
+      var mx14=(sp1x+sp4x)/2, my14=(sp1y+sp4y)/2;
+      var mx23=(sp2x+sp3x)/2, my23=(sp2y+sp3y)/2;
+      spg.appendChild(svgEl('line',{x1:mx14,y1:my14,x2:mx23,y2:my23,stroke:'#283593','stroke-width':0.6}));
+      // Subtle reflection/glare
+      spg.appendChild(svgEl('path',{d:'M'+sp1x+' '+sp1y+' L'+sp2x+' '+sp2y+' L'+sp3x+' '+sp3y+' L'+sp4x+' '+sp4y+' Z',fill:'rgba(144,202,249,0.08)'}));
+
+      gSolar.appendChild(spg);
+      allPieces.push({el:spg,phase:8,index:spi,total:numPanels});
+    }
+    svg.appendChild(gSolar);
 
     // Phase names for labeling
-    var phaseNames=['SETTING TRUSSES','DECKING','ICE & WATER SHIELD','UNDERLAYMENT','LAYING SHINGLES','RIDGE CAP','FLASHING & TRIM'];
+    var phaseNames=['SETTING TRUSSES','DECKING','ICE & WATER SHIELD','UNDERLAYMENT','LAYING SHINGLES','RIDGE CAP','FLASHING','GUTTERS','SOLAR PANELS'];
 
     // Power lights
     var powerLights=[];
@@ -1000,9 +1051,9 @@ body::before {
       svg.setAttribute('height',svgH);
 
       // ═══ PIECE-BY-PIECE ANIMATION ═══
-      // 7 phases, each gets ~11.5% of scroll (0.06 to 0.865)
-      var numPhases=7;
-      var phaseLen=0.115;
+      // 9 phases, each gets ~9% of scroll (0.06 to 0.87)
+      var numPhases=9;
+      var phaseLen=0.09;
       var buildStart=0.06;
 
       allPieces.forEach(function(pc){
