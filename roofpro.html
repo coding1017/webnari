@@ -804,8 +804,8 @@ body::before {
 
     // ═══ BUILD ISOMETRIC ROOF — PIECE BY PIECE ═══
     // Every layer is built incrementally as you scroll, not dropped in
-    var cx=525, baseY=480;
-    var roofW=320, roofD=150, peakH=100;
+    var cx=525, baseY=420;
+    var roofW=280, roofD=140, peakH=90;
     var hd=roofD/2;
 
     // Isometric helpers
@@ -984,41 +984,56 @@ body::before {
     }
     svg.appendChild(gGutters);
 
-    // ─── 9. SOLAR PANELS (4 panels on the right slope, installed one by one) ───
+    // ─── 9. SOLAR PANELS (3 rows x 2 cols on BOTH slopes — 12 panels total) ───
     var gSolar=svgEl('g',{});
-    var numPanels=4;
-    for(var spi=0;spi<numPanels;spi++){
+    var panelIdx=0, totalPanels=12;
+    // Helper: place a sleek panel on a slope
+    function addPanel(side,row,col){
       var spg=svgEl('g',{opacity:0});
-      // Panel positioned on right slope, from ~30% to ~80% up
-      var spRow=Math.floor(spi/2), spCol=spi%2;
-      var spFracY=0.25+spRow*0.28; // vertical position on slope
-      var spFracD=0.15+spCol*0.45; // depth position (front to back)
-      var spW=roofW*0.18; // panel half-width along slope
-      var spD=roofD*0.32; // panel depth
-
-      // Four corners on the right slope surface
-      var c1f=spFracY, c2f=spFracY+0.18;
-      var d1=-hd+spFracD*roofD, d2=-hd+(spFracD+0.32)*roofD;
-      var sp1x=isoX(roofW*(1-c1f),d1), sp1y=isoY(roofW*(1-c1f),d1,peakH*c1f);
-      var sp2x=isoX(roofW*(1-c2f),d1), sp2y=isoY(roofW*(1-c2f),d1,peakH*c2f);
-      var sp3x=isoX(roofW*(1-c2f),d2), sp3y=isoY(roofW*(1-c2f),d2,peakH*c2f);
-      var sp4x=isoX(roofW*(1-c1f),d2), sp4y=isoY(roofW*(1-c1f),d2,peakH*c1f);
-
-      // Panel body (dark blue/black)
-      spg.appendChild(svgEl('path',{d:'M'+sp1x+' '+sp1y+' L'+sp2x+' '+sp2y+' L'+sp3x+' '+sp3y+' L'+sp4x+' '+sp4y+' Z',fill:'#1a237e',stroke:'#90CAF9','stroke-width':1}));
-      // Grid lines (solar cell pattern)
-      var mx12=(sp1x+sp2x)/2, my12=(sp1y+sp2y)/2;
-      var mx34=(sp4x+sp3x)/2, my34=(sp4y+sp3y)/2;
-      spg.appendChild(svgEl('line',{x1:mx12,y1:my12,x2:mx34,y2:my34,stroke:'#283593','stroke-width':0.6}));
-      var mx14=(sp1x+sp4x)/2, my14=(sp1y+sp4y)/2;
-      var mx23=(sp2x+sp3x)/2, my23=(sp2y+sp3y)/2;
-      spg.appendChild(svgEl('line',{x1:mx14,y1:my14,x2:mx23,y2:my23,stroke:'#283593','stroke-width':0.6}));
-      // Subtle reflection/glare
-      spg.appendChild(svgEl('path',{d:'M'+sp1x+' '+sp1y+' L'+sp2x+' '+sp2y+' L'+sp3x+' '+sp3y+' L'+sp4x+' '+sp4y+' Z',fill:'rgba(144,202,249,0.08)'}));
-
+      var rows=3, cols=2;
+      // Panel position on slope: row determines height (eave→ridge), col determines depth (front→back)
+      var yStart=0.15+row*0.25, yEnd=yStart+0.20; // height band on slope
+      var dStart=0.08+col*0.44, dEnd=dStart+0.38; // depth band
+      var d1=-hd+dStart*roofD, d2=-hd+dEnd*roofD;
+      var sign=side==='left'?-1:1;
+      // Four corners mapped to slope surface
+      var c1x=isoX(sign*roofW*(1-yStart),d1), c1y=isoY(sign*roofW*(1-yStart),d1,peakH*yStart);
+      var c2x=isoX(sign*roofW*(1-yEnd),d1), c2y=isoY(sign*roofW*(1-yEnd),d1,peakH*yEnd);
+      var c3x=isoX(sign*roofW*(1-yEnd),d2), c3y=isoY(sign*roofW*(1-yEnd),d2,peakH*yEnd);
+      var c4x=isoX(sign*roofW*(1-yStart),d2), c4y=isoY(sign*roofW*(1-yStart),d2,peakH*yStart);
+      // Panel frame (black with silver border)
+      spg.appendChild(svgEl('path',{d:'M'+c1x+' '+c1y+' L'+c2x+' '+c2y+' L'+c3x+' '+c3y+' L'+c4x+' '+c4y+' Z',fill:'#0D1B2A',stroke:'#B0BEC5','stroke-width':1.2}));
+      // Inner cells (2x3 grid for premium look)
+      for(var cr=0;cr<3;cr++){
+        for(var cc=0;cc<2;cc++){
+          var cf1=(cr)/3, cf2=(cr+1)/3, df1=(cc)/2, df2=(cc+1)/2;
+          var inset=0.04;
+          var f1=cf1+(cf2-cf1)*inset, f2=cf2-(cf2-cf1)*inset;
+          var g1=df1+(df2-df1)*inset, g2=df2-(df2-df1)*inset;
+          // Interpolate corners
+          function lerp4(ax,ay,bx,by,cx2,cy2,dx,dy,u,v){
+            var tx=ax+(bx-ax)*u, ty=ay+(by-ay)*u;
+            var bx2=dx+(cx2-dx)*u, by2=dy+(cy2-dy)*u;
+            return{x:tx+(bx2-tx)*v, y:ty+(by2-ty)*v};
+          }
+          var p1=lerp4(c1x,c1y,c2x,c2y,c3x,c3y,c4x,c4y,f1,g1);
+          var p2=lerp4(c1x,c1y,c2x,c2y,c3x,c3y,c4x,c4y,f2,g1);
+          var p3=lerp4(c1x,c1y,c2x,c2y,c3x,c3y,c4x,c4y,f2,g2);
+          var p4=lerp4(c1x,c1y,c2x,c2y,c3x,c3y,c4x,c4y,f1,g2);
+          spg.appendChild(svgEl('path',{d:'M'+p1.x+' '+p1.y+' L'+p2.x+' '+p2.y+' L'+p3.x+' '+p3.y+' L'+p4.x+' '+p4.y+' Z',fill:'#1A2744',stroke:'#263850','stroke-width':0.4}));
+        }
+      }
+      // Sleek highlight (top edge glint)
+      spg.appendChild(svgEl('line',{x1:c1x,y1:c1y,x2:c4x,y2:c4y,stroke:'rgba(176,190,197,0.4)','stroke-width':0.8}));
+      // Subtle blue reflection
+      spg.appendChild(svgEl('path',{d:'M'+c1x+' '+c1y+' L'+c2x+' '+c2y+' L'+c3x+' '+c3y+' L'+c4x+' '+c4y+' Z',fill:'rgba(100,160,220,0.06)'}));
       gSolar.appendChild(spg);
-      allPieces.push({el:spg,phase:8,index:spi,total:numPanels});
+      allPieces.push({el:spg,phase:8,index:panelIdx++,total:totalPanels});
     }
+    // Left slope: 3 rows x 2 cols
+    for(var lr=0;lr<3;lr++) for(var lc=0;lc<2;lc++) addPanel('left',lr,lc);
+    // Right slope: 3 rows x 2 cols
+    for(var rr=0;rr<3;rr++) for(var rc2=0;rc2<2;rc2++) addPanel('right',rr,rc2);
     svg.appendChild(gSolar);
 
     // Phase names for labeling
