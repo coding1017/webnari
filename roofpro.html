@@ -806,6 +806,7 @@ body::before {
     // Every layer is built incrementally as you scroll, not dropped in
     var cx=525, baseY=300;
     var roofW=340, roofD=600, peakH=105;
+    var wallW=310; // walls are narrower than roof = overhang
     var hd=roofD/2;
 
     // Isometric helpers
@@ -818,33 +819,33 @@ body::before {
     // ─── 0. HOUSE WALLS (LEFT side wall = viewer side + front wall) ───
     var gHouse=svgEl('g',{opacity:0});
     var wallH=500; // extends well off-screen (3-story feel)
-    // LEFT side wall (at x=-roofW, from front hd to back -hd — THIS faces the viewer)
-    var lwTF=isoX(-roofW,hd), lwTFy=isoY(-roofW,hd,0);
-    var lwTB=isoX(-roofW,-hd), lwTBy=isoY(-roofW,-hd,0);
-    var lwBF=isoX(-roofW,hd), lwBFy=isoY(-roofW,hd,-wallH);
-    var lwBB=isoX(-roofW,-hd), lwBBy=isoY(-roofW,-hd,-wallH);
+    // LEFT side wall (at x=-wallW, set back from roof edge = overhang visible)
+    var lwTF=isoX(-wallW,hd), lwTFy=isoY(-wallW,hd,0);
+    var lwTB=isoX(-wallW,-hd), lwTBy=isoY(-wallW,-hd,0);
+    var lwBF=isoX(-wallW,hd), lwBFy=isoY(-wallW,hd,-wallH);
+    var lwBB=isoX(-wallW,-hd), lwBBy=isoY(-wallW,-hd,-wallH);
     gHouse.appendChild(svgEl('path',{d:'M'+lwTF+' '+lwTFy+' L'+lwTB+' '+lwTBy+' L'+lwBB+' '+lwBBy+' L'+lwBF+' '+lwBFy+' Z',fill:'#1E2028',stroke:'#2A2C38','stroke-width':0.8}));
     // Horizontal siding lines
     for(var sl=1;sl<14;sl++){
       var slZ=-sl*35;
-      gHouse.appendChild(svgEl('line',{x1:isoX(-roofW,hd),y1:isoY(-roofW,hd,slZ),x2:isoX(-roofW,-hd),y2:isoY(-roofW,-hd,slZ),stroke:'#252830','stroke-width':0.5}));
+      gHouse.appendChild(svgEl('line',{x1:isoX(-wallW,hd),y1:isoY(-wallW,hd,slZ),x2:isoX(-wallW,-hd),y2:isoY(-wallW,-hd,slZ),stroke:'#252830','stroke-width':0.5}));
     }
     // Side wall window helper (on LEFT wall at x=-roofW)
     function sideWin(wDepth,wZ){
       var wW=22, wH=38;
-      var wtl=isoX(-roofW,wDepth-wW/2), wtly=isoY(-roofW,wDepth-wW/2,wZ+wH/2);
-      var wtr=isoX(-roofW,wDepth+wW/2), wtry=isoY(-roofW,wDepth+wW/2,wZ+wH/2);
-      var wbr=isoX(-roofW,wDepth+wW/2), wbry=isoY(-roofW,wDepth+wW/2,wZ-wH/2);
-      var wbl=isoX(-roofW,wDepth-wW/2), wbly=isoY(-roofW,wDepth-wW/2,wZ-wH/2);
+      var wtl=isoX(-wallW,wDepth-wW/2), wtly=isoY(-wallW,wDepth-wW/2,wZ+wH/2);
+      var wtr=isoX(-wallW,wDepth+wW/2), wtry=isoY(-wallW,wDepth+wW/2,wZ+wH/2);
+      var wbr=isoX(-wallW,wDepth+wW/2), wbry=isoY(-wallW,wDepth+wW/2,wZ-wH/2);
+      var wbl=isoX(-wallW,wDepth-wW/2), wbly=isoY(-wallW,wDepth-wW/2,wZ-wH/2);
       gHouse.appendChild(svgEl('path',{d:'M'+wtl+' '+wtly+' L'+wtr+' '+wtry+' L'+wbr+' '+wbry+' L'+wbl+' '+wbly+' Z',fill:'#0A1828'}));
-      var wmtx=isoX(-roofW,wDepth), wmty=isoY(-roofW,wDepth,wZ+wH/2);
-      var wmbx=isoX(-roofW,wDepth), wmby=isoY(-roofW,wDepth,wZ-wH/2);
-      var wmlx=isoX(-roofW,wDepth-wW/2), wmly=isoY(-roofW,wDepth-wW/2,wZ);
-      var wmrx=isoX(-roofW,wDepth+wW/2), wmry=isoY(-roofW,wDepth+wW/2,wZ);
+      var wmtx=isoX(-wallW,wDepth), wmty=isoY(-wallW,wDepth,wZ+wH/2);
+      var wmbx=isoX(-wallW,wDepth), wmby=isoY(-wallW,wDepth,wZ-wH/2);
+      var wmlx=isoX(-wallW,wDepth-wW/2), wmly=isoY(-wallW,wDepth-wW/2,wZ);
+      var wmrx=isoX(-wallW,wDepth+wW/2), wmry=isoY(-wallW,wDepth+wW/2,wZ);
       gHouse.appendChild(svgEl('line',{x1:wmlx,y1:wmly,x2:wmrx,y2:wmry,stroke:'#3A4A5A','stroke-width':1}));
       gHouse.appendChild(svgEl('line',{x1:wmtx,y1:wmty,x2:wmbx,y2:wmby,stroke:'#3A4A5A','stroke-width':1}));
       gHouse.appendChild(svgEl('path',{d:'M'+wtl+' '+wtly+' L'+wtr+' '+wtry+' L'+wbr+' '+wbry+' L'+wbl+' '+wbly+' Z',fill:'none',stroke:'#4A5A6A','stroke-width':1.5}));
-      gHouse.appendChild(svgEl('line',{x1:isoX(-roofW-2,wDepth-wW/2-2),y1:isoY(-roofW-2,wDepth-wW/2-2,wZ-wH/2),x2:isoX(-roofW-2,wDepth+wW/2+2),y2:isoY(-roofW-2,wDepth+wW/2+2,wZ-wH/2),stroke:'#5A6A7A','stroke-width':2}));
+      gHouse.appendChild(svgEl('line',{x1:isoX(-wallW-2,wDepth-wW/2-2),y1:isoY(-wallW-2,wDepth-wW/2-2,wZ-wH/2),x2:isoX(-wallW-2,wDepth+wW/2+2),y2:isoY(-wallW-2,wDepth+wW/2+2,wZ-wH/2),stroke:'#5A6A7A','stroke-width':2}));
       gHouse.appendChild(svgEl('path',{d:'M'+wtl+' '+wtly+' L'+wtr+' '+wtry+' L'+wmrx+' '+wmry+' L'+wmlx+' '+wmly+' Z',fill:'rgba(100,160,220,0.06)'}));
     }
     // Top floor (3 windows)
@@ -854,20 +855,32 @@ body::before {
     // 3rd floor / ground (3 windows, further down)
     for(var wi3=0;wi3<3;wi3++) sideWin(-hd+(wi3+1)*roofD/4, -260);
     // Floor dividers
-    gHouse.appendChild(svgEl('line',{x1:isoX(-roofW,hd),y1:isoY(-roofW,hd,-115),x2:isoX(-roofW,-hd),y2:isoY(-roofW,-hd,-115),stroke:'#3A3C48','stroke-width':1.2}));
-    gHouse.appendChild(svgEl('line',{x1:isoX(-roofW,hd),y1:isoY(-roofW,hd,-220),x2:isoX(-roofW,-hd),y2:isoY(-roofW,-hd,-220),stroke:'#3A3C48','stroke-width':1.2}));
-    // Right side wall edge (just a thin edge, barely visible)
-    gHouse.appendChild(svgEl('line',{x1:isoX(roofW,hd),y1:isoY(roofW,hd,0),x2:isoX(roofW,hd),y2:isoY(roofW,hd,-wallH),stroke:'#2A2C38','stroke-width':1.5}));
+    gHouse.appendChild(svgEl('line',{x1:isoX(-wallW,hd),y1:isoY(-wallW,hd,-115),x2:isoX(-wallW,-hd),y2:isoY(-wallW,-hd,-115),stroke:'#3A3C48','stroke-width':1.2}));
+    gHouse.appendChild(svgEl('line',{x1:isoX(-wallW,hd),y1:isoY(-wallW,hd,-220),x2:isoX(-wallW,-hd),y2:isoY(-wallW,-hd,-220),stroke:'#3A3C48','stroke-width':1.2}));
+    // Right side wall edge
+    gHouse.appendChild(svgEl('line',{x1:isoX(wallW,hd),y1:isoY(wallW,hd,0),x2:isoX(wallW,hd),y2:isoY(wallW,hd,-wallH),stroke:'#2A2C38','stroke-width':1.5}));
+    // Soffit under left eave overhang (visible underside between wall and roof edge)
+    var soffitL=svgEl('path',{fill:'#16181E',stroke:'#252830','stroke-width':0.5});
+    soffitL.setAttribute('d','M'+isoX(-roofW,hd)+' '+isoY(-roofW,hd,0)+' L'+isoX(-wallW,hd)+' '+isoY(-wallW,hd,0)+' L'+isoX(-wallW,-hd)+' '+isoY(-wallW,-hd,0)+' L'+isoX(-roofW,-hd)+' '+isoY(-roofW,-hd,0)+' Z');
+    gHouse.appendChild(soffitL);
+    // Soffit under front eave overhang
+    var soffitF=svgEl('path',{fill:'#14161C',stroke:'#252830','stroke-width':0.5});
+    soffitF.setAttribute('d','M'+isoX(-roofW,hd)+' '+isoY(-roofW,hd,0)+' L'+isoX(roofW,hd)+' '+isoY(roofW,hd,0)+' L'+isoX(wallW,hd)+' '+isoY(wallW,hd,0)+' L'+isoX(-wallW,hd)+' '+isoY(-wallW,hd,0)+' Z');
+    gHouse.appendChild(soffitF);
+    // Fascia board along front eave (visible trim piece)
+    gHouse.appendChild(svgEl('line',{x1:isoX(-roofW,hd),y1:isoY(-roofW,hd,0),x2:isoX(roofW,hd),y2:isoY(roofW,hd,0),stroke:'#4A5568','stroke-width':2.5}));
+    // Fascia along left eave
+    gHouse.appendChild(svgEl('line',{x1:isoX(-roofW,hd),y1:isoY(-roofW,hd,0),x2:isoX(-roofW,-hd),y2:isoY(-roofW,-hd,0),stroke:'#4A5568','stroke-width':2}));
     // Front wall (below gable, extends down off screen — viewer facing)
-    var fwTL=isoX(-roofW,hd), fwTLy=isoY(-roofW,hd,0);
-    var fwTR=isoX(roofW,hd), fwTRy=isoY(roofW,hd,0);
-    var fwBL=isoX(-roofW,hd), fwBLy=isoY(-roofW,hd,-wallH);
-    var fwBR=isoX(roofW,hd), fwBRy=isoY(roofW,hd,-wallH);
+    var fwTL=isoX(-wallW,hd), fwTLy=isoY(-wallW,hd,0);
+    var fwTR=isoX(wallW,hd), fwTRy=isoY(wallW,hd,0);
+    var fwBL=isoX(-wallW,hd), fwBLy=isoY(-wallW,hd,-wallH);
+    var fwBR=isoX(wallW,hd), fwBRy=isoY(wallW,hd,-wallH);
     gHouse.appendChild(svgEl('path',{d:'M'+fwTL+' '+fwTLy+' L'+fwTR+' '+fwTRy+' L'+fwBR+' '+fwBRy+' L'+fwBL+' '+fwBLy+' Z',fill:'#1C1E28',stroke:'#2A2C38','stroke-width':0.5}));
     // Horizontal siding lines on front wall
     for(var fsl=1;fsl<15;fsl++){
       var fslZ=-fsl*35;
-      gHouse.appendChild(svgEl('line',{x1:isoX(-roofW,hd),y1:isoY(-roofW,hd,fslZ),x2:isoX(roofW,hd),y2:isoY(roofW,hd,fslZ),stroke:'#22242E','stroke-width':0.5}));
+      gHouse.appendChild(svgEl('line',{x1:isoX(-wallW,hd),y1:isoY(-wallW,hd,fslZ),x2:isoX(wallW,hd),y2:isoY(wallW,hd,fslZ),stroke:'#22242E','stroke-width':0.5}));
     }
     // Elegant windows on front wall — 2 floors visible
     // Helper to draw a window on the front wall
@@ -899,8 +912,8 @@ body::before {
     // 3rd floor / ground (4 across, extends toward bottom of screen)
     for(var fwi3=0;fwi3<4;fwi3++) frontWin(-roofW*0.72+fwi3*roofW*0.48, -270);
     // Floor divider lines between stories
-    gHouse.appendChild(svgEl('line',{x1:isoX(-roofW,hd),y1:isoY(-roofW,hd,-115),x2:isoX(roofW,hd),y2:isoY(roofW,hd,-115),stroke:'#3A3C48','stroke-width':1.5}));
-    gHouse.appendChild(svgEl('line',{x1:isoX(-roofW,hd),y1:isoY(-roofW,hd,-225),x2:isoX(roofW,hd),y2:isoY(roofW,hd,-225),stroke:'#3A3C48','stroke-width':1.5}));
+    gHouse.appendChild(svgEl('line',{x1:isoX(-wallW,hd),y1:isoY(-wallW,hd,-115),x2:isoX(wallW,hd),y2:isoY(wallW,hd,-115),stroke:'#3A3C48','stroke-width':1.5}));
+    gHouse.appendChild(svgEl('line',{x1:isoX(-wallW,hd),y1:isoY(-wallW,hd,-225),x2:isoX(wallW,hd),y2:isoY(wallW,hd,-225),stroke:'#3A3C48','stroke-width':1.5}));
     svg.appendChild(gHouse);
     allPieces.push({el:gHouse,phase:0,index:0,total:numT+2});
 
