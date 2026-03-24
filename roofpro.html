@@ -874,7 +874,7 @@ body::before {
     svg.appendChild(gDeck);
     // Front gable decking face (triangle covering the front)
     var deckFront=svgEl('path',{opacity:0,fill:'#B89A5F',stroke:'#A08A52','stroke-width':0.5});
-    deckFront.setAttribute('d','M'+isoX(-roofW,-hd)+' '+isoY(-roofW,-hd,0)+' L'+isoX(0,-hd)+' '+isoY(0,-hd,peakH)+' L'+isoX(roofW,-hd)+' '+isoY(roofW,-hd,0)+' Z');
+    deckFront.setAttribute('d','M'+isoX(-roofW,hd)+' '+isoY(-roofW,hd,0)+' L'+isoX(0,hd)+' '+isoY(0,hd,peakH)+' L'+isoX(roofW,hd)+' '+isoY(roofW,hd,0)+' Z');
     svg.appendChild(deckFront);
     allPieces.push({el:deckFront,phase:1,index:numBoards*2,total:numBoards*2+1});
 
@@ -898,7 +898,7 @@ body::before {
     svg.appendChild(gIce);
     // Front gable ice shield face
     var iceFront=svgEl('path',{opacity:0,fill:'rgba(56,189,248,0.5)'});
-    iceFront.setAttribute('d','M'+isoX(-roofW,-hd)+' '+isoY(-roofW,-hd,0)+' L'+isoX(0,-hd)+' '+isoY(0,-hd,peakH)+' L'+isoX(roofW,-hd)+' '+isoY(roofW,-hd,0)+' Z');
+    iceFront.setAttribute('d','M'+isoX(-roofW,hd)+' '+isoY(-roofW,hd,0)+' L'+isoX(0,hd)+' '+isoY(0,hd,peakH)+' L'+isoX(roofW,hd)+' '+isoY(roofW,hd,0)+' Z');
     svg.appendChild(iceFront);
     allPieces.push({el:iceFront,phase:2,index:iceStrips*2,total:iceStrips*2+1});
 
@@ -919,7 +919,7 @@ body::before {
     svg.appendChild(gFelt);
     // Front gable felt face
     var feltFront=svgEl('path',{opacity:0,fill:'#707880'});
-    feltFront.setAttribute('d','M'+isoX(-roofW,-hd)+' '+isoY(-roofW,-hd,0)+' L'+isoX(0,-hd)+' '+isoY(0,-hd,peakH)+' L'+isoX(roofW,-hd)+' '+isoY(roofW,-hd,0)+' Z');
+    feltFront.setAttribute('d','M'+isoX(-roofW,hd)+' '+isoY(-roofW,hd,0)+' L'+isoX(0,hd)+' '+isoY(0,hd,peakH)+' L'+isoX(roofW,hd)+' '+isoY(roofW,hd,0)+' Z');
     svg.appendChild(feltFront);
     allPieces.push({el:feltFront,phase:3,index:feltStrips*2,total:feltStrips*2+1});
 
@@ -983,12 +983,12 @@ body::before {
     svg.appendChild(gShingles);
     // Front gable shingles face (with horizontal shingle lines)
     var shingleFront=svgEl('g',{opacity:0});
-    shingleFront.appendChild(svgEl('path',{d:'M'+isoX(-roofW,-hd)+' '+isoY(-roofW,-hd,0)+' L'+isoX(0,-hd)+' '+isoY(0,-hd,peakH)+' L'+isoX(roofW,-hd)+' '+isoY(roofW,-hd,0)+' Z',fill:'#4A5568'}));
+    shingleFront.appendChild(svgEl('path',{d:'M'+isoX(-roofW,hd)+' '+isoY(-roofW,hd,0)+' L'+isoX(0,hd)+' '+isoY(0,hd,peakH)+' L'+isoX(roofW,hd)+' '+isoY(roofW,hd,0)+' Z',fill:'#4A5568'}));
     // Horizontal shingle lines on front gable
     for(var gsi=1;gsi<10;gsi++){
       var gf=gsi/10;
-      var glx=isoX(-roofW*(1-gf),-hd), gly=isoY(-roofW*(1-gf),-hd,peakH*gf);
-      var grx=isoX(roofW*(1-gf),-hd), gry=isoY(roofW*(1-gf),-hd,peakH*gf);
+      var glx=isoX(-roofW*(1-gf),hd), gly=isoY(-roofW*(1-gf),hd,peakH*gf);
+      var grx=isoX(roofW*(1-gf),hd), gry=isoY(roofW*(1-gf),hd,peakH*gf);
       shingleFront.appendChild(svgEl('line',{x1:glx,y1:gly,x2:grx,y2:gry,stroke:'#2D3748','stroke-width':0.6,opacity:0.5}));
     }
     svg.appendChild(shingleFront);
