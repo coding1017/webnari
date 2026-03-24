@@ -18,6 +18,7 @@ A **Website-as-a-Service (WaaS)** platform called **Webnari**. The agency landin
 | HVAC | **AirPro** | `hvac.html` | 6 subpages | Ice blue `#38BDF8` + navy | (305) 555-0150 |
 | Plumber | **FlowPro** | `FlowPro.html` | 6 subpages | Water blue `#0EA5E9` + deep navy | (786) 555-0200 |
 | Pest Control | **PestPro** | `pestpro.html` | standalone | Green + dark | — |
+| Roofing | **RoofPro** | `roofpro.html` | standalone | Slate/Red `#E63946` + dark navy | (305) 555-0300 |
 
 ### VoltPro Subpages (electrician)
 `panel-upgrades.html`, `ev-charger.html`, `home-rewiring.html`, `smart-home.html`, `commercial.html`, `emergency-service.html`, `about.html`, `team.html`, `blog.html`, `reviews.html`, `privacy.html`, `contact.html`
@@ -31,7 +32,6 @@ A **Website-as-a-Service (WaaS)** platform called **Webnari**. The agency landin
 ## Templates Planned (not yet built)
 - **LockPro** — Locksmith — purple/gold palette
 - **GreenPro** — Landscaping — green palette
-- **RoofPro** — Roofer — slate/red palette
 
 ## Design System Rules (apply to ALL templates)
 - **Fonts:** Barlow Condensed (headings, 900 weight) + Barlow (body) — always from Google Fonts
@@ -59,10 +59,19 @@ A **Website-as-a-Service (WaaS)** platform called **Webnari**. The agency landin
 --cyan: #06B6D4; --white: #F0F8FF; --muted: #6080A0; --text: #B0C8E0;
 ```
 
+## RoofPro Design Tokens (roofpro.html reference)
+```css
+--black: #0A0E12; --dark: #0E1219; --surface: #141A24;
+--surface2: #1C2332; --border: #252E3E;
+--red: #E63946; --red2: #F77F8A; --red3: #FFC2C7;
+--slate: #64748B; --white: #F5F7FA; --muted: #6B7A8A; --text: #A8B8CA;
+```
+
 ## Licenses Used in Templates
 - VoltPro: Electrical License `#EC13008450`
 - AirPro: HVAC License `#CAC1818191`
 - FlowPro: Plumbing License `#CFC1430009`
+- RoofPro: Roofing License `#CCC1560088`
 
 ## Service Area (all templates — South Florida)
 Miami, Coral Gables, Doral, Hialeah, Kendall, Miami Beach, Brickell, Westchester, South Miami, Homestead, Miami Gardens, North Miami
@@ -134,7 +143,23 @@ Bottom terminal strip → trunk wires → cable clips → horizontal bundles →
 - **PestPro (Pest Control):** Build a shield/barrier around a house — house outline, barrier segments lock in, pests bounce off
 - **LockPro (Locksmith):** Lock mechanism assembly — pins, springs, cylinder, key inserts and turns
 - **GreenPro (Landscaping):** Garden/landscape builds — soil layers, irrigation pipes, plants grow, flowers bloom
-- **RoofPro (Roofer):** Roof construction — trusses, decking, underlayment, shingles lay row by row
+
+### RoofPro Parallax (roofpro.html) — Roof Cross-Section Build
+**Theme:** A roof being built layer by layer from trusses to finished shingles
+**SVG viewBox:** 0 0 1050 600
+
+**Build sequence:**
+1. House walls + gable outline (stroke-dashoffset drawing)
+2. 9 triangular trusses snap into place one by one
+3. Plywood decking boards laid across both slopes
+4. Ice & water shield membrane (blue-tinted) rolls across bottom edge
+5. Gray felt underlayment rolls across full deck surface
+6. 14 rows of architectural shingles laid bottom to top (staggered offsets, slate gray variations)
+7. Ridge cap pieces along the peak
+8. Metal flashing at ridge, eave edges, chimney
+9. L-profile gutters + downspouts + drip edge
+10. Box vents, pipe boot, soffit details
+11. "ROOFPRO" glow blast with red glow + hero transition
 
 ## Git Workflow
 ```bash
