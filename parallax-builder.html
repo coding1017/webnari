@@ -1203,10 +1203,7 @@ Theme: Lock mechanism being assembled
       <div>Tokens: <span class="val" id="statusTokens">0</span> | Time: <span class="val" id="statusTime">0s</span></div>
     </div>
 
-    <div class="divider"></div>
-
-    <!-- Tweak Section -->
-    <!-- Continue (shown when code is incomplete) -->
+    <!-- Continue (shown when code is incomplete) — right below status so user sees it immediately -->
     <div class="continue-section" id="continueSection">
       <div class="continue-alert">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1L15 14H1L8 1Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><line x1="8" y1="6" x2="8" y2="9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="11.5" r="0.8" fill="currentColor"/></svg>
@@ -1217,6 +1214,8 @@ Theme: Lock mechanism being assembled
         Continue Generation
       </button>
     </div>
+
+    <div class="divider"></div>
 
     <div class="tweak-section" id="tweakSection">
       <label>Tweak / Modify</label>
@@ -1372,6 +1371,18 @@ Theme: Lock mechanism being assembled
     tabActions.style.display = 'flex';
     previewControls.style.display = 'flex';
     tweakSection.classList.add('visible');
+    // Check if loaded code is incomplete
+    var isIncomplete = !fullCode.match(/<\/html>\s*$/i) || !fullCode.includes('requestAnimationFrame');
+    var cs = document.getElementById('continueSection');
+    if (isIncomplete) {
+      cs.classList.add('visible');
+      streamStatus.classList.add('visible');
+      statusText.textContent = 'Incomplete — code was cut off';
+      statusTokens.textContent = item.tokens ? item.tokens.toLocaleString() : '?';
+      statusTime.textContent = item.time ? item.time + 's' : '?';
+    } else {
+      cs.classList.remove('visible');
+    }
     // Switch to preview tab
     document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
     document.querySelector('.tab-btn[data-tab="preview"]').classList.add('active');
