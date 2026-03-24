@@ -883,7 +883,7 @@ body::before {
       var dfr2x=isoX(roofW*(1-df2),hd), dfr2y=isoY(roofW*(1-df2),hd,peakH*df2);
       dfEl.setAttribute('d','M'+dfl1x+' '+dfl1y+' L'+dfl2x+' '+dfl2y+' L'+dfr2x+' '+dfr2y+' L'+dfr1x+' '+dfr1y+' Z');
       svg.appendChild(dfEl);
-      allPieces.push({el:dfEl,phase:1,index:numBoards*2+dfi,total:numBoards*2+deckFrontStrips});
+      allPieces.push({el:dfEl,phase:1,index:Math.round(dfi*numBoards*2/deckFrontStrips),total:numBoards*2});
     }
 
     // ─── 3. ICE & WATER SHIELD (8 strips covering FULL slope) ───
@@ -911,7 +911,7 @@ body::before {
       var ifEl=svgEl('path',{opacity:0,fill:'rgba(56,189,248,0.5)'});
       ifEl.setAttribute('d','M'+isoX(-roofW*(1-if1),hd)+' '+isoY(-roofW*(1-if1),hd,peakH*if1)+' L'+isoX(-roofW*(1-if2),hd)+' '+isoY(-roofW*(1-if2),hd,peakH*if2)+' L'+isoX(roofW*(1-if2),hd)+' '+isoY(roofW*(1-if2),hd,peakH*if2)+' L'+isoX(roofW*(1-if1),hd)+' '+isoY(roofW*(1-if1),hd,peakH*if1)+' Z');
       svg.appendChild(ifEl);
-      allPieces.push({el:ifEl,phase:2,index:iceStrips*2+ifi,total:iceStrips*2+iceFrontStrips});
+      allPieces.push({el:ifEl,phase:2,index:Math.round(ifi*iceStrips*2/iceFrontStrips),total:iceStrips*2});
     }
 
     // ─── 4. FELT UNDERLAYMENT (rolled out in 4 strips across full slope) ───
@@ -936,7 +936,7 @@ body::before {
       var ffEl=svgEl('path',{opacity:0,fill:ffi%2===0?'#707880':'#808890'});
       ffEl.setAttribute('d','M'+isoX(-roofW*(1-ff1),hd)+' '+isoY(-roofW*(1-ff1),hd,peakH*ff1)+' L'+isoX(-roofW*(1-ff2),hd)+' '+isoY(-roofW*(1-ff2),hd,peakH*ff2)+' L'+isoX(roofW*(1-ff2),hd)+' '+isoY(roofW*(1-ff2),hd,peakH*ff2)+' L'+isoX(roofW*(1-ff1),hd)+' '+isoY(roofW*(1-ff1),hd,peakH*ff1)+' Z');
       svg.appendChild(ffEl);
-      allPieces.push({el:ffEl,phase:3,index:feltStrips*2+ffi,total:feltStrips*2+feltFrontStrips});
+      allPieces.push({el:ffEl,phase:3,index:Math.round(ffi*feltStrips*2/feltFrontStrips),total:feltStrips*2});
     }
 
     // ─── 5. SHINGLES (rows with individual tabs for elegant detail) ───
@@ -1021,7 +1021,7 @@ body::before {
       // Shadow line at bottom
       sfg.appendChild(svgEl('line',{x1:sfl1x,y1:sfl1y,x2:sfr1x,y2:sfr1y,stroke:'rgba(0,0,0,0.25)','stroke-width':0.7}));
       svg.appendChild(sfg);
-      allPieces.push({el:sfg,phase:4,index:shTotal+sfi,total:shTotal+shFrontRows});
+      allPieces.push({el:sfg,phase:4,index:Math.round(sfi*shTotal/shFrontRows),total:shTotal});
     }
 
     // ─── 6. RIDGE CAP (individual pieces along peak) ───
