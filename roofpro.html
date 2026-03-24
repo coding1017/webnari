@@ -802,246 +802,178 @@ body::before {
     function setPhase(t){if(t===lastPhase)return;lastPhase=t;phaseEl.style.opacity='0';phaseEl.style.transform='translateX(-50%) translateY(7px)';setTimeout(function(){phaseEl.textContent=t;phaseEl.style.opacity='1';phaseEl.style.transform='translateX(-50%) translateY(0)';},190);}
     function svgEl(tag,attrs){var e=document.createElementNS(ns,tag);for(var k in attrs){if(attrs.hasOwnProperty(k))e.setAttribute(k,String(attrs[k]));}return e;}
 
-    // ═══ BUILD ROOF CROSS-SECTION SVG ═══
-    // Scene: Gable-end cross-section view of a house
-    // House base: walls at bottom, gable roof above
-    var wallL=200, wallR=850, wallTop=420, wallBot=560;
-    var ridgeX=525, ridgeY=160;// Ridge peak center
-    var eaveL=160, eaveR=890;// Eave overhangs past walls
+    // ═══ BUILD ISOMETRIC EXPLODED ROOF LAYERS ═══
+    // Like the 3D reference: each layer is an isometric parallelogram
+    // that floats down and stacks as you scroll
+    // Isometric projection: 30-deg angle, x-skew for depth
+    var IX=0.866, IY=0.5; // cos(30), sin(30) for isometric
+    var cx=525, baseY=520; // center x, bottom of stack
+    var layerW=380, layerD=220; // width and depth of each slab
+    var layerGap=58; // vertical gap between exploded layers
+    var stackH=12; // thickness of each layer slab
 
-    // 1. HOUSE WALLS
-    var gWalls=svgEl('g',{opacity:0});
-    // Left wall
-    gWalls.appendChild(svgEl('rect',{x:wallL,y:wallTop,width:120,height:wallBot-wallTop,fill:'#8B7355',stroke:'#7A6345','stroke-width':1}));
-    // Right wall
-    gWalls.appendChild(svgEl('rect',{x:wallR-120,y:wallTop,width:120,height:wallBot-wallTop,fill:'#8B7355',stroke:'#7A6345','stroke-width':1}));
-    // Window left
-    gWalls.appendChild(svgEl('rect',{x:wallL+30,y:wallTop+25,width:60,height:50,fill:'#6A9BC7',opacity:0.5,rx:2}));
-    gWalls.appendChild(svgEl('line',{x1:wallL+60,y1:wallTop+25,x2:wallL+60,y2:wallTop+75,stroke:'#7A6345','stroke-width':1.5}));
-    gWalls.appendChild(svgEl('line',{x1:wallL+30,y1:wallTop+50,x2:wallL+90,y2:wallTop+50,stroke:'#7A6345','stroke-width':1.5}));
-    // Window right
-    gWalls.appendChild(svgEl('rect',{x:wallR-90,y:wallTop+25,width:60,height:50,fill:'#6A9BC7',opacity:0.5,rx:2}));
-    gWalls.appendChild(svgEl('line',{x1:wallR-60,y1:wallTop+25,x2:wallR-60,y2:wallTop+75,stroke:'#7A6345','stroke-width':1.5}));
-    gWalls.appendChild(svgEl('line',{x1:wallR-90,y1:wallTop+50,x2:wallR-30,y2:wallTop+50,stroke:'#7A6345','stroke-width':1.5}));
-    // Attic gable triangle outline
-    var gableOutline=svgEl('path',{d:'M'+wallL+' '+wallTop+' L'+ridgeX+' '+(ridgeY+20)+' L'+wallR+' '+wallTop,fill:'none',stroke:'#7A6345','stroke-width':2});
-    gWalls.appendChild(gableOutline);
-    var gableLen=1400;// approximate
-    gableOutline.style.strokeDasharray=gableLen;
-    gableOutline.style.strokeDashoffset=gableLen;
-    // Ground line
-    gWalls.appendChild(svgEl('line',{x1:100,y1:wallBot,x2:950,y2:wallBot,stroke:'#5A4A3A','stroke-width':2}));
-    svg.appendChild(gWalls);
-
-    // 2. TRUSSES (triangular frames across the roof span)
-    var gTrusses=svgEl('g',{opacity:0});
-    var trussData=[];
-    var numTrusses=9;
-    for(var ti=0;ti<numTrusses;ti++){
-      var tFrac=(ti+1)/(numTrusses+1);
-      // Each truss is a triangle: bottom chord + two rafters
-      var tBottomL=wallL+tFrac*10;
-      var tBottomR=wallR-tFrac*10;
-      var tPeakY=ridgeY+20+(1-Math.abs(tFrac-0.5)*2)*20;// slight variation
-      var truss=svgEl('path',{
-        d:'M'+tBottomL+' '+wallTop+' L'+ridgeX+' '+tPeakY+' L'+tBottomR+' '+wallTop+' Z',
-        fill:'none',stroke:'#D4A574','stroke-width':2.5,opacity:0
-      });
-      gTrusses.appendChild(truss);
-      trussData.push(truss);
+    // Isometric quad helper: returns path for a parallelogram slab
+    // at position (cx, y) with width w, depth d, thickness t
+    function isoTop(y,w,d){
+      // Top face of the slab
+      var hw=w/2, hd=d/2;
+      var x0=cx-hw*IX+hd*IX, y0=y-hw*IY-hd*IY;
+      var x1=cx+hw*IX+hd*IX, y1=y+hw*IY-hd*IY;
+      var x2=cx+hw*IX-hd*IX, y2=y+hw*IY+hd*IY;
+      var x3=cx-hw*IX-hd*IX, y3=y-hw*IY+hd*IY;
+      return 'M'+x0+' '+y0+' L'+x1+' '+y1+' L'+x2+' '+y2+' L'+x3+' '+y3+' Z';
     }
-    svg.appendChild(gTrusses);
-
-    // 3. DECKING (plywood boards across trusses — both roof slopes)
-    var gDecking=svgEl('g',{opacity:0});
-    var deckBoards=[];
-    var deckColors=['#C9A96E','#B89A5F','#C4A468','#BA9C62'];
-    var numDeckRows=14;
-    for(var di=0;di<numDeckRows;di++){
-      var dFrac=di/numDeckRows;
-      // Left slope
-      var dLx1=eaveL+(ridgeX-eaveL)*dFrac;
-      var dLy1=wallTop+(ridgeY+20-wallTop)*dFrac;
-      var dLx2=eaveL+(ridgeX-eaveL)*(dFrac+1/numDeckRows);
-      var dLy2=wallTop+(ridgeY+20-wallTop)*(dFrac+1/numDeckRows);
-      var deckL=svgEl('path',{
-        d:'M'+dLx1+' '+dLy1+' L'+dLx2+' '+dLy2+' L'+(dLx2+18)+' '+dLy2+' L'+(dLx1+18)+' '+dLy1+' Z',
-        fill:deckColors[di%4],opacity:0,'stroke':'#A08A52','stroke-width':0.5
-      });
-      gDecking.appendChild(deckL);
-      deckBoards.push(deckL);
-      // Right slope
-      var dRx1=eaveR-(eaveR-ridgeX)*dFrac;
-      var dRy1=wallTop+(ridgeY+20-wallTop)*dFrac;
-      var dRx2=eaveR-(eaveR-ridgeX)*(dFrac+1/numDeckRows);
-      var dRy2=wallTop+(ridgeY+20-wallTop)*(dFrac+1/numDeckRows);
-      var deckR=svgEl('path',{
-        d:'M'+dRx1+' '+dRy1+' L'+dRx2+' '+dRy2+' L'+(dRx2-18)+' '+dRy2+' L'+(dRx1-18)+' '+dRy1+' Z',
-        fill:deckColors[(di+2)%4],opacity:0,'stroke':'#A08A52','stroke-width':0.5
-      });
-      gDecking.appendChild(deckR);
-      deckBoards.push(deckR);
+    function isoRight(y,w,d,t){
+      var hw=w/2, hd=d/2;
+      var x1=cx+hw*IX+hd*IX, y1=y+hw*IY-hd*IY;
+      var x2=cx+hw*IX-hd*IX, y2=y+hw*IY+hd*IY;
+      return 'M'+x1+' '+y1+' L'+x2+' '+y2+' L'+x2+' '+(y2+t)+' L'+x1+' '+(y1+t)+' Z';
     }
-    svg.appendChild(gDecking);
+    function isoFront(y,w,d,t){
+      var hw=w/2, hd=d/2;
+      var x2=cx+hw*IX-hd*IX, y2=y+hw*IY+hd*IY;
+      var x3=cx-hw*IX-hd*IX, y3=y-hw*IY+hd*IY;
+      return 'M'+x3+' '+y3+' L'+x2+' '+y2+' L'+x2+' '+(y2+t)+' L'+x3+' '+(y3+t)+' Z';
+    }
 
-    // 4. ICE & WATER SHIELD (bottom 1/3 of deck, blue tint)
-    var gIceShield=svgEl('g',{opacity:0});
-    // Left slope ice shield (bottom third)
-    var isL_y1=wallTop;
-    var isL_y2=wallTop+(ridgeY+20-wallTop)*0.33;
-    var isL_x1=eaveL;
-    var isL_x2=eaveL+(ridgeX-eaveL)*0.33;
-    var iceShieldL=svgEl('path',{
-      d:'M'+isL_x1+' '+isL_y1+' L'+isL_x2+' '+isL_y2+' L'+(ridgeX-(ridgeX-isL_x2))+' '+isL_y2+' L'+(ridgeX-(ridgeX-isL_x1))+' '+isL_y1+' Z',
-      fill:'rgba(56,189,248,0.3)',opacity:0
+    // Define layers bottom-to-top (order they appear in the stack)
+    // Each layer: {name, topFill, rightFill, frontFill, thickness, details}
+    var layers=[
+      {name:'Roof Deck',topFill:'#C9A96E',rightFill:'#A08A52',frontFill:'#B89A5F',t:14,
+        detail:function(g,y){
+          // Wood plank lines on top face
+          for(var i=1;i<8;i++){
+            var frac=i/8;
+            var hw=layerW/2,hd=layerD/2;
+            var sx=cx-hw*IX+hd*IX+(cx+hw*IX+hd*IX-(cx-hw*IX+hd*IX))*frac;
+            var sy=(y-hw*IY-hd*IY)+((y+hw*IY-hd*IY)-(y-hw*IY-hd*IY))*frac;
+            var ex=cx-hw*IX-hd*IX+(cx+hw*IX-hd*IX-(cx-hw*IX-hd*IX))*frac;
+            var ey=(y-hw*IY+hd*IY)+((y+hw*IY+hd*IY)-(y-hw*IY+hd*IY))*frac;
+            g.appendChild(svgEl('line',{x1:sx,y1:sy,x2:ex,y2:ey,stroke:'#A08A52','stroke-width':0.8,opacity:0.6}));
+          }
+        }},
+      {name:'Ice & Water Shield',topFill:'#38BDF8',rightFill:'#0E87C0',frontFill:'#1A9AD8',t:8,topOpacity:0.7,
+        detail:function(g,y){
+          // Subtle texture lines
+          for(var i=0;i<5;i++){
+            var frac=(i+0.5)/5;
+            var hw=layerW/2,hd=layerD/2;
+            var sx=cx-hw*IX+hd*IX+(cx+hw*IX+hd*IX-(cx-hw*IX+hd*IX))*frac;
+            var sy=(y-hw*IY-hd*IY)+((y+hw*IY-hd*IY)-(y-hw*IY-hd*IY))*frac;
+            var ex=cx-hw*IX-hd*IX+(cx+hw*IX-hd*IX-(cx-hw*IX-hd*IX))*frac;
+            var ey=(y-hw*IY+hd*IY)+((y+hw*IY+hd*IY)-(y-hw*IY+hd*IY))*frac;
+            g.appendChild(svgEl('line',{x1:sx,y1:sy,x2:ex,y2:ey,stroke:'#0284C7','stroke-width':0.5,opacity:0.3}));
+          }
+        }},
+      {name:'Felt Underlayment',topFill:'#6B7280',rightFill:'#4B5563',frontFill:'#555E6B',t:6,
+        detail:function(g,y){
+          // Felt texture: small dots
+          var hw=layerW/2,hd=layerD/2;
+          for(var r=0;r<4;r++){for(var c=0;c<6;c++){
+            var fx=(c+0.5)/6,fy=(r+0.5)/4;
+            var px=cx+(-hw+fx*layerW*2)*IX*0.5+(-hd+fy*layerD*2)*IX*0.5;
+            var py=y+(-hw+fx*layerW*2)*IY*0.5+(-hd+fy*layerD*2)*(-IY)*0.5;
+            g.appendChild(svgEl('circle',{cx:px,cy:py,r:1.5,fill:'#555E6B',opacity:0.4}));
+          }}
+        }},
+      {name:'Insulation',topFill:'#FDE68A',rightFill:'#D4A520',frontFill:'#E5B82A',t:20,
+        detail:function(g,y){
+          // Cross-hatch pattern for fiberglass
+          for(var i=0;i<6;i++){
+            var frac=(i+0.5)/6;
+            var hw=layerW/2,hd=layerD/2;
+            var sx=cx-hw*IX+hd*IX+(cx+hw*IX+hd*IX-(cx-hw*IX+hd*IX))*frac;
+            var sy=(y-hw*IY-hd*IY)+((y+hw*IY-hd*IY)-(y-hw*IY-hd*IY))*frac;
+            var ex=cx-hw*IX-hd*IX+(cx+hw*IX-hd*IX-(cx-hw*IX-hd*IX))*frac;
+            var ey=(y-hw*IY+hd*IY)+((y+hw*IY+hd*IY)-(y-hw*IY+hd*IY))*frac;
+            g.appendChild(svgEl('line',{x1:sx,y1:sy,x2:ex,y2:ey,stroke:'#D4A520','stroke-width':0.6,opacity:0.3}));
+          }
+          for(var j=0;j<4;j++){
+            var frac2=(j+0.5)/4;
+            var hw2=layerW/2,hd2=layerD/2;
+            var sx2=cx-hw2*IX+hd2*IX*frac2*2-hd2*IX+((cx-hw2*IX-hd2*IX)-(cx-hw2*IX+hd2*IX))*0;
+            var sy2=y-hw2*IY-hd2*IY*frac2*2+hd2*IY;
+            var ex2=cx+hw2*IX+hd2*IX*frac2*2-hd2*IX;
+            var ey2=y+hw2*IY-hd2*IY*frac2*2+hd2*IY;
+            g.appendChild(svgEl('line',{x1:cx-hw2*IX+(cx+hw2*IX-(cx-hw2*IX))*0,y1:y-hw2*IY+(y+hw2*IY-(y-hw2*IY))*0+frac2*layerD*IY,
+              x2:cx-hw2*IX+(cx+hw2*IX-(cx-hw2*IX))*1,y2:y-hw2*IY+(y+hw2*IY-(y-hw2*IY))*1+frac2*layerD*IY-layerD*IY,
+              stroke:'#D4A520','stroke-width':0.4,opacity:0.25}));
+          }
+        }},
+      {name:'Vapor Barrier',topFill:'#94A3B8',rightFill:'#64748B',frontFill:'#7A8A9E',t:5,topOpacity:0.85,
+        detail:function(g,y){}},
+      {name:'Roof Sheathing',topFill:'#A3896B',rightFill:'#8B7355',frontFill:'#957D62',t:12,
+        detail:function(g,y){
+          // OSB board pattern
+          for(var i=1;i<6;i++){
+            var frac=i/6;
+            var hw=layerW/2,hd=layerD/2;
+            var sx=cx-hw*IX+hd*IX+(cx+hw*IX+hd*IX-(cx-hw*IX+hd*IX))*frac;
+            var sy=(y-hw*IY-hd*IY)+((y+hw*IY-hd*IY)-(y-hw*IY-hd*IY))*frac;
+            var ex=cx-hw*IX-hd*IX+(cx+hw*IX-hd*IX-(cx-hw*IX-hd*IX))*frac;
+            var ey=(y-hw*IY+hd*IY)+((y+hw*IY+hd*IY)-(y-hw*IY+hd*IY))*frac;
+            g.appendChild(svgEl('line',{x1:sx,y1:sy,x2:ex,y2:ey,stroke:'#7A6345','stroke-width':0.7,opacity:0.5}));
+          }
+        }},
+      {name:'Shingles',topFill:'#4A5568',rightFill:'#2D3748',frontFill:'#374151',t:10,
+        detail:function(g,y){
+          // Shingle tab pattern on top face — staggered rows
+          var hw=layerW/2,hd=layerD/2;
+          var cols=['#3D4A5C','#5A6577','#475569','#4F5B6B','#4A5568'];
+          for(var row=0;row<7;row++){
+            var fy=(row+0.3)/7;
+            for(var col=0;col<10;col++){
+              var fx=(col+(row%2)*0.5)/10;
+              if(fx>1) continue;
+              // Map fx,fy to isometric coordinates
+              var px=cx+(-hw+fx*layerW)*IX+(-hd+fy*layerD)*IX;
+              var py=y+(-hw+fx*layerW)*IY+(-hd+fy*layerD)*(-IY);
+              var sw=layerW/10*IX*0.9, sh=layerD/7*IY*0.7;
+              g.appendChild(svgEl('rect',{x:px-sw/2,y:py-sh/2,width:sw,height:sh,
+                fill:cols[(row+col)%cols.length],rx:0.5,opacity:0.7,stroke:'#2D3748','stroke-width':0.3}));
+            }
+          }
+        }}
+    ];
+
+    // Build all layer groups
+    var layerGroups=[];
+    var totalStackH=0;
+    layers.forEach(function(L){totalStackH+=L.t+4;}); // total compressed height
+    var explodedH=layers.length*layerGap; // total exploded height
+
+    layers.forEach(function(L,li){
+      var g=svgEl('g',{opacity:0});
+      // Calculate stacked Y (compressed, bottom of stack)
+      var stackY=baseY;
+      for(var si=0;si<li;si++) stackY-=(layers[si].t+4);
+      stackY-=L.t;
+      // Calculate exploded Y (spread out, higher up)
+      var explY=baseY-li*layerGap-L.t;
+
+      // Top face
+      var topPath=svgEl('path',{d:isoTop(0,layerW,layerD),fill:L.topFill,opacity:L.topOpacity||1});
+      g.appendChild(topPath);
+      // Right face
+      g.appendChild(svgEl('path',{d:isoRight(0,layerW,layerD,L.t),fill:L.rightFill}));
+      // Front face
+      g.appendChild(svgEl('path',{d:isoFront(0,layerW,layerD,L.t),fill:L.frontFill}));
+      // Edge highlights
+      g.appendChild(svgEl('path',{d:isoTop(0,layerW,layerD),fill:'none',stroke:'rgba(255,255,255,0.15)','stroke-width':0.8}));
+      // Detail texture
+      if(L.detail) L.detail(g,0);
+
+      // Label on front face
+      var hw=layerW/2,hd=layerD/2;
+      var lx=cx-hd*IX*0.3;
+      var ly=L.t/2+hd*IY*0.3+4;
+      var label=svgEl('text',{x:lx,y:ly,'font-family':'Barlow Condensed, sans-serif','font-size':'9','font-weight':'700',fill:'rgba(255,255,255,0.85)','letter-spacing':'0.1em','text-anchor':'middle'});
+      label.textContent=L.name.toUpperCase();
+      g.appendChild(label);
+
+      svg.appendChild(g);
+      layerGroups.push({g:g,stackY:stackY,explY:explY,thickness:L.t,idx:li});
     });
-    gIceShield.appendChild(iceShieldL);
-    // Right slope
-    var isR_x1=eaveR;
-    var isR_x2=eaveR-(eaveR-ridgeX)*0.33;
-    var iceShieldR=svgEl('path',{
-      d:'M'+isR_x1+' '+isL_y1+' L'+isR_x2+' '+isL_y2+' L'+(ridgeX+(ridgeX-isR_x2))+' '+isL_y2+' L'+(ridgeX+(ridgeX-isR_x1))+' '+isL_y1+' Z',
-      fill:'rgba(56,189,248,0.3)',opacity:0
-    });
-    gIceShield.appendChild(iceShieldR);
-    svg.appendChild(gIceShield);
-
-    // 5. UNDERLAYMENT (gray felt, full deck)
-    var gUnderlayment=svgEl('g',{opacity:0});
-    // Left slope
-    gUnderlayment.appendChild(svgEl('path',{
-      d:'M'+eaveL+' '+wallTop+' L'+ridgeX+' '+(ridgeY+20)+' L'+ridgeX+' '+(ridgeY+20)+' L'+(ridgeX-(ridgeX-eaveL))+' '+wallTop+' Z',
-      fill:'#888888',opacity:0.5
-    }));
-    // Right slope
-    gUnderlayment.appendChild(svgEl('path',{
-      d:'M'+eaveR+' '+wallTop+' L'+ridgeX+' '+(ridgeY+20)+' L'+ridgeX+' '+(ridgeY+20)+' L'+(ridgeX+(ridgeX-eaveR))+' '+wallTop+' Z',
-      fill:'#888888',opacity:0.5
-    }));
-    svg.appendChild(gUnderlayment);
-
-    // 6. SHINGLES (rows from eave to ridge, overlapping)
-    var gShingles=svgEl('g',{opacity:0});
-    var shingleRows=[];
-    var shingleColors=['#4A5568','#5A6577','#3D4A5C','#475569','#4F5B6B'];
-    var numShingleRows=14;
-    var shingleH=18;// Height of each shingle row
-    for(var sri=0;sri<numShingleRows;sri++){
-      var rowGroup=svgEl('g',{opacity:0});
-      var sFrac=sri/numShingleRows;
-      var sFracNext=(sri+1)/numShingleRows;
-      // Y positions along slope
-      var sY1=wallTop+(ridgeY+18-wallTop)*sFrac;
-      var sY2=wallTop+(ridgeY+18-wallTop)*sFracNext;
-      // X positions at this height (both slopes)
-      var sLx1=eaveL+(ridgeX-eaveL)*sFrac;
-      var sLx2=eaveL+(ridgeX-eaveL)*sFracNext;
-      var sRx1=eaveR-(eaveR-ridgeX)*sFrac;
-      var sRx2=eaveR-(eaveR-ridgeX)*sFracNext;
-      // Number of shingles per row
-      var rowWidth=sRx1-sLx1;
-      var shingleW=rowWidth/Math.max(6,Math.round(rowWidth/55));
-      var offset=(sri%2)*shingleW*0.5;// Stagger
-      for(var shi=0;shi*shingleW+offset<rowWidth;shi++){
-        var shX=sLx1+shi*shingleW+offset;
-        var shXEnd=Math.min(shX+shingleW-2,sRx1);
-        if(shXEnd<=shX) continue;
-        // Interpolate Y for this x position
-        var shXMid=(shX+shXEnd)/2;
-        var tLeft,tRight,shY;
-        if(shXMid<=ridgeX){
-          tLeft=(shXMid-eaveL)/(ridgeX-eaveL);
-          shY=wallTop+(ridgeY+18-wallTop)*tLeft;
-        } else {
-          tRight=(eaveR-shXMid)/(eaveR-ridgeX);
-          shY=wallTop+(ridgeY+18-wallTop)*tRight;
-        }
-        var sc=shingleColors[(sri+shi)%shingleColors.length];
-        rowGroup.appendChild(svgEl('rect',{
-          x:shX,y:shY-shingleH/2,width:shXEnd-shX,height:shingleH,
-          fill:sc,rx:1,stroke:'#2D3748','stroke-width':0.3
-        }));
-      }
-      gShingles.appendChild(rowGroup);
-      shingleRows.push(rowGroup);
-    }
-    svg.appendChild(gShingles);
-
-    // 7. RIDGE CAP (along the peak)
-    var gRidgeCap=svgEl('g',{opacity:0});
-    var ridgeCapPieces=[];
-    var numRidgeCaps=18;
-    var ridgeCapW=(eaveR-eaveL)*0.6/numRidgeCaps;
-    for(var rci=0;rci<numRidgeCaps;rci++){
-      var rcx=ridgeX-((numRidgeCaps/2)-rci)*ridgeCapW;
-      var rc=svgEl('rect',{
-        x:rcx,y:ridgeY+12,width:ridgeCapW-2,height:14,
-        fill:'#3D4A5C',rx:1,stroke:'#2D3748','stroke-width':0.5,opacity:0
-      });
-      gRidgeCap.appendChild(rc);
-      ridgeCapPieces.push(rc);
-    }
-    svg.appendChild(gRidgeCap);
-
-    // 8. FLASHING (metallic silver at key points)
-    var gFlashing=svgEl('g',{opacity:0});
-    // Ridge flashing (thin line along peak)
-    gFlashing.appendChild(svgEl('rect',{x:ridgeX-180,y:ridgeY+14,width:360,height:3,fill:'#A0AEC0',rx:1}));
-    // Eave flashing (drip edge) — left
-    gFlashing.appendChild(svgEl('line',{x1:eaveL-5,y1:wallTop+2,x2:ridgeX,y2:ridgeY+22,stroke:'#A0AEC0','stroke-width':2}));
-    // Eave flashing — right
-    gFlashing.appendChild(svgEl('line',{x1:eaveR+5,y1:wallTop+2,x2:ridgeX,y2:ridgeY+22,stroke:'#A0AEC0','stroke-width':2}));
-    // Chimney structure
-    var chimX=620,chimY=260;
-    gFlashing.appendChild(svgEl('rect',{x:chimX,y:chimY-60,width:40,height:80,fill:'#9B8B75',stroke:'#8A7A65','stroke-width':1}));
-    // Chimney cap
-    gFlashing.appendChild(svgEl('rect',{x:chimX-4,y:chimY-64,width:48,height:6,fill:'#A0AEC0',rx:1}));
-    // Chimney flashing (step flashing pieces)
-    gFlashing.appendChild(svgEl('path',{d:'M'+chimX+' '+(chimY+10)+' L'+(chimX-8)+' '+(chimY+16)+' L'+chimX+' '+(chimY+20),fill:'none',stroke:'#A0AEC0','stroke-width':2}));
-    gFlashing.appendChild(svgEl('path',{d:'M'+(chimX+40)+' '+(chimY+10)+' L'+(chimX+48)+' '+(chimY+16)+' L'+(chimX+40)+' '+(chimY+20),fill:'none',stroke:'#A0AEC0','stroke-width':2}));
-    svg.appendChild(gFlashing);
-
-    // 9. GUTTERS & TRIM
-    var gGutters=svgEl('g',{opacity:0});
-    // Left gutter (L-shaped profile along eave)
-    gGutters.appendChild(svgEl('path',{
-      d:'M'+(eaveL-8)+' '+(wallTop-2)+' L'+(eaveL-8)+' '+(wallTop+10)+' L'+(eaveL+10)+' '+(wallTop+10)+' L'+(eaveL+10)+' '+(wallTop+4),
-      fill:'none',stroke:'#718096','stroke-width':3,'stroke-linecap':'round'
-    }));
-    // Right gutter
-    gGutters.appendChild(svgEl('path',{
-      d:'M'+(eaveR+8)+' '+(wallTop-2)+' L'+(eaveR+8)+' '+(wallTop+10)+' L'+(eaveR-10)+' '+(wallTop+10)+' L'+(eaveR-10)+' '+(wallTop+4),
-      fill:'none',stroke:'#718096','stroke-width':3,'stroke-linecap':'round'
-    }));
-    // Left downspout
-    gGutters.appendChild(svgEl('rect',{x:eaveL-10,y:wallTop+10,width:6,height:wallBot-wallTop-10,fill:'#718096',rx:1}));
-    // Right downspout
-    gGutters.appendChild(svgEl('rect',{x:eaveR+6,y:wallTop+10,width:6,height:wallBot-wallTop-10,fill:'#718096',rx:1}));
-    // Drip edge trim line — left slope
-    gGutters.appendChild(svgEl('line',{x1:eaveL,y1:wallTop,x2:ridgeX,y2:ridgeY+20,stroke:'#64748B','stroke-width':1.5}));
-    // Drip edge trim line — right slope
-    gGutters.appendChild(svgEl('line',{x1:eaveR,y1:wallTop,x2:ridgeX,y2:ridgeY+20,stroke:'#64748B','stroke-width':1.5}));
-    svg.appendChild(gGutters);
-
-    // 10. FINISHING DETAILS (vents, pipe boot, soffit)
-    var gFinishing=svgEl('g',{opacity:0});
-    // Roof vent (box shape) — left slope
-    var ventLx=350,ventLy=310;
-    gFinishing.appendChild(svgEl('rect',{x:ventLx,y:ventLy,width:30,height:20,fill:'#64748B',stroke:'#4A5568','stroke-width':1,rx:2}));
-    gFinishing.appendChild(svgEl('rect',{x:ventLx-2,y:ventLy-3,width:34,height:5,fill:'#718096',rx:1}));
-    // Roof vent — right slope
-    var ventRx=680,ventRy=320;
-    gFinishing.appendChild(svgEl('rect',{x:ventRx,y:ventRy,width:30,height:20,fill:'#64748B',stroke:'#4A5568','stroke-width':1,rx:2}));
-    gFinishing.appendChild(svgEl('rect',{x:ventRx-2,y:ventRy-3,width:34,height:5,fill:'#718096',rx:1}));
-    // Pipe boot (circle)
-    var pipeX=430,pipeY=290;
-    gFinishing.appendChild(svgEl('circle',{cx:pipeX,cy:pipeY,r:8,fill:'#4A5568',stroke:'#2D3748','stroke-width':1}));
-    gFinishing.appendChild(svgEl('circle',{cx:pipeX,cy:pipeY,r:4,fill:'#2D3748'}));
-    gFinishing.appendChild(svgEl('rect',{x:pipeX-12,y:pipeY-2,width:24,height:4,fill:'#A0AEC0',rx:1}));
-    // Soffit detail (under eave overhang)
-    gFinishing.appendChild(svgEl('rect',{x:eaveL-5,y:wallTop,width:wallL-eaveL+5,height:8,fill:'#E8E0D8',rx:1}));
-    gFinishing.appendChild(svgEl('rect',{x:wallR,y:wallTop,width:eaveR-wallR+5,height:8,fill:'#E8E0D8',rx:1}));
-    svg.appendChild(gFinishing);
 
     // Power lights
     var powerLights=[];
@@ -1057,9 +989,9 @@ body::before {
       // Background
       var bgB=map(p,0.04,0.12,0,1);
       bg.style.background='rgb('+Math.round(10+bgB*8)+','+Math.round(14+bgB*6)+','+Math.round(18+bgB*4)+')';
-      bg.style.opacity=String(p<0.88?map(p,0.04,0.10,1,0):map(p,0.92,0.96,0,1));
+      bg.style.opacity=String(p<0.88?1:map(p,0.92,0.96,0,1));
 
-      var fadeOut=p<0.90?1:map(p,0.90,0.96,1,0);
+      var fadeOut=p<0.88?1:map(p,0.88,0.94,1,0);
       sceneContainer.style.opacity=String(map(p,0.05,0.10,0,1)*fadeOut);
 
       // SVG sizing
@@ -1072,83 +1004,61 @@ body::before {
       svg.setAttribute('width',svgW);
       svg.setAttribute('height',svgH);
 
-      // ═══ 1. FRAMING (6-12%) — Walls + gable outline draws ═══
-      var frameP=easeOut3(clamp((p-0.06)/0.06,0,1));
-      gWalls.setAttribute('opacity',String(frameP));
-      gableOutline.style.strokeDashoffset=String(gableLen*(1-frameP));
+      // ═══ LAYER ANIMATION ═══
+      // Each layer: fades in from above (exploded), then slides down to stack
+      var numL=layerGroups.length; // 7 layers
+      var perLayer=0.10; // 10% scroll per layer
+      var startAt=0.06; // start after intro
 
-      // ═══ 2. SETTING TRUSSES (12-22%) ═══
-      gTrusses.setAttribute('opacity','1');
-      trussData.forEach(function(tr,tri){
-        var trP=easeOut3(clamp((p-0.12-tri*0.008)/0.03,0,1));
-        tr.setAttribute('opacity',String(trP));
+      layerGroups.forEach(function(L){
+        var li=L.idx;
+        var layerStart=startAt+li*perLayer;
+        var fadeIn=layerStart;
+        var fadeEnd=fadeIn+0.03;
+        var moveEnd=fadeIn+perLayer*0.8;
+
+        // Opacity: fade in
+        var op=easeOut3(clamp((p-fadeIn)/0.03,0,1));
+        // Don't show if not started
+        if(p<fadeIn){
+          L.g.setAttribute('opacity','0');
+          return;
+        }
+
+        // Position: start high (exploded), settle to stacked
+        var moveP=easeOut3(clamp((p-fadeIn)/(moveEnd-fadeIn),0,1));
+        // Start Y = exploded position (high up, spread apart)
+        var startY=L.explY-80; // extra offset above for dramatic entrance
+        // End Y = stacked position
+        var endY=L.stackY;
+        var currentY=startY+(endY-startY)*moveP;
+
+        L.g.setAttribute('opacity',String(op));
+        L.g.setAttribute('transform','translate(0,'+currentY+')');
       });
-
-      // ═══ 3. DECKING (22-32%) ═══
-      gDecking.setAttribute('opacity','1');
-      deckBoards.forEach(function(db,dbi){
-        var dbP=easeOut3(clamp((p-0.22-dbi*0.003)/0.025,0,1));
-        db.setAttribute('opacity',String(dbP));
-      });
-
-      // ═══ 4. ICE & WATER SHIELD (32-40%) ═══
-      var iceP=easeOut3(clamp((p-0.32)/0.08,0,1));
-      gIceShield.setAttribute('opacity','1');
-      iceShieldL.setAttribute('opacity',String(iceP));
-      iceShieldR.setAttribute('opacity',String(iceP));
-
-      // ═══ 5. UNDERLAYMENT (40-50%) ═══
-      var underP=easeOut3(clamp((p-0.40)/0.10,0,1));
-      gUnderlayment.setAttribute('opacity',String(underP));
-
-      // ═══ 6. LAYING SHINGLES (50-70%) — BIG phase ═══
-      gShingles.setAttribute('opacity','1');
-      shingleRows.forEach(function(sr,sri2){
-        var srP=easeOut3(clamp((p-0.50-sri2*0.012)/0.03,0,1));
-        sr.setAttribute('opacity',String(srP));
-      });
-
-      // ═══ 7. RIDGE CAP (70-75%) ═══
-      gRidgeCap.setAttribute('opacity','1');
-      ridgeCapPieces.forEach(function(rc,rci2){
-        var rcP=easeOut3(clamp((p-0.70-rci2*0.002)/0.02,0,1));
-        rc.setAttribute('opacity',String(rcP));
-      });
-
-      // ═══ 8. FLASHING (75-80%) ═══
-      var flashP=easeOut3(clamp((p-0.75)/0.05,0,1));
-      gFlashing.setAttribute('opacity',String(flashP));
-
-      // ═══ 9. GUTTERS & TRIM (80-85%) ═══
-      var gutterP=easeOut3(clamp((p-0.80)/0.05,0,1));
-      gGutters.setAttribute('opacity',String(gutterP));
-
-      // ═══ 10. FINISHING (85-90%) ═══
-      var finishP=easeOut3(clamp((p-0.85)/0.05,0,1));
-      gFinishing.setAttribute('opacity',String(finishP));
 
       // HUD
-      var hudIn=map(p,0.06,0.12,0,1);
-      var hudOut=p<0.90?1:map(p,0.90,0.94,1,0);
+      var hudIn=map(p,0.08,0.14,0,1);
+      var hudOut=p<0.88?1:map(p,0.88,0.92,1,0);
       sceneHud.style.opacity=String(clamp(hudIn*hudOut,0,1));
 
-      // ═══ FINALE — RED GLOW (90-96%) ═══
-      var glowVal=map(p,0.90,0.96,0,1);
-      sceneGlow.style.opacity=String(glowVal);
-      if(p>=0.90){
-        var glowSpread=easeOut3(clamp((p-0.90)/0.06,0,1));
+      // ═══ FINALE — RED GLOW (88-94%) ═══
+      var glowVal=map(p,0.88,0.94,0,1);
+      sceneGlow.style.opacity=String(clamp(glowVal,0,1));
+      if(p>=0.88){
+        var glowSpread=easeOut3(clamp((p-0.88)/0.06,0,1));
         sceneGlow.style.background='radial-gradient(ellipse '+(50+glowSpread*50)+'% '+(50+glowSpread*50)+'% at 50% 50%, rgba(230,57,70,'+(0.15+glowSpread*0.85)+'), rgba(230,57,70,'+(glowSpread*0.4)+') 50%, transparent 80%)';
       }
 
       // ROOFPRO text
-      var pi3=easeOut3(clamp((p-0.90)/0.03,0,1));
-      var poHold=p<0.96?1:map(p,0.96,1.0,1,0);
+      var pi3=easeOut3(clamp((p-0.88)/0.03,0,1));
+      var poHold=p<0.94?1:map(p,0.94,1.0,1,0);
       scenePowered.style.opacity=String(pi3*poHold);
-      scenePowered.style.transform='translate(-50%,-50%) scale('+map(p,0.90,0.96,0.85,1.15)+')';
+      scenePowered.style.transform='translate(-50%,-50%) scale('+map(p,0.88,0.94,0.85,1.15)+')';
 
       // Power lights
       powerLights.forEach(function(pl,li){
-        var ls=0.89+li*0.004,le=ls+0.03;
+        var ls=0.87+li*0.004,le=ls+0.03;
         var lp3=clamp((p-ls)/(le-ls),0,1);
         var w=easeOut3(lp3)*poHold;
         pl.style.background='rgba(230,57,70,'+(w*0.9)+')';
@@ -1156,38 +1066,24 @@ body::before {
       });
 
       // Background goes red-warm
-      if(p>0.89){
-        var bgRed=easeOut3(clamp((p-0.89)/0.05,0,1))*poHold;
+      if(p>0.87){
+        var bgRed=easeOut3(clamp((p-0.87)/0.05,0,1))*poHold;
         bg.style.background='rgb('+Math.round(10+bgRed*60)+','+Math.round(14+bgRed*15)+','+Math.round(18+bgRed*10)+')';
         bg.style.opacity=String(Math.min(bgRed*0.75,0.75));
       }
 
-      // Scene fades behind glow
-      if(p>0.92){
-        var sceneFade=map(p,0.92,0.96,1,0.2);
-        sceneContainer.style.opacity=String(sceneFade);
-      }
-
-      // Hero CTA (96-100%)
-      var fP=map(p,0.96,1.0,0,1);
+      // Hero CTA (94-100%)
+      var fP=map(p,0.94,1.0,0,1);
       var fOp=easeOut3(fP);
       finalEl.style.opacity=String(fOp);
       finalEl.style.transform='translateY('+map(fP,0,1,20,0)+'px)';
-      finalEl.classList.toggle('active',p>0.96);
+      finalEl.classList.toggle('active',p>0.94);
 
       // Phase labels
+      var currentLayer=Math.floor((p-startAt)/perLayer);
       if(p<0.06) setPhase('');
-      else if(p<0.12) setPhase('FRAMING');
-      else if(p<0.22) setPhase('SETTING TRUSSES');
-      else if(p<0.32) setPhase('DECKING');
-      else if(p<0.40) setPhase('ICE & WATER SHIELD');
-      else if(p<0.50) setPhase('UNDERLAYMENT');
-      else if(p<0.70) setPhase('LAYING SHINGLES');
-      else if(p<0.75) setPhase('RIDGE CAP');
-      else if(p<0.80) setPhase('FLASHING');
-      else if(p<0.85) setPhase('GUTTERS & TRIM');
-      else if(p<0.90) setPhase('FINISHING');
-      else if(p<0.96) setPhase('ROOFPRO');
+      else if(currentLayer>=0&&currentLayer<numL) setPhase(layers[currentLayer].name.toUpperCase());
+      else if(p>=0.88&&p<0.94) setPhase('ROOFPRO');
       else setPhase('');
     }
 
