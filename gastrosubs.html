@@ -726,10 +726,10 @@ a{color:inherit;text-decoration:none}
   // Bottom edge touches top of bottom bread, top edge touches bottom of top bread
   // Slightly tapered inward like real bread interior
   var interiorPanel=svgEl('path',{
-    d:'M'+(subX+10)+' '+(bottomBreadTop+20)+
+    d:'M'+(subX+10)+' '+(bottomBreadTop+40)+
       ' L'+(subX+15)+' '+(bottomBreadTop-vOpenH+10)+
       ' L'+(subX+subW-15)+' '+(bottomBreadTop-vOpenH+10)+
-      ' L'+(subX+subW-10)+' '+(bottomBreadTop+20)+' Z',
+      ' L'+(subX+subW-10)+' '+(bottomBreadTop+40)+' Z',
     fill:'url(#breadInner)',stroke:'#DDD0B0','stroke-width':0.5,opacity:0
   });
   gVBread.appendChild(interiorPanel);
@@ -1697,10 +1697,13 @@ a{color:inherit;text-decoration:none}
   if(!stickyOrder||!mainNav||!hero)return;
   var isDesktop=window.innerWidth>768;
   window.addEventListener('resize',function(){isDesktop=window.innerWidth>768;checkScroll();});
-  // On desktop: always show nav + bottom bar
+  // On desktop: always show nav + bottom bar; mobile: ensure hidden initially
   if(isDesktop){
     stickyOrder.style.transform='translateY(0)';
     mainNav.style.transform='translateY(0)';
+  }else{
+    stickyOrder.style.transform='translateY(110%)';
+    mainNav.style.transform='translateY(-100%)';
   }
   var pastParallax=false;
   function checkScroll(){
@@ -1717,7 +1720,7 @@ a{color:inherit;text-decoration:none}
       if(floatOrder)floatOrder.classList.add('hidden');
     }else if(heroBottom>=100&&pastParallax){
       pastParallax=false;
-      stickyOrder.style.transform='translateY(100%)';
+      stickyOrder.style.transform='translateY(110%)';
       mainNav.style.transform='translateY(-100%)';
       if(floatOrder)floatOrder.classList.remove('hidden');
     }
