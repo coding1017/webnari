@@ -371,7 +371,7 @@ a{color:inherit;text-decoration:none}
   var mozzPieces=[];
   // Grid-based mozz placement for even 85% coverage
   var mozzPosArr=[];
-  var mozzGridStep=isMobile?30:25;
+  var mozzGridStep=isMobile?38:32;
   for(var mgx=-sauceR+10;mgx<sauceR-10;mgx+=mozzGridStep){
     for(var mgy=-sauceR+10;mgy<sauceR-10;mgy+=mozzGridStep){
       var mgDist=Math.sqrt(mgx*mgx+mgy*mgy);
@@ -387,10 +387,10 @@ a{color:inherit;text-decoration:none}
     var mzg=svgEl('g',{opacity:0});
 
     // Shadow
-    mzg.appendChild(svgEl('ellipse',{cx:mzx+1,cy:mzy+2,rx:13+Math.random()*6,ry:10+Math.random()*4,fill:'#000',opacity:0.08}));
+    mzg.appendChild(svgEl('ellipse',{cx:mzx+1,cy:mzy+1,rx:8+Math.random()*4,ry:6+Math.random()*3,fill:'#000',opacity:0.06}));
 
     // Irregular torn blob (randomized bezier)
-    var mzR=14+Math.random()*12;
+    var mzR=8+Math.random()*7;
     var mzPts=6+Math.floor(Math.random()*3);
     var mzPath='';
     var mzPoints=[];
@@ -462,7 +462,7 @@ a{color:inherit;text-decoration:none}
   // ─── 9. BASIL LEAVES ───
   var gBasil=svgEl('g',{opacity:0});
   var basilLeaves=[];
-  var basilCount=isMobile?22:14;
+  var basilCount=isMobile?28:18;
   for(var bli=0;bli<basilCount;bli++){
     var bla=bli*Math.PI*2/basilCount+0.5+Math.random()*0.5;
     var bld=sauceR*0.3+Math.random()*sauceR*0.5;
@@ -499,101 +499,136 @@ a{color:inherit;text-decoration:none}
     oreganoFlakes.push(oflake);
   }
 
-  // ─── 10. PIZZA PEEL ───
+  // ─── 10. PIZZA PEEL (handle on right for L→R slide) ───
   var gPeel=svgEl('g',{opacity:0});
-  var peelW=isMobile?620:380, peelH=isMobile?520:360;
-  var peelHandleW=isMobile?240:180, peelHandleH=40;
-  var peelX=cx-peelW/2, peelY=cy-peelH/2+20;
+  var peelW=isMobile?500:340, peelH=isMobile?440:320;
+  var peelHandleLen=isMobile?240:180, peelHandleThk=32;
+  var peelX=cx-peelW/2-40, peelY=cy-peelH/2+10;
   // Paddle
   gPeel.appendChild(svgEl('rect',{x:peelX,y:peelY,width:peelW,height:peelH,rx:20,fill:'url(#woodGrad)',stroke:'#A08030','stroke-width':1.5}));
-  // Wood grain
+  // Wood grain (horizontal)
   for(var gi=0;gi<8;gi++){
     var gy=peelY+20+gi*(peelH-40)/8;
     gPeel.appendChild(svgEl('line',{x1:peelX+10,y1:gy+Math.sin(gi)*4,x2:peelX+peelW-10,y2:gy+Math.cos(gi)*3,stroke:'#B08830','stroke-width':0.6,opacity:0.2}));
   }
-  // Handle
-  gPeel.appendChild(svgEl('rect',{x:cx-peelHandleH/2,y:peelY+peelH,width:peelHandleH,height:peelHandleW,rx:8,fill:'#B08830',stroke:'#907020','stroke-width':1}));
-  // Metal rivets
-  gPeel.appendChild(svgEl('circle',{cx:cx,cy:peelY+peelH+15,r:3,fill:'#999'}));
-  gPeel.appendChild(svgEl('circle',{cx:cx,cy:peelY+peelH+peelHandleW-15,r:3,fill:'#999'}));
+  // Handle on RIGHT side
+  var handleX=peelX+peelW;
+  var handleY=cy-peelHandleThk/2;
+  gPeel.appendChild(svgEl('rect',{x:handleX,y:handleY,width:peelHandleLen,height:peelHandleThk,rx:8,fill:'#B08830',stroke:'#907020','stroke-width':1}));
+  // Metal rivets on handle
+  gPeel.appendChild(svgEl('circle',{cx:handleX+18,cy:cy,r:3,fill:'#999'}));
+  gPeel.appendChild(svgEl('circle',{cx:handleX+peelHandleLen-18,cy:cy,r:3,fill:'#999'}));
   // Insert peel BEFORE disc so it renders underneath the pizza
   svg.insertBefore(gPeel, gDisc);
 
-  // ─── 11. BRICK OVEN ───
+  // ─── 11. BRICK OVEN (3/4 angled view — slightly to our left) ───
   var gOven=svgEl('g',{opacity:0});
-  var ovenW=isMobile?800:550, ovenH=isMobile?420:350;
-  var ovenX=cx-ovenW/2, ovenY=cy-ovenH/2+30;
-  var archH=ovenH*0.85;
-  var archW=ovenW*0.7;
-
-  // Oven mouth (dark interior arch)
-  var archPath='M'+(cx-archW/2)+' '+(ovenY+ovenH)+
-    ' L'+(cx-archW/2)+' '+(ovenY+ovenH-archH*0.6)+
-    ' Q'+(cx-archW/2)+' '+(ovenY+ovenH-archH)+' '+cx+' '+(ovenY+ovenH-archH)+
-    ' Q'+(cx+archW/2)+' '+(ovenY+ovenH-archH)+' '+(cx+archW/2)+' '+(ovenY+ovenH-archH*0.6)+
-    ' L'+(cx+archW/2)+' '+(ovenY+ovenH)+' Z';
-  gOven.appendChild(svgEl('path',{d:archPath,fill:'url(#ovenInterior)'}));
-
-  // Oven floor (visible through mouth)
-  gOven.appendChild(svgEl('rect',{x:cx-archW/2+10,y:ovenY+ovenH-30,width:archW-20,height:30,fill:'#2A1A08'}));
-  // Floor glow from fire
-  gOven.appendChild(svgEl('rect',{x:cx-archW/2+10,y:ovenY+ovenH-30,width:archW-20,height:30,fill:'#FF4400',opacity:0.08}));
-
-  // Bricks around the arch
+  // Oven positioned slightly left of center, angled view
+  var ovCx=cx-40, ovCy=cy+20;
   var brickColors=['#8B4513','#A0522D','#6B3410','#7A4020','#9B5A30','#884818'];
-  var brickCount=isMobile?30:22;
-  for(var bri=0;bri<brickCount;bri++){
-    var brAngle=Math.PI+bri*Math.PI/(brickCount-1);
-    var brDist=archW/2+15;
-    var brDistOuter=brDist+25;
-    var brcx=cx+Math.cos(brAngle)*((brDist+brDistOuter)/2);
-    var brcy=(ovenY+ovenH-archH*0.6)+Math.sin(brAngle)*((brDist+brDistOuter)/2)*(archH/archW);
-    if(brcy>ovenY+ovenH+5)continue;
-    var brRot=((brAngle*180/Math.PI)-90);
+
+  // ── Oven body (dome shape, 3/4 view — wider on left, narrower on right) ──
+  var domeW=isMobile?700:480, domeH=isMobile?340:280;
+  // Outer dome (brick-colored rounded shape with perspective skew)
+  var domeL=ovCx-domeW*0.55, domeR=ovCx+domeW*0.45; // asymmetric for angle
+  var domeTop=ovCy-domeH*0.65, domeBot=ovCy+domeH*0.35;
+  var domePath='M'+domeL+' '+domeBot+
+    ' L'+domeL+' '+(ovCy-domeH*0.15)+
+    ' Q'+domeL+' '+domeTop+' '+ovCx+' '+(domeTop-10)+
+    ' Q'+domeR+' '+domeTop+' '+domeR+' '+(ovCy-domeH*0.1)+
+    ' L'+domeR+' '+domeBot+' Z';
+  gOven.appendChild(svgEl('path',{d:domePath,fill:'#6B3410',stroke:'#3A1A08','stroke-width':2}));
+
+  // Brick texture on dome
+  var domeBrickCount=isMobile?40:28;
+  for(var dbi=0;dbi<domeBrickCount;dbi++){
+    var dbx=domeL+30+Math.random()*(domeR-domeL-60);
+    var dby=domeTop+20+Math.random()*(domeBot-domeTop-40);
+    // Only draw if inside dome shape (approximate)
+    var dbRelX=(dbx-domeL)/(domeR-domeL);
+    var dbRelY=(dby-domeTop)/(domeBot-domeTop);
+    var dbDomeEdge=0.5+0.5*Math.sin(dbRelX*Math.PI);
+    if(dbRelY>0.15&&dbRelY<dbDomeEdge*1.1){
+      gOven.appendChild(svgEl('rect',{
+        x:dbx,y:dby,width:22+Math.random()*8,height:10+Math.random()*4,rx:2,
+        fill:brickColors[dbi%brickColors.length],stroke:'#3A1A08','stroke-width':0.8,
+        opacity:0.6+Math.random()*0.3
+      }));
+    }
+  }
+
+  // ── Oven mouth (dark opening, offset to right for 3/4 view) ──
+  var mouthW=isMobile?300:220, mouthH=isMobile?220:180;
+  var mouthL=ovCx-mouthW*0.3, mouthR=ovCx+mouthW*0.7;
+  var mouthTop=ovCy-mouthH*0.4, mouthBot=ovCy+mouthH*0.6;
+  var mouthPath='M'+mouthL+' '+mouthBot+
+    ' L'+mouthL+' '+(mouthTop+mouthH*0.2)+
+    ' Q'+mouthL+' '+mouthTop+' '+((mouthL+mouthR)/2)+' '+(mouthTop-8)+
+    ' Q'+mouthR+' '+mouthTop+' '+mouthR+' '+(mouthTop+mouthH*0.2)+
+    ' L'+mouthR+' '+mouthBot+' Z';
+  gOven.appendChild(svgEl('path',{d:mouthPath,fill:'#0A0400'}));
+
+  // Oven floor visible through mouth (perspective — narrower at back)
+  var floorPath='M'+mouthL+' '+mouthBot+
+    ' L'+(mouthL+15)+' '+(mouthBot-35)+
+    ' L'+(mouthR-15)+' '+(mouthBot-35)+
+    ' L'+mouthR+' '+mouthBot+' Z';
+  gOven.appendChild(svgEl('path',{d:floorPath,fill:'#2A1A08'}));
+  gOven.appendChild(svgEl('path',{d:floorPath,fill:'#FF4400',opacity:0.06}));
+
+  // Arch bricks around mouth
+  var archBrickCount=isMobile?18:14;
+  for(var abi=0;abi<archBrickCount;abi++){
+    var abAngle=Math.PI+abi*Math.PI/(archBrickCount-1);
+    var abRx=mouthW*0.55, abRy=mouthH*0.55;
+    var abcx2=((mouthL+mouthR)/2)+Math.cos(abAngle)*abRx;
+    var abcy2=(mouthTop+mouthH*0.15)+Math.sin(abAngle)*abRy*0.7;
+    if(abcy2>mouthBot+5)continue;
+    var abRot=((abAngle*180/Math.PI)-90);
     gOven.appendChild(svgEl('rect',{
-      x:brcx-14,y:brcy-8,width:28,height:16,rx:2,
-      fill:brickColors[bri%brickColors.length],
-      stroke:'#3A1A08','stroke-width':1.5,
-      transform:'rotate('+brRot+','+brcx+','+brcy+')'
+      x:abcx2-12,y:abcy2-7,width:24,height:14,rx:2,
+      fill:brickColors[abi%brickColors.length],
+      stroke:'#3A1A08','stroke-width':1.2,
+      transform:'rotate('+abRot+','+abcx2+','+abcy2+')'
     }));
   }
-  // Side bricks (vertical columns)
-  for(var sbi=0;sbi<4;sbi++){
-    var sby=ovenY+ovenH-sbi*22-20;
-    gOven.appendChild(svgEl('rect',{x:cx-archW/2-20,y:sby,width:28,height:16,rx:2,fill:brickColors[(sbi+2)%brickColors.length],stroke:'#3A1A08','stroke-width':1.5}));
-    gOven.appendChild(svgEl('rect',{x:cx+archW/2-8,y:sby,width:28,height:16,rx:2,fill:brickColors[(sbi+4)%brickColors.length],stroke:'#3A1A08','stroke-width':1.5}));
-  }
 
-  // Flames at back of oven
+  // ── Base/hearth (stone ledge below mouth) ──
+  var hearthPath='M'+(domeL+10)+' '+mouthBot+
+    ' L'+(domeL-5)+' '+(mouthBot+25)+
+    ' L'+(domeR+15)+' '+(mouthBot+25)+
+    ' L'+(domeR+5)+' '+mouthBot+' Z';
+  gOven.appendChild(svgEl('path',{d:hearthPath,fill:'#555',stroke:'#333','stroke-width':1.5}));
+
+  // ── Flames inside (visible through mouth, at the back wall) ──
   var flames=[];
   var flameCount=isMobile?7:5;
   for(var fli=0;fli<flameCount;fli++){
-    var flx=cx-archW*0.25+fli*(archW*0.5/(flameCount-1));
-    var flH=30+Math.random()*25;
-    var flBase=ovenY+ovenH-archH*0.45;
-    var flPath='M'+(flx-6)+' '+flBase+
-      ' Q'+(flx-8)+' '+(flBase-flH*0.5)+' '+(flx-2)+' '+(flBase-flH*0.8)+
-      ' Q'+flx+' '+(flBase-flH)+' '+(flx+2)+' '+(flBase-flH*0.75)+
-      ' Q'+(flx+8)+' '+(flBase-flH*0.4)+' '+(flx+6)+' '+flBase+' Z';
+    var flx=mouthL+25+fli*((mouthR-mouthL-50)/(flameCount-1));
+    var flH=20+Math.random()*20;
+    var flBase=mouthBot-40;
+    var flPath='M'+(flx-5)+' '+flBase+
+      ' Q'+(flx-6)+' '+(flBase-flH*0.5)+' '+(flx-1)+' '+(flBase-flH*0.8)+
+      ' Q'+flx+' '+(flBase-flH)+' '+(flx+1)+' '+(flBase-flH*0.75)+
+      ' Q'+(flx+6)+' '+(flBase-flH*0.4)+' '+(flx+5)+' '+flBase+' Z';
     var fl=svgEl('path',{d:flPath,fill:'url(#flameGrad)',opacity:0.8});
     gOven.appendChild(fl);
     flames.push(fl);
   }
 
-  // Embers on floor
+  // ── Embers on floor ──
   var embers=[];
-  var emberCount=isMobile?15:10;
+  var emberCount=isMobile?12:8;
   for(var ei=0;ei<emberCount;ei++){
-    var ex=cx-archW*0.3+Math.random()*archW*0.6;
-    var ey=ovenY+ovenH-20+Math.random()*10;
+    var ex=mouthL+20+Math.random()*(mouthR-mouthL-40);
+    var ey=mouthBot-15+Math.random()*8;
     var ember=svgEl('circle',{cx:ex,cy:ey,r:1+Math.random()*1.5,fill:Math.random()>0.5?'#FF4400':'#FF8800',opacity:0.4+Math.random()*0.3});
     gOven.appendChild(ember);
     embers.push(ember);
   }
 
-  // Flame licks on ceiling
-  gOven.appendChild(svgEl('path',{d:'M'+(cx-40)+' '+(ovenY+ovenH-archH+25)+' Q'+(cx-30)+' '+(ovenY+ovenH-archH+10)+' '+(cx-20)+' '+(ovenY+ovenH-archH+25),fill:'#FF4400',opacity:0.2}));
-  gOven.appendChild(svgEl('path',{d:'M'+(cx+20)+' '+(ovenY+ovenH-archH+20)+' Q'+(cx+35)+' '+(ovenY+ovenH-archH+8)+' '+(cx+45)+' '+(ovenY+ovenH-archH+22),fill:'#FF6600',opacity:0.15}));
+  // Ceiling fire glow
+  gOven.appendChild(svgEl('path',{d:'M'+(mouthL+30)+' '+(mouthTop+15)+' Q'+((mouthL+mouthR)/2)+' '+(mouthTop+5)+' '+(mouthR-30)+' '+(mouthTop+15),fill:'none',stroke:'#FF4400','stroke-width':3,opacity:0.15}));
 
   svg.appendChild(gOven);
 
@@ -771,7 +806,7 @@ a{color:inherit;text-decoration:none}
   svg.appendChild(gShimmer);
 
   // Warm oven glow overlay (for baking)
-  var gOvenGlow=svgEl('rect',{x:cx-archW/2+10,y:ovenY+ovenH-archH,width:archW-20,height:archH,fill:'#FF4400',opacity:0,rx:10});
+  var gOvenGlow=svgEl('rect',{x:mouthL,y:mouthTop,width:mouthR-mouthL,height:mouthBot-mouthTop,fill:'#FF4400',opacity:0,rx:10});
   svg.appendChild(gOvenGlow);
 
   // ═══ ANIMATION UPDATE ═══
@@ -1047,48 +1082,65 @@ a{color:inherit;text-decoration:none}
     }
 
     // ── 9. INTO THE OVEN (57-67%) ──
+    // Pizza on peel slides from right toward oven mouth, shrinks into it
     if(p>=0.57&&p<0.67){
       var ovenP=clamp((p-0.57)/0.10,0,1);
       setPhase('INTO THE OVEN');
+      // Oven mouth center for targeting
+      var mCx=(mouthL+mouthR)/2-cx, mCy=(mouthTop+mouthBot)/2-cy;
 
-      if(ovenP<0.3){
-        var ovenInP=ease3(ovenP/0.3);
+      // 9a: Oven fades in while pizza+peel wait to the right (0-25%)
+      if(ovenP<0.25){
+        var ovenInP=ease3(ovenP/0.25);
         gOven.setAttribute('opacity',String(ovenInP));
-        gOven.setAttribute('transform','scale('+(0.9+ovenInP*0.1)+')');
         showDiscFull();showSauceFull();showAllMozz();showAllPep();showAllBasil();
         gPeel.setAttribute('opacity','1');
-        gPeel.setAttribute('transform','translate(300,-20)');
-        gDisc.setAttribute('transform','translate(300,-20)');
-        gSauce_g.setAttribute('transform','translate(300,-20)');
-        gMozz_g.setAttribute('transform','translate(300,-20)');
-        gPep_g.setAttribute('transform','translate(300,-20)');
-        gBasil.setAttribute('transform','translate(300,-20)');
+        gPeel.setAttribute('transform','translate(350,0)');
+        gDisc.setAttribute('transform','translate(350,0)');
+        gSauce_g.setAttribute('transform','translate(350,0)');
+        gMozz_g.setAttribute('transform','translate(350,0)');
+        gPep_g.setAttribute('transform','translate(350,0)');
+        gBasil.setAttribute('transform','translate(350,0)');
       }
-      else if(ovenP<0.7){
-        var slideP=ease3((ovenP-0.3)/0.4);
+      // 9b: Pizza+peel slide left toward oven mouth (25-60%)
+      else if(ovenP<0.60){
+        var slideP=ease3((ovenP-0.25)/0.35);
         gOven.setAttribute('opacity','1');
-        var slideX=300-slideP*300;
+        var slideX2=350-slideP*350;
         showDiscFull();showSauceFull();showAllMozz();showAllPep();showAllBasil();
         gPeel.setAttribute('opacity','1');
-        gPeel.setAttribute('transform','translate('+slideX+',-20)');
-        gDisc.setAttribute('transform','translate('+slideX+',-20)');
-        gSauce_g.setAttribute('transform','translate('+slideX+',-20)');
-        gMozz_g.setAttribute('transform','translate('+slideX+',-20)');
-        gPep_g.setAttribute('transform','translate('+slideX+',-20)');
-        gBasil.setAttribute('transform','translate('+slideX+',-20)');
+        gPeel.setAttribute('transform','translate('+slideX2+',0)');
+        gDisc.setAttribute('transform','translate('+slideX2+',0)');
+        gSauce_g.setAttribute('transform','translate('+slideX2+',0)');
+        gMozz_g.setAttribute('transform','translate('+slideX2+',0)');
+        gPep_g.setAttribute('transform','translate('+slideX2+',0)');
+        gBasil.setAttribute('transform','translate('+slideX2+',0)');
       }
+      // 9c: Pizza slides into oven mouth (shrinks + moves into opening), peel withdraws (60-100%)
       else {
-        var withdrawP=ease3((ovenP-0.7)/0.3);
+        var intoP=ease3((ovenP-0.60)/0.40);
         gOven.setAttribute('opacity','1');
+        // Peel pulls back to the right
+        gPeel.setAttribute('opacity',String(1-intoP));
+        gPeel.setAttribute('transform','translate('+(intoP*300)+',0)');
+        // Pizza moves toward mouth center and shrinks (going inside)
+        var pScale=1-intoP*0.4;
+        var pTx=mCx*intoP;
+        var pTy=mCy*intoP*0.5;
+        var pizzaTrans='translate('+pTx+','+pTy+') translate('+cx*(1-pScale)+','+cy*(1-pScale)+') scale('+pScale+')';
         showDiscFull();showSauceFull();showAllMozz();showAllPep();showAllBasil();
-        gPeel.setAttribute('opacity',String(1-withdrawP));
-        gPeel.setAttribute('transform','translate('+(withdrawP*350)+',-20)');
-        var rawFade=1-withdrawP*0.3;
-        gDisc.setAttribute('opacity',String(rawFade));
-        gSauce_g.setAttribute('opacity',String(rawFade));
-        gMozz_g.setAttribute('opacity',String(rawFade));
-        gPep_g.setAttribute('opacity',String(rawFade));
-        gBasil.setAttribute('opacity',String(rawFade));
+        // Fade raw toppings as they enter the dark oven
+        var rawFade2=1-intoP*0.7;
+        gDisc.setAttribute('opacity',String(rawFade2));
+        gDisc.setAttribute('transform',pizzaTrans);
+        gSauce_g.setAttribute('opacity',String(rawFade2));
+        gSauce_g.setAttribute('transform',pizzaTrans);
+        gMozz_g.setAttribute('opacity',String(rawFade2));
+        gMozz_g.setAttribute('transform',pizzaTrans);
+        gPep_g.setAttribute('opacity',String(rawFade2));
+        gPep_g.setAttribute('transform',pizzaTrans);
+        gBasil.setAttribute('opacity',String(rawFade2));
+        gBasil.setAttribute('transform',pizzaTrans);
       }
     }
 
