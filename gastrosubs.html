@@ -889,7 +889,7 @@ a{color:inherit;text-decoration:none}
   }
   gVBread.appendChild(gTomato);
 
-  // 9. ONION RINGS — white/cream visible rings, not purple
+  // 9. ONION RINGS — red/purple onion rings
   var gOnion=svgEl('g',{opacity:0});
   var onionRings=[];
   var onionCount=isMobile?8:5;
@@ -897,16 +897,16 @@ a{color:inherit;text-decoration:none}
     var oxx=subX+subW*0.08+oni*(subW*0.78/(onionCount-1));
     var oy=bottomBreadTop-62;
     var og=svgEl('g',{opacity:0});
-    // Outer ring — white/cream onion
-    og.appendChild(svgEl('circle',{cx:oxx,cy:oy,r:14,fill:'none',stroke:'#F5F0E0','stroke-width':4,opacity:0.9}));
-    // Middle layer
-    og.appendChild(svgEl('circle',{cx:oxx,cy:oy,r:10,fill:'none',stroke:'#EDE4D0','stroke-width':2.5,opacity:0.7}));
-    // Inner ring
-    og.appendChild(svgEl('circle',{cx:oxx,cy:oy,r:6.5,fill:'none',stroke:'#E8DCC0','stroke-width':1.5,opacity:0.5}));
-    // Subtle purple tint on outer edge (red onion hint)
-    og.appendChild(svgEl('circle',{cx:oxx,cy:oy,r:14,fill:'none',stroke:'#CE93D8','stroke-width':1,opacity:0.25}));
+    // Outer ring — deep purple/red
+    og.appendChild(svgEl('circle',{cx:oxx,cy:oy,r:14,fill:'none',stroke:'#8B2252','stroke-width':4,opacity:0.9}));
+    // Middle layer — lighter purple
+    og.appendChild(svgEl('circle',{cx:oxx,cy:oy,r:10,fill:'none',stroke:'#B0446E','stroke-width':2.5,opacity:0.8}));
+    // Inner ring — pinkish
+    og.appendChild(svgEl('circle',{cx:oxx,cy:oy,r:6.5,fill:'none',stroke:'#D4789A','stroke-width':1.5,opacity:0.6}));
+    // White flesh between layers
+    og.appendChild(svgEl('circle',{cx:oxx,cy:oy,r:12,fill:'none',stroke:'#F0E0E8','stroke-width':1,opacity:0.5}));
     // Shine
-    og.appendChild(svgEl('ellipse',{cx:oxx-3,cy:oy-4,rx:4,ry:2,fill:'#FFF',opacity:0.15}));
+    og.appendChild(svgEl('ellipse',{cx:oxx-3,cy:oy-4,rx:4,ry:2,fill:'#FFF',opacity:0.25}));
     gOnion.appendChild(og);
     onionRings.push(og);
   }
@@ -916,21 +916,21 @@ a{color:inherit;text-decoration:none}
   var gToppings=svgEl('g',{opacity:0});
   var pepperPieces=[];
   var pepperCount=isMobile?10:7;
-  var pepColors=['#4CAF50','#8BC34A','#FFEB3B','#4CAF50','#FFC107','#66BB6A','#4CAF50','#8BC34A','#FFEB3B','#4CAF50','#FFC107','#66BB6A'];
+  var pepColors=['#2E7D32','#43A047','#F9A825','#2E7D32','#E65100','#388E3C','#2E7D32','#43A047','#F9A825','#2E7D32','#E65100','#388E3C'];
   for(var pi=0;pi<pepperCount;pi++){
     var px=subX+subW*0.08+pi*(subW*0.78/(pepperCount-1));
     var py=bottomBreadTop-74+Math.random()*4;
     var pg=svgEl('g',{opacity:0});
-    // Bell pepper ring cross-section
-    pg.appendChild(svgEl('circle',{cx:px,cy:py,r:10,fill:'none',stroke:pepColors[pi],'stroke-width':4,opacity:0.9}));
+    // Bell pepper ring cross-section — thicker, bolder
+    pg.appendChild(svgEl('circle',{cx:px,cy:py,r:12,fill:'none',stroke:pepColors[pi],'stroke-width':5,opacity:1}));
     // Inner membrane
-    pg.appendChild(svgEl('circle',{cx:px,cy:py,r:6,fill:'none',stroke:pepColors[pi],'stroke-width':1.5,opacity:0.4}));
+    pg.appendChild(svgEl('circle',{cx:px,cy:py,r:7,fill:'none',stroke:pepColors[pi],'stroke-width':2,opacity:0.6}));
     // Seed cluster in center
     for(var psi=0;psi<3;psi++){
-      pg.appendChild(svgEl('circle',{cx:px-2+psi*2,cy:py-1+psi,r:1,fill:'#FFF8E1',opacity:0.5}));
+      pg.appendChild(svgEl('circle',{cx:px-2+psi*2,cy:py-1+psi,r:1.2,fill:'#FFF8E1',opacity:0.7}));
     }
     // Highlight
-    pg.appendChild(svgEl('ellipse',{cx:px-3,cy:py-3,rx:3,ry:2,fill:'#FFF',opacity:0.15}));
+    pg.appendChild(svgEl('ellipse',{cx:px-3,cy:py-3,rx:4,ry:2.5,fill:'#FFF',opacity:0.2}));
     gToppings.appendChild(pg);
     pepperPieces.push(pg);
   }
