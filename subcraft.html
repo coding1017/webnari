@@ -552,25 +552,29 @@ a{color:inherit;text-decoration:none}
     // Checker wrap
     wg.appendChild(svgEl('path',{d:bodyPath,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
 
-    // Cross-section on the CUT END — thicker with detailed meat layers
-    var csW=35;
-    var csx=side==='left'?hx+hw-csW:hx;
-    // Bread crust outer
-    wg.appendChild(svgEl('rect',{x:csx,y:subY-hh,width:csW,height:hh*2,rx:3,fill:'#C8882A',stroke:'#A06820','stroke-width':2}));
+    // Cross-section on the CUT END — tall oval matching the sub's actual shape
+    var csRX=20; // horizontal radius (width of the oval cross-section)
+    var csRY=hh; // vertical radius = full sub height
+    var csCX=side==='left'?hx+hw-csRX:hx+csRX; // center of the oval
+    // Bread crust outer (tall oval)
+    wg.appendChild(svgEl('ellipse',{cx:csCX,cy:subY,rx:csRX,ry:csRY,fill:'#C8882A',stroke:'#A06820','stroke-width':2}));
     // Bread interior
-    wg.appendChild(svgEl('rect',{x:csx+4,y:subY-hh+5,width:csW-8,height:hh*2-10,rx:2,fill:'#F5E6C8'}));
+    wg.appendChild(svgEl('ellipse',{cx:csCX,cy:subY,rx:csRX-4,ry:csRY-5,fill:'#F5E6C8'}));
     // Bread air pockets
-    wg.appendChild(svgEl('circle',{cx:csx+csW/2-3,cy:subY-hh+12,r:2.5,fill:'#ECD8B0',opacity:0.5}));
-    wg.appendChild(svgEl('circle',{cx:csx+csW/2+5,cy:subY+hh-12,r:2,fill:'#ECD8B0',opacity:0.5}));
-    // Filling layers — thick and detailed
-    var layerX=csx+5, layerW=csW-10;
-    wg.appendChild(svgEl('rect',{x:layerX,y:subY-16,width:layerW,height:5,rx:1,fill:'#4CAF50'}));  // lettuce
-    wg.appendChild(svgEl('rect',{x:layerX,y:subY-10,width:layerW,height:5,rx:1,fill:'#CC4444'}));  // salami
-    wg.appendChild(svgEl('rect',{x:layerX,y:subY-4,width:layerW,height:4,rx:1,fill:'#B03030'}));   // pepperoni
-    wg.appendChild(svgEl('rect',{x:layerX,y:subY+1,width:layerW,height:5,rx:1,fill:'#F0A0A0'}));   // ham
-    wg.appendChild(svgEl('rect',{x:layerX,y:subY+7,width:layerW,height:4,rx:1,fill:'#C85A3A'}));   // capicola
-    wg.appendChild(svgEl('rect',{x:layerX,y:subY+12,width:layerW,height:5,rx:1,fill:'#FFF8E0'}));  // mozzarella
-    wg.appendChild(svgEl('rect',{x:layerX,y:subY+18,width:layerW,height:4,rx:1,fill:'#E53935'}));  // tomato
+    wg.appendChild(svgEl('circle',{cx:csCX-3,cy:subY-csRY+14,r:2.5,fill:'#ECD8B0',opacity:0.5}));
+    wg.appendChild(svgEl('circle',{cx:csCX+4,cy:subY-csRY+22,r:2,fill:'#ECD8B0',opacity:0.4}));
+    wg.appendChild(svgEl('circle',{cx:csCX-2,cy:subY+csRY-14,r:2.5,fill:'#ECD8B0',opacity:0.5}));
+    wg.appendChild(svgEl('circle',{cx:csCX+5,cy:subY+csRY-20,r:1.8,fill:'#ECD8B0',opacity:0.4}));
+    // Filling layers — packed tight, filling the middle of the oval
+    var layerW=csRX*2-12, layerX=csCX-layerW/2;
+    wg.appendChild(svgEl('rect',{x:layerX,y:subY-20,width:layerW,height:5,rx:2,fill:'#4CAF50'}));  // lettuce
+    wg.appendChild(svgEl('rect',{x:layerX,y:subY-14,width:layerW,height:5,rx:2,fill:'#CC4444'}));  // salami
+    wg.appendChild(svgEl('rect',{x:layerX,y:subY-8,width:layerW,height:4,rx:2,fill:'#B03030'}));   // pepperoni
+    wg.appendChild(svgEl('rect',{x:layerX,y:subY-3,width:layerW,height:5,rx:2,fill:'#F0A0A0'}));   // ham
+    wg.appendChild(svgEl('rect',{x:layerX,y:subY+3,width:layerW,height:4,rx:2,fill:'#C85A3A'}));   // capicola
+    wg.appendChild(svgEl('rect',{x:layerX,y:subY+8,width:layerW,height:5,rx:2,fill:'#FFFACD'}));   // provolone (yellow)
+    wg.appendChild(svgEl('rect',{x:layerX,y:subY+14,width:layerW,height:4,rx:2,fill:'#E53935'}));  // tomato
+    wg.appendChild(svgEl('rect',{x:layerX,y:subY+19,width:layerW,height:4,rx:2,fill:'#388E3C'}));  // more lettuce
 
     return wg;
   }
@@ -594,80 +598,67 @@ a{color:inherit;text-decoration:none}
   // Paper fold crease
   gBasketScene.appendChild(svgEl('line',{x1:paperCX-paperW/2+15,y1:paperCY,x2:paperCX+paperW/2-15,y2:paperCY,stroke:'#DDD5C5','stroke-width':0.5,opacity:0.5}));
 
-  // Two sub halves displayed with CUT FACE TOWARD VIEWER (like the reference photo)
-  // Each half shows a big thick cross-section with visible layers
-  // Presented side by side, cut faces front, like being held up to show the fillings
-  var crossW=140; // width of each cross-section face
-  var crossH=140; // height — thick and prominent
+  // Final presentation: same style as the cut phase — tall oval cross-sections
+  // Sub halves laid horizontal, bodies point inward, cut faces on outer sides
+  var fSubW=180; // length of each half body
+  var fSubH=subH+10; // height matching the sub
+  var fcsRX=30; // cross-section oval horizontal radius (scaled up from cut phase)
+  var fcsRY=fSubH/2; // cross-section oval vertical radius
 
-  // Helper: draw a detailed cross-section face (the hero of the presentation)
-  function drawCrossSection(g,cx2,cy2,w,h){
-    var hw=w/2, hh=h/2;
-    // Bread crust outer (OVAL shape like real bread cross-section)
-    g.appendChild(svgEl('ellipse',{cx:cx2,cy:cy2,rx:hw,ry:hh,fill:'#C8882A',stroke:'#906018','stroke-width':2}));
-    // Bread interior (slightly smaller oval)
-    g.appendChild(svgEl('ellipse',{cx:cx2,cy:cy2,rx:hw-8,ry:hh-8,fill:'#F5E6C8'}));
-    // Bread texture dots (air pockets) — top area
-    for(var bi2=0;bi2<8;bi2++){
-      var bx=cx2-hw+20+Math.random()*(w-40);
-      var by=cy2-hh+15+Math.random()*25;
-      g.appendChild(svgEl('circle',{cx:bx,cy:by,r:2+Math.random()*3,fill:'#ECD8B0',opacity:0.5}));
-    }
-    // Bottom bread interior dots
-    for(var bi3=0;bi3<6;bi3++){
-      var bx2=cx2-hw+20+Math.random()*(w-40);
-      var by2=cy2+hh-35+Math.random()*18;
-      g.appendChild(svgEl('circle',{cx:bx2,cy:by2,r:2+Math.random()*3,fill:'#ECD8B0',opacity:0.5}));
-    }
-    // === FILLING LAYERS (thick horizontal bands, center of cross-section) ===
-    var fillTop=cy2-20, fillH=50;
-    // Lettuce (green, ruffled edges)
-    g.appendChild(svgEl('rect',{x:cx2-hw+10,y:fillTop,width:w-20,height:8,rx:3,fill:'#4CAF50'}));
-    g.appendChild(svgEl('rect',{x:cx2-hw+8,y:fillTop+1,width:w-16,height:6,rx:3,fill:'#66BB6A',opacity:0.6}));
-    // Salami/pepperoni
-    g.appendChild(svgEl('rect',{x:cx2-hw+10,y:fillTop+9,width:w-20,height:8,rx:2,fill:'#CC4444'}));
-    // Ham (pink)
-    g.appendChild(svgEl('rect',{x:cx2-hw+10,y:fillTop+18,width:w-20,height:7,rx:2,fill:'#E8A0A0'}));
-    // Capicola (reddish)
-    g.appendChild(svgEl('rect',{x:cx2-hw+10,y:fillTop+26,width:w-20,height:6,rx:2,fill:'#C85A3A'}));
-    // Cheese (white mozzarella)
-    g.appendChild(svgEl('rect',{x:cx2-hw+10,y:fillTop+33,width:w-20,height:7,rx:2,fill:'#FFF8E0'}));
-    g.appendChild(svgEl('rect',{x:cx2-hw+12,y:fillTop+34,width:w-24,height:5,rx:2,fill:'#F8E8A0',opacity:0.5}));
-    // Tomato slices
-    g.appendChild(svgEl('rect',{x:cx2-hw+10,y:fillTop+41,width:w-20,height:6,rx:2,fill:'#E53935'}));
-    // More lettuce at bottom
-    g.appendChild(svgEl('rect',{x:cx2-hw+10,y:fillTop+48,width:w-20,height:6,rx:3,fill:'#388E3C'}));
+  // Helper: draw a tall oval cross-section (same style as cut phase, just bigger)
+  function drawFinalCS(g,fcx,fcy,rx,ry){
+    g.appendChild(svgEl('ellipse',{cx:fcx,cy:fcy,rx:rx,ry:ry,fill:'#C8882A',stroke:'#A06820','stroke-width':2.5}));
+    g.appendChild(svgEl('ellipse',{cx:fcx,cy:fcy,rx:rx-5,ry:ry-6,fill:'#F5E6C8'}));
+    // Air pockets
+    g.appendChild(svgEl('circle',{cx:fcx-4,cy:fcy-ry+16,r:3,fill:'#ECD8B0',opacity:0.5}));
+    g.appendChild(svgEl('circle',{cx:fcx+6,cy:fcy-ry+25,r:2.5,fill:'#ECD8B0',opacity:0.4}));
+    g.appendChild(svgEl('circle',{cx:fcx-3,cy:fcy+ry-16,r:3,fill:'#ECD8B0',opacity:0.5}));
+    g.appendChild(svgEl('circle',{cx:fcx+5,cy:fcy+ry-24,r:2,fill:'#ECD8B0',opacity:0.4}));
+    // Filling layers — same as cut phase, scaled up
+    var lw=rx*2-14, lx=fcx-lw/2;
+    g.appendChild(svgEl('rect',{x:lx,y:fcy-24,width:lw,height:6,rx:2,fill:'#4CAF50'}));
+    g.appendChild(svgEl('rect',{x:lx,y:fcy-17,width:lw,height:6,rx:2,fill:'#CC4444'}));
+    g.appendChild(svgEl('rect',{x:lx,y:fcy-10,width:lw,height:5,rx:2,fill:'#B03030'}));
+    g.appendChild(svgEl('rect',{x:lx,y:fcy-4,width:lw,height:6,rx:2,fill:'#F0A0A0'}));
+    g.appendChild(svgEl('rect',{x:lx,y:fcy+3,width:lw,height:5,rx:2,fill:'#C85A3A'}));
+    g.appendChild(svgEl('rect',{x:lx,y:fcy+9,width:lw,height:6,rx:2,fill:'#FFFACD'}));
+    g.appendChild(svgEl('rect',{x:lx,y:fcy+16,width:lw,height:5,rx:2,fill:'#E53935'}));
+    g.appendChild(svgEl('rect',{x:lx,y:fcy+22,width:lw,height:5,rx:2,fill:'#388E3C'}));
   }
 
-  // Both sub bodies point INWARD (toward center), cut faces on OUTER sides
-  // Left half: body goes RIGHT toward center, cut face on LEFT (outer edge)
+  // Left half: body goes RIGHT (inward), tall oval cross-section on LEFT (outer)
   var bLeftG=svgEl('g',{});
-  var blCrossCX=paperCX-crossW/2-30; // cross-section on the left (outer)
   var blCY=paperCY-5;
-  var bodyLen=130;
-  var bodyH=crossH-30;
-  // Wrapped body going RIGHT (inward toward center) — rounded right end
-  var blBodyX=blCrossCX+crossW/2-5;
-  bLeftG.appendChild(svgEl('rect',{x:blBodyX,y:blCY-bodyH/2,width:bodyLen,height:bodyH,rx:bodyH/2,fill:'#FFFFFF'}));
-  bLeftG.appendChild(svgEl('rect',{x:blBodyX,y:blCY-bodyH/2,width:bodyLen,height:bodyH,rx:bodyH/2,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
-  // Bread crust peeking over wrapper
-  bLeftG.appendChild(svgEl('rect',{x:blBodyX+15,y:blCY-bodyH/2-6,width:bodyLen-30,height:12,rx:6,fill:'url(#crustGrad)',opacity:0.65}));
-  // Cross-section face on LEFT (the outer cut face)
-  drawCrossSection(bLeftG,blCrossCX,blCY,crossW,crossH);
+  var blCSCX=paperCX-fcsRX-fSubW/2-10; // cross-section center X
+  // Wrapped body (flat left end where cross-section is, rounded right end)
+  var blBodyX=blCSCX+fcsRX-2;
+  var blBodyPath='M'+blBodyX+' '+(blCY-fSubH/2)+
+    ' L'+(blBodyX+fSubW-fSubH/2)+' '+(blCY-fSubH/2)+
+    ' A'+(fSubH/2)+' '+(fSubH/2)+' 0 0 1 '+(blBodyX+fSubW)+' '+blCY+
+    ' A'+(fSubH/2)+' '+(fSubH/2)+' 0 0 1 '+(blBodyX+fSubW-fSubH/2)+' '+(blCY+fSubH/2)+
+    ' L'+blBodyX+' '+(blCY+fSubH/2)+' Z';
+  bLeftG.appendChild(svgEl('path',{d:blBodyPath,fill:'#FFFFFF'}));
+  bLeftG.appendChild(svgEl('path',{d:blBodyPath,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
+  bLeftG.appendChild(svgEl('rect',{x:blBodyX+10,y:blCY-fSubH/2-5,width:fSubW-40,height:12,rx:6,fill:'url(#crustGrad)',opacity:0.6}));
+  drawFinalCS(bLeftG,blCSCX,blCY,fcsRX,fcsRY);
   bLeftG.setAttribute('transform','rotate(-1,'+paperCX+','+paperCY+')');
   gBasketScene.appendChild(bLeftG);
 
-  // Right half: body goes LEFT toward center, cut face on RIGHT (outer edge)
+  // Right half: body goes LEFT (inward), tall oval cross-section on RIGHT (outer)
   var bRightG=svgEl('g',{});
-  var brCrossCX=paperCX+crossW/2+30; // cross-section on the right (outer)
   var brCY=paperCY;
-  // Wrapped body going LEFT (inward toward center) — rounded left end
-  var brBodyX=brCrossCX-crossW/2-bodyLen+5;
-  bRightG.appendChild(svgEl('rect',{x:brBodyX,y:brCY-bodyH/2,width:bodyLen,height:bodyH,rx:bodyH/2,fill:'#FFFFFF'}));
-  bRightG.appendChild(svgEl('rect',{x:brBodyX,y:brCY-bodyH/2,width:bodyLen,height:bodyH,rx:bodyH/2,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
-  bRightG.appendChild(svgEl('rect',{x:brBodyX+15,y:brCY-bodyH/2-6,width:bodyLen-30,height:12,rx:6,fill:'url(#crustGrad)',opacity:0.65}));
-  // Cross-section face on RIGHT (the outer cut face)
-  drawCrossSection(bRightG,brCrossCX,brCY,crossW,crossH);
+  var brCSCX=paperCX+fcsRX+fSubW/2+10; // cross-section center X
+  var brBodyX=brCSCX-fcsRX-fSubW+2;
+  var brBodyPath='M'+(brBodyX+fSubH/2)+' '+(brCY-fSubH/2)+
+    ' L'+(brCSCX-fcsRX+2)+' '+(brCY-fSubH/2)+
+    ' L'+(brCSCX-fcsRX+2)+' '+(brCY+fSubH/2)+
+    ' L'+(brBodyX+fSubH/2)+' '+(brCY+fSubH/2)+
+    ' A'+(fSubH/2)+' '+(fSubH/2)+' 0 0 1 '+brBodyX+' '+brCY+
+    ' A'+(fSubH/2)+' '+(fSubH/2)+' 0 0 1 '+(brBodyX+fSubH/2)+' '+(brCY-fSubH/2)+' Z';
+  bRightG.appendChild(svgEl('path',{d:brBodyPath,fill:'#FFFFFF'}));
+  bRightG.appendChild(svgEl('path',{d:brBodyPath,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
+  bRightG.appendChild(svgEl('rect',{x:brBodyX+20,y:brCY-fSubH/2-5,width:fSubW-40,height:12,rx:6,fill:'url(#crustGrad)',opacity:0.6}));
+  drawFinalCS(bRightG,brCSCX,brCY,fcsRX,fcsRY);
   bRightG.setAttribute('transform','rotate(1,'+paperCX+','+paperCY+')');
   gBasketScene.appendChild(bRightG);
 
