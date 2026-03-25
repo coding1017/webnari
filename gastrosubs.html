@@ -728,7 +728,7 @@ a{color:inherit;text-decoration:none}
   var interiorPanel=svgEl('path',{
     d:'M'+(subX+5)+' '+(bottomBreadTop+40)+
       ' L'+(subX+5)+' '+(bottomBreadTop-vOpenH+5)+
-      ' L'+(subX+subW-5)+' '+(bottomBreadTop-vOpenH-25)+
+      ' L'+(subX+subW-5)+' '+(bottomBreadTop-vOpenH+5)+
       ' L'+(subX+subW-5)+' '+(bottomBreadTop+40)+' Z',
     fill:'url(#breadInner)',stroke:'#DDD0B0','stroke-width':0.5,opacity:0
   });
@@ -773,7 +773,7 @@ a{color:inherit;text-decoration:none}
   var lettuceLeaves=[];
   var lettuceCount=isMobile?10:7;
   for(var li=0;li<lettuceCount;li++){
-    var lx=subX+subW*0.02+li*(subW*0.78/(lettuceCount-1));
+    var lx=subX+subW*0.02+li*(subW*0.82/(lettuceCount-1));
     var ly=bottomBreadTop-8;
     var leafPath='M'+lx+' '+ly+' Q'+(lx+10)+' '+(ly-18)+' '+(lx+25)+' '+(ly-12)+' Q'+(lx+35)+' '+(ly-22)+' '+(lx+50)+' '+(ly-10)+' Q'+(lx+60)+' '+(ly-18)+' '+(lx+70)+' '+(ly-6)+' Q'+(lx+55)+' '+(ly+4)+' '+(lx+35)+' '+(ly+2)+' Q'+(lx+15)+' '+(ly+6)+' '+lx+' '+ly;
     var leaf=svgEl('path',{d:leafPath,fill:li%2===0?'#4CAF50':'#66BB6A',stroke:'#2E7D32','stroke-width':0.5,opacity:0});
@@ -1321,7 +1321,7 @@ a{color:inherit;text-decoration:none}
       interiorPanel.setAttribute('opacity','1');
       // Top bread rotated up ~40deg, pivoting at back (top) edge
       // We use skewY to create the angled-open look from the back hinge
-      topBread.setAttribute('transform','translate(0,'+(-(vOpenH-subH/2))+') skewY(3)');
+      topBread.setAttribute('transform','translate(0,'+(-(vOpenH-subH/2))+')');
       bottomBread.setAttribute('transform','translate(0,20)');
     }
     function showOilFull(){
@@ -1410,8 +1410,7 @@ a{color:inherit;text-decoration:none}
       // Top bread rotates upward from back hinge (after knife passes)
       var openAmount=ease3(clamp((sliceP-0.3)/0.7,0,1));
       var topLift=-(vOpenH-subH/2)*openAmount;
-      var topSkew=3*openAmount;
-      topBread.setAttribute('transform','translate(0,'+topLift+') skewY('+topSkew+')');
+      topBread.setAttribute('transform','translate(0,'+topLift+')');
 
       // Bottom bread drops slightly
       var bottomDrop=20*openAmount;
@@ -1526,8 +1525,7 @@ a{color:inherit;text-decoration:none}
       // Reverse the V opening
       var closeAmount=1-ease3(closeP);
       var topLiftC=-(vOpenH-subH/2)*closeAmount;
-      var topSkewC=3*closeAmount;
-      topBread.setAttribute('transform','translate(0,'+topLiftC+') skewY('+topSkewC+')');
+      topBread.setAttribute('transform','translate(0,'+topLiftC+')');
       var bottomDropC=20*closeAmount;
       bottomBread.setAttribute('transform','translate(0,'+bottomDropC+')');
 
