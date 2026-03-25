@@ -529,15 +529,34 @@ a{color:inherit;text-decoration:none}
     var hh=subH/2+5; // half-height of the sub body
     var hx=side==='left'?subX:cx+10;
 
-    // Simple rounded-end sub body wrapped in checker
+    // Sub body: rounded on the OUTER end, FLAT on the cut end (like a real cut sub)
+    var bodyPath;
+    if(side==='left'){
+      // Rounded left end, flat right end (cut side)
+      bodyPath='M'+(hx+hh)+' '+(subY-hh)+
+        ' L'+(hx+hw)+' '+(subY-hh)+
+        ' L'+(hx+hw)+' '+(subY+hh)+
+        ' L'+(hx+hh)+' '+(subY+hh)+
+        ' A'+hh+' '+hh+' 0 0 1 '+hx+' '+subY+
+        ' A'+hh+' '+hh+' 0 0 1 '+(hx+hh)+' '+(subY-hh)+' Z';
+    } else {
+      // Flat left end (cut side), rounded right end
+      bodyPath='M'+hx+' '+(subY-hh)+
+        ' L'+(hx+hw-hh)+' '+(subY-hh)+
+        ' A'+hh+' '+hh+' 0 0 1 '+(hx+hw)+' '+subY+
+        ' A'+hh+' '+hh+' 0 0 1 '+(hx+hw-hh)+' '+(subY+hh)+
+        ' L'+hx+' '+(subY+hh)+' Z';
+    }
     // White base
-    wg.appendChild(svgEl('rect',{x:hx,y:subY-hh,width:hw,height:hh*2,rx:hh,fill:'#FFFFFF'}));
+    wg.appendChild(svgEl('path',{d:bodyPath,fill:'#FFFFFF'}));
     // Checker wrap
-    wg.appendChild(svgEl('rect',{x:hx,y:subY-hh,width:hw,height:hh*2,rx:hh,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
+    wg.appendChild(svgEl('path',{d:bodyPath,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
 
-    // Cross-section FLUSH at the cut end — thicker, visible filling layers
-    var csW=22; // cross-section width — thick enough to see layers clearly
-    var csx=side==='left'?hx+hw-1:hx-csW+1; // flush against the sub body edge
+    // Cross-section on the CUT END of this half — INSIDE the half's body
+    var csW=24;
+    // Left half: cross-section at the RIGHT edge (the cut side)
+    // Right half: cross-section at the LEFT edge (the cut side)
+    var csx=side==='left'?hx+hw-csW:hx;
     // Bread crust outer
     wg.appendChild(svgEl('rect',{x:csx,y:subY-hh,width:csW,height:hh*2,rx:2,fill:'#C8882A',stroke:'#A06820','stroke-width':1.5}));
     // Bread interior
@@ -581,20 +600,20 @@ a{color:inherit;text-decoration:none}
   // Helper: draw a detailed cross-section face (the hero of the presentation)
   function drawCrossSection(g,cx2,cy2,w,h){
     var hw=w/2, hh=h/2;
-    // Bread crust outer (rounded rect shape like real bread cross-section)
-    g.appendChild(svgEl('rect',{x:cx2-hw,y:cy2-hh,width:w,height:h,rx:20,fill:'#C8882A',stroke:'#906018','stroke-width':2}));
-    // Bread interior (slightly smaller)
-    g.appendChild(svgEl('rect',{x:cx2-hw+8,y:cy2-hh+8,width:w-16,height:h-16,rx:14,fill:'#F5E6C8'}));
-    // Bread texture dots (air pockets)
+    // Bread crust outer (OVAL shape like real bread cross-section)
+    g.appendChild(svgEl('ellipse',{cx:cx2,cy:cy2,rx:hw,ry:hh,fill:'#C8882A',stroke:'#906018','stroke-width':2}));
+    // Bread interior (slightly smaller oval)
+    g.appendChild(svgEl('ellipse',{cx:cx2,cy:cy2,rx:hw-8,ry:hh-8,fill:'#F5E6C8'}));
+    // Bread texture dots (air pockets) — top area
     for(var bi2=0;bi2<8;bi2++){
-      var bx=cx2-hw+15+Math.random()*(w-30);
-      var by=cy2-hh+12+Math.random()*20;
+      var bx=cx2-hw+20+Math.random()*(w-40);
+      var by=cy2-hh+15+Math.random()*25;
       g.appendChild(svgEl('circle',{cx:bx,cy:by,r:2+Math.random()*3,fill:'#ECD8B0',opacity:0.5}));
     }
-    // Bottom bread interior
+    // Bottom bread interior dots
     for(var bi3=0;bi3<6;bi3++){
-      var bx2=cx2-hw+15+Math.random()*(w-30);
-      var by2=cy2+hh-30+Math.random()*15;
+      var bx2=cx2-hw+20+Math.random()*(w-40);
+      var by2=cy2+hh-35+Math.random()*18;
       g.appendChild(svgEl('circle',{cx:bx2,cy:by2,r:2+Math.random()*3,fill:'#ECD8B0',opacity:0.5}));
     }
     // === FILLING LAYERS (thick horizontal bands, center of cross-section) ===
@@ -643,7 +662,7 @@ a{color:inherit;text-decoration:none}
 
   // Chips pile — bottom right of paper
   var chipsG=svgEl('g',{});
-  var chipsCX=paperCX+paperW/2-50, chipsCY=paperCY+paperH/2-35;
+  var chipsCX=paperCX+paperW/2-80, chipsCY=paperCY+paperH/2-50;
   var chipShapes=[
     {dx:-18,dy:-12,rx:14,ry:8,rot:-15},
     {dx:5,dy:-20,rx:12,ry:9,rot:25},
@@ -1000,8 +1019,8 @@ a{color:inherit;text-decoration:none}
         var sepP=ease3(clamp((cutP-0.5)/0.5,0,1));
         gClosed.setAttribute('opacity',String(1-sepP));
         gWrapped.setAttribute('opacity',String(sepP));
-        wrappedLeft.setAttribute('transform','translateX('+(-sepP*180)+')');
-        wrappedRight.setAttribute('transform','translateX('+(sepP*180)+')');
+        wrappedLeft.setAttribute('transform','translateX('+(-sepP*220)+')');
+        wrappedRight.setAttribute('transform','translateX('+(sepP*220)+')');
       }
       setPhase('CUT IN HALF');
     }
@@ -1015,16 +1034,16 @@ a{color:inherit;text-decoration:none}
       // Wrapped halves fully visible, very wide separation
       gWrapped.setAttribute('opacity','1');
       var sepExtra=ease3(clamp(wrapP/0.5,0,1));
-      wrappedLeft.setAttribute('transform','translateX('+(-180-sepExtra*20)+')');
-      wrappedRight.setAttribute('transform','translateX('+(180+sepExtra*20)+')');
+      wrappedLeft.setAttribute('transform','translateX('+(-220-sepExtra*10)+')');
+      wrappedRight.setAttribute('transform','translateX('+(220+sepExtra*10)+')');
 
       // Subtle spin effect on each half
       var spinAngle=ease3(clamp((wrapP-0.2)/0.5,0,1))*8;
       var spinBack=ease3(clamp((wrapP-0.7)/0.3,0,1))*8;
       var netSpin=spinAngle-spinBack;
       if(wrapP>0.2){
-        wrappedLeft.setAttribute('transform','translateX('+(-180-sepExtra*20)+') rotate('+netSpin+','+(subX+subW/4)+','+subY+')');
-        wrappedRight.setAttribute('transform','translateX('+(180+sepExtra*20)+') rotate('+(-netSpin)+','+(cx+subW/4)+','+subY+')');
+        wrappedLeft.setAttribute('transform','translateX('+(-220-sepExtra*10)+') rotate('+netSpin+','+(subX+subW/4)+','+subY+')');
+        wrappedRight.setAttribute('transform','translateX('+(220+sepExtra*10)+') rotate('+(-netSpin)+','+(cx+subW/4)+','+subY+')');
       }
 
       gBoard.setAttribute('opacity',String(Math.max(0,1-ease3(wrapP))));
