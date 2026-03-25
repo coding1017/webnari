@@ -366,30 +366,10 @@ a{color:inherit;text-decoration:none}
   gLadle.appendChild(svgEl('path',{d:'M'+(ladleX-17)+' '+(ladleY+14)+' Q'+(ladleX-20)+' '+(ladleY+36)+' '+ladleX+' '+(ladleY+40)+' Q'+(ladleX+20)+' '+(ladleY+36)+' '+(ladleX+17)+' '+(ladleY+14),fill:'#B22222'}));
   svg.appendChild(gLadle);
 
-  // ─── 6. OLIVE OIL DRIZZLE ───
-  var gOil=svgEl('g',{opacity:0});
-  var oilLines=[];
-  var oilLineCount=isMobile?7:5;
-  for(var oli=0;oli<oilLineCount;oli++){
-    // Create zigzag drizzle paths across the sauce area
-    var oly=cy-sauceR*0.6+oli*(sauceR*1.2/(oilLineCount-1));
-    var olPts='M'+(cx-sauceR*0.7)+' '+oly;
-    for(var op=1;op<=6;op++){
-      olPts+=' L'+(cx-sauceR*0.7+op*(sauceR*1.4/6))+' '+(oly+(op%2===0?-4:4)*Math.random());
-    }
-    var oline=svgEl('path',{d:olPts,fill:'none',stroke:'#C8A830','stroke-width':1.8,'stroke-linecap':'round',opacity:0});
-    gOil.appendChild(oline);
-    oilLines.push(oline);
-    // Oil pool dots at endpoints
-    gOil.appendChild(svgEl('circle',{cx:cx-sauceR*0.7,cy:oly,r:2.5,fill:'#D4A830',opacity:0}));
-    gOil.appendChild(svgEl('circle',{cx:cx+sauceR*0.7,cy:oly,r:2.5,fill:'#D4A830',opacity:0}));
-  }
-  svg.appendChild(gOil);
-
-  // ─── 7. MOZZARELLA PIECES ───
+  // ─── 6. MOZZARELLA PIECES ───
   var gMozz_g=svgEl('g',{opacity:0});
   var mozzPieces=[];
-  var mozzCount=isMobile?20:14;
+  var mozzCount=isMobile?40:28;
   for(var mzi=0;mzi<mozzCount;mzi++){
     var mza=mzi*Math.PI*2/mozzCount+Math.random()*0.4;
     var mzd=20+Math.random()*(sauceR-35);
@@ -401,7 +381,7 @@ a{color:inherit;text-decoration:none}
     mzg.appendChild(svgEl('ellipse',{cx:mzx+1,cy:mzy+2,rx:13+Math.random()*6,ry:10+Math.random()*4,fill:'#000',opacity:0.08}));
 
     // Irregular torn blob (randomized bezier)
-    var mzR=10+Math.random()*8;
+    var mzR=14+Math.random()*12;
     var mzPts=6+Math.floor(Math.random()*3);
     var mzPath='';
     var mzPoints=[];
@@ -797,11 +777,6 @@ a{color:inherit;text-decoration:none}
     gSauce_g.setAttribute('opacity','0');gSauce_g.setAttribute('transform','');
     sauceCircle.setAttribute('r',String(15));
     gLadle.setAttribute('opacity','0');gLadle.setAttribute('transform','');
-    gOil.setAttribute('opacity','0');
-    for(var roi=0;roi<oilLines.length;roi++){oilLines[roi].setAttribute('opacity','0');}
-    // Reset oil pool dots
-    var oilPoolDots=gOil.querySelectorAll('circle');
-    for(var opd=0;opd<oilPoolDots.length;opd++){oilPoolDots[opd].setAttribute('opacity','0');}
     gMozz_g.setAttribute('opacity','0');
     for(var rmi=0;rmi<mozzPieces.length;rmi++){mozzPieces[rmi].setAttribute('opacity','0');mozzPieces[rmi].setAttribute('transform','');}
     gPep_g.setAttribute('opacity','0');
@@ -836,12 +811,6 @@ a{color:inherit;text-decoration:none}
       gSauce_g.setAttribute('opacity','1');
       sauceCircle.setAttribute('r',String(sauceR));
     }
-    function showOilFull(){
-      gOil.setAttribute('opacity','1');
-      for(var i=0;i<oilLines.length;i++){oilLines[i].setAttribute('opacity','0.7');}
-      var opds=gOil.querySelectorAll('circle');
-      for(var j=0;j<opds.length;j++){opds[j].setAttribute('opacity','0.5');}
-    }
     function showAllMozz(){
       gMozz_g.setAttribute('opacity','1');
       for(var i=0;i<mozzPieces.length;i++){mozzPieces[i].setAttribute('opacity','1');mozzPieces[i].setAttribute('transform','');}
@@ -857,7 +826,7 @@ a{color:inherit;text-decoration:none}
     }
 
     // ── 1. MARBLE SLAB (5-9%, visible through ~82%) ──
-    if(p>=0.05&&p<0.82){
+    if(p>=0.05&&p<0.57){
       var slabP=clamp((p-0.05)/0.04,0,1);
       gSlab.setAttribute('opacity',String(ease3(slabP)));
       gSlab.setAttribute('transform','scale('+(0.92+ease3(slabP)*0.08)+')');
@@ -872,140 +841,152 @@ a{color:inherit;text-decoration:none}
       setPhase('FRESH DOUGH BALL');
     }
 
-    // ── 3. HAND STRETCHING (16-24%) ──
-    if(p>=0.16&&p<0.24){
-      var stretchP=clamp((p-0.16)/0.08,0,1);
-      setPhase('HAND STRETCHING');
+    // ── 3. ROLLING & STRETCHING (16-26%) ──
+    if(p>=0.16&&p<0.26){
+      var stretchP=clamp((p-0.16)/0.10,0,1);
 
-      // 3a: Dough ball squashes (0-25%)
-      if(stretchP<0.25){
-        var squashP=ease3(stretchP/0.25);
+      // 3a: Pin descends from above onto the ball (0-15%)
+      if(stretchP<0.15){
+        setPhase('ROLLING THE DOUGH');
+        var descP=ease3(stretchP/0.15);
         gDoughBall.setAttribute('opacity','1');
-        gDoughBall.setAttribute('transform','scale('+(1+squashP*0.4)+','+(1-squashP*0.3)+')');
+        gPin_g.setAttribute('opacity',String(descP));
+        gPin_g.setAttribute('transform','translate(0,'+((1-descP)*-120)+')');
       }
-      // 3b: Rolling pin appears + dough ball fades (25-50%)
-      else if(stretchP<0.5){
-        var pinAppearP=ease3((stretchP-0.25)/0.25);
-        gDoughBall.setAttribute('opacity',String(1-pinAppearP));
-        gDoughBall.setAttribute('transform','scale(1.4,0.7)');
-        gPin_g.setAttribute('opacity',String(pinAppearP));
-        gPin_g.setAttribute('transform','translate(0,'+((1-pinAppearP)*-60)+')');
-      }
-      // 3c: Pin moves across, disc appears (50-85%)
-      else if(stretchP<0.85){
-        var rollP=ease3((stretchP-0.5)/0.35);
+      // 3b: Pin rolls back & forth, ball squashes to oval (15-50%)
+      else if(stretchP<0.50){
+        setPhase('ROLLING THE DOUGH');
+        var rollPhase=(stretchP-0.15)/0.35;
+        gDoughBall.setAttribute('opacity','1');
         gPin_g.setAttribute('opacity','1');
-        gPin_g.setAttribute('transform','translate('+((-150+rollP*300)*(isMobile?1.5:1))+',0)');
-        gDisc.setAttribute('opacity',String(rollP));
-        gDisc.setAttribute('transform','scale('+(0.3+rollP*0.7)+')');
+        // Pin oscillates left-right (2 full passes)
+        var rollOsc=Math.sin(rollPhase*Math.PI*4);
+        var rollRange=isMobile?100:70;
+        gPin_g.setAttribute('transform','translate('+(rollOsc*rollRange)+',0)');
+        // Ball gradually squashes: round → wide oval
+        var squashAmt=ease3(rollPhase);
+        gDoughBall.setAttribute('transform','scale('+(1+squashAmt*0.7)+','+(1-squashAmt*0.35)+')');
       }
-      // 3d: Pin lifts off (85-100%)
+      // 3c: Pin fades out, oval stretches into circular disc (50-80%)
+      else if(stretchP<0.80){
+        setPhase('STRETCHING THE DOUGH');
+        var morphP=ease3((stretchP-0.50)/0.30);
+        // Oval dough ball fades out as disc fades in
+        gDoughBall.setAttribute('opacity',String(1-morphP));
+        gDoughBall.setAttribute('transform','scale(1.7,0.65)');
+        // Pin lifts away
+        var pinFade=ease3(clamp((stretchP-0.50)/0.12,0,1));
+        gPin_g.setAttribute('opacity',String(1-pinFade));
+        gPin_g.setAttribute('transform','translate(0,'+(pinFade*-60)+')');
+        // Disc grows from small oval to full circle
+        gDisc.setAttribute('opacity',String(morphP));
+        gDisc.setAttribute('transform','scale('+(0.4+morphP*0.6)+')');
+      }
+      // 3d: Disc settles at full size (80-100%)
       else {
-        var liftP=ease3((stretchP-0.85)/0.15);
-        gPin_g.setAttribute('opacity',String(1-liftP));
-        gPin_g.setAttribute('transform','translate('+((150)*(isMobile?1.5:1))+','+(liftP*-50)+')');
+        setPhase('STRETCHING THE DOUGH');
+        var settleP=ease3((stretchP-0.80)/0.20);
         gDisc.setAttribute('opacity','1');
-        gDisc.setAttribute('transform','scale('+(1+liftP*0.02-liftP*0.02)+')');
+        // Subtle scale settle
+        gDisc.setAttribute('transform','scale('+(1+0.02*(1-settleP))+')');
       }
     }
 
-    // ── 4. SAUCE SPREAD (24-30%) ──
-    if(p>=0.24&&p<0.30){
-      var sauceP=clamp((p-0.24)/0.06,0,1);
+    // ── 4. SAUCE SPREAD (26-34%) ──
+    if(p>=0.26&&p<0.34){
+      var sauceP=clamp((p-0.26)/0.08,0,1);
       showDiscFull();
       setPhase('SAN MARZANO SAUCE');
 
-      // Ladle appears (0-20%)
-      if(sauceP<0.2){
-        var ladleInP=ease3(sauceP/0.2);
+      // 4a: Ladle comes in from above toward center (0-20%)
+      if(sauceP<0.20){
+        var ladleInP=ease3(sauceP/0.20);
         gLadle.setAttribute('opacity',String(ladleInP));
-        gLadle.setAttribute('transform','translate('+((1-ladleInP)*80)+','+((1-ladleInP)*-60)+') rotate('+(-15+ladleInP*15)+','+ladleX+','+ladleY+')');
+        // Move ladle from upper-right to center of pizza
+        var ladleTargetX=cx-ladleX;
+        var ladleTargetY=cy-20-ladleY;
+        gLadle.setAttribute('transform','translate('+(ladleTargetX*ladleInP+80*(1-ladleInP))+','+(ladleTargetY*ladleInP-80*(1-ladleInP))+') rotate('+(-20+ladleInP*20)+','+ladleX+','+ladleY+')');
       }
-      // Sauce spreads (20-80%)
-      else if(sauceP<0.8){
+      // 4b: Sauce dollop drops in center (20-30%)
+      else if(sauceP<0.30){
+        var dropP=ease3((sauceP-0.20)/0.10);
+        var ladleTargetX2=cx-ladleX;
+        var ladleTargetY2=cy-20-ladleY;
         gLadle.setAttribute('opacity','1');
-        // Ladle moves toward center then spirals
-        var spiralP=(sauceP-0.2)/0.6;
-        var ladleAngle=spiralP*720;
-        gLadle.setAttribute('transform','translate('+(-60-spiralP*30)+','+(60+spiralP*20)+') rotate('+ladleAngle+','+ladleX+','+(ladleY+30)+')');
-
+        gLadle.setAttribute('transform','translate('+ladleTargetX2+','+ladleTargetY2+')');
+        // Small sauce pool appears in center
         gSauce_g.setAttribute('opacity','1');
-        var currentR=15+ease3(spiralP)*sauceR*0.93;
-        sauceCircle.setAttribute('r',String(Math.min(currentR,sauceR)));
-        // Sauce dots appear
+        sauceCircle.setAttribute('r',String(15+dropP*15));
+      }
+      // 4c: Spoon spreads sauce outward in concentric circles (30-80%)
+      else if(sauceP<0.80){
+        var spreadP=(sauceP-0.30)/0.50;
+        var spreadEased=ease3(spreadP);
+        gLadle.setAttribute('opacity','1');
+        // Ladle spirals outward from center, spreading the sauce
+        var spiralRadius=spreadEased*sauceR*0.7;
+        var spiralAngle=spreadP*Math.PI*6;
+        var ladleSX=cx+Math.cos(spiralAngle)*spiralRadius-ladleX;
+        var ladleSY=cy+Math.sin(spiralAngle)*spiralRadius-20-ladleY;
+        gLadle.setAttribute('transform','translate('+ladleSX+','+ladleSY+') rotate('+(spiralAngle*180/Math.PI)+','+ladleX+','+(ladleY+20)+')');
+        // Sauce circle grows with spoon motion
+        gSauce_g.setAttribute('opacity','1');
+        var currentR2=30+spreadEased*(sauceR-30);
+        sauceCircle.setAttribute('r',String(Math.min(currentR2,sauceR)));
+        // Sauce texture dots appear as sauce spreads
         for(var sdti=0;sdti<sauceDotsArr.length;sdti++){
-          var sdtP=ease3(clamp((spiralP-sdti*0.03)/0.3,0,1));
-          sauceDotsArr[sdti].setAttribute('opacity',String(sdtP*0.3));
+          var sdtP2=ease3(clamp((spreadP-sdti*0.02)/0.25,0,1));
+          sauceDotsArr[sdti].setAttribute('opacity',String(sdtP2*0.3));
         }
       }
-      // Ladle exits (80-100%)
+      // 4d: Ladle exits upward (80-100%)
       else {
-        gLadle.setAttribute('opacity',String(1-ease3((sauceP-0.8)/0.2)));
-        gLadle.setAttribute('transform','translate(-90,'+(-40-(sauceP-0.8)/0.2*80)+')');
+        var exitP2=ease3((sauceP-0.80)/0.20);
+        gLadle.setAttribute('opacity',String(1-exitP2));
+        gLadle.setAttribute('transform','translate('+(cx-ladleX)+','+(cy-20-ladleY-exitP2*120)+')');
         showSauceFull();
       }
     }
 
-    // ── 5. OLIVE OIL DRIZZLE (30-36%) ──
-    if(p>=0.30&&p<0.36){
-      var oilP=clamp((p-0.30)/0.06,0,1);
+    // ── 5. MOZZARELLA (34-41%) ──
+    if(p>=0.34&&p<0.41){
+      var mozzP=clamp((p-0.34)/0.07,0,1);
       showDiscFull();showSauceFull();
-      setPhase('EXTRA VIRGIN DRIZZLE');
-
-      gOil.setAttribute('opacity','1');
-      for(var oili=0;oili<oilLines.length;oili++){
-        var olP=ease3(clamp((oilP-oili*0.04)/0.3,0,1));
-        oilLines[oili].setAttribute('opacity',String(olP*0.7));
-      }
-      // Oil pool dots
-      var oilPools=gOil.querySelectorAll('circle');
-      for(var opdi=0;opdi<oilPools.length;opdi++){
-        var oppP=ease3(clamp((oilP-0.2)/0.5,0,1));
-        oilPools[opdi].setAttribute('opacity',String(oppP*0.5));
-      }
-    }
-
-    // ── 6. MOZZARELLA (36-42%) ──
-    if(p>=0.36&&p<0.42){
-      var mozzP=clamp((p-0.36)/0.06,0,1);
-      showDiscFull();showSauceFull();showOilFull();
       setPhase('FRESH MOZZARELLA');
 
       gMozz_g.setAttribute('opacity','1');
       for(var mzi2=0;mzi2<mozzPieces.length;mzi2++){
-        var mzProg=ease3(clamp((mozzP-mzi2*0.03)/0.25,0,1));
+        var mzProg=ease3(clamp((mozzP-mzi2*0.015)/0.2,0,1));
         mozzPieces[mzi2].setAttribute('opacity',String(mzProg));
-        mozzPieces[mzi2].setAttribute('transform','translateY('+(1-mzProg)*-15+')');
+        mozzPieces[mzi2].setAttribute('transform','translate(0,'+(1-mzProg)*-15+')');
       }
     }
 
-    // ── 7. PEPPERONI (42-48%) ──
-    if(p>=0.42&&p<0.48){
-      var pepP=clamp((p-0.42)/0.06,0,1);
-      showDiscFull();showSauceFull();showOilFull();showAllMozz();
+    // ── 6. PEPPERONI (41-47%) ──
+    if(p>=0.41&&p<0.47){
+      var pepP=clamp((p-0.41)/0.06,0,1);
+      showDiscFull();showSauceFull();showAllMozz();
       setPhase('CLASSIC PEPPERONI');
 
       gPep_g.setAttribute('opacity','1');
       for(var ppi2=0;ppi2<pepSlices.length;ppi2++){
         var ppProg=ease3(clamp((pepP-ppi2*0.025)/0.2,0,1));
         pepSlices[ppi2].setAttribute('opacity',String(ppProg));
-        pepSlices[ppi2].setAttribute('transform','translateY('+(1-ppProg)*-12+')');
+        pepSlices[ppi2].setAttribute('transform','translate(0,'+(1-ppProg)*-12+')');
       }
     }
 
-    // ── 8. BASIL & OREGANO (48-53%) ──
-    if(p>=0.48&&p<0.53){
-      var basilP=clamp((p-0.48)/0.05,0,1);
-      showDiscFull();showSauceFull();showOilFull();showAllMozz();showAllPep();
+    // ── 7. BASIL & OREGANO (47-52%) ──
+    if(p>=0.47&&p<0.52){
+      var basilP=clamp((p-0.47)/0.05,0,1);
+      showDiscFull();showSauceFull();showAllMozz();showAllPep();
       setPhase('BASIL & OREGANO');
 
       gBasil.setAttribute('opacity','1');
-      // Basil leaves (0-60%)
       for(var bli2=0;bli2<basilLeaves.length;bli2++){
         var blProg=ease3(clamp((basilP-bli2*0.04)/0.3,0,1));
         basilLeaves[bli2].setAttribute('opacity',String(blProg));
       }
-      // Oregano (40-100%)
       var oregP=clamp((basilP-0.4)/0.6,0,1);
       for(var oi2=0;oi2<oreganoFlakes.length;oi2++){
         var ofP=ease3(clamp((oregP-oi2*0.008)/0.2,0,1));
@@ -1013,87 +994,73 @@ a{color:inherit;text-decoration:none}
       }
     }
 
-    // ── 9. PEEL TRANSFER (53-58%) ──
-    if(p>=0.53&&p<0.58){
-      var peelP=clamp((p-0.53)/0.05,0,1);
-      showDiscFull();showSauceFull();showOilFull();showAllMozz();showAllPep();showAllBasil();
+    // ── 8. PEEL TRANSFER (52-57%) ──
+    if(p>=0.52&&p<0.57){
+      var peelP=clamp((p-0.52)/0.05,0,1);
+      showDiscFull();showSauceFull();showAllMozz();showAllPep();showAllBasil();
       setPhase('PEEL TRANSFER');
 
-      // Peel slides in from right (0-40%)
       if(peelP<0.4){
         var peelInP=ease3(peelP/0.4);
         gPeel.setAttribute('opacity',String(peelInP));
         gPeel.setAttribute('transform','translate('+(1-peelInP)*300+',0)');
       }
-      // Pizza settles onto peel (40-80%)
       else if(peelP<0.8){
         gPeel.setAttribute('opacity','1');
         gPeel.setAttribute('transform','');
-        var settleP=ease3((peelP-0.4)/0.4);
-        // Slab starts fading
-        if(p>=0.05) gSlab.setAttribute('opacity',String(1-settleP*0.6));
+        var settleP3=ease3((peelP-0.4)/0.4);
+        if(p>=0.05) gSlab.setAttribute('opacity',String(1-settleP3*0.6));
       }
-      // Assembly lifts (80-100%)
       else {
         gPeel.setAttribute('opacity','1');
-        var liftP2=ease3((peelP-0.8)/0.2);
-        gPeel.setAttribute('transform','translate(0,'+(liftP2*-20)+')');
-        gDisc.setAttribute('transform','translate(0,'+(liftP2*-20)+')');
-        gSauce_g.setAttribute('transform','translate(0,'+(liftP2*-20)+')');
-        gOil.setAttribute('transform','translate(0,'+(liftP2*-20)+')');
-        gMozz_g.setAttribute('transform','translate(0,'+(liftP2*-20)+')');
-        gPep_g.setAttribute('transform','translate(0,'+(liftP2*-20)+')');
-        gBasil.setAttribute('transform','translate(0,'+(liftP2*-20)+')');
-        gSlab.setAttribute('opacity',String(Math.max(0,0.4-liftP2*0.4)));
+        var liftP3=ease3((peelP-0.8)/0.2);
+        gPeel.setAttribute('transform','translate(0,'+(liftP3*-20)+')');
+        gDisc.setAttribute('transform','translate(0,'+(liftP3*-20)+')');
+        gSauce_g.setAttribute('transform','translate(0,'+(liftP3*-20)+')');
+        gMozz_g.setAttribute('transform','translate(0,'+(liftP3*-20)+')');
+        gPep_g.setAttribute('transform','translate(0,'+(liftP3*-20)+')');
+        gBasil.setAttribute('transform','translate(0,'+(liftP3*-20)+')');
+        gSlab.setAttribute('opacity',String(Math.max(0,0.4-liftP3*0.4)));
       }
     }
 
-    // ── 10. INTO THE OVEN (58-68%) ──
-    if(p>=0.58&&p<0.68){
-      var ovenP=clamp((p-0.58)/0.10,0,1);
+    // ── 9. INTO THE OVEN (57-67%) ──
+    if(p>=0.57&&p<0.67){
+      var ovenP=clamp((p-0.57)/0.10,0,1);
       setPhase('INTO THE OVEN');
 
-      // 10a: Oven appears (0-30%)
       if(ovenP<0.3){
         var ovenInP=ease3(ovenP/0.3);
         gOven.setAttribute('opacity',String(ovenInP));
         gOven.setAttribute('transform','scale('+(0.9+ovenInP*0.1)+')');
-        // Raw pizza + peel still visible
-        showDiscFull();showSauceFull();showOilFull();showAllMozz();showAllPep();showAllBasil();
+        showDiscFull();showSauceFull();showAllMozz();showAllPep();showAllBasil();
         gPeel.setAttribute('opacity','1');
         gPeel.setAttribute('transform','translate(300,-20)');
         gDisc.setAttribute('transform','translate(300,-20)');
         gSauce_g.setAttribute('transform','translate(300,-20)');
-        gOil.setAttribute('transform','translate(300,-20)');
         gMozz_g.setAttribute('transform','translate(300,-20)');
         gPep_g.setAttribute('transform','translate(300,-20)');
         gBasil.setAttribute('transform','translate(300,-20)');
       }
-      // 10b: Pizza slides into oven (30-70%)
       else if(ovenP<0.7){
         var slideP=ease3((ovenP-0.3)/0.4);
         gOven.setAttribute('opacity','1');
         var slideX=300-slideP*300;
-        showDiscFull();showSauceFull();showOilFull();showAllMozz();showAllPep();showAllBasil();
+        showDiscFull();showSauceFull();showAllMozz();showAllPep();showAllBasil();
         gPeel.setAttribute('opacity','1');
         gPeel.setAttribute('transform','translate('+slideX+',-20)');
         gDisc.setAttribute('transform','translate('+slideX+',-20)');
         gSauce_g.setAttribute('transform','translate('+slideX+',-20)');
-        gOil.setAttribute('transform','translate('+slideX+',-20)');
         gMozz_g.setAttribute('transform','translate('+slideX+',-20)');
         gPep_g.setAttribute('transform','translate('+slideX+',-20)');
         gBasil.setAttribute('transform','translate('+slideX+',-20)');
       }
-      // 10c: Peel withdraws, pizza stays (70-100%)
       else {
         var withdrawP=ease3((ovenP-0.7)/0.3);
         gOven.setAttribute('opacity','1');
-        // Pizza stays centered
-        showDiscFull();showSauceFull();showOilFull();showAllMozz();showAllPep();showAllBasil();
-        // Peel slides out
+        showDiscFull();showSauceFull();showAllMozz();showAllPep();showAllBasil();
         gPeel.setAttribute('opacity',String(1-withdrawP));
         gPeel.setAttribute('transform','translate('+(withdrawP*350)+',-20)');
-        // Raw toppings fade down to prepare for cooked swap
         var rawFade=1-withdrawP*0.3;
         gDisc.setAttribute('opacity',String(rawFade));
         gSauce_g.setAttribute('opacity',String(rawFade));
@@ -1103,52 +1070,41 @@ a{color:inherit;text-decoration:none}
       }
     }
 
-    // ── 11. FIRE & CHAR — BAKING (68-76%) ──
-    if(p>=0.68&&p<0.76){
-      var bakeP=clamp((p-0.68)/0.08,0,1);
+    // ── 10. FIRE & CHAR — BAKING (67-75%) ──
+    if(p>=0.67&&p<0.75){
+      var bakeP=clamp((p-0.67)/0.08,0,1);
       gOven.setAttribute('opacity','1');
       setPhase('FIRE & CHAR');
 
-      // Raw pizza fades out, cooked fades in
       var cookSwap=ease3(clamp(bakeP/0.5,0,1));
       gDisc.setAttribute('opacity',String(0.7*(1-cookSwap)));
       gSauce_g.setAttribute('opacity',String(0.7*(1-cookSwap)));
       gMozz_g.setAttribute('opacity',String(0.7*(1-cookSwap)));
       gPep_g.setAttribute('opacity',String(0.7*(1-cookSwap)));
       gBasil.setAttribute('opacity',String(0.7*(1-cookSwap)));
-      gOil.setAttribute('opacity',String(0.7*(1-cookSwap)));
-
       gCooked_g.setAttribute('opacity',String(cookSwap));
-
-      // Heat shimmer
       gShimmer.setAttribute('opacity',String(ease3(clamp(bakeP/0.3,0,1))*0.5));
-
-      // Fire intensifies
       for(var fii=0;fii<flames.length;fii++){
         flames[fii].setAttribute('opacity',String(0.8+bakeP*0.2));
         flames[fii].setAttribute('transform','scale(1,'+(1+bakeP*0.3)+')');
       }
-      // Embers brighter
       for(var eii=0;eii<embers.length;eii++){
         embers[eii].setAttribute('opacity',String(0.4+bakeP*0.4));
       }
-      // Warm glow
       gOvenGlow.setAttribute('opacity',String(bakeP*0.1));
     }
 
-    // ── 12. OUT OF THE OVEN (76-82%) ──
-    if(p>=0.76&&p<0.82){
-      var outP=clamp((p-0.76)/0.06,0,1);
+    // ── 11. OUT OF THE OVEN (75-81%) ──
+    if(p>=0.75&&p<0.81){
+      var outP=clamp((p-0.75)/0.06,0,1);
       setPhase('OUT OF THE OVEN');
 
-      // Peel re-enters, grabs pizza (0-30%)
       if(outP<0.3){
         gOven.setAttribute('opacity','1');
         gCooked_g.setAttribute('opacity','1');
         gPeel.setAttribute('opacity',String(ease3(outP/0.3)));
         gPeel.setAttribute('transform','translate('+(1-ease3(outP/0.3))*350+',-20)');
       }
-      // Pizza + peel slide out (30-60%)
       else if(outP<0.6){
         var exitP=ease3((outP-0.3)/0.3);
         gOven.setAttribute('opacity',String(1-exitP*0.5));
@@ -1157,45 +1113,37 @@ a{color:inherit;text-decoration:none}
         gPeel.setAttribute('opacity','1');
         gPeel.setAttribute('transform','translate('+(exitP*200)+',-20)');
       }
-      // Oven fades, pizza transfers to pan (60-100%)
       else {
         var panP=ease3((outP-0.6)/0.4);
         gOven.setAttribute('opacity',String(Math.max(0,0.5-panP*0.5)));
         gPeel.setAttribute('opacity',String(1-panP));
         gPeel.setAttribute('transform','translate(200,'+(panP*-40-20)+')');
         gCooked_g.setAttribute('opacity','1');
-        // Slide back to center
         gCooked_g.setAttribute('transform','translate('+(200-panP*200)+',0)');
-        // Pan fades in
         gPanEl.setAttribute('opacity',String(panP));
       }
     }
 
-    // ── 13. THE SLICE (82-88%) ──
-    if(p>=0.82&&p<0.88){
-      var sliceP2=clamp((p-0.82)/0.06,0,1);
+    // ── 12. THE SLICE (81-87%) ──
+    if(p>=0.81&&p<0.87){
+      var sliceP2=clamp((p-0.81)/0.06,0,1);
       gCooked_g.setAttribute('opacity','1');
       gPanEl.setAttribute('opacity','1');
       setPhase('THE SLICE');
 
-      // Cutter appears (0-15%)
       if(sliceP2<0.15){
         gCutter.setAttribute('opacity',String(ease3(sliceP2/0.15)));
         gCutter.setAttribute('transform','translate(0,'+(1-ease3(sliceP2/0.15))*-40+')');
       }
-      // Cutting motion (15-65%)
       else if(sliceP2<0.65){
         gCutter.setAttribute('opacity','1');
         var cutPhase=(sliceP2-0.15)/0.5;
-        // 3 cuts
         if(cutPhase<0.33){
-          // Cut 1: vertical
           var c1P=ease3(cutPhase/0.33);
           var c1y1=cy-pizzaR;
           var c1y2=cy+pizzaR;
           gCutter.setAttribute('transform','translate(0,'+(c1y1+(c1y2-c1y1)*c1P-cutterY)+')');
         } else if(cutPhase<0.66){
-          // Cut 2: diagonal
           var c2P=ease3((cutPhase-0.33)/0.33);
           var c2Angle=cutAngles[1];
           var c2sx=cx+Math.cos(c2Angle)*pizzaR;
@@ -1204,7 +1152,6 @@ a{color:inherit;text-decoration:none}
           var c2ey=cy-Math.sin(c2Angle)*pizzaR;
           gCutter.setAttribute('transform','translate('+(c2sx+(c2ex-c2sx)*c2P-cutterX)+','+(c2sy+(c2ey-c2sy)*c2P-cutterY)+')');
         } else {
-          // Cut 3: diagonal
           var c3P=ease3((cutPhase-0.66)/0.34);
           var c3Angle=cutAngles[2];
           var c3sx=cx+Math.cos(c3Angle)*pizzaR;
@@ -1213,23 +1160,20 @@ a{color:inherit;text-decoration:none}
           var c3ey=cy-Math.sin(c3Angle)*pizzaR;
           gCutter.setAttribute('transform','translate('+(c3sx+(c3ex-c3sx)*c3P-cutterX)+','+(c3sy+(c3ey-c3sy)*c3P-cutterY)+')');
         }
-        // Show cut lines progressively
         if(cutPhase>0.33) gCutLines.setAttribute('opacity',String(ease3((cutPhase-0.1)/0.5)));
       }
-      // Slice separates (65-100%)
       else {
         gCutter.setAttribute('opacity',String(1-ease3((sliceP2-0.65)/0.15)));
         gCutLines.setAttribute('opacity','1');
-
         var sepP=ease3((sliceP2-0.65)/0.35);
         gSlice.setAttribute('opacity',String(sepP));
         gSlice.setAttribute('transform','translate('+(sepP*60)+','+(sepP*-50)+') rotate('+(sepP*-15)+','+cx+','+cy+')');
       }
     }
 
-    // ── 14. BRAND GLOW FINALE (88-95%) ──
-    if(p>=0.88&&p<0.95){
-      var finaleP=clamp((p-0.88)/0.07,0,1);
+    // ── 13. BRAND GLOW FINALE (87-95%) ──
+    if(p>=0.87&&p<0.95){
+      var finaleP=clamp((p-0.87)/0.08,0,1);
       sceneGlow.style.opacity=String(ease3(finaleP));
       sceneEnergize.style.clipPath='inset(0 '+(100-ease3(finaleP)*100)+'% 0 0)';
 
