@@ -892,9 +892,10 @@ a{color:inherit;text-decoration:none}
   // 9. ONION RINGS — red/purple onion rings
   var gOnion=svgEl('g',{opacity:0});
   var onionRings=[];
-  var onionCount=isMobile?8:5;
+  var onionCount=isMobile?7:4;
+  var onionSpacing=subW*0.78/(onionCount);
   for(var oni=0;oni<onionCount;oni++){
-    var oxx=subX+subW*0.08+oni*(subW*0.78/(onionCount-1));
+    var oxx=subX+subW*0.08+onionSpacing*0.5+oni*onionSpacing;
     var oy=bottomBreadTop-62;
     var og=svgEl('g',{opacity:0});
     // Outer ring — deep purple/red
@@ -915,11 +916,13 @@ a{color:inherit;text-decoration:none}
   // 10. PEPPERS + OREGANO — bell pepper rings (green & yellow), visible
   var gToppings=svgEl('g',{opacity:0});
   var pepperPieces=[];
-  var pepperCount=isMobile?10:7;
-  var pepColors=['#2E7D32','#43A047','#F9A825','#2E7D32','#E65100','#388E3C','#2E7D32','#43A047','#F9A825','#2E7D32','#E65100','#388E3C'];
+  var pepperCount=isMobile?9:5;
+  var pepColors=['#2E7D32','#F9A825','#E65100','#43A047','#2E7D32','#F9A825','#E65100','#388E3C','#43A047'];
+  // Offset peppers to sit between tomatoes/onions (half-step offset)
+  var pepSpacing=subW*0.78/(pepperCount);
   for(var pi=0;pi<pepperCount;pi++){
-    var px=subX+subW*0.08+pi*(subW*0.78/(pepperCount-1));
-    var py=bottomBreadTop-74+Math.random()*4;
+    var px=subX+subW*0.08+pepSpacing*0.5+pi*pepSpacing;
+    var py=bottomBreadTop-82;
     var pg=svgEl('g',{opacity:0});
     // Bell pepper ring cross-section — thicker, bolder
     pg.appendChild(svgEl('circle',{cx:px,cy:py,r:12,fill:'none',stroke:pepColors[pi],'stroke-width':5,opacity:1}));
