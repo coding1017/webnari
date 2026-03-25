@@ -855,56 +855,83 @@ a{color:inherit;text-decoration:none}
   }
   gVBread.appendChild(gCheese_g);
 
-  // 8. TOMATO SLICES
+  // 8. TOMATO SLICES — vivid red with visible seeds and flesh
   var gTomato=svgEl('g',{opacity:0});
   var tomatoSlices=[];
   for(var ti=0;ti<6;ti++){
     var tx=subX+40+ti*82;
     var ty=bottomBreadTop-52;
     var tg=svgEl('g',{opacity:0});
-    tg.appendChild(svgEl('circle',{cx:tx,cy:ty,r:16,fill:'#E53935',stroke:'#C62828','stroke-width':0.8}));
-    for(var ts=0;ts<4;ts++){
-      var ta=ts*Math.PI/2;
-      tg.appendChild(svgEl('line',{x1:tx,y1:ty,x2:tx+Math.cos(ta)*12,y2:ty+Math.sin(ta)*12,stroke:'#EF9A9A','stroke-width':0.6,opacity:0.5}));
+    // Outer red circle
+    tg.appendChild(svgEl('circle',{cx:tx,cy:ty,r:17,fill:'#D32F2F',stroke:'#B71C1C','stroke-width':1.2}));
+    // Inner flesh ring
+    tg.appendChild(svgEl('circle',{cx:tx,cy:ty,r:13,fill:'#EF5350',stroke:'#E53935','stroke-width':0.5}));
+    // Seed chambers (6 sections with seeds)
+    for(var ts=0;ts<6;ts++){
+      var ta=ts*Math.PI/3+0.3;
+      var sx=tx+Math.cos(ta)*8;
+      var sy=ty+Math.sin(ta)*8;
+      tg.appendChild(svgEl('ellipse',{cx:sx,cy:sy,rx:3,ry:1.5,fill:'#FFCDD2',opacity:0.7,transform:'rotate('+(ts*60)+','+sx+','+sy+')'}));
+      // Tiny seed dots
+      tg.appendChild(svgEl('circle',{cx:sx+Math.cos(ta)*1.5,cy:sy+Math.sin(ta)*1.5,r:0.8,fill:'#FFEB3B',opacity:0.6}));
     }
-    tg.appendChild(svgEl('circle',{cx:tx,cy:ty,r:3,fill:'#FF8A80',opacity:0.4}));
+    // Center core
+    tg.appendChild(svgEl('circle',{cx:tx,cy:ty,r:3.5,fill:'#FF8A80',opacity:0.6}));
+    // Wet shine highlight
+    tg.appendChild(svgEl('ellipse',{cx:tx-4,cy:ty-5,rx:5,ry:3,fill:'#FFF',opacity:0.2}));
     gTomato.appendChild(tg);
     tomatoSlices.push(tg);
   }
   gVBread.appendChild(gTomato);
 
-  // 9. ONION RINGS
+  // 9. ONION RINGS — white/cream visible rings, not purple
   var gOnion=svgEl('g',{opacity:0});
   var onionRings=[];
   for(var oni=0;oni<5;oni++){
     var oxx=subX+55+oni*100;
     var oy=bottomBreadTop-62;
     var og=svgEl('g',{opacity:0});
-    og.appendChild(svgEl('circle',{cx:oxx,cy:oy,r:12,fill:'none',stroke:'#9C27B0','stroke-width':3,opacity:0.6}));
-    og.appendChild(svgEl('circle',{cx:oxx,cy:oy,r:9,fill:'none',stroke:'#CE93D8','stroke-width':1.5,opacity:0.3}));
-    og.appendChild(svgEl('circle',{cx:oxx,cy:oy,r:6,fill:'none',stroke:'#F3E5F5','stroke-width':1,opacity:0.4}));
+    // Outer ring — white/cream onion
+    og.appendChild(svgEl('circle',{cx:oxx,cy:oy,r:14,fill:'none',stroke:'#F5F0E0','stroke-width':4,opacity:0.9}));
+    // Middle layer
+    og.appendChild(svgEl('circle',{cx:oxx,cy:oy,r:10,fill:'none',stroke:'#EDE4D0','stroke-width':2.5,opacity:0.7}));
+    // Inner ring
+    og.appendChild(svgEl('circle',{cx:oxx,cy:oy,r:6.5,fill:'none',stroke:'#E8DCC0','stroke-width':1.5,opacity:0.5}));
+    // Subtle purple tint on outer edge (red onion hint)
+    og.appendChild(svgEl('circle',{cx:oxx,cy:oy,r:14,fill:'none',stroke:'#CE93D8','stroke-width':1,opacity:0.25}));
+    // Shine
+    og.appendChild(svgEl('ellipse',{cx:oxx-3,cy:oy-4,rx:4,ry:2,fill:'#FFF',opacity:0.15}));
     gOnion.appendChild(og);
     onionRings.push(og);
   }
   gVBread.appendChild(gOnion);
 
-  // 10. PEPPERS + OREGANO
+  // 10. PEPPERS + OREGANO — bell pepper rings (green & yellow), visible
   var gToppings=svgEl('g',{opacity:0});
   var pepperPieces=[];
+  var pepColors=['#4CAF50','#8BC34A','#FFEB3B','#4CAF50','#FFC107','#66BB6A','#4CAF50'];
   for(var pi=0;pi<7;pi++){
     var px=subX+35+pi*70;
     var py=bottomBreadTop-74+Math.random()*4;
     var pg=svgEl('g',{opacity:0});
-    pg.appendChild(svgEl('circle',{cx:px,cy:py,r:8,fill:'none',stroke:'#CDDC39','stroke-width':3,opacity:0.75}));
-    pg.appendChild(svgEl('circle',{cx:px,cy:py,r:4,fill:'#F0F4C3',opacity:0.3}));
+    // Bell pepper ring cross-section
+    pg.appendChild(svgEl('circle',{cx:px,cy:py,r:10,fill:'none',stroke:pepColors[pi],'stroke-width':4,opacity:0.9}));
+    // Inner membrane
+    pg.appendChild(svgEl('circle',{cx:px,cy:py,r:6,fill:'none',stroke:pepColors[pi],'stroke-width':1.5,opacity:0.4}));
+    // Seed cluster in center
+    for(var psi=0;psi<3;psi++){
+      pg.appendChild(svgEl('circle',{cx:px-2+psi*2,cy:py-1+psi,r:1,fill:'#FFF8E1',opacity:0.5}));
+    }
+    // Highlight
+    pg.appendChild(svgEl('ellipse',{cx:px-3,cy:py-3,rx:3,ry:2,fill:'#FFF',opacity:0.15}));
     gToppings.appendChild(pg);
     pepperPieces.push(pg);
   }
   var oreganoDots=[];
-  for(var oi2=0;oi2<30;oi2++){
+  for(var oi2=0;oi2<40;oi2++){
     var ox2=subX+25+Math.random()*(subW-50);
     var oy2=bottomBreadTop-80+Math.random()*70;
-    var odot=svgEl('circle',{cx:ox2,cy:oy2,r:0.8+Math.random()*0.8,fill:'#558B2F',opacity:0});
+    var odot=svgEl('circle',{cx:ox2,cy:oy2,r:0.8+Math.random()*1,fill:'#33691E',opacity:0});
     gToppings.appendChild(odot);
     oreganoDots.push(odot);
   }
@@ -1118,26 +1145,41 @@ a{color:inherit;text-decoration:none}
   function drawChipPile(parentG,cpx,cpy,spread){
     var cg=svgEl('g',{});
     var shapes=[
-      {dx:-22,dy:-16,rx:16,ry:9,rot:-15},{dx:12,dy:-24,rx:14,ry:10,rot:25},
-      {dx:-8,dy:4,rx:17,ry:8,rot:-5},{dx:20,dy:-10,rx:13,ry:9,rot:35},
-      {dx:-4,dy:18,rx:15,ry:8,rot:-20},{dx:24,dy:8,rx:12,ry:9,rot:10},
-      {dx:3,dy:-6,rx:16,ry:10,rot:0},{dx:-16,dy:14,rx:13,ry:8,rot:-30},
-      {dx:30,dy:-2,rx:14,ry:8,rot:15},{dx:-25,dy:-4,rx:12,ry:9,rot:-40},
-      {dx:8,dy:22,rx:15,ry:7,rot:20},{dx:-12,dy:-22,rx:13,ry:9,rot:5}
+      {dx:-22,dy:-16,r:14,rot:-15},{dx:12,dy:-24,r:13,rot:25},
+      {dx:-8,dy:4,r:15,rot:-5},{dx:20,dy:-10,r:12,rot:35},
+      {dx:-4,dy:18,r:13,rot:-20},{dx:24,dy:8,r:11,rot:10},
+      {dx:3,dy:-6,r:14,rot:0},{dx:-16,dy:14,r:12,rot:-30},
+      {dx:30,dy:-2,r:13,rot:15},{dx:-25,dy:-4,r:11,rot:-40},
+      {dx:8,dy:22,r:14,rot:20},{dx:-12,dy:-22,r:12,rot:5}
     ];
     for(var i=0;i<shapes.length;i++){
       var s=shapes[i];
-      var dx=s.dx*spread, dy=s.dy*spread;
-      var baseCol=['#F5D85A','#EDCC42','#E8C430','#F0D048'][i%4];
-      cg.appendChild(svgEl('ellipse',{cx:cpx+dx,cy:cpy+dy,rx:s.rx,ry:s.ry,fill:baseCol,stroke:'#C8A028','stroke-width':0.6,opacity:0.9,transform:'rotate('+s.rot+','+(cpx+dx)+','+(cpy+dy)+')'}));
-      // Highlight
-      cg.appendChild(svgEl('ellipse',{cx:cpx+dx-1,cy:cpy+dy-1,rx:s.rx*0.45,ry:s.ry*0.35,fill:'#FFF',opacity:0.15,transform:'rotate('+s.rot+','+(cpx+dx-1)+','+(cpy+dy-1)+')'}));
-      // Subtle shadow
-      cg.appendChild(svgEl('ellipse',{cx:cpx+dx+1,cy:cpy+dy+2,rx:s.rx*0.7,ry:s.ry*0.5,fill:'#000',opacity:0.04,transform:'rotate('+s.rot+','+(cpx+dx+1)+','+(cpy+dy+2)+')'}));
+      var cx2=cpx+s.dx*spread, cy2=cpy+s.dy*spread;
+      var baseCol=['#F5D85A','#EDCC42','#E0B830','#F0D048','#D4A428'][i%5];
+      // Wavy irregular chip path (not a perfect ellipse)
+      var r=s.r;
+      var pts=8;
+      var chipD='M';
+      for(var cp2=0;cp2<pts;cp2++){
+        var ang=cp2*Math.PI*2/pts;
+        var wobble=r*(0.7+Math.sin(i*3+cp2*2.5)*0.3);
+        var flatness=0.55+Math.cos(i*2+cp2*1.7)*0.15;
+        chipD+=(cx2+Math.cos(ang)*wobble)+' '+(cy2+Math.sin(ang)*wobble*flatness);
+        if(cp2<pts-1)chipD+=' L';
+      }
+      chipD+=' Z';
+      cg.appendChild(svgEl('path',{d:chipD,fill:baseCol,stroke:'#B89020','stroke-width':0.7,opacity:0.92,transform:'rotate('+s.rot+','+cx2+','+cy2+')'}));
+      // Oily shine spot
+      cg.appendChild(svgEl('ellipse',{cx:cx2-2,cy:cy2-2,rx:r*0.3,ry:r*0.2,fill:'#FFF',opacity:0.18,transform:'rotate('+(s.rot+15)+','+cx2+','+cy2+')'}));
+      // Brown crispy edge spots
+      cg.appendChild(svgEl('circle',{cx:cx2+r*0.4,cy:cy2+r*0.2,r:2+Math.random()*1.5,fill:'#B8860B',opacity:0.2}));
+      cg.appendChild(svgEl('circle',{cx:cx2-r*0.3,cy:cy2-r*0.1,r:1.5+Math.random(),fill:'#A07010',opacity:0.15}));
     }
     // Crumbs scattered around
-    for(var ci=0;ci<6;ci++){
-      cg.appendChild(svgEl('circle',{cx:cpx-15+ci*12,cy:cpy+8+ci*3,r:1.5+Math.random()*1.5,fill:'#C8A030',opacity:0.3}));
+    for(var ci=0;ci<8;ci++){
+      var crx=cpx-20+ci*10+Math.random()*6;
+      var cry=cpy+5+ci*4+Math.random()*4;
+      cg.appendChild(svgEl('path',{d:'M'+crx+' '+cry+' l'+(2+Math.random()*3)+' '+(Math.random()*2-1)+' l'+(Math.random()*2-1)+' '+(2+Math.random()*2)+' Z',fill:'#C8A030',opacity:0.3}));
     }
     parentG.appendChild(cg);
   }
