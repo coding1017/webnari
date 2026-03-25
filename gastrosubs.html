@@ -997,7 +997,7 @@ a{color:inherit;text-decoration:none}
 
   // ─── 12. KNIFE ───
   var gKnife=svgEl('g',{opacity:0});
-  var knifeX=cx, knifeBaseY=cy-50;
+  var knifeX=cx, knifeBaseY=cy+10;
   gKnife.appendChild(svgEl('path',{d:'M'+(knifeX-12)+' '+knifeBaseY+' L'+knifeX+' '+(knifeBaseY-150)+' L'+(knifeX+18)+' '+knifeBaseY+' Q'+(knifeX+3)+' '+(knifeBaseY+5)+' '+(knifeX-12)+' '+knifeBaseY,fill:'#D0D0D0',stroke:'#A0A0A0','stroke-width':1}));
   gKnife.appendChild(svgEl('path',{d:'M'+(knifeX-6)+' '+(knifeBaseY-5)+' L'+(knifeX+1)+' '+(knifeBaseY-140)+' L'+(knifeX+10)+' '+(knifeBaseY-5)+' Z',fill:'#E8E8E8',opacity:0.35}));
   gKnife.appendChild(svgEl('rect',{x:knifeX-12,y:knifeBaseY,width:30,height:10,rx:2,fill:'#B0B0B0'}));
@@ -1389,29 +1389,29 @@ a{color:inherit;text-decoration:none}
         var kEndX=subX+subW-knifeX+40;
         var kSlideX=kStartX+(kEndX-kStartX)*kSlideP;
         // Rotate 90 degrees so blade points RIGHT, positioned at bread mid-height
-        gKnife.setAttribute('transform','translate('+kSlideX+',15) rotate(90,'+knifeX+','+knifeBaseY+')');
+        gKnife.setAttribute('transform','translate('+kSlideX+',0) rotate(90,'+knifeX+','+knifeBaseY+')');
       } else {
         // Knife fades after slice
         var knifeFade=1-ease3(clamp((sliceP-0.5)/0.2,0,1));
         gKnife.setAttribute('opacity',String(knifeFade));
-        gKnife.setAttribute('transform','translate('+(subX+subW-knifeX+40)+',15) rotate(90,'+knifeX+','+knifeBaseY+')');
+        gKnife.setAttribute('transform','translate('+(subX+subW-knifeX+40)+',0) rotate(90,'+knifeX+','+knifeBaseY+')');
       }
 
-      // Whole bread fades out
-      if(sliceP<0.4){
-        gBread.setAttribute('opacity',String(1-ease3(clamp(sliceP/0.3,0,1))));
+      // Whole bread stays fully visible until knife finishes, then quick swap
+      if(sliceP<0.5){
+        gBread.setAttribute('opacity','1');
+        gVBread.setAttribute('opacity','0');
+      } else {
+        gBread.setAttribute('opacity',String(1-ease3(clamp((sliceP-0.5)/0.15,0,1))));
+        gVBread.setAttribute('opacity',String(ease3(clamp((sliceP-0.5)/0.15,0,1))));
       }
 
-      // V-bread fades in after knife passes
-      var vFadeIn=ease3(clamp((sliceP-0.2)/0.4,0,1));
-      gVBread.setAttribute('opacity',String(vFadeIn));
-
-      // Interior panel grows visible (the V backdrop)
-      var panelOpacity=ease3(clamp((sliceP-0.3)/0.5,0,1));
+      // Interior panel grows visible after knife finishes
+      var panelOpacity=ease3(clamp((sliceP-0.5)/0.4,0,1));
       interiorPanel.setAttribute('opacity',String(panelOpacity));
 
-      // Top bread rotates upward from back hinge (after knife passes)
-      var openAmount=ease3(clamp((sliceP-0.3)/0.7,0,1));
+      // Top bread lifts upward after knife finishes
+      var openAmount=ease3(clamp((sliceP-0.5)/0.5,0,1));
       var topLift=-(vOpenH-subH/2)*openAmount;
       topBread.setAttribute('transform','translate(0,'+topLift+')');
 
