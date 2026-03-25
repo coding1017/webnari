@@ -509,10 +509,6 @@ a{color:inherit;text-decoration:none}
     oreganoFlakes.push(oflake);
   }
 
-  // Append oven front layer ON TOP of all raw toppings
-  // (dome covers pizza outside the mouth opening during oven phase)
-  svg.appendChild(gOvenFront);
-
   // ─── 10. PIZZA PEEL (handle on right for L→R slide) ───
   var gPeel=svgEl('g',{opacity:0});
   var peelW=isMobile?580:400, peelH=isMobile?500:380;
@@ -649,7 +645,8 @@ a{color:inherit;text-decoration:none}
   // Z-order: back layer goes before disc (pizza on top of interior)
   // Front layer goes after basil (dome hides pizza outside mouth)
   svg.insertBefore(gOvenBack, gDisc);
-  // gOvenFront appended after all raw toppings but before cooked pizza
+  // Front layer on top of all raw toppings (dome hides pizza outside mouth)
+  svg.appendChild(gOvenFront);
 
   // ─── 12. COOKED PIZZA (replaces raw pizza when baked) ───
   var gCooked_g=svgEl('g',{opacity:0});
