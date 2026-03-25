@@ -2696,6 +2696,23 @@ function loadDB() {
   catch { return JSON.parse(JSON.stringify(SEED)); }
 }
 
+// Merge seed templates into DB — adds missing ones, updates categories on existing
+function migrateTemplates() {
+  if (!DB.templates) DB.templates = [];
+  const existing = new Set(DB.templates.map(t => t.id));
+  SEED.templates.forEach(seed => {
+    if (!existing.has(seed.id)) {
+      DB.templates.push(JSON.parse(JSON.stringify(seed)));
+    } else {
+      // Backfill category + path on existing templates
+      const t = DB.templates.find(x => x.id === seed.id);
+      if (t && !t.category) t.category = seed.category;
+      if (t && (!t.path || !t.path.startsWith('http')) && seed.path.startsWith('http')) t.path = seed.path;
+      if (t && seed.status === 'ready' && t.status !== 'ready') t.status = seed.status;
+    }
+  });
+}
+
 async function syncFromSupabase() {
   if (!_sb) return;
   const { data: { user } } = await _sb.auth.getUser();
@@ -2703,6 +2720,7 @@ async function syncFromSupabase() {
   const { data } = await _sb.from('agency_db').select('data').eq('admin_id', user.id).single();
   if (data?.data && Object.keys(data.data).length > 0) {
     DB = data.data;
+    migrateTemplates();
     localStorage.setItem(KEY, JSON.stringify(DB));
   }
 }
@@ -2716,6 +2734,8 @@ async function save() {
 }
 
 let DB = loadDB();
+migrateTemplates();
+localStorage.setItem(KEY, JSON.stringify(DB));
 
 // ════════════════════════════════════════════════════
 //  NAVIGATION
