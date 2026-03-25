@@ -34,13 +34,17 @@
 <style>
 /* ─── TOKENS ──────────────────────────────────────────────────────────────── */
 :root {
-  --black: #08060E; --dark: #0E0B18; --surface: #141024;
-  --surface2: #1A1530; --border: #2A2244;
+  --black: #0A0514; --dark: #120B20; --surface: #1A1030;
+  --surface2: #221840; --border: #3A2860;
   --pink: #FF2D9B; --pink2: #FF6BBF;
   --purple: #A855F7; --purple2: #C084FC;
   --neon: #39FF14; --cyan: #00F0FF; --orange: #FF6B2B;
-  --white: #F8F0FF; --muted: #7A6A94; --text: #B8A8D4;
+  --yellow: #FACC15; --tiedye: #FF6B2B;
+  --white: #F8F0FF; --muted: #9A7ABB; --text: #D4C0E8;
   --gradient: linear-gradient(135deg, #FF2D9B, #A855F7, #00F0FF);
+  --gradient-warm: linear-gradient(135deg, #FF6B2B, #FF2D9B, #A855F7);
+  --gradient-trippy: linear-gradient(135deg, #39FF14, #00F0FF, #A855F7, #FF2D9B);
+  --checker: repeating-conic-gradient(rgba(255,45,155,0.06) 0% 25%, transparent 0% 50%) 0 0 / 40px 40px;
   --font-head: 'Barlow Condensed', sans-serif;
   --font-body: 'Barlow', sans-serif;
   --radius: 12px; --radius-lg: 20px;
@@ -54,8 +58,13 @@ ul { list-style: none; }
 
 body::before {
   content: ''; position: fixed; inset: 0;
+  background: var(--checker);
+  pointer-events: none; z-index: 0; opacity: 0.4;
+}
+body::after {
+  content: ''; position: fixed; inset: 0;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");
-  pointer-events: none; z-index: 9999;
+  pointer-events: none; z-index: 9999; opacity: 0.5;
 }
 
 .container { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
@@ -97,9 +106,9 @@ body::before {
 /* ─── NAV ────────────────────────────────────────────────────────────────── */
 .site-nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 1000; height: 68px;
-  background: rgba(8,6,14,0.85); backdrop-filter: blur(14px) saturate(160%);
+  background: rgba(10,5,20,0.88); backdrop-filter: blur(14px) saturate(180%);
   -webkit-backdrop-filter: blur(14px) saturate(160%);
-  border-bottom: 1px solid rgba(255,45,155,0.08);
+  border-bottom: 1px solid rgba(255,45,155,0.15);
 }
 .nav-inner { max-width: 1200px; margin: 0 auto; height: 100%; display: flex; align-items: center; padding: 0 40px; }
 .nav-logo { font-family: var(--font-head); font-weight: 900; font-size: 22px; color: var(--white); letter-spacing: 0.06em; }
@@ -170,24 +179,34 @@ body::before {
 .hero-bg {
   position: absolute; inset: 0; z-index: 0;
   background:
-    radial-gradient(ellipse 60% 50% at 20% 50%, rgba(255,45,155,0.12) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 60% at 80% 30%, rgba(168,85,247,0.1) 0%, transparent 70%),
-    radial-gradient(ellipse 40% 40% at 60% 80%, rgba(0,240,255,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse at 20% 50%, rgba(255,45,155,0.25) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(57,255,20,0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(0,240,255,0.2) 0%, transparent 50%),
+    radial-gradient(ellipse at 70% 60%, rgba(168,85,247,0.2) 0%, transparent 40%),
+    radial-gradient(ellipse at 30% 30%, rgba(255,107,43,0.15) 0%, transparent 50%),
     var(--black);
-  animation: meshDrift 12s ease-in-out infinite alternate;
+  animation: heroShift 12s ease-in-out infinite alternate;
 }
-@keyframes meshDrift {
-  0% { background-position: 0% 0%, 100% 0%, 50% 100%; }
-  100% { background-position: 10% 10%, 90% 10%, 40% 90%; }
+@keyframes heroShift {
+  0% { filter: hue-rotate(0deg); transform: scale(1); }
+  50% { filter: hue-rotate(30deg); transform: scale(1.1); }
+  100% { filter: hue-rotate(-20deg); transform: scale(1.05); }
 }
 .hero-content { position: relative; z-index: 1; text-align: center; max-width: 720px; }
 .hero-eyebrow {
   display: inline-flex; align-items: center; gap: 10px;
   font-family: var(--font-head); font-size: 12px; font-weight: 700;
-  letter-spacing: 0.2em; text-transform: uppercase; color: var(--pink);
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--cyan);
   margin-bottom: 24px; padding: 8px 20px;
-  background: rgba(255,45,155,0.06); border: 1px solid rgba(255,45,155,0.15);
+  background: linear-gradient(135deg, rgba(57,255,20,0.1), rgba(0,240,255,0.1), rgba(168,85,247,0.1), rgba(255,45,155,0.1));
+  border: 1px solid rgba(0,240,255,0.25);
   border-radius: 24px;
+  animation: eyebrowGlow 4s ease-in-out infinite alternate;
+}
+@keyframes eyebrowGlow {
+  0% { border-color: rgba(0,240,255,0.25); box-shadow: 0 0 12px rgba(0,240,255,0.1); }
+  50% { border-color: rgba(168,85,247,0.3); box-shadow: 0 0 12px rgba(168,85,247,0.1); }
+  100% { border-color: rgba(255,45,155,0.25); box-shadow: 0 0 12px rgba(255,45,155,0.1); }
 }
 .hero-eyebrow svg { width: 14px; height: 14px; }
 .hero-title {
@@ -196,8 +215,13 @@ body::before {
   color: var(--white); margin-bottom: 24px;
 }
 .hero-title .hero-accent {
-  background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-  background-clip: text;
+  background: var(--gradient-trippy); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text; background-size: 200% 200%;
+  animation: trippyText 6s ease-in-out infinite alternate;
+}
+@keyframes trippyText {
+  0% { background-position: 0% 50%; }
+  100% { background-position: 100% 50%; }
 }
 .hero-sub { font-size: 18px; color: var(--text); max-width: 480px; margin: 0 auto 40px; line-height: 1.6; }
 .hero-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
@@ -205,8 +229,8 @@ body::before {
 /* ─── MARQUEE ────────────────────────────────────────────────────────────── */
 .marquee-section {
   padding: 18px 0; overflow: hidden;
-  background: linear-gradient(135deg, rgba(255,45,155,0.08), rgba(168,85,247,0.08), rgba(0,240,255,0.08));
-  border-top: 1px solid rgba(255,45,155,0.1); border-bottom: 1px solid rgba(168,85,247,0.1);
+  background: linear-gradient(135deg, rgba(255,45,155,0.18), rgba(168,85,247,0.15), rgba(0,240,255,0.18), rgba(57,255,20,0.1));
+  border-top: 1px solid rgba(255,45,155,0.25); border-bottom: 1px solid rgba(0,240,255,0.25);
 }
 .marquee-track {
   display: flex; gap: 48px; width: max-content;
@@ -218,8 +242,9 @@ body::before {
   font-family: var(--font-head); font-size: 13px; font-weight: 700;
   letter-spacing: 0.15em; text-transform: uppercase; color: var(--text);
 }
-.marquee-item svg { width: 16px; height: 16px; color: var(--pink); }
-.marquee-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--purple); flex-shrink: 0; }
+.marquee-item svg { width: 16px; height: 16px; color: var(--neon); }
+.marquee-item { color: var(--white); }
+.marquee-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gradient); flex-shrink: 0; box-shadow: 0 0 8px rgba(255,45,155,0.4); }
 
 /* ─── FEATURED PRODUCTS ──────────────────────────────────────────────────── */
 .products-grid {
@@ -230,8 +255,10 @@ body::before {
   position: relative; background: var(--surface); border: 1px solid var(--border);
   border-radius: var(--radius-lg); overflow: hidden; transition: all 0.3s;
 }
-.product-card:hover { border-color: var(--purple); transform: translateY(-4px);
-  box-shadow: 0 12px 40px rgba(168,85,247,0.15);
+.product-card:hover { border-color: transparent; transform: translateY(-6px);
+  box-shadow: 0 12px 48px rgba(168,85,247,0.2), 0 0 0 1px var(--purple), inset 0 0 0 1px rgba(168,85,247,0.1);
+  background: linear-gradient(var(--surface), var(--surface)) padding-box,
+              linear-gradient(135deg, var(--pink), var(--purple), var(--cyan)) border-box;
 }
 .product-img {
   aspect-ratio: 1; overflow: hidden; position: relative;
@@ -306,9 +333,19 @@ body::before {
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
   padding: 32px 24px; text-align: center; transition: all 0.3s; cursor: pointer;
 }
-.category-card:hover { border-color: var(--pink); transform: translateY(-4px);
-  box-shadow: 0 8px 32px rgba(255,45,155,0.1);
-}
+.category-card:hover { transform: translateY(-4px); }
+.category-card:nth-child(1) { border-top: 2px solid var(--pink); }
+.category-card:nth-child(1):hover { border-color: var(--pink); box-shadow: 0 8px 32px rgba(255,45,155,0.15); }
+.category-card:nth-child(1) .category-icon { color: var(--pink2); }
+.category-card:nth-child(2) { border-top: 2px solid var(--cyan); }
+.category-card:nth-child(2):hover { border-color: var(--cyan); box-shadow: 0 8px 32px rgba(0,240,255,0.15); }
+.category-card:nth-child(2) .category-icon { color: var(--cyan); }
+.category-card:nth-child(3) { border-top: 2px solid var(--orange); }
+.category-card:nth-child(3):hover { border-color: var(--orange); box-shadow: 0 8px 32px rgba(255,107,43,0.15); }
+.category-card:nth-child(3) .category-icon { color: var(--orange); }
+.category-card:nth-child(4) { border-top: 2px solid var(--neon); }
+.category-card:nth-child(4):hover { border-color: var(--neon); box-shadow: 0 8px 32px rgba(57,255,20,0.15); }
+.category-card:nth-child(4) .category-icon { color: var(--neon); }
 .category-icon { width: 48px; height: 48px; margin: 0 auto 16px; color: var(--purple2); }
 .category-name {
   font-family: var(--font-head); font-weight: 800; font-size: 18px;
@@ -321,10 +358,16 @@ body::before {
   display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 48px;
 }
 .testimonial-card {
-  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
-  padding: 28px; transition: border-color 0.3s;
+  background: var(--surface); border: 1px solid transparent; border-radius: var(--radius-lg);
+  padding: 28px; transition: all 0.3s; position: relative;
+  background: linear-gradient(var(--surface), var(--surface)) padding-box,
+              linear-gradient(135deg, rgba(255,45,155,0.3), rgba(168,85,247,0.3), rgba(0,240,255,0.3)) border-box;
 }
-.testimonial-card:hover { border-color: var(--purple); }
+.testimonial-card:hover {
+  background: linear-gradient(var(--surface), var(--surface)) padding-box,
+              linear-gradient(135deg, rgba(255,45,155,0.5), rgba(168,85,247,0.5), rgba(0,240,255,0.5)) border-box;
+  box-shadow: 0 8px 32px rgba(168,85,247,0.12);
+}
 .testimonial-quote {
   font-size: 15px; color: var(--text); line-height: 1.7; margin-bottom: 20px; font-style: italic;
 }
@@ -341,8 +384,14 @@ body::before {
 
 /* ─── INSTAGRAM CTA ──────────────────────────────────────────────────────── */
 .ig-section {
-  text-align: center;
+  text-align: center; position: relative; overflow: hidden;
   background: linear-gradient(180deg, var(--black) 0%, var(--dark) 50%, var(--black) 100%);
+}
+.ig-section::before {
+  content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 700px; height: 400px;
+  background: radial-gradient(ellipse, rgba(255,45,155,0.1) 0%, rgba(168,85,247,0.06) 40%, transparent 70%);
+  pointer-events: none; z-index: 0;
 }
 .ig-grid {
   display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px;
@@ -350,17 +399,29 @@ body::before {
 }
 .ig-thumb {
   aspect-ratio: 1; border-radius: var(--radius); overflow: hidden;
-  background: var(--surface); border: 1px solid var(--border);
+  background: var(--surface); border: 1px solid transparent;
   display: flex; align-items: center; justify-content: center;
+  transition: all 0.3s;
+  background: linear-gradient(var(--surface), var(--surface)) padding-box,
+              linear-gradient(135deg, rgba(255,45,155,0.2), rgba(168,85,247,0.2)) border-box;
 }
-.ig-thumb svg { width: 20px; height: 20px; color: var(--muted); }
+.ig-thumb:hover { transform: scale(1.05);
+  background: linear-gradient(var(--surface), var(--surface)) padding-box,
+              linear-gradient(135deg, rgba(255,45,155,0.5), rgba(168,85,247,0.5), rgba(0,240,255,0.5)) border-box;
+}
+.ig-thumb svg { width: 20px; height: 20px; color: var(--purple2); }
 .ig-handle {
-  font-family: var(--font-head); font-size: 20px; font-weight: 700; color: var(--white);
-  margin-bottom: 24px;
+  font-family: var(--font-head); font-size: 24px; font-weight: 900; margin-bottom: 24px;
+  background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* ─── FOOTER ─────────────────────────────────────────────────────────────── */
-.site-footer { padding: 64px 0 32px; border-top: 1px solid var(--border); }
+.site-footer { padding: 64px 0 32px; border-top: 1px solid var(--border); position: relative; }
+.site-footer::before {
+  content: ''; position: absolute; inset: 0;
+  background: var(--checker); opacity: 0.2; pointer-events: none;
+}
 .footer-grid {
   display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 48px;
 }
@@ -386,6 +447,43 @@ body::before {
   display: flex; justify-content: space-between; align-items: center;
   margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border);
   font-size: 13px; color: var(--muted);
+}
+
+/* ─── PSYCHEDELIC SECTION ACCENTS ────────────────────────────────────────── */
+#featured { position: relative; }
+#featured::before {
+  content: ''; position: absolute; top: -100px; right: -200px; width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(168,85,247,0.12) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+.section:has(.about-split) { position: relative; overflow: hidden; }
+.section:has(.about-split)::before {
+  content: ''; position: absolute; bottom: -80px; left: -150px; width: 450px; height: 450px;
+  background: radial-gradient(circle, rgba(255,45,155,0.1) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+.section:has(.about-split)::after {
+  content: ''; position: absolute; top: -60px; right: -100px; width: 350px; height: 350px;
+  background: radial-gradient(circle, rgba(0,240,255,0.08) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+.section:has(.categories-grid) { position: relative; overflow: hidden; }
+.section:has(.categories-grid)::before {
+  content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 600px; height: 400px;
+  background: radial-gradient(ellipse, rgba(168,85,247,0.08) 0%, transparent 60%);
+  pointer-events: none; z-index: 0;
+}
+.section:has(.testimonials-grid) { position: relative; overflow: hidden; }
+.section:has(.testimonials-grid)::before {
+  content: ''; position: absolute; top: -50px; left: -100px; width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(57,255,20,0.06) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+.section:has(.testimonials-grid)::after {
+  content: ''; position: absolute; bottom: -80px; right: -80px; width: 350px; height: 350px;
+  background: radial-gradient(circle, rgba(255,107,43,0.08) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
 }
 
 /* ─── SCROLL REVEAL ──────────────────────────────────────────────────────── */
@@ -573,7 +671,7 @@ body::before {
   <div class="hero-bg"></div>
   <div class="hero-content">
     <div class="hero-eyebrow">
-      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L9 7H2l5.5 4.5L5 17l7-4.5L19 17l-2.5-5.5L22 7h-7L12 2z"/></svg>
+      <svg viewBox="0 0 24 24" fill="currentColor" width="16" height="16"><path d="M12 2C7 2 3 5.5 3 9.5c0 2.5 1.5 4 3 4.5h1v6a1 1 0 001 1h8a1 1 0 001-1v-6h1c1.5-.5 3-2 3-4.5C21 5.5 17 2 12 2zm-1 17h2v-5h-2v5zm-2-5v4h1v-4H9zm6 0v4h1v-4h-1z"/><circle cx="8" cy="7" r="1.2" fill="rgba(255,255,255,0.5)"/><circle cx="14" cy="6" r="0.9" fill="rgba(255,255,255,0.5)"/><circle cx="11" cy="9" r="0.7" fill="rgba(255,255,255,0.5)"/></svg>
       Handmade With Love
     </div>
     <h1 class="hero-title">ONE OF A KIND<br><span class="hero-accent">WEARABLE ART</span></h1>
@@ -588,7 +686,7 @@ body::before {
 <!-- ─── MARQUEE ──────────────────────────────────────────────────────────── -->
 <div class="marquee-section">
   <div class="marquee-track" id="marqueeTrack">
-    <span class="marquee-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L9 7H2l5.5 4.5L5 17l7-4.5L19 17l-2.5-5.5L22 7h-7L12 2z"/></svg> #WOOKWEARWEDNESDAY</span>
+    <span class="marquee-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C7 2 3 5.5 3 9.5c0 2.5 1.5 4 3 4.5h1v6a1 1 0 001 1h8a1 1 0 001-1v-6h1c1.5-.5 3-2 3-4.5C21 5.5 17 2 12 2zm-1 17h2v-5h-2v5z"/></svg> #WOOKWEARWEDNESDAY</span>
     <span class="marquee-dot"></span>
     <span class="marquee-item">NEW DROP EVERY WEEK</span>
     <span class="marquee-dot"></span>
@@ -596,12 +694,12 @@ body::before {
     <span class="marquee-dot"></span>
     <span class="marquee-item">ONE OF ONE PIECES</span>
     <span class="marquee-dot"></span>
-    <span class="marquee-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L9 7H2l5.5 4.5L5 17l7-4.5L19 17l-2.5-5.5L22 7h-7L12 2z"/></svg> PRIZED POSSESSION POUCHES</span>
+    <span class="marquee-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C7 2 3 5.5 3 9.5c0 2.5 1.5 4 3 4.5h1v6a1 1 0 001 1h8a1 1 0 001-1v-6h1c1.5-.5 3-2 3-4.5C21 5.5 17 2 12 2zm-1 17h2v-5h-2v5z"/></svg> PRIZED POSSESSION POUCHES</span>
     <span class="marquee-dot"></span>
     <span class="marquee-item">BAGS &amp; ACCESSORIES</span>
     <span class="marquee-dot"></span>
     <!-- duplicate for seamless loop -->
-    <span class="marquee-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L9 7H2l5.5 4.5L5 17l7-4.5L19 17l-2.5-5.5L22 7h-7L12 2z"/></svg> #WOOKWEARWEDNESDAY</span>
+    <span class="marquee-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C7 2 3 5.5 3 9.5c0 2.5 1.5 4 3 4.5h1v6a1 1 0 001 1h8a1 1 0 001-1v-6h1c1.5-.5 3-2 3-4.5C21 5.5 17 2 12 2zm-1 17h2v-5h-2v5z"/></svg> #WOOKWEARWEDNESDAY</span>
     <span class="marquee-dot"></span>
     <span class="marquee-item">NEW DROP EVERY WEEK</span>
     <span class="marquee-dot"></span>
@@ -609,7 +707,7 @@ body::before {
     <span class="marquee-dot"></span>
     <span class="marquee-item">ONE OF ONE PIECES</span>
     <span class="marquee-dot"></span>
-    <span class="marquee-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L9 7H2l5.5 4.5L5 17l7-4.5L19 17l-2.5-5.5L22 7h-7L12 2z"/></svg> PRIZED POSSESSION POUCHES</span>
+    <span class="marquee-item"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C7 2 3 5.5 3 9.5c0 2.5 1.5 4 3 4.5h1v6a1 1 0 001 1h8a1 1 0 001-1v-6h1c1.5-.5 3-2 3-4.5C21 5.5 17 2 12 2zm-1 17h2v-5h-2v5z"/></svg> PRIZED POSSESSION POUCHES</span>
     <span class="marquee-dot"></span>
     <span class="marquee-item">BAGS &amp; ACCESSORIES</span>
     <span class="marquee-dot"></span>
@@ -762,7 +860,9 @@ body::before {
   <div class="container">
     <div class="footer-grid">
       <div>
-        <div class="footer-brand">WOOK <span class="logo-accent">WEAR</span></div>
+        <div class="footer-brand">
+          <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20" style="display:inline-block;vertical-align:middle;margin-right:6px;color:var(--pink);"><path d="M12 2C7 2 3 5.5 3 9.5c0 2.5 1.5 4 3 4.5h1v6a1 1 0 001 1h8a1 1 0 001-1v-6h1c1.5-.5 3-2 3-4.5C21 5.5 17 2 12 2zm-1 17h2v-5h-2v5zm-2-5v4h1v-4H9zm6 0v4h1v-4h-1z"/><circle cx="8" cy="7" r="1.2" fill="rgba(255,255,255,0.5)"/><circle cx="14" cy="6" r="0.9" fill="rgba(255,255,255,0.5)"/><circle cx="11" cy="9" r="0.7" fill="rgba(255,255,255,0.5)"/></svg>WOOK <span class="logo-accent">WEAR</span>
+        </div>
         <div class="footer-tagline">Handmade pouches, bags, and accessories.<br>One of a kind, made with love by Meesh.</div>
         <div class="footer-social">
           <a href="https://www.instagram.com/wook.wear" target="_blank" rel="noopener" aria-label="Instagram">

@@ -35,13 +35,17 @@ A **Website-as-a-Service (WaaS)** platform called **Webnari**. The agency landin
 
 ## Wook Wear Design Tokens (wookwear.html reference)
 ```css
---black: #08060E; --dark: #0E0B18; --surface: #141024;
---surface2: #1A1530; --border: #2A2244;
+--black: #0A0514; --dark: #120B20; --surface: #1A1030;
+--surface2: #221840; --border: #3A2860;
 --pink: #FF2D9B; --pink2: #FF6BBF;
 --purple: #A855F7; --purple2: #C084FC;
 --neon: #39FF14; --cyan: #00F0FF; --orange: #FF6B2B;
---white: #F8F0FF; --muted: #7A6A94; --text: #B8A8D4;
+--yellow: #FACC15; --tiedye: #FF6B2B;
+--white: #F8F0FF; --muted: #9A7ABB; --text: #D4C0E8;
 --gradient: linear-gradient(135deg, #FF2D9B, #A855F7, #00F0FF);
+--gradient-warm: linear-gradient(135deg, #FF6B2B, #FF2D9B, #A855F7);
+--gradient-trippy: linear-gradient(135deg, #39FF14, #00F0FF, #A855F7, #FF2D9B);
+--checker: repeating-conic-gradient(rgba(255,45,155,0.06) 0% 25%, transparent 0% 50%) 0 0 / 40px 40px;
 ```
 
 ## Wook Wear Notes

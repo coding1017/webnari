@@ -21,13 +21,17 @@
 <style>
 /* ─── TOKENS ──────────────────────────────────────────────────────────────── */
 :root {
-  --black: #08060E; --dark: #0E0B18; --surface: #141024;
-  --surface2: #1A1530; --border: #2A2244;
+  --black: #0A0514; --dark: #120B20; --surface: #1A1030;
+  --surface2: #221840; --border: #3A2860;
   --pink: #FF2D9B; --pink2: #FF6BBF;
   --purple: #A855F7; --purple2: #C084FC;
   --neon: #39FF14; --cyan: #00F0FF; --orange: #FF6B2B;
-  --white: #F8F0FF; --muted: #7A6A94; --text: #B8A8D4;
+  --yellow: #FACC15; --tiedye: #FF6B2B;
+  --white: #F8F0FF; --muted: #9A7ABB; --text: #D4C0E8;
   --gradient: linear-gradient(135deg, #FF2D9B, #A855F7, #00F0FF);
+  --gradient-warm: linear-gradient(135deg, #FF6B2B, #FF2D9B, #A855F7);
+  --gradient-trippy: linear-gradient(135deg, #39FF14, #00F0FF, #A855F7, #FF2D9B);
+  --checker: repeating-conic-gradient(rgba(255,45,155,0.06) 0% 25%, transparent 0% 50%) 0 0 / 40px 40px;
   --font-head: 'Barlow Condensed', sans-serif;
   --font-body: 'Barlow', sans-serif;
   --radius: 12px; --radius-lg: 20px;
@@ -41,8 +45,13 @@ ul { list-style: none; }
 
 body::before {
   content: ''; position: fixed; inset: 0;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");
-  pointer-events: none; z-index: 9999;
+  background: var(--checker);
+  pointer-events: none; z-index: 0; opacity: 0.4;
+}
+body::after {
+  content: ''; position: fixed; bottom: -15%; right: -10%; width: 55%; height: 55%;
+  background: radial-gradient(ellipse at center, rgba(168,85,247,0.05) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
 }
 
 .container { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
@@ -314,8 +323,20 @@ body::before {
 .contact-header-sub { font-size: 18px; color: var(--text); max-width: 480px; margin: 0 auto; line-height: 1.6; }
 
 /* ─── CONTACT SPLIT ──────────────────────────────────────────────────────── */
+.contact-form-section { position: relative; overflow: hidden; }
+.contact-form-section::before {
+  content: ''; position: absolute; top: 10%; left: -15%; width: 50%; height: 70%;
+  background: radial-gradient(ellipse at center, rgba(255,45,155,0.06) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
+.contact-form-section::after {
+  content: ''; position: absolute; bottom: 5%; right: -10%; width: 45%; height: 60%;
+  background: radial-gradient(ellipse at center, rgba(0,240,255,0.05) 0%, transparent 70%);
+  pointer-events: none; z-index: 0;
+}
 .contact-split {
   display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px; align-items: start;
+  position: relative; z-index: 1;
 }
 
 /* ─── FORM STYLES ────────────────────────────────────────────────────────── */
@@ -489,7 +510,7 @@ body::before {
 </section>
 
 <!-- ─── CONTACT SPLIT ────────────────────────────────────────────────────── -->
-<section class="section">
+<section class="section contact-form-section">
   <div class="container">
     <div class="contact-split">
       <!-- Form -->
