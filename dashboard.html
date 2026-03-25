@@ -2915,11 +2915,12 @@ function renderTemplateCard(t, usage, useMobilePreview) {
   <div class="template-card" onclick="navigate('template-detail','${t.id}')" style="cursor:pointer;--_tpl-color:${t.color};">
     <div class="template-preview" style="height:160px;">
         ${hasLiveUrl ? `
-          <img src="https://image.thum.io/get/width/600/crop/340/noanimate/${t.path}" alt="${t.name}" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;" onerror="this.style.display='none';this.nextElementSibling.style.display='';this.nextElementSibling.nextElementSibling.style.display='';this.nextElementSibling.nextElementSibling.nextElementSibling.style.display='';">
-          <div class="template-preview-bg" style="background:${t.color};display:none;"></div>
-          <div class="template-preview-grid" style="display:none;"></div>
-          <div class="template-icon" style="display:none;">${t.icon || ''}</div>
-          <div style="position:absolute;top:8px;right:10px;z-index:2;background:rgba(0,0,0,0.55);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.12);border-radius:6px;padding:3px 8px;font-size:10px;font-weight:600;color:rgba(255,255,255,0.7);letter-spacing:0.04em;">LIVE</div>
+          <div style="position:absolute;inset:0;overflow:hidden;border-radius:var(--radius-lg) var(--radius-lg) 0 0;">
+            <iframe src="${t.path}" sandbox="" scrolling="no" loading="lazy" tabindex="-1" style="width:1280px;height:900px;border:none;transform:scale(0.3);transform-origin:top left;pointer-events:none;overflow:hidden;"></iframe>
+          </div>
+          <div style="position:absolute;inset:0;z-index:2;"></div>
+          <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 60%,rgba(0,0,0,0.35) 100%);z-index:3;pointer-events:none;"></div>
+          <div style="position:absolute;top:8px;right:10px;z-index:4;background:rgba(0,0,0,0.55);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.12);border-radius:6px;padding:3px 8px;font-size:10px;font-weight:600;color:rgba(255,255,255,0.7);letter-spacing:0.04em;">LIVE</div>
         ` : `
           <div class="template-preview-bg" style="background:${t.color};"></div>
           <div class="template-preview-grid"></div>
