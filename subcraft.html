@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SubCraft | Premium Deli Subs</title>
+<title>GastroSubs | Premium Deli Subs</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
@@ -77,12 +77,12 @@ a{color:inherit;text-decoration:none}
       <svg id="sceneSvg" class="scene-svg" viewBox="0 0 1050 600" preserveAspectRatio="xMidYMid meet"></svg>
     </div>
     <div class="scene-energize" id="sceneEnergize"></div>
-    <div class="scene-powered" id="scenePowered"><span class="scene-powered-text">SUB<span>CRAFT</span></span></div>
+    <div class="scene-powered" id="scenePowered"><span class="scene-powered-text">GASTRO<span>SUBS</span></span></div>
     <div class="power-light pl-1" id="pl1"></div><div class="power-light pl-2" id="pl2"></div>
     <div class="power-light pl-3" id="pl3"></div><div class="power-light pl-4" id="pl4"></div>
     <div class="power-light pl-5" id="pl5"></div><div class="power-light pl-6" id="pl6"></div>
     <div class="seq-intro" id="seqIntro">
-      <div class="seq-intro-logo">SUB<span>CRAFT</span></div>
+      <div class="seq-intro-logo">GASTRO<span>SUBS</span></div>
       <div class="seq-intro-sub">Artisan Deli Subs &bull; Handcrafted Daily</div>
       <div class="seq-scroll-hint"><span>Scroll</span><div class="seq-scroll-line"></div></div>
     </div>
@@ -594,9 +594,9 @@ a{color:inherit;text-decoration:none}
   // ─── 14. RED BASKET PRESENTATION ───
   var gBasketScene=svgEl('g',{opacity:0});
 
-  // Deli paper on table (large, slightly crumpled)
+  // Deli paper on table (large)
   var paperCX=cx, paperCY=cy+60;
-  var paperW=500, paperH=200;
+  var paperW=520, paperH=260;
   // Paper shadow
   gBasketScene.appendChild(svgEl('rect',{x:paperCX-paperW/2+4,y:paperCY-paperH/2+4,width:paperW,height:paperH,rx:6,fill:'#000',opacity:0.1}));
   // Main deli paper (off-white)
@@ -604,23 +604,20 @@ a{color:inherit;text-decoration:none}
   // Paper fold crease
   gBasketScene.appendChild(svgEl('line',{x1:paperCX-paperW/2+15,y1:paperCY,x2:paperCX+paperW/2-15,y2:paperCY,stroke:'#DDD5C5','stroke-width':0.5,opacity:0.5}));
 
-  // Final presentation: same style as the cut phase — tall oval cross-sections
-  // Sub halves laid horizontal, bodies point inward, cut faces on outer sides
-  var fSubW=180; // length of each half body
-  var fSubH=subH+10; // height matching the sub
-  var fcsRX=30; // cross-section oval horizontal radius (scaled up from cut phase)
-  var fcsRY=fSubH/2; // cross-section oval vertical radius
+  // Final presentation: tall oval cross-sections, more separation
+  var fSubW=170;
+  var fSubH=subH+10;
+  var fcsRX=32;
+  var fcsRY=fSubH/2;
 
-  // Helper: draw a tall oval cross-section (same style as cut phase, just bigger)
+  // Helper: draw a tall oval cross-section
   function drawFinalCS(g,fcx,fcy,rx,ry){
     g.appendChild(svgEl('ellipse',{cx:fcx,cy:fcy,rx:rx,ry:ry,fill:'#C8882A',stroke:'#A06820','stroke-width':2.5}));
     g.appendChild(svgEl('ellipse',{cx:fcx,cy:fcy,rx:rx-5,ry:ry-6,fill:'#F5E6C8'}));
-    // Air pockets
     g.appendChild(svgEl('circle',{cx:fcx-4,cy:fcy-ry+16,r:3,fill:'#ECD8B0',opacity:0.5}));
     g.appendChild(svgEl('circle',{cx:fcx+6,cy:fcy-ry+25,r:2.5,fill:'#ECD8B0',opacity:0.4}));
     g.appendChild(svgEl('circle',{cx:fcx-3,cy:fcy+ry-16,r:3,fill:'#ECD8B0',opacity:0.5}));
     g.appendChild(svgEl('circle',{cx:fcx+5,cy:fcy+ry-24,r:2,fill:'#ECD8B0',opacity:0.4}));
-    // Filling layers — same as cut phase, scaled up
     var lw=rx*2-14, lx=fcx-lw/2;
     g.appendChild(svgEl('rect',{x:lx,y:fcy-24,width:lw,height:6,rx:2,fill:'#4CAF50'}));
     g.appendChild(svgEl('rect',{x:lx,y:fcy-17,width:lw,height:6,rx:2,fill:'#CC4444'}));
@@ -632,89 +629,117 @@ a{color:inherit;text-decoration:none}
     g.appendChild(svgEl('rect',{x:lx,y:fcy+22,width:lw,height:5,rx:2,fill:'#388E3C'}));
   }
 
-  // Left half: body goes RIGHT (inward), tall oval cross-section on LEFT (outer)
-  // Body connects to the oval edges — arches at top/bottom to meet the oval
+  // Left half: upper-left area, body goes RIGHT, cross-section on LEFT
   var bLeftG=svgEl('g',{});
-  var blCY=paperCY-35;
-  var blCSCX=paperCX-fcsRX-fSubW/2-10;
-  var blBodyStart=blCSCX; // body starts where oval center is
+  var blCY=paperCY-55;
+  var blCSCX=paperCX-fcsRX-fSubW/2-25;
+  var blBodyStart=blCSCX;
   var blBodyEnd=blBodyStart+fSubW;
-  var rEnd=fSubH/2; // rounded end radius
-  // Path: starts at oval top, goes right to rounded end, comes back to oval bottom
-  var blPath='M'+blBodyStart+' '+(blCY-fcsRY)+  // oval top
+  var rEnd=fSubH/2;
+  var blPath='M'+blBodyStart+' '+(blCY-fcsRY)+
     ' L'+(blBodyEnd-rEnd)+' '+(blCY-rEnd)+
     ' A'+rEnd+' '+rEnd+' 0 0 1 '+blBodyEnd+' '+blCY+
     ' A'+rEnd+' '+rEnd+' 0 0 1 '+(blBodyEnd-rEnd)+' '+(blCY+rEnd)+
-    ' L'+blBodyStart+' '+(blCY+fcsRY)+  // oval bottom
+    ' L'+blBodyStart+' '+(blCY+fcsRY)+
     ' A'+fcsRX+' '+fcsRY+' 0 0 1 '+(blBodyStart-fcsRX)+' '+blCY+
     ' A'+fcsRX+' '+fcsRY+' 0 0 1 '+blBodyStart+' '+(blCY-fcsRY)+' Z';
   bLeftG.appendChild(svgEl('path',{d:blPath,fill:'#FFFFFF'}));
   bLeftG.appendChild(svgEl('path',{d:blPath,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
   drawFinalCS(bLeftG,blCSCX,blCY,fcsRX,fcsRY);
-  bLeftG.setAttribute('transform','rotate(-1,'+paperCX+','+paperCY+')');
+  bLeftG.setAttribute('transform','rotate(-2,'+paperCX+','+paperCY+')');
   gBasketScene.appendChild(bLeftG);
 
-  // Right half: body goes LEFT (inward), tall oval cross-section on RIGHT (outer)
+  // Right half: lower-right area, body goes LEFT, cross-section on RIGHT
   var bRightG=svgEl('g',{});
-  var brCY=paperCY+30;
-  var brCSCX=paperCX+fcsRX+fSubW/2+10;
-  var brBodyEnd=brCSCX; // body ends where oval center is
+  var brCY=paperCY+50;
+  var brCSCX=paperCX+fcsRX+fSubW/2+25;
+  var brBodyEnd=brCSCX;
   var brBodyStart=brBodyEnd-fSubW;
-  var brPath='M'+brBodyEnd+' '+(brCY-fcsRY)+  // oval top
+  var brPath='M'+brBodyEnd+' '+(brCY-fcsRY)+
     ' L'+(brBodyStart+rEnd)+' '+(brCY-rEnd)+
     ' A'+rEnd+' '+rEnd+' 0 0 0 '+brBodyStart+' '+brCY+
     ' A'+rEnd+' '+rEnd+' 0 0 0 '+(brBodyStart+rEnd)+' '+(brCY+rEnd)+
-    ' L'+brBodyEnd+' '+(brCY+fcsRY)+  // oval bottom
+    ' L'+brBodyEnd+' '+(brCY+fcsRY)+
     ' A'+fcsRX+' '+fcsRY+' 0 0 0 '+(brBodyEnd+fcsRX)+' '+brCY+
     ' A'+fcsRX+' '+fcsRY+' 0 0 0 '+brBodyEnd+' '+(brCY-fcsRY)+' Z';
   bRightG.appendChild(svgEl('path',{d:brPath,fill:'#FFFFFF'}));
   bRightG.appendChild(svgEl('path',{d:brPath,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
   drawFinalCS(bRightG,brCSCX,brCY,fcsRX,fcsRY);
-  bRightG.setAttribute('transform','rotate(1,'+paperCX+','+paperCY+')');
+  bRightG.setAttribute('transform','rotate(2,'+paperCX+','+paperCY+')');
   gBasketScene.appendChild(bRightG);
 
-  // Chips pile — bottom right, fully inside the paper
-  var chipsG=svgEl('g',{});
-  var chipsCX=paperCX+paperW/2-90, chipsCY=paperCY+paperH/2-55;
-  var chipShapes=[
-    {dx:-18,dy:-12,rx:14,ry:8,rot:-15},
-    {dx:5,dy:-20,rx:12,ry:9,rot:25},
-    {dx:-8,dy:0,rx:15,ry:7,rot:-5},
-    {dx:12,dy:-8,rx:11,ry:8,rot:35},
-    {dx:-5,dy:10,rx:13,ry:7,rot:-20},
-    {dx:15,dy:5,rx:10,ry:8,rot:10},
-    {dx:0,dy:-5,rx:14,ry:9,rot:0},
-    {dx:-12,dy:8,rx:11,ry:7,rot:-30},
-    {dx:8,dy:12,rx:12,ry:6,rot:20}
-  ];
-  for(var chi=0;chi<chipShapes.length;chi++){
-    var ch=chipShapes[chi];
-    chipsG.appendChild(svgEl('ellipse',{cx:chipsCX+ch.dx*1.3,cy:chipsCY+ch.dy*1.3,rx:ch.rx*1.2,ry:ch.ry*1.2,fill:chi%3===0?'#E8C840':'#D4A830',stroke:'#B08820','stroke-width':0.5,opacity:0.9,transform:'rotate('+ch.rot+','+(chipsCX+ch.dx*1.3)+','+(chipsCY+ch.dy*1.3)+')'}));
+  // Chips — TWO piles: top-right and bottom-left corners of paper
+  function drawChipPile(parentG,cpx,cpy){
+    var cg=svgEl('g',{});
+    var shapes=[
+      {dx:-15,dy:-10,rx:16,ry:9,rot:-15},{dx:8,dy:-18,rx:14,ry:10,rot:25},
+      {dx:-6,dy:2,rx:17,ry:8,rot:-5},{dx:14,dy:-6,rx:13,ry:9,rot:35},
+      {dx:-3,dy:12,rx:15,ry:8,rot:-20},{dx:17,dy:6,rx:12,ry:9,rot:10},
+      {dx:2,dy:-4,rx:16,ry:10,rot:0},{dx:-10,dy:10,rx:13,ry:8,rot:-30}
+    ];
+    for(var i=0;i<shapes.length;i++){
+      var s=shapes[i];
+      var baseCol=i%3===0?'#F0D050':'#E0C040';
+      var strokeCol='#C09828';
+      cg.appendChild(svgEl('ellipse',{cx:cpx+s.dx,cy:cpy+s.dy,rx:s.rx,ry:s.ry,fill:baseCol,stroke:strokeCol,'stroke-width':0.8,opacity:0.92,transform:'rotate('+s.rot+','+(cpx+s.dx)+','+(cpy+s.dy)+')'}));
+      // Chip highlights
+      cg.appendChild(svgEl('ellipse',{cx:cpx+s.dx-2,cy:cpy+s.dy-2,rx:s.rx*0.5,ry:s.ry*0.4,fill:'#FFF',opacity:0.12,transform:'rotate('+s.rot+','+(cpx+s.dx-2)+','+(cpy+s.dy-2)+')'}));
+    }
+    // Crumb specks
+    for(var ci=0;ci<4;ci++){
+      cg.appendChild(svgEl('circle',{cx:cpx-8+ci*10,cy:cpy+ci*4,r:2+Math.random()*1.5,fill:'#B89030',opacity:0.35}));
+    }
+    parentG.appendChild(cg);
   }
-  for(var cbi=0;cbi<5;cbi++){
-    chipsG.appendChild(svgEl('circle',{cx:chipsCX-10+cbi*9,cy:chipsCY-5+cbi*5,r:2.5+Math.random()*2,fill:'#A07820',opacity:0.4}));
-  }
-  gBasketScene.appendChild(chipsG);
+  drawChipPile(gBasketScene, paperCX+paperW/2-65, paperCY-paperH/2+50);
+  drawChipPile(gBasketScene, paperCX-paperW/2+65, paperCY+paperH/2-50);
 
-  // Drink cup (left side)
+  // Drink cup (left side) — BIGGER, nicer, with GastroSubs logo
   var cupG=svgEl('g',{});
-  var cupCX=paperCX-paperW/2-55, cupCY=paperCY-20;
-  var cupW=50, cupH=100;
-  cupG.appendChild(svgEl('ellipse',{cx:cupCX+3,cy:cupCY+cupH/2+5,rx:cupW/2+2,ry:6,fill:'#000',opacity:0.12}));
-  cupG.appendChild(svgEl('path',{d:'M'+(cupCX-cupW/2+5)+' '+(cupCY+cupH/2)+' L'+(cupCX-cupW/2)+' '+(cupCY-cupH/2+10)+' L'+(cupCX+cupW/2)+' '+(cupCY-cupH/2+10)+' L'+(cupCX+cupW/2-5)+' '+(cupCY+cupH/2)+' Z',fill:'url(#cupGrad)',stroke:'#906018','stroke-width':1}));
-  cupG.appendChild(svgEl('rect',{x:cupCX-cupW/2+3,y:cupCY-10,width:cupW-6,height:20,rx:2,fill:'#B87A1E',opacity:0.4}));
-  cupG.appendChild(svgEl('line',{x1:cupCX-8,y1:cupCY-2,x2:cupCX-2,y2:cupCY-2,stroke:'#FFF8F0','stroke-width':1.5,opacity:0.6}));
-  cupG.appendChild(svgEl('line',{x1:cupCX+2,y1:cupCY-2,x2:cupCX+10,y2:cupCY-2,stroke:'#FFF8F0','stroke-width':1.5,opacity:0.6}));
-  cupG.appendChild(svgEl('ellipse',{cx:cupCX,cy:cupCY-cupH/2+10,rx:cupW/2+3,ry:8,fill:'url(#lidGrad)',stroke:'#909090','stroke-width':0.8}));
-  cupG.appendChild(svgEl('ellipse',{cx:cupCX,cy:cupCY-cupH/2+5,rx:cupW/2-2,ry:5,fill:'#D0D0D0',opacity:0.6}));
-  cupG.appendChild(svgEl('circle',{cx:cupCX+5,cy:cupCY-cupH/2+6,r:3,fill:'#A0A0A0',opacity:0.5}));
-  cupG.appendChild(svgEl('line',{x1:cupCX+5,y1:cupCY-cupH/2-25,x2:cupCX+5,y2:cupCY-cupH/2+6,stroke:'#E0D8C8','stroke-width':3,'stroke-linecap':'round'}));
-  cupG.appendChild(svgEl('line',{x1:cupCX+5,y1:cupCY-cupH/2-25,x2:cupCX+5,y2:cupCY-cupH/2+6,stroke:'#C8B898','stroke-width':1.5,'stroke-linecap':'round'}));
-  cupG.appendChild(svgEl('line',{x1:cupCX+5,y1:cupCY-cupH/2-25,x2:cupCX-5,y2:cupCY-cupH/2-35,stroke:'#E0D8C8','stroke-width':3,'stroke-linecap':'round'}));
-  cupG.appendChild(svgEl('line',{x1:cupCX+5,y1:cupCY-cupH/2-25,x2:cupCX-5,y2:cupCY-cupH/2-35,stroke:'#C8B898','stroke-width':1.5,'stroke-linecap':'round'}));
-  for(var cdi=0;cdi<4;cdi++){
-    cupG.appendChild(svgEl('circle',{cx:cupCX-cupW/2+8+cdi*12,cy:cupCY+10+cdi*8,r:1.5,fill:'#FFF',opacity:0.3}));
+  var cupCX=paperCX-paperW/2-80, cupCY=paperCY-10;
+  var cupW=70, cupH=140;
+  // Shadow
+  cupG.appendChild(svgEl('ellipse',{cx:cupCX+4,cy:cupCY+cupH/2+6,rx:cupW/2+4,ry:8,fill:'#000',opacity:0.15}));
+  // Cup body — tapered
+  var cupTopW=cupW, cupBotW=cupW-12;
+  cupG.appendChild(svgEl('path',{d:'M'+(cupCX-cupBotW/2)+' '+(cupCY+cupH/2)+
+    ' L'+(cupCX-cupTopW/2)+' '+(cupCY-cupH/2+14)+
+    ' L'+(cupCX+cupTopW/2)+' '+(cupCY-cupH/2+14)+
+    ' L'+(cupCX+cupBotW/2)+' '+(cupCY+cupH/2)+' Z',
+    fill:'url(#cupGrad)',stroke:'#906018','stroke-width':1.2}));
+  // Cup band/sleeve (brown kraft paper)
+  cupG.appendChild(svgEl('path',{d:'M'+(cupCX-cupBotW/2+3)+' '+(cupCY+20)+
+    ' L'+(cupCX-cupTopW/2+5)+' '+(cupCY-20)+
+    ' L'+(cupCX+cupTopW/2-5)+' '+(cupCY-20)+
+    ' L'+(cupCX+cupBotW/2-3)+' '+(cupCY+20)+' Z',
+    fill:'#8B6530',opacity:0.7}));
+  // GastroSubs logo text on cup sleeve
+  var logoText=svgEl('text',{x:cupCX,y:cupCY+4,fill:'#FFF8F0','font-family':'Barlow Condensed, sans-serif','font-weight':'900','font-size':'11',opacity:0.9,'text-anchor':'middle','letter-spacing':'1'});
+  logoText.textContent='GASTRO';
+  cupG.appendChild(logoText);
+  var logoText2=svgEl('text',{x:cupCX,y:cupCY+14,fill:'#D4942A','font-family':'Barlow Condensed, sans-serif','font-weight':'900','font-size':'10',opacity:0.9,'text-anchor':'middle','letter-spacing':'1'});
+  logoText2.textContent='SUBS';
+  cupG.appendChild(logoText2);
+  // Condensation drops
+  for(var cdi=0;cdi<6;cdi++){
+    var cdx=cupCX-cupW/2+10+cdi*11;
+    var cdy=cupCY+20+Math.random()*30;
+    cupG.appendChild(svgEl('ellipse',{cx:cdx,cy:cdy,rx:1.5,ry:2.5+Math.random()*2,fill:'#FFF',opacity:0.2+Math.random()*0.15}));
   }
+  // Lid (domed)
+  cupG.appendChild(svgEl('ellipse',{cx:cupCX,cy:cupCY-cupH/2+14,rx:cupTopW/2+4,ry:10,fill:'url(#lidGrad)',stroke:'#A0A0A0','stroke-width':0.8}));
+  cupG.appendChild(svgEl('ellipse',{cx:cupCX,cy:cupCY-cupH/2+8,rx:cupTopW/2-3,ry:6,fill:'#D8D8D8',opacity:0.5}));
+  // Straw hole
+  cupG.appendChild(svgEl('circle',{cx:cupCX+6,cy:cupCY-cupH/2+9,r:4,fill:'#B0B0B0',opacity:0.5}));
+  // Straw
+  cupG.appendChild(svgEl('line',{x1:cupCX+6,y1:cupCY-cupH/2-30,x2:cupCX+6,y2:cupCY-cupH/2+9,stroke:'#F0E8D8','stroke-width':4,'stroke-linecap':'round'}));
+  cupG.appendChild(svgEl('line',{x1:cupCX+6,y1:cupCY-cupH/2-30,x2:cupCX+6,y2:cupCY-cupH/2+9,stroke:'#D4C8A8','stroke-width':2,'stroke-linecap':'round'}));
+  // Straw bend
+  cupG.appendChild(svgEl('line',{x1:cupCX+6,y1:cupCY-cupH/2-30,x2:cupCX-6,y2:cupCY-cupH/2-42,stroke:'#F0E8D8','stroke-width':4,'stroke-linecap':'round'}));
+  cupG.appendChild(svgEl('line',{x1:cupCX+6,y1:cupCY-cupH/2-30,x2:cupCX-6,y2:cupCY-cupH/2-42,stroke:'#D4C8A8','stroke-width':2,'stroke-linecap':'round'}));
+  // Ice cubes visible at top
+  cupG.appendChild(svgEl('rect',{x:cupCX-12,y:cupCY-cupH/2+16,width:10,height:8,rx:2,fill:'#FFF',opacity:0.15}));
+  cupG.appendChild(svgEl('rect',{x:cupCX+4,y:cupCY-cupH/2+18,width:8,height:7,rx:2,fill:'#FFF',opacity:0.12}));
   gBasketScene.appendChild(cupG);
 
   svg.appendChild(gBasketScene);
@@ -1102,7 +1127,7 @@ a{color:inherit;text-decoration:none}
         gBoard.setAttribute('opacity','0');
       }
 
-      setPhase('SUBCRAFT');
+      setPhase('GASTROSUBS');
 
       var r=Math.round(20+finaleP*30);
       var g=Math.round(14+finaleP*12);
