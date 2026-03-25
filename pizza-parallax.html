@@ -318,10 +318,8 @@ a{color:inherit;text-decoration:none}
   gDisc.appendChild(svgEl('ellipse',{cx:cx,cy:cy+pizzaR*0.15,rx:pizzaR+8,ry:pizzaR*0.25+8,fill:'#000',opacity:0.1}));
   // Main disc
   gDisc.appendChild(svgEl('circle',{cx:cx,cy:cy,r:pizzaR,fill:'url(#doughGrad)',stroke:'#D4C090','stroke-width':1}));
-  // Raised rim (cornicione)
-  gDisc.appendChild(svgEl('circle',{cx:cx,cy:cy,r:pizzaR,fill:'none',stroke:'#DCC090','stroke-width':isMobile?18:14,opacity:0.4}));
-  // Inner disc (slightly lighter — thinner center)
-  gDisc.appendChild(svgEl('circle',{cx:cx,cy:cy,r:pizzaR-20,fill:'#F0DDB8',opacity:0.15}));
+  // Raised rim (cornicione) — thin, subtle
+  gDisc.appendChild(svgEl('circle',{cx:cx,cy:cy,r:pizzaR,fill:'none',stroke:'#DCC090','stroke-width':isMobile?8:6,opacity:0.3}));
   // Air bubbles
   var bubbleCount=isMobile?8:5;
   for(var bi=0;bi<bubbleCount;bi++){
@@ -371,11 +369,11 @@ a{color:inherit;text-decoration:none}
   var mozzPieces=[];
   // Grid-based mozz placement for even 85% coverage
   var mozzPosArr=[];
-  var mozzGridStep=isMobile?38:32;
-  for(var mgx=-sauceR+10;mgx<sauceR-10;mgx+=mozzGridStep){
-    for(var mgy=-sauceR+10;mgy<sauceR-10;mgy+=mozzGridStep){
+  var mozzGridStep=isMobile?34:28;
+  for(var mgx=-sauceR;mgx<=sauceR;mgx+=mozzGridStep){
+    for(var mgy=-sauceR;mgy<=sauceR;mgy+=mozzGridStep){
       var mgDist=Math.sqrt(mgx*mgx+mgy*mgy);
-      if(mgDist<sauceR-15){
+      if(mgDist<sauceR-2){
         mozzPosArr.push({x:cx+mgx+(Math.random()-0.5)*12, y:cy+mgy+(Math.random()-0.5)*12});
       }
     }
@@ -462,10 +460,22 @@ a{color:inherit;text-decoration:none}
   // ─── 9. BASIL LEAVES ───
   var gBasil=svgEl('g',{opacity:0});
   var basilLeaves=[];
-  var basilCount=isMobile?28:18;
+  var basilCount=isMobile?30:20;
   for(var bli=0;bli<basilCount;bli++){
-    var bla=bli*Math.PI*2/basilCount+0.5+Math.random()*0.5;
-    var bld=sauceR*0.3+Math.random()*sauceR*0.5;
+    var bla, bld;
+    // Force some leaves into center and bottom edge
+    if(bli<3){
+      // Center cluster
+      bla=Math.random()*Math.PI*2;
+      bld=Math.random()*sauceR*0.2;
+    } else if(bli<7){
+      // Bottom edge
+      bla=Math.PI*0.3+Math.random()*Math.PI*0.4;
+      bld=sauceR*0.6+Math.random()*sauceR*0.3;
+    } else {
+      bla=bli*Math.PI*2/basilCount+0.5+Math.random()*0.5;
+      bld=sauceR*0.15+Math.random()*sauceR*0.7;
+    }
     var blx=cx+Math.cos(bla)*bld;
     var bly=cy+Math.sin(bla)*bld;
     var blRot=-15+Math.random()*30;
@@ -499,11 +509,15 @@ a{color:inherit;text-decoration:none}
     oreganoFlakes.push(oflake);
   }
 
+  // Append oven front layer ON TOP of all raw toppings
+  // (dome covers pizza outside the mouth opening during oven phase)
+  svg.appendChild(gOvenFront);
+
   // ─── 10. PIZZA PEEL (handle on right for L→R slide) ───
   var gPeel=svgEl('g',{opacity:0});
-  var peelW=isMobile?500:340, peelH=isMobile?440:320;
-  var peelHandleLen=isMobile?240:180, peelHandleThk=32;
-  var peelX=cx-peelW/2-40, peelY=cy-peelH/2+10;
+  var peelW=isMobile?580:400, peelH=isMobile?500:380;
+  var peelHandleLen=isMobile?260:200, peelHandleThk=34;
+  var peelX=cx-peelW/2-20, peelY=cy-peelH/2+10;
   // Paddle
   gPeel.appendChild(svgEl('rect',{x:peelX,y:peelY,width:peelW,height:peelH,rx:20,fill:'url(#woodGrad)',stroke:'#A08030','stroke-width':1.5}));
   // Wood grain (horizontal)
@@ -521,86 +535,41 @@ a{color:inherit;text-decoration:none}
   // Insert peel BEFORE disc so it renders underneath the pizza
   svg.insertBefore(gPeel, gDisc);
 
-  // ─── 11. BRICK OVEN (3/4 angled view — slightly to our left) ───
-  var gOven=svgEl('g',{opacity:0});
-  // Oven positioned slightly left of center, angled view
+  // ─── 11. BRICK OVEN — SPLIT INTO BACK + FRONT LAYERS ───
+  // Back layer: interior, floor, flames (pizza renders ON TOP of this)
+  // Front layer: dome, bricks, arch, hearth (renders ON TOP of pizza → clips it visually)
+  var gOvenBack=svgEl('g',{opacity:0});
+  var gOvenFront=svgEl('g',{opacity:0});
+  // Alias for animation code that references gOven
+  var gOven=svgEl('g',{}); // dummy for transform — we control back/front separately
+
   var ovCx=cx-40, ovCy=cy+20;
   var brickColors=['#8B4513','#A0522D','#6B3410','#7A4020','#9B5A30','#884818'];
-
-  // ── Oven body (dome shape, 3/4 view — wider on left, narrower on right) ──
   var domeW=isMobile?700:480, domeH=isMobile?340:280;
-  // Outer dome (brick-colored rounded shape with perspective skew)
-  var domeL=ovCx-domeW*0.55, domeR=ovCx+domeW*0.45; // asymmetric for angle
+  var domeL=ovCx-domeW*0.55, domeR=ovCx+domeW*0.45;
   var domeTop=ovCy-domeH*0.65, domeBot=ovCy+domeH*0.35;
-  var domePath='M'+domeL+' '+domeBot+
-    ' L'+domeL+' '+(ovCy-domeH*0.15)+
-    ' Q'+domeL+' '+domeTop+' '+ovCx+' '+(domeTop-10)+
-    ' Q'+domeR+' '+domeTop+' '+domeR+' '+(ovCy-domeH*0.1)+
-    ' L'+domeR+' '+domeBot+' Z';
-  gOven.appendChild(svgEl('path',{d:domePath,fill:'#6B3410',stroke:'#3A1A08','stroke-width':2}));
 
-  // Brick texture on dome
-  var domeBrickCount=isMobile?40:28;
-  for(var dbi=0;dbi<domeBrickCount;dbi++){
-    var dbx=domeL+30+Math.random()*(domeR-domeL-60);
-    var dby=domeTop+20+Math.random()*(domeBot-domeTop-40);
-    // Only draw if inside dome shape (approximate)
-    var dbRelX=(dbx-domeL)/(domeR-domeL);
-    var dbRelY=(dby-domeTop)/(domeBot-domeTop);
-    var dbDomeEdge=0.5+0.5*Math.sin(dbRelX*Math.PI);
-    if(dbRelY>0.15&&dbRelY<dbDomeEdge*1.1){
-      gOven.appendChild(svgEl('rect',{
-        x:dbx,y:dby,width:22+Math.random()*8,height:10+Math.random()*4,rx:2,
-        fill:brickColors[dbi%brickColors.length],stroke:'#3A1A08','stroke-width':0.8,
-        opacity:0.6+Math.random()*0.3
-      }));
-    }
-  }
-
-  // ── Oven mouth (dark opening, offset to right for 3/4 view) ──
+  // ── Oven mouth dimensions (used by both layers + animation) ──
   var mouthW=isMobile?300:220, mouthH=isMobile?220:180;
   var mouthL=ovCx-mouthW*0.3, mouthR=ovCx+mouthW*0.7;
   var mouthTop=ovCy-mouthH*0.4, mouthBot=ovCy+mouthH*0.6;
+
+  // ═══ BACK LAYER (behind pizza) ═══
+  // Dark interior
   var mouthPath='M'+mouthL+' '+mouthBot+
     ' L'+mouthL+' '+(mouthTop+mouthH*0.2)+
     ' Q'+mouthL+' '+mouthTop+' '+((mouthL+mouthR)/2)+' '+(mouthTop-8)+
     ' Q'+mouthR+' '+mouthTop+' '+mouthR+' '+(mouthTop+mouthH*0.2)+
     ' L'+mouthR+' '+mouthBot+' Z';
-  gOven.appendChild(svgEl('path',{d:mouthPath,fill:'#0A0400'}));
-
-  // Oven floor visible through mouth (perspective — narrower at back)
+  gOvenBack.appendChild(svgEl('path',{d:mouthPath,fill:'#0A0400'}));
+  // Floor
   var floorPath='M'+mouthL+' '+mouthBot+
     ' L'+(mouthL+15)+' '+(mouthBot-35)+
     ' L'+(mouthR-15)+' '+(mouthBot-35)+
     ' L'+mouthR+' '+mouthBot+' Z';
-  gOven.appendChild(svgEl('path',{d:floorPath,fill:'#2A1A08'}));
-  gOven.appendChild(svgEl('path',{d:floorPath,fill:'#FF4400',opacity:0.06}));
-
-  // Arch bricks around mouth
-  var archBrickCount=isMobile?18:14;
-  for(var abi=0;abi<archBrickCount;abi++){
-    var abAngle=Math.PI+abi*Math.PI/(archBrickCount-1);
-    var abRx=mouthW*0.55, abRy=mouthH*0.55;
-    var abcx2=((mouthL+mouthR)/2)+Math.cos(abAngle)*abRx;
-    var abcy2=(mouthTop+mouthH*0.15)+Math.sin(abAngle)*abRy*0.7;
-    if(abcy2>mouthBot+5)continue;
-    var abRot=((abAngle*180/Math.PI)-90);
-    gOven.appendChild(svgEl('rect',{
-      x:abcx2-12,y:abcy2-7,width:24,height:14,rx:2,
-      fill:brickColors[abi%brickColors.length],
-      stroke:'#3A1A08','stroke-width':1.2,
-      transform:'rotate('+abRot+','+abcx2+','+abcy2+')'
-    }));
-  }
-
-  // ── Base/hearth (stone ledge below mouth) ──
-  var hearthPath='M'+(domeL+10)+' '+mouthBot+
-    ' L'+(domeL-5)+' '+(mouthBot+25)+
-    ' L'+(domeR+15)+' '+(mouthBot+25)+
-    ' L'+(domeR+5)+' '+mouthBot+' Z';
-  gOven.appendChild(svgEl('path',{d:hearthPath,fill:'#555',stroke:'#333','stroke-width':1.5}));
-
-  // ── Flames inside (visible through mouth, at the back wall) ──
+  gOvenBack.appendChild(svgEl('path',{d:floorPath,fill:'#2A1A08'}));
+  gOvenBack.appendChild(svgEl('path',{d:floorPath,fill:'#FF4400',opacity:0.06}));
+  // Flames
   var flames=[];
   var flameCount=isMobile?7:5;
   for(var fli=0;fli<flameCount;fli++){
@@ -612,25 +581,75 @@ a{color:inherit;text-decoration:none}
       ' Q'+flx+' '+(flBase-flH)+' '+(flx+1)+' '+(flBase-flH*0.75)+
       ' Q'+(flx+6)+' '+(flBase-flH*0.4)+' '+(flx+5)+' '+flBase+' Z';
     var fl=svgEl('path',{d:flPath,fill:'url(#flameGrad)',opacity:0.8});
-    gOven.appendChild(fl);
+    gOvenBack.appendChild(fl);
     flames.push(fl);
   }
-
-  // ── Embers on floor ──
+  // Embers
   var embers=[];
   var emberCount=isMobile?12:8;
   for(var ei=0;ei<emberCount;ei++){
     var ex=mouthL+20+Math.random()*(mouthR-mouthL-40);
     var ey=mouthBot-15+Math.random()*8;
     var ember=svgEl('circle',{cx:ex,cy:ey,r:1+Math.random()*1.5,fill:Math.random()>0.5?'#FF4400':'#FF8800',opacity:0.4+Math.random()*0.3});
-    gOven.appendChild(ember);
+    gOvenBack.appendChild(ember);
     embers.push(ember);
   }
+  // Ceiling glow
+  gOvenBack.appendChild(svgEl('path',{d:'M'+(mouthL+30)+' '+(mouthTop+15)+' Q'+((mouthL+mouthR)/2)+' '+(mouthTop+5)+' '+(mouthR-30)+' '+(mouthTop+15),fill:'none',stroke:'#FF4400','stroke-width':3,opacity:0.15}));
 
-  // Ceiling fire glow
-  gOven.appendChild(svgEl('path',{d:'M'+(mouthL+30)+' '+(mouthTop+15)+' Q'+((mouthL+mouthR)/2)+' '+(mouthTop+5)+' '+(mouthR-30)+' '+(mouthTop+15),fill:'none',stroke:'#FF4400','stroke-width':3,opacity:0.15}));
+  // ═══ FRONT LAYER (on top of pizza — dome hides pizza outside mouth) ═══
+  // Dome body
+  var domePath='M'+domeL+' '+domeBot+
+    ' L'+domeL+' '+(ovCy-domeH*0.15)+
+    ' Q'+domeL+' '+domeTop+' '+ovCx+' '+(domeTop-10)+
+    ' Q'+domeR+' '+domeTop+' '+domeR+' '+(ovCy-domeH*0.1)+
+    ' L'+domeR+' '+domeBot+' Z';
+  gOvenFront.appendChild(svgEl('path',{d:domePath,fill:'#6B3410',stroke:'#3A1A08','stroke-width':2}));
+  // Brick texture
+  var domeBrickCount=isMobile?40:28;
+  for(var dbi=0;dbi<domeBrickCount;dbi++){
+    var dbx=domeL+30+Math.random()*(domeR-domeL-60);
+    var dby=domeTop+20+Math.random()*(domeBot-domeTop-40);
+    var dbRelX=(dbx-domeL)/(domeR-domeL);
+    var dbRelY=(dby-domeTop)/(domeBot-domeTop);
+    var dbDomeEdge=0.5+0.5*Math.sin(dbRelX*Math.PI);
+    if(dbRelY>0.15&&dbRelY<dbDomeEdge*1.1){
+      gOvenFront.appendChild(svgEl('rect',{
+        x:dbx,y:dby,width:22+Math.random()*8,height:10+Math.random()*4,rx:2,
+        fill:brickColors[dbi%brickColors.length],stroke:'#3A1A08','stroke-width':0.8,
+        opacity:0.6+Math.random()*0.3
+      }));
+    }
+  }
+  // Cut out the mouth opening in the dome (draw mouth shape with background to create hole effect)
+  gOvenFront.appendChild(svgEl('path',{d:mouthPath,fill:'#0A0400'}));
+  // Arch bricks around mouth
+  var archBrickCount=isMobile?18:14;
+  for(var abi=0;abi<archBrickCount;abi++){
+    var abAngle=Math.PI+abi*Math.PI/(archBrickCount-1);
+    var abRx=mouthW*0.55, abRy=mouthH*0.55;
+    var abcx2=((mouthL+mouthR)/2)+Math.cos(abAngle)*abRx;
+    var abcy2=(mouthTop+mouthH*0.15)+Math.sin(abAngle)*abRy*0.7;
+    if(abcy2>mouthBot+5)continue;
+    var abRot=((abAngle*180/Math.PI)-90);
+    gOvenFront.appendChild(svgEl('rect',{
+      x:abcx2-12,y:abcy2-7,width:24,height:14,rx:2,
+      fill:brickColors[abi%brickColors.length],
+      stroke:'#3A1A08','stroke-width':1.2,
+      transform:'rotate('+abRot+','+abcx2+','+abcy2+')'
+    }));
+  }
+  // Hearth
+  var hearthPath='M'+(domeL+10)+' '+mouthBot+
+    ' L'+(domeL-5)+' '+(mouthBot+25)+
+    ' L'+(domeR+15)+' '+(mouthBot+25)+
+    ' L'+(domeR+5)+' '+mouthBot+' Z';
+  gOvenFront.appendChild(svgEl('path',{d:hearthPath,fill:'#555',stroke:'#333','stroke-width':1.5}));
 
-  svg.appendChild(gOven);
+  // Z-order: back layer goes before disc (pizza on top of interior)
+  // Front layer goes after basil (dome hides pizza outside mouth)
+  svg.insertBefore(gOvenBack, gDisc);
+  // gOvenFront appended after all raw toppings but before cooked pizza
 
   // ─── 12. COOKED PIZZA (replaces raw pizza when baked) ───
   var gCooked_g=svgEl('g',{opacity:0});
@@ -809,6 +828,9 @@ a{color:inherit;text-decoration:none}
   var gOvenGlow=svgEl('rect',{x:mouthL,y:mouthTop,width:mouthR-mouthL,height:mouthBot-mouthTop,fill:'#FF4400',opacity:0,rx:10});
   svg.appendChild(gOvenGlow);
 
+  // Helper: set oven opacity on both layers
+  function setOvenOpacity(v){gOvenBack.setAttribute('opacity',v);gOvenFront.setAttribute('opacity',v);}
+
   // ═══ ANIMATION UPDATE ═══
   function update(){
     var p=getProgress();
@@ -835,7 +857,7 @@ a{color:inherit;text-decoration:none}
     for(var rbi=0;rbi<basilLeaves.length;rbi++){basilLeaves[rbi].setAttribute('opacity','0');}
     for(var rfi=0;rfi<oreganoFlakes.length;rfi++){oreganoFlakes[rfi].setAttribute('opacity','0');}
     gPeel.setAttribute('opacity','0');gPeel.setAttribute('transform','');
-    gOven.setAttribute('opacity','0');gOven.setAttribute('transform','');
+    setOvenOpacity('0');
     gCooked_g.setAttribute('opacity','0');gCooked_g.setAttribute('transform','');
     gPanEl.setAttribute('opacity','0');gPanEl.setAttribute('transform','');
     gCutter.setAttribute('opacity','0');gCutter.setAttribute('transform','');
@@ -1092,7 +1114,7 @@ a{color:inherit;text-decoration:none}
       // 9a: Oven fades in while pizza+peel wait to the right (0-25%)
       if(ovenP<0.25){
         var ovenInP=ease3(ovenP/0.25);
-        gOven.setAttribute('opacity',String(ovenInP));
+        setOvenOpacity(String(ovenInP));
         showDiscFull();showSauceFull();showAllMozz();showAllPep();showAllBasil();
         gPeel.setAttribute('opacity','1');
         gPeel.setAttribute('transform','translate(350,0)');
@@ -1105,7 +1127,7 @@ a{color:inherit;text-decoration:none}
       // 9b: Pizza+peel slide left toward oven mouth (25-60%)
       else if(ovenP<0.60){
         var slideP=ease3((ovenP-0.25)/0.35);
-        gOven.setAttribute('opacity','1');
+        setOvenOpacity('1');
         var slideX2=350-slideP*350;
         showDiscFull();showSauceFull();showAllMozz();showAllPep();showAllBasil();
         gPeel.setAttribute('opacity','1');
@@ -1119,7 +1141,7 @@ a{color:inherit;text-decoration:none}
       // 9c: Pizza slides into oven mouth (shrinks + moves into opening), peel withdraws (60-100%)
       else {
         var intoP=ease3((ovenP-0.60)/0.40);
-        gOven.setAttribute('opacity','1');
+        setOvenOpacity('1');
         // Peel pulls back to the right
         gPeel.setAttribute('opacity',String(1-intoP));
         gPeel.setAttribute('transform','translate('+(intoP*300)+',0)');
@@ -1147,7 +1169,7 @@ a{color:inherit;text-decoration:none}
     // ── 10. FIRE & CHAR — BAKING (67-75%) ──
     if(p>=0.67&&p<0.75){
       var bakeP=clamp((p-0.67)/0.08,0,1);
-      gOven.setAttribute('opacity','1');
+      setOvenOpacity('1');
       setPhase('FIRE & CHAR');
 
       var cookSwap=ease3(clamp(bakeP/0.5,0,1));
@@ -1174,14 +1196,14 @@ a{color:inherit;text-decoration:none}
       setPhase('OUT OF THE OVEN');
 
       if(outP<0.3){
-        gOven.setAttribute('opacity','1');
+        setOvenOpacity('1');
         gCooked_g.setAttribute('opacity','1');
         gPeel.setAttribute('opacity',String(ease3(outP/0.3)));
         gPeel.setAttribute('transform','translate('+(1-ease3(outP/0.3))*350+',-20)');
       }
       else if(outP<0.6){
         var exitP=ease3((outP-0.3)/0.3);
-        gOven.setAttribute('opacity',String(1-exitP*0.5));
+        setOvenOpacity(String(1-exitP*0.5));
         gCooked_g.setAttribute('opacity','1');
         gCooked_g.setAttribute('transform','translate('+(exitP*200)+',0)');
         gPeel.setAttribute('opacity','1');
@@ -1189,7 +1211,7 @@ a{color:inherit;text-decoration:none}
       }
       else {
         var panP=ease3((outP-0.6)/0.4);
-        gOven.setAttribute('opacity',String(Math.max(0,0.5-panP*0.5)));
+        setOvenOpacity(String(Math.max(0,0.5-panP*0.5)));
         gPeel.setAttribute('opacity',String(1-panP));
         gPeel.setAttribute('transform','translate(200,'+(panP*-40-20)+')');
         gCooked_g.setAttribute('opacity','1');
