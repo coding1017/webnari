@@ -761,8 +761,9 @@ a{color:inherit;text-decoration:none}
   var vinegarLine=svgEl('line',{x1:subX+30,y1:oilY+4,x2:subX+30,y2:oilY+4,stroke:'#8B4513','stroke-width':2,'stroke-linecap':'round',opacity:0.5});
   gOil.appendChild(vinegarLine);
   var oilDrops=[];
-  for(var oi=0;oi<6;oi++){
-    var od=svgEl('circle',{cx:subX+subW*0.08+oi*(subW*0.84/5),cy:oilY+1+Math.random()*3,r:2+Math.random()*2,fill:'#D4A830',opacity:0});
+  var oilCount=isMobile?10:6;
+  for(var oi=0;oi<oilCount;oi++){
+    var od=svgEl('circle',{cx:subX+subW*0.05+oi*(subW*0.9/(oilCount-1)),cy:oilY+1+Math.random()*3,r:2+Math.random()*2,fill:'#D4A830',opacity:0});
     gOil.appendChild(od);
     oilDrops.push(od);
   }
@@ -771,8 +772,9 @@ a{color:inherit;text-decoration:none}
   // 5. LETTUCE LEAVES (resting on bottom bread inside V)
   var gLettuce=svgEl('g',{opacity:0});
   var lettuceLeaves=[];
-  for(var li=0;li<7;li++){
-    var lx=subX+subW*0.04+li*(subW*0.86/6);
+  var lettuceCount=isMobile?12:7;
+  for(var li=0;li<lettuceCount;li++){
+    var lx=subX+subW*0.03+li*(subW*0.94/(lettuceCount-1));
     var ly=bottomBreadTop-8;
     var leafPath='M'+lx+' '+ly+' Q'+(lx+10)+' '+(ly-18)+' '+(lx+25)+' '+(ly-12)+' Q'+(lx+35)+' '+(ly-22)+' '+(lx+50)+' '+(ly-10)+' Q'+(lx+60)+' '+(ly-18)+' '+(lx+70)+' '+(ly-6)+' Q'+(lx+55)+' '+(ly+4)+' '+(lx+35)+' '+(ly+2)+' Q'+(lx+15)+' '+(ly+6)+' '+lx+' '+ly;
     var leaf=svgEl('path',{d:leafPath,fill:li%2===0?'#4CAF50':'#66BB6A',stroke:'#2E7D32','stroke-width':0.5,opacity:0});
@@ -788,8 +790,9 @@ a{color:inherit;text-decoration:none}
   var meatSlices=[];
   var meatTypes=['salami','ham','cap','salami','ham','cap','salami','ham'];
   var meatFills={'salami':'url(#salamiGrad)','ham':'url(#hamGrad)','cap':'url(#capGrad)'};
-  for(var mi=0;mi<8;mi++){
-    var mx=subX+subW*0.04+mi*(subW*0.86/7);
+  var meatCount=isMobile?14:8;
+  for(var mi=0;mi<meatCount;mi++){
+    var mx=subX+subW*0.03+mi*(subW*0.94/(meatCount-1));
     var my=bottomBreadTop-22;
     var mType=meatTypes[mi];
     var mFill=meatFills[mType];
@@ -846,8 +849,9 @@ a{color:inherit;text-decoration:none}
   // 7. PROVOLONE CHEESE
   var gCheese_g=svgEl('g',{opacity:0});
   var cheeseSlices=[];
-  for(var ci=0;ci<5;ci++){
-    var ccx=subX+subW*0.05+ci*(subW*0.85/4);
+  var cheeseCount=isMobile?9:5;
+  for(var ci=0;ci<cheeseCount;ci++){
+    var ccx=subX+subW*0.03+ci*(subW*0.94/(cheeseCount-1));
     var ccy=bottomBreadTop-36;
     var cheesePath='M'+ccx+' '+(ccy+5)+' L'+(ccx+35)+' '+(ccy-20)+' L'+(ccx+70)+' '+(ccy+5)+' Q'+(ccx+50)+' '+(ccy+12)+' '+(ccx+20)+' '+(ccy+10)+' Z';
     var cs=svgEl('path',{d:cheesePath,fill:'url(#cheeseGrad)',stroke:'#C8B860','stroke-width':0.5,opacity:0});
@@ -859,8 +863,9 @@ a{color:inherit;text-decoration:none}
   // 8. TOMATO SLICES — vivid red with visible seeds and flesh
   var gTomato=svgEl('g',{opacity:0});
   var tomatoSlices=[];
-  for(var ti=0;ti<6;ti++){
-    var tx=subX+subW*0.07+ti*(subW*0.82/5);
+  var tomatoCount=isMobile?10:6;
+  for(var ti=0;ti<tomatoCount;ti++){
+    var tx=subX+subW*0.04+ti*(subW*0.92/(tomatoCount-1));
     var ty=bottomBreadTop-52;
     var tg=svgEl('g',{opacity:0});
     // Outer red circle
@@ -888,8 +893,9 @@ a{color:inherit;text-decoration:none}
   // 9. ONION RINGS — white/cream visible rings, not purple
   var gOnion=svgEl('g',{opacity:0});
   var onionRings=[];
-  for(var oni=0;oni<5;oni++){
-    var oxx=subX+subW*0.1+oni*(subW*0.8/4);
+  var onionCount=isMobile?8:5;
+  for(var oni=0;oni<onionCount;oni++){
+    var oxx=subX+subW*0.05+oni*(subW*0.9/(onionCount-1));
     var oy=bottomBreadTop-62;
     var og=svgEl('g',{opacity:0});
     // Outer ring — white/cream onion
@@ -910,9 +916,10 @@ a{color:inherit;text-decoration:none}
   // 10. PEPPERS + OREGANO — bell pepper rings (green & yellow), visible
   var gToppings=svgEl('g',{opacity:0});
   var pepperPieces=[];
-  var pepColors=['#4CAF50','#8BC34A','#FFEB3B','#4CAF50','#FFC107','#66BB6A','#4CAF50'];
-  for(var pi=0;pi<7;pi++){
-    var px=subX+subW*0.06+pi*(subW*0.84/6);
+  var pepperCount=isMobile?12:7;
+  var pepColors=['#4CAF50','#8BC34A','#FFEB3B','#4CAF50','#FFC107','#66BB6A','#4CAF50','#8BC34A','#FFEB3B','#4CAF50','#FFC107','#66BB6A'];
+  for(var pi=0;pi<pepperCount;pi++){
+    var px=subX+subW*0.04+pi*(subW*0.92/(pepperCount-1));
     var py=bottomBreadTop-74+Math.random()*4;
     var pg=svgEl('g',{opacity:0});
     // Bell pepper ring cross-section
@@ -929,7 +936,8 @@ a{color:inherit;text-decoration:none}
     pepperPieces.push(pg);
   }
   var oreganoDots=[];
-  for(var oi2=0;oi2<40;oi2++){
+  var oreganoCount=isMobile?70:40;
+  for(var oi2=0;oi2<oreganoCount;oi2++){
     var ox2=subX+subW*0.04+Math.random()*(subW*0.92);
     var oy2=bottomBreadTop-80+Math.random()*70;
     var odot=svgEl('circle',{cx:ox2,cy:oy2,r:0.8+Math.random()*1,fill:'#33691E',opacity:0});
@@ -1162,7 +1170,7 @@ a{color:inherit;text-decoration:none}
       var cx2=cpx+s.dx*spread, cy2=cpy+s.dy*spread;
       var baseCol=['#F5D85A','#EDCC42','#E0B830','#F0D048','#D4A428'][i%5];
       // Wavy irregular chip path with smooth curves
-      var r=s.r;
+      var r=s.r*(isMobile?1.8:1);
       var pts=8;
       var chipPts=[];
       for(var cp2=0;cp2<pts;cp2++){
@@ -1195,14 +1203,15 @@ a{color:inherit;text-decoration:none}
     }
     parentG.appendChild(cg);
   }
-  drawChipPile(gBasketScene, paperCX+paperW/2-70, paperCY-paperH/2+50, 0.85);
-  drawChipPile(gBasketScene, paperCX-paperW/2+70, paperCY+paperH/2-50, 0.85);
+  var chipSpread=isMobile?1.6:0.85;
+  drawChipPile(gBasketScene, paperCX+paperW/2-paperW*0.12, paperCY-paperH/2+paperH*0.2, chipSpread);
+  drawChipPile(gBasketScene, paperCX-paperW/2+paperW*0.12, paperCY+paperH/2-paperH*0.2, chipSpread);
 
   // Drink cup (left side) — clean modern white cup with brand sleeve
   var cupG=svgEl('g',{});
   var cupCX=isMobile?paperCX:paperCX-paperW/2-85;
   var cupCY=isMobile?paperCY-paperH/2-90:paperCY-10;
-  var cupW=75, cupH=150;
+  var cupW=isMobile?130:75, cupH=isMobile?260:150;
   // Shadow
   cupG.appendChild(svgEl('ellipse',{cx:cupCX+5,cy:cupCY+cupH/2+7,rx:cupW/2+5,ry:9,fill:'#000',opacity:0.18}));
   // Cup body — clean tapered white
@@ -1223,10 +1232,11 @@ a{color:inherit;text-decoration:none}
     ' L'+(cupCX+slvBW/2)+' '+slvBot+' Z',
     fill:'#2A2A2A'}));
   // Brand text on sleeve
-  var logoText=svgEl('text',{x:cupCX,y:cupCY+6,fill:'#FFFFFF','font-family':'Barlow Condensed, sans-serif','font-weight':'900','font-size':'13',opacity:1,'text-anchor':'middle','letter-spacing':'1.5'});
+  var logoFS1=isMobile?22:13, logoFS2=isMobile?18:11;
+  var logoText=svgEl('text',{x:cupCX,y:cupCY+6,fill:'#FFFFFF','font-family':'Barlow Condensed, sans-serif','font-weight':'900','font-size':String(logoFS1),opacity:1,'text-anchor':'middle','letter-spacing':'1.5'});
   logoText.textContent='GASTRO';
   cupG.appendChild(logoText);
-  var logoText2=svgEl('text',{x:cupCX,y:cupCY+18,fill:'#D4942A','font-family':'Barlow Condensed, sans-serif','font-weight':'800','font-size':'11',opacity:1,'text-anchor':'middle','letter-spacing':'2'});
+  var logoText2=svgEl('text',{x:cupCX,y:cupCY+6+logoFS1*1.1,fill:'#D4942A','font-family':'Barlow Condensed, sans-serif','font-weight':'800','font-size':String(logoFS2),opacity:1,'text-anchor':'middle','letter-spacing':'2'});
   logoText2.textContent='SUBS';
   cupG.appendChild(logoText2);
   // Condensation drops
