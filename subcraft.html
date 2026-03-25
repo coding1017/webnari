@@ -529,32 +529,38 @@ a{color:inherit;text-decoration:none}
     var hh=subH/2+5; // half-height of the sub body
     var hx=side==='left'?subX:cx+10;
 
-    // Sub body: rounded on the OUTER end, FLAT on the cut end (like a real cut sub)
+    // Cross-section dimensions (defined first so body can match)
+    var csRX=20;
+    var csRY=hh;
+
+    // Sub body: rounded on OUTER end, meets the OVAL at the cut end
+    // The cut end uses the oval's shape so checker doesn't extend past it
     var bodyPath;
     if(side==='left'){
-      // Rounded left end, flat right end (cut side)
+      // Rounded left end, oval-shaped right end (cut side)
+      var cutX=hx+hw-csRX; // where the oval center is
       bodyPath='M'+(hx+hh)+' '+(subY-hh)+
-        ' L'+(hx+hw)+' '+(subY-hh)+
-        ' L'+(hx+hw)+' '+(subY+hh)+
+        ' L'+cutX+' '+(subY-csRY)+  // top edge meets oval top
+        ' A'+csRX+' '+csRY+' 0 0 1 '+(cutX+csRX)+' '+subY+  // arc to oval right
+        ' A'+csRX+' '+csRY+' 0 0 1 '+cutX+' '+(subY+csRY)+  // arc to oval bottom
         ' L'+(hx+hh)+' '+(subY+hh)+
         ' A'+hh+' '+hh+' 0 0 1 '+hx+' '+subY+
         ' A'+hh+' '+hh+' 0 0 1 '+(hx+hh)+' '+(subY-hh)+' Z';
     } else {
-      // Flat left end (cut side), rounded right end
-      bodyPath='M'+hx+' '+(subY-hh)+
+      // Oval-shaped left end (cut side), rounded right end
+      var cutX2=hx+csRX;
+      bodyPath='M'+cutX2+' '+(subY-csRY)+  // start at oval top
         ' L'+(hx+hw-hh)+' '+(subY-hh)+
         ' A'+hh+' '+hh+' 0 0 1 '+(hx+hw)+' '+subY+
         ' A'+hh+' '+hh+' 0 0 1 '+(hx+hw-hh)+' '+(subY+hh)+
-        ' L'+hx+' '+(subY+hh)+' Z';
+        ' L'+cutX2+' '+(subY+csRY)+  // bottom edge meets oval bottom
+        ' A'+csRX+' '+csRY+' 0 0 1 '+(cutX2-csRX)+' '+subY+  // arc to oval left
+        ' A'+csRX+' '+csRY+' 0 0 1 '+cutX2+' '+(subY-csRY)+' Z';
     }
     // White base
     wg.appendChild(svgEl('path',{d:bodyPath,fill:'#FFFFFF'}));
     // Checker wrap
     wg.appendChild(svgEl('path',{d:bodyPath,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
-
-    // Cross-section on the CUT END — tall oval matching the sub's actual shape
-    var csRX=20; // horizontal radius (width of the oval cross-section)
-    var csRY=hh; // vertical radius = full sub height
     var csCX=side==='left'?hx+hw-csRX:hx+csRX; // center of the oval
     // Bread crust outer (tall oval)
     wg.appendChild(svgEl('ellipse',{cx:csCX,cy:subY,rx:csRX,ry:csRY,fill:'#C8882A',stroke:'#A06820','stroke-width':2}));
@@ -627,19 +633,25 @@ a{color:inherit;text-decoration:none}
   }
 
   // Left half: body goes RIGHT (inward), tall oval cross-section on LEFT (outer)
+  // Body connects to the oval edges — arches at top/bottom to meet the oval
   var bLeftG=svgEl('g',{});
   var blCY=paperCY-5;
-  var blCSCX=paperCX-fcsRX-fSubW/2-10; // cross-section center X
-  // Wrapped body (flat left end where cross-section is, rounded right end)
-  var blBodyX=blCSCX+fcsRX-2;
-  var blBodyPath='M'+blBodyX+' '+(blCY-fSubH/2)+
-    ' L'+(blBodyX+fSubW-fSubH/2)+' '+(blCY-fSubH/2)+
-    ' A'+(fSubH/2)+' '+(fSubH/2)+' 0 0 1 '+(blBodyX+fSubW)+' '+blCY+
-    ' A'+(fSubH/2)+' '+(fSubH/2)+' 0 0 1 '+(blBodyX+fSubW-fSubH/2)+' '+(blCY+fSubH/2)+
-    ' L'+blBodyX+' '+(blCY+fSubH/2)+' Z';
-  bLeftG.appendChild(svgEl('path',{d:blBodyPath,fill:'#FFFFFF'}));
-  bLeftG.appendChild(svgEl('path',{d:blBodyPath,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
-  bLeftG.appendChild(svgEl('rect',{x:blBodyX+10,y:blCY-fSubH/2-5,width:fSubW-40,height:12,rx:6,fill:'url(#crustGrad)',opacity:0.6}));
+  var blCSCX=paperCX-fcsRX-fSubW/2-10;
+  var blBodyStart=blCSCX; // body starts where oval center is
+  var blBodyEnd=blBodyStart+fSubW;
+  var rEnd=fSubH/2; // rounded end radius
+  // Path: starts at oval top, goes right to rounded end, comes back to oval bottom
+  var blPath='M'+blBodyStart+' '+(blCY-fcsRY)+  // oval top
+    ' L'+(blBodyEnd-rEnd)+' '+(blCY-rEnd)+
+    ' A'+rEnd+' '+rEnd+' 0 0 1 '+blBodyEnd+' '+blCY+
+    ' A'+rEnd+' '+rEnd+' 0 0 1 '+(blBodyEnd-rEnd)+' '+(blCY+rEnd)+
+    ' L'+blBodyStart+' '+(blCY+fcsRY)+  // oval bottom
+    ' A'+fcsRX+' '+fcsRY+' 0 0 1 '+(blBodyStart-fcsRX)+' '+blCY+
+    ' A'+fcsRX+' '+fcsRY+' 0 0 1 '+blBodyStart+' '+(blCY-fcsRY)+' Z';
+  bLeftG.appendChild(svgEl('path',{d:blPath,fill:'#FFFFFF'}));
+  bLeftG.appendChild(svgEl('path',{d:blPath,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
+  // Bread crust peeking over wrapper
+  bLeftG.appendChild(svgEl('rect',{x:blBodyStart+10,y:blCY-rEnd-5,width:fSubW-rEnd-15,height:12,rx:6,fill:'url(#crustGrad)',opacity:0.6}));
   drawFinalCS(bLeftG,blCSCX,blCY,fcsRX,fcsRY);
   bLeftG.setAttribute('transform','rotate(-1,'+paperCX+','+paperCY+')');
   gBasketScene.appendChild(bLeftG);
@@ -647,17 +659,19 @@ a{color:inherit;text-decoration:none}
   // Right half: body goes LEFT (inward), tall oval cross-section on RIGHT (outer)
   var bRightG=svgEl('g',{});
   var brCY=paperCY;
-  var brCSCX=paperCX+fcsRX+fSubW/2+10; // cross-section center X
-  var brBodyX=brCSCX-fcsRX-fSubW+2;
-  var brBodyPath='M'+(brBodyX+fSubH/2)+' '+(brCY-fSubH/2)+
-    ' L'+(brCSCX-fcsRX+2)+' '+(brCY-fSubH/2)+
-    ' L'+(brCSCX-fcsRX+2)+' '+(brCY+fSubH/2)+
-    ' L'+(brBodyX+fSubH/2)+' '+(brCY+fSubH/2)+
-    ' A'+(fSubH/2)+' '+(fSubH/2)+' 0 0 1 '+brBodyX+' '+brCY+
-    ' A'+(fSubH/2)+' '+(fSubH/2)+' 0 0 1 '+(brBodyX+fSubH/2)+' '+(brCY-fSubH/2)+' Z';
-  bRightG.appendChild(svgEl('path',{d:brBodyPath,fill:'#FFFFFF'}));
-  bRightG.appendChild(svgEl('path',{d:brBodyPath,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
-  bRightG.appendChild(svgEl('rect',{x:brBodyX+20,y:brCY-fSubH/2-5,width:fSubW-40,height:12,rx:6,fill:'url(#crustGrad)',opacity:0.6}));
+  var brCSCX=paperCX+fcsRX+fSubW/2+10;
+  var brBodyEnd=brCSCX; // body ends where oval center is
+  var brBodyStart=brBodyEnd-fSubW;
+  var brPath='M'+brBodyEnd+' '+(brCY-fcsRY)+  // oval top
+    ' L'+(brBodyStart+rEnd)+' '+(brCY-rEnd)+
+    ' A'+rEnd+' '+rEnd+' 0 0 0 '+brBodyStart+' '+brCY+
+    ' A'+rEnd+' '+rEnd+' 0 0 0 '+(brBodyStart+rEnd)+' '+(brCY+rEnd)+
+    ' L'+brBodyEnd+' '+(brCY+fcsRY)+  // oval bottom
+    ' A'+fcsRX+' '+fcsRY+' 0 0 0 '+(brBodyEnd+fcsRX)+' '+brCY+
+    ' A'+fcsRX+' '+fcsRY+' 0 0 0 '+brBodyEnd+' '+(brCY-fcsRY)+' Z';
+  bRightG.appendChild(svgEl('path',{d:brPath,fill:'#FFFFFF'}));
+  bRightG.appendChild(svgEl('path',{d:brPath,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
+  bRightG.appendChild(svgEl('rect',{x:brBodyStart+rEnd+5,y:brCY-rEnd-5,width:fSubW-rEnd-15,height:12,rx:6,fill:'url(#crustGrad)',opacity:0.6}));
   drawFinalCS(bRightG,brCSCX,brCY,fcsRX,fcsRY);
   bRightG.setAttribute('transform','rotate(1,'+paperCX+','+paperCY+')');
   gBasketScene.appendChild(bRightG);
