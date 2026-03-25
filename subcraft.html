@@ -546,6 +546,8 @@ a{color:inherit;text-decoration:none}
         ' A'+cylRX+' '+cylRY+' 0 0 1 '+(hx+hw-cylRX)+' '+(subY+cylRY)+
         ' L'+hx+' '+(subY+cylRY)+' Z';
     }
+    // White base under checker to prevent any brown bleed-through
+    wg.appendChild(svgEl('path',{d:bodyPath,fill:'#FFFFFF'}));
     wg.appendChild(svgEl('path',{d:bodyPath,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
 
     // OVAL cross-section at cut end (wider than tall, matching sub shape)
@@ -612,15 +614,17 @@ a{color:inherit;text-decoration:none}
   // Two wrapped sub halves LAYING HORIZONTAL in basket (like a real deli)
   // Each is a long wrapped sub laying on its side, cut end visible at the CENTER gap
   var bSubW=basketRX-20; // each half takes most of its side
-  var bSubH=40; // height of each sub in the basket
+  var bSubH=55; // height — thick deli sub, not thin baguette
 
   // Left half — laying horizontal, cut end facing RIGHT (toward center)
   var bLeftG=svgEl('g',{});
   var blX=basketCX-basketRX+15, blY=basketCY-12;
-  // Checker paper wrap (full body)
+  // Solid white base under checker (prevents brown bleed-through)
+  bLeftG.appendChild(svgEl('rect',{x:blX,y:blY-bSubH/2,width:bSubW,height:bSubH,rx:bSubH/2,fill:'#FFFFFF'}));
+  // Checker paper wrap (full body) on top of white
   bLeftG.appendChild(svgEl('rect',{x:blX,y:blY-bSubH/2,width:bSubW,height:bSubH,rx:bSubH/2,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
   // Bread crust visible at top (peeking over paper)
-  bLeftG.appendChild(svgEl('rect',{x:blX+10,y:blY-bSubH/2-4,width:bSubW-20,height:10,rx:5,fill:'url(#crustGrad)',opacity:0.7}));
+  bLeftG.appendChild(svgEl('rect',{x:blX+10,y:blY-bSubH/2-5,width:bSubW-20,height:12,rx:6,fill:'url(#crustGrad)',opacity:0.7}));
   // Cut face at RIGHT end — flat oval cross-section
   var blCutX=blX+bSubW;
   bLeftG.appendChild(svgEl('ellipse',{cx:blCutX,cy:blY,rx:6,ry:bSubH/2,fill:'#ECD8B0',stroke:'#A06820','stroke-width':2}));
@@ -635,8 +639,10 @@ a{color:inherit;text-decoration:none}
   // Right half — laying horizontal, cut end facing LEFT (toward center)
   var bRightG=svgEl('g',{});
   var brX=basketCX+5, brY=basketCY-8;
+  // Solid white base under checker
+  bRightG.appendChild(svgEl('rect',{x:brX,y:brY-bSubH/2,width:bSubW,height:bSubH,rx:bSubH/2,fill:'#FFFFFF'}));
   bRightG.appendChild(svgEl('rect',{x:brX,y:brY-bSubH/2,width:bSubW,height:bSubH,rx:bSubH/2,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
-  bRightG.appendChild(svgEl('rect',{x:brX+10,y:brY-bSubH/2-4,width:bSubW-20,height:10,rx:5,fill:'url(#crustGrad)',opacity:0.7}));
+  bRightG.appendChild(svgEl('rect',{x:brX+10,y:brY-bSubH/2-5,width:bSubW-20,height:12,rx:6,fill:'url(#crustGrad)',opacity:0.7}));
   // Cut face at LEFT end
   var brCutX=brX;
   bRightG.appendChild(svgEl('ellipse',{cx:brCutX,cy:brY,rx:6,ry:bSubH/2,fill:'#ECD8B0',stroke:'#A06820','stroke-width':2}));
@@ -804,24 +810,25 @@ a{color:inherit;text-decoration:none}
     }
 
     // ── 3. V-SHAPE BREAD OPENING with KNIFE (15-22%) ──
-    // Knife slices along the bread, then bread opens like a book
+    // Knife slices SIDEWAYS along the bread (horizontal, like slicing a sub open)
     if(p>=0.15&&p<0.57){
       var sliceP=clamp((p-0.15)/0.07,0,1);
 
-      // Knife appears and slices along the bread (first 40% of phase)
+      // Knife appears SIDEWAYS and slices left-to-right through the middle
       if(sliceP<0.5){
         gKnife.setAttribute('opacity',String(ease3(clamp(sliceP/0.15,0,1))));
-        // Knife slides from left to right along the bread
+        // Knife rotated 90deg (sideways), slides from left to right along bread center
         var kSlideP=ease3(clamp(sliceP/0.45,0,1));
-        var kStartX=subX-knifeX+30;
-        var kEndX=subX+subW-knifeX-30;
+        var kStartX=subX-knifeX-40;
+        var kEndX=subX+subW-knifeX+40;
         var kSlideX=kStartX+(kEndX-kStartX)*kSlideP;
-        gKnife.setAttribute('transform','translate('+kSlideX+',-20)');
+        // Rotate 90 degrees so blade points RIGHT, positioned at bread mid-height
+        gKnife.setAttribute('transform','translate('+kSlideX+',15) rotate(90,'+knifeX+','+knifeBaseY+')');
       } else {
         // Knife fades after slice
         var knifeFade=1-ease3(clamp((sliceP-0.5)/0.2,0,1));
         gKnife.setAttribute('opacity',String(knifeFade));
-        gKnife.setAttribute('transform','translate('+(subX+subW-knifeX-30)+',-20)');
+        gKnife.setAttribute('transform','translate('+(subX+subW-knifeX+40)+',15) rotate(90,'+knifeX+','+knifeBaseY+')');
       }
 
       // Whole bread fades out
@@ -1001,13 +1008,13 @@ a{color:inherit;text-decoration:none}
       var knifeY=-120+chopDown*120-chopUp*80;
       gKnife.setAttribute('transform','translate(0,'+knifeY+')');
 
-      // After knife hits, show wrapped halves separating (wider gap)
+      // After knife hits, show wrapped halves separating (very wide gap)
       if(cutP>0.5){
         var sepP=ease3(clamp((cutP-0.5)/0.5,0,1));
         gClosed.setAttribute('opacity',String(1-sepP));
         gWrapped.setAttribute('opacity',String(sepP));
-        wrappedLeft.setAttribute('transform','translateX('+(-sepP*60)+')');
-        wrappedRight.setAttribute('transform','translateX('+(sepP*60)+')');
+        wrappedLeft.setAttribute('transform','translateX('+(-sepP*120)+')');
+        wrappedRight.setAttribute('transform','translateX('+(sepP*120)+')');
       }
       setPhase('CUT IN HALF');
     }
@@ -1018,19 +1025,19 @@ a{color:inherit;text-decoration:none}
       // Fade knife
       gKnife.setAttribute('opacity',String(1-ease3(clamp(wrapP/0.2,0,1))));
 
-      // Wrapped halves fully visible, separating wider
+      // Wrapped halves fully visible, very wide separation
       gWrapped.setAttribute('opacity','1');
       var sepExtra=ease3(clamp(wrapP/0.5,0,1));
-      wrappedLeft.setAttribute('transform','translateX('+(-60-sepExtra*40)+')');
-      wrappedRight.setAttribute('transform','translateX('+(60+sepExtra*40)+')');
+      wrappedLeft.setAttribute('transform','translateX('+(-120-sepExtra*30)+')');
+      wrappedRight.setAttribute('transform','translateX('+(120+sepExtra*30)+')');
 
       // Subtle spin effect on each half
       var spinAngle=ease3(clamp((wrapP-0.2)/0.5,0,1))*8;
       var spinBack=ease3(clamp((wrapP-0.7)/0.3,0,1))*8;
       var netSpin=spinAngle-spinBack;
       if(wrapP>0.2){
-        wrappedLeft.setAttribute('transform','translateX('+(-60-sepExtra*40)+') rotate('+netSpin+','+(subX+subW/4)+','+subY+')');
-        wrappedRight.setAttribute('transform','translateX('+(60+sepExtra*40)+') rotate('+(-netSpin)+','+(cx+subW/4)+','+subY+')');
+        wrappedLeft.setAttribute('transform','translateX('+(-120-sepExtra*30)+') rotate('+netSpin+','+(subX+subW/4)+','+subY+')');
+        wrappedRight.setAttribute('transform','translateX('+(120+sepExtra*30)+') rotate('+(-netSpin)+','+(cx+subW/4)+','+subY+')');
       }
 
       gBoard.setAttribute('opacity',String(Math.max(0,1-ease3(wrapP))));
