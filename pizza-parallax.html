@@ -587,6 +587,21 @@ a{color:inherit;text-decoration:none}
   // Warm glow on ceiling
   gOvenScene.appendChild(svgEl('rect',{x:0,y:0,width:vbW,height:vbH*0.2,fill:'#FF4400',opacity:0.06}));
 
+  // Floor flames — underneath the pizza, pointing upward
+  var ovenFloorFlames=[];
+  for(var offi=0;offi<6;offi++){
+    var offx=ovenPizzaCx-ovenPizzaR*0.7+offi*((ovenPizzaR*1.4)/(6-1));
+    var offH=25+Math.random()*20;
+    var offBase=ovenFloorY;
+    var offPath='M'+(offx-6)+' '+offBase+
+      ' Q'+(offx-8)+' '+(offBase-offH*0.4)+' '+(offx-1)+' '+(offBase-offH*0.8)+
+      ' Q'+offx+' '+(offBase-offH)+' '+(offx+1)+' '+(offBase-offH*0.75)+
+      ' Q'+(offx+8)+' '+(offBase-offH*0.35)+' '+(offx+6)+' '+offBase+' Z';
+    var offl=svgEl('path',{d:offPath,fill:'url(#flameGrad)',opacity:0.7});
+    gOvenScene.appendChild(offl);
+    ovenFloorFlames.push(offl);
+  }
+
   // Embers on floor
   var ovenEmbers=[];
   for(var oei=0;oei<12;oei++){
@@ -608,17 +623,18 @@ a{color:inherit;text-decoration:none}
   gOvenPizzaRaw.appendChild(svgEl('ellipse',{cx:ovenPizzaCx,cy:ovenPizzaCy,rx:ovenPizzaR,ry:ovenPizzaR*0.55,fill:'#E8D5A8',stroke:'#C8A868','stroke-width':1.5}));
   gOvenPizzaRaw.appendChild(svgEl('ellipse',{cx:ovenPizzaCx,cy:ovenPizzaCy,rx:ovenPizzaR,ry:ovenPizzaR*0.55,fill:'none',stroke:'#D4B878','stroke-width':8,opacity:0.4}));
   gOvenPizzaRaw.appendChild(svgEl('ellipse',{cx:ovenPizzaCx,cy:ovenPizzaCy,rx:ovenPizzaSauceR,ry:ovenPizzaSauceR*0.55,fill:'#B02020',opacity:0.9}));
-  for(var oti=0;oti<20;oti++){
+  // Toppings: 18 mozz, 10 pepperoni, 8 basil = 36 total
+  for(var oti=0;oti<36;oti++){
     var otAngle=Math.random()*Math.PI*2;
     var otDist=Math.random()*ovenPizzaSauceR*0.85;
     var otx=ovenPizzaCx+Math.cos(otAngle)*otDist;
     var oty=ovenPizzaCy+Math.sin(otAngle)*otDist*0.55;
-    if(oti<10){
+    if(oti<18){
       gOvenPizzaRaw.appendChild(svgEl('ellipse',{cx:otx,cy:oty,rx:8+Math.random()*6,ry:5+Math.random()*3,fill:'#FFF5E0',opacity:0.8}));
-    } else if(oti<16){
+    } else if(oti<28){
       gOvenPizzaRaw.appendChild(svgEl('ellipse',{cx:otx,cy:oty,rx:5+Math.random()*2,ry:3+Math.random()*1.5,fill:'#8B0000',opacity:0.85}));
     } else {
-      gOvenPizzaRaw.appendChild(svgEl('ellipse',{cx:otx,cy:oty,rx:4,ry:2.5,fill:'#228B22',opacity:0.7}));
+      gOvenPizzaRaw.appendChild(svgEl('ellipse',{cx:otx,cy:oty,rx:5+Math.random()*2,ry:3+Math.random(),fill:'#228B22',opacity:0.7}));
     }
   }
   gOvenScene.appendChild(gOvenPizzaRaw);
@@ -637,19 +653,19 @@ a{color:inherit;text-decoration:none}
       rx:3+Math.random()*3,ry:2+Math.random()*2,fill:'#3A1A00',opacity:0.45
     }));
   }
-  // Cooked toppings
-  for(var cti=0;cti<20;cti++){
+  // Cooked toppings: 18 mozz, 10 pepperoni, 8 basil = 36
+  for(var cti=0;cti<36;cti++){
     var ctAngle=Math.random()*Math.PI*2;
     var ctDist=Math.random()*ovenPizzaSauceR*0.85;
     var ctx2=ovenPizzaCx+Math.cos(ctAngle)*ctDist;
     var cty2=ovenPizzaCy+Math.sin(ctAngle)*ctDist*0.55;
-    if(cti<10){
+    if(cti<18){
       gOvenPizzaCooked.appendChild(svgEl('ellipse',{cx:ctx2,cy:cty2,rx:8+Math.random()*6,ry:5+Math.random()*3,fill:'#FFF8DC',opacity:0.7}));
-      if(Math.random()>0.5) gOvenPizzaCooked.appendChild(svgEl('ellipse',{cx:ctx2+2,cy:cty2,rx:2,ry:1,fill:'#8B6914',opacity:0.3}));
-    } else if(cti<16){
+      if(Math.random()>0.4) gOvenPizzaCooked.appendChild(svgEl('ellipse',{cx:ctx2+2,cy:cty2,rx:2,ry:1,fill:'#8B6914',opacity:0.3}));
+    } else if(cti<28){
       gOvenPizzaCooked.appendChild(svgEl('ellipse',{cx:ctx2,cy:cty2,rx:5+Math.random()*2,ry:3+Math.random()*1.5,fill:'#7A0000',opacity:0.85}));
     } else {
-      gOvenPizzaCooked.appendChild(svgEl('ellipse',{cx:ctx2,cy:cty2,rx:3.5,ry:2,fill:'#1A6B1A',opacity:0.65}));
+      gOvenPizzaCooked.appendChild(svgEl('ellipse',{cx:ctx2,cy:cty2,rx:5+Math.random()*2,ry:3+Math.random(),fill:'#1A6B1A',opacity:0.65}));
     }
   }
   gOvenScene.appendChild(gOvenPizzaCooked);
@@ -1193,6 +1209,13 @@ a{color:inherit;text-decoration:none}
         ovenFlames[fii].setAttribute('transform','scale(1,'+flickerScale+')');
       }
 
+      // Floor flames flicker
+      for(var ffii=0;ffii<ovenFloorFlames.length;ffii++){
+        var ffPhase=bakeP*Math.PI*5+ffii*1.5;
+        ovenFloorFlames[ffii].setAttribute('opacity',String(0.5+Math.sin(ffPhase)*0.2+bakeP*0.2));
+        ovenFloorFlames[ffii].setAttribute('transform','scale(1,'+(1+Math.sin(ffPhase*0.8)*0.12)+')');
+      }
+
       // Embers glow brighter
       for(var eii=0;eii<ovenEmbers.length;eii++){
         ovenEmbers[eii].setAttribute('opacity',String(0.3+bakeP*0.5));
@@ -1203,23 +1226,35 @@ a{color:inherit;text-decoration:none}
       ovenGlowRect.setAttribute('opacity',String(glowPulse));
     }
 
-    // ── 11. OUT OF THE OVEN (73-79%) ──
-    if(p>=0.73&&p<0.79){
-      var outP=clamp((p-0.73)/0.06,0,1);
+    // ── 11. OUT OF THE OVEN (73-81%) ──
+    if(p>=0.73&&p<0.81){
+      var outP=clamp((p-0.73)/0.08,0,1);
       setPhase('OUT OF THE OVEN');
 
       // 73-76%: gOvenScene fades out
-      if(outP<0.5){
-        var sceneFadeP=ease3(outP/0.5);
+      if(outP<0.35){
+        var sceneFadeP=ease3(outP/0.35);
         gOvenScene.setAttribute('opacity',String(1-sceneFadeP));
         gOvenPizzaCooked.setAttribute('opacity','1');
         gOvenPizzaRaw.setAttribute('opacity','0');
       }
-      // 76-79%: Pan and cooked pizza fade in
+      // 76-78%: Peel slides in with cooked pizza from left
+      else if(outP<0.65){
+        var peelInP2=ease3((outP-0.35)/0.3);
+        gPeel.setAttribute('opacity',String(peelInP2));
+        gPeel.setAttribute('transform','translate('+((1-peelInP2)*-350)+',0)');
+        gCooked_g.setAttribute('opacity',String(peelInP2));
+        gCooked_g.setAttribute('transform','translate('+((1-peelInP2)*-350)+',0)');
+      }
+      // 78-80%: Peel deposits pizza onto pan, peel exits
       else {
-        var panInP=ease3((outP-0.5)/0.5);
-        gPanEl.setAttribute('opacity',String(panInP));
-        gCooked_g.setAttribute('opacity',String(panInP));
+        var depositP=ease3((outP-0.65)/0.35);
+        gPanEl.setAttribute('opacity',String(ease3(clamp(depositP/0.4,0,1))));
+        gCooked_g.setAttribute('opacity','1');
+        gCooked_g.setAttribute('transform','');
+        // Peel slides out to the right
+        gPeel.setAttribute('opacity',String(1-depositP));
+        gPeel.setAttribute('transform','translate('+(depositP*350)+',0)');
       }
     }
 
