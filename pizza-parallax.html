@@ -643,12 +643,7 @@ a{color:inherit;text-decoration:none}
   gOvenFront.appendChild(svgEl('path',{d:hearthPath,fill:'#555',stroke:'#333','stroke-width':1.5}));
 
   // Z-order: back layer goes before disc (pizza on top of interior)
-  // Front layer goes after basil (dome hides pizza outside mouth)
   svg.insertBefore(gOvenBack, gDisc);
-  // Cooked pizza goes BEFORE front layer so it renders INSIDE the oven mouth
-  svg.appendChild(gCooked_g);
-  // Front layer on top of all raw toppings (dome hides pizza outside mouth)
-  svg.appendChild(gOvenFront);
 
   // ─── 12. COOKED PIZZA (replaces raw pizza when baked) ───
   var gCooked_g=svgEl('g',{opacity:0});
@@ -706,7 +701,10 @@ a{color:inherit;text-decoration:none}
       fill:'#1A6B1A',stroke:'#145214','stroke-width':0.3,opacity:0.7
     }));
   }
-  // Pan is appended first (below), cooked pizza on top after pan definition
+  // Cooked pizza goes BEFORE front layer so it renders INSIDE the oven mouth
+  svg.appendChild(gCooked_g);
+  // Front layer on top — dome hides pizza outside mouth
+  svg.appendChild(gOvenFront);
 
   // ─── 13. PIZZA PAN ───
   var gPanEl=svgEl('g',{opacity:0});
