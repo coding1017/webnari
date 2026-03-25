@@ -233,225 +233,237 @@ a{color:inherit;text-decoration:none}
   var subW=520, subH=70;
   var subX=cx-subW/2, subY=cy+10;
 
+  // V-opening geometry
+  var vOpenH=130; // total height of V opening from bottom bread top to top bread top
+  var interiorW=subW+40; // interior panel wider than bread
+  var interiorX=cx-interiorW/2;
+  var bottomBreadTop=subY+10; // where bottom bread interior surface sits
+  var bottomBreadBot=subY+45; // bottom of bottom bread crust
+
   // ─── 1. CUTTING BOARD ───
   var gBoard=svgEl('g',{opacity:0});
-  // Board shadow
   gBoard.appendChild(svgEl('rect',{x:boardX+6,y:boardY+6,width:boardW,height:boardH,rx:12,fill:'#000',opacity:0.2}));
-  // Main board
   gBoard.appendChild(svgEl('rect',{x:boardX,y:boardY,width:boardW,height:boardH,rx:12,fill:'url(#woodGrad)',stroke:'#5A4010','stroke-width':2}));
-  // Wood grain lines
   for(var wi=0;wi<15;wi++){
     var wy=boardY+10+wi*(boardH-20)/15;
     gBoard.appendChild(svgEl('line',{x1:boardX+8,y1:wy+Math.sin(wi)*3,x2:boardX+boardW-8,y2:wy+Math.cos(wi)*2,stroke:'#6E5020','stroke-width':0.6,opacity:0.25}));
   }
-  // Board edge highlight
   gBoard.appendChild(svgEl('rect',{x:boardX+3,y:boardY+3,width:boardW-6,height:4,rx:2,fill:'#B8902A',opacity:0.2}));
-  // Juice groove
   gBoard.appendChild(svgEl('rect',{x:boardX+20,y:boardY+20,width:boardW-40,height:boardH-40,rx:8,fill:'none',stroke:'#5A4010','stroke-width':1,opacity:0.3}));
   svg.appendChild(gBoard);
 
-  // ─── 2. WHOLE BREAD ROLL ───
+  // ─── 2. WHOLE BREAD ROLL (3/4 front angle) ───
   var gBread=svgEl('g',{opacity:0});
-  // Shadow
   gBread.appendChild(svgEl('ellipse',{cx:cx,cy:subY+subH/2+12,rx:subW/2-20,ry:8,fill:'#000',opacity:0.15}));
-  // Main bread body — whole roll (before slicing)
-  var breadBody=svgEl('rect',{x:subX,y:subY-subH/2,width:subW,height:subH,rx:subH/2,fill:'url(#crustGrad)',stroke:'#906018','stroke-width':1.5});
-  gBread.appendChild(breadBody);
-  // Crust scoring marks (diagonal lines on top)
+  // Main body - elongated oval sub roll
+  gBread.appendChild(svgEl('rect',{x:subX,y:subY-subH/2,width:subW,height:subH,rx:subH/2,fill:'url(#crustGrad)',stroke:'#906018','stroke-width':1.5}));
+  // Score marks on top
   for(var si=0;si<5;si++){
     var sx=subX+60+si*100;
     gBread.appendChild(svgEl('line',{x1:sx,y1:subY-subH/2+8,x2:sx+40,y2:subY-subH/2+20,stroke:'#B87A1E','stroke-width':1.5,'stroke-linecap':'round',opacity:0.5}));
   }
-  // Top highlight
   gBread.appendChild(svgEl('rect',{x:subX+40,y:subY-subH/2+3,width:subW-80,height:8,rx:4,fill:'#E8B050',opacity:0.25}));
-  // Flour dusting spots
+  // Flour dusting
   for(var fi=0;fi<8;fi++){
     var fx=subX+40+fi*62;
     gBread.appendChild(svgEl('circle',{cx:fx,cy:subY-subH/2+10+Math.random()*15,r:2+Math.random()*3,fill:'#F5E8D0',opacity:0.2}));
   }
   svg.appendChild(gBread);
 
-  // ─── 3. BREAD SLICED OPEN — top half + bottom half + interior ───
-  var gSliced=svgEl('g',{opacity:0});
+  // ─── 3. V-SHAPE BREAD OPENING ───
+  // This group contains: interior panel (backdrop), bottom bread, ingredient layers, top bread
+  var gVBread=svgEl('g',{opacity:0});
 
-  // Bottom half (moves down when spread)
-  var bottomHalf=svgEl('g',{});
-  bottomHalf.appendChild(svgEl('path',{d:'M'+(subX+subH/2)+' '+subY+' L'+subX+' '+subY+' Q'+subX+' '+(subY+subH/2)+' '+(subX+subH/2)+' '+(subY+subH/2)+' L'+(subX+subW-subH/2)+' '+(subY+subH/2)+' Q'+(subX+subW)+' '+(subY+subH/2)+' '+(subX+subW)+' '+subY+' L'+(subX+subW-subH/2)+' '+subY+' Z',fill:'url(#crustGrad)',stroke:'#906018','stroke-width':1}));
-  // Interior face (flat top of bottom half)
-  bottomHalf.appendChild(svgEl('rect',{x:subX+10,y:subY-2,width:subW-20,height:6,rx:2,fill:'url(#breadInner)'}));
-  gSliced.appendChild(bottomHalf);
+  // Interior panel - large cream/beige trapezoid representing exposed bread interior
+  // Wider than the bread itself, forming the V backdrop
+  var interiorPanel=svgEl('path',{
+    d:'M'+(interiorX+10)+' '+bottomBreadTop+
+      ' L'+(interiorX)+' '+(bottomBreadTop-vOpenH)+
+      ' L'+(interiorX+interiorW)+' '+(bottomBreadTop-vOpenH)+
+      ' L'+(interiorX+interiorW-10)+' '+bottomBreadTop+' Z',
+    fill:'url(#breadInner)',stroke:'#DDD0B0','stroke-width':0.5,opacity:0
+  });
+  gVBread.appendChild(interiorPanel);
 
-  // Top half (lifts up)
-  var topHalf=svgEl('g',{});
-  topHalf.appendChild(svgEl('path',{d:'M'+(subX+subH/2)+' '+subY+' L'+subX+' '+subY+' Q'+subX+' '+(subY-subH/2)+' '+(subX+subH/2)+' '+(subY-subH/2)+' L'+(subX+subW-subH/2)+' '+(subY-subH/2)+' Q'+(subX+subW)+' '+(subY-subH/2)+' '+(subX+subW)+' '+subY+' L'+(subX+subW-subH/2)+' '+subY+' Z',fill:'url(#crustGrad)',stroke:'#906018','stroke-width':1}));
-  // Scoring marks on top
-  for(var si2=0;si2<5;si2++){
-    var sx2=subX+60+si2*100;
-    topHalf.appendChild(svgEl('line',{x1:sx2,y1:subY-subH/2+8,x2:sx2+40,y2:subY-subH/2+20,stroke:'#B87A1E','stroke-width':1.5,'stroke-linecap':'round',opacity:0.5}));
-  }
-  // Interior face (underside of top half)
-  topHalf.appendChild(svgEl('rect',{x:subX+10,y:subY-4,width:subW-20,height:6,rx:2,fill:'url(#breadInner)'}));
-  // Top highlight
-  topHalf.appendChild(svgEl('rect',{x:subX+40,y:subY-subH/2+3,width:subW-80,height:6,rx:3,fill:'#E8B050',opacity:0.25}));
-  gSliced.appendChild(topHalf);
-  svg.appendChild(gSliced);
+  // Bottom bread - crust curves along the bottom, interior face on top
+  var bottomBread=svgEl('g',{});
+  // Crust exterior (bottom curve)
+  bottomBread.appendChild(svgEl('path',{
+    d:'M'+(subX+subH/4)+' '+bottomBreadTop+
+      ' L'+subX+' '+bottomBreadTop+
+      ' Q'+(subX-5)+' '+((bottomBreadTop+bottomBreadBot)/2)+' '+(subX+subH/4)+' '+bottomBreadBot+
+      ' L'+(subX+subW-subH/4)+' '+bottomBreadBot+
+      ' Q'+(subX+subW+5)+' '+((bottomBreadTop+bottomBreadBot)/2)+' '+(subX+subW)+' '+bottomBreadTop+
+      ' L'+(subX+subW-subH/4)+' '+bottomBreadTop+' Z',
+    fill:'url(#crustGrad)',stroke:'#906018','stroke-width':1
+  }));
+  // Interior face on top of bottom bread
+  bottomBread.appendChild(svgEl('rect',{x:subX+5,y:bottomBreadTop-3,width:subW-10,height:6,rx:2,fill:'#F5E6C8'}));
+  gVBread.appendChild(bottomBread);
 
-  // ─── 4. OIL & VINEGAR DRIZZLE ───
+  // ─── INGREDIENT LAYERS (sit inside the V, on bottom bread) ───
+
+  // 4. OIL & VINEGAR
   var gOil=svgEl('g',{opacity:0});
-  // Oil line (golden) — positioned on bottom bread surface (subY+28)
-  var oilLine=svgEl('line',{x1:subX+30,y1:subY+28,x2:subX+30,y2:subY+28,stroke:'#C8A830','stroke-width':2.5,'stroke-linecap':'round',opacity:0.7});
+  var oilY=bottomBreadTop-4;
+  var oilLine=svgEl('line',{x1:subX+30,y1:oilY,x2:subX+30,y2:oilY,stroke:'#C8A830','stroke-width':2.5,'stroke-linecap':'round',opacity:0.7});
   gOil.appendChild(oilLine);
-  // Vinegar line (darker) (subY+32)
-  var vinegarLine=svgEl('line',{x1:subX+30,y1:subY+32,x2:subX+30,y2:subY+32,stroke:'#8B4513','stroke-width':2,'stroke-linecap':'round',opacity:0.5});
+  var vinegarLine=svgEl('line',{x1:subX+30,y1:oilY+4,x2:subX+30,y2:oilY+4,stroke:'#8B4513','stroke-width':2,'stroke-linecap':'round',opacity:0.5});
   gOil.appendChild(vinegarLine);
-  // Oil droplets (subY+29+random)
   var oilDrops=[];
   for(var oi=0;oi<6;oi++){
-    var od=svgEl('circle',{cx:subX+50+oi*80,cy:subY+29+Math.random()*4,r:2+Math.random()*2,fill:'#D4A830',opacity:0});
+    var od=svgEl('circle',{cx:subX+50+oi*80,cy:oilY+1+Math.random()*3,r:2+Math.random()*2,fill:'#D4A830',opacity:0});
     gOil.appendChild(od);
     oilDrops.push(od);
   }
-  svg.appendChild(gOil);
+  gVBread.appendChild(gOil);
 
-  // ─── 5. LETTUCE LEAVES ───  (subY+22 — resting on bread above oil)
+  // 5. LETTUCE LEAVES (resting on bottom bread inside V)
   var gLettuce=svgEl('g',{opacity:0});
   var lettuceLeaves=[];
   for(var li=0;li<7;li++){
     var lx=subX+20+li*72;
-    var ly=subY+22;
-    // Ruffled leaf shape
+    var ly=bottomBreadTop-8;
     var leafPath='M'+lx+' '+ly+' Q'+(lx+10)+' '+(ly-18)+' '+(lx+25)+' '+(ly-12)+' Q'+(lx+35)+' '+(ly-22)+' '+(lx+50)+' '+(ly-10)+' Q'+(lx+60)+' '+(ly-18)+' '+(lx+70)+' '+(ly-6)+' Q'+(lx+55)+' '+(ly+4)+' '+(lx+35)+' '+(ly+2)+' Q'+(lx+15)+' '+(ly+6)+' '+lx+' '+ly;
     var leaf=svgEl('path',{d:leafPath,fill:li%2===0?'#4CAF50':'#66BB6A',stroke:'#2E7D32','stroke-width':0.5,opacity:0});
-    // Leaf vein
     var vein=svgEl('line',{x1:lx+10,y1:ly,x2:lx+55,y2:ly-8,stroke:'#388E3C','stroke-width':0.5,opacity:0});
     gLettuce.appendChild(leaf);
     gLettuce.appendChild(vein);
     lettuceLeaves.push({leaf:leaf,vein:vein});
   }
-  svg.appendChild(gLettuce);
+  gVBread.appendChild(gLettuce);
 
-  // ─── 6. DELI MEATS — salami, ham, capicola (folded slices) ───  (subY+14)
+  // 6. DELI MEATS (folded slices stacking above lettuce)
   var gMeats=svgEl('g',{opacity:0});
   var meatSlices=[];
   var meatTypes=['salami','ham','cap','salami','ham','cap','salami','ham'];
   var meatFills={'salami':'url(#salamiGrad)','ham':'url(#hamGrad)','cap':'url(#capGrad)'};
   for(var mi=0;mi<8;mi++){
     var mx=subX+20+mi*62;
-    var my=subY+14;
+    var my=bottomBreadTop-22;
     var mType=meatTypes[mi];
     var mFill=meatFills[mType];
     var meatG=svgEl('g',{opacity:0});
-    // Folded slice (wave shape)
     var foldPath='M'+mx+' '+(my+5)+' Q'+(mx+15)+' '+(my-20)+' '+(mx+30)+' '+(my-5)+' Q'+(mx+45)+' '+(my+15)+' '+(mx+55)+' '+(my-8)+' L'+(mx+55)+' '+(my+8)+' Q'+(mx+40)+' '+(my-2)+' '+(mx+28)+' '+(my+10)+' Q'+(mx+14)+' '+(my+20)+' '+mx+' '+(my+5);
     meatG.appendChild(svgEl('path',{d:foldPath,fill:mFill,stroke:mType==='salami'?'#7A1818':mType==='ham'?'#B06060':'#904030','stroke-width':0.8}));
-    // Salami white fat specks
     if(mType==='salami'){
       for(var sp=0;sp<4;sp++){
         meatG.appendChild(svgEl('circle',{cx:mx+10+sp*12,cy:my+Math.random()*6-3,r:1+Math.random(),fill:'#F8E0E0',opacity:0.6}));
       }
     }
-    // Capicola fat marbling
     if(mType==='cap'){
-      meatG.appendChild(svgEl('path',{d:'M'+(mx+8)+' '+(my)+' Q'+(mx+20)+' '+(my-8)+' '+(mx+35)+' '+(my+2),fill:'none',stroke:'#F0B090','stroke-width':1.5,opacity:0.4}));
+      meatG.appendChild(svgEl('path',{d:'M'+(mx+8)+' '+my+' Q'+(mx+20)+' '+(my-8)+' '+(mx+35)+' '+(my+2),fill:'none',stroke:'#F0B090','stroke-width':1.5,opacity:0.4}));
     }
     gMeats.appendChild(meatG);
     meatSlices.push(meatG);
   }
-  svg.appendChild(gMeats);
+  gVBread.appendChild(gMeats);
 
-  // ─── 7. PROVOLONE CHEESE SLICES ───  (subY+6)
+  // 7. PROVOLONE CHEESE
   var gCheese_g=svgEl('g',{opacity:0});
   var cheeseSlices=[];
   for(var ci=0;ci<5;ci++){
     var ccx=subX+30+ci*100;
-    var ccy=subY+6;
-    // Triangular fold (provolone draped over meats)
+    var ccy=bottomBreadTop-36;
     var cheesePath='M'+ccx+' '+(ccy+5)+' L'+(ccx+35)+' '+(ccy-20)+' L'+(ccx+70)+' '+(ccy+5)+' Q'+(ccx+50)+' '+(ccy+12)+' '+(ccx+20)+' '+(ccy+10)+' Z';
     var cs=svgEl('path',{d:cheesePath,fill:'url(#cheeseGrad)',stroke:'#C8B860','stroke-width':0.5,opacity:0});
     gCheese_g.appendChild(cs);
     cheeseSlices.push(cs);
   }
-  svg.appendChild(gCheese_g);
+  gVBread.appendChild(gCheese_g);
 
-  // ─── 8. TOMATO SLICES ───  (subY-2)
+  // 8. TOMATO SLICES
   var gTomato=svgEl('g',{opacity:0});
   var tomatoSlices=[];
   for(var ti=0;ti<6;ti++){
     var tx=subX+40+ti*82;
-    var ty=subY-2;
+    var ty=bottomBreadTop-52;
     var tg=svgEl('g',{opacity:0});
-    // Main circle
     tg.appendChild(svgEl('circle',{cx:tx,cy:ty,r:16,fill:'#E53935',stroke:'#C62828','stroke-width':0.8}));
-    // Seed sections (radial lines)
     for(var ts=0;ts<4;ts++){
       var ta=ts*Math.PI/2;
       tg.appendChild(svgEl('line',{x1:tx,y1:ty,x2:tx+Math.cos(ta)*12,y2:ty+Math.sin(ta)*12,stroke:'#EF9A9A','stroke-width':0.6,opacity:0.5}));
     }
-    // Center
     tg.appendChild(svgEl('circle',{cx:tx,cy:ty,r:3,fill:'#FF8A80',opacity:0.4}));
     gTomato.appendChild(tg);
     tomatoSlices.push(tg);
   }
-  svg.appendChild(gTomato);
+  gVBread.appendChild(gTomato);
 
-  // ─── 9. ONION RINGS ───  (subY-10)
+  // 9. ONION RINGS
   var gOnion=svgEl('g',{opacity:0});
   var onionRings=[];
   for(var oni=0;oni<5;oni++){
-    var ox=subX+55+oni*100;
-    var oy=subY-10;
+    var oxx=subX+55+oni*100;
+    var oy=bottomBreadTop-62;
     var og=svgEl('g',{opacity:0});
-    og.appendChild(svgEl('circle',{cx:ox,cy:oy,r:12,fill:'none',stroke:'#9C27B0','stroke-width':3,opacity:0.6}));
-    og.appendChild(svgEl('circle',{cx:ox,cy:oy,r:9,fill:'none',stroke:'#CE93D8','stroke-width':1.5,opacity:0.3}));
-    // White inner ring
-    og.appendChild(svgEl('circle',{cx:ox,cy:oy,r:6,fill:'none',stroke:'#F3E5F5','stroke-width':1,opacity:0.4}));
+    og.appendChild(svgEl('circle',{cx:oxx,cy:oy,r:12,fill:'none',stroke:'#9C27B0','stroke-width':3,opacity:0.6}));
+    og.appendChild(svgEl('circle',{cx:oxx,cy:oy,r:9,fill:'none',stroke:'#CE93D8','stroke-width':1.5,opacity:0.3}));
+    og.appendChild(svgEl('circle',{cx:oxx,cy:oy,r:6,fill:'none',stroke:'#F3E5F5','stroke-width':1,opacity:0.4}));
     gOnion.appendChild(og);
     onionRings.push(og);
   }
-  svg.appendChild(gOnion);
+  gVBread.appendChild(gOnion);
 
-  // ─── 10. PEPPERS + OREGANO ───  (subY-18)
+  // 10. PEPPERS + OREGANO
   var gToppings=svgEl('g',{opacity:0});
-  // Banana pepper rings (yellow-green)
   var pepperPieces=[];
   for(var pi=0;pi<7;pi++){
     var px=subX+35+pi*70;
-    var py=subY-18+Math.random()*4;
+    var py=bottomBreadTop-74+Math.random()*4;
     var pg=svgEl('g',{opacity:0});
     pg.appendChild(svgEl('circle',{cx:px,cy:py,r:8,fill:'none',stroke:'#CDDC39','stroke-width':3,opacity:0.75}));
     pg.appendChild(svgEl('circle',{cx:px,cy:py,r:4,fill:'#F0F4C3',opacity:0.3}));
     gToppings.appendChild(pg);
     pepperPieces.push(pg);
   }
-  // Oregano sprinkle (tiny dots)
   var oreganoDots=[];
   for(var oi2=0;oi2<30;oi2++){
     var ox2=subX+25+Math.random()*(subW-50);
-    var oy2=subY-16+Math.random()*36;
+    var oy2=bottomBreadTop-80+Math.random()*70;
     var odot=svgEl('circle',{cx:ox2,cy:oy2,r:0.8+Math.random()*0.8,fill:'#558B2F',opacity:0});
     gToppings.appendChild(odot);
     oreganoDots.push(odot);
   }
-  svg.appendChild(gToppings);
+  gVBread.appendChild(gToppings);
 
-  // ─── 11. CLOSED SUB (top bread comes down with all fillings visible at edges) ───
+  // Top bread - angled upward from back edge (hinge at back/top)
+  // When open: skewed ~40 degrees showing crust outside, interior underneath
+  var topBread=svgEl('g',{});
+  // Top bread crust (when open, angled path showing 3/4 perspective)
+  // This will be transformed via the animation; drawn flat here, rotated in animation
+  var topCrustPath='M'+(subX+subH/4)+' '+(subY-subH/2)+
+    ' L'+subX+' '+(subY-subH/2)+
+    ' Q'+(subX-5)+' '+(subY-subH)+' '+(subX+subH/4)+' '+(subY-subH)+
+    ' L'+(subX+subW-subH/4)+' '+(subY-subH)+
+    ' Q'+(subX+subW+5)+' '+(subY-subH)+' '+(subX+subW)+' '+(subY-subH/2)+
+    ' L'+(subX+subW-subH/4)+' '+(subY-subH/2)+' Z';
+  topBread.appendChild(svgEl('path',{d:topCrustPath,fill:'url(#crustGrad)',stroke:'#906018','stroke-width':1}));
+  // Score marks
+  for(var si2=0;si2<5;si2++){
+    var sx2=subX+60+si2*100;
+    topBread.appendChild(svgEl('line',{x1:sx2,y1:subY-subH+8,x2:sx2+40,y2:subY-subH+18,stroke:'#B87A1E','stroke-width':1.5,'stroke-linecap':'round',opacity:0.5}));
+  }
+  topBread.appendChild(svgEl('rect',{x:subX+40,y:subY-subH+3,width:subW-80,height:6,rx:3,fill:'#E8B050',opacity:0.25}));
+  // Interior face (underside visible when open)
+  topBread.appendChild(svgEl('rect',{x:subX+5,y:subY-subH/2-3,width:subW-10,height:6,rx:2,fill:'#F5E6C8'}));
+  gVBread.appendChild(topBread);
+
+  svg.appendChild(gVBread);
+
+  // ─── 11. CLOSED SUB (after V closes) ───
   var gClosed=svgEl('g',{opacity:0});
-  // Shadow
   gClosed.appendChild(svgEl('ellipse',{cx:cx,cy:subY+subH/2+15,rx:subW/2-20,ry:8,fill:'#000',opacity:0.15}));
   // Bottom half with visible filling edges
   gClosed.appendChild(svgEl('path',{d:'M'+(subX+subH/2)+' '+(subY+4)+' L'+subX+' '+(subY+4)+' Q'+subX+' '+(subY+subH/2)+' '+(subX+subH/2)+' '+(subY+subH/2)+' L'+(subX+subW-subH/2)+' '+(subY+subH/2)+' Q'+(subX+subW)+' '+(subY+subH/2)+' '+(subX+subW)+' '+(subY+4)+' Z',fill:'url(#crustGrad)',stroke:'#906018','stroke-width':1}));
-  // Visible fillings peeking out at edges
   for(var lp=0;lp<6;lp++){
     var lpx=subX+10+lp*95;
     gClosed.appendChild(svgEl('path',{d:'M'+lpx+' '+(subY)+' Q'+(lpx+20)+' '+(subY-6)+' '+(lpx+40)+' '+(subY)+' Q'+(lpx+30)+' '+(subY+3)+' '+(lpx+10)+' '+(subY+2)+' Z',fill:'#4CAF50',opacity:0.7}));
   }
-  // Meat edges
   for(var mp=0;mp<4;mp++){
     gClosed.appendChild(svgEl('rect',{x:subX+5+mp*130,y:subY-2,width:20,height:6,rx:2,fill:'#CC4444',opacity:0.5}));
   }
-  // Top half
   gClosed.appendChild(svgEl('path',{d:'M'+(subX+subH/2)+' '+(subY-2)+' L'+subX+' '+(subY-2)+' Q'+subX+' '+(subY-subH/2)+' '+(subX+subH/2)+' '+(subY-subH/2)+' L'+(subX+subW-subH/2)+' '+(subY-subH/2)+' Q'+(subX+subW)+' '+(subY-subH/2)+' '+(subX+subW)+' '+(subY-2)+' Z',fill:'url(#crustGrad)',stroke:'#906018','stroke-width':1}));
-  // Score marks
   for(var sc=0;sc<5;sc++){
     gClosed.appendChild(svgEl('line',{x1:subX+60+sc*100,y1:subY-subH/2+8,x2:subX+100+sc*100,y2:subY-subH/2+20,stroke:'#B87A1E','stroke-width':1.5,'stroke-linecap':'round',opacity:0.5}));
   }
@@ -461,109 +473,98 @@ a{color:inherit;text-decoration:none}
   // ─── 12. KNIFE ───
   var gKnife=svgEl('g',{opacity:0});
   var knifeX=cx, knifeBaseY=cy-50;
-  // Blade
-  gKnife.appendChild(svgEl('path',{d:'M'+(knifeX-12)+' '+knifeBaseY+' L'+(knifeX)+' '+(knifeBaseY-150)+' L'+(knifeX+18)+' '+knifeBaseY+' Q'+(knifeX+3)+' '+(knifeBaseY+5)+' '+(knifeX-12)+' '+knifeBaseY,fill:'#D0D0D0',stroke:'#A0A0A0','stroke-width':1}));
-  // Blade edge highlight
+  gKnife.appendChild(svgEl('path',{d:'M'+(knifeX-12)+' '+knifeBaseY+' L'+knifeX+' '+(knifeBaseY-150)+' L'+(knifeX+18)+' '+knifeBaseY+' Q'+(knifeX+3)+' '+(knifeBaseY+5)+' '+(knifeX-12)+' '+knifeBaseY,fill:'#D0D0D0',stroke:'#A0A0A0','stroke-width':1}));
   gKnife.appendChild(svgEl('path',{d:'M'+(knifeX-6)+' '+(knifeBaseY-5)+' L'+(knifeX+1)+' '+(knifeBaseY-140)+' L'+(knifeX+10)+' '+(knifeBaseY-5)+' Z',fill:'#E8E8E8',opacity:0.35}));
-  // Bolster
   gKnife.appendChild(svgEl('rect',{x:knifeX-12,y:knifeBaseY,width:30,height:10,rx:2,fill:'#B0B0B0'}));
-  // Handle
   gKnife.appendChild(svgEl('rect',{x:knifeX-10,y:knifeBaseY+10,width:26,height:55,rx:5,fill:'#3A2518',stroke:'#2A1508','stroke-width':1}));
-  // Handle rivets
   gKnife.appendChild(svgEl('circle',{cx:knifeX+3,cy:knifeBaseY+25,r:2.5,fill:'#C0C0C0'}));
   gKnife.appendChild(svgEl('circle',{cx:knifeX+3,cy:knifeBaseY+45,r:2.5,fill:'#C0C0C0'}));
   svg.appendChild(gKnife);
 
-  // ─── 13. TWO HALVES (after cut) ───
-  var gHalves=svgEl('g',{opacity:0});
+  // ─── 13. WRAPPED HALVES (full cylinder wrap with exposed cross-section) ───
+  var gWrapped=svgEl('g',{opacity:0});
 
-  function makeHalf(side){
-    var h=svgEl('g',{});
-    var hw=subW/2-8;
-    var hx=side==='left'?subX:cx+8;
-    var hy=subY;
-    // Bottom crust
-    h.appendChild(svgEl('path',{d:'M'+(hx+(side==='left'?subH/2:0))+' '+(hy+4)+' L'+hx+' '+(hy+4)+' Q'+hx+' '+(hy+subH/2)+' '+(hx+(side==='left'?subH/2:0))+' '+(hy+subH/2)+' L'+(hx+hw-(side==='right'?subH/2:0))+' '+(hy+subH/2)+' Q'+(hx+hw)+' '+(hy+subH/2)+' '+(hx+hw)+' '+(hy+4)+' Z',fill:'url(#crustGrad)',stroke:'#906018','stroke-width':1}));
-    // Cross-section at cut (interior visible)
-    var cutX=side==='left'?hx+hw:hx;
-    h.appendChild(svgEl('rect',{x:cutX-3,y:hy-subH/2+3,width:6,height:subH-6,rx:1,fill:'url(#breadInner)'}));
-    // Filling cross-section layers
-    h.appendChild(svgEl('rect',{x:cutX-2,y:hy-6,width:4,height:3,rx:1,fill:'#4CAF50'}));
-    h.appendChild(svgEl('rect',{x:cutX-2,y:hy-10,width:4,height:3,rx:1,fill:'#CC4444'}));
-    h.appendChild(svgEl('rect',{x:cutX-2,y:hy-14,width:4,height:3,rx:1,fill:'#F0A0A0'}));
-    h.appendChild(svgEl('rect',{x:cutX-2,y:hy-18,width:4,height:3,rx:1,fill:'#F8E8A0'}));
-    h.appendChild(svgEl('rect',{x:cutX-2,y:hy-2,width:4,height:3,rx:1,fill:'#E53935'}));
-    // Peeking fillings
-    for(var lpp=0;lpp<3;lpp++){
-      var lpx2=hx+10+lpp*80;
-      h.appendChild(svgEl('path',{d:'M'+lpx2+' '+hy+' Q'+(lpx2+15)+' '+(hy-5)+' '+(lpx2+30)+' '+hy,fill:'#4CAF50',opacity:0.6}));
+  // Each wrapped half is a cylinder: checkerboard body + circular cross-section at cut end
+  function makeWrappedHalf(side){
+    var wg=svgEl('g',{});
+    var hw=subW/2-10;
+    var cylR=subH/2+4; // cylinder radius
+    var hx=side==='left'?subX-10:cx+10;
+
+    // Checkerboard cylinder body
+    var bodyPath;
+    if(side==='left'){
+      // Rounded left end, flat right end (cut face)
+      bodyPath='M'+(hx+cylR)+' '+(subY-cylR)+
+        ' L'+(hx+hw)+' '+(subY-cylR)+
+        ' L'+(hx+hw)+' '+(subY+cylR)+
+        ' L'+(hx+cylR)+' '+(subY+cylR)+
+        ' A'+cylR+' '+cylR+' 0 0 1 '+hx+' '+subY+
+        ' A'+cylR+' '+cylR+' 0 0 1 '+(hx+cylR)+' '+(subY-cylR)+' Z';
+    } else {
+      // Flat left end (cut face), rounded right end
+      bodyPath='M'+hx+' '+(subY-cylR)+
+        ' L'+(hx+hw-cylR)+' '+(subY-cylR)+
+        ' A'+cylR+' '+cylR+' 0 0 1 '+(hx+hw)+' '+subY+
+        ' A'+cylR+' '+cylR+' 0 0 1 '+(hx+hw-cylR)+' '+(subY+cylR)+
+        ' L'+hx+' '+(subY+cylR)+' Z';
     }
-    // Top crust
-    h.appendChild(svgEl('path',{d:'M'+(hx+(side==='left'?subH/2:0))+' '+(hy-2)+' L'+hx+' '+(hy-2)+' Q'+hx+' '+(hy-subH/2)+' '+(hx+(side==='left'?subH/2:0))+' '+(hy-subH/2)+' L'+(hx+hw-(side==='right'?subH/2:0))+' '+(hy-subH/2)+' Q'+(hx+hw)+' '+(hy-subH/2)+' '+(hx+hw)+' '+(hy-2)+' Z',fill:'url(#crustGrad)',stroke:'#906018','stroke-width':1}));
-    // Score marks
-    for(var sc2=0;sc2<2;sc2++){
-      h.appendChild(svgEl('line',{x1:hx+30+sc2*90,y1:hy-subH/2+8,x2:hx+60+sc2*90,y2:hy-subH/2+18,stroke:'#B87A1E','stroke-width':1.5,'stroke-linecap':'round',opacity:0.5}));
-    }
-    return h;
+    wg.appendChild(svgEl('path',{d:bodyPath,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
+
+    // Cross-section circle at cut end
+    var crossX=side==='left'?hx+hw:hx;
+    // Bread outer ring
+    wg.appendChild(svgEl('circle',{cx:crossX,cy:subY,r:cylR,fill:'#ECD8B0',stroke:'#C8A878','stroke-width':1}));
+    // Crust ring
+    wg.appendChild(svgEl('circle',{cx:crossX,cy:subY,r:cylR,fill:'none',stroke:'#A06820','stroke-width':3}));
+    // Bread interior ring
+    wg.appendChild(svgEl('circle',{cx:crossX,cy:subY,r:cylR-4,fill:'#F5E6C8',stroke:'#DDD0B0','stroke-width':0.5}));
+    // Green lettuce ring
+    wg.appendChild(svgEl('circle',{cx:crossX,cy:subY,r:cylR-8,fill:'none',stroke:'#4CAF50','stroke-width':5}));
+    // White/cheese ring
+    wg.appendChild(svgEl('circle',{cx:crossX,cy:subY,r:cylR-14,fill:'#F8E8A0',stroke:'#E8D070','stroke-width':1}));
+    // Meat filling center
+    wg.appendChild(svgEl('circle',{cx:crossX,cy:subY,r:cylR-18,fill:'#CC4444'}));
+    // Meat detail layers
+    wg.appendChild(svgEl('circle',{cx:crossX-4,cy:subY-3,r:6,fill:'#F0A0A0',opacity:0.7}));
+    wg.appendChild(svgEl('circle',{cx:crossX+5,cy:subY+2,r:5,fill:'#C85A3A',opacity:0.6}));
+    // Tomato accent
+    wg.appendChild(svgEl('circle',{cx:crossX-2,cy:subY+6,r:4,fill:'#E53935',opacity:0.5}));
+    // Pepper accent
+    wg.appendChild(svgEl('circle',{cx:crossX+3,cy:subY-5,r:3,fill:'#CDDC39',opacity:0.4}));
+
+    return wg;
   }
-  var leftHalf=makeHalf('left');
-  var rightHalf=makeHalf('right');
-  gHalves.appendChild(leftHalf);
-  gHalves.appendChild(rightHalf);
-  svg.appendChild(gHalves);
 
-  // ─── 14. WRAPPING PAPER (checkerboard — bottom 60% only, deli style) ───
-  var gWrap=svgEl('g',{opacity:0});
-  var lhw=subW/2-8;
-  var rhw=subW/2-8;
-  // Left half wrap — covers LEFT half of the sub half (hold-to-eat)
-  var wrapLeftG=svgEl('g',{opacity:0});
-  var lwy=subY;
-  var wrapFullH=subH+6;
-  var wrapHalfW=lhw/2;
-  // Paper base (from left end of left half, covering half the sub's width)
-  wrapLeftG.appendChild(svgEl('rect',{x:subX-25,y:subY-subH/2-3,width:wrapHalfW,height:wrapFullH,rx:3,fill:'url(#checker)',opacity:0.9}));
-  gWrap.appendChild(wrapLeftG);
+  var wrappedLeft=makeWrappedHalf('left');
+  var wrappedRight=makeWrappedHalf('right');
+  gWrapped.appendChild(wrappedLeft);
+  gWrapped.appendChild(wrappedRight);
+  svg.appendChild(gWrapped);
 
-  // Right half wrap — covers RIGHT half of the sub half (hold-to-eat)
-  var wrapRightG=svgEl('g',{opacity:0});
-  var rwy=subY;
-  // Paper base (from middle of right half to its right end)
-  var rwrapStartX=cx+8+25+rhw/2;
-  wrapRightG.appendChild(svgEl('rect',{x:rwrapStartX,y:subY-subH/2-3,width:rhw/2,height:wrapFullH,rx:3,fill:'url(#checker)',opacity:0.9}));
-  gWrap.appendChild(wrapRightG);
-  svg.appendChild(gWrap);
-
-  // ─── 15. RED BASKET PRESENTATION ───
+  // ─── 14. RED BASKET PRESENTATION ───
   var gBasketScene=svgEl('g',{opacity:0});
 
-  // Napkin underneath (white, slightly crumpled rectangle)
+  // Napkin
   var napkinX=cx-180, napkinY=cy+50;
   gBasketScene.appendChild(svgEl('rect',{x:napkinX,y:napkinY,width:360,height:180,rx:4,fill:'#F5F0E8',stroke:'#E0D8C8','stroke-width':0.5,opacity:0.8}));
-  // Napkin fold line
   gBasketScene.appendChild(svgEl('line',{x1:napkinX+10,y1:napkinY+90,x2:napkinX+350,y2:napkinY+90,stroke:'#D8D0C0','stroke-width':0.5,opacity:0.4}));
 
-  // Red basket — oval shape
-  var basketCX=cx-20, basketCY=cy+110;
-  var basketRX=190, basketRY=70;
-  // Basket shadow
+  // Red basket
+  var basketCX=cx, basketCY=cy+110;
+  var basketRX=200, basketRY=75;
   gBasketScene.appendChild(svgEl('ellipse',{cx:basketCX+4,cy:basketCY+8,rx:basketRX+4,ry:basketRY+4,fill:'#000',opacity:0.15}));
-  // Basket body (bottom)
   gBasketScene.appendChild(svgEl('ellipse',{cx:basketCX,cy:basketCY,rx:basketRX,ry:basketRY,fill:'url(#basketGrad)',stroke:'#8B1A1A','stroke-width':1.5}));
-  // Basket inner surface
   gBasketScene.appendChild(svgEl('ellipse',{cx:basketCX,cy:basketCY-5,rx:basketRX-8,ry:basketRY-8,fill:'#D32F2F',stroke:'#B71C1C','stroke-width':0.5}));
-  // Basket texture lines (horizontal ridges)
   for(var bi=0;bi<5;bi++){
     var bly=basketCY-basketRY+20+bi*25;
     var blRX=basketRX-5-bi*2;
     gBasketScene.appendChild(svgEl('ellipse',{cx:basketCX,cy:bly,rx:blRX,ry:2,fill:'none',stroke:'#A51C1C','stroke-width':0.8,opacity:0.4}));
   }
-  // Basket rim
   gBasketScene.appendChild(svgEl('ellipse',{cx:basketCX,cy:basketCY-basketRY+12,rx:basketRX-2,ry:12,fill:'#E53935',stroke:'#C62828','stroke-width':1}));
 
-  // Wax paper lining inside basket
+  // Wax paper lining
   gBasketScene.appendChild(svgEl('ellipse',{cx:basketCX,cy:basketCY-5,rx:basketRX-15,ry:basketRY-15,fill:'#FFF8E8',opacity:0.5}));
-  // Crinkled paper edges
   for(var cri=0;cri<8;cri++){
     var cra=cri*Math.PI/4;
     var crx=basketCX+Math.cos(cra)*(basketRX-20);
@@ -571,36 +572,59 @@ a{color:inherit;text-decoration:none}
     gBasketScene.appendChild(svgEl('circle',{cx:crx,cy:cry,r:6+Math.random()*4,fill:'#FFF8E8',opacity:0.4}));
   }
 
-  // Wrapped left half in basket (angled slightly)
-  var bSubLeftG=svgEl('g',{});
-  var bslx=basketCX-basketRX+30, bsly=basketCY-25;
-  var bsubH=subH-6, bsubR=bsubH/2;
-  var bslw=lhw-10;
-  // Sub body — rounded left end, flat right end (cut side)
-  bSubLeftG.appendChild(svgEl('path',{d:'M'+(bslx+bsubR)+' '+(bsly-18)+' L'+(bslx+bslw)+' '+(bsly-18)+' L'+(bslx+bslw)+' '+(bsly-18+bsubH)+' L'+(bslx+bsubR)+' '+(bsly-18+bsubH)+' A'+bsubR+' '+bsubR+' 0 0 1 '+(bslx)+' '+(bsly-18+bsubR)+' A'+bsubR+' '+bsubR+' 0 0 1 '+(bslx+bsubR)+' '+(bsly-18)+' Z',fill:'url(#crustGrad)',stroke:'#906018','stroke-width':0.8}));
-  // Checker wrap on LEFT half of the sub
-  bSubLeftG.appendChild(svgEl('rect',{x:bslx,y:bsly+2,width:bslw/2,height:subH*0.45,rx:8,fill:'url(#checker)',opacity:0.85}));
-  // Filling peek
-  bSubLeftG.appendChild(svgEl('path',{d:'M'+(bslx+5)+' '+(bsly)+' Q'+(bslx+30)+' '+(bsly-5)+' '+(bslx+55)+' '+(bsly),fill:'#4CAF50',opacity:0.5}));
-  bSubLeftG.setAttribute('transform','rotate(-3,'+basketCX+','+basketCY+')');
-  gBasketScene.appendChild(bSubLeftG);
+  // Two wrapped cylinder halves in basket
+  // Left half - angled slightly, cut end facing right (toward center)
+  var bCylR=30;
+  var bCylW=150;
+  var bLeftG=svgEl('g',{});
+  var blX=basketCX-basketRX+35, blY=basketCY-15;
+  // Checker body
+  bLeftG.appendChild(svgEl('path',{
+    d:'M'+(blX+bCylR)+' '+(blY-bCylR)+
+      ' L'+(blX+bCylW)+' '+(blY-bCylR)+
+      ' L'+(blX+bCylW)+' '+(blY+bCylR)+
+      ' L'+(blX+bCylR)+' '+(blY+bCylR)+
+      ' A'+bCylR+' '+bCylR+' 0 0 1 '+blX+' '+blY+
+      ' A'+bCylR+' '+bCylR+' 0 0 1 '+(blX+bCylR)+' '+(blY-bCylR)+' Z',
+    fill:'url(#checker)',stroke:'#888','stroke-width':0.5
+  }));
+  // Cross-section at right (cut) end
+  bLeftG.appendChild(svgEl('circle',{cx:blX+bCylW,cy:blY,r:bCylR,fill:'#ECD8B0',stroke:'#A06820','stroke-width':2.5}));
+  bLeftG.appendChild(svgEl('circle',{cx:blX+bCylW,cy:blY,r:bCylR-3,fill:'#F5E6C8'}));
+  bLeftG.appendChild(svgEl('circle',{cx:blX+bCylW,cy:blY,r:bCylR-6,fill:'none',stroke:'#4CAF50','stroke-width':4}));
+  bLeftG.appendChild(svgEl('circle',{cx:blX+bCylW,cy:blY,r:bCylR-11,fill:'#F8E8A0'}));
+  bLeftG.appendChild(svgEl('circle',{cx:blX+bCylW,cy:blY,r:bCylR-14,fill:'#CC4444'}));
+  bLeftG.appendChild(svgEl('circle',{cx:blX+bCylW-3,cy:blY-3,r:5,fill:'#F0A0A0',opacity:0.6}));
+  bLeftG.appendChild(svgEl('circle',{cx:blX+bCylW+3,cy:blY+2,r:4,fill:'#E53935',opacity:0.4}));
+  bLeftG.setAttribute('transform','rotate(-5,'+basketCX+','+basketCY+')');
+  gBasketScene.appendChild(bLeftG);
 
-  // Wrapped right half in basket (angled opposite)
-  var bSubRightG=svgEl('g',{});
-  var bsrx=basketCX-20, bsry=basketCY-30;
-  var bsrw=rhw-10;
-  // Sub body — flat left end (cut side), rounded right end
-  bSubRightG.appendChild(svgEl('path',{d:'M'+bsrx+' '+(bsry-18)+' L'+(bsrx+bsrw-bsubR)+' '+(bsry-18)+' A'+bsubR+' '+bsubR+' 0 0 1 '+(bsrx+bsrw)+' '+(bsry-18+bsubR)+' A'+bsubR+' '+bsubR+' 0 0 1 '+(bsrx+bsrw-bsubR)+' '+(bsry-18+bsubH)+' L'+bsrx+' '+(bsry-18+bsubH)+' Z',fill:'url(#crustGrad)',stroke:'#906018','stroke-width':0.8}));
-  // Checker wrap on RIGHT half of the sub
-  bSubRightG.appendChild(svgEl('rect',{x:bsrx+bsrw/2,y:bsry+2,width:bsrw/2,height:subH*0.45,rx:8,fill:'url(#checker)',opacity:0.85}));
-  bSubRightG.appendChild(svgEl('path',{d:'M'+(bsrx+5)+' '+(bsry)+' Q'+(bsrx+30)+' '+(bsry-5)+' '+(bsrx+55)+' '+(bsry),fill:'#4CAF50',opacity:0.5}));
-  bSubRightG.setAttribute('transform','rotate(4,'+basketCX+','+basketCY+')');
-  gBasketScene.appendChild(bSubRightG);
+  // Right half - cut end facing left (toward center)
+  var bRightG=svgEl('g',{});
+  var brX=basketCX+10, brY=basketCY-20;
+  // Checker body
+  bRightG.appendChild(svgEl('path',{
+    d:'M'+brX+' '+(brY-bCylR)+
+      ' L'+(brX+bCylW-bCylR)+' '+(brY-bCylR)+
+      ' A'+bCylR+' '+bCylR+' 0 0 1 '+(brX+bCylW)+' '+brY+
+      ' A'+bCylR+' '+bCylR+' 0 0 1 '+(brX+bCylW-bCylR)+' '+(brY+bCylR)+
+      ' L'+brX+' '+(brY+bCylR)+' Z',
+    fill:'url(#checker)',stroke:'#888','stroke-width':0.5
+  }));
+  // Cross-section at left (cut) end
+  bRightG.appendChild(svgEl('circle',{cx:brX,cy:brY,r:bCylR,fill:'#ECD8B0',stroke:'#A06820','stroke-width':2.5}));
+  bRightG.appendChild(svgEl('circle',{cx:brX,cy:brY,r:bCylR-3,fill:'#F5E6C8'}));
+  bRightG.appendChild(svgEl('circle',{cx:brX,cy:brY,r:bCylR-6,fill:'none',stroke:'#4CAF50','stroke-width':4}));
+  bRightG.appendChild(svgEl('circle',{cx:brX,cy:brY,r:bCylR-11,fill:'#F8E8A0'}));
+  bRightG.appendChild(svgEl('circle',{cx:brX,cy:brY,r:bCylR-14,fill:'#CC4444'}));
+  bRightG.appendChild(svgEl('circle',{cx:brX-3,cy:brY-2,r:5,fill:'#C85A3A',opacity:0.5}));
+  bRightG.appendChild(svgEl('circle',{cx:brX+2,cy:brY+4,r:3,fill:'#CDDC39',opacity:0.3}));
+  bRightG.setAttribute('transform','rotate(4,'+basketCX+','+basketCY+')');
+  gBasketScene.appendChild(bRightG);
 
-  // Chips pile (inside basket, right side)
+  // Chips pile (to the SIDE of the subs, not touching)
   var chipsG=svgEl('g',{});
-  var chipsCX=basketCX+basketRX-45, chipsCY=basketCY+15;
-  // Chip bag / pile of chips (golden irregular shapes)
+  var chipsCX=basketCX+basketRX-50, chipsCY=basketCY+20;
   var chipShapes=[
     {dx:-18,dy:-12,rx:14,ry:8,rot:-15},
     {dx:5,dy:-20,rx:12,ry:9,rot:25},
@@ -614,41 +638,29 @@ a{color:inherit;text-decoration:none}
   ];
   for(var chi=0;chi<chipShapes.length;chi++){
     var ch=chipShapes[chi];
-    var chipEl=svgEl('ellipse',{cx:chipsCX+ch.dx,cy:chipsCY+ch.dy,rx:ch.rx*0.7,ry:ch.ry*0.7,fill:chi%3===0?'#E8C840':'#D4A830',stroke:'#B08820','stroke-width':0.5,opacity:0.9,transform:'rotate('+ch.rot+','+(chipsCX+ch.dx)+','+(chipsCY+ch.dy)+')'});
-    chipsG.appendChild(chipEl);
+    chipsG.appendChild(svgEl('ellipse',{cx:chipsCX+ch.dx,cy:chipsCY+ch.dy,rx:ch.rx*0.7,ry:ch.ry*0.7,fill:chi%3===0?'#E8C840':'#D4A830',stroke:'#B08820','stroke-width':0.5,opacity:0.9,transform:'rotate('+ch.rot+','+(chipsCX+ch.dx)+','+(chipsCY+ch.dy)+')'}));
   }
-  // Brown crispy spots on some chips
   for(var cbi=0;cbi<5;cbi++){
     chipsG.appendChild(svgEl('circle',{cx:chipsCX-10+cbi*8,cy:chipsCY-5+cbi*4,r:2+Math.random()*2,fill:'#A07820',opacity:0.4}));
   }
   gBasketScene.appendChild(chipsG);
 
-  // Drink cup (left side)
+  // Drink cup (left side, separate from basket)
   var cupG=svgEl('g',{});
-  var cupCX=basketCX-basketRX-55, cupCY=basketCY-30;
+  var cupCX=basketCX-basketRX-60, cupCY=basketCY-30;
   var cupW=50, cupH=100;
-  // Cup shadow
   cupG.appendChild(svgEl('ellipse',{cx:cupCX+3,cy:cupCY+cupH/2+5,rx:cupW/2+2,ry:6,fill:'#000',opacity:0.12}));
-  // Cup body (slightly tapered — wider at top)
   cupG.appendChild(svgEl('path',{d:'M'+(cupCX-cupW/2+5)+' '+(cupCY+cupH/2)+' L'+(cupCX-cupW/2)+' '+(cupCY-cupH/2+10)+' L'+(cupCX+cupW/2)+' '+(cupCY-cupH/2+10)+' L'+(cupCX+cupW/2-5)+' '+(cupCY+cupH/2)+' Z',fill:'url(#cupGrad)',stroke:'#906018','stroke-width':1}));
-  // Cup brand stripe
   cupG.appendChild(svgEl('rect',{x:cupCX-cupW/2+3,y:cupCY-10,width:cupW-6,height:20,rx:2,fill:'#B87A1E',opacity:0.4}));
-  // "SC" brand text area (simple lines to suggest text)
   cupG.appendChild(svgEl('line',{x1:cupCX-8,y1:cupCY-2,x2:cupCX-2,y2:cupCY-2,stroke:'#FFF8F0','stroke-width':1.5,opacity:0.6}));
   cupG.appendChild(svgEl('line',{x1:cupCX+2,y1:cupCY-2,x2:cupCX+10,y2:cupCY-2,stroke:'#FFF8F0','stroke-width':1.5,opacity:0.6}));
-  // Lid
   cupG.appendChild(svgEl('ellipse',{cx:cupCX,cy:cupCY-cupH/2+10,rx:cupW/2+3,ry:8,fill:'url(#lidGrad)',stroke:'#909090','stroke-width':0.8}));
-  // Lid dome
   cupG.appendChild(svgEl('ellipse',{cx:cupCX,cy:cupCY-cupH/2+5,rx:cupW/2-2,ry:5,fill:'#D0D0D0',opacity:0.6}));
-  // Straw hole
   cupG.appendChild(svgEl('circle',{cx:cupCX+5,cy:cupCY-cupH/2+6,r:3,fill:'#A0A0A0',opacity:0.5}));
-  // Straw
   cupG.appendChild(svgEl('line',{x1:cupCX+5,y1:cupCY-cupH/2-25,x2:cupCX+5,y2:cupCY-cupH/2+6,stroke:'#E0D8C8','stroke-width':3,'stroke-linecap':'round'}));
   cupG.appendChild(svgEl('line',{x1:cupCX+5,y1:cupCY-cupH/2-25,x2:cupCX+5,y2:cupCY-cupH/2+6,stroke:'#C8B898','stroke-width':1.5,'stroke-linecap':'round'}));
-  // Straw bend at top
   cupG.appendChild(svgEl('line',{x1:cupCX+5,y1:cupCY-cupH/2-25,x2:cupCX-5,y2:cupCY-cupH/2-35,stroke:'#E0D8C8','stroke-width':3,'stroke-linecap':'round'}));
   cupG.appendChild(svgEl('line',{x1:cupCX+5,y1:cupCY-cupH/2-25,x2:cupCX-5,y2:cupCY-cupH/2-35,stroke:'#C8B898','stroke-width':1.5,'stroke-linecap':'round'}));
-  // Condensation droplets
   for(var cdi=0;cdi<4;cdi++){
     cupG.appendChild(svgEl('circle',{cx:cupCX-cupW/2+8+cdi*12,cy:cupCY+10+cdi*8,r:1.5,fill:'#FFF',opacity:0.3}));
   }
@@ -666,10 +678,14 @@ a{color:inherit;text-decoration:none}
     intro.style.opacity=1-ease3(introP);
     intro.style.transform='scale('+(1+introP*0.05)+')';
 
-    // ════════ MASTER RESET — every frame, unconditional ════════
+    // ════════ MASTER RESET ════════
     gBoard.setAttribute('opacity','0');gBoard.setAttribute('transform','');
     gBread.setAttribute('opacity','0');gBread.setAttribute('transform','');
-    gSliced.setAttribute('opacity','0');topHalf.setAttribute('transform','');bottomHalf.setAttribute('transform','');
+    gVBread.setAttribute('opacity','0');
+    interiorPanel.setAttribute('opacity','0');
+    interiorPanel.setAttribute('transform','');
+    bottomBread.setAttribute('transform','');
+    topBread.setAttribute('transform','');
     gOil.setAttribute('opacity','0');
     oilLine.setAttribute('x2',String(subX+30));
     vinegarLine.setAttribute('x2',String(subX+30));
@@ -689,13 +705,9 @@ a{color:inherit;text-decoration:none}
     for(var rdi=0;rdi<oreganoDots.length;rdi++) oreganoDots[rdi].setAttribute('opacity','0');
     gClosed.setAttribute('opacity','0');gClosed.setAttribute('transform','');
     gKnife.setAttribute('opacity','0');gKnife.setAttribute('transform','');
-    gHalves.setAttribute('opacity','0');
-    leftHalf.setAttribute('transform','');
-    rightHalf.setAttribute('transform','');
-    gWrap.setAttribute('opacity','0');
-    wrapLeftG.setAttribute('opacity','0');wrapLeftG.setAttribute('transform','');
-    wrapRightG.setAttribute('opacity','0');wrapRightG.setAttribute('transform','');
-    // (fold rects removed — wrap uses simple rect coverage now)
+    gWrapped.setAttribute('opacity','0');
+    wrappedLeft.setAttribute('transform','');
+    wrappedRight.setAttribute('transform','');
     gBasketScene.setAttribute('opacity','0');gBasketScene.setAttribute('transform','');
     scenePowered.style.opacity='0';
     scenePowered.style.transform='';
@@ -707,11 +719,21 @@ a{color:inherit;text-decoration:none}
     finalEl.style.opacity='0';
     finalEl.classList.remove('show');
 
-    // Helper: show all open-sub layers fully visible (used by multiple ingredient phases)
-    function showOpenSub(){
-      gSliced.setAttribute('opacity','1');
-      topHalf.setAttribute('transform','translateY(-160)');
-      bottomHalf.setAttribute('transform','translateY(30)');
+    // ── Helper functions ──
+    // Show V-open bread at full open state
+    function showVOpen(){
+      gVBread.setAttribute('opacity','1');
+      interiorPanel.setAttribute('opacity','1');
+      // Top bread rotated up ~40deg, pivoting at back (top) edge
+      // We use skewY to create the angled-open look from the back hinge
+      topBread.setAttribute('transform','translate(0,'+(-(vOpenH-subH/2))+') skewY(3)');
+      bottomBread.setAttribute('transform','translate(0,20)');
+    }
+    function showOilFull(){
+      gOil.setAttribute('opacity','1');
+      oilLine.setAttribute('x2',String(subX+subW-30));
+      vinegarLine.setAttribute('x2',String(subX+subW-30));
+      for(var i=0;i<oilDrops.length;i++) oilDrops[i].setAttribute('opacity','0.7');
     }
     function showAllLeaves(){
       gLettuce.setAttribute('opacity','1');
@@ -748,33 +770,47 @@ a{color:inherit;text-decoration:none}
     }
 
     // ── 2. BREAD ROLL APPEARS (9-15%) ──
-    if(p>=0.09&&p<0.57){
+    if(p>=0.09&&p<0.15){
       var breadP=clamp((p-0.09)/0.06,0,1);
-      if(p<0.15){
-        gBread.setAttribute('opacity',ease3(breadP));
-        gBread.setAttribute('transform','translateY('+(1-ease3(breadP))*-40+')');
-        setPhase('FRESH BAKED ROLL');
-      }
+      gBread.setAttribute('opacity',String(ease3(breadP)));
+      gBread.setAttribute('transform','translateY('+(1-ease3(breadP))*-40+')');
+      setPhase('FRESH BAKED ROLL');
     }
 
-    // ── 3. BREAD SLICED OPEN — spread wide (15-22%) ──
+    // ── 3. V-SHAPE BREAD OPENING (15-22%) ──
+    // Bread opens like a book hinged at back edge
     if(p>=0.15&&p<0.57){
       var sliceP=clamp((p-0.15)/0.07,0,1);
-      // Whole bread fades as sliced version appears
-      gBread.setAttribute('opacity',1-ease3(clamp(sliceP/0.3,0,1)));
-      gSliced.setAttribute('opacity',ease3(clamp(sliceP/0.4,0,1)));
-      // Top half lifts up 160px (near 90-degree spread), bottom half drops 30px
-      var liftY=-ease3(sliceP)*160;
-      var dropY=ease3(sliceP)*30;
-      topHalf.setAttribute('transform','translateY('+liftY+')');
-      bottomHalf.setAttribute('transform','translateY('+dropY+')');
+
+      // Whole bread fades out
+      if(sliceP<0.4){
+        gBread.setAttribute('opacity',String(1-ease3(clamp(sliceP/0.3,0,1))));
+      }
+
+      gVBread.setAttribute('opacity',String(ease3(clamp(sliceP/0.4,0,1))));
+
+      // Interior panel grows visible (the V backdrop)
+      var panelOpacity=ease3(clamp((sliceP-0.2)/0.5,0,1));
+      interiorPanel.setAttribute('opacity',String(panelOpacity));
+
+      // Top bread rotates upward from back hinge
+      // Animate: starts flat (transform=''), ends rotated up
+      var openAmount=ease3(sliceP);
+      var topLift=-(vOpenH-subH/2)*openAmount;
+      var topSkew=3*openAmount;
+      topBread.setAttribute('transform','translate(0,'+topLift+') skewY('+topSkew+')');
+
+      // Bottom bread drops slightly
+      var bottomDrop=20*openAmount;
+      bottomBread.setAttribute('transform','translate(0,'+bottomDrop+')');
+
       if(p<0.22) setPhase('SLICING OPEN');
     }
 
     // ── 4. OIL & VINEGAR (22-27%) ──
     if(p>=0.22&&p<0.57){
       var oilP=clamp((p-0.22)/0.05,0,1);
-      gOil.setAttribute('opacity',ease3(clamp(oilP/0.2,0,1)));
+      gOil.setAttribute('opacity',String(ease3(clamp(oilP/0.2,0,1))));
       var oEndX=subX+subW-30;
       oilLine.setAttribute('x2',String(subX+30+ease3(oilP)*(oEndX-subX-30)));
       vinegarLine.setAttribute('x2',String(subX+30+ease3(clamp((oilP-0.15)/0.85,0,1))*(oEndX-subX-30)));
@@ -782,7 +818,7 @@ a{color:inherit;text-decoration:none}
         var dropP=ease3(clamp((oilP-doi*0.05)/0.3,0,1));
         oilDrops[doi].setAttribute('opacity',String(dropP*0.7));
       }
-      showOpenSub();
+      showVOpen();
       if(p>=0.22&&p<0.27) setPhase('OIL & VINEGAR');
     }
 
@@ -795,11 +831,8 @@ a{color:inherit;text-decoration:none}
         lettuceLeaves[lli].leaf.setAttribute('opacity',String(leafP));
         lettuceLeaves[lli].vein.setAttribute('opacity',String(leafP*0.5));
       }
-      showOpenSub();
-      gOil.setAttribute('opacity','1');
-      oilLine.setAttribute('x2',String(subX+subW-30));
-      vinegarLine.setAttribute('x2',String(subX+subW-30));
-      for(var doia=0;doia<oilDrops.length;doia++) oilDrops[doia].setAttribute('opacity','0.7');
+      showVOpen();
+      showOilFull();
       if(p>=0.27&&p<0.33) setPhase('FRESH LETTUCE');
     }
 
@@ -812,11 +845,8 @@ a{color:inherit;text-decoration:none}
         meatSlices[mmi].setAttribute('opacity',String(msP));
         meatSlices[mmi].setAttribute('transform','translateY('+(1-msP)*-20+')');
       }
-      showOpenSub();
-      gOil.setAttribute('opacity','1');
-      oilLine.setAttribute('x2',String(subX+subW-30));
-      vinegarLine.setAttribute('x2',String(subX+subW-30));
-      for(var doib=0;doib<oilDrops.length;doib++) oilDrops[doib].setAttribute('opacity','0.7');
+      showVOpen();
+      showOilFull();
       showAllLeaves();
       if(p>=0.33&&p<0.40) setPhase('IMPORTED DELI MEATS');
     }
@@ -829,9 +859,8 @@ a{color:inherit;text-decoration:none}
         var csP=ease3(clamp((chP-cci*0.04)/0.3,0,1));
         cheeseSlices[cci].setAttribute('opacity',String(csP));
       }
-      showOpenSub();
-      gOil.setAttribute('opacity','1');oilLine.setAttribute('x2',String(subX+subW-30));vinegarLine.setAttribute('x2',String(subX+subW-30));
-      for(var doic=0;doic<oilDrops.length;doic++) oilDrops[doic].setAttribute('opacity','0.7');
+      showVOpen();
+      showOilFull();
       showAllLeaves();showAllMeats();
       if(p>=0.40&&p<0.46) setPhase('PROVOLONE CHEESE');
     }
@@ -850,9 +879,8 @@ a{color:inherit;text-decoration:none}
         var osP=ease3(clamp((onP-ooi*0.04)/0.25,0,1));
         onionRings[ooi].setAttribute('opacity',String(osP));
       }
-      showOpenSub();
-      gOil.setAttribute('opacity','1');oilLine.setAttribute('x2',String(subX+subW-30));vinegarLine.setAttribute('x2',String(subX+subW-30));
-      for(var doid=0;doid<oilDrops.length;doid++) oilDrops[doid].setAttribute('opacity','0.7');
+      showVOpen();
+      showOilFull();
       showAllLeaves();showAllMeats();showAllCheese();
       if(p>=0.46&&p<0.52) setPhase('TOMATO & ONION');
     }
@@ -870,23 +898,30 @@ a{color:inherit;text-decoration:none}
         var odP=ease3(clamp((oregP-odi*0.01)/0.2,0,1));
         oreganoDots[odi].setAttribute('opacity',String(odP*0.6));
       }
-      showOpenSub();
-      gOil.setAttribute('opacity','1');oilLine.setAttribute('x2',String(subX+subW-30));vinegarLine.setAttribute('x2',String(subX+subW-30));
-      for(var doie=0;doie<oilDrops.length;doie++) oilDrops[doie].setAttribute('opacity','0.7');
+      showVOpen();
+      showOilFull();
       showAllLeaves();showAllMeats();showAllCheese();showAllTomatoes();showAllOnions();
       setPhase('PEPPERS & OREGANO');
     }
 
-    // ── 10. CLOSE THE SUB — top bread comes down, bottom comes up (57-63%) ──
+    // ── 10. CLOSE THE V — top bread rotates back down (57-63%) ──
     if(p>=0.57&&p<0.63){
       var closeP=clamp((p-0.57)/0.06,0,1);
-      // Animate bread halves closing: top from -160 to 0, bottom from +30 to 0
-      var topClose=lerp(-160,0,ease3(closeP));
-      var botClose=lerp(30,0,ease3(closeP));
-      gSliced.setAttribute('opacity',String(1-ease3(clamp(closeP/0.7,0,1))));
-      topHalf.setAttribute('transform','translateY('+topClose+')');
-      bottomHalf.setAttribute('transform','translateY('+botClose+')');
-      // Fade out ingredient layers as they get sandwiched
+
+      gVBread.setAttribute('opacity',String(1-ease3(clamp(closeP/0.7,0,1))));
+
+      // Reverse the V opening
+      var closeAmount=1-ease3(closeP);
+      var topLiftC=-(vOpenH-subH/2)*closeAmount;
+      var topSkewC=3*closeAmount;
+      topBread.setAttribute('transform','translate(0,'+topLiftC+') skewY('+topSkewC+')');
+      var bottomDropC=20*closeAmount;
+      bottomBread.setAttribute('transform','translate(0,'+bottomDropC+')');
+
+      // Interior panel shrinks
+      interiorPanel.setAttribute('opacity',String(closeAmount));
+
+      // Fade out ingredient layers
       var ingredFade=1-ease3(clamp(closeP/0.6,0,1));
       gOil.setAttribute('opacity',String(ingredFade));
       oilLine.setAttribute('x2',String(subX+subW-30));vinegarLine.setAttribute('x2',String(subX+subW-30));
@@ -919,45 +954,41 @@ a{color:inherit;text-decoration:none}
       gKnife.setAttribute('opacity','1');
 
       var chopDown=ease3(clamp(cutP/0.4,0,1));
-      var chopPause=clamp((cutP-0.4)/0.1,0,1);
       var chopUp=ease3(clamp((cutP-0.55)/0.2,0,1));
       var knifeY=-120+chopDown*120-chopUp*80;
       gKnife.setAttribute('transform','translate(0,'+knifeY+')');
 
+      // After knife hits, show wrapped halves separating
       if(cutP>0.5){
         var sepP=ease3(clamp((cutP-0.5)/0.5,0,1));
         gClosed.setAttribute('opacity',String(1-sepP));
-        gHalves.setAttribute('opacity',String(sepP));
-        leftHalf.setAttribute('transform','translateX('+(-sepP*25)+')');
-        rightHalf.setAttribute('transform','translateX('+(sepP*25)+')');
+        gWrapped.setAttribute('opacity',String(sepP));
+        wrappedLeft.setAttribute('transform','translateX('+(-sepP*15)+')');
+        wrappedRight.setAttribute('transform','translateX('+(sepP*15)+')');
       }
       setPhase('CUT IN HALF');
     }
 
-    // ── 12. WRAPPING WITH SPIN (70-78%) ──
+    // ── 12. WRAPPING — full cylinder wrap (70-78%) ──
     if(p>=0.70&&p<0.78){
       var wrapP=clamp((p-0.70)/0.08,0,1);
-      // Fade knife out
+      // Fade knife
       gKnife.setAttribute('opacity',String(1-ease3(clamp(wrapP/0.2,0,1))));
-      // Sub halves separate further AND stay visible
-      var sepExtra=ease3(clamp(wrapP/0.4,0,1));
-      gHalves.setAttribute('opacity','1');
-      leftHalf.setAttribute('transform','translateX('+(-25-sepExtra*20)+')');
-      rightHalf.setAttribute('transform','translateX('+(25+sepExtra*20)+')');
-      gWrap.setAttribute('opacity','1');
 
-      // Paper slides in from the outer ends
-      var paperIn=ease3(clamp(wrapP/0.4,0,1));
-      wrapLeftG.setAttribute('opacity',String(paperIn));
-      wrapRightG.setAttribute('opacity',String(paperIn));
+      // Wrapped halves fully visible, separating further
+      gWrapped.setAttribute('opacity','1');
+      var sepExtra=ease3(clamp(wrapP/0.5,0,1));
+      wrappedLeft.setAttribute('transform','translateX('+(-15-sepExtra*30)+')');
+      wrappedRight.setAttribute('transform','translateX('+(15+sepExtra*30)+')');
 
-      // Spin rotation during wrapping (subtle, like spinning the sub)
-      var spinAngle=ease3(clamp((wrapP-0.2)/0.5,0,1))*10;
-      var spinBack=ease3(clamp((wrapP-0.7)/0.3,0,1))*10;
+      // Subtle spin effect on each half
+      var spinAngle=ease3(clamp((wrapP-0.2)/0.5,0,1))*8;
+      var spinBack=ease3(clamp((wrapP-0.7)/0.3,0,1))*8;
       var netSpin=spinAngle-spinBack;
-      // Left wrap+sub spin together, right wrap+sub spin together
-      wrapLeftG.setAttribute('transform','translate('+(-25-sepExtra*20)+',0) rotate('+netSpin+','+(subX+lhw/2)+','+lwy+')');
-      wrapRightG.setAttribute('transform','translate('+(25+sepExtra*20)+',0) rotate('+(-netSpin)+','+(cx+8+rhw/2)+','+rwy+')');
+      if(wrapP>0.2){
+        wrappedLeft.setAttribute('transform','translateX('+(-15-sepExtra*30)+') rotate('+netSpin+','+(subX+subW/4)+','+subY+')');
+        wrappedRight.setAttribute('transform','translateX('+(15+sepExtra*30)+') rotate('+(-netSpin)+','+(cx+subW/4)+','+subY+')');
+      }
 
       gBoard.setAttribute('opacity',String(Math.max(0,1-ease3(wrapP))));
       setPhase('WRAPPING UP');
@@ -967,12 +998,9 @@ a{color:inherit;text-decoration:none}
     if(p>=0.78&&p<0.85){
       var basketP=clamp((p-0.78)/0.07,0,1);
 
-      // Fade out wrapping/halves scene
+      // Fade out wrapping scene
       var wrapFade=1-ease3(clamp(basketP/0.3,0,1));
-      gWrap.setAttribute('opacity',String(wrapFade));
-      wrapLeftG.setAttribute('opacity',String(wrapFade));
-      wrapRightG.setAttribute('opacity',String(wrapFade));
-      gHalves.setAttribute('opacity',String(wrapFade*0.7));
+      gWrapped.setAttribute('opacity',String(wrapFade));
 
       // Basket scene rises in
       var basketIn=ease3(clamp((basketP-0.1)/0.5,0,1));
@@ -995,12 +1023,10 @@ a{color:inherit;text-decoration:none}
         pls[pli].style.opacity=String(ease3(lightP));
       }
 
-      // Brand text
       var brandP=clamp((finaleP-0.1)/0.4,0,1);
       scenePowered.style.opacity=String(ease3(brandP));
       scenePowered.style.transform='scale('+(0.92+ease3(brandP)*0.13)+')';
 
-      // Fade out basket scene
       if(finaleP>0.1){
         var sceneFade=1-ease3((finaleP-0.1)/0.4);
         gBasketScene.setAttribute('opacity',String(Math.max(0,sceneFade)));
@@ -1009,7 +1035,6 @@ a{color:inherit;text-decoration:none}
 
       setPhase('SUBCRAFT');
 
-      // Background warm up
       var r=Math.round(20+finaleP*30);
       var g=Math.round(14+finaleP*12);
       var b=Math.round(6+finaleP*6);
@@ -1023,12 +1048,10 @@ a{color:inherit;text-decoration:none}
       finalEl.style.opacity=String(heroP);
       scenePowered.style.opacity=String(1-heroP);
       sceneGlow.style.opacity=String(0.8*(1-heroP));
-      gWrap.setAttribute('opacity','0');
-      gHalves.setAttribute('opacity','0');
+      gWrapped.setAttribute('opacity','0');
       gBoard.setAttribute('opacity','0');
       gBasketScene.setAttribute('opacity','0');
 
-      // Keep warm bg
       var r2=Math.round(20+30);
       var g2=Math.round(14+12);
       var b2=Math.round(6+6);
