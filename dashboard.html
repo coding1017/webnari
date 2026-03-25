@@ -487,6 +487,122 @@ td.bold { color: var(--white); font-weight: 600; }
 }
 .template-icon { position: relative; z-index: 1; width: 60px; height: 60px; color: rgba(255,255,255,0.92); filter: drop-shadow(0 6px 20px rgba(0,0,0,0.55)); }
 .template-icon svg { width: 100%; height: 100%; }
+
+/* ── CATEGORY BAR ───────────────────────────────────── */
+.tpl-top { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; flex-wrap: wrap; }
+.tpl-search {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+  border-radius: var(--radius); padding: 8px 14px; min-width: 220px; transition: all 0.2s;
+}
+.tpl-search:focus-within { border-color: var(--indigo-border); background: rgba(123,111,255,0.06); box-shadow: 0 0 0 3px rgba(123,111,255,0.1); }
+.tpl-search svg { width: 15px; height: 15px; color: var(--muted); flex-shrink: 0; }
+.tpl-search input { background: none; border: none; outline: none; color: var(--white); font-size: 13px; width: 100%; font-family: var(--font); }
+.tpl-search input::placeholder { color: var(--muted); }
+
+.cat-bar {
+  display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;
+  scrollbar-width: none; -ms-overflow-style: none; flex: 1;
+}
+.cat-bar::-webkit-scrollbar { display: none; }
+.cat-pill {
+  display: flex; align-items: center; gap: 7px;
+  padding: 7px 16px; border-radius: 100px;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07);
+  color: var(--text); font-size: 12.5px; font-weight: 600;
+  cursor: pointer; white-space: nowrap; transition: all 0.2s;
+  font-family: var(--font); flex-shrink: 0;
+}
+.cat-pill svg { width: 15px; height: 15px; flex-shrink: 0; }
+.cat-pill:hover { border-color: rgba(255,255,255,0.15); color: var(--white); background: rgba(255,255,255,0.07); }
+.cat-pill.active {
+  background: var(--_cat-bg, var(--indigo-bg));
+  border-color: var(--_cat-border, var(--indigo-border));
+  color: var(--_cat-color, var(--indigo2));
+  box-shadow: 0 0 16px var(--_cat-glow, rgba(123,111,255,0.2));
+}
+.cat-pill .cat-count {
+  background: rgba(255,255,255,0.08); border-radius: 20px;
+  padding: 1px 7px; font-size: 10px; font-weight: 700; margin-left: 2px;
+}
+.cat-pill.active .cat-count { background: rgba(255,255,255,0.12); }
+
+/* ── CATEGORY SECTIONS ──────────────────────────────── */
+.cat-section { margin-bottom: 32px; }
+.cat-section:last-child { margin-bottom: 0; }
+.cat-header {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 16px; padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.cat-header-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--_cat-bg, var(--indigo-bg));
+  border: 1px solid var(--_cat-border, var(--indigo-border));
+  color: var(--_cat-color, var(--indigo2));
+  flex-shrink: 0;
+}
+.cat-header-icon svg { width: 18px; height: 18px; }
+.cat-header-text h3 {
+  font-size: 15px; font-weight: 800; color: var(--white);
+  letter-spacing: -0.02em; line-height: 1;
+}
+.cat-header-text span { font-size: 11.5px; color: var(--muted); font-weight: 500; }
+.cat-header-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--border), transparent); }
+.cat-header-count {
+  font-size: 11px; font-weight: 700; color: var(--muted);
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06);
+  padding: 3px 10px; border-radius: 20px; white-space: nowrap;
+}
+
+/* ── CATEGORY HERO (single category view) ───────────── */
+.cat-hero {
+  padding: 28px 32px; border-radius: var(--radius-xl);
+  margin-bottom: 24px; position: relative; overflow: hidden;
+  border: 1px solid var(--_cat-border, var(--border));
+  background: linear-gradient(135deg, var(--surface2) 0%, var(--surface) 100%);
+}
+.cat-hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: var(--_cat-color, var(--indigo));
+  opacity: 0.04; pointer-events: none;
+}
+.cat-hero-glow {
+  position: absolute; top: -40px; right: -40px;
+  width: 200px; height: 200px; border-radius: 50%;
+  background: var(--_cat-color, var(--indigo));
+  opacity: 0.08; filter: blur(50px); pointer-events: none;
+}
+.cat-hero-inner { position: relative; display: flex; align-items: center; gap: 18px; }
+.cat-hero-icon {
+  width: 52px; height: 52px; border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--_cat-bg, var(--indigo-bg));
+  border: 1px solid var(--_cat-border, var(--indigo-border));
+  color: var(--_cat-color, var(--indigo2)); flex-shrink: 0;
+}
+.cat-hero-icon svg { width: 26px; height: 26px; }
+.cat-hero h2 { font-size: 22px; font-weight: 900; color: var(--white); letter-spacing: -0.03em; margin-bottom: 3px; }
+.cat-hero p { font-size: 13px; color: var(--muted); }
+
+/* ── EMPTY CATEGORY ─────────────────────────────────── */
+.cat-empty {
+  text-align: center; padding: 40px 20px; color: var(--muted);
+  font-size: 13px; border: 1px dashed rgba(255,255,255,0.06);
+  border-radius: var(--radius-lg); background: rgba(255,255,255,0.01);
+}
+.cat-empty svg { width: 32px; height: 32px; margin-bottom: 10px; opacity: 0.3; }
+
+/* ── TEMPLATE CARD accent stripe ────────────────────── */
+.template-card { position: relative; }
+.template-card::before {
+  content: ''; position: absolute; top: 0; left: 0; bottom: 0;
+  width: 3px; background: var(--_tpl-color, var(--indigo));
+  border-radius: 3px 0 0 3px; z-index: 2; opacity: 0.7;
+  transition: opacity 0.2s;
+}
+.template-card:hover::before { opacity: 1; }
 .template-info { padding: 18px; }
 .template-name { font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 3px; letter-spacing: -0.01em; }
 .template-niche { font-size: 12px; color: var(--muted); margin-bottom: 14px; }
@@ -883,6 +999,10 @@ td.bold { color: var(--white); font-weight: 600; }
 @media (max-width: 900px) {
   .templates-grid { grid-template-columns: 1fr 1fr; }
   .settings-layout { grid-template-columns: 1fr; }
+  .tpl-top { flex-direction: column; align-items: stretch; }
+  .tpl-search { min-width: 0; }
+  .cat-hero { padding: 20px; }
+  .cat-hero h2 { font-size: 18px; }
 }
 
 /* ── MOBILE SIDEBAR OVERLAY ──────────────────────────── */
@@ -1223,7 +1343,14 @@ td.bold { color: var(--white); font-weight: 600; }
       </div>
       <button class="btn btn-primary" onclick="openAddTemplate()">+ Add Template</button>
     </div>
-    <div class="templates-grid" id="templates-grid"></div>
+    <div class="tpl-top">
+      <div class="tpl-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="Search templates..." id="tpl-search-input" oninput="tplSearch=this.value.toLowerCase();renderTemplates()">
+      </div>
+      <div class="cat-bar" id="cat-bar"></div>
+    </div>
+    <div id="templates-container"></div>
   </div>
 
   <!-- ══════════════════════════════════════
@@ -2256,6 +2383,10 @@ td.bold { color: var(--white); font-weight: 600; }
           <input class="form-input" id="t-niche" type="text" placeholder="Electrician">
         </div>
         <div class="form-group">
+          <label class="form-label">Category *</label>
+          <select class="form-select" id="t-category"></select>
+        </div>
+        <div class="form-group">
           <label class="form-label">Accent Color</label>
           <input class="form-input" id="t-color" type="color" value="#6366F1" style="padding:4px 8px;height:42px;cursor:pointer;">
         </div>
@@ -2353,6 +2484,31 @@ td.bold { color: var(--white); font-weight: 600; }
 // ════════════════════════════════════════════════════
 const KEY = 'waas_os_v1';
 
+// ── Category definitions ──
+const CATEGORIES = [
+  { id:'home-construction', label:'Home & Construction', color:'#EAB308', desc:'Trades, contractors & home services',
+    icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></svg>` },
+  { id:'landscaping', label:'Landscaping', color:'#10B981', desc:'Lawn care, tree service & outdoor design',
+    icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>` },
+  { id:'food-dining', label:'Food & Dining', color:'#F97316', desc:'Restaurants, cafes, bakeries & catering',
+    icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>` },
+  { id:'retail', label:'Retail & Shopping', color:'#EC4899', desc:'Boutiques, e-commerce & specialty stores',
+    icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>` },
+  { id:'health', label:'Health & Wellness', color:'#14B8A6', desc:'Dentists, chiropractors, med spas & clinics',
+    icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>` },
+  { id:'fitness', label:'Fitness', color:'#8B5CF6', desc:'Gyms, yoga studios, personal trainers & dojos',
+    icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11"/><path d="M6.5 17.5h11"/><path d="M4 10V6.5a2.5 2.5 0 0 1 5 0v11a2.5 2.5 0 0 0 5 0V14"/><path d="M20 14v3.5a2.5 2.5 0 0 1-5 0v-11a2.5 2.5 0 0 0-5 0V10"/></svg>` },
+  { id:'automotive', label:'Automotive', color:'#EF4444', desc:'Auto repair, detailing, towing & tire shops',
+    icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>` },
+  { id:'professional', label:'Professional Services', color:'#3B82F6', desc:'Law firms, accounting, consulting & real estate',
+    icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>` },
+  { id:'beauty', label:'Beauty', color:'#D946EF', desc:'Salons, barbershops, nail spas & tattoo parlors',
+    icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.5-2.5 8-6.5 8-12V5l-8-3-8 3v5c0 5.5 2.5 9.5 8 12z"/><path d="M9 12l2 2 4-4"/></svg>` },
+];
+
+let activeCat = 'all';
+let tplSearch = '';
+
 const SEED = {
   agency: { name: 'Your Agency', ownerName: '', email: '', phone: '', website: '' },
   pricing: { starter: 79, standard: 129, premium: 189, setup: 500 },
@@ -2401,18 +2557,49 @@ const SEED = {
     }
   ],
   templates: [
-    {id:'pest-control', name:'PestPro',    niche:'Pest Control', color:'#F45C0A', status:'ready',    path:'https://webnari.io/pestpro.html',
+    // Home & Construction
+    {id:'pest-control', name:'PestPro',    niche:'Pest Control', category:'home-construction', color:'#F45C0A', status:'ready',    path:'https://webnari.io/pestpro.html',
      icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>`},
-    {id:'electrician',  name:'ElectriPro', niche:'Electrician',  color:'#EAB308', status:'ready',   path:'https://webnari.io/voltpro.html',
+    {id:'electrician',  name:'ElectriPro', niche:'Electrician',  category:'home-construction', color:'#EAB308', status:'ready',   path:'https://webnari.io/voltpro.html',
      icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`},
-    {id:'plumber',      name:'FlowPro',    niche:'Plumber',      color:'#0EA5E9', status:'ready',  path:'https://webnari.io/FlowPro',
+    {id:'plumber',      name:'FlowPro',    niche:'Plumber',      category:'home-construction', color:'#0EA5E9', status:'ready',  path:'https://webnari.io/FlowPro',
      icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>`},
-    {id:'hvac',         name:'AirPro',     niche:'HVAC',         color:'#06B6D4', status:'ready',  path:'https://webnari.io/hvac.html',
+    {id:'hvac',         name:'AirPro',     niche:'HVAC',         category:'home-construction', color:'#06B6D4', status:'ready',  path:'https://webnari.io/hvac.html',
      icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/></svg>`},
-    {id:'locksmith',    name:'LockPro',    niche:'Locksmith',    color:'#8B5CF6', status:'planned', path:'templates/locksmith/',
+    {id:'locksmith',    name:'LockPro',    niche:'Locksmith',    category:'home-construction', color:'#8B5CF6', status:'ready', path:'https://webnari.io/lockpro.html',
      icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1" fill="currentColor" stroke="none"/></svg>`},
-    {id:'landscaping',  name:'GreenPro',   niche:'Landscaping',  color:'#10B981', status:'planned', path:'templates/landscaping/',
-     icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>`}
+    {id:'roofing',      name:'RoofPro',    niche:'Roofing',      category:'home-construction', color:'#E63946', status:'ready',  path:'https://webnari.io/roofpro.html',
+     icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></svg>`},
+    // Landscaping
+    {id:'landscaping',  name:'GreenScape', niche:'Landscaping & Lawn Care', category:'landscaping', color:'#10B981', status:'ready', path:'https://webnari.io/greenscape.html',
+     icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>`},
+    // Food & Dining
+    {id:'omakase',      name:'Omakase',    niche:'Premium Sushi & Japanese', category:'food-dining', color:'#C8A96E', status:'ready', path:'https://webnari.io/omakase.html',
+     icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>`},
+    {id:'sushiroll',    name:'SushiRoll',  niche:'Premium Sushi Bar',  category:'food-dining', color:'#E74C3C', status:'ready', path:'https://webnari.io/sushiroll.html',
+     icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></svg>`},
+    {id:'subcraft',     name:'SubCraft',   niche:'Premium Deli Subs',  category:'food-dining', color:'#D4A017', status:'ready', path:'https://webnari.io/subcraft.html',
+     icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>`},
+    // Retail
+    {id:'boutique',     name:'ShopPro',    niche:'Boutique',     category:'retail', color:'#EC4899', status:'planned', path:'',
+     icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>`},
+    // Health & Wellness
+    {id:'dentist',      name:'SmilePro',   niche:'Dentist',      category:'health', color:'#14B8A6', status:'planned', path:'',
+     icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>`},
+    {id:'medspa',       name:'GlowPro',    niche:'Med Spa',      category:'health', color:'#2DD4BF', status:'planned', path:'',
+     icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.5-2.5 8-6.5 8-12V5l-8-3-8 3v5c0 5.5 2.5 9.5 8 12z"/></svg>`},
+    // Fitness
+    {id:'gym',          name:'FitPro',     niche:'Gym',          category:'fitness', color:'#8B5CF6', status:'planned', path:'',
+     icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11"/><path d="M6.5 17.5h11"/><path d="M4 10V6.5a2.5 2.5 0 0 1 5 0v11a2.5 2.5 0 0 0 5 0V14"/><path d="M20 14v3.5a2.5 2.5 0 0 1-5 0v-11a2.5 2.5 0 0 0-5 0V10"/></svg>`},
+    // Automotive
+    {id:'autorepair',   name:'AutoPro',    niche:'Auto Repair',  category:'automotive', color:'#EF4444', status:'planned', path:'',
+     icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`},
+    // Professional Services
+    {id:'lawfirm',      name:'LegalPro',   niche:'Law Firm',     category:'professional', color:'#3B82F6', status:'planned', path:'',
+     icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`},
+    // Beauty
+    {id:'salon',        name:'StylePro',   niche:'Salon',        category:'beauty', color:'#D946EF', status:'planned', path:'',
+     icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2m-9-11h2m18 0h2m-3.64-6.36l-1.42 1.42M6.06 17.94l-1.42 1.42m0-12.72l1.42 1.42m11.88 11.88l1.42 1.42"/></svg>`},
   ],
   activity: [
     {text:'<strong>PestPro South Florida</strong> went live', time:'2 days ago', type:'green'},
@@ -2590,51 +2777,148 @@ function renderClients() {
 // ════════════════════════════════════════════════════
 //  TEMPLATES
 // ════════════════════════════════════════════════════
+function getCatVars(cat) {
+  return `--_cat-bg:${cat.color}15;--_cat-border:${cat.color}38;--_cat-color:${cat.color};--_cat-glow:${cat.color}30;`;
+}
+
+function renderCatBar() {
+  const counts = {};
+  DB.templates.forEach(t => { counts[t.category] = (counts[t.category]||0)+1; });
+  const total = DB.templates.length;
+  const bar = document.getElementById('cat-bar');
+  bar.innerHTML = `<button class="cat-pill${activeCat==='all'?' active':''}" onclick="activeCat='all';renderTemplates()"><span class="cat-count">${total}</span> All</button>` +
+    CATEGORIES.map(c => {
+      const n = counts[c.id]||0;
+      if (n === 0 && activeCat !== c.id) return '';
+      const isActive = activeCat === c.id;
+      return `<button class="cat-pill${isActive?' active':''}" style="${getCatVars(c)}" onclick="activeCat='${c.id}';renderTemplates()">${c.icon}<span>${c.label}</span><span class="cat-count">${n}</span></button>`;
+    }).join('');
+}
+
+function renderTemplateCard(t, usage, useMobilePreview) {
+  const n = usage[t.id]||0;
+  const [sbg,sc,sl] = t.status==='ready'
+    ? ['var(--green-bg)','var(--green)','Ready']
+    : t.status==='in-progress'
+    ? ['var(--amber-bg)','var(--amber)','In Progress']
+    : ['var(--surface2)','var(--muted)','Planned'];
+  const hasLiveUrl = t.path && t.path.startsWith('http');
+  return `
+  <div class="template-card" onclick="navigate('template-detail','${t.id}')" style="cursor:pointer;--_tpl-color:${t.color};">
+    <div class="template-preview" style="height:160px;">
+      ${hasLiveUrl && !useMobilePreview ? `
+        <div style="position:absolute;inset:0;overflow:hidden;border-radius:var(--radius-lg) var(--radius-lg) 0 0;">
+          <iframe src="${t.path}" sandbox="allow-same-origin" loading="lazy" tabindex="-1" style="width:1280px;height:900px;border:none;transform:scale(0.3);transform-origin:top left;pointer-events:none;"></iframe>
+        </div>
+        <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 60%,rgba(0,0,0,0.35) 100%);pointer-events:none;"></div>
+        <div style="position:absolute;top:8px;right:10px;background:rgba(0,0,0,0.55);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.12);border-radius:6px;padding:3px 8px;font-size:10px;font-weight:600;color:rgba(255,255,255,0.7);letter-spacing:0.04em;">LIVE PREVIEW</div>
+      ` : `
+        <div class="template-preview-bg" style="background:${t.color};"></div>
+        <div class="template-preview-grid"></div>
+        <div class="template-icon">${t.icon || ''}</div>
+        ${hasLiveUrl ? `<div style="position:absolute;top:8px;right:10px;background:rgba(0,0,0,0.55);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.12);border-radius:6px;padding:3px 8px;font-size:10px;font-weight:600;color:rgba(255,255,255,0.7);letter-spacing:0.04em;">LIVE</div>` : ''}
+      `}
+    </div>
+    <div class="template-info">
+      <div class="template-name">${t.name}</div>
+      <div class="template-niche">${t.niche}</div>
+      <div class="template-meta">
+        <div class="template-clients"><strong>${n}</strong> client${n!==1?'s':''}</div>
+        <span class="badge" style="background:${sbg};color:${sc};font-size:10px;">${sl}</span>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px;" onclick="event.stopPropagation()">
+        ${t.status==='ready'
+          ? `<button class="btn btn-primary btn-sm" onclick="openAddClient()">+ Assign Client</button>`
+          : `<span class="btn btn-ghost btn-sm" style="opacity:0.45;cursor:default;">Coming Soon</span>`}
+        <button class="btn btn-danger btn-sm btn-icon" onclick="deleteTemplate('${t.id}')" title="Remove">&#x1f5d1;</button>
+      </div>
+    </div>
+  </div>`;
+}
+
 function renderTemplates() {
   const usage = {};
   DB.clients.forEach(c => { usage[c.template] = (usage[c.template]||0)+1; });
-  // On mobile, never load iframes — they run full canvas animations and crash Safari
   const useMobilePreview = window.innerWidth <= 900;
-  document.getElementById('templates-grid').innerHTML = DB.templates.map(t => {
-    const n = usage[t.id]||0;
-    const [sbg,sc,sl] = t.status==='ready'
-      ? ['var(--green-bg)','var(--green)','● Ready']
-      : t.status==='in-progress'
-      ? ['var(--amber-bg)','var(--amber)','● In Progress']
-      : ['var(--surface2)','var(--muted)','○ Planned'];
-    const hasLiveUrl = t.path && t.path.startsWith('http');
-    return `
-    <div class="template-card" onclick="navigate('template-detail','${t.id}')" style="cursor:pointer;">
-      <div class="template-preview" style="height:160px;">
-        ${hasLiveUrl && !useMobilePreview ? `
-          <div style="position:absolute;inset:0;overflow:hidden;border-radius:var(--radius-lg) var(--radius-lg) 0 0;">
-            <iframe src="${t.path}" sandbox="allow-same-origin" loading="lazy" tabindex="-1" style="width:1280px;height:900px;border:none;transform:scale(0.3);transform-origin:top left;pointer-events:none;"></iframe>
+  const container = document.getElementById('templates-container');
+
+  // Ensure all templates have a category (backfill old data)
+  DB.templates.forEach(t => { if (!t.category) t.category = 'home-construction'; });
+
+  renderCatBar();
+
+  // Filter by search
+  let filtered = DB.templates;
+  if (tplSearch) {
+    filtered = filtered.filter(t =>
+      t.name.toLowerCase().includes(tplSearch) ||
+      t.niche.toLowerCase().includes(tplSearch) ||
+      (CATEGORIES.find(c=>c.id===t.category)?.label||'').toLowerCase().includes(tplSearch)
+    );
+  }
+
+  // Single category view
+  if (activeCat !== 'all') {
+    const cat = CATEGORIES.find(c => c.id === activeCat);
+    const catTemplates = filtered.filter(t => t.category === activeCat);
+    let html = '';
+    if (cat) {
+      html += `<div class="cat-hero" style="${getCatVars(cat)}">
+        <div class="cat-hero-glow"></div>
+        <div class="cat-hero-inner">
+          <div class="cat-hero-icon">${cat.icon}</div>
+          <div>
+            <h2>${cat.label}</h2>
+            <p>${cat.desc} &mdash; ${catTemplates.length} template${catTemplates.length!==1?'s':''}</p>
           </div>
-          <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 60%,rgba(0,0,0,0.35) 100%);pointer-events:none;"></div>
-          <div style="position:absolute;top:8px;right:10px;background:rgba(0,0,0,0.55);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.12);border-radius:6px;padding:3px 8px;font-size:10px;font-weight:600;color:rgba(255,255,255,0.7);letter-spacing:0.04em;">LIVE PREVIEW</div>
-        ` : `
-          <div class="template-preview-bg" style="background:${t.color};"></div>
-          <div class="template-preview-grid"></div>
-          <div class="template-icon">${t.icon || ''}</div>
-          ${hasLiveUrl ? `<div style="position:absolute;top:8px;right:10px;background:rgba(0,0,0,0.55);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.12);border-radius:6px;padding:3px 8px;font-size:10px;font-weight:600;color:rgba(255,255,255,0.7);letter-spacing:0.04em;">LIVE</div>` : ''}
-        `}
+        </div>
+      </div>`;
+    }
+    if (catTemplates.length) {
+      html += `<div class="templates-grid">${catTemplates.map(t => renderTemplateCard(t, usage, useMobilePreview)).join('')}
+        <div class="template-card add-card" onclick="openAddTemplate()"><span style="font-size:28px;">+</span><span>Add Template</span></div></div>`;
+    } else {
+      html += `<div class="cat-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg><p>No templates in this category yet</p><button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="openAddTemplate()">+ Add Template</button></div>`;
+    }
+    container.innerHTML = html;
+    return;
+  }
+
+  // All categories view — group by category
+  const grouped = {};
+  filtered.forEach(t => {
+    if (!grouped[t.category]) grouped[t.category] = [];
+    grouped[t.category].push(t);
+  });
+
+  let html = '';
+  CATEGORIES.forEach(cat => {
+    const templates = grouped[cat.id];
+    if (!templates || !templates.length) return;
+    html += `<div class="cat-section" style="${getCatVars(cat)}">
+      <div class="cat-header">
+        <div class="cat-header-icon">${cat.icon}</div>
+        <div class="cat-header-text">
+          <h3>${cat.label}</h3>
+          <span>${cat.desc}</span>
+        </div>
+        <div class="cat-header-line"></div>
+        <div class="cat-header-count">${templates.length} template${templates.length!==1?'s':''}</div>
       </div>
-      <div class="template-info">
-        <div class="template-name">${t.name}</div>
-        <div class="template-niche">${t.niche}</div>
-        <div class="template-meta">
-          <div class="template-clients"><strong>${n}</strong> client${n!==1?'s':''}</div>
-          <span class="badge" style="background:${sbg};color:${sc};font-size:10px;">${sl}</span>
-        </div>
-        <div style="display:flex;gap:8px;margin-top:12px;" onclick="event.stopPropagation()">
-          ${t.status==='ready'
-            ? `<button class="btn btn-primary btn-sm" onclick="openAddClient()">+ Assign Client</button>`
-            : `<span class="btn btn-ghost btn-sm" style="opacity:0.45;cursor:default;">Coming Soon</span>`}
-          <button class="btn btn-danger btn-sm btn-icon" onclick="deleteTemplate('${t.id}')" title="Remove">🗑</button>
-        </div>
+      <div class="templates-grid">
+        ${templates.map(t => renderTemplateCard(t, usage, useMobilePreview)).join('')}
       </div>
     </div>`;
-  }).join('') + `<div class="template-card add-card" onclick="openAddTemplate()"><span style="font-size:28px;">+</span><span>Add Template</span></div>`;
+  });
+
+  // Add card at the end
+  html += `<div style="text-align:center;padding:20px 0;">
+    <button class="btn btn-ghost" onclick="openAddTemplate()" style="gap:8px;font-size:14px;padding:12px 28px;">
+      <span style="font-size:20px;">+</span> Add New Template
+    </button>
+  </div>`;
+
+  container.innerHTML = html;
 }
 
 function renderTemplateDetail(id) {
@@ -3229,7 +3513,12 @@ function saveTemplatePath() {
   toast('Template path saved!', 'success');
   renderTemplateDetail(id);
 }
-function openAddTemplate() { openModal('modal-template'); }
+function openAddTemplate() {
+  const sel = document.getElementById('t-category');
+  sel.innerHTML = CATEGORIES.map(c => `<option value="${c.id}">${c.label}</option>`).join('');
+  if (activeCat !== 'all') sel.value = activeCat;
+  openModal('modal-template');
+}
 
 function saveTemplate() {
   const name = rv('t-name').trim();
@@ -3237,6 +3526,7 @@ function saveTemplate() {
   DB.templates.push({
     id: 't'+Date.now(), name,
     niche: rv('t-niche'),
+    category: rv('t-category') || 'home-construction',
     color: rv('t-color'), status: rv('t-status'), path: rv('t-path'),
     icon: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>`
   });
