@@ -92,7 +92,7 @@ a{color:inherit;text-decoration:none}
 .seq-scroll-hint span{font-size:11px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted)}
 .seq-scroll-line{width:1px;height:32px;background:linear-gradient(to bottom,var(--amber),transparent)}
 @keyframes hintBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
-.seq-phase{position:absolute;bottom:80px;left:50%;transform:translateX(-50%);z-index:7;font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--amber);opacity:0;transition:opacity 0.2s,transform 0.2s;white-space:nowrap}
+.seq-phase{position:absolute;bottom:60px;left:50%;transform:translateX(-50%);z-index:7;font-family:var(--font-head);font-size:clamp(14px,3vw,18px);font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--amber);opacity:0;transition:opacity 0.2s,transform 0.2s;white-space:nowrap}
 .seq-scrub{position:absolute;bottom:0;left:0;right:0;height:3px;background:var(--border);z-index:7}
 .seq-scrub-fill{height:100%;width:0;background:var(--amber);transition:width 0.05s linear}
 .power-light{position:absolute;width:6px;height:6px;border-radius:50%;background:var(--amber);opacity:0;z-index:5;box-shadow:0 0 8px var(--amber)}
@@ -706,13 +706,13 @@ a{color:inherit;text-decoration:none}
   gBread.appendChild(svgEl('rect',{x:subX,y:subY-subH/2,width:subW,height:subH,rx:subH/2,fill:'url(#crustGrad)',stroke:'#906018','stroke-width':1.5}));
   // Score marks on top
   for(var si=0;si<5;si++){
-    var sx=subX+60+si*100;
+    var sx=subX+subW*0.1+si*(subW*0.8/4);
     gBread.appendChild(svgEl('line',{x1:sx,y1:subY-subH/2+8,x2:sx+40,y2:subY-subH/2+20,stroke:'#B87A1E','stroke-width':1.5,'stroke-linecap':'round',opacity:0.5}));
   }
   gBread.appendChild(svgEl('rect',{x:subX+40,y:subY-subH/2+3,width:subW-80,height:8,rx:4,fill:'#E8B050',opacity:0.25}));
   // Flour dusting
   for(var fi=0;fi<8;fi++){
-    var fx=subX+40+fi*62;
+    var fx=subX+subW*0.07+fi*(subW*0.86/7);
     gBread.appendChild(svgEl('circle',{cx:fx,cy:subY-subH/2+10+Math.random()*15,r:2+Math.random()*3,fill:'#F5E8D0',opacity:0.2}));
   }
   svg.appendChild(gBread);
@@ -762,7 +762,7 @@ a{color:inherit;text-decoration:none}
   gOil.appendChild(vinegarLine);
   var oilDrops=[];
   for(var oi=0;oi<6;oi++){
-    var od=svgEl('circle',{cx:subX+50+oi*80,cy:oilY+1+Math.random()*3,r:2+Math.random()*2,fill:'#D4A830',opacity:0});
+    var od=svgEl('circle',{cx:subX+subW*0.08+oi*(subW*0.84/5),cy:oilY+1+Math.random()*3,r:2+Math.random()*2,fill:'#D4A830',opacity:0});
     gOil.appendChild(od);
     oilDrops.push(od);
   }
@@ -772,7 +772,7 @@ a{color:inherit;text-decoration:none}
   var gLettuce=svgEl('g',{opacity:0});
   var lettuceLeaves=[];
   for(var li=0;li<7;li++){
-    var lx=subX+20+li*72;
+    var lx=subX+subW*0.04+li*(subW*0.86/6);
     var ly=bottomBreadTop-8;
     var leafPath='M'+lx+' '+ly+' Q'+(lx+10)+' '+(ly-18)+' '+(lx+25)+' '+(ly-12)+' Q'+(lx+35)+' '+(ly-22)+' '+(lx+50)+' '+(ly-10)+' Q'+(lx+60)+' '+(ly-18)+' '+(lx+70)+' '+(ly-6)+' Q'+(lx+55)+' '+(ly+4)+' '+(lx+35)+' '+(ly+2)+' Q'+(lx+15)+' '+(ly+6)+' '+lx+' '+ly;
     var leaf=svgEl('path',{d:leafPath,fill:li%2===0?'#4CAF50':'#66BB6A',stroke:'#2E7D32','stroke-width':0.5,opacity:0});
@@ -789,7 +789,7 @@ a{color:inherit;text-decoration:none}
   var meatTypes=['salami','ham','cap','salami','ham','cap','salami','ham'];
   var meatFills={'salami':'url(#salamiGrad)','ham':'url(#hamGrad)','cap':'url(#capGrad)'};
   for(var mi=0;mi<8;mi++){
-    var mx=subX+20+mi*62;
+    var mx=subX+subW*0.04+mi*(subW*0.86/7);
     var my=bottomBreadTop-22;
     var mType=meatTypes[mi];
     var mFill=meatFills[mType];
@@ -847,7 +847,7 @@ a{color:inherit;text-decoration:none}
   var gCheese_g=svgEl('g',{opacity:0});
   var cheeseSlices=[];
   for(var ci=0;ci<5;ci++){
-    var ccx=subX+30+ci*100;
+    var ccx=subX+subW*0.05+ci*(subW*0.85/4);
     var ccy=bottomBreadTop-36;
     var cheesePath='M'+ccx+' '+(ccy+5)+' L'+(ccx+35)+' '+(ccy-20)+' L'+(ccx+70)+' '+(ccy+5)+' Q'+(ccx+50)+' '+(ccy+12)+' '+(ccx+20)+' '+(ccy+10)+' Z';
     var cs=svgEl('path',{d:cheesePath,fill:'url(#cheeseGrad)',stroke:'#C8B860','stroke-width':0.5,opacity:0});
@@ -860,7 +860,7 @@ a{color:inherit;text-decoration:none}
   var gTomato=svgEl('g',{opacity:0});
   var tomatoSlices=[];
   for(var ti=0;ti<6;ti++){
-    var tx=subX+40+ti*82;
+    var tx=subX+subW*0.07+ti*(subW*0.82/5);
     var ty=bottomBreadTop-52;
     var tg=svgEl('g',{opacity:0});
     // Outer red circle
@@ -889,7 +889,7 @@ a{color:inherit;text-decoration:none}
   var gOnion=svgEl('g',{opacity:0});
   var onionRings=[];
   for(var oni=0;oni<5;oni++){
-    var oxx=subX+55+oni*100;
+    var oxx=subX+subW*0.1+oni*(subW*0.8/4);
     var oy=bottomBreadTop-62;
     var og=svgEl('g',{opacity:0});
     // Outer ring — white/cream onion
@@ -912,7 +912,7 @@ a{color:inherit;text-decoration:none}
   var pepperPieces=[];
   var pepColors=['#4CAF50','#8BC34A','#FFEB3B','#4CAF50','#FFC107','#66BB6A','#4CAF50'];
   for(var pi=0;pi<7;pi++){
-    var px=subX+35+pi*70;
+    var px=subX+subW*0.06+pi*(subW*0.84/6);
     var py=bottomBreadTop-74+Math.random()*4;
     var pg=svgEl('g',{opacity:0});
     // Bell pepper ring cross-section
@@ -930,7 +930,7 @@ a{color:inherit;text-decoration:none}
   }
   var oreganoDots=[];
   for(var oi2=0;oi2<40;oi2++){
-    var ox2=subX+25+Math.random()*(subW-50);
+    var ox2=subX+subW*0.04+Math.random()*(subW*0.92);
     var oy2=bottomBreadTop-80+Math.random()*70;
     var odot=svgEl('circle',{cx:ox2,cy:oy2,r:0.8+Math.random()*1,fill:'#33691E',opacity:0});
     gToppings.appendChild(odot);
@@ -1079,7 +1079,7 @@ a{color:inherit;text-decoration:none}
   gBasketScene.appendChild(svgEl('line',{x1:paperCX-paperW/2+15,y1:paperCY,x2:paperCX+paperW/2-15,y2:paperCY,stroke:'#DDD5C5','stroke-width':0.5,opacity:0.5}));
 
   // Final presentation: tall oval cross-sections, more separation
-  var fSubW=220;
+  var fSubW=isMobile?340:220;
   var fSubH=subH+10;
   var fcsRX=32;
   var fcsRY=fSubH/2;
