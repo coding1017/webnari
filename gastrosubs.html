@@ -62,15 +62,16 @@
   --radius: 8px; --radius-lg: 16px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;overflow-x:hidden}
 body{font-family:var(--font-body);background:var(--black);color:var(--text);overflow-x:hidden;line-height:1.6}
 a{color:inherit;text-decoration:none}
 
 /* ── FLOATING ORDER BUTTON (always visible, even during parallax) ── */
-.float-order{position:fixed;top:20px;right:20px;z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px 32px;background:var(--amber);color:var(--black);font-family:var(--font-head);font-weight:800;font-size:16px;letter-spacing:0.1em;text-transform:uppercase;border:2px solid var(--amber2);border-radius:var(--radius);text-decoration:none;box-shadow:0 4px 24px rgba(212,148,42,0.5),0 2px 8px rgba(0,0,0,0.3);transition:all 0.2s;animation:floatPulse 3s infinite}
-.float-order:hover{transform:scale(1.05);box-shadow:0 6px 32px rgba(212,148,42,0.6)}
+.float-order{position:fixed;top:10px;left:12px;right:12px;z-index:1000;display:none;align-items:center;justify-content:center;padding:14px 0;background:var(--amber);color:var(--black);font-family:var(--font-head);font-weight:800;font-size:14px;letter-spacing:0.1em;text-transform:uppercase;border:2px solid var(--amber2);border-radius:var(--radius);text-decoration:none;text-align:center;box-shadow:0 4px 24px rgba(212,148,42,0.5),0 2px 8px rgba(0,0,0,0.3);transition:transform 0.3s ease,opacity 0.3s ease;animation:floatPulse 3s infinite}
+.float-order:hover{filter:brightness(1.1)}
+.float-order.hidden{transform:translateY(-120%);opacity:0;pointer-events:none}
 @keyframes floatPulse{0%,100%{box-shadow:0 4px 24px rgba(212,148,42,0.5),0 2px 8px rgba(0,0,0,0.3)}50%{box-shadow:0 4px 32px rgba(212,148,42,0.7),0 2px 12px rgba(0,0,0,0.3)}}
-@media(max-width:480px){.float-order{left:12px;right:12px;top:10px;padding:14px 0;font-size:14px;text-align:center}}
+@media(max-width:768px){.float-order{display:flex}}
 
 /* ── SCROLL SEQUENCE ── */
 .scroll-sequence{height:700vh;position:relative}
@@ -1687,23 +1688,26 @@ a{color:inherit;text-decoration:none}
 })();
 </script>
 <script>
-// Sticky order bar + nav visibility after parallax
+// Sticky order bar + nav + float-order visibility synced at parallax end
 (function(){
   var stickyOrder=document.getElementById('stickyOrder');
   var mainNav=document.getElementById('mainNav');
+  var floatOrder=document.getElementById('floatOrder');
   var hero=document.getElementById('hero');
   if(!stickyOrder||!mainNav||!hero)return;
-  var shown=false;
+  var pastParallax=false;
   function checkScroll(){
     var heroBottom=hero.getBoundingClientRect().bottom;
-    if(heroBottom<100&&!shown){
-      shown=true;
+    if(heroBottom<100&&!pastParallax){
+      pastParallax=true;
       stickyOrder.style.transform='translateY(0)';
       mainNav.style.transform='translateY(0)';
-    }else if(heroBottom>=100&&shown){
-      shown=false;
+      if(floatOrder)floatOrder.classList.add('hidden');
+    }else if(heroBottom>=100&&pastParallax){
+      pastParallax=false;
       stickyOrder.style.transform='translateY(100%)';
       mainNav.style.transform='translateY(-100%)';
+      if(floatOrder)floatOrder.classList.remove('hidden');
     }
   }
   window.addEventListener('scroll',checkScroll,{passive:true});
