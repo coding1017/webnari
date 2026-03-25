@@ -600,13 +600,13 @@ a{color:inherit;text-decoration:none}
   }
   gBasketScene.appendChild(svgEl('ellipse',{cx:basketCX,cy:basketCY-basketRY+12,rx:basketRX-2,ry:12,fill:'#E53935',stroke:'#C62828','stroke-width':1}));
 
-  // Wax paper lining
-  gBasketScene.appendChild(svgEl('ellipse',{cx:basketCX,cy:basketCY-5,rx:basketRX-15,ry:basketRY-15,fill:'#FFF8E8',opacity:0.5}));
+  // Brown kraft/wax paper lining
+  gBasketScene.appendChild(svgEl('ellipse',{cx:basketCX,cy:basketCY-5,rx:basketRX-15,ry:basketRY-15,fill:'#D4B896',opacity:0.6}));
   for(var cri=0;cri<8;cri++){
     var cra=cri*Math.PI/4;
     var crx=basketCX+Math.cos(cra)*(basketRX-20);
     var cry=basketCY-5+Math.sin(cra)*(basketRY-20);
-    gBasketScene.appendChild(svgEl('circle',{cx:crx,cy:cry,r:6+Math.random()*4,fill:'#FFF8E8',opacity:0.4}));
+    gBasketScene.appendChild(svgEl('circle',{cx:crx,cy:cry,r:6+Math.random()*4,fill:'#C8A878',opacity:0.4}));
   }
 
   // Two wrapped sub halves LAYING HORIZONTAL in basket (like a real deli)
@@ -1001,13 +1001,13 @@ a{color:inherit;text-decoration:none}
       var knifeY=-120+chopDown*120-chopUp*80;
       gKnife.setAttribute('transform','translate(0,'+knifeY+')');
 
-      // After knife hits, show wrapped halves separating
+      // After knife hits, show wrapped halves separating (wider gap)
       if(cutP>0.5){
         var sepP=ease3(clamp((cutP-0.5)/0.5,0,1));
         gClosed.setAttribute('opacity',String(1-sepP));
         gWrapped.setAttribute('opacity',String(sepP));
-        wrappedLeft.setAttribute('transform','translateX('+(-sepP*15)+')');
-        wrappedRight.setAttribute('transform','translateX('+(sepP*15)+')');
+        wrappedLeft.setAttribute('transform','translateX('+(-sepP*60)+')');
+        wrappedRight.setAttribute('transform','translateX('+(sepP*60)+')');
       }
       setPhase('CUT IN HALF');
     }
@@ -1018,19 +1018,19 @@ a{color:inherit;text-decoration:none}
       // Fade knife
       gKnife.setAttribute('opacity',String(1-ease3(clamp(wrapP/0.2,0,1))));
 
-      // Wrapped halves fully visible, separating further
+      // Wrapped halves fully visible, separating wider
       gWrapped.setAttribute('opacity','1');
       var sepExtra=ease3(clamp(wrapP/0.5,0,1));
-      wrappedLeft.setAttribute('transform','translateX('+(-15-sepExtra*30)+')');
-      wrappedRight.setAttribute('transform','translateX('+(15+sepExtra*30)+')');
+      wrappedLeft.setAttribute('transform','translateX('+(-60-sepExtra*40)+')');
+      wrappedRight.setAttribute('transform','translateX('+(60+sepExtra*40)+')');
 
       // Subtle spin effect on each half
       var spinAngle=ease3(clamp((wrapP-0.2)/0.5,0,1))*8;
       var spinBack=ease3(clamp((wrapP-0.7)/0.3,0,1))*8;
       var netSpin=spinAngle-spinBack;
       if(wrapP>0.2){
-        wrappedLeft.setAttribute('transform','translateX('+(-15-sepExtra*30)+') rotate('+netSpin+','+(subX+subW/4)+','+subY+')');
-        wrappedRight.setAttribute('transform','translateX('+(15+sepExtra*30)+') rotate('+(-netSpin)+','+(cx+subW/4)+','+subY+')');
+        wrappedLeft.setAttribute('transform','translateX('+(-60-sepExtra*40)+') rotate('+netSpin+','+(subX+subW/4)+','+subY+')');
+        wrappedRight.setAttribute('transform','translateX('+(60+sepExtra*40)+') rotate('+(-netSpin)+','+(cx+subW/4)+','+subY+')');
       }
 
       gBoard.setAttribute('opacity',String(Math.max(0,1-ease3(wrapP))));
