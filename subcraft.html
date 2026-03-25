@@ -235,7 +235,7 @@ a{color:inherit;text-decoration:none}
 
   // V-opening geometry
   var vOpenH=130; // total height of V opening from bottom bread top to top bread top
-  var interiorW=subW+40; // interior panel wider than bread
+  var interiorW=subW-20; // interior panel narrower than bread (stays inside crust)
   var interiorX=cx-interiorW/2;
   var bottomBreadTop=subY+10; // where bottom bread interior surface sits
   var bottomBreadBot=subY+45; // bottom of bottom bread crust
@@ -276,11 +276,14 @@ a{color:inherit;text-decoration:none}
 
   // Interior panel - large cream/beige trapezoid representing exposed bread interior
   // Wider than the bread itself, forming the V backdrop
+  // Interior panel: trapezoid that stays WITHIN the bread crust boundaries
+  // Bottom edge touches top of bottom bread, top edge touches bottom of top bread
+  // Slightly tapered inward like real bread interior
   var interiorPanel=svgEl('path',{
-    d:'M'+(interiorX+10)+' '+bottomBreadTop+
-      ' L'+(interiorX)+' '+(bottomBreadTop-vOpenH)+
-      ' L'+(interiorX+interiorW)+' '+(bottomBreadTop-vOpenH)+
-      ' L'+(interiorX+interiorW-10)+' '+bottomBreadTop+' Z',
+    d:'M'+(subX+10)+' '+(bottomBreadTop+20)+
+      ' L'+(subX+15)+' '+(bottomBreadTop-vOpenH+10)+
+      ' L'+(subX+subW-15)+' '+(bottomBreadTop-vOpenH+10)+
+      ' L'+(subX+subW-10)+' '+(bottomBreadTop+20)+' Z',
     fill:'url(#breadInner)',stroke:'#DDD0B0','stroke-width':0.5,opacity:0
   });
   gVBread.appendChild(interiorPanel);
@@ -333,7 +336,7 @@ a{color:inherit;text-decoration:none}
   }
   gVBread.appendChild(gLettuce);
 
-  // 6. DELI MEATS (folded slices stacking above lettuce)
+  // 6. DELI MEATS (realistic folded slices stacking above lettuce)
   var gMeats=svgEl('g',{opacity:0});
   var meatSlices=[];
   var meatTypes=['salami','ham','cap','salami','ham','cap','salami','ham'];
@@ -344,16 +347,50 @@ a{color:inherit;text-decoration:none}
     var mType=meatTypes[mi];
     var mFill=meatFills[mType];
     var meatG=svgEl('g',{opacity:0});
-    var foldPath='M'+mx+' '+(my+5)+' Q'+(mx+15)+' '+(my-20)+' '+(mx+30)+' '+(my-5)+' Q'+(mx+45)+' '+(my+15)+' '+(mx+55)+' '+(my-8)+' L'+(mx+55)+' '+(my+8)+' Q'+(mx+40)+' '+(my-2)+' '+(mx+28)+' '+(my+10)+' Q'+(mx+14)+' '+(my+20)+' '+mx+' '+(my+5);
-    meatG.appendChild(svgEl('path',{d:foldPath,fill:mFill,stroke:mType==='salami'?'#7A1818':mType==='ham'?'#B06060':'#904030','stroke-width':0.8}));
+
     if(mType==='salami'){
-      for(var sp=0;sp<4;sp++){
-        meatG.appendChild(svgEl('circle',{cx:mx+10+sp*12,cy:my+Math.random()*6-3,r:1+Math.random(),fill:'#F8E0E0',opacity:0.6}));
+      // Salami: overlapping circular slices with white fat specks
+      for(var sl=0;sl<3;sl++){
+        var sliceX=mx+sl*14;
+        meatG.appendChild(svgEl('ellipse',{cx:sliceX+15,cy:my,rx:15,ry:12,fill:mFill,stroke:'#7A1818','stroke-width':0.8}));
+        // Fat specks
+        for(var sp=0;sp<5;sp++){
+          var spAngle=sp*Math.PI*2/5+mi*0.3;
+          var spR=4+Math.random()*6;
+          meatG.appendChild(svgEl('circle',{cx:sliceX+15+Math.cos(spAngle)*spR,cy:my+Math.sin(spAngle)*spR,r:1+Math.random()*1.2,fill:'#F8E0E0',opacity:0.7}));
+        }
       }
+    } else if(mType==='ham'){
+      // Ham: rectangular folded piece (folded in half, slightly ruffled)
+      var hamW=48, hamH=20;
+      // Bottom half of fold (slightly wider, visible underneath)
+      meatG.appendChild(svgEl('path',{
+        d:'M'+mx+' '+(my+2)+' L'+(mx+hamW)+' '+(my+2)+' L'+(mx+hamW-2)+' '+(my+hamH/2+4)+' Q'+(mx+hamW/2)+' '+(my+hamH/2+7)+' '+(mx+2)+' '+(my+hamH/2+4)+' Z',
+        fill:'#D88080',stroke:'#B06060','stroke-width':0.8
+      }));
+      // Top half of fold (folded over, slightly ruffled edge)
+      meatG.appendChild(svgEl('path',{
+        d:'M'+(mx+2)+' '+(my+2)+' L'+(mx+hamW-2)+' '+(my+2)+' Q'+(mx+hamW-4)+' '+(my-6)+' '+(mx+hamW/2+8)+' '+(my-10)+' Q'+(mx+hamW/2-5)+' '+(my-12)+' '+(mx+hamW/2-12)+' '+(my-8)+' Q'+(mx+6)+' '+(my-5)+' '+(mx+2)+' '+(my+2)+' Z',
+        fill:mFill,stroke:'#B06060','stroke-width':0.8
+      }));
+    } else {
+      // Capicola: similar folded shape with reddish-orange color and marbling
+      var capW=48, capH=20;
+      // Bottom half
+      meatG.appendChild(svgEl('path',{
+        d:'M'+mx+' '+(my+2)+' L'+(mx+capW)+' '+(my+2)+' L'+(mx+capW-2)+' '+(my+capH/2+3)+' Q'+(mx+capW/2)+' '+(my+capH/2+6)+' '+(mx+2)+' '+(my+capH/2+3)+' Z',
+        fill:'#B84A2A',stroke:'#904030','stroke-width':0.8
+      }));
+      // Top folded half
+      meatG.appendChild(svgEl('path',{
+        d:'M'+(mx+2)+' '+(my+2)+' L'+(mx+capW-2)+' '+(my+2)+' Q'+(mx+capW-5)+' '+(my-7)+' '+(mx+capW/2+6)+' '+(my-10)+' Q'+(mx+capW/2-8)+' '+(my-11)+' '+(mx+8)+' '+(my-6)+' Q'+(mx+3)+' '+(my-3)+' '+(mx+2)+' '+(my+2)+' Z',
+        fill:mFill,stroke:'#904030','stroke-width':0.8
+      }));
+      // Marbling streaks
+      meatG.appendChild(svgEl('path',{d:'M'+(mx+8)+' '+(my-2)+' Q'+(mx+20)+' '+(my-7)+' '+(mx+35)+' '+(my-3),fill:'none',stroke:'#F0B090','stroke-width':1.5,opacity:0.5}));
+      meatG.appendChild(svgEl('path',{d:'M'+(mx+12)+' '+(my+1)+' Q'+(mx+25)+' '+(my-3)+' '+(mx+40)+' '+(my),fill:'none',stroke:'#F8C8A8','stroke-width':1,opacity:0.4}));
     }
-    if(mType==='cap'){
-      meatG.appendChild(svgEl('path',{d:'M'+(mx+8)+' '+my+' Q'+(mx+20)+' '+(my-8)+' '+(mx+35)+' '+(my+2),fill:'none',stroke:'#F0B090','stroke-width':1.5,opacity:0.4}));
-    }
+
     gMeats.appendChild(meatG);
     meatSlices.push(meatG);
   }
@@ -484,54 +521,54 @@ a{color:inherit;text-decoration:none}
   // ─── 13. WRAPPED HALVES (full cylinder wrap with exposed cross-section) ───
   var gWrapped=svgEl('g',{opacity:0});
 
-  // Each wrapped half is a cylinder: checkerboard body + circular cross-section at cut end
+  // Each wrapped half is a cylinder: checkerboard body + OVAL cross-section at cut end
+  // Sub is wider than tall, so cross-section is an ellipse (rx > ry)
   function makeWrappedHalf(side){
     var wg=svgEl('g',{});
     var hw=subW/2-10;
-    var cylR=subH/2+4; // cylinder radius
+    var cylRX=subH/2+12; // horizontal radius (wider)
+    var cylRY=subH/2+4;  // vertical radius (shorter)
     var hx=side==='left'?subX-10:cx+10;
 
-    // Checkerboard cylinder body
+    // Checkerboard cylinder body (rectangular, flat cut end)
     var bodyPath;
     if(side==='left'){
-      // Rounded left end, flat right end (cut face)
-      bodyPath='M'+(hx+cylR)+' '+(subY-cylR)+
-        ' L'+(hx+hw)+' '+(subY-cylR)+
-        ' L'+(hx+hw)+' '+(subY+cylR)+
-        ' L'+(hx+cylR)+' '+(subY+cylR)+
-        ' A'+cylR+' '+cylR+' 0 0 1 '+hx+' '+subY+
-        ' A'+cylR+' '+cylR+' 0 0 1 '+(hx+cylR)+' '+(subY-cylR)+' Z';
+      bodyPath='M'+(hx+cylRX)+' '+(subY-cylRY)+
+        ' L'+(hx+hw)+' '+(subY-cylRY)+
+        ' L'+(hx+hw)+' '+(subY+cylRY)+
+        ' L'+(hx+cylRX)+' '+(subY+cylRY)+
+        ' A'+cylRX+' '+cylRY+' 0 0 1 '+hx+' '+subY+
+        ' A'+cylRX+' '+cylRY+' 0 0 1 '+(hx+cylRX)+' '+(subY-cylRY)+' Z';
     } else {
-      // Flat left end (cut face), rounded right end
-      bodyPath='M'+hx+' '+(subY-cylR)+
-        ' L'+(hx+hw-cylR)+' '+(subY-cylR)+
-        ' A'+cylR+' '+cylR+' 0 0 1 '+(hx+hw)+' '+subY+
-        ' A'+cylR+' '+cylR+' 0 0 1 '+(hx+hw-cylR)+' '+(subY+cylR)+
-        ' L'+hx+' '+(subY+cylR)+' Z';
+      bodyPath='M'+hx+' '+(subY-cylRY)+
+        ' L'+(hx+hw-cylRX)+' '+(subY-cylRY)+
+        ' A'+cylRX+' '+cylRY+' 0 0 1 '+(hx+hw)+' '+subY+
+        ' A'+cylRX+' '+cylRY+' 0 0 1 '+(hx+hw-cylRX)+' '+(subY+cylRY)+
+        ' L'+hx+' '+(subY+cylRY)+' Z';
     }
     wg.appendChild(svgEl('path',{d:bodyPath,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
 
-    // Cross-section circle at cut end
+    // OVAL cross-section at cut end (wider than tall, matching sub shape)
     var crossX=side==='left'?hx+hw:hx;
     // Bread outer ring
-    wg.appendChild(svgEl('circle',{cx:crossX,cy:subY,r:cylR,fill:'#ECD8B0',stroke:'#C8A878','stroke-width':1}));
+    wg.appendChild(svgEl('ellipse',{cx:crossX,cy:subY,rx:cylRX,ry:cylRY,fill:'#ECD8B0',stroke:'#C8A878','stroke-width':1}));
     // Crust ring
-    wg.appendChild(svgEl('circle',{cx:crossX,cy:subY,r:cylR,fill:'none',stroke:'#A06820','stroke-width':3}));
-    // Bread interior ring
-    wg.appendChild(svgEl('circle',{cx:crossX,cy:subY,r:cylR-4,fill:'#F5E6C8',stroke:'#DDD0B0','stroke-width':0.5}));
-    // Green lettuce ring
-    wg.appendChild(svgEl('circle',{cx:crossX,cy:subY,r:cylR-8,fill:'none',stroke:'#4CAF50','stroke-width':5}));
-    // White/cheese ring
-    wg.appendChild(svgEl('circle',{cx:crossX,cy:subY,r:cylR-14,fill:'#F8E8A0',stroke:'#E8D070','stroke-width':1}));
+    wg.appendChild(svgEl('ellipse',{cx:crossX,cy:subY,rx:cylRX,ry:cylRY,fill:'none',stroke:'#A06820','stroke-width':3}));
+    // Bread interior
+    wg.appendChild(svgEl('ellipse',{cx:crossX,cy:subY,rx:cylRX-4,ry:cylRY-4,fill:'#F5E6C8',stroke:'#DDD0B0','stroke-width':0.5}));
+    // Green lettuce band
+    wg.appendChild(svgEl('ellipse',{cx:crossX,cy:subY,rx:cylRX-8,ry:cylRY-8,fill:'none',stroke:'#4CAF50','stroke-width':5}));
+    // Cheese band
+    wg.appendChild(svgEl('ellipse',{cx:crossX,cy:subY,rx:cylRX-14,ry:cylRY-13,fill:'#F8E8A0',stroke:'#E8D070','stroke-width':1}));
     // Meat filling center
-    wg.appendChild(svgEl('circle',{cx:crossX,cy:subY,r:cylR-18,fill:'#CC4444'}));
+    wg.appendChild(svgEl('ellipse',{cx:crossX,cy:subY,rx:cylRX-18,ry:cylRY-16,fill:'#CC4444'}));
     // Meat detail layers
-    wg.appendChild(svgEl('circle',{cx:crossX-4,cy:subY-3,r:6,fill:'#F0A0A0',opacity:0.7}));
-    wg.appendChild(svgEl('circle',{cx:crossX+5,cy:subY+2,r:5,fill:'#C85A3A',opacity:0.6}));
+    wg.appendChild(svgEl('ellipse',{cx:crossX-4,cy:subY-3,rx:7,ry:5,fill:'#F0A0A0',opacity:0.7}));
+    wg.appendChild(svgEl('ellipse',{cx:crossX+5,cy:subY+2,rx:6,ry:4,fill:'#C85A3A',opacity:0.6}));
     // Tomato accent
-    wg.appendChild(svgEl('circle',{cx:crossX-2,cy:subY+6,r:4,fill:'#E53935',opacity:0.5}));
+    wg.appendChild(svgEl('ellipse',{cx:crossX-2,cy:subY+6,rx:5,ry:3,fill:'#E53935',opacity:0.5}));
     // Pepper accent
-    wg.appendChild(svgEl('circle',{cx:crossX+3,cy:subY-5,r:3,fill:'#CDDC39',opacity:0.4}));
+    wg.appendChild(svgEl('ellipse',{cx:crossX+3,cy:subY-5,rx:4,ry:2.5,fill:'#CDDC39',opacity:0.4}));
 
     return wg;
   }
@@ -572,59 +609,53 @@ a{color:inherit;text-decoration:none}
     gBasketScene.appendChild(svgEl('circle',{cx:crx,cy:cry,r:6+Math.random()*4,fill:'#FFF8E8',opacity:0.4}));
   }
 
-  // Two wrapped cylinder halves in basket
-  // Left half - angled slightly, cut end facing right (toward center)
-  var bCylR=30;
-  var bCylW=150;
+  // Two wrapped cylinder halves in basket — side by side filling the basket width
+  // Cut faces face the VIEWER (toward bottom/front of basket)
+  // Cross-sections are OVAL (wider than tall)
+  var bCylRX=40; // horizontal radius of oval cross-section
+  var bCylRY=26; // vertical radius (shorter)
+  var bCylW=160; // length of each half
+
+  // Left half — cut face at bottom (facing viewer)
   var bLeftG=svgEl('g',{});
-  var blX=basketCX-basketRX+35, blY=basketCY-15;
-  // Checker body
-  bLeftG.appendChild(svgEl('path',{
-    d:'M'+(blX+bCylR)+' '+(blY-bCylR)+
-      ' L'+(blX+bCylW)+' '+(blY-bCylR)+
-      ' L'+(blX+bCylW)+' '+(blY+bCylR)+
-      ' L'+(blX+bCylR)+' '+(blY+bCylR)+
-      ' A'+bCylR+' '+bCylR+' 0 0 1 '+blX+' '+blY+
-      ' A'+bCylR+' '+bCylR+' 0 0 1 '+(blX+bCylR)+' '+(blY-bCylR)+' Z',
-    fill:'url(#checker)',stroke:'#888','stroke-width':0.5
-  }));
-  // Cross-section at right (cut) end
-  bLeftG.appendChild(svgEl('circle',{cx:blX+bCylW,cy:blY,r:bCylR,fill:'#ECD8B0',stroke:'#A06820','stroke-width':2.5}));
-  bLeftG.appendChild(svgEl('circle',{cx:blX+bCylW,cy:blY,r:bCylR-3,fill:'#F5E6C8'}));
-  bLeftG.appendChild(svgEl('circle',{cx:blX+bCylW,cy:blY,r:bCylR-6,fill:'none',stroke:'#4CAF50','stroke-width':4}));
-  bLeftG.appendChild(svgEl('circle',{cx:blX+bCylW,cy:blY,r:bCylR-11,fill:'#F8E8A0'}));
-  bLeftG.appendChild(svgEl('circle',{cx:blX+bCylW,cy:blY,r:bCylR-14,fill:'#CC4444'}));
-  bLeftG.appendChild(svgEl('circle',{cx:blX+bCylW-3,cy:blY-3,r:5,fill:'#F0A0A0',opacity:0.6}));
-  bLeftG.appendChild(svgEl('circle',{cx:blX+bCylW+3,cy:blY+2,r:4,fill:'#E53935',opacity:0.4}));
-  bLeftG.setAttribute('transform','rotate(-5,'+basketCX+','+basketCY+')');
+  var blX=basketCX-bCylRX*2-8, blY=basketCY-10;
+  // Checker body goes from back (top) to front (bottom), angled into basket
+  // Body is a rectangle from top edge going upward (away from viewer)
+  bLeftG.appendChild(svgEl('rect',{x:blX-bCylRX,y:blY-bCylW+bCylRY,width:bCylRX*2,height:bCylW-bCylRY,rx:4,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
+  // Rounded back end (away from viewer, top)
+  bLeftG.appendChild(svgEl('ellipse',{cx:blX,cy:blY-bCylW+bCylRY,rx:bCylRX,ry:bCylRY*0.6,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
+  // OVAL cross-section at front (cut face, facing viewer)
+  bLeftG.appendChild(svgEl('ellipse',{cx:blX,cy:blY,rx:bCylRX,ry:bCylRY,fill:'#ECD8B0',stroke:'#A06820','stroke-width':2.5}));
+  bLeftG.appendChild(svgEl('ellipse',{cx:blX,cy:blY,rx:bCylRX-3,ry:bCylRY-3,fill:'#F5E6C8'}));
+  bLeftG.appendChild(svgEl('ellipse',{cx:blX,cy:blY,rx:bCylRX-7,ry:bCylRY-6,fill:'none',stroke:'#4CAF50','stroke-width':4}));
+  bLeftG.appendChild(svgEl('ellipse',{cx:blX,cy:blY,rx:bCylRX-12,ry:bCylRY-10,fill:'#F8E8A0'}));
+  bLeftG.appendChild(svgEl('ellipse',{cx:blX,cy:blY,rx:bCylRX-16,ry:bCylRY-13,fill:'#CC4444'}));
+  bLeftG.appendChild(svgEl('ellipse',{cx:blX-4,cy:blY-3,rx:6,ry:4,fill:'#F0A0A0',opacity:0.6}));
+  bLeftG.appendChild(svgEl('ellipse',{cx:blX+4,cy:blY+2,rx:5,ry:3,fill:'#E53935',opacity:0.4}));
+  bLeftG.setAttribute('transform','rotate(-3,'+basketCX+','+basketCY+')');
   gBasketScene.appendChild(bLeftG);
 
-  // Right half - cut end facing left (toward center)
+  // Right half — cut face at bottom (facing viewer)
   var bRightG=svgEl('g',{});
-  var brX=basketCX+10, brY=basketCY-20;
-  // Checker body
-  bRightG.appendChild(svgEl('path',{
-    d:'M'+brX+' '+(brY-bCylR)+
-      ' L'+(brX+bCylW-bCylR)+' '+(brY-bCylR)+
-      ' A'+bCylR+' '+bCylR+' 0 0 1 '+(brX+bCylW)+' '+brY+
-      ' A'+bCylR+' '+bCylR+' 0 0 1 '+(brX+bCylW-bCylR)+' '+(brY+bCylR)+
-      ' L'+brX+' '+(brY+bCylR)+' Z',
-    fill:'url(#checker)',stroke:'#888','stroke-width':0.5
-  }));
-  // Cross-section at left (cut) end
-  bRightG.appendChild(svgEl('circle',{cx:brX,cy:brY,r:bCylR,fill:'#ECD8B0',stroke:'#A06820','stroke-width':2.5}));
-  bRightG.appendChild(svgEl('circle',{cx:brX,cy:brY,r:bCylR-3,fill:'#F5E6C8'}));
-  bRightG.appendChild(svgEl('circle',{cx:brX,cy:brY,r:bCylR-6,fill:'none',stroke:'#4CAF50','stroke-width':4}));
-  bRightG.appendChild(svgEl('circle',{cx:brX,cy:brY,r:bCylR-11,fill:'#F8E8A0'}));
-  bRightG.appendChild(svgEl('circle',{cx:brX,cy:brY,r:bCylR-14,fill:'#CC4444'}));
-  bRightG.appendChild(svgEl('circle',{cx:brX-3,cy:brY-2,r:5,fill:'#C85A3A',opacity:0.5}));
-  bRightG.appendChild(svgEl('circle',{cx:brX+2,cy:brY+4,r:3,fill:'#CDDC39',opacity:0.3}));
-  bRightG.setAttribute('transform','rotate(4,'+basketCX+','+basketCY+')');
+  var brX=basketCX+bCylRX*2+8, brY=basketCY-10;
+  // Body rectangle
+  bRightG.appendChild(svgEl('rect',{x:brX-bCylRX,y:brY-bCylW+bCylRY,width:bCylRX*2,height:bCylW-bCylRY,rx:4,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
+  // Rounded back end
+  bRightG.appendChild(svgEl('ellipse',{cx:brX,cy:brY-bCylW+bCylRY,rx:bCylRX,ry:bCylRY*0.6,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
+  // OVAL cross-section at front (cut face, facing viewer)
+  bRightG.appendChild(svgEl('ellipse',{cx:brX,cy:brY,rx:bCylRX,ry:bCylRY,fill:'#ECD8B0',stroke:'#A06820','stroke-width':2.5}));
+  bRightG.appendChild(svgEl('ellipse',{cx:brX,cy:brY,rx:bCylRX-3,ry:bCylRY-3,fill:'#F5E6C8'}));
+  bRightG.appendChild(svgEl('ellipse',{cx:brX,cy:brY,rx:bCylRX-7,ry:bCylRY-6,fill:'none',stroke:'#4CAF50','stroke-width':4}));
+  bRightG.appendChild(svgEl('ellipse',{cx:brX,cy:brY,rx:bCylRX-12,ry:bCylRY-10,fill:'#F8E8A0'}));
+  bRightG.appendChild(svgEl('ellipse',{cx:brX,cy:brY,rx:bCylRX-16,ry:bCylRY-13,fill:'#CC4444'}));
+  bRightG.appendChild(svgEl('ellipse',{cx:brX-3,cy:brY-2,rx:6,ry:4,fill:'#C85A3A',opacity:0.5}));
+  bRightG.appendChild(svgEl('ellipse',{cx:brX+3,cy:brY+3,rx:4,ry:2.5,fill:'#CDDC39',opacity:0.3}));
+  bRightG.setAttribute('transform','rotate(3,'+basketCX+','+basketCY+')');
   gBasketScene.appendChild(bRightG);
 
-  // Chips pile (to the SIDE of the subs, not touching)
+  // Chips pile — BELOW the basket, sitting on the napkin
   var chipsG=svgEl('g',{});
-  var chipsCX=basketCX+basketRX-50, chipsCY=basketCY+20;
+  var chipsCX=basketCX+30, chipsCY=basketCY+basketRY+25;
   var chipShapes=[
     {dx:-18,dy:-12,rx:14,ry:8,rot:-15},
     {dx:5,dy:-20,rx:12,ry:9,rot:25},
