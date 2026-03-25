@@ -672,22 +672,24 @@ a{color:inherit;text-decoration:none}
   var ovenGlowRect=svgEl('rect',{x:0,y:0,width:vbW,height:vbH,fill:'#FF4400',opacity:0,rx:0});
   gOvenScene.appendChild(ovenGlowRect);
 
-  // Floor flames — underneath the pizza, pointing upward (must be after pizza vars)
+  svg.appendChild(gOvenScene);
+
+  // Floor flames — spread across full oven width, inserted BEFORE pizza so they render behind it
   var ovenFloorFlames=[];
-  for(var offi=0;offi<6;offi++){
-    var offx=ovenPizzaCx-ovenPizzaR*0.7+offi*((ovenPizzaR*1.4)/(6-1));
-    var offH=25+Math.random()*20;
+  var floorFlameCount=10;
+  for(var offi=0;offi<floorFlameCount;offi++){
+    var offx=60+offi*((vbW-120)/(floorFlameCount-1));
+    var offH=20+Math.random()*18;
     var offBase=ovenFloorY;
     var offPath='M'+(offx-6)+' '+offBase+
       ' Q'+(offx-8)+' '+(offBase-offH*0.4)+' '+(offx-1)+' '+(offBase-offH*0.8)+
       ' Q'+offx+' '+(offBase-offH)+' '+(offx+1)+' '+(offBase-offH*0.75)+
       ' Q'+(offx+8)+' '+(offBase-offH*0.35)+' '+(offx+6)+' '+offBase+' Z';
     var offl=svgEl('path',{d:offPath,fill:'url(#flameGrad)',opacity:0.7});
-    gOvenScene.appendChild(offl);
+    // Insert before raw pizza so flames are BEHIND the pizza
+    gOvenScene.insertBefore(offl, gOvenPizzaRaw);
     ovenFloorFlames.push(offl);
   }
-
-  svg.appendChild(gOvenScene);
 
   // ─── 12. COOKED PIZZA (replaces raw pizza when baked) ───
   var gCooked_g=svgEl('g',{opacity:0});
@@ -765,6 +767,16 @@ a{color:inherit;text-decoration:none}
   }
   svg.appendChild(gPanEl);
   svg.appendChild(gCooked_g);
+
+  // Slice hole — covers the separated wedge area on gCooked_g with pan color
+  var sliceHoleAngle1=-Math.PI/2;
+  var sliceHoleAngle2=-Math.PI/6;
+  var sliceHolePath='M'+cx+' '+cy+
+    ' L'+(cx+Math.cos(sliceHoleAngle1)*(pizzaR+5))+' '+(cy+Math.sin(sliceHoleAngle1)*(pizzaR+5))+
+    ' A'+(pizzaR+5)+' '+(pizzaR+5)+' 0 0 1 '+(cx+Math.cos(sliceHoleAngle2)*(pizzaR+5))+' '+(cy+Math.sin(sliceHoleAngle2)*(pizzaR+5))+
+    ' Z';
+  var gSliceHole=svgEl('path',{d:sliceHolePath,fill:'url(#panGrad)',opacity:0});
+  svg.appendChild(gSliceHole);
 
   // ─── 14. PIZZA CUTTER ───
   var gCutter=svgEl('g',{opacity:0});
@@ -934,6 +946,7 @@ a{color:inherit;text-decoration:none}
     gCooked_g.setAttribute('opacity','0');gCooked_g.setAttribute('transform','');
     gPanEl.setAttribute('opacity','0');gPanEl.setAttribute('transform','');
     gCutter.setAttribute('opacity','0');gCutter.setAttribute('transform','');
+    gSliceHole.setAttribute('opacity','0');
     gCutLines.setAttribute('opacity','0');
     for(var rci=0;rci<cutLineEls.length;rci++){cutLineEls[rci].setAttribute('opacity','0');cutLineEls[rci].setAttribute('stroke-dashoffset',String(cutLen));}
     gSlice.setAttribute('opacity','0');gSlice.setAttribute('transform','');
@@ -1243,28 +1256,36 @@ a{color:inherit;text-decoration:none}
       var outP=clamp((p-0.73)/0.08,0,1);
       setPhase('OUT OF THE OVEN');
 
-      // 73-76%: gOvenScene fades out
-      if(outP<0.35){
-        var sceneFadeP=ease3(outP/0.35);
+      // Cross-fade: oven scene fades out while peel+pizza fade in simultaneously
+      if(outP<0.45){
+        // Oven fades out, peel+pizza start fading in (overlap)
+        var sceneFadeP=ease3(outP/0.45);
+        var peelInP2=ease3(clamp((outP-0.15)/0.3,0,1));
         gOvenScene.setAttribute('opacity',String(1-sceneFadeP));
         gOvenPizzaCooked.setAttribute('opacity','1');
         gOvenPizzaRaw.setAttribute('opacity','0');
-      }
-      // 76-78%: Peel slides in with cooked pizza from left
-      else if(outP<0.65){
-        var peelInP2=ease3((outP-0.35)/0.3);
+        // Peel and pizza start appearing from left during the fade
         gPeel.setAttribute('opacity',String(peelInP2));
         gPeel.setAttribute('transform','translate('+((1-peelInP2)*-350)+',0)');
         gCooked_g.setAttribute('opacity',String(peelInP2));
         gCooked_g.setAttribute('transform','translate('+((1-peelInP2)*-350)+',0)');
       }
-      // 78-80%: Peel deposits pizza onto pan, peel exits
-      else {
-        var depositP=ease3((outP-0.65)/0.35);
-        gPanEl.setAttribute('opacity',String(ease3(clamp(depositP/0.4,0,1))));
+      // Peel arrives at center with pizza
+      else if(outP<0.7){
+        var slideP2=ease3((outP-0.45)/0.25);
+        gPeel.setAttribute('opacity','1');
+        gPeel.setAttribute('transform','');
         gCooked_g.setAttribute('opacity','1');
         gCooked_g.setAttribute('transform','');
-        // Peel slides out to the right
+        // Pan fades in underneath
+        gPanEl.setAttribute('opacity',String(slideP2));
+      }
+      // Peel exits, pizza on pan
+      else {
+        var depositP=ease3((outP-0.7)/0.3);
+        gPanEl.setAttribute('opacity','1');
+        gCooked_g.setAttribute('opacity','1');
+        gCooked_g.setAttribute('transform','');
         gPeel.setAttribute('opacity',String(1-depositP));
         gPeel.setAttribute('transform','translate('+(depositP*350)+',0)');
       }
@@ -1340,6 +1361,8 @@ a{color:inherit;text-decoration:none}
         gSlice.setAttribute('opacity',String(sepP));
         var sliceTx=sepP*60, sliceTy=sepP*-50, sliceRot=sepP*-15;
         gSlice.setAttribute('transform','translate('+sliceTx+','+sliceTy+') rotate('+sliceRot+','+cx+','+cy+')');
+        // Show hole in cooked pizza where slice was removed
+        gSliceHole.setAttribute('opacity',String(sepP));
       }
     }
 
@@ -1366,12 +1389,14 @@ a{color:inherit;text-decoration:none}
         gPanEl.setAttribute('opacity',String(Math.max(0,sceneFade)));
         gCutLines.setAttribute('opacity',String(Math.max(0,sceneFade)));
         gSlice.setAttribute('opacity',String(Math.max(0,sceneFade)));
+        gSliceHole.setAttribute('opacity',String(Math.max(0,sceneFade)));
       } else {
         gCooked_g.setAttribute('opacity','1');
         gPanEl.setAttribute('opacity','1');
         gCutLines.setAttribute('opacity','1');
         gSlice.setAttribute('opacity','1');
         gSlice.setAttribute('transform','translate(60,-50) rotate(-15,'+cx+','+cy+')');
+        gSliceHole.setAttribute('opacity','1');
       }
 
       setPhase('FIRECRUST');
