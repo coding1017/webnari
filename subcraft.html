@@ -609,53 +609,48 @@ a{color:inherit;text-decoration:none}
     gBasketScene.appendChild(svgEl('circle',{cx:crx,cy:cry,r:6+Math.random()*4,fill:'#FFF8E8',opacity:0.4}));
   }
 
-  // Two wrapped cylinder halves in basket — side by side filling the basket width
-  // Cut faces face the VIEWER (toward bottom/front of basket)
-  // Cross-sections are OVAL (wider than tall)
-  var bCylRX=40; // horizontal radius of oval cross-section
-  var bCylRY=26; // vertical radius (shorter)
-  var bCylW=160; // length of each half
+  // Two wrapped sub halves LAYING HORIZONTAL in basket (like a real deli)
+  // Each is a long wrapped sub laying on its side, cut end visible at the CENTER gap
+  var bSubW=basketRX-20; // each half takes most of its side
+  var bSubH=40; // height of each sub in the basket
 
-  // Left half — cut face at bottom (facing viewer)
+  // Left half — laying horizontal, cut end facing RIGHT (toward center)
   var bLeftG=svgEl('g',{});
-  var blX=basketCX-bCylRX*2-8, blY=basketCY-10;
-  // Checker body goes from back (top) to front (bottom), angled into basket
-  // Body is a rectangle from top edge going upward (away from viewer)
-  bLeftG.appendChild(svgEl('rect',{x:blX-bCylRX,y:blY-bCylW+bCylRY,width:bCylRX*2,height:bCylW-bCylRY,rx:4,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
-  // Rounded back end (away from viewer, top)
-  bLeftG.appendChild(svgEl('ellipse',{cx:blX,cy:blY-bCylW+bCylRY,rx:bCylRX,ry:bCylRY*0.6,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
-  // OVAL cross-section at front (cut face, facing viewer)
-  bLeftG.appendChild(svgEl('ellipse',{cx:blX,cy:blY,rx:bCylRX,ry:bCylRY,fill:'#ECD8B0',stroke:'#A06820','stroke-width':2.5}));
-  bLeftG.appendChild(svgEl('ellipse',{cx:blX,cy:blY,rx:bCylRX-3,ry:bCylRY-3,fill:'#F5E6C8'}));
-  bLeftG.appendChild(svgEl('ellipse',{cx:blX,cy:blY,rx:bCylRX-7,ry:bCylRY-6,fill:'none',stroke:'#4CAF50','stroke-width':4}));
-  bLeftG.appendChild(svgEl('ellipse',{cx:blX,cy:blY,rx:bCylRX-12,ry:bCylRY-10,fill:'#F8E8A0'}));
-  bLeftG.appendChild(svgEl('ellipse',{cx:blX,cy:blY,rx:bCylRX-16,ry:bCylRY-13,fill:'#CC4444'}));
-  bLeftG.appendChild(svgEl('ellipse',{cx:blX-4,cy:blY-3,rx:6,ry:4,fill:'#F0A0A0',opacity:0.6}));
-  bLeftG.appendChild(svgEl('ellipse',{cx:blX+4,cy:blY+2,rx:5,ry:3,fill:'#E53935',opacity:0.4}));
-  bLeftG.setAttribute('transform','rotate(-3,'+basketCX+','+basketCY+')');
+  var blX=basketCX-basketRX+15, blY=basketCY-12;
+  // Checker paper wrap (full body)
+  bLeftG.appendChild(svgEl('rect',{x:blX,y:blY-bSubH/2,width:bSubW,height:bSubH,rx:bSubH/2,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
+  // Bread crust visible at top (peeking over paper)
+  bLeftG.appendChild(svgEl('rect',{x:blX+10,y:blY-bSubH/2-4,width:bSubW-20,height:10,rx:5,fill:'url(#crustGrad)',opacity:0.7}));
+  // Cut face at RIGHT end — flat oval cross-section
+  var blCutX=blX+bSubW;
+  bLeftG.appendChild(svgEl('ellipse',{cx:blCutX,cy:blY,rx:6,ry:bSubH/2,fill:'#ECD8B0',stroke:'#A06820','stroke-width':2}));
+  bLeftG.appendChild(svgEl('ellipse',{cx:blCutX,cy:blY,rx:4,ry:bSubH/2-4,fill:'#F5E6C8'}));
+  bLeftG.appendChild(svgEl('rect',{x:blCutX-3,y:blY-8,width:6,height:3,rx:1,fill:'#4CAF50'}));
+  bLeftG.appendChild(svgEl('rect',{x:blCutX-3,y:blY-4,width:6,height:3,rx:1,fill:'#CC4444'}));
+  bLeftG.appendChild(svgEl('rect',{x:blCutX-3,y:blY,width:6,height:3,rx:1,fill:'#F0A0A0'}));
+  bLeftG.appendChild(svgEl('rect',{x:blCutX-3,y:blY+4,width:6,height:3,rx:1,fill:'#F8E8A0'}));
+  bLeftG.setAttribute('transform','rotate(-2,'+basketCX+','+basketCY+')');
   gBasketScene.appendChild(bLeftG);
 
-  // Right half — cut face at bottom (facing viewer)
+  // Right half — laying horizontal, cut end facing LEFT (toward center)
   var bRightG=svgEl('g',{});
-  var brX=basketCX+bCylRX*2+8, brY=basketCY-10;
-  // Body rectangle
-  bRightG.appendChild(svgEl('rect',{x:brX-bCylRX,y:brY-bCylW+bCylRY,width:bCylRX*2,height:bCylW-bCylRY,rx:4,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
-  // Rounded back end
-  bRightG.appendChild(svgEl('ellipse',{cx:brX,cy:brY-bCylW+bCylRY,rx:bCylRX,ry:bCylRY*0.6,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
-  // OVAL cross-section at front (cut face, facing viewer)
-  bRightG.appendChild(svgEl('ellipse',{cx:brX,cy:brY,rx:bCylRX,ry:bCylRY,fill:'#ECD8B0',stroke:'#A06820','stroke-width':2.5}));
-  bRightG.appendChild(svgEl('ellipse',{cx:brX,cy:brY,rx:bCylRX-3,ry:bCylRY-3,fill:'#F5E6C8'}));
-  bRightG.appendChild(svgEl('ellipse',{cx:brX,cy:brY,rx:bCylRX-7,ry:bCylRY-6,fill:'none',stroke:'#4CAF50','stroke-width':4}));
-  bRightG.appendChild(svgEl('ellipse',{cx:brX,cy:brY,rx:bCylRX-12,ry:bCylRY-10,fill:'#F8E8A0'}));
-  bRightG.appendChild(svgEl('ellipse',{cx:brX,cy:brY,rx:bCylRX-16,ry:bCylRY-13,fill:'#CC4444'}));
-  bRightG.appendChild(svgEl('ellipse',{cx:brX-3,cy:brY-2,rx:6,ry:4,fill:'#C85A3A',opacity:0.5}));
-  bRightG.appendChild(svgEl('ellipse',{cx:brX+3,cy:brY+3,rx:4,ry:2.5,fill:'#CDDC39',opacity:0.3}));
-  bRightG.setAttribute('transform','rotate(3,'+basketCX+','+basketCY+')');
+  var brX=basketCX+5, brY=basketCY-8;
+  bRightG.appendChild(svgEl('rect',{x:brX,y:brY-bSubH/2,width:bSubW,height:bSubH,rx:bSubH/2,fill:'url(#checker)',stroke:'#888','stroke-width':0.5}));
+  bRightG.appendChild(svgEl('rect',{x:brX+10,y:brY-bSubH/2-4,width:bSubW-20,height:10,rx:5,fill:'url(#crustGrad)',opacity:0.7}));
+  // Cut face at LEFT end
+  var brCutX=brX;
+  bRightG.appendChild(svgEl('ellipse',{cx:brCutX,cy:brY,rx:6,ry:bSubH/2,fill:'#ECD8B0',stroke:'#A06820','stroke-width':2}));
+  bRightG.appendChild(svgEl('ellipse',{cx:brCutX,cy:brY,rx:4,ry:bSubH/2-4,fill:'#F5E6C8'}));
+  bRightG.appendChild(svgEl('rect',{x:brCutX-3,y:brY-8,width:6,height:3,rx:1,fill:'#4CAF50'}));
+  bRightG.appendChild(svgEl('rect',{x:brCutX-3,y:brY-4,width:6,height:3,rx:1,fill:'#CC4444'}));
+  bRightG.appendChild(svgEl('rect',{x:brCutX-3,y:brY,width:6,height:3,rx:1,fill:'#F0A0A0'}));
+  bRightG.appendChild(svgEl('rect',{x:brCutX-3,y:brY+4,width:6,height:3,rx:1,fill:'#F8E8A0'}));
+  bRightG.setAttribute('transform','rotate(2,'+basketCX+','+basketCY+')');
   gBasketScene.appendChild(bRightG);
 
-  // Chips pile — BELOW the basket, sitting on the napkin
+  // Chips pile — BOTTOM RIGHT of napkin where there's space, bigger chips
   var chipsG=svgEl('g',{});
-  var chipsCX=basketCX+30, chipsCY=basketCY+basketRY+25;
+  var chipsCX=napkinX+300, chipsCY=napkinY+145;
   var chipShapes=[
     {dx:-18,dy:-12,rx:14,ry:8,rot:-15},
     {dx:5,dy:-20,rx:12,ry:9,rot:25},
@@ -669,7 +664,7 @@ a{color:inherit;text-decoration:none}
   ];
   for(var chi=0;chi<chipShapes.length;chi++){
     var ch=chipShapes[chi];
-    chipsG.appendChild(svgEl('ellipse',{cx:chipsCX+ch.dx,cy:chipsCY+ch.dy,rx:ch.rx*0.7,ry:ch.ry*0.7,fill:chi%3===0?'#E8C840':'#D4A830',stroke:'#B08820','stroke-width':0.5,opacity:0.9,transform:'rotate('+ch.rot+','+(chipsCX+ch.dx)+','+(chipsCY+ch.dy)+')'}));
+    chipsG.appendChild(svgEl('ellipse',{cx:chipsCX+ch.dx*1.2,cy:chipsCY+ch.dy*1.2,rx:ch.rx*1.1,ry:ch.ry*1.1,fill:chi%3===0?'#E8C840':'#D4A830',stroke:'#B08820','stroke-width':0.5,opacity:0.9,transform:'rotate('+ch.rot+','+(chipsCX+ch.dx*1.2)+','+(chipsCY+ch.dy*1.2)+')'}));
   }
   for(var cbi=0;cbi<5;cbi++){
     chipsG.appendChild(svgEl('circle',{cx:chipsCX-10+cbi*8,cy:chipsCY-5+cbi*4,r:2+Math.random()*2,fill:'#A07820',opacity:0.4}));
@@ -808,25 +803,42 @@ a{color:inherit;text-decoration:none}
       setPhase('FRESH BAKED ROLL');
     }
 
-    // ── 3. V-SHAPE BREAD OPENING (15-22%) ──
-    // Bread opens like a book hinged at back edge
+    // ── 3. V-SHAPE BREAD OPENING with KNIFE (15-22%) ──
+    // Knife slices along the bread, then bread opens like a book
     if(p>=0.15&&p<0.57){
       var sliceP=clamp((p-0.15)/0.07,0,1);
+
+      // Knife appears and slices along the bread (first 40% of phase)
+      if(sliceP<0.5){
+        gKnife.setAttribute('opacity',String(ease3(clamp(sliceP/0.15,0,1))));
+        // Knife slides from left to right along the bread
+        var kSlideP=ease3(clamp(sliceP/0.45,0,1));
+        var kStartX=subX-knifeX+30;
+        var kEndX=subX+subW-knifeX-30;
+        var kSlideX=kStartX+(kEndX-kStartX)*kSlideP;
+        gKnife.setAttribute('transform','translate('+kSlideX+',-20)');
+      } else {
+        // Knife fades after slice
+        var knifeFade=1-ease3(clamp((sliceP-0.5)/0.2,0,1));
+        gKnife.setAttribute('opacity',String(knifeFade));
+        gKnife.setAttribute('transform','translate('+(subX+subW-knifeX-30)+',-20)');
+      }
 
       // Whole bread fades out
       if(sliceP<0.4){
         gBread.setAttribute('opacity',String(1-ease3(clamp(sliceP/0.3,0,1))));
       }
 
-      gVBread.setAttribute('opacity',String(ease3(clamp(sliceP/0.4,0,1))));
+      // V-bread fades in after knife passes
+      var vFadeIn=ease3(clamp((sliceP-0.2)/0.4,0,1));
+      gVBread.setAttribute('opacity',String(vFadeIn));
 
       // Interior panel grows visible (the V backdrop)
-      var panelOpacity=ease3(clamp((sliceP-0.2)/0.5,0,1));
+      var panelOpacity=ease3(clamp((sliceP-0.3)/0.5,0,1));
       interiorPanel.setAttribute('opacity',String(panelOpacity));
 
-      // Top bread rotates upward from back hinge
-      // Animate: starts flat (transform=''), ends rotated up
-      var openAmount=ease3(sliceP);
+      // Top bread rotates upward from back hinge (after knife passes)
+      var openAmount=ease3(clamp((sliceP-0.3)/0.7,0,1));
       var topLift=-(vOpenH-subH/2)*openAmount;
       var topSkew=3*openAmount;
       topBread.setAttribute('transform','translate(0,'+topLift+') skewY('+topSkew+')');
