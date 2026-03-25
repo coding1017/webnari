@@ -587,21 +587,6 @@ a{color:inherit;text-decoration:none}
   // Warm glow on ceiling
   gOvenScene.appendChild(svgEl('rect',{x:0,y:0,width:vbW,height:vbH*0.2,fill:'#FF4400',opacity:0.06}));
 
-  // Floor flames — underneath the pizza, pointing upward
-  var ovenFloorFlames=[];
-  for(var offi=0;offi<6;offi++){
-    var offx=ovenPizzaCx-ovenPizzaR*0.7+offi*((ovenPizzaR*1.4)/(6-1));
-    var offH=25+Math.random()*20;
-    var offBase=ovenFloorY;
-    var offPath='M'+(offx-6)+' '+offBase+
-      ' Q'+(offx-8)+' '+(offBase-offH*0.4)+' '+(offx-1)+' '+(offBase-offH*0.8)+
-      ' Q'+offx+' '+(offBase-offH)+' '+(offx+1)+' '+(offBase-offH*0.75)+
-      ' Q'+(offx+8)+' '+(offBase-offH*0.35)+' '+(offx+6)+' '+offBase+' Z';
-    var offl=svgEl('path',{d:offPath,fill:'url(#flameGrad)',opacity:0.7});
-    gOvenScene.appendChild(offl);
-    ovenFloorFlames.push(offl);
-  }
-
   // Embers on floor
   var ovenEmbers=[];
   for(var oei=0;oei<12;oei++){
@@ -623,19 +608,26 @@ a{color:inherit;text-decoration:none}
   gOvenPizzaRaw.appendChild(svgEl('ellipse',{cx:ovenPizzaCx,cy:ovenPizzaCy,rx:ovenPizzaR,ry:ovenPizzaR*0.55,fill:'#E8D5A8',stroke:'#C8A868','stroke-width':1.5}));
   gOvenPizzaRaw.appendChild(svgEl('ellipse',{cx:ovenPizzaCx,cy:ovenPizzaCy,rx:ovenPizzaR,ry:ovenPizzaR*0.55,fill:'none',stroke:'#D4B878','stroke-width':8,opacity:0.4}));
   gOvenPizzaRaw.appendChild(svgEl('ellipse',{cx:ovenPizzaCx,cy:ovenPizzaCy,rx:ovenPizzaSauceR,ry:ovenPizzaSauceR*0.55,fill:'#B02020',opacity:0.9}));
-  // Toppings: 18 mozz, 10 pepperoni, 8 basil = 36 total
-  for(var oti=0;oti<36;oti++){
-    var otAngle=Math.random()*Math.PI*2;
-    var otDist=Math.random()*ovenPizzaSauceR*0.85;
-    var otx=ovenPizzaCx+Math.cos(otAngle)*otDist;
-    var oty=ovenPizzaCy+Math.sin(otAngle)*otDist*0.55;
-    if(oti<18){
-      gOvenPizzaRaw.appendChild(svgEl('ellipse',{cx:otx,cy:oty,rx:8+Math.random()*6,ry:5+Math.random()*3,fill:'#FFF5E0',opacity:0.8}));
-    } else if(oti<28){
-      gOvenPizzaRaw.appendChild(svgEl('ellipse',{cx:otx,cy:oty,rx:5+Math.random()*2,ry:3+Math.random()*1.5,fill:'#8B0000',opacity:0.85}));
-    } else {
-      gOvenPizzaRaw.appendChild(svgEl('ellipse',{cx:otx,cy:oty,rx:5+Math.random()*2,ry:3+Math.random(),fill:'#228B22',opacity:0.7}));
-    }
+  // Grid-based cheese for full coverage, then pepperoni and basil on top
+  // Cheese layer first — covers 85% of sauce area
+  for(var omci=0;omci<40;omci++){
+    var omcAngle=Math.random()*Math.PI*2;
+    var omcDist=Math.random()*ovenPizzaSauceR*0.92;
+    var omcx=ovenPizzaCx+Math.cos(omcAngle)*omcDist;
+    var omcy=ovenPizzaCy+Math.sin(omcAngle)*omcDist*0.55;
+    gOvenPizzaRaw.appendChild(svgEl('ellipse',{cx:omcx,cy:omcy,rx:10+Math.random()*8,ry:6+Math.random()*4,fill:'#FFF5E0',opacity:0.75}));
+  }
+  // Pepperoni on top
+  for(var oppi=0;oppi<12;oppi++){
+    var oppAngle=Math.random()*Math.PI*2;
+    var oppDist=Math.random()*ovenPizzaSauceR*0.85;
+    gOvenPizzaRaw.appendChild(svgEl('ellipse',{cx:ovenPizzaCx+Math.cos(oppAngle)*oppDist,cy:ovenPizzaCy+Math.sin(oppAngle)*oppDist*0.55,rx:5+Math.random()*2,ry:3+Math.random()*1.5,fill:'#8B0000',opacity:0.85}));
+  }
+  // Basil leaves
+  for(var obli=0;obli<10;obli++){
+    var oblAngle=Math.random()*Math.PI*2;
+    var oblDist=Math.random()*ovenPizzaSauceR*0.8;
+    gOvenPizzaRaw.appendChild(svgEl('ellipse',{cx:ovenPizzaCx+Math.cos(oblAngle)*oblDist,cy:ovenPizzaCy+Math.sin(oblAngle)*oblDist*0.55,rx:5+Math.random()*2,ry:3+Math.random(),fill:'#228B22',opacity:0.7}));
   }
   gOvenScene.appendChild(gOvenPizzaRaw);
 
@@ -653,26 +645,47 @@ a{color:inherit;text-decoration:none}
       rx:3+Math.random()*3,ry:2+Math.random()*2,fill:'#3A1A00',opacity:0.45
     }));
   }
-  // Cooked toppings: 18 mozz, 10 pepperoni, 8 basil = 36
-  for(var cti=0;cti<36;cti++){
-    var ctAngle=Math.random()*Math.PI*2;
-    var ctDist=Math.random()*ovenPizzaSauceR*0.85;
-    var ctx2=ovenPizzaCx+Math.cos(ctAngle)*ctDist;
-    var cty2=ovenPizzaCy+Math.sin(ctAngle)*ctDist*0.55;
-    if(cti<18){
-      gOvenPizzaCooked.appendChild(svgEl('ellipse',{cx:ctx2,cy:cty2,rx:8+Math.random()*6,ry:5+Math.random()*3,fill:'#FFF8DC',opacity:0.7}));
-      if(Math.random()>0.4) gOvenPizzaCooked.appendChild(svgEl('ellipse',{cx:ctx2+2,cy:cty2,rx:2,ry:1,fill:'#8B6914',opacity:0.3}));
-    } else if(cti<28){
-      gOvenPizzaCooked.appendChild(svgEl('ellipse',{cx:ctx2,cy:cty2,rx:5+Math.random()*2,ry:3+Math.random()*1.5,fill:'#7A0000',opacity:0.85}));
-    } else {
-      gOvenPizzaCooked.appendChild(svgEl('ellipse',{cx:ctx2,cy:cty2,rx:5+Math.random()*2,ry:3+Math.random(),fill:'#1A6B1A',opacity:0.65}));
-    }
+  // Cooked cheese — melted, browned, full coverage
+  for(var cmci=0;cmci<40;cmci++){
+    var cmcAngle=Math.random()*Math.PI*2;
+    var cmcDist=Math.random()*ovenPizzaSauceR*0.92;
+    var cmcx=ovenPizzaCx+Math.cos(cmcAngle)*cmcDist;
+    var cmcy=ovenPizzaCy+Math.sin(cmcAngle)*cmcDist*0.55;
+    gOvenPizzaCooked.appendChild(svgEl('ellipse',{cx:cmcx,cy:cmcy,rx:10+Math.random()*8,ry:6+Math.random()*4,fill:'#FFF8DC',opacity:0.7}));
+    if(Math.random()>0.4) gOvenPizzaCooked.appendChild(svgEl('ellipse',{cx:cmcx+2,cy:cmcy,rx:2,ry:1,fill:'#8B6914',opacity:0.3}));
+  }
+  // Cooked pepperoni
+  for(var cppi=0;cppi<12;cppi++){
+    var cppAngle=Math.random()*Math.PI*2;
+    var cppDist=Math.random()*ovenPizzaSauceR*0.85;
+    gOvenPizzaCooked.appendChild(svgEl('ellipse',{cx:ovenPizzaCx+Math.cos(cppAngle)*cppDist,cy:ovenPizzaCy+Math.sin(cppAngle)*cppDist*0.55,rx:5+Math.random()*2,ry:3+Math.random()*1.5,fill:'#7A0000',opacity:0.85}));
+  }
+  // Wilted basil
+  for(var cbli=0;cbli<10;cbli++){
+    var cblAngle=Math.random()*Math.PI*2;
+    var cblDist=Math.random()*ovenPizzaSauceR*0.8;
+    gOvenPizzaCooked.appendChild(svgEl('ellipse',{cx:ovenPizzaCx+Math.cos(cblAngle)*cblDist,cy:ovenPizzaCy+Math.sin(cblAngle)*cblDist*0.55,rx:5+Math.random()*2,ry:3+Math.random(),fill:'#1A6B1A',opacity:0.65}));
   }
   gOvenScene.appendChild(gOvenPizzaCooked);
 
   // Ambient warm glow overlay (pulses during baking)
   var ovenGlowRect=svgEl('rect',{x:0,y:0,width:vbW,height:vbH,fill:'#FF4400',opacity:0,rx:0});
   gOvenScene.appendChild(ovenGlowRect);
+
+  // Floor flames — underneath the pizza, pointing upward (must be after pizza vars)
+  var ovenFloorFlames=[];
+  for(var offi=0;offi<6;offi++){
+    var offx=ovenPizzaCx-ovenPizzaR*0.7+offi*((ovenPizzaR*1.4)/(6-1));
+    var offH=25+Math.random()*20;
+    var offBase=ovenFloorY;
+    var offPath='M'+(offx-6)+' '+offBase+
+      ' Q'+(offx-8)+' '+(offBase-offH*0.4)+' '+(offx-1)+' '+(offBase-offH*0.8)+
+      ' Q'+offx+' '+(offBase-offH)+' '+(offx+1)+' '+(offBase-offH*0.75)+
+      ' Q'+(offx+8)+' '+(offBase-offH*0.35)+' '+(offx+6)+' '+offBase+' Z';
+    var offl=svgEl('path',{d:offPath,fill:'url(#flameGrad)',opacity:0.7});
+    gOvenScene.appendChild(offl);
+    ovenFloorFlames.push(offl);
+  }
 
   svg.appendChild(gOvenScene);
 
@@ -732,9 +745,7 @@ a{color:inherit;text-decoration:none}
       fill:'#1A6B1A',stroke:'#145214','stroke-width':0.3,opacity:0.7
     }));
   }
-  svg.appendChild(gCooked_g);
-
-  // ─── 13. PIZZA PAN ───
+  // ─── 13. PIZZA PAN (must be before cooked pizza so pizza renders ON TOP) ───
   var gPanEl=svgEl('g',{opacity:0});
   var panR=pizzaR+20;
   // Shadow
@@ -753,6 +764,7 @@ a{color:inherit;text-decoration:none}
     }));
   }
   svg.appendChild(gPanEl);
+  svg.appendChild(gCooked_g);
 
   // ─── 14. PIZZA CUTTER ───
   var gCutter=svgEl('g',{opacity:0});
