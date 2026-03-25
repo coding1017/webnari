@@ -369,10 +369,13 @@ a{color:inherit;text-decoration:none}
   // ─── 6. MOZZARELLA PIECES ───
   var gMozz_g=svgEl('g',{opacity:0});
   var mozzPieces=[];
-  var mozzCount=isMobile?40:28;
+  var mozzCount=isMobile?52:36;
   for(var mzi=0;mzi<mozzCount;mzi++){
     var mza=mzi*Math.PI*2/mozzCount+Math.random()*0.4;
-    var mzd=20+Math.random()*(sauceR-35);
+    // Bias some pieces toward top-left and bottom-right quadrants
+    if(mzi%5===0) mza=Math.PI*0.75+Math.random()*0.5; // top-left
+    if(mzi%5===1) mza=-Math.PI*0.25+Math.random()*0.5; // bottom-right
+    var mzd=15+Math.random()*(sauceR-25);
     var mzx=cx+Math.cos(mza)*mzd;
     var mzy=cy+Math.sin(mza)*mzd;
     var mzg=svgEl('g',{opacity:0});
@@ -413,10 +416,13 @@ a{color:inherit;text-decoration:none}
   // ─── 8. PEPPERONI ───
   var gPep_g=svgEl('g',{opacity:0});
   var pepSlices=[];
-  var pepCount=isMobile?26:18;
+  var pepCount=isMobile?34:24;
   for(var ppi=0;ppi<pepCount;ppi++){
     var ppa=ppi*Math.PI*2/pepCount+Math.random()*0.5;
-    var ppd=15+Math.random()*(sauceR-25);
+    // Bias some toward center and bottom-center
+    if(ppi%4===0) { ppa=Math.PI*0.4+Math.random()*0.3; } // bottom-center
+    if(ppi%4===1) { ppa=Math.PI*0.5+Math.random()*0.2; } // bottom
+    var ppd=10+Math.random()*(sauceR-20);
     var ppx=cx+Math.cos(ppa)*ppd;
     var ppy=cy+Math.sin(ppa)*ppd;
     var ppR=10+Math.random()*4;
@@ -444,7 +450,7 @@ a{color:inherit;text-decoration:none}
   // ─── 9. BASIL LEAVES ───
   var gBasil=svgEl('g',{opacity:0});
   var basilLeaves=[];
-  var basilCount=isMobile?8:5;
+  var basilCount=isMobile?16:10;
   for(var bli=0;bli<basilCount;bli++){
     var bla=bli*Math.PI*2/basilCount+0.5+Math.random()*0.5;
     var bld=sauceR*0.3+Math.random()*sauceR*0.5;
@@ -472,7 +478,7 @@ a{color:inherit;text-decoration:none}
 
   // ─── 9b. OREGANO FLAKES ───
   var oreganoFlakes=[];
-  var oreganoCount=isMobile?80:50;
+  var oreganoCount=isMobile?140:90;
   for(var oi=0;oi<oreganoCount;oi++){
     var oa=Math.random()*Math.PI*2;
     var od=Math.random()*sauceR;
@@ -853,34 +859,34 @@ a{color:inherit;text-decoration:none}
         gPin_g.setAttribute('opacity',String(descP));
         gPin_g.setAttribute('transform','translate(0,'+((1-descP)*-120)+')');
       }
-      // 3b: Pin rolls back & forth, ball squashes to oval (15-50%)
+      // 3b: Pin rolls up & down over the ball, ball squashes flat (15-50%)
       else if(stretchP<0.50){
         setPhase('ROLLING THE DOUGH');
         var rollPhase=(stretchP-0.15)/0.35;
         gDoughBall.setAttribute('opacity','1');
         gPin_g.setAttribute('opacity','1');
-        // Pin oscillates left-right (2 full passes)
-        var rollOsc=Math.sin(rollPhase*Math.PI*4);
-        var rollRange=isMobile?100:70;
-        gPin_g.setAttribute('transform','translate('+(rollOsc*rollRange)+',0)');
-        // Ball gradually squashes: round → wide oval
+        // Pin oscillates up-down (3 rolling passes over the ball)
+        var rollOsc=Math.sin(rollPhase*Math.PI*6);
+        var rollRange=isMobile?50:35;
+        gPin_g.setAttribute('transform','translate(0,'+(rollOsc*rollRange)+')');
+        // Ball gradually squashes: round → flat wide oval
         var squashAmt=ease3(rollPhase);
-        gDoughBall.setAttribute('transform','scale('+(1+squashAmt*0.7)+','+(1-squashAmt*0.35)+')');
+        gDoughBall.setAttribute('transform','scale('+(1+squashAmt*0.8)+','+(1-squashAmt*0.4)+')');
       }
-      // 3c: Pin fades out, oval stretches into circular disc (50-80%)
+      // 3c: Pin fades out, flat oval expands into circular disc from center (50-80%)
       else if(stretchP<0.80){
         setPhase('STRETCHING THE DOUGH');
         var morphP=ease3((stretchP-0.50)/0.30);
-        // Oval dough ball fades out as disc fades in
+        // Flat oval dough ball fades out as disc fades in
         gDoughBall.setAttribute('opacity',String(1-morphP));
-        gDoughBall.setAttribute('transform','scale(1.7,0.65)');
-        // Pin lifts away
+        gDoughBall.setAttribute('transform','scale('+(1.8+morphP*0.2)+','+(0.6-morphP*0.1)+')');
+        // Pin lifts away upward
         var pinFade=ease3(clamp((stretchP-0.50)/0.12,0,1));
         gPin_g.setAttribute('opacity',String(1-pinFade));
-        gPin_g.setAttribute('transform','translate(0,'+(pinFade*-60)+')');
-        // Disc grows from small oval to full circle
+        gPin_g.setAttribute('transform','translate(0,'+(pinFade*-80)+')');
+        // Disc expands from center — starts tiny, grows to full size
         gDisc.setAttribute('opacity',String(morphP));
-        gDisc.setAttribute('transform','scale('+(0.4+morphP*0.6)+')');
+        gDisc.setAttribute('transform','scale('+(0.15+morphP*0.85)+')');
       }
       // 3d: Disc settles at full size (80-100%)
       else {
@@ -939,11 +945,14 @@ a{color:inherit;text-decoration:none}
           sauceDotsArr[sdti].setAttribute('opacity',String(sdtP2*0.3));
         }
       }
-      // 4d: Ladle exits upward (80-100%)
+      // 4d: Ladle exits off-screen to the right (80-100%)
       else {
         var exitP2=ease3((sauceP-0.80)/0.20);
-        gLadle.setAttribute('opacity',String(1-exitP2));
-        gLadle.setAttribute('transform','translate('+(cx-ladleX)+','+(cy-20-ladleY-exitP2*120)+')');
+        gLadle.setAttribute('opacity',String(1-exitP2*0.8));
+        // Move ladle from its last spiral position off to the right
+        var exitOffX=sauceR*0.7+exitP2*400;
+        var exitOffY=-exitP2*60;
+        gLadle.setAttribute('transform','translate('+(cx+exitOffX-ladleX)+','+(cy+exitOffY-ladleY)+') rotate('+(exitP2*30)+','+ladleX+','+ladleY+')');
         showSauceFull();
       }
     }
@@ -956,7 +965,7 @@ a{color:inherit;text-decoration:none}
 
       gMozz_g.setAttribute('opacity','1');
       for(var mzi2=0;mzi2<mozzPieces.length;mzi2++){
-        var mzProg=ease3(clamp((mozzP-mzi2*0.015)/0.2,0,1));
+        var mzProg=ease3(clamp((mozzP-mzi2*0.01)/0.2,0,1));
         mozzPieces[mzi2].setAttribute('opacity',String(mzProg));
         mozzPieces[mzi2].setAttribute('transform','translate(0,'+(1-mzProg)*-15+')');
       }
