@@ -19,6 +19,7 @@ A **Website-as-a-Service (WaaS)** platform called **Webnari**. The agency landin
 | Plumber | **FlowPro** | `FlowPro.html` | 6 subpages | Water blue `#0EA5E9` + deep navy | (786) 555-0200 |
 | Pest Control | **PestPro** | `pestpro.html` | standalone | Green + dark | — |
 | Roofing | **RoofPro** | `roofpro.html` | standalone | Slate/Red `#E63946` + dark navy | (305) 555-0300 |
+| E-commerce | **Wook Wear** | `wookwear.html` | 3 subpages | Gradient pink/purple/cyan + deep purple-black | — |
 
 ### VoltPro Subpages (electrician)
 `panel-upgrades.html`, `ev-charger.html`, `home-rewiring.html`, `smart-home.html`, `commercial.html`, `emergency-service.html`, `about.html`, `team.html`, `blog.html`, `reviews.html`, `privacy.html`, `contact.html`
@@ -28,6 +29,31 @@ A **Website-as-a-Service (WaaS)** platform called **Webnari**. The agency landin
 
 ### FlowPro Subpages (plumber)
 `drain-cleaning.html`, `water-heaters.html`, `leak-detection.html`, `repiping.html`, `bathroom-remodeling.html`, `emergency-plumbing.html`
+
+### Wook Wear Subpages (e-commerce)
+`wookwear-shop.html`, `wookwear-about.html`, `wookwear-contact.html`
+
+## Wook Wear Design Tokens (wookwear.html reference)
+```css
+--black: #08060E; --dark: #0E0B18; --surface: #141024;
+--surface2: #1A1530; --border: #2A2244;
+--pink: #FF2D9B; --pink2: #FF6BBF;
+--purple: #A855F7; --purple2: #C084FC;
+--neon: #39FF14; --cyan: #00F0FF; --orange: #FF6B2B;
+--white: #F8F0FF; --muted: #7A6A94; --text: #B8A8D4;
+--gradient: linear-gradient(135deg, #FF2D9B, #A855F7, #00F0FF);
+```
+
+## Wook Wear Notes
+- **Brand:** Wook Wear by Meesh (@wook.wear on Instagram, 6.8k followers)
+- **Products:** Handmade pouches, crossbody bags, display mats, buddy pouches
+- **Aesthetic:** Psychedelic, maximalist, festival/wook culture, checkerboard patterns, tie-dye
+- **E-commerce:** Full cart system using localStorage + vanilla JS. Stripe Payment Links for checkout (no backend).
+- **Nav:** E-commerce style (Shop, About, Drops, Contact, cart icon) — NO service dropdowns or 24/7 badge
+- **Sales model:** Drop-based (#wookwearwednesday), one-of-a-kind pieces
+- **Existing domain:** wookwearshop.com (currently GoDaddy placeholder, can point to Webnari later)
+- **Hero placeholder:** `.hero-placeholder` wrapper on wookwear.html ready for future parallax swap
+- **Parallax concept (future):** Sewing machine stitching a pouch together, thread pulling, button eyes snapping on, psychedelic glow finale
 
 ## Templates Planned (not yet built)
 - **LockPro** — Locksmith — purple/gold palette

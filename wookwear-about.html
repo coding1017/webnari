@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About Meesh | Wook Wear</title>
+<meta name="description" content="Meet Meesh, the maker behind Wook Wear. Handmade pouches, bags, and accessories crafted with love from the PNW.">
+<link rel="canonical" href="https://webnari.io/wookwear-about.html">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://webnari.io/wookwear-about.html">
+<meta property="og:title" content="About Meesh | Wook Wear">
+<meta property="og:description" content="Meet Meesh, the maker behind Wook Wear. Handmade pouches, bags & accessories.">
+<meta property="og:site_name" content="Wook Wear">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="About Meesh | Wook Wear">
+<meta name="twitter:description" content="Meet the maker behind Wook Wear.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ─── TOKENS ──────────────────────────────────────────────────────────────── */
+:root {
+  --black: #08060E; --dark: #0E0B18; --surface: #141024;
+  --surface2: #1A1530; --border: #2A2244;
+  --pink: #FF2D9B; --pink2: #FF6BBF;
+  --purple: #A855F7; --purple2: #C084FC;
+  --neon: #39FF14; --cyan: #00F0FF; --orange: #FF6B2B;
+  --white: #F8F0FF; --muted: #7A6A94; --text: #B8A8D4;
+  --gradient: linear-gradient(135deg, #FF2D9B, #A855F7, #00F0FF);
+  --font-head: 'Barlow Condensed', sans-serif;
+  --font-body: 'Barlow', sans-serif;
+  --radius: 12px; --radius-lg: 20px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-body); background: var(--black); color: var(--text); overflow-x: hidden; line-height: 1.6; }
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+
+body::before {
+  content: ''; position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.7' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.02'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 9999;
+}
+
+.container { max-width: 1200px; margin: 0 auto; padding: 0 40px; }
+.eyebrow {
+  display: flex; align-items: center; gap: 12px;
+  font-family: var(--font-head); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--pink); margin-bottom: 20px;
+}
+.eyebrow::before { content: ''; width: 32px; height: 2px; background: var(--gradient); flex-shrink: 0; }
+.section-heading {
+  font-family: var(--font-head); font-weight: 900; font-size: clamp(36px, 5vw, 56px);
+  line-height: 1.05; color: var(--white); margin-bottom: 20px;
+}
+.section-heading .accent {
+  background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.section { padding: 96px 0; }
+
+/* ─── BUTTONS ────────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 28px; font-family: var(--font-head); font-size: 14px; font-weight: 800;
+  letter-spacing: 0.08em; text-transform: uppercase; border-radius: var(--radius);
+  transition: all 0.25s; border: none; cursor: pointer;
+}
+.btn-primary {
+  background: var(--gradient); color: var(--white);
+  box-shadow: 0 0 24px rgba(255,45,155,0.2);
+}
+.btn-primary:hover { box-shadow: 0 0 40px rgba(255,45,155,0.35); transform: translateY(-2px); }
+.btn-outline {
+  background: transparent; color: var(--white);
+  border: 1px solid var(--border);
+}
+.btn-outline:hover { border-color: var(--purple); color: var(--purple2); }
+.btn-sm { padding: 10px 20px; font-size: 12px; }
+
+/* ─── NAV ────────────────────────────────────────────────────────────────── */
+.site-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000; height: 68px;
+  background: rgba(8,6,14,0.85); backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border-bottom: 1px solid rgba(255,45,155,0.08);
+}
+.nav-inner { max-width: 1200px; margin: 0 auto; height: 100%; display: flex; align-items: center; padding: 0 40px; }
+.nav-logo { font-family: var(--font-head); font-weight: 900; font-size: 22px; color: var(--white); letter-spacing: 0.06em; }
+.nav-logo .logo-accent {
+  background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.nav-links { display: flex; align-items: center; gap: 4px; margin-left: auto; }
+.nav-link {
+  display: flex; align-items: center; padding: 8px 16px; font-size: 14px; font-weight: 500;
+  color: var(--text); transition: color 0.15s; border-radius: var(--radius);
+}
+.nav-link:hover { color: var(--white); background: rgba(168,85,247,0.06); }
+.nav-link.active { color: var(--pink); }
+.nav-cart {
+  position: relative; display: flex; align-items: center; justify-content: center;
+  width: 42px; height: 42px; margin-left: 12px; border-radius: var(--radius);
+  transition: background 0.15s; cursor: pointer; background: none; border: none;
+}
+.nav-cart:hover { background: rgba(168,85,247,0.08); }
+.nav-cart svg { width: 22px; height: 22px; color: var(--text); transition: color 0.15s; }
+.nav-cart:hover svg { color: var(--white); }
+.cart-badge {
+  position: absolute; top: 2px; right: 2px; min-width: 18px; height: 18px;
+  background: var(--pink); color: var(--white); font-family: var(--font-head);
+  font-size: 10px; font-weight: 800; display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; padding: 0 4px;
+  opacity: 0; transform: scale(0.5); transition: all 0.2s;
+}
+.cart-badge.show { opacity: 1; transform: scale(1); }
+
+.hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; z-index: 1001; }
+.hamburger span { display: block; width: 24px; height: 2px; background: var(--white); transition: all 0.3s; }
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.mobile-menu {
+  position: fixed; top: 68px; right: -100%; width: min(360px,85vw); height: calc(100vh - 68px);
+  background: rgba(14,11,24,0.97); backdrop-filter: blur(20px);
+  border-left: 1px solid var(--border); z-index: 999; padding: 32px 28px;
+  overflow-y: auto; transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+.mobile-menu.open { right: 0; }
+.mob-section { margin-bottom: 28px; }
+.mob-section-label {
+  font-family: var(--font-head); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);
+  margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+}
+.mob-section a {
+  display: block; padding: 12px 0; font-size: 16px; color: var(--text);
+  border-bottom: 1px solid rgba(42,34,68,0.3); transition: color 0.15s;
+}
+.mob-section a:hover { color: var(--pink2); }
+.mob-cta {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 14px 24px; background: var(--gradient); color: var(--white);
+  font-family: var(--font-head); font-size: 14px; font-weight: 800;
+  letter-spacing: 0.08em; text-transform: uppercase; border-radius: var(--radius); margin-top: 16px;
+}
+
+/* ─── FOOTER ─────────────────────────────────────────────────────────────── */
+.site-footer { padding: 64px 0 32px; border-top: 1px solid var(--border); }
+.footer-grid {
+  display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 48px;
+}
+.footer-brand { font-family: var(--font-head); font-weight: 900; font-size: 20px; color: var(--white); margin-bottom: 12px; letter-spacing: 0.04em; }
+.footer-brand .logo-accent { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.footer-tagline { font-size: 14px; color: var(--muted); margin-bottom: 20px; }
+.footer-social { display: flex; gap: 12px; }
+.footer-social a {
+  width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; background: var(--surface); border: 1px solid var(--border);
+  color: var(--muted); transition: all 0.2s;
+}
+.footer-social a:hover { border-color: var(--pink); color: var(--pink); }
+.footer-social a svg { width: 16px; height: 16px; }
+.footer-heading {
+  font-family: var(--font-head); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);
+  margin-bottom: 16px;
+}
+.footer-links a { display: block; padding: 5px 0; font-size: 14px; color: var(--text); transition: color 0.15s; }
+.footer-links a:hover { color: var(--pink2); }
+.footer-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border);
+  font-size: 13px; color: var(--muted);
+}
+
+/* ─── SCROLL REVEAL ──────────────────────────────────────────────────────── */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ─── TOAST ──────────────────────────────────────────────────────────────── */
+.toast {
+  position: fixed; bottom: 24px; right: 24px; z-index: 10000;
+  padding: 14px 24px; background: var(--surface); border: 1px solid var(--pink);
+  border-radius: var(--radius); color: var(--white); font-family: var(--font-head);
+  font-size: 13px; font-weight: 700; letter-spacing: 0.06em;
+  transform: translateY(120%); transition: transform 0.3s ease;
+  box-shadow: 0 8px 32px rgba(255,45,155,0.2);
+}
+.toast.show { transform: translateY(0); }
+
+/* ─── CART SIDEBAR ───────────────────────────────────────────────────────── */
+.cart-overlay {
+  position: fixed; inset: 0; background: rgba(8,6,14,0.6); z-index: 2000;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s;
+}
+.cart-overlay.open { opacity: 1; pointer-events: auto; }
+.cart-sidebar {
+  position: fixed; top: 0; right: -420px; width: min(400px, 90vw); height: 100vh;
+  background: var(--dark); border-left: 1px solid var(--border); z-index: 2001;
+  display: flex; flex-direction: column; transition: right 0.35s cubic-bezier(0.4,0,0.2,1);
+}
+.cart-sidebar.open { right: 0; }
+.cart-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 24px; border-bottom: 1px solid var(--border);
+}
+.cart-title { font-family: var(--font-head); font-weight: 900; font-size: 20px; color: var(--white); letter-spacing: 0.04em; }
+.cart-close {
+  width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+  background: none; border: 1px solid var(--border); border-radius: var(--radius);
+  color: var(--muted); cursor: pointer; transition: all 0.15s;
+}
+.cart-close:hover { border-color: var(--pink); color: var(--pink); }
+.cart-close svg { width: 18px; height: 18px; }
+.cart-items { flex: 1; overflow-y: auto; padding: 16px 24px; }
+.cart-empty {
+  text-align: center; padding: 48px 16px; color: var(--muted);
+  font-size: 14px;
+}
+.cart-empty svg { width: 48px; height: 48px; color: var(--border); margin-bottom: 16px; }
+.cart-item {
+  display: flex; gap: 14px; padding: 16px 0;
+  border-bottom: 1px solid rgba(42,34,68,0.3);
+}
+.cart-item-img {
+  width: 64px; height: 64px; border-radius: var(--radius); overflow: hidden; flex-shrink: 0;
+}
+.cart-item-details { flex: 1; }
+.cart-item-name { font-family: var(--font-head); font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 2px; }
+.cart-item-price { font-size: 13px; color: var(--purple2); margin-bottom: 8px; }
+.cart-item-qty {
+  display: flex; align-items: center; gap: 8px;
+}
+.qty-btn {
+  width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 6px;
+  color: var(--text); cursor: pointer; font-size: 14px; transition: all 0.15s;
+}
+.qty-btn:hover { border-color: var(--purple); color: var(--white); }
+.qty-num { font-family: var(--font-head); font-size: 14px; font-weight: 700; color: var(--white); min-width: 20px; text-align: center; }
+.cart-item-remove {
+  background: none; border: none; color: var(--muted); cursor: pointer; font-size: 12px;
+  font-family: var(--font-head); letter-spacing: 0.05em; transition: color 0.15s; margin-left: auto; align-self: flex-start;
+}
+.cart-item-remove:hover { color: var(--pink); }
+.cart-footer {
+  padding: 20px 24px; border-top: 1px solid var(--border);
+}
+.cart-subtotal {
+  display: flex; justify-content: space-between; margin-bottom: 16px;
+  font-family: var(--font-head); font-size: 16px; font-weight: 700; color: var(--white);
+}
+.cart-checkout {
+  width: 100%; padding: 14px; background: var(--gradient); color: var(--white);
+  font-family: var(--font-head); font-size: 14px; font-weight: 800;
+  letter-spacing: 0.1em; text-transform: uppercase; border: none; border-radius: var(--radius);
+  cursor: pointer; transition: all 0.2s;
+}
+.cart-checkout:hover { box-shadow: 0 0 32px rgba(255,45,155,0.3); }
+
+/* ─── PRODUCT PLACEHOLDERS (for cart rendering) ──────────────────────────── */
+.product-img-placeholder { display: flex; align-items: center; justify-content: center; font-family: var(--font-head); font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.3); }
+.product-img-placeholder.bg1 { background: linear-gradient(135deg, #FF2D9B, #A855F7); }
+.product-img-placeholder.bg2 { background: linear-gradient(135deg, #A855F7, #00F0FF); }
+.product-img-placeholder.bg3 { background: linear-gradient(135deg, #00F0FF, #39FF14); }
+.product-img-placeholder.bg4 { background: linear-gradient(135deg, #FF6B2B, #FF2D9B); }
+.badge-collection { background: rgba(168,85,247,0.15); color: var(--purple2); border: 1px solid rgba(168,85,247,0.3); }
+.product-img img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ─── ABOUT HERO ─────────────────────────────────────────────────────────── */
+.about-hero {
+  padding: 140px 0 64px; text-align: center; position: relative; overflow: hidden;
+  min-height: 50vh; display: flex; align-items: center; justify-content: center;
+}
+.about-hero-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 50%, rgba(255,45,155,0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 80% 30%, rgba(168,85,247,0.1) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 60% 80%, rgba(0,240,255,0.08) 0%, transparent 70%),
+    var(--black);
+  animation: meshDrift 12s ease-in-out infinite alternate;
+}
+@keyframes meshDrift {
+  0% { background-position: 0% 0%, 100% 0%, 50% 100%; }
+  100% { background-position: 10% 10%, 90% 10%, 40% 90%; }
+}
+.about-hero-content { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; }
+.about-hero .hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font-head); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--pink);
+  margin-bottom: 24px; padding: 8px 20px;
+  background: rgba(255,45,155,0.06); border: 1px solid rgba(255,45,155,0.15);
+  border-radius: 24px;
+}
+.about-hero .hero-eyebrow svg { width: 14px; height: 14px; }
+.about-hero-title {
+  font-family: var(--font-head); font-weight: 900;
+  font-size: clamp(48px, 8vw, 80px); line-height: 0.95;
+  color: var(--white); margin-bottom: 20px;
+}
+.about-hero-title .accent {
+  background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.about-hero-sub { font-size: 18px; color: var(--text); max-width: 480px; margin: 0 auto; line-height: 1.6; }
+
+/* ─── STORY SPLIT ────────────────────────────────────────────────────────── */
+.story-split {
+  display: grid; grid-template-columns: 1fr 1.2fr; gap: 64px; align-items: center;
+}
+.story-image {
+  aspect-ratio: 4/5; border-radius: var(--radius-lg); overflow: hidden;
+  background: linear-gradient(135deg, var(--surface), var(--surface2));
+  border: 1px solid var(--border); display: flex; align-items: center; justify-content: center;
+}
+.story-image-placeholder {
+  font-family: var(--font-head); font-size: 14px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+}
+.story-text h2 { margin-bottom: 24px; }
+.story-text p { color: var(--text); font-size: 16px; line-height: 1.7; margin-bottom: 20px; }
+
+/* ─── PROCESS TIMELINE ───────────────────────────────────────────────────── */
+.process-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 32px; margin-top: 48px;
+}
+.process-step { text-align: center; }
+.step-num {
+  width: 48px; height: 48px; border-radius: 50%; background: var(--gradient);
+  display: flex; align-items: center; justify-content: center; margin: 0 auto 20px;
+  font-family: var(--font-head); font-size: 18px; font-weight: 900; color: var(--white);
+}
+.step-icon { width: 40px; height: 40px; color: var(--purple2); margin: 0 auto 16px; }
+.step-heading {
+  font-family: var(--font-head); font-weight: 800; font-size: 18px;
+  color: var(--white); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px;
+}
+.step-desc { font-size: 14px; color: var(--text); line-height: 1.6; }
+
+/* ─── COLLAB SECTION ─────────────────────────────────────────────────────── */
+.collab-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; margin-top: 40px;
+}
+.collab-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 28px; display: flex; align-items: flex-start; gap: 16px; transition: border-color 0.3s;
+}
+.collab-card:hover { border-color: var(--purple); }
+.collab-avatar {
+  width: 56px; height: 56px; border-radius: 50%; flex-shrink: 0;
+  background: var(--gradient); display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-head); font-size: 20px; font-weight: 900; color: var(--white);
+}
+.collab-name { font-family: var(--font-head); font-weight: 700; font-size: 16px; color: var(--white); margin-bottom: 2px; }
+.collab-handle { font-size: 13px; color: var(--pink); margin-bottom: 8px; }
+.collab-desc { font-size: 14px; color: var(--text); line-height: 1.6; }
+
+/* ─── PRESS CALLOUT ──────────────────────────────────────────────────────── */
+.press-callout {
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 32px; border-radius: var(--radius-lg); text-align: center;
+  max-width: 640px; margin: 0 auto;
+}
+.press-callout-label {
+  font-family: var(--font-head); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px;
+}
+.press-callout-title {
+  font-family: var(--font-head); font-weight: 800; font-size: 20px;
+  color: var(--white); margin-bottom: 8px;
+}
+.press-callout-desc { font-size: 15px; color: var(--text); line-height: 1.6; }
+
+/* ─── CTA SECTION ────────────────────────────────────────────────────────── */
+.cta-section { text-align: center; }
+.cta-heading {
+  font-family: var(--font-head); font-weight: 900; font-size: clamp(28px, 4vw, 44px);
+  line-height: 1.1; color: var(--white); margin-bottom: 24px;
+}
+.cta-heading .accent {
+  background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.cta-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .nav-links { display: none; }
+  .hamburger { display: flex; }
+  .story-split { grid-template-columns: 1fr; gap: 40px; }
+  .process-grid { grid-template-columns: repeat(2, 1fr); }
+  .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+}
+@media (max-width: 768px) {
+  .container { padding: 0 20px; }
+  .nav-inner { padding: 0 20px; }
+  .section { padding: 64px 0; }
+  .about-hero { padding: 120px 20px 48px; }
+  .process-grid { grid-template-columns: 1fr 1fr; gap: 24px; }
+  .collab-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+  .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+}
+@media (max-width: 480px) {
+  .process-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+
+<body>
+<!-- ─── NAV ──────────────────────────────────────────────────────────────── -->
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a href="wookwear.html" class="nav-logo">WOOK <span class="logo-accent">WEAR</span></a>
+    <div class="nav-links">
+      <a href="wookwear-shop.html" class="nav-link">Shop</a>
+      <a href="wookwear-about.html" class="nav-link active">About</a>
+      <a href="wookwear.html#featured" class="nav-link">Drops</a>
+      <a href="wookwear-contact.html" class="nav-link">Contact</a>
+    </div>
+    <button class="nav-cart" id="cartToggle" aria-label="Shopping cart">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/>
+      </svg>
+      <span class="cart-badge" id="cartBadge">0</span>
+    </button>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mob-section">
+    <div class="mob-section-label">Menu</div>
+    <a href="wookwear-shop.html">Shop</a>
+    <a href="wookwear-about.html">About</a>
+    <a href="wookwear.html#featured">Drops</a>
+    <a href="wookwear-contact.html">Contact</a>
+  </div>
+  <div class="mob-section">
+    <div class="mob-section-label">Follow</div>
+    <a href="https://www.instagram.com/wook.wear" target="_blank" rel="noopener">Instagram @wook.wear</a>
+  </div>
+  <a href="wookwear-shop.html" class="mob-cta">Shop the Drop</a>
+</div>
+
+<!-- ─── CART SIDEBAR ─────────────────────────────────────────────────────── -->
+<div class="cart-overlay" id="cartOverlay"></div>
+<aside class="cart-sidebar" id="cartSidebar">
+  <div class="cart-header">
+    <span class="cart-title">YOUR CART</span>
+    <button class="cart-close" id="cartClose" aria-label="Close cart">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+  <div class="cart-items" id="cartItems"></div>
+  <div class="cart-footer" id="cartFooter" style="display:none;">
+    <div class="cart-subtotal">
+      <span>Subtotal</span>
+      <span id="cartSubtotal">$0.00</span>
+    </div>
+    <button class="cart-checkout" id="cartCheckout">Checkout</button>
+  </div>
+</aside>
+
+<!-- ─── TOAST ────────────────────────────────────────────────────────────── -->
+<div class="toast" id="toast"></div>
+
+<!-- ─── ABOUT HERO ───────────────────────────────────────────────────────── -->
+<section class="about-hero">
+  <div class="about-hero-bg"></div>
+  <div class="about-hero-content">
+    <div class="hero-eyebrow">
+      <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L9 7H2l5.5 4.5L5 17l7-4.5L19 17l-2.5-5.5L22 7h-7L12 2z"/></svg>
+      The Story
+    </div>
+    <h1 class="about-hero-title">Meet the <span class="accent">Maker</span></h1>
+    <p class="about-hero-sub">Every stitch, every cut, every detail is done by hand. This is Wook Wear, and it all starts with Meesh.</p>
+  </div>
+</section>
+
+<!-- ─── STORY SPLIT ──────────────────────────────────────────────────────── -->
+<section class="section" style="background: var(--dark);">
+  <div class="container">
+    <div class="story-split">
+      <div class="story-image reveal">
+        <span class="story-image-placeholder">Photo of Meesh</span>
+      </div>
+      <div class="story-text reveal reveal-delay-1">
+        <div class="eyebrow">The Maker</div>
+        <h2 class="section-heading">How It All <span class="accent">Started</span></h2>
+        <p>Wook Wear started the way most good things do: with a sewing machine, a pile of fabric, and a late-night idea that just wouldn't quit. Meesh had always been drawn to pattern-making and the feel of working with her hands, but it wasn't until she started making pouches for friends heading to festivals that things really clicked.</p>
+        <p>What began as Instagram drops and word-of-mouth sales quickly grew into something bigger. Festival-goers, collectors, and fellow makers started reaching out, and Wook Wear found its community. Rooted in the PNW and fueled by a deep love for festival culture and handmade goods, every piece is designed, hand-cut, and sewn by Meesh herself.</p>
+        <p>No two pieces are ever the same. That's not a limitation -- it's the whole point. Each creation carries its own personality, from the fabric selection to the final stitch. It's wearable art, made one piece at a time.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PROCESS TIMELINE ─────────────────────────────────────────────────── -->
+<section class="section">
+  <div class="container">
+    <div class="reveal" style="text-align:center;">
+      <div class="eyebrow" style="justify-content:center;">From Sketch to Stitch</div>
+      <h2 class="section-heading">How It's <span class="accent">Made</span></h2>
+    </div>
+    <div class="process-grid">
+      <div class="process-step reveal reveal-delay-1">
+        <div class="step-num">1</div>
+        <svg class="step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 3a2.85 2.85 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+        </svg>
+        <div class="step-heading">Design</div>
+        <p class="step-desc">Every piece starts as a sketch or a vision. Meesh draws patterns and picks fabrics that speak to her.</p>
+      </div>
+      <div class="process-step reveal reveal-delay-2">
+        <div class="step-num">2</div>
+        <svg class="step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><line x1="8.12" y1="3.88" x2="20.12" y2="15.88"/><line x1="3.88" y1="8.12" x2="15.88" y2="20.12"/>
+        </svg>
+        <div class="step-heading">Cut & Sew</div>
+        <p class="step-desc">Each piece is hand-cut and sewn on Meesh's trusty machine. No two cuts are ever the same.</p>
+      </div>
+      <div class="process-step reveal reveal-delay-3">
+        <div class="step-num">3</div>
+        <svg class="step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2l2.09 6.26L20 9.27l-4.91 3.82L16.18 20 12 16.77 7.82 20l1.09-6.91L4 9.27l5.91-1.01L12 2z"/>
+        </svg>
+        <div class="step-heading">Details</div>
+        <p class="step-desc">Snaps, zippers, piping, and patches are added by hand. The details make it special.</p>
+      </div>
+      <div class="process-step reveal reveal-delay-4">
+        <div class="step-num">4</div>
+        <svg class="step-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+        </svg>
+        <div class="step-heading">Ship with Love</div>
+        <p class="step-desc">Wrapped up with stickers and care, every order is packed like a gift.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── COLLAB SECTION ───────────────────────────────────────────────────── -->
+<section class="section" style="background: var(--dark);">
+  <div class="container">
+    <div class="reveal">
+      <div class="eyebrow">Better Together</div>
+      <h2 class="section-heading">The Collab <span class="accent">Crew</span></h2>
+      <p style="color: var(--text); font-size: 16px; line-height: 1.7; max-width: 560px; margin-bottom: 8px;">Wook Wear wouldn't be what it is without the incredible makers and creatives who inspire, collaborate, and push the craft forward. Here are some of the people who make the magic happen.</p>
+    </div>
+    <div class="collab-grid">
+      <div class="collab-card reveal reveal-delay-1">
+        <div class="collab-avatar">J</div>
+        <div>
+          <div class="collab-name">J Hudson</div>
+          <div class="collab-handle">@jhudson_tiedye</div>
+          <p class="collab-desc">Tie-dye artist extraordinaire. J creates the vibrant, one-of-a-kind dyed fabrics that give many Wook Wear pieces their signature color and energy.</p>
+        </div>
+      </div>
+      <div class="collab-card reveal reveal-delay-2">
+        <div class="collab-avatar">P</div>
+        <div>
+          <div class="collab-name">Power Pat</div>
+          <div class="collab-handle">@_powerpat</div>
+          <p class="collab-desc">Creative partner and hype squad. Pat brings fresh ideas, feedback, and energy to every drop. A key part of the Wook Wear universe.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── PRESS SECTION ────────────────────────────────────────────────────── -->
+<section class="section">
+  <div class="container">
+    <div class="reveal" style="text-align:center;">
+      <div class="eyebrow" style="justify-content:center;">In the Spotlight</div>
+      <h2 class="section-heading">As Seen <span class="accent">In</span></h2>
+    </div>
+    <div class="press-callout reveal reveal-delay-1" style="margin-top: 40px;">
+      <div class="press-callout-label">Featured In</div>
+      <div class="press-callout-title">Leafy Magazine</div>
+      <p class="press-callout-desc">Wook Wear was featured in Leafy Magazine for pushing the boundaries of handmade festival accessories. From one-of-a-kind pouches to bold display mats, the feature highlighted Meesh's commitment to craft and community.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── CTA SECTION ──────────────────────────────────────────────────────── -->
+<section class="section cta-section" style="background: var(--dark);">
+  <div class="container reveal">
+    <h2 class="cta-heading">Want to collab or<br>just <span class="accent">say hi</span>?</h2>
+    <div class="cta-btns">
+      <a href="wookwear-contact.html" class="btn btn-primary">Get in Touch</a>
+      <a href="https://www.instagram.com/wook.wear" target="_blank" rel="noopener" class="btn btn-outline">Follow on Instagram</a>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ───────────────────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">WOOK <span class="logo-accent">WEAR</span></div>
+        <div class="footer-tagline">Handmade pouches, bags, and accessories.<br>One of a kind, made with love by Meesh.</div>
+        <div class="footer-social">
+          <a href="https://www.instagram.com/wook.wear" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+          </a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-heading">Shop</div>
+        <div class="footer-links">
+          <a href="wookwear-shop.html?cat=pouches">Pouches</a>
+          <a href="wookwear-shop.html?cat=bags">Bags</a>
+          <a href="wookwear-shop.html?cat=mats">Mats</a>
+          <a href="wookwear-shop.html?cat=buddy">Buddy Pouches</a>
+          <a href="wookwear-shop.html">All Products</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-heading">Company</div>
+        <div class="footer-links">
+          <a href="wookwear-about.html">About Meesh</a>
+          <a href="wookwear-contact.html">Contact</a>
+          <a href="wookwear-contact.html#faq">FAQ</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-heading">Connect</div>
+        <div class="footer-links">
+          <a href="https://www.instagram.com/wook.wear" target="_blank" rel="noopener">Instagram</a>
+          <a href="mailto:hello@wookwear.com">hello@wookwear.com</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>Handmade in the PNW with love</span>
+      <span>&copy; 2026 Wook Wear. All rights reserved.</span>
+    </div>
+  </div>
+</footer>
+
+<script src="wookwear-data.js"></script>
+<script>
+/* ─── PRODUCT DATA (from shared data layer) ─────────────────────────────── */
+var WW_PRODUCTS = WookWearData.getProducts();
+
+/* ─── CART UI (uses WookWearData for logic) ──────────────────────────────── */
+function addToCart(id) {
+  var product = WookWearData.addToCart(id);
+  updateBadge();
+  showToast(product ? product.name + ' added to cart' : 'Added to cart');
+}
+function removeFromCart(id) {
+  WookWearData.removeFromCart(id);
+  updateBadge();
+  renderCartSidebar();
+}
+function updateQty(id, delta) {
+  WookWearData.updateQty(id, delta);
+  updateBadge();
+  renderCartSidebar();
+}
+function updateBadge() {
+  var badge = document.getElementById('cartBadge');
+  var count = WookWearData.getCartCount();
+  badge.textContent = count;
+  if (count > 0) badge.classList.add('show');
+  else badge.classList.remove('show');
+}
+
+function renderCartSidebar() {
+  var cart = WookWearData.getCart();
+  var itemsEl = document.getElementById('cartItems');
+  var footerEl = document.getElementById('cartFooter');
+
+  if (cart.length === 0) {
+    itemsEl.innerHTML = '<div class="cart-empty">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>' +
+      '<p>Your cart is empty</p><p style="color:var(--muted);font-size:13px;">Go find something you love!</p></div>';
+    footerEl.style.display = 'none';
+    return;
+  }
+
+  var html = '';
+  for (var i = 0; i < cart.length; i++) {
+    var product = WookWearData.getProductById(cart[i].id);
+    if (!product) continue;
+    html += '<div class="cart-item">' +
+      '<div class="cart-item-img">' + (product.img || (product.imgs && product.imgs[0]) ? '<img src="' + (product.img || product.imgs[0]) + '" alt="' + product.name + '" style="width:64px;height:64px;object-fit:cover;border-radius:8px;">' : '<div class="product-img-placeholder bg1" style="width:64px;height:64px;border-radius:8px;"></div>') + '</div>' +
+      '<div class="cart-item-details">' +
+        '<div class="cart-item-name">' + product.name + '</div>' +
+        '<div class="cart-item-price">$' + product.price.toFixed(2) + '</div>' +
+        '<div class="cart-item-qty">' +
+          '<button class="qty-btn" onclick="updateQty(\'' + product.id + '\', -1)">-</button>' +
+          '<span class="qty-num">' + cart[i].qty + '</span>' +
+          '<button class="qty-btn" onclick="updateQty(\'' + product.id + '\', 1)">+</button>' +
+        '</div>' +
+      '</div>' +
+      '<button class="cart-item-remove" onclick="removeFromCart(\'' + product.id + '\')">REMOVE</button>' +
+    '</div>';
+  }
+  itemsEl.innerHTML = html;
+  footerEl.style.display = 'block';
+  document.getElementById('cartSubtotal').textContent = '$' + WookWearData.getCartTotal().toFixed(2);
+}
+
+function openCart() {
+  renderCartSidebar();
+  document.getElementById('cartOverlay').classList.add('open');
+  document.getElementById('cartSidebar').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeCart() {
+  document.getElementById('cartOverlay').classList.remove('open');
+  document.getElementById('cartSidebar').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function showToast(msg) {
+  var toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(function() { toast.classList.remove('show'); }, 2200);
+}
+
+/* ─── EVENT LISTENERS ────────────────────────────────────────────────────── */
+document.addEventListener('DOMContentLoaded', function() {
+  updateBadge();
+
+  // Cart toggle
+  document.getElementById('cartToggle').addEventListener('click', openCart);
+  document.getElementById('cartClose').addEventListener('click', closeCart);
+  document.getElementById('cartOverlay').addEventListener('click', closeCart);
+
+  // Hamburger
+  var hamburger = document.getElementById('hamburger');
+  var mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', function() {
+    hamburger.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+  });
+
+  // Scroll reveal
+  var reveals = document.querySelectorAll('.reveal');
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  reveals.forEach(function(el) { observer.observe(el); });
+
+  // Close mobile menu on link click
+  var mobLinks = mobileMenu.querySelectorAll('a');
+  mobLinks.forEach(function(link) {
+    link.addEventListener('click', function() {
+      hamburger.classList.remove('open');
+      mobileMenu.classList.remove('open');
+    });
+  });
+});
+</script>
+</body>
+</html>
