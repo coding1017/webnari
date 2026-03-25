@@ -594,6 +594,84 @@ td.bold { color: var(--white); font-weight: 600; }
 }
 .cat-empty svg { width: 32px; height: 32px; margin-bottom: 10px; opacity: 0.3; }
 
+/* ── CATEGORY CARDS GRID (Level 1) ──────────────────── */
+.cat-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+.cat-card {
+  background: linear-gradient(160deg, var(--surface2) 0%, var(--surface) 100%);
+  border: 1px solid var(--border); border-radius: var(--radius-xl);
+  padding: 28px 24px; position: relative; overflow: hidden;
+  cursor: pointer; transition: all 0.25s;
+}
+.cat-card:hover {
+  border-color: var(--_cat-border, var(--border3));
+  transform: translateY(-4px);
+  box-shadow: 0 16px 48px rgba(0,0,0,0.4), 0 0 24px var(--_cat-glow, rgba(123,111,255,0.15));
+}
+.cat-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: var(--_cat-color, var(--indigo)); border-radius: 3px 3px 0 0;
+}
+.cat-card-glow {
+  position: absolute; top: -30px; right: -30px;
+  width: 140px; height: 140px; border-radius: 50%;
+  background: var(--_cat-color, var(--indigo));
+  opacity: 0.06; filter: blur(40px); pointer-events: none;
+  transition: opacity 0.25s;
+}
+.cat-card:hover .cat-card-glow { opacity: 0.12; }
+.cat-card-icon {
+  width: 48px; height: 48px; border-radius: 13px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--_cat-bg, var(--indigo-bg));
+  border: 1px solid var(--_cat-border, var(--indigo-border));
+  color: var(--_cat-color, var(--indigo2));
+  margin-bottom: 16px;
+}
+.cat-card-icon svg { width: 24px; height: 24px; }
+.cat-card h3 {
+  font-size: 16px; font-weight: 800; color: var(--white);
+  letter-spacing: -0.02em; margin-bottom: 4px;
+}
+.cat-card p { font-size: 12.5px; color: var(--muted); margin-bottom: 16px; line-height: 1.4; }
+.cat-card-footer {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.cat-card-count {
+  font-size: 12px; font-weight: 700; color: var(--text);
+}
+.cat-card-count strong { color: var(--_cat-color, var(--indigo)); }
+.cat-card-arrow {
+  width: 28px; height: 28px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06);
+  color: var(--muted); font-size: 14px; transition: all 0.2s;
+}
+.cat-card:hover .cat-card-arrow {
+  background: var(--_cat-bg, var(--indigo-bg));
+  border-color: var(--_cat-border, var(--indigo-border));
+  color: var(--_cat-color, var(--indigo2));
+}
+/* ── BACK BUTTON ────────────────────────────────────── */
+.cat-back {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 13px; font-weight: 600; color: var(--muted);
+  cursor: pointer; background: none; border: none;
+  padding: 6px 0; margin-bottom: 8px; transition: color 0.15s;
+  font-family: var(--font);
+}
+.cat-back:hover { color: var(--white); }
+.cat-back svg { width: 16px; height: 16px; }
+
+@media (max-width: 900px) {
+  .cat-grid { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 480px) {
+  .cat-grid { grid-template-columns: 1fr; }
+}
+
 /* ── TEMPLATE CARD accent stripe ────────────────────── */
 .template-card { position: relative; }
 .template-card::before {
@@ -1344,7 +1422,7 @@ td.bold { color: var(--white); font-weight: 600; }
       <button class="btn btn-primary" onclick="openAddTemplate()">+ Add Template</button>
     </div>
     <div class="tpl-top">
-      <div class="tpl-search">
+      <div class="tpl-search" id="tpl-search-wrap">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input type="text" placeholder="Search templates..." id="tpl-search-input" oninput="tplSearch=this.value.toLowerCase();renderTemplates()">
       </div>
@@ -2841,82 +2919,98 @@ function renderTemplates() {
   DB.clients.forEach(c => { usage[c.template] = (usage[c.template]||0)+1; });
   const useMobilePreview = window.innerWidth <= 900;
   const container = document.getElementById('templates-container');
+  const catBar = document.getElementById('cat-bar');
+  const searchEl = document.getElementById('tpl-search-wrap');
 
   // Ensure all templates have a category (backfill old data)
   DB.templates.forEach(t => { if (!t.category) t.category = 'home-construction'; });
 
-  renderCatBar();
+  // Count templates per category
+  const counts = {};
+  DB.templates.forEach(t => { counts[t.category] = (counts[t.category]||0)+1; });
+  const readyCounts = {};
+  DB.templates.filter(t => t.status === 'ready').forEach(t => { readyCounts[t.category] = (readyCounts[t.category]||0)+1; });
 
-  // Filter by search
-  let filtered = DB.templates;
-  if (tplSearch) {
-    filtered = filtered.filter(t =>
-      t.name.toLowerCase().includes(tplSearch) ||
-      t.niche.toLowerCase().includes(tplSearch) ||
-      (CATEGORIES.find(c=>c.id===t.category)?.label||'').toLowerCase().includes(tplSearch)
-    );
-  }
+  // ── LEVEL 1: Category Cards Grid ──
+  if (activeCat === 'all') {
+    catBar.style.display = 'none';
 
-  // Single category view
-  if (activeCat !== 'all') {
-    const cat = CATEGORIES.find(c => c.id === activeCat);
-    const catTemplates = filtered.filter(t => t.category === activeCat);
-    let html = '';
-    if (cat) {
-      html += `<div class="cat-hero" style="${getCatVars(cat)}">
-        <div class="cat-hero-glow"></div>
-        <div class="cat-hero-inner">
-          <div class="cat-hero-icon">${cat.icon}</div>
-          <div>
-            <h2>${cat.label}</h2>
-            <p>${cat.desc} &mdash; ${catTemplates.length} template${catTemplates.length!==1?'s':''}</p>
-          </div>
+    // Filter categories by search
+    let cats = CATEGORIES.filter(c => counts[c.id] > 0);
+    if (tplSearch) {
+      cats = cats.filter(c =>
+        c.label.toLowerCase().includes(tplSearch) ||
+        c.desc.toLowerCase().includes(tplSearch)
+      );
+    }
+
+    let html = '<div class="cat-grid">';
+    cats.forEach(cat => {
+      const n = counts[cat.id] || 0;
+      const ready = readyCounts[cat.id] || 0;
+      html += `<div class="cat-card" style="${getCatVars(cat)}" onclick="activeCat='${cat.id}';tplSearch='';document.getElementById('tpl-search-input').value='';renderTemplates();">
+        <div class="cat-card-glow"></div>
+        <div class="cat-card-icon">${cat.icon}</div>
+        <h3>${cat.label}</h3>
+        <p>${cat.desc}</p>
+        <div class="cat-card-footer">
+          <div class="cat-card-count"><strong>${n}</strong> template${n!==1?'s':''} ${ready ? '&middot; '+ready+' live' : ''}</div>
+          <div class="cat-card-arrow">&rarr;</div>
         </div>
       </div>`;
+    });
+    html += '</div>';
+
+    if (!cats.length && tplSearch) {
+      html = `<div class="cat-empty"><p>No categories match "${tplSearch}"</p></div>`;
     }
-    if (catTemplates.length) {
-      html += `<div class="templates-grid">${catTemplates.map(t => renderTemplateCard(t, usage, useMobilePreview)).join('')}
-        <div class="template-card add-card" onclick="openAddTemplate()"><span style="font-size:28px;">+</span><span>Add Template</span></div></div>`;
-    } else {
-      html += `<div class="cat-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg><p>No templates in this category yet</p><button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="openAddTemplate()">+ Add Template</button></div>`;
-    }
+
     container.innerHTML = html;
     return;
   }
 
-  // All categories view — group by category
-  const grouped = {};
-  filtered.forEach(t => {
-    if (!grouped[t.category]) grouped[t.category] = [];
-    grouped[t.category].push(t);
-  });
+  // ── LEVEL 2: Single Category View ──
+  catBar.style.display = '';
+  renderCatBar();
 
+  // Filter by search within category
+  let filtered = DB.templates.filter(t => t.category === activeCat);
+  if (tplSearch) {
+    filtered = filtered.filter(t =>
+      t.name.toLowerCase().includes(tplSearch) ||
+      t.niche.toLowerCase().includes(tplSearch)
+    );
+  }
+
+  const cat = CATEGORIES.find(c => c.id === activeCat);
   let html = '';
-  CATEGORIES.forEach(cat => {
-    const templates = grouped[cat.id];
-    if (!templates || !templates.length) return;
-    html += `<div class="cat-section" style="${getCatVars(cat)}">
-      <div class="cat-header">
-        <div class="cat-header-icon">${cat.icon}</div>
-        <div class="cat-header-text">
-          <h3>${cat.label}</h3>
-          <span>${cat.desc}</span>
+
+  // Back button
+  html += `<button class="cat-back" onclick="activeCat='all';tplSearch='';document.getElementById('tpl-search-input').value='';renderTemplates();">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+    All Categories
+  </button>`;
+
+  // Hero
+  if (cat) {
+    html += `<div class="cat-hero" style="${getCatVars(cat)}">
+      <div class="cat-hero-glow"></div>
+      <div class="cat-hero-inner">
+        <div class="cat-hero-icon">${cat.icon}</div>
+        <div>
+          <h2>${cat.label}</h2>
+          <p>${cat.desc} &mdash; ${filtered.length} template${filtered.length!==1?'s':''}</p>
         </div>
-        <div class="cat-header-line"></div>
-        <div class="cat-header-count">${templates.length} template${templates.length!==1?'s':''}</div>
-      </div>
-      <div class="templates-grid">
-        ${templates.map(t => renderTemplateCard(t, usage, useMobilePreview)).join('')}
       </div>
     </div>`;
-  });
+  }
 
-  // Add card at the end
-  html += `<div style="text-align:center;padding:20px 0;">
-    <button class="btn btn-ghost" onclick="openAddTemplate()" style="gap:8px;font-size:14px;padding:12px 28px;">
-      <span style="font-size:20px;">+</span> Add New Template
-    </button>
-  </div>`;
+  if (filtered.length) {
+    html += `<div class="templates-grid">${filtered.map(t => renderTemplateCard(t, usage, useMobilePreview)).join('')}
+      <div class="template-card add-card" onclick="openAddTemplate()"><span style="font-size:28px;">+</span><span>Add Template</span></div></div>`;
+  } else {
+    html += `<div class="cat-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg><p>No templates${tplSearch ? ' matching "'+tplSearch+'"' : ' in this category yet'}</p><button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="openAddTemplate()">+ Add Template</button></div>`;
+  }
 
   container.innerHTML = html;
 }
