@@ -1227,6 +1227,21 @@ td.bold { color: var(--white); font-weight: 600; }
     </button>
 
     <div class="nav-divider"></div>
+    <div class="nav-section-label">AI Tools</div>
+    <button class="nav-item" onclick="navigate('review-resp')">
+      <span class="nav-icon">💬</span> Review Responder
+    </button>
+    <button class="nav-item" onclick="navigate('seo-writer')">
+      <span class="nav-icon">✍️</span> SEO Writer
+    </button>
+    <button class="nav-item" onclick="navigate('site-gen')">
+      <span class="nav-icon">🔧</span> Site Generator
+    </button>
+    <button class="nav-item" onclick="navigate('onboarding')">
+      <span class="nav-icon">🚀</span> Onboarding
+    </button>
+
+    <div class="nav-divider"></div>
     <button class="nav-item" onclick="navigate('settings')">
       <span class="nav-icon">⚙️</span> Settings
     </button>
@@ -2363,6 +2378,316 @@ td.bold { color: var(--white); font-weight: 600; }
     </div>
   </div>
 
+  <!-- ══════════════════════════════════════
+       REVIEW RESPONDER
+  ══════════════════════════════════════ -->
+  <div class="page" id="page-review-resp">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1>Review Responder</h1>
+        <p>AI-powered review response drafting</p>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Review Details</div></div>
+        <div class="panel-body" style="display:flex;flex-direction:column;gap:14px;">
+          <div class="form-group">
+            <label class="form-label">Client</label>
+            <select class="form-select" id="rr-client" onchange="rrFillBiz()"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Reviewer Name</label>
+            <input class="form-input" id="rr-reviewer" placeholder="John D.">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Star Rating</label>
+            <select class="form-select" id="rr-rating">
+              <option value="5">5 Stars</option>
+              <option value="4">4 Stars</option>
+              <option value="3">3 Stars</option>
+              <option value="2">2 Stars</option>
+              <option value="1">1 Star</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Review Text</label>
+            <textarea class="form-input" id="rr-text" rows="5" placeholder="Paste the customer's review here..."></textarea>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tone</label>
+            <select class="form-select" id="rr-tone">
+              <option value="professional">Professional</option>
+              <option value="friendly">Friendly</option>
+              <option value="apologetic">Apologetic</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" id="rr-generate" onclick="generateReviewResponse()" style="width:100%;justify-content:center;">Generate Response</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Generated Response</div>
+          <button class="btn btn-ghost btn-sm" id="rr-copy" onclick="copyRrResult()" style="display:none;">Copy</button>
+        </div>
+        <div class="panel-body">
+          <div id="rr-result" style="min-height:120px;color:var(--text);line-height:1.7;white-space:pre-wrap;">
+            <div style="text-align:center;color:var(--muted);padding:40px 20px;">Fill in the review details and click Generate to draft a response.</div>
+          </div>
+          <div id="rr-loading" style="display:none;text-align:center;padding:40px;">
+            <div style="color:var(--indigo);font-weight:600;margin-bottom:8px;">Generating response...</div>
+            <div style="color:var(--muted);font-size:12px;">This usually takes a few seconds</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SEO WRITER
+  ══════════════════════════════════════ -->
+  <div class="page" id="page-seo-writer">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1>SEO Content Writer</h1>
+        <p>AI-generated SEO content for your clients</p>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Content Settings</div></div>
+        <div class="panel-body" style="display:flex;flex-direction:column;gap:14px;">
+          <div class="form-group">
+            <label class="form-label">Client</label>
+            <select class="form-select" id="seo-client" onchange="seoFillDetails()"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Content Type</label>
+            <select class="form-select" id="seo-type">
+              <option value="meta">Meta Tags (Title + Description)</option>
+              <option value="service-page">Service Page Copy</option>
+              <option value="blog">Blog Post</option>
+              <option value="schema">Schema Markup (JSON-LD)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Target City / Area</label>
+            <input class="form-input" id="seo-city" placeholder="Miami, FL">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Target Keywords (optional)</label>
+            <input class="form-input" id="seo-keywords" placeholder="plumber near me, emergency plumber miami">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Additional Instructions (optional)</label>
+            <textarea class="form-input" id="seo-notes" rows="3" placeholder="e.g. Focus on emergency services, mention 24/7 availability"></textarea>
+          </div>
+          <button class="btn btn-primary" id="seo-generate" onclick="generateSeoContent()" style="width:100%;justify-content:center;">Generate Content</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Generated Content</div>
+          <button class="btn btn-ghost btn-sm" id="seo-copy" onclick="copySeoResult()" style="display:none;">Copy</button>
+        </div>
+        <div class="panel-body">
+          <div id="seo-result" style="min-height:120px;color:var(--text);line-height:1.7;">
+            <div style="text-align:center;color:var(--muted);padding:40px 20px;">Select a client and content type, then click Generate.</div>
+          </div>
+          <div id="seo-loading" style="display:none;text-align:center;padding:40px;">
+            <div style="color:var(--indigo);font-weight:600;margin-bottom:8px;">Generating content...</div>
+            <div style="color:var(--muted);font-size:12px;">This may take 10-20 seconds for longer content</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       SITE GENERATOR
+  ══════════════════════════════════════ -->
+  <div class="page" id="page-site-gen">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1>Client Site Generator</h1>
+        <p>Clone a template and customize it for a new client</p>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Client Details</div></div>
+        <div class="panel-body" style="display:flex;flex-direction:column;gap:14px;">
+          <div class="modal-grid">
+            <div class="form-group">
+              <label class="form-label">Business Name *</label>
+              <input class="form-input" id="sg-biz" placeholder="Mike's Plumbing">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone Number *</label>
+              <input class="form-input" id="sg-phone" placeholder="(305) 555-0100">
+            </div>
+            <div class="form-group">
+              <label class="form-label">City / Area *</label>
+              <input class="form-input" id="sg-city" placeholder="Miami, FL">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Base Template *</label>
+              <select class="form-select" id="sg-template"></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Primary Color</label>
+              <input class="form-input" id="sg-color" type="color" value="#6366F1" style="padding:4px 8px;height:42px;cursor:pointer;">
+            </div>
+            <div class="form-group">
+              <label class="form-label">License Number</label>
+              <input class="form-input" id="sg-license" placeholder="Optional">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tagline (optional)</label>
+            <input class="form-input" id="sg-tagline" placeholder="South Florida's Most Trusted Plumber">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Service Area</label>
+            <input class="form-input" id="sg-area" placeholder="Miami, Coral Gables, Doral, Hialeah" value="Miami, Coral Gables, Doral, Hialeah, Kendall, Miami Beach">
+          </div>
+          <button class="btn btn-primary" id="sg-generate" onclick="generateSite()" style="width:100%;justify-content:center;">Generate Site</button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Output</div>
+          <button class="btn btn-primary btn-sm" id="sg-download" onclick="downloadSite()" style="display:none;">Download HTML</button>
+        </div>
+        <div class="panel-body">
+          <div id="sg-result" style="min-height:200px;">
+            <div style="text-align:center;color:var(--muted);padding:60px 20px;">
+              <div style="font-size:36px;margin-bottom:12px;">🔧</div>
+              <p>Fill in the client details and select a base template to generate a customized site.</p>
+            </div>
+          </div>
+          <div id="sg-loading" style="display:none;text-align:center;padding:60px;">
+            <div style="color:var(--indigo);font-weight:600;margin-bottom:8px;">Generating site...</div>
+            <div style="color:var(--muted);font-size:12px;">This may take 30-60 seconds for a full site</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       ONBOARDING WIZARD
+  ══════════════════════════════════════ -->
+  <div class="page" id="page-onboarding">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1>Client Onboarding</h1>
+        <p>Set up a new client end-to-end</p>
+      </div>
+    </div>
+    <!-- Progress bar -->
+    <div style="display:flex;gap:4px;margin-bottom:28px;">
+      <div class="ob-step active" id="ob-step-1" style="flex:1;height:4px;border-radius:2px;background:var(--indigo);transition:background 0.3s;"></div>
+      <div class="ob-step" id="ob-step-2" style="flex:1;height:4px;border-radius:2px;background:var(--border);transition:background 0.3s;"></div>
+      <div class="ob-step" id="ob-step-3" style="flex:1;height:4px;border-radius:2px;background:var(--border);transition:background 0.3s;"></div>
+      <div class="ob-step" id="ob-step-4" style="flex:1;height:4px;border-radius:2px;background:var(--border);transition:background 0.3s;"></div>
+    </div>
+    <!-- Step 1: Client Info -->
+    <div class="ob-panel" id="ob-1">
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Step 1 — Client Information</div></div>
+        <div class="panel-body">
+          <div class="modal-grid">
+            <div class="form-group">
+              <label class="form-label">Business Name *</label>
+              <input class="form-input" id="ob-biz" placeholder="Mike's Plumbing">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Contact Name *</label>
+              <input class="form-input" id="ob-contact" placeholder="Mike Johnson">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email *</label>
+              <input class="form-input" id="ob-email" type="email" placeholder="mike@mikesplumbing.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone *</label>
+              <input class="form-input" id="ob-phone" placeholder="(305) 555-0100">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Plan</label>
+              <select class="form-select" id="ob-plan">
+                <option value="starter">Starter</option>
+                <option value="standard">Standard</option>
+                <option value="premium">Premium</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">City</label>
+              <input class="form-input" id="ob-city" placeholder="Miami, FL">
+            </div>
+          </div>
+          <div style="display:flex;justify-content:flex-end;margin-top:16px;">
+            <button class="btn btn-primary" onclick="obNext(2)">Next: Template Setup &rarr;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Step 2: Template Selection -->
+    <div class="ob-panel" id="ob-2" style="display:none;">
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Step 2 — Template & Customization</div></div>
+        <div class="panel-body">
+          <div class="modal-grid">
+            <div class="form-group">
+              <label class="form-label">Base Template *</label>
+              <select class="form-select" id="ob-template"></select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Primary Color</label>
+              <input class="form-input" id="ob-color" type="color" value="#6366F1" style="padding:4px 8px;height:42px;cursor:pointer;">
+            </div>
+            <div class="form-group">
+              <label class="form-label">License Number</label>
+              <input class="form-input" id="ob-license" placeholder="Optional">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tagline</label>
+              <input class="form-input" id="ob-tagline" placeholder="Optional custom tagline">
+            </div>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-top:16px;">
+            <button class="btn btn-ghost" onclick="obNext(1)">&larr; Back</button>
+            <button class="btn btn-primary" onclick="obGenerate()">Generate Site & SEO &rarr;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Step 3: Generation -->
+    <div class="ob-panel" id="ob-3" style="display:none;">
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Step 3 — Generating Assets</div></div>
+        <div class="panel-body" style="text-align:center;padding:48px;">
+          <div id="ob-gen-status" style="color:var(--indigo);font-weight:600;font-size:16px;margin-bottom:12px;">Generating site...</div>
+          <div id="ob-gen-sub" style="color:var(--muted);font-size:13px;">This may take up to a minute</div>
+        </div>
+      </div>
+    </div>
+    <!-- Step 4: Review & Confirm -->
+    <div class="ob-panel" id="ob-4" style="display:none;">
+      <div class="panel">
+        <div class="panel-header"><div class="panel-title">Step 4 — Review & Confirm</div></div>
+        <div class="panel-body">
+          <div id="ob-summary" style="display:flex;flex-direction:column;gap:12px;margin-bottom:20px;"></div>
+          <div style="display:flex;justify-content:space-between;">
+            <button class="btn btn-ghost" onclick="obNext(2)">&larr; Back to Template</button>
+            <button class="btn btn-gold" onclick="obConfirm()">Confirm & Create Client</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 </div><!-- /main -->
 
 <!-- ══════════════════════════════════════
@@ -2764,7 +3089,7 @@ localStorage.setItem(KEY, JSON.stringify(DB));
 // ════════════════════════════════════════════════════
 //  NAVIGATION
 // ════════════════════════════════════════════════════
-const TITLES = { overview:'Overview', clients:'Clients', templates:'Template Library', 'template-detail':'Template', seo:'SEO Manager', reputation:'Reputation Manager', analytics:'Analytics', leads:'Lead Tracker', ads:'Ad Campaigns', billing:'Billing', settings:'Settings' };
+const TITLES = { overview:'Overview', clients:'Clients', templates:'Template Library', 'template-detail':'Template', seo:'SEO Manager', reputation:'Reputation Manager', analytics:'Analytics', leads:'Lead Tracker', ads:'Ad Campaigns', billing:'Billing', settings:'Settings', 'review-resp':'Review Responder', 'seo-writer':'SEO Writer', 'site-gen':'Site Generator', onboarding:'Client Onboarding' };
 
 // ── Mobile sidebar ────────────────────────────────────
 function openSidebar() {
@@ -2792,7 +3117,7 @@ function navigate(page, param) {
     if (n.getAttribute('onclick')?.includes("'" + navPage + "'")) n.classList.add('active');
   });
   document.getElementById('topbar-title').textContent = TITLES[page] || page;
-  const renders = { overview: renderOverview, clients: renderClients, templates: renderTemplates, seo: renderSeoSelect, reputation: renderRepSelect, analytics: renderAnSelect, leads: renderLeadsSelect, ads: renderAdsSelect, billing: renderBilling, settings: loadSettings };
+  const renders = { overview: renderOverview, clients: renderClients, templates: renderTemplates, seo: renderSeoSelect, reputation: renderRepSelect, analytics: renderAnSelect, leads: renderLeadsSelect, ads: renderAdsSelect, billing: renderBilling, settings: loadSettings, 'review-resp': initReviewResp, 'seo-writer': initSeoWriter, 'site-gen': initSiteGen, onboarding: initOnboarding };
   if (page === 'template-detail') renderTemplateDetail(param);
   else {
     if (page === 'templates') { activeCat = 'all'; tplSearch = ''; const si = document.getElementById('tpl-search-input'); if (si) si.value = ''; }
@@ -4160,6 +4485,304 @@ function saveCampaign() {
 function deleteCampaign(clientId, idx) {
   const c = DB.clients.find(x => x.id === clientId); if (!c?.ads) return;
   c.ads.campaigns.splice(idx,1); save(); loadAds(clientId); toast('Campaign removed','success');
+}
+
+// ════════════════════════════════════════════════════
+//  AI TOOLS
+// ════════════════════════════════════════════════════
+const TOOLS_API = 'https://webnari-tools.webnari.workers.dev';
+// Fallback for local dev
+// const TOOLS_API = 'http://localhost:8788';
+
+function fillClientSelect(id) {
+  const sel = document.getElementById(id);
+  sel.innerHTML = '<option value="">Select client...</option>' + DB.clients.map(c => `<option value="${c.id}">${c.bizName}</option>`).join('');
+}
+function fillTemplateSelect(id) {
+  const sel = document.getElementById(id);
+  sel.innerHTML = DB.templates.filter(t => t.status === 'ready').map(t => `<option value="${t.id}">${t.name} — ${t.niche}</option>`).join('');
+}
+
+// ── Review Responder ──
+function initReviewResp() { fillClientSelect('rr-client'); }
+function rrFillBiz() {}
+
+async function generateReviewResponse() {
+  const clientId = document.getElementById('rr-client').value;
+  const client = DB.clients.find(c => c.id === clientId);
+  const bizName = client ? client.bizName : 'the business';
+  const reviewer = document.getElementById('rr-reviewer').value || 'the customer';
+  const rating = document.getElementById('rr-rating').value;
+  const text = document.getElementById('rr-text').value.trim();
+  const tone = document.getElementById('rr-tone').value;
+
+  if (!text) { toast('Paste a review first', 'error'); return; }
+
+  document.getElementById('rr-result').style.display = 'none';
+  document.getElementById('rr-loading').style.display = '';
+  document.getElementById('rr-generate').disabled = true;
+
+  const prompt = `Business: ${bizName}\nReviewer: ${reviewer}\nRating: ${rating}/5 stars\nTone: ${tone}\n\nReview:\n"${text}"`;
+
+  try {
+    const res = await fetch(TOOLS_API + '/api/tools/review-response', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    document.getElementById('rr-result').textContent = data.result;
+    document.getElementById('rr-result').style.display = '';
+    document.getElementById('rr-copy').style.display = '';
+  } catch (e) {
+    document.getElementById('rr-result').innerHTML = `<div style="color:var(--red);">Error: ${e.message}</div>`;
+    document.getElementById('rr-result').style.display = '';
+  }
+  document.getElementById('rr-loading').style.display = 'none';
+  document.getElementById('rr-generate').disabled = false;
+}
+
+function copyRrResult() {
+  navigator.clipboard.writeText(document.getElementById('rr-result').textContent).then(() => toast('Copied!', 'success'));
+}
+
+// ── SEO Writer ──
+function initSeoWriter() { fillClientSelect('seo-client'); }
+function seoFillDetails() {
+  const c = DB.clients.find(x => x.id === document.getElementById('seo-client').value);
+  if (c?.seo?.city) document.getElementById('seo-city').value = c.seo.city;
+}
+
+async function generateSeoContent() {
+  const clientId = document.getElementById('seo-client').value;
+  const client = DB.clients.find(c => c.id === clientId);
+  const type = document.getElementById('seo-type').value;
+  const city = document.getElementById('seo-city').value || 'Miami, FL';
+  const keywords = document.getElementById('seo-keywords').value;
+  const notes = document.getElementById('seo-notes').value;
+  const tpl = client ? DB.templates.find(t => t.id === client.template) : null;
+
+  if (!client) { toast('Select a client first', 'error'); return; }
+
+  document.getElementById('seo-result').style.display = 'none';
+  document.getElementById('seo-loading').style.display = '';
+  document.getElementById('seo-generate').disabled = true;
+
+  const typeLabel = { meta: 'META TAGS', 'service-page': 'SERVICE PAGE COPY', blog: 'BLOG POST', schema: 'SCHEMA MARKUP' }[type];
+  const prompt = `Generate ${typeLabel} for:\nBusiness: ${client.bizName}\nIndustry: ${tpl ? tpl.niche : 'service business'}\nCity: ${city}\n${keywords ? 'Keywords: ' + keywords : ''}\n${notes ? 'Notes: ' + notes : ''}\nPhone: ${client.phone || ''}`;
+
+  try {
+    const res = await fetch(TOOLS_API + '/api/tools/seo-content', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    // Format output
+    const el = document.getElementById('seo-result');
+    if (type === 'meta' || type === 'schema') {
+      el.innerHTML = `<pre style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;overflow-x:auto;font-size:12px;color:var(--indigo2);white-space:pre-wrap;word-break:break-word;">${escHtml(data.result)}</pre>`;
+    } else {
+      el.innerHTML = `<div style="line-height:1.8;">${data.result}</div>`;
+    }
+    el.style.display = '';
+    document.getElementById('seo-copy').style.display = '';
+  } catch (e) {
+    document.getElementById('seo-result').innerHTML = `<div style="color:var(--red);">Error: ${e.message}</div>`;
+    document.getElementById('seo-result').style.display = '';
+  }
+  document.getElementById('seo-loading').style.display = 'none';
+  document.getElementById('seo-generate').disabled = false;
+}
+
+function copySeoResult() {
+  const el = document.getElementById('seo-result');
+  navigator.clipboard.writeText(el.textContent || el.innerText).then(() => toast('Copied!', 'success'));
+}
+
+function escHtml(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ── Site Generator ──
+function initSiteGen() { fillTemplateSelect('sg-template'); }
+
+let generatedSiteHtml = '';
+
+async function generateSite() {
+  const biz = document.getElementById('sg-biz').value.trim();
+  const phone = document.getElementById('sg-phone').value.trim();
+  const city = document.getElementById('sg-city').value.trim();
+  const tplId = document.getElementById('sg-template').value;
+  const color = document.getElementById('sg-color').value;
+  const license = document.getElementById('sg-license').value.trim();
+  const tagline = document.getElementById('sg-tagline').value.trim();
+  const area = document.getElementById('sg-area').value.trim();
+  const tpl = DB.templates.find(t => t.id === tplId);
+
+  if (!biz || !phone || !city) { toast('Fill in required fields', 'error'); return; }
+  if (!tpl || !tpl.path) { toast('Select a template with a live URL', 'error'); return; }
+
+  document.getElementById('sg-result').style.display = 'none';
+  document.getElementById('sg-loading').style.display = '';
+  document.getElementById('sg-generate').disabled = true;
+
+  // Fetch the base template HTML
+  let baseHtml;
+  try {
+    const tplRes = await fetch(tpl.path);
+    baseHtml = await tplRes.text();
+  } catch {
+    toast('Could not fetch template — check the URL', 'error');
+    document.getElementById('sg-loading').style.display = 'none';
+    document.getElementById('sg-result').style.display = '';
+    document.getElementById('sg-generate').disabled = false;
+    return;
+  }
+
+  const prompt = `Here is the base HTML template:\n\n${baseHtml.substring(0, 12000)}\n\n---\n\nCustomize this for:\nBusiness Name: ${biz}\nPhone: ${phone}\nCity: ${city}\nService Area: ${area}\nPrimary Color: ${color}\n${license ? 'License: ' + license : ''}\n${tagline ? 'Tagline: ' + tagline : ''}\n\nOriginal template brand: ${tpl.name}\nOriginal niche: ${tpl.niche}`;
+
+  try {
+    const res = await fetch(TOOLS_API + '/api/tools/generate-site', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    generatedSiteHtml = data.result;
+    document.getElementById('sg-result').innerHTML = `<div style="text-align:center;padding:24px;">
+      <div style="color:var(--green);font-weight:700;font-size:16px;margin-bottom:8px;">Site Generated!</div>
+      <div style="color:var(--muted);font-size:13px;margin-bottom:16px;">${biz} — based on ${tpl.name}</div>
+      <div style="display:flex;gap:10px;justify-content:center;">
+        <button class="btn btn-primary btn-sm" onclick="previewSite()">Preview in New Tab</button>
+      </div>
+    </div>`;
+    document.getElementById('sg-result').style.display = '';
+    document.getElementById('sg-download').style.display = '';
+  } catch (e) {
+    document.getElementById('sg-result').innerHTML = `<div style="color:var(--red);padding:20px;">Error: ${e.message}</div>`;
+    document.getElementById('sg-result').style.display = '';
+  }
+  document.getElementById('sg-loading').style.display = 'none';
+  document.getElementById('sg-generate').disabled = false;
+}
+
+function previewSite() {
+  const w = window.open('', '_blank');
+  w.document.write(generatedSiteHtml);
+  w.document.close();
+}
+function downloadSite() {
+  const name = (document.getElementById('sg-biz').value || 'site').toLowerCase().replace(/[^a-z0-9]+/g, '-') + '.html';
+  const blob = new Blob([generatedSiteHtml], { type: 'text/html' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('Downloaded ' + name, 'success');
+}
+
+// ── Onboarding Wizard ──
+let obData = {};
+
+function initOnboarding() {
+  fillTemplateSelect('ob-template');
+  obNext(1);
+}
+
+function obNext(step) {
+  [1,2,3,4].forEach(s => {
+    document.getElementById('ob-' + s).style.display = s === step ? '' : 'none';
+    document.getElementById('ob-step-' + s).style.background = s <= step ? 'var(--indigo)' : 'var(--border)';
+  });
+}
+
+async function obGenerate() {
+  obData = {
+    biz: document.getElementById('ob-biz').value.trim(),
+    contact: document.getElementById('ob-contact').value.trim(),
+    email: document.getElementById('ob-email').value.trim(),
+    phone: document.getElementById('ob-phone').value.trim(),
+    plan: document.getElementById('ob-plan').value,
+    city: document.getElementById('ob-city').value.trim(),
+    templateId: document.getElementById('ob-template').value,
+    color: document.getElementById('ob-color').value,
+    license: document.getElementById('ob-license').value.trim(),
+    tagline: document.getElementById('ob-tagline').value.trim(),
+  };
+
+  if (!obData.biz || !obData.contact || !obData.email || !obData.phone) {
+    toast('Fill in all required fields in Step 1', 'error');
+    obNext(1);
+    return;
+  }
+
+  obNext(3);
+  const tpl = DB.templates.find(t => t.id === obData.templateId);
+
+  // Generate SEO meta tags
+  document.getElementById('ob-gen-status').textContent = 'Generating SEO meta tags...';
+  try {
+    const seoRes = await fetch(TOOLS_API + '/api/tools/seo-content', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: `Generate META TAGS for:\nBusiness: ${obData.biz}\nIndustry: ${tpl ? tpl.niche : 'service business'}\nCity: ${obData.city || 'Miami, FL'}\nPhone: ${obData.phone}` })
+    });
+    const seoData = await seoRes.json();
+    obData.seoResult = seoData.result || '';
+  } catch { obData.seoResult = ''; }
+
+  document.getElementById('ob-gen-status').textContent = 'Done!';
+  document.getElementById('ob-gen-sub').textContent = 'Review the details below';
+
+  // Show summary
+  const rate = DB.pricing?.[obData.plan] || (obData.plan === 'starter' ? 79 : obData.plan === 'standard' ? 129 : 189);
+  document.getElementById('ob-summary').innerHTML = `
+    <div style="display:grid;grid-template-columns:120px 1fr;gap:8px 16px;font-size:13px;">
+      <div style="color:var(--muted);font-weight:600;">Business</div><div style="color:var(--white);">${obData.biz}</div>
+      <div style="color:var(--muted);font-weight:600;">Contact</div><div>${obData.contact}</div>
+      <div style="color:var(--muted);font-weight:600;">Email</div><div>${obData.email}</div>
+      <div style="color:var(--muted);font-weight:600;">Phone</div><div>${obData.phone}</div>
+      <div style="color:var(--muted);font-weight:600;">Plan</div><div style="text-transform:capitalize;">${obData.plan} — $${rate}/mo</div>
+      <div style="color:var(--muted);font-weight:600;">Template</div><div>${tpl ? tpl.name + ' (' + tpl.niche + ')' : obData.templateId}</div>
+      <div style="color:var(--muted);font-weight:600;">City</div><div>${obData.city || 'Not set'}</div>
+      ${obData.license ? `<div style="color:var(--muted);font-weight:600;">License</div><div>${obData.license}</div>` : ''}
+    </div>
+    ${obData.seoResult ? `<div style="margin-top:12px;"><div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:6px;">Generated SEO</div><pre style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px;font-size:11px;color:var(--indigo2);white-space:pre-wrap;overflow-x:auto;">${escHtml(obData.seoResult)}</pre></div>` : ''}
+  `;
+  obNext(4);
+}
+
+function obConfirm() {
+  const rate = DB.pricing?.[obData.plan] || (obData.plan === 'starter' ? 79 : obData.plan === 'standard' ? 129 : 189);
+  const d = new Date();
+  const billing = new Date(d);
+  billing.setDate(billing.getDate() + 30);
+  const id = 'c' + Date.now();
+
+  DB.clients.push({
+    id, bizName: obData.biz, contactName: obData.contact,
+    email: obData.email, phone: obData.phone,
+    template: obData.templateId, status: 'onboarding', plan: obData.plan,
+    monthlyRate: rate, setupFee: DB.pricing?.setup || 500,
+    billingDate: billing.toISOString().slice(0, 10),
+    paymentStatus: 'active', liveUrl: '', notes: 'Created via onboarding wizard',
+    seo: { title: '', description: '', keywords: '', city: obData.city, gbp: '', url: '', schemaName: obData.biz, schemaPhone: obData.phone, schemaAddress: '', notes: obData.seoResult || '' },
+    reputation: { googleUrl: '', google: {rating:0,reviews:0}, yelp: {rating:0,reviews:0}, facebook: {rating:0,reviews:0}, homeadvisor: {rating:0,reviews:0}, recentReviews: [] },
+    analytics: { sessions:0, organic:0, paid:0, direct:0, social:0, referral:0, bounceRate:0, avgDuration:'0:00', conversions:0, convRate:0, prevSessions:0, prevConversions:0, topPages:[] },
+    leads: [], ads: { monthlyBudget:0, campaigns:[] },
+    createdAt: d.toISOString().slice(0,10), updatedAt: d.toISOString().slice(0,10)
+  });
+
+  // Activity log
+  if (!DB.activity) DB.activity = [];
+  DB.activity.unshift({ text: `<strong>${obData.biz}</strong> onboarded via wizard`, time: 'Just now', type: 'indigo' });
+
+  save();
+  toast(obData.biz + ' created successfully!', 'success');
+  navigate('clients');
 }
 
 // ════════════════════════════════════════════════════
