@@ -1695,8 +1695,20 @@ a{color:inherit;text-decoration:none}
   var floatOrder=document.getElementById('floatOrder');
   var hero=document.getElementById('hero');
   if(!stickyOrder||!mainNav||!hero)return;
+  var isDesktop=window.innerWidth>768;
+  window.addEventListener('resize',function(){isDesktop=window.innerWidth>768;checkScroll();});
+  // On desktop: always show nav + bottom bar
+  if(isDesktop){
+    stickyOrder.style.transform='translateY(0)';
+    mainNav.style.transform='translateY(0)';
+  }
   var pastParallax=false;
   function checkScroll(){
+    if(isDesktop){
+      stickyOrder.style.transform='translateY(0)';
+      mainNav.style.transform='translateY(0)';
+      return;
+    }
     var heroBottom=hero.getBoundingClientRect().bottom;
     if(heroBottom<100&&!pastParallax){
       pastParallax=true;
