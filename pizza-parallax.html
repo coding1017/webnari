@@ -369,15 +369,21 @@ a{color:inherit;text-decoration:none}
   // ─── 6. MOZZARELLA PIECES ───
   var gMozz_g=svgEl('g',{opacity:0});
   var mozzPieces=[];
-  var mozzCount=isMobile?52:36;
+  // Grid-based mozz placement for even 85% coverage
+  var mozzPosArr=[];
+  var mozzGridStep=isMobile?30:25;
+  for(var mgx=-sauceR+10;mgx<sauceR-10;mgx+=mozzGridStep){
+    for(var mgy=-sauceR+10;mgy<sauceR-10;mgy+=mozzGridStep){
+      var mgDist=Math.sqrt(mgx*mgx+mgy*mgy);
+      if(mgDist<sauceR-15){
+        mozzPosArr.push({x:cx+mgx+(Math.random()-0.5)*12, y:cy+mgy+(Math.random()-0.5)*12});
+      }
+    }
+  }
+  var mozzCount=mozzPosArr.length;
   for(var mzi=0;mzi<mozzCount;mzi++){
-    var mza=mzi*Math.PI*2/mozzCount+Math.random()*0.4;
-    // Bias some pieces toward top-left and bottom-right quadrants
-    if(mzi%5===0) mza=Math.PI*0.75+Math.random()*0.5; // top-left
-    if(mzi%5===1) mza=-Math.PI*0.25+Math.random()*0.5; // bottom-right
-    var mzd=15+Math.random()*(sauceR-25);
-    var mzx=cx+Math.cos(mza)*mzd;
-    var mzy=cy+Math.sin(mza)*mzd;
+    var mzx=mozzPosArr[mzi].x;
+    var mzy=mozzPosArr[mzi].y;
     var mzg=svgEl('g',{opacity:0});
 
     // Shadow
@@ -416,15 +422,21 @@ a{color:inherit;text-decoration:none}
   // ─── 8. PEPPERONI ───
   var gPep_g=svgEl('g',{opacity:0});
   var pepSlices=[];
-  var pepCount=isMobile?34:24;
+  // Grid-based pepperoni for even coverage
+  var pepPosArr=[];
+  var pepGridStep=isMobile?38:32;
+  for(var pgx=-sauceR+15;pgx<sauceR-15;pgx+=pepGridStep){
+    for(var pgy=-sauceR+15;pgy<sauceR-15;pgy+=pepGridStep){
+      var pgDist=Math.sqrt(pgx*pgx+pgy*pgy);
+      if(pgDist<sauceR-12){
+        pepPosArr.push({x:cx+pgx+(Math.random()-0.5)*10, y:cy+pgy+(Math.random()-0.5)*10});
+      }
+    }
+  }
+  var pepCount=pepPosArr.length;
   for(var ppi=0;ppi<pepCount;ppi++){
-    var ppa=ppi*Math.PI*2/pepCount+Math.random()*0.5;
-    // Bias some toward center and bottom-center
-    if(ppi%4===0) { ppa=Math.PI*0.4+Math.random()*0.3; } // bottom-center
-    if(ppi%4===1) { ppa=Math.PI*0.5+Math.random()*0.2; } // bottom
-    var ppd=10+Math.random()*(sauceR-20);
-    var ppx=cx+Math.cos(ppa)*ppd;
-    var ppy=cy+Math.sin(ppa)*ppd;
+    var ppx=pepPosArr[ppi].x;
+    var ppy=pepPosArr[ppi].y;
     var ppR=10+Math.random()*4;
     var ppg=svgEl('g',{opacity:0});
 
@@ -450,7 +462,7 @@ a{color:inherit;text-decoration:none}
   // ─── 9. BASIL LEAVES ───
   var gBasil=svgEl('g',{opacity:0});
   var basilLeaves=[];
-  var basilCount=isMobile?16:10;
+  var basilCount=isMobile?22:14;
   for(var bli=0;bli<basilCount;bli++){
     var bla=bli*Math.PI*2/basilCount+0.5+Math.random()*0.5;
     var bld=sauceR*0.3+Math.random()*sauceR*0.5;
@@ -459,8 +471,8 @@ a{color:inherit;text-decoration:none}
     var blRot=-15+Math.random()*30;
     var blg=svgEl('g',{opacity:0,transform:'rotate('+blRot+','+blx+','+bly+')'});
 
-    // Leaf body
-    var leafW=14+Math.random()*4, leafH=22+Math.random()*6;
+    // Leaf body (large, visible basil)
+    var leafW=20+Math.random()*8, leafH=30+Math.random()*10;
     blg.appendChild(svgEl('path',{
       d:'M'+blx+' '+(bly-leafH/2)+' Q'+(blx+leafW/2)+' '+(bly-leafH*0.2)+' '+blx+' '+(bly+leafH/2)+' Q'+(blx-leafW/2)+' '+(bly-leafH*0.2)+' '+blx+' '+(bly-leafH/2),
       fill:'#228B22',stroke:'#1B5E20','stroke-width':0.5
@@ -478,7 +490,7 @@ a{color:inherit;text-decoration:none}
 
   // ─── 9b. OREGANO FLAKES ───
   var oreganoFlakes=[];
-  var oreganoCount=isMobile?140:90;
+  var oreganoCount=isMobile?180:120;
   for(var oi=0;oi<oreganoCount;oi++){
     var oa=Math.random()*Math.PI*2;
     var od=Math.random()*sauceR;
@@ -504,7 +516,8 @@ a{color:inherit;text-decoration:none}
   // Metal rivets
   gPeel.appendChild(svgEl('circle',{cx:cx,cy:peelY+peelH+15,r:3,fill:'#999'}));
   gPeel.appendChild(svgEl('circle',{cx:cx,cy:peelY+peelH+peelHandleW-15,r:3,fill:'#999'}));
-  svg.appendChild(gPeel);
+  // Insert peel BEFORE disc so it renders underneath the pizza
+  svg.insertBefore(gPeel, gDisc);
 
   // ─── 11. BRICK OVEN ───
   var gOven=svgEl('g',{opacity:0});
@@ -606,25 +619,21 @@ a{color:inherit;text-decoration:none}
     }));
   }
 
-  // Melted mozzarella (spread out, yellowed)
-  var meltCount=isMobile?18:12;
-  for(var mli=0;mli<meltCount;mli++){
-    var mla=mli*Math.PI*2/meltCount+Math.random()*0.4;
-    var mld=15+Math.random()*(sauceR-25);
-    var mlR=14+Math.random()*10;
-    gCooked_g.appendChild(svgEl('circle',{cx:cx+Math.cos(mla)*mld,cy:cy+Math.sin(mla)*mld,r:mlR,fill:'#FFF8DC',opacity:0.7}));
-    // Brown bubble spots
-    if(Math.random()>0.5){
-      gCooked_g.appendChild(svgEl('circle',{cx:cx+Math.cos(mla)*mld+3,cy:cy+Math.sin(mla)*mld-2,r:1.5+Math.random(),fill:'#8B6914',opacity:0.35}));
+  // Melted mozzarella — grid-based for full coverage
+  for(var mli=0;mli<mozzPosArr.length;mli++){
+    var mlx=mozzPosArr[mli].x+(Math.random()-0.5)*6;
+    var mly=mozzPosArr[mli].y+(Math.random()-0.5)*6;
+    var mlR=16+Math.random()*12;
+    gCooked_g.appendChild(svgEl('circle',{cx:mlx,cy:mly,r:mlR,fill:'#FFF8DC',opacity:0.7}));
+    if(Math.random()>0.4){
+      gCooked_g.appendChild(svgEl('circle',{cx:mlx+3,cy:mly-2,r:1.5+Math.random(),fill:'#8B6914',opacity:0.35}));
     }
   }
 
-  // Cooked pepperoni (cupped, with oil)
-  for(var cpi=0;cpi<pepCount;cpi++){
-    var cpa=cpi*Math.PI*2/pepCount+Math.random()*0.5;
-    var cpd=15+Math.random()*(sauceR-25);
-    var cpx=cx+Math.cos(cpa)*cpd;
-    var cpy=cy+Math.sin(cpa)*cpd;
+  // Cooked pepperoni (cupped, with oil) — grid-based
+  for(var cpi=0;cpi<pepPosArr.length;cpi++){
+    var cpx=pepPosArr[cpi].x+(Math.random()-0.5)*4;
+    var cpy=pepPosArr[cpi].y+(Math.random()-0.5)*4;
     var cpR=9+Math.random()*3;
     gCooked_g.appendChild(svgEl('circle',{cx:cpx,cy:cpy,r:cpR,fill:'#7A0000',stroke:'#4A0000','stroke-width':0.8}));
     // Cup shadow (darker center = cupped)
@@ -869,32 +878,36 @@ a{color:inherit;text-decoration:none}
         var rollOsc=Math.sin(rollPhase*Math.PI*6);
         var rollRange=isMobile?50:35;
         gPin_g.setAttribute('transform','translate(0,'+(rollOsc*rollRange)+')');
-        // Ball gradually squashes: round → flat wide oval
+        // Ball gradually squashes: round → flat wide oval (centered)
         var squashAmt=ease3(rollPhase);
-        gDoughBall.setAttribute('transform','scale('+(1+squashAmt*0.8)+','+(1-squashAmt*0.4)+')');
+        var bsx=1+squashAmt*0.8, bsy=1-squashAmt*0.4;
+        gDoughBall.setAttribute('transform','translate('+cx*(1-bsx)+','+cy*(1-bsy)+') scale('+bsx+','+bsy+')');
       }
       // 3c: Pin fades out, flat oval expands into circular disc from center (50-80%)
       else if(stretchP<0.80){
         setPhase('STRETCHING THE DOUGH');
         var morphP=ease3((stretchP-0.50)/0.30);
-        // Flat oval dough ball fades out as disc fades in
+        // Flat oval dough ball fades out as disc fades in (centered)
         gDoughBall.setAttribute('opacity',String(1-morphP));
-        gDoughBall.setAttribute('transform','scale('+(1.8+morphP*0.2)+','+(0.6-morphP*0.1)+')');
+        var bsx2=1.8+morphP*0.2, bsy2=0.6-morphP*0.1;
+        gDoughBall.setAttribute('transform','translate('+cx*(1-bsx2)+','+cy*(1-bsy2)+') scale('+bsx2+','+bsy2+')');
         // Pin lifts away upward
         var pinFade=ease3(clamp((stretchP-0.50)/0.12,0,1));
         gPin_g.setAttribute('opacity',String(1-pinFade));
         gPin_g.setAttribute('transform','translate(0,'+(pinFade*-80)+')');
-        // Disc expands from center — starts tiny, grows to full size
+        // Disc expands from center — starts tiny, grows to full size (centered)
+        var ds=0.15+morphP*0.85;
         gDisc.setAttribute('opacity',String(morphP));
-        gDisc.setAttribute('transform','scale('+(0.15+morphP*0.85)+')');
+        gDisc.setAttribute('transform','translate('+cx*(1-ds)+','+cy*(1-ds)+') scale('+ds+')');
       }
       // 3d: Disc settles at full size (80-100%)
       else {
         setPhase('STRETCHING THE DOUGH');
         var settleP=ease3((stretchP-0.80)/0.20);
         gDisc.setAttribute('opacity','1');
-        // Subtle scale settle
-        gDisc.setAttribute('transform','scale('+(1+0.02*(1-settleP))+')');
+        // Subtle scale settle (centered)
+        var ds2=1+0.02*(1-settleP);
+        gDisc.setAttribute('transform','translate('+cx*(1-ds2)+','+cy*(1-ds2)+') scale('+ds2+')');
       }
     }
 
@@ -965,7 +978,7 @@ a{color:inherit;text-decoration:none}
 
       gMozz_g.setAttribute('opacity','1');
       for(var mzi2=0;mzi2<mozzPieces.length;mzi2++){
-        var mzProg=ease3(clamp((mozzP-mzi2*0.01)/0.2,0,1));
+        var mzProg=ease3(clamp((mozzP-mzi2*0.005)/0.15,0,1));
         mozzPieces[mzi2].setAttribute('opacity',String(mzProg));
         mozzPieces[mzi2].setAttribute('transform','translate(0,'+(1-mzProg)*-15+')');
       }
@@ -979,7 +992,7 @@ a{color:inherit;text-decoration:none}
 
       gPep_g.setAttribute('opacity','1');
       for(var ppi2=0;ppi2<pepSlices.length;ppi2++){
-        var ppProg=ease3(clamp((pepP-ppi2*0.025)/0.2,0,1));
+        var ppProg=ease3(clamp((pepP-ppi2*0.008)/0.15,0,1));
         pepSlices[ppi2].setAttribute('opacity',String(ppProg));
         pepSlices[ppi2].setAttribute('transform','translate(0,'+(1-ppProg)*-12+')');
       }
