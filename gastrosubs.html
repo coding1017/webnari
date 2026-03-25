@@ -1156,16 +1156,23 @@ a{color:inherit;text-decoration:none}
       var s=shapes[i];
       var cx2=cpx+s.dx*spread, cy2=cpy+s.dy*spread;
       var baseCol=['#F5D85A','#EDCC42','#E0B830','#F0D048','#D4A428'][i%5];
-      // Wavy irregular chip path (not a perfect ellipse)
+      // Wavy irregular chip path with smooth curves
       var r=s.r;
       var pts=8;
-      var chipD='M';
+      var chipPts=[];
       for(var cp2=0;cp2<pts;cp2++){
         var ang=cp2*Math.PI*2/pts;
-        var wobble=r*(0.7+Math.sin(i*3+cp2*2.5)*0.3);
-        var flatness=0.55+Math.cos(i*2+cp2*1.7)*0.15;
-        chipD+=(cx2+Math.cos(ang)*wobble)+' '+(cy2+Math.sin(ang)*wobble*flatness);
-        if(cp2<pts-1)chipD+=' L';
+        var wobble=r*(0.78+Math.sin(i*3+cp2*2.5)*0.22);
+        var flatness=0.58+Math.cos(i*2+cp2*1.7)*0.12;
+        chipPts.push({x:cx2+Math.cos(ang)*wobble,y:cy2+Math.sin(ang)*wobble*flatness});
+      }
+      // Smooth closed curve through points using cubic bezier
+      var chipD='M'+chipPts[0].x+' '+chipPts[0].y;
+      for(var cp3=0;cp3<pts;cp3++){
+        var p0=chipPts[(cp3-1+pts)%pts],p1=chipPts[cp3],p2=chipPts[(cp3+1)%pts],p3=chipPts[(cp3+2)%pts];
+        var c1x=p1.x+(p2.x-p0.x)/6,c1y=p1.y+(p2.y-p0.y)/6;
+        var c2x=p2.x-(p3.x-p1.x)/6,c2y=p2.y-(p3.y-p1.y)/6;
+        chipD+=' C'+c1x+' '+c1y+' '+c2x+' '+c2y+' '+p2.x+' '+p2.y;
       }
       chipD+=' Z';
       cg.appendChild(svgEl('path',{d:chipD,fill:baseCol,stroke:'#B89020','stroke-width':0.7,opacity:0.92,transform:'rotate('+s.rot+','+cx2+','+cy2+')'}));
