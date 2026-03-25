@@ -67,11 +67,12 @@ body{font-family:var(--font-body);background:var(--black);color:var(--text);over
 a{color:inherit;text-decoration:none}
 
 /* ── FLOATING ORDER BUTTON (always visible, even during parallax) ── */
-.float-order{position:fixed;top:10px;left:12px;right:12px;z-index:1000;display:none;align-items:center;justify-content:center;padding:14px 0;background:var(--amber);color:var(--black);font-family:var(--font-head);font-weight:800;font-size:14px;letter-spacing:0.1em;text-transform:uppercase;border:2px solid var(--amber2);border-radius:var(--radius);text-decoration:none;text-align:center;box-shadow:0 4px 24px rgba(212,148,42,0.5),0 2px 8px rgba(0,0,0,0.3);transition:transform 0.3s ease,opacity 0.3s ease;animation:floatPulse 3s infinite}
+.float-order-wrap{position:fixed;top:0;left:0;right:0;z-index:1000;display:none;padding:env(safe-area-inset-top,0px) 12px 0;background:var(--black);transition:transform 0.3s ease,opacity 0.3s ease}
+.float-order-wrap.hidden{transform:translateY(-120%);opacity:0;pointer-events:none}
+.float-order{display:flex;align-items:center;justify-content:center;padding:14px 0;margin-top:8px;margin-bottom:10px;background:var(--amber);color:var(--black);font-family:var(--font-head);font-weight:800;font-size:14px;letter-spacing:0.1em;text-transform:uppercase;border:2px solid var(--amber2);border-radius:var(--radius);text-decoration:none;text-align:center;box-shadow:0 4px 24px rgba(212,148,42,0.5),0 2px 8px rgba(0,0,0,0.3);animation:floatPulse 3s infinite}
 .float-order:hover{filter:brightness(1.1)}
-.float-order.hidden{transform:translateY(-120%);opacity:0;pointer-events:none}
 @keyframes floatPulse{0%,100%{box-shadow:0 4px 24px rgba(212,148,42,0.5),0 2px 8px rgba(0,0,0,0.3)}50%{box-shadow:0 4px 32px rgba(212,148,42,0.7),0 2px 12px rgba(0,0,0,0.3)}}
-@media(max-width:768px){.float-order{display:flex}}
+@media(max-width:768px){.float-order-wrap{display:block}}
 
 /* ── SCROLL SEQUENCE ── */
 .scroll-sequence{height:700vh;position:relative}
@@ -121,9 +122,11 @@ a{color:inherit;text-decoration:none}
 <body>
 
 <!-- Floating Order Button — ALWAYS visible, even during parallax -->
-<a href="https://order.toasttab.com/online/gastrosubs-1110-a1a-n-102" target="_blank" rel="noopener" class="float-order" id="floatOrder">
-  Order Online
-</a>
+<div class="float-order-wrap" id="floatOrderWrap">
+  <a href="https://order.toasttab.com/online/gastrosubs-1110-a1a-n-102" target="_blank" rel="noopener" class="float-order" id="floatOrder">
+    Order Online
+  </a>
+</div>
 
 <div class="scroll-sequence" id="hero">
   <div class="sequence-sticky" id="seqSticky">
@@ -1692,7 +1695,7 @@ a{color:inherit;text-decoration:none}
 (function(){
   var stickyOrder=document.getElementById('stickyOrder');
   var mainNav=document.getElementById('mainNav');
-  var floatOrder=document.getElementById('floatOrder');
+  var floatOrder=document.getElementById('floatOrderWrap');
   var hero=document.getElementById('hero');
   if(!stickyOrder||!mainNav||!hero)return;
   var isDesktop=window.innerWidth>768;
