@@ -200,12 +200,16 @@ section{padding:120px 48px;position:relative}
 
 /* ── Pricing ── */
 #pricing{background:var(--surface)}
-.pricing-grid{display:flex;align-items:center;justify-content:center;gap:0;margin-top:56px;flex-wrap:wrap}
-.pricing-card{width:300px;padding:32px;background:var(--surface2);border:1px solid var(--border);border-radius:16px;transform:scale(.92);opacity:.7;transition:all .3s}
-.pricing-card:hover{opacity:.85;transform:scale(.94)}
-.pricing-card.popular{width:340px;padding:44px 36px;transform:scale(1);opacity:1;border-color:var(--accent);z-index:2;
+.pricing-toggle{display:flex;justify-content:center;gap:4px;margin-top:40px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:4px;width:fit-content;margin-left:auto;margin-right:auto}
+.pricing-toggle-btn{padding:10px 28px;border:none;border-radius:9px;font-family:var(--font-body);font-size:14px;font-weight:600;color:var(--muted);background:transparent;cursor:pointer;transition:all .25s}
+.pricing-toggle-btn:hover{color:var(--text)}
+.pricing-toggle-btn.active{background:var(--accent);color:var(--bg)}
+.pricing-grid{display:flex;align-items:center;justify-content:center;gap:0;margin-top:32px;flex-wrap:wrap}
+.pricing-card{width:300px;padding:32px;background:var(--surface2);border:1px solid var(--border);border-radius:16px;transform:scale(.92);opacity:.55;transition:all .4s ease;position:relative}
+.pricing-card:hover{opacity:.7;transform:scale(.94)}
+.pricing-card.focused{width:340px;padding:44px 36px;transform:scale(1);opacity:1;border-color:var(--accent);z-index:2;
   box-shadow:0 0 80px rgba(201,169,110,.06)}
-.pricing-card.popular:hover{transform:scale(1.02)}
+.pricing-card.focused:hover{transform:scale(1.02)}
 .pricing-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:var(--bg);
   font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:.04em;padding:5px 16px;border-radius:20px;white-space:nowrap}
 .pricing-tier{font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:12px}
@@ -222,7 +226,7 @@ section{padding:120px 48px;position:relative}
 .pricing-features li svg{width:14px;height:14px;stroke:var(--green);stroke-width:2.5;flex-shrink:0}
 .pricing-cta{width:100%;padding:14px;border-radius:10px;font-family:var(--font-body);font-size:15px;font-weight:600;cursor:pointer;border:none;
   background:var(--surface3);color:var(--text);transition:all .2s}
-.pricing-card.popular .pricing-cta{background:var(--accent);color:var(--bg)}
+.pricing-card.focused .pricing-cta{background:var(--accent);color:var(--bg)}
 .pricing-cta:hover{transform:translateY(-2px)}
 
 /* ── Testimonials ── */
@@ -349,7 +353,7 @@ footer{border-top:1px solid var(--border);padding:48px}
   .steps-progress{display:none}
   .pricing-grid{flex-direction:column;align-items:center;gap:16px}
   .pricing-card{width:100%;max-width:400px;transform:scale(1);opacity:1}
-  .pricing-card.popular{width:100%;max-width:400px}
+  .pricing-card.focused{width:100%;max-width:400px}
   .testi-grid{columns:1}
   footer .footer-top{flex-direction:column}
   .footer-links{gap:32px}
@@ -562,6 +566,11 @@ footer{border-top:1px solid var(--border);padding:48px}
     <div class="section-eyebrow" style="text-align:center">Transparent pricing</div>
     <div class="section-title" style="margin:0 auto;text-align:center">No contracts. No surprises.</div>
     <div class="section-sub" style="margin:16px auto 0;">Cancel any time. All plans include hosting, SSL, support, and your client dashboard.</div>
+  </div>
+  <div class="pricing-toggle reveal-scale" id="pricing-toggle">
+    <button class="pricing-toggle-btn" data-tier="starter" onclick="focusTier('starter')">Starter</button>
+    <button class="pricing-toggle-btn active" data-tier="standard" onclick="focusTier('standard')">Standard</button>
+    <button class="pricing-toggle-btn" data-tier="premium" onclick="focusTier('premium')">Premium</button>
   </div>
   <div class="pricing-grid reveal-scale" id="pricing-grid"></div>
 </section>
@@ -1150,8 +1159,15 @@ function renderPricing(){
   const chk='<svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>';
   document.getElementById('pricing-grid').innerHTML=tiers.map(t=>{
     const feats=(t.features||'').split('\n').filter(Boolean).map(f=>`<li>${chk}${f}</li>`).join('');
-    return`<div class="pricing-card ${t.cls}">${t.cls==='popular'?'<div class="pricing-badge">MOST POPULAR</div>':''}<div class="pricing-tier ${t.tierCls}">${t.name.toUpperCase()} PLAN</div><div class="pricing-name">${t.name}</div><div class="pricing-desc">${t.desc}</div><div class="pricing-price"><span>$</span>${t.price}</div><div class="pricing-period">per month</div><div class="pricing-setup">+ $${t.setup} one-time setup</div><ul class="pricing-features">${feats}</ul><button class="pricing-cta" onclick="openAuth()">Get started</button></div>`;
+    const focused=t.key==='standard'?'focused':'';
+    const badge=t.key==='standard'?'<div class="pricing-badge">MOST POPULAR</div>':'';
+    return`<div class="pricing-card ${focused}" data-tier="${t.key}">${badge}<div class="pricing-tier ${t.tierCls}">${t.name.toUpperCase()} PLAN</div><div class="pricing-name">${t.name}</div><div class="pricing-desc">${t.desc}</div><div class="pricing-price"><span>$</span>${t.price}</div><div class="pricing-period">per month</div><div class="pricing-setup">+ $${t.setup} one-time setup</div><ul class="pricing-features">${feats}</ul><button class="pricing-cta" onclick="location.href='plan-${t.key}.html'">Get started</button></div>`;
   }).join('');
+}
+
+function focusTier(tier){
+  document.querySelectorAll('.pricing-toggle-btn').forEach(b=>{b.classList.toggle('active',b.dataset.tier===tier)});
+  document.querySelectorAll('.pricing-card').forEach(c=>{c.classList.toggle('focused',c.dataset.tier===tier)});
 }
 
 // ── Page Loader ──
