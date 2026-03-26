@@ -2034,13 +2034,15 @@ body::before {
     // Front fascia gutter (along front gable bottom edge, viewer side)
     var gf=svgEl('line',{x1:isoX(-roofW-8,hd),y1:isoY(-roofW-8,hd,-4),x2:isoX(roofW+8,hd),y2:isoY(roofW+8,hd,-4),stroke:'#718096','stroke-width':5,'stroke-linecap':'round',opacity:0});
     gGutters.appendChild(gf); allPieces.push({el:gf,phase:7,index:2,total:8});
-    // Left downspout at FRONT corner (viewer side)
-    var ds1x=isoX(-roofW-8,hd),ds1y=isoY(-roofW-8,hd,-4);
-    var ds1=svgEl('line',{x1:ds1x,y1:ds1y,x2:ds1x,y2:ds1y+500,stroke:'#64748B','stroke-width':4,'stroke-linecap':'round',opacity:0});
+    // Left downspout at FRONT corner — elbow back to wall, then straight down
+    var ds1gx=isoX(-roofW-8,hd),ds1gy=isoY(-roofW-8,hd,-4); // gutter attachment
+    var ds1wx=isoX(-wallW,hd),ds1wy=isoY(-wallW,hd,-20); // wall contact point (slightly below gutter)
+    var ds1=svgEl('polyline',{points:ds1gx+','+ds1gy+' '+ds1wx+','+ds1wy+' '+ds1wx+','+(ds1wy+500),fill:'none',stroke:'#64748B','stroke-width':4,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0});
     gGutters.appendChild(ds1); allPieces.push({el:ds1,phase:7,index:3,total:8});
-    // Right downspout at FRONT corner
-    var ds2x=isoX(roofW+8,hd),ds2y=isoY(roofW+8,hd,-4);
-    var ds2=svgEl('line',{x1:ds2x,y1:ds2y,x2:ds2x,y2:ds2y+500,stroke:'#64748B','stroke-width':4,'stroke-linecap':'round',opacity:0});
+    // Right downspout at FRONT corner — elbow back to wall, then straight down
+    var ds2gx=isoX(roofW+8,hd),ds2gy=isoY(roofW+8,hd,-4); // gutter attachment
+    var ds2wx=isoX(wallW,hd),ds2wy=isoY(wallW,hd,-20); // wall contact point
+    var ds2=svgEl('polyline',{points:ds2gx+','+ds2gy+' '+ds2wx+','+ds2wy+' '+ds2wx+','+(ds2wy+500),fill:'none',stroke:'#64748B','stroke-width':4,'stroke-linecap':'round','stroke-linejoin':'round',opacity:0});
     gGutters.appendChild(ds2); allPieces.push({el:ds2,phase:7,index:4,total:8});
     // Gutter brackets along left eave
     for(var gi=0;gi<3;gi++){
