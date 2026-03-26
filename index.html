@@ -122,6 +122,13 @@ nav.scrolled{background:rgba(6,6,10,.8);backdrop-filter:blur(20px) saturate(150%
 
 /* ── Section Divider ── */
 .section-line{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent)}
+.section-line-glow{width:100%;height:2px;background:linear-gradient(90deg,transparent 5%,var(--accent) 50%,transparent 95%);opacity:.2}
+.section-shift-right{overflow:hidden}
+.section-shift-right>*{animation:shiftRight .8s ease forwards;opacity:0}
+@keyframes shiftRight{from{transform:translateX(-60px);opacity:0}to{transform:translateX(0);opacity:1}}
+.section-shift-left{overflow:hidden}
+.section-shift-left>*{animation:shiftLeft .8s ease forwards;opacity:0}
+@keyframes shiftLeft{from{transform:translateX(60px);opacity:0}to{transform:translateX(0);opacity:1}}
 
 /* ── Section commons ── */
 section{padding:120px 48px;position:relative}
@@ -130,7 +137,7 @@ section{padding:120px 48px;position:relative}
 .section-sub{font-size:17px;color:var(--text);max-width:480px;margin-top:16px;line-height:1.7}
 
 /* ── Parallax Showcase (sticky scroll-lock) ── */
-.showcase-wrap{height:400vh;position:relative}
+.showcase-wrap{height:280vh;position:relative}
 .showcase-sticky{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:var(--bg);padding:0 48px}
 .showcase-header{text-align:center;margin-bottom:32px;position:relative;z-index:2}
 .showcase-split{display:flex;gap:4px;width:100%;height:65vh;min-height:400px;position:relative}
@@ -426,7 +433,7 @@ footer{border-top:1px solid var(--border);padding:48px}
   </div>
 </div>
 
-<div class="section-line"></div>
+<div class="section-line-glow"></div>
 
 <!-- Features -->
 <section id="features" class="features-section">
@@ -469,7 +476,7 @@ footer{border-top:1px solid var(--border);padding:48px}
   </div>
 </section>
 
-<div class="section-line"></div>
+<div class="section-line-glow"></div>
 
 <!-- How It Works: Horizontal Scroll -->
 <div class="steps-wrap" id="process">
@@ -508,7 +515,7 @@ footer{border-top:1px solid var(--border);padding:48px}
   </div>
 </div>
 
-<div class="section-line"></div>
+<div class="section-line-glow"></div>
 
 <!-- Pricing -->
 <section id="pricing" style="text-align:center">
@@ -520,7 +527,7 @@ footer{border-top:1px solid var(--border);padding:48px}
   <div class="pricing-grid reveal-scale" id="pricing-grid"></div>
 </section>
 
-<div class="section-line"></div>
+<div class="section-line-glow"></div>
 
 <!-- Testimonials -->
 <section class="testimonials-section">
@@ -755,9 +762,12 @@ function initOrb(){
 
   // Satellites — 3 orbital dots at different inclinations
   const sats=[
-    {angle:0,speed:.022,incl:0.3,dist:1.18,trail:[]},
-    {angle:2.1,speed:-.018,incl:0.6,dist:1.25,trail:[]},
-    {angle:4.2,speed:.025,incl:0.15,dist:1.32,trail:[]},
+    {angle:0,speed:.022,incl:0.3,dist:1.18,trail:[],hue:0},
+    {angle:1.2,speed:-.018,incl:0.65,dist:1.24,trail:[],hue:1},
+    {angle:2.4,speed:.028,incl:0.15,dist:1.32,trail:[],hue:0},
+    {angle:3.5,speed:-.014,incl:0.5,dist:1.15,trail:[],hue:1},
+    {angle:4.7,speed:.02,incl:0.8,dist:1.28,trail:[],hue:0},
+    {angle:5.8,speed:-.024,incl:0.35,dist:1.35,trail:[],hue:1},
   ];
 
   let t=0;
@@ -847,20 +857,22 @@ function initOrb(){
       if(sat.trail.length>20)sat.trail.shift();
       // Draw trail
       sat.trail.forEach((tp,ti)=>{
-        tp.a*=.88;
-        const ts=2*tp.a;
-        if(ts>.3){
+        tp.a*=.9;
+        const ts=4*tp.a;
+        if(ts>.5){
           ctx.beginPath();ctx.arc(tp.x,tp.y,ts,0,Math.PI*2);
-          ctx.fillStyle=si===1?`rgba(80,170,255,${tp.a*.4})`:`rgba(255,210,120,${tp.a*.4})`;
+          ctx.fillStyle=sat.hue?`rgba(80,170,255,${tp.a*.35})`:`rgba(255,210,120,${tp.a*.35})`;
           ctx.fill();
         }
       });
       // Draw satellite dot
-      ctx.beginPath();ctx.arc(px,py,4,0,Math.PI*2);
-      ctx.fillStyle=si===1?'rgba(120,200,255,.9)':'rgba(255,220,140,.9)';ctx.fill();
-      // Satellite glow
-      ctx.beginPath();ctx.arc(px,py,12,0,Math.PI*2);
-      ctx.fillStyle=si===1?'rgba(80,170,255,.15)':'rgba(255,210,120,.15)';ctx.fill();
+      ctx.beginPath();ctx.arc(px,py,7,0,Math.PI*2);
+      ctx.fillStyle=sat.hue?'rgba(120,200,255,.9)':'rgba(255,220,140,.9)';ctx.fill();
+      // Satellite glow — large
+      ctx.beginPath();ctx.arc(px,py,22,0,Math.PI*2);
+      ctx.fillStyle=sat.hue?'rgba(80,170,255,.12)':'rgba(255,210,120,.12)';ctx.fill();
+      ctx.beginPath();ctx.arc(px,py,40,0,Math.PI*2);
+      ctx.fillStyle=sat.hue?'rgba(80,170,255,.04)':'rgba(255,210,120,.04)';ctx.fill();
     });
 
     requestAnimationFrame(draw);
