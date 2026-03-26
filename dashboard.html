@@ -2451,6 +2451,10 @@ td.bold { color: var(--white); font-weight: 600; }
         <h1>Ad Campaigns</h1>
         <p>Track PPC spend, conversions, and ROAS across all platforms</p>
       </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-ghost" onclick="exportAdsCSV()">↓ Export</button>
+        <button class="btn btn-primary" onclick="openAddCampaign()">+ Add Campaign</button>
+      </div>
     </div>
     <select class="form-select" id="ads-select" onchange="loadAds(this.value)" style="display:none;"></select>
     <div style="display:grid;grid-template-columns:200px 1fr;gap:20px;">
@@ -2458,33 +2462,7 @@ td.bold { color: var(--white); font-weight: 600; }
         <div style="font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--muted);margin-bottom:10px;">CLIENTS</div>
         <div id="ads-client-list" data-active=""></div>
       </div>
-      <div>
-        <div id="ads-empty" style="text-align:center;padding:80px 40px;">
-          <svg style="width:48px;height:48px;color:var(--indigo);margin-bottom:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-          <div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px;">Select a client to begin</div>
-          <div style="color:var(--muted);">Monitor ad spend, clicks, and conversions for each client.</div>
-        </div>
-        <div id="ads-content" style="display:none;">
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;">
-            <div class="kpi-card"><div class="kpi-label">TOTAL SPEND</div><div class="kpi-value" id="ads-spend">$0</div></div>
-            <div class="kpi-card"><div class="kpi-label">TOTAL CLICKS</div><div class="kpi-value" id="ads-clicks">0</div></div>
-            <div class="kpi-card"><div class="kpi-label">COST PER CONV.</div><div class="kpi-value" id="ads-cpa">—</div></div>
-            <div class="kpi-card"><div class="kpi-label">EST. ROAS</div><div class="kpi-value" id="ads-roas">—</div></div>
-          </div>
-          <div class="panel">
-            <div class="panel-header">
-              <div class="panel-title">Active Campaigns</div>
-              <button class="btn btn-ghost btn-sm" onclick="openAddCampaign()">+ Add Campaign</button>
-            </div>
-            <div class="table-wrap">
-              <table>
-                <thead><tr><th>Campaign</th><th>Platform</th><th>Budget</th><th>Spend</th><th>Clicks</th><th>Conv.</th><th>CPC</th><th></th></tr></thead>
-                <tbody id="ads-tbody"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div id="ads-dynamic"></div>
     </div>
   </div>
 
@@ -8022,49 +8000,294 @@ function saveLead() {
 function renderAdsSelect() { fillToolSelect('ads-select'); initToolWithSidebar('ads', loadAds); }
 
 function loadAds(id) {
+  const el = document.getElementById('ads-dynamic');
   const c = DB.clients.find(x => x.id === id);
-  document.getElementById('ads-empty').style.display   = c ? 'none' : '';
-  document.getElementById('ads-content').style.display = c ? ''     : 'none';
-  if (!c) return;
-  const campaigns = (c.ads && c.ads.campaigns) || [];
-
-  const totalSpend = campaigns.reduce((s,cam) => s+(cam.spend||0), 0);
-  const totalClicks = campaigns.reduce((s,cam) => s+(cam.clicks||0), 0);
-  const totalConvs  = campaigns.reduce((s,cam) => s+(cam.conversions||0), 0);
-  const cpa  = totalConvs ? '$'+(totalSpend/totalConvs).toFixed(0) : '—';
-  const roas = totalSpend ? ((totalConvs*150)/totalSpend).toFixed(1)+'x' : '—';
-
-  document.getElementById('ads-spend').textContent  = '$'+totalSpend.toLocaleString();
-  document.getElementById('ads-clicks').textContent = totalClicks.toLocaleString();
-  document.getElementById('ads-cpa').textContent    = cpa;
-  document.getElementById('ads-roas').textContent   = roas;
-
-  const tbody = document.getElementById('ads-tbody');
-  if (!campaigns.length) {
-    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:48px;">No campaigns yet — click "+ Add Campaign" above</td></tr>`;
+  if(!c) {
+    el.innerHTML = `<div class="panel" style="text-align:center;padding:80px 40px;">
+      <svg style="width:48px;height:48px;color:var(--indigo);margin-bottom:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+      <div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px;">Select a client to begin</div>
+      <div style="color:var(--muted);">Monitor ad spend, clicks, conversions, and ROAS for each client.</div>
+    </div>`;
     return;
   }
-  tbody.innerHTML = campaigns.map((cam, i) => {
-    const pct = cam.budget ? Math.min(Math.round((cam.spend/cam.budget)*100), 100) : 0;
-    const cpc = cam.clicks ? '$'+(cam.spend/cam.clicks).toFixed(2) : '—';
-    const platC = {google:'#4285F4',facebook:'#1877F2',microsoft:'#00A4EF'}[cam.platform]||'var(--muted)';
-    const platL = {google:'Google Ads',facebook:'Facebook',microsoft:'Microsoft'}[cam.platform]||cam.platform;
-    const barC = pct>90?'var(--red)':pct>70?'var(--amber)':'var(--green)';
-    return `<tr>
-      <td>
-        <div style="font-weight:600;color:var(--white);font-size:13px;">${cam.name}</div>
-        <div style="margin-top:5px;height:4px;background:var(--surface3);border-radius:2px;overflow:hidden;width:160px;"><div style="height:100%;width:${pct}%;background:${barC};border-radius:2px;"></div></div>
-        <div style="font-size:10px;color:var(--muted);margin-top:2px;">$${cam.spend}/$${cam.budget} (${pct}%)</div>
-      </td>
-      <td><span style="font-size:11px;font-weight:700;color:${platC};">${platL}</span></td>
-      <td>$${cam.budget}/mo</td>
-      <td style="font-weight:600;color:var(--white);">$${cam.spend}</td>
-      <td>${cam.clicks.toLocaleString()}</td>
-      <td style="color:var(--green);font-weight:700;">${cam.conversions}</td>
-      <td style="color:var(--muted);">${cpc}</td>
-      <td><button class="btn btn-danger btn-icon btn-sm" onclick="deleteCampaign('${id}',${i})">🗑</button></td>
-    </tr>`;
+  if(!c.ads) c.ads = {campaigns:[]};
+  const campaigns = c.ads.campaigns || [];
+
+  // Aggregate KPIs
+  const totalSpend = campaigns.reduce((s,cam) => s+(cam.spend||0), 0);
+  const totalBudget = campaigns.reduce((s,cam) => s+(cam.budget||0), 0);
+  const totalClicks = campaigns.reduce((s,cam) => s+(cam.clicks||0), 0);
+  const totalImps = campaigns.reduce((s,cam) => s+(cam.impressions||0), 0);
+  const totalConvs = campaigns.reduce((s,cam) => s+(cam.conversions||0), 0);
+  const cpa = totalConvs ? (totalSpend/totalConvs).toFixed(0) : null;
+  const cpc = totalClicks ? (totalSpend/totalClicks).toFixed(2) : null;
+  const ctr = totalImps ? ((totalClicks/totalImps)*100).toFixed(1) : null;
+  const avgRevPerConv = c.ads.avgRevPerConv || 150;
+  const roas = totalSpend ? ((totalConvs*avgRevPerConv)/totalSpend).toFixed(1) : null;
+  const budgetPct = totalBudget ? Math.round((totalSpend/totalBudget)*100) : 0;
+
+  // Spend history (6 months)
+  if(!c.ads.spendHistory) c.ads.spendHistory = [];
+  const now = new Date();
+  const thisMonth = now.toISOString().slice(0,7);
+  const existing = c.ads.spendHistory.find(h=>h.month===thisMonth);
+  if(!existing && totalSpend>0) { c.ads.spendHistory.push({month:thisMonth, spend:totalSpend, clicks:totalClicks, conversions:totalConvs}); save(); }
+  else if(existing && (existing.spend!==totalSpend||existing.conversions!==totalConvs)) { existing.spend=totalSpend; existing.clicks=totalClicks; existing.conversions=totalConvs; save(); }
+
+  const months = [];
+  for(let i=5;i>=0;i--){
+    const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+    const key = d.toISOString().slice(0,7);
+    const label = d.toLocaleDateString('en',{month:'short'});
+    const rec = c.ads.spendHistory.find(h=>h.month===key);
+    months.push({label, spend:rec?rec.spend:0, clicks:rec?rec.clicks:0, conversions:rec?rec.conversions:0});
+  }
+  const maxSpend = Math.max(...months.map(m=>m.spend), 100);
+
+  // SVG spend chart
+  const cW=600, cH=150, pL=50, pR=10, pT=10, pB=25;
+  const plotW=cW-pL-pR, plotH=cH-pT-pB;
+  const spendPts = months.map((m,i)=>{
+    const x=pL+(i/(months.length-1))*plotW;
+    const y=pT+plotH-(m.spend/maxSpend)*plotH;
+    return `${x},${y}`;
+  });
+  const spendPath = `M${spendPts.join(' L')}`;
+  const spendArea = `${spendPath} L${pL+plotW},${pT+plotH} L${pL},${pT+plotH} Z`;
+  const gridLinesAds = [0,.25,.5,.75,1].map(pct=>{
+    const y=pT+plotH-pct*plotH;
+    const val=Math.round(maxSpend*pct);
+    return `<line x1="${pL}" y1="${y}" x2="${pL+plotW}" y2="${y}" stroke="var(--border)" stroke-width="0.5"/>
+            <text x="${pL-8}" y="${y+4}" fill="var(--muted)" font-size="9" text-anchor="end">$${val>=1000?(val/1000).toFixed(1)+'k':val}</text>`;
   }).join('');
+  const xLabelsAds = months.map((m,i)=>{
+    const x=pL+(i/(months.length-1))*plotW;
+    return `<text x="${x}" y="${cH-2}" fill="var(--muted)" font-size="9" text-anchor="middle">${m.label}</text>`;
+  }).join('');
+
+  // Platform breakdown
+  const platBreak = {};
+  campaigns.forEach(cam => {
+    const p = cam.platform||'other';
+    if(!platBreak[p]) platBreak[p] = {spend:0, clicks:0, conversions:0, count:0};
+    platBreak[p].spend += cam.spend||0;
+    platBreak[p].clicks += cam.clicks||0;
+    platBreak[p].conversions += cam.conversions||0;
+    platBreak[p].count++;
+  });
+  const platColors = {google:'#4285F4',facebook:'#1877F2',microsoft:'#00A4EF',tiktok:'#010101',instagram:'#E4405F',other:'var(--muted)'};
+  const platLabels = {google:'Google Ads',facebook:'Facebook Ads',microsoft:'Microsoft Ads',tiktok:'TikTok Ads',instagram:'Instagram Ads',other:'Other'};
+
+  // Campaign status counts
+  const active = campaigns.filter(c=>!c.paused);
+  const paused = campaigns.filter(c=>c.paused);
+
+  el.innerHTML = `
+    <!-- KPI Row -->
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:24px;">
+      <div class="panel" style="padding:18px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--indigo);"></div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:6px;">TOTAL SPEND</div>
+        <div style="font-size:24px;font-weight:800;color:var(--indigo2);">$${totalSpend.toLocaleString()}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">${budgetPct}% of $${totalBudget.toLocaleString()} budget</div>
+      </div>
+      <div class="panel" style="padding:18px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--teal);"></div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:6px;">CLICKS</div>
+        <div style="font-size:24px;font-weight:800;color:var(--teal);">${totalClicks.toLocaleString()}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">CTR: ${ctr||'--'}%</div>
+      </div>
+      <div class="panel" style="padding:18px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--green);"></div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:6px;">CONVERSIONS</div>
+        <div style="font-size:24px;font-weight:800;color:var(--green);">${totalConvs}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">CPA: ${cpa?'$'+cpa:'--'}</div>
+      </div>
+      <div class="panel" style="padding:18px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:${roas&&parseFloat(roas)>=2?'var(--green)':roas&&parseFloat(roas)>=1?'var(--amber)':'var(--red)'};"></div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:6px;">ROAS</div>
+        <div style="font-size:24px;font-weight:800;color:${roas&&parseFloat(roas)>=2?'var(--green)':roas&&parseFloat(roas)>=1?'var(--amber)':'var(--red)'};">${roas?roas+'x':'--'}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">$${avgRevPerConv} avg/conv</div>
+      </div>
+      <div class="panel" style="padding:18px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold);"></div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:6px;">CPC</div>
+        <div style="font-size:24px;font-weight:800;color:var(--gold);">${cpc?'$'+cpc:'--'}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">${totalImps.toLocaleString()} impressions</div>
+      </div>
+      <div class="panel" style="padding:18px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--purple);"></div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:6px;">CAMPAIGNS</div>
+        <div style="font-size:24px;font-weight:800;color:var(--purple2);">${campaigns.length}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">${active.length} active · ${paused.length} paused</div>
+      </div>
+    </div>
+
+    <!-- Spend Trend + Platform Breakdown -->
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:24px;">
+      <div class="panel" style="padding:20px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <div class="panel-title">Spend Trend (6 months)</div>
+          <div style="display:flex;gap:16px;font-size:11px;">
+            <span style="color:var(--indigo);"><span style="display:inline-block;width:12px;height:3px;background:var(--indigo);border-radius:2px;vertical-align:middle;margin-right:4px;"></span>Spend</span>
+            <span style="color:var(--green);"><span style="display:inline-block;width:12px;height:3px;background:var(--green);border-radius:2px;vertical-align:middle;margin-right:4px;"></span>Conversions</span>
+          </div>
+        </div>
+        <svg viewBox="0 0 ${cW} ${cH}" style="width:100%;height:auto;">
+          ${gridLinesAds}
+          <defs><linearGradient id="adSpendGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--indigo)" stop-opacity="0.25"/><stop offset="100%" stop-color="var(--indigo)" stop-opacity="0.02"/></linearGradient></defs>
+          <path d="${spendArea}" fill="url(#adSpendGrad)"/>
+          <path d="${spendPath}" fill="none" stroke="var(--indigo)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          ${months.map((m,i)=>{
+            const x=pL+(i/(months.length-1))*plotW;
+            const y=pT+plotH-(m.spend/maxSpend)*plotH;
+            return m.spend>0?`<circle cx="${x}" cy="${y}" r="3" fill="var(--indigo)" stroke="var(--surface)" stroke-width="1.5"/>`:'';
+          }).join('')}
+          ${xLabelsAds}
+        </svg>
+      </div>
+
+      <div class="panel" style="padding:20px;">
+        <div class="panel-title" style="margin-bottom:16px;">Platform Breakdown</div>
+        ${Object.keys(platBreak).length ? Object.entries(platBreak).map(([key,data]) => {
+          const pct = totalSpend ? Math.round((data.spend/totalSpend)*100) : 0;
+          return `<div style="margin-bottom:12px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+              <span style="font-size:12px;font-weight:600;color:${platColors[key]||'var(--muted)'};">${platLabels[key]||key}</span>
+              <span style="font-size:11px;color:var(--muted);">${data.count} campaigns · $${data.spend.toLocaleString()}</span>
+            </div>
+            <div style="height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;">
+              <div style="height:100%;width:${pct}%;background:${platColors[key]||'var(--muted)'};border-radius:3px;transition:width .5s;"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:4px;font-size:10px;color:var(--muted);">
+              <span>${data.clicks.toLocaleString()} clicks</span>
+              <span>${data.conversions} conv.</span>
+              <span>CPA: ${data.conversions?'$'+Math.round(data.spend/data.conversions):'--'}</span>
+            </div>
+          </div>`;
+        }).join('') : `<div style="text-align:center;padding:32px;color:var(--muted);font-size:13px;">Add campaigns to see breakdown</div>`}
+        <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border);">
+          <div class="form-group" style="margin:0;">
+            <label class="form-label">AVG REVENUE PER CONVERSION ($)</label>
+            <div style="display:flex;gap:8px;">
+              <input class="form-input" id="ads-rev-per-conv" type="number" value="${avgRevPerConv}" style="width:100px;font-size:12px;">
+              <button class="btn btn-ghost btn-sm" onclick="saveAvgRev('${c.id}')">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Budget Health + Campaign Performance -->
+    <div style="display:grid;grid-template-columns:1fr 2fr;gap:16px;margin-bottom:24px;">
+      <!-- Budget Health -->
+      <div class="panel" style="padding:20px;">
+        <div class="panel-title" style="margin-bottom:16px;">Budget Health</div>
+        <div style="text-align:center;margin-bottom:16px;">
+          <div style="position:relative;width:120px;height:120px;margin:0 auto;">
+            <svg viewBox="0 0 120 120" style="width:100%;transform:rotate(-90deg);">
+              <circle cx="60" cy="60" r="50" fill="none" stroke="var(--surface2)" stroke-width="10"/>
+              <circle cx="60" cy="60" r="50" fill="none" stroke="${budgetPct>90?'var(--red)':budgetPct>70?'var(--amber)':'var(--green)'}" stroke-width="10" stroke-dasharray="${Math.min(budgetPct,100)*3.14} 314" stroke-linecap="round"/>
+            </svg>
+            <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;">
+              <div style="font-size:24px;font-weight:800;color:var(--white);">${budgetPct}%</div>
+              <div style="font-size:9px;color:var(--muted);">spent</div>
+            </div>
+          </div>
+        </div>
+        ${campaigns.length ? campaigns.map(cam => {
+          const p = cam.budget ? Math.min(Math.round(((cam.spend||0)/(cam.budget||1))*100),100) : 0;
+          const bColor = p>90?'var(--red)':p>70?'var(--amber)':'var(--green)';
+          return `<div style="margin-bottom:8px;">
+            <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;">
+              <span style="color:var(--text);font-weight:500;">${cam.name}</span>
+              <span style="color:var(--muted);">$${cam.spend||0}/$${cam.budget||0}</span>
+            </div>
+            <div style="height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;">
+              <div style="height:100%;width:${p}%;background:${bColor};border-radius:2px;"></div>
+            </div>
+          </div>`;
+        }).join('') : `<div style="text-align:center;color:var(--muted);font-size:12px;padding:16px;">No campaigns</div>`}
+      </div>
+
+      <!-- Campaign Performance Table -->
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">All Campaigns</div>
+          <button class="btn btn-ghost btn-sm" onclick="openAddCampaign()">+ Add Campaign</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Campaign</th>
+                <th>Platform</th>
+                <th>Status</th>
+                <th>Budget</th>
+                <th>Spend</th>
+                <th>Clicks</th>
+                <th>Impr.</th>
+                <th>Conv.</th>
+                <th>CPC</th>
+                <th>ROAS</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              ${!campaigns.length ? `<tr><td colspan="11" style="text-align:center;color:var(--muted);padding:48px;">No campaigns yet</td></tr>` :
+                campaigns.map((cam,i) => {
+                  const pct = cam.budget ? Math.min(Math.round(((cam.spend||0)/(cam.budget||1))*100),100) : 0;
+                  const camCpc = cam.clicks ? '$'+(cam.spend/cam.clicks).toFixed(2) : '—';
+                  const camRoas = cam.spend ? ((cam.conversions||0)*avgRevPerConv/cam.spend).toFixed(1)+'x' : '—';
+                  const platC = platColors[cam.platform]||'var(--muted)';
+                  const platL = platLabels[cam.platform]||cam.platform;
+                  return `<tr style="${cam.paused?'opacity:0.5;':''}">
+                    <td>
+                      <div style="font-weight:600;color:var(--white);font-size:13px;">${cam.name}</div>
+                      <div style="margin-top:4px;height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;width:120px;">
+                        <div style="height:100%;width:${pct}%;background:${pct>90?'var(--red)':pct>70?'var(--amber)':'var(--green)'};border-radius:2px;"></div>
+                      </div>
+                    </td>
+                    <td><span style="font-size:11px;font-weight:700;color:${platC};">${platL}</span></td>
+                    <td>
+                      <button class="btn btn-ghost btn-sm" style="font-size:10px;color:${cam.paused?'var(--amber)':'var(--green)'};" onclick="toggleCampaignPause('${c.id}',${i})">
+                        ${cam.paused?'Paused':'Active'}
+                      </button>
+                    </td>
+                    <td style="color:var(--muted);">$${cam.budget||0}/mo</td>
+                    <td style="font-weight:600;color:var(--white);">$${(cam.spend||0).toLocaleString()}</td>
+                    <td>${(cam.clicks||0).toLocaleString()}</td>
+                    <td style="color:var(--muted);">${(cam.impressions||0).toLocaleString()}</td>
+                    <td style="color:var(--green);font-weight:700;">${cam.conversions||0}</td>
+                    <td style="color:var(--muted);">${camCpc}</td>
+                    <td style="font-weight:700;color:${camRoas!=='—'&&parseFloat(camRoas)>=2?'var(--green)':camRoas!=='—'&&parseFloat(camRoas)>=1?'var(--amber)':'var(--red)'};">${camRoas}</td>
+                    <td style="white-space:nowrap;">
+                      <button class="btn btn-ghost btn-sm" style="font-size:10px;" onclick="updateCampaignMetrics('${c.id}',${i})">Update</button>
+                      <button class="btn btn-ghost btn-sm" style="font-size:10px;color:var(--red);" onclick="deleteCampaign('${c.id}',${i})">Delete</button>
+                    </td>
+                  </tr>`;
+                }).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Ad Notes -->
+    <div class="panel" style="padding:20px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div class="panel-title">Campaign Notes & Optimizations</div>
+        <button class="btn btn-ghost btn-sm" onclick="addAdNote('${c.id}')">+ Add Note</button>
+      </div>
+      ${(c.ads.notes||[]).length ? (c.ads.notes||[]).slice(0,8).map((n,i) => `
+        <div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);">
+          <div style="flex:1;">
+            <div style="font-size:12px;color:var(--text);">${n.text}</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:2px;">${n.date}</div>
+          </div>
+          <button class="btn btn-ghost btn-sm" style="font-size:9px;color:var(--red);" onclick="deleteAdNote('${c.id}',${i})">×</button>
+        </div>`).join('') : `<div style="text-align:center;color:var(--muted);font-size:12px;padding:20px;">Track ad optimizations, A/B tests, and bid changes</div>`}
+    </div>`;
 }
 
 let addCampaignClientId = null;
@@ -8087,7 +8310,73 @@ function saveCampaign() {
 
 function deleteCampaign(clientId, idx) {
   const c = DB.clients.find(x => x.id === clientId); if (!c?.ads) return;
+  if(!confirm('Delete this campaign?')) return;
   c.ads.campaigns.splice(idx,1); save(); loadAds(clientId); toast('Campaign removed','success');
+}
+
+function toggleCampaignPause(clientId, idx) {
+  const c = DB.clients.find(x=>x.id===clientId); if(!c?.ads?.campaigns) return;
+  c.ads.campaigns[idx].paused = !c.ads.campaigns[idx].paused;
+  save(); loadAds(clientId);
+  toast(`Campaign ${c.ads.campaigns[idx].paused?'paused':'resumed'}`,'success');
+}
+
+function updateCampaignMetrics(clientId, idx) {
+  const c = DB.clients.find(x=>x.id===clientId); if(!c?.ads?.campaigns) return;
+  const cam = c.ads.campaigns[idx];
+  const spend = parseFloat(prompt('Current spend ($):', cam.spend||0));
+  if(isNaN(spend)) return;
+  const clicks = parseInt(prompt('Total clicks:', cam.clicks||0))||0;
+  const imps = parseInt(prompt('Total impressions:', cam.impressions||0))||0;
+  const convs = parseInt(prompt('Total conversions:', cam.conversions||0))||0;
+  cam.spend = spend;
+  cam.clicks = clicks;
+  cam.impressions = imps;
+  cam.conversions = convs;
+  save(); loadAds(clientId);
+  toast('Campaign metrics updated!','success');
+}
+
+function saveAvgRev(clientId) {
+  const c = DB.clients.find(x=>x.id===clientId); if(!c) return;
+  if(!c.ads) c.ads = {campaigns:[]};
+  c.ads.avgRevPerConv = parseFloat(document.getElementById('ads-rev-per-conv').value)||150;
+  save(); loadAds(clientId);
+  toast('Avg revenue per conversion saved','success');
+}
+
+function addAdNote(clientId) {
+  const c = DB.clients.find(x=>x.id===clientId); if(!c) return;
+  const text = prompt('Add a campaign note (optimization, A/B test, bid change, etc.):');
+  if(!text) return;
+  if(!c.ads) c.ads = {campaigns:[]};
+  if(!c.ads.notes) c.ads.notes = [];
+  c.ads.notes.unshift({text, date:today()});
+  if(c.ads.notes.length>20) c.ads.notes = c.ads.notes.slice(0,20);
+  save(); loadAds(clientId);
+  toast('Note added','success');
+}
+
+function deleteAdNote(clientId, idx) {
+  const c = DB.clients.find(x=>x.id===clientId); if(!c?.ads?.notes) return;
+  c.ads.notes.splice(idx,1); save(); loadAds(clientId);
+}
+
+function exportAdsCSV() {
+  const id = document.getElementById('ads-select').value;
+  const c = id ? DB.clients.find(x=>x.id===id) : null;
+  if(!c?.ads?.campaigns?.length) { toast('No campaign data to export','error'); return; }
+  const rows = [['Campaign','Platform','Status','Budget','Spend','Clicks','Impressions','Conversions','CPC','ROAS']];
+  const avgRev = c.ads.avgRevPerConv||150;
+  c.ads.campaigns.forEach(cam => {
+    const cpc = cam.clicks ? (cam.spend/cam.clicks).toFixed(2) : 'N/A';
+    const roas = cam.spend ? ((cam.conversions||0)*avgRev/cam.spend).toFixed(1) : 'N/A';
+    rows.push([cam.name,cam.platform||'',cam.paused?'Paused':'Active',cam.budget||0,cam.spend||0,cam.clicks||0,cam.impressions||0,cam.conversions||0,cpc,roas]);
+  });
+  const csv = rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv],{type:'text/csv'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`ad-campaigns-${c.bizName}-${today()}.csv`; a.click();
+  toast('Campaigns exported!','success');
 }
 
 // ════════════════════════════════════════════════════
