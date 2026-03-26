@@ -790,22 +790,36 @@ a{color:inherit;text-decoration:none}
   gCutter.appendChild(svgEl('rect',{x:cutterX-6,y:cutterY-48,width:12,height:34,rx:4,fill:'#444'}));
   svg.appendChild(gCutter);
 
-  // ─── 15. CUT LINES (appear progressively after each cut) ───
+  // ─── 15. CUT LINES — realistic deep cuts with edge separation ───
   var gCutLines=svgEl('g',{opacity:0});
-  // 3 cuts through center = 6 slices
   var cutAngles=[Math.PI/2, Math.PI/2+Math.PI/3, Math.PI/2+Math.PI*2/3];
-  var cutLineEls=[];
+  var cutLineEls=[]; // Each entry is a group containing the multi-layer cut
   var cutLen=pizzaR*2*0.95;
   for(var ci=0;ci<cutAngles.length;ci++){
     var ca=cutAngles[ci];
-    var cutLine=svgEl('line',{
-      x1:cx+Math.cos(ca)*pizzaR*0.95,y1:cy+Math.sin(ca)*pizzaR*0.95,
-      x2:cx-Math.cos(ca)*pizzaR*0.95,y2:cy-Math.sin(ca)*pizzaR*0.95,
-      stroke:'#2A1A00','stroke-width':1,opacity:0,
-      'stroke-dasharray':String(cutLen),'stroke-dashoffset':String(cutLen)
-    });
-    gCutLines.appendChild(cutLine);
-    cutLineEls.push(cutLine);
+    var x1=cx+Math.cos(ca)*pizzaR*0.95, y1=cy+Math.sin(ca)*pizzaR*0.95;
+    var x2=cx-Math.cos(ca)*pizzaR*0.95, y2=cy-Math.sin(ca)*pizzaR*0.95;
+    // Perpendicular offset for edge separation
+    var px=Math.cos(ca+Math.PI/2)*1.5, py=Math.sin(ca+Math.PI/2)*1.5;
+    var cutGrp=svgEl('g',{opacity:0});
+    // Shadow/depth line (widest, darkest) — the deep groove
+    var shadow=svgEl('line',{x1:x1,y1:y1,x2:x2,y2:y2,stroke:'#0A0500','stroke-width':4,opacity:0.5,
+      'stroke-linecap':'round','stroke-dasharray':String(cutLen),'stroke-dashoffset':String(cutLen)});
+    cutGrp.appendChild(shadow);
+    // Left edge highlight — slightly separated crust edge
+    var edgeL=svgEl('line',{x1:x1-px,y1:y1-py,x2:x2-px,y2:y2-py,stroke:'#8B6914','stroke-width':1.2,opacity:0.4,
+      'stroke-linecap':'round','stroke-dasharray':String(cutLen),'stroke-dashoffset':String(cutLen)});
+    cutGrp.appendChild(edgeL);
+    // Right edge highlight
+    var edgeR=svgEl('line',{x1:x1+px,y1:y1+py,x2:x2+px,y2:y2+py,stroke:'#8B6914','stroke-width':1.2,opacity:0.4,
+      'stroke-linecap':'round','stroke-dasharray':String(cutLen),'stroke-dashoffset':String(cutLen)});
+    cutGrp.appendChild(edgeR);
+    // Inner dark center line — the actual cut
+    var center=svgEl('line',{x1:x1,y1:y1,x2:x2,y2:y2,stroke:'#1A0A00','stroke-width':2,opacity:0.7,
+      'stroke-linecap':'round','stroke-dasharray':String(cutLen),'stroke-dashoffset':String(cutLen)});
+    cutGrp.appendChild(center);
+    gCutLines.appendChild(cutGrp);
+    cutLineEls.push(cutGrp);
   }
   svg.appendChild(gCutLines);
 
@@ -914,6 +928,9 @@ a{color:inherit;text-decoration:none}
 
 
   // ═══ ANIMATION UPDATE ═══
+  // Helper: set stroke-dashoffset on all line children of a cut group
+  function setCutDash(grp,val){var ch=grp.childNodes;for(var i=0;i<ch.length;i++){ch[i].setAttribute('stroke-dashoffset',String(val));}}
+
   function update(){
     var p=getProgress();
     scrubFill.style.width=(p*100)+'%';
@@ -948,7 +965,7 @@ a{color:inherit;text-decoration:none}
     gCutter.setAttribute('opacity','0');gCutter.setAttribute('transform','');
     gSliceHole.setAttribute('opacity','0');
     gCutLines.setAttribute('opacity','0');
-    for(var rci=0;rci<cutLineEls.length;rci++){cutLineEls[rci].setAttribute('opacity','0');cutLineEls[rci].setAttribute('stroke-dashoffset',String(cutLen));}
+    for(var rci=0;rci<cutLineEls.length;rci++){cutLineEls[rci].setAttribute('opacity','0');setCutDash(cutLineEls[rci],cutLen);}
     gSlice.setAttribute('opacity','0');gSlice.setAttribute('transform','');
     scenePowered.style.opacity='0';
     scenePowered.style.transform='';
@@ -1330,33 +1347,32 @@ a{color:inherit;text-decoration:none}
         // Draw cut lines progressively as the cutter moves through each cut
         gCutLines.setAttribute('opacity','1');
         if(cutPhase<0.33){
-          cutLineEls[0].setAttribute('opacity','0.4');
-          cutLineEls[0].setAttribute('stroke-dashoffset',String(cutLen*(1-c1P)));
+          cutLineEls[0].setAttribute('opacity','1');
+          setCutDash(cutLineEls[0],cutLen*(1-c1P));
         } else if(cutPhase<0.66){
-          cutLineEls[0].setAttribute('opacity','0.4');
-          cutLineEls[0].setAttribute('stroke-dashoffset','0');
-          cutLineEls[1].setAttribute('opacity','0.4');
-          cutLineEls[1].setAttribute('stroke-dashoffset',String(cutLen*(1-c2P)));
+          cutLineEls[0].setAttribute('opacity','1');
+          setCutDash(cutLineEls[0],0);
+          cutLineEls[1].setAttribute('opacity','1');
+          setCutDash(cutLineEls[1],cutLen*(1-c2P));
         } else {
-          cutLineEls[0].setAttribute('opacity','0.4');
-          cutLineEls[0].setAttribute('stroke-dashoffset','0');
-          cutLineEls[1].setAttribute('opacity','0.4');
-          cutLineEls[1].setAttribute('stroke-dashoffset','0');
-          cutLineEls[2].setAttribute('opacity','0.4');
-          cutLineEls[2].setAttribute('stroke-dashoffset',String(cutLen*(1-c3P)));
+          cutLineEls[0].setAttribute('opacity','1');
+          setCutDash(cutLineEls[0],0);
+          cutLineEls[1].setAttribute('opacity','1');
+          setCutDash(cutLineEls[1],0);
+          cutLineEls[2].setAttribute('opacity','1');
+          setCutDash(cutLineEls[2],cutLen*(1-c3P));
         }
       }
       else {
         gCutter.setAttribute('opacity',String(1-ease3((sliceP2-0.65)/0.15)));
         gCutLines.setAttribute('opacity','1');
-        // Show all cut lines fully drawn during separation
-        cutLineEls[0].setAttribute('opacity','0.4');
-        cutLineEls[0].setAttribute('stroke-dashoffset','0');
-        cutLineEls[1].setAttribute('opacity','0.4');
-        cutLineEls[1].setAttribute('stroke-dashoffset','0');
+        cutLineEls[0].setAttribute('opacity','1');
+        setCutDash(cutLineEls[0],0);
+        cutLineEls[1].setAttribute('opacity','1');
+        setCutDash(cutLineEls[1],0);
         var line3FadeP=ease3(clamp((sliceP2-0.65)/0.1,0,1));
-        cutLineEls[2].setAttribute('opacity',String(line3FadeP*0.4));
-        cutLineEls[2].setAttribute('stroke-dashoffset','0');
+        cutLineEls[2].setAttribute('opacity',String(line3FadeP));
+        setCutDash(cutLineEls[2],0);
         var sepP=ease3((sliceP2-0.65)/0.35);
         gSlice.setAttribute('opacity',String(sepP));
         var sliceTx=sepP*60, sliceTy=sepP*-50, sliceRot=sepP*-15;
