@@ -127,10 +127,7 @@ nav.scrolled{background:rgba(6,6,10,.8);backdrop-filter:blur(20px) saturate(150%
 .transition-diagonal::before{content:'';position:absolute;inset:0;background:var(--surface);clip-path:polygon(0 0,100% 70%,100% 100%,0 100%)}
 .transition-diagonal-rev{width:100%;height:100px;position:relative;overflow:hidden;background:var(--surface)}
 .transition-diagonal-rev::before{content:'';position:absolute;inset:0;background:var(--bg);clip-path:polygon(0 30%,100% 0,100% 100%,0 100%)}
-/* Quick transition between showcase and features */
-.cam-barrel-transition{height:10vh;position:relative;overflow:hidden;background:var(--bg)}
-.cam-barrel-inner{position:sticky;top:0;height:100vh;perspective:600px;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.cam-barrel-flash{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(201,169,110,.15),transparent 70%);opacity:0;transition:opacity .3s}
+/* (barrel-roll removed — replaced by diagonal wipe) */
 
 /* Camera tilt transition */
 .cam-tilt{perspective:800px;overflow:hidden}
@@ -468,12 +465,8 @@ footer{border-top:1px solid var(--border);padding:48px}
   </div>
 </div>
 
-<!-- Dramatic 3D barrel-roll transition: showcase → features -->
-<div class="cam-barrel-transition" id="barrel-transition">
-  <div class="cam-barrel-inner" id="barrel-inner">
-    <div class="cam-barrel-flash"></div>
-  </div>
-</div>
+<!-- Diagonal wipe: showcase → features -->
+<div class="transition-diagonal"></div>
 
 <!-- Features (camera tilts in) -->
 <section id="features" class="features-section cam-tilt">
@@ -1040,49 +1033,7 @@ function initShowcase(){
   window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(update);ticking=true}},{passive:true});
 }
 
-// ── Barrel-Roll Transition (showcase → features) ──
-function initBarrelTransition(){
-  const wrap=document.getElementById('barrel-transition');if(!wrap)return;
-  const inner=wrap.querySelector('.cam-barrel-inner');
-  const flash=wrap.querySelector('.cam-barrel-flash');
-  let ticking=false;
-  function update(){
-    ticking=false;
-    const rect=wrap.getBoundingClientRect();
-    const total=wrap.offsetHeight-window.innerHeight;
-    const scrolled=Math.max(0,-rect.top);
-    const p=Math.max(0,Math.min(1,scrolled/total));
-    /*
-      0-30%  : Camera pulls back (scale down + slight rotateX)
-      30-70% : Whip pan — fast rotateY spin + rotateZ tilt + zoom through
-      70-100%: Camera settles (scale back to 1, all rotations to 0)
-    */
-    let rX=0,rY=0,rZ=0,sc=1,op=1;
-    if(p<.3){
-      const t=p/.3;
-      rX=t*12;sc=1-t*.15;op=1;
-    }else if(p<.7){
-      const t=(p-.3)/.4;
-      const ease=t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2; // cubic ease in-out
-      rY=ease*180;
-      rZ=Math.sin(ease*Math.PI)*15;
-      rX=12-ease*12;
-      sc=.85+ease*.3; // zoom through
-      // Flash at the peak of the spin
-      const flashInt=Math.sin(ease*Math.PI);
-      flash.style.opacity=flashInt*.6;
-    }else{
-      const t=(p-.7)/.3;
-      const ease=1-Math.pow(1-t,3); // ease out
-      rY=180+ease*180; // complete the 360
-      rZ=(1-ease)*5;
-      sc=1.15-ease*.15;
-      flash.style.opacity=(1-ease)*.1;
-    }
-    inner.style.transform=`perspective(600px) rotateX(${rX}deg) rotateY(${rY}deg) rotateZ(${rZ}deg) scale(${sc})`;
-  }
-  window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(update);ticking=true}},{passive:true});
-}
+// (barrel-roll transition removed)
 
 // ── Horizontal Scroll Steps ──
 function initHorizontalScroll(){
@@ -1306,7 +1257,7 @@ function initLoader(){
   renderPricing();
   initOrb();
   initShowcase();
-  initBarrelTransition();
+  // (barrel-roll removed)
   initHorizontalScroll();
   initReveal();
   initScrollProgress();
