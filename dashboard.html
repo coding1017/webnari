@@ -1442,99 +1442,16 @@ td.bold { color: var(--white); font-weight: 600; }
   <div class="page active" id="page-overview">
     <div class="page-header">
       <div class="page-header-left">
-        <h1 id="overview-greeting">Good morning 👋</h1>
+        <h1 id="overview-greeting">Good morning</h1>
         <p id="overview-date"></p>
       </div>
       <div style="display:flex;gap:10px;">
-        <button class="btn btn-ghost" onclick="navigate('billing')">📈 Revenue</button>
+        <button class="btn btn-ghost" onclick="navigate('forecast')">📊 Forecast</button>
         <button class="btn btn-primary" onclick="openAddClient()">+ New Client</button>
       </div>
     </div>
-
-    <!-- KPI Cards -->
-    <div class="kpi-grid">
-      <div class="kpi-card" style="--accent:var(--green)">
-        <div class="kpi-glow" style="background:var(--green)"></div>
-        <div class="kpi-label">Monthly Revenue <span class="kpi-icon">💰</span></div>
-        <div class="kpi-value">$<span id="kpi-mrr">0</span></div>
-        <div class="kpi-trend up" id="kpi-mrr-sub">↑ Recurring</div>
-      </div>
-      <div class="kpi-card" style="--accent:var(--indigo)">
-        <div class="kpi-glow"></div>
-        <div class="kpi-label">Active Clients <span class="kpi-icon">👥</span></div>
-        <div class="kpi-value"><span id="kpi-clients">0</span></div>
-        <div class="kpi-trend neutral">Total managed</div>
-      </div>
-      <div class="kpi-card" style="--accent:var(--purple)">
-        <div class="kpi-glow" style="background:var(--purple)"></div>
-        <div class="kpi-label">Sites Live <span class="kpi-icon">🌐</span></div>
-        <div class="kpi-value"><span id="kpi-live">0</span></div>
-        <div class="kpi-trend neutral">Published</div>
-      </div>
-      <div class="kpi-card" style="--accent:var(--amber)">
-        <div class="kpi-glow" style="background:var(--amber)"></div>
-        <div class="kpi-label">Websites <span class="kpi-icon">🎨</span></div>
-        <div class="kpi-value"><span id="kpi-templates">0</span></div>
-        <div class="kpi-trend neutral">In library</div>
-      </div>
-    </div>
-
-    <!-- Recent + Activity -->
-    <div class="grid-2" style="margin-bottom:16px;">
-      <div class="panel">
-        <div class="panel-header">
-          <div>
-            <div class="panel-title">Recent Clients</div>
-            <div class="panel-subtitle">Latest additions</div>
-          </div>
-          <button class="panel-link" onclick="navigate('clients')">View all →</button>
-        </div>
-        <div class="table-wrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Business</th>
-                <th>Template</th>
-                <th>Status</th>
-                <th>MRR</th>
-              </tr>
-            </thead>
-            <tbody id="recent-tbody">
-              <tr><td colspan="4" style="text-align:center;color:var(--muted);padding:28px;font-size:13px;">No clients yet</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <div class="panel">
-        <div class="panel-header">
-          <div>
-            <div class="panel-title">Activity Feed</div>
-            <div class="panel-subtitle">Recent updates</div>
-          </div>
-        </div>
-        <div class="panel-body">
-          <div class="activity-list" id="activity-list">
-            <div style="color:var(--muted);font-size:13px;text-align:center;padding:20px;">Activity will appear here</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Revenue breakdown -->
-    <div class="panel">
-      <div class="panel-header">
-        <div>
-          <div class="panel-title">Revenue by Plan</div>
-          <div class="panel-subtitle">MRR breakdown across tiers</div>
-        </div>
-      </div>
-      <div class="panel-body">
-        <div id="revenue-breakdown" style="display:flex;gap:24px;flex-wrap:wrap;align-items:center;">
-          <div style="color:var(--muted);font-size:13px;">Add clients to see revenue breakdown.</div>
-        </div>
-      </div>
-    </div>
+    <!-- Everything rendered dynamically -->
+    <div id="overview-content"></div>
   </div>
 
   <!-- ══════════════════════════════════════
@@ -3460,55 +3377,219 @@ function navigate(page, param) {
 function renderOverview() {
   const now = new Date();
   const h = now.getHours();
-  document.getElementById('overview-greeting').textContent = (h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening') + ' 👋';
+  const agencyName = DB.agency?.name && DB.agency.name !== 'Your Agency' ? ', ' + DB.agency.ownerName.split(' ')[0] : '';
+  document.getElementById('overview-greeting').textContent = (h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening') + agencyName;
   document.getElementById('overview-date').textContent = now.toLocaleDateString('en-US', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
-
-  const active = DB.clients.filter(c => c.paymentStatus === 'active');
-  const mrr = active.reduce((s,c) => s + (c.monthlyRate||0), 0);
-  const live = DB.clients.filter(c => c.status === 'live').length;
-
-  document.getElementById('kpi-mrr').textContent = mrr.toLocaleString();
-  document.getElementById('kpi-clients').textContent = DB.clients.length;
-  document.getElementById('kpi-live').textContent = live;
-  document.getElementById('kpi-templates').textContent = DB.templates.length;
   document.getElementById('client-count-badge').textContent = DB.clients.length;
 
-  // Recent clients
-  const rtb = document.getElementById('recent-tbody');
-  if (!DB.clients.length) {
-    rtb.innerHTML = `<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:28px;font-size:13px;">No clients yet</td></tr>`;
-  } else {
-    rtb.innerHTML = [...DB.clients].reverse().slice(0,5).map(c => `
-      <tr style="cursor:pointer;" onclick="navigate('clients')">
-        <td class="bold">${c.bizName}</td>
-        <td style="color:var(--muted);font-size:12.5px;">${getTplName(c.template)}</td>
-        <td>${statusBadge(c.status)}</td>
-        <td style="color:var(--green);font-weight:700;">$${c.monthlyRate||0}/mo</td>
-      </tr>`).join('');
+  const active = DB.clients.filter(c => c.paymentStatus === 'active');
+  const mrr = active.reduce((s, c) => s + (c.monthlyRate || 0), 0);
+  const arr = mrr * 12;
+  const live = DB.clients.filter(c => c.status === 'live').length;
+  const onboarding = DB.clients.filter(c => c.status === 'onboarding').length;
+  const pastDue = DB.clients.filter(c => c.paymentStatus === 'past_due').length;
+  const netMonthly = mrr - (DB.forecast?.fixedCosts || 0);
+
+  // New leads this week
+  const weekAgo = Date.now() - 7 * 86400000;
+  const newLeads = (DB.leadInbox || []).filter(l => l.status === 'new').length;
+  const weekLeads = (DB.leadInbox || []).filter(l => new Date(l.createdAt).getTime() > weekAgo).length;
+
+  // Upcoming billing (next 7 days)
+  const todayStr = now.toISOString().slice(0, 10);
+  const weekFromNow = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
+  const upcomingBilling = DB.clients.filter(c => c.billingDate && c.billingDate >= todayStr && c.billingDate <= weekFromNow);
+
+  // Overdue content
+  const overdueContent = (DB.contentItems || []).filter(i => i.status !== 'published' && i.dueDate < todayStr).length;
+
+  // Health summary
+  const healthChecks = DB.healthChecks || {};
+  let sitesUp = 0, sitesDown = 0;
+  DB.clients.filter(c => c.liveUrl && c.status === 'live').forEach(c => {
+    const hc = healthChecks[c.id];
+    if (hc && hc.history && hc.history.length) {
+      const last = hc.history[hc.history.length - 1];
+      if (last.status === 'up') sitesUp++; else if (last.status === 'down') sitesDown++;
+    }
+  });
+
+  // Revenue by plan
+  const planBreak = { starter: { count: 0, rev: 0 }, standard: { count: 0, rev: 0 }, premium: { count: 0, rev: 0 } };
+  active.forEach(c => {
+    const p = c.plan || 'starter';
+    if (planBreak[p]) { planBreak[p].count++; planBreak[p].rev += c.monthlyRate || 0; }
+  });
+
+  // Pending proposals
+  const pendingProposals = (DB.proposals || []).filter(p => p.status === 'sent' || p.status === 'viewed').length;
+
+  // Change requests pending
+  const pendingRequests = (DB.changeRequests || []).filter(r => r.status === 'pending').length;
+
+  const container = document.getElementById('overview-content');
+
+  // Build alerts
+  let alerts = [];
+  if (sitesDown > 0) alerts.push({ text: `${sitesDown} site${sitesDown > 1 ? 's' : ''} DOWN`, color: 'var(--red)', icon: '●', action: "navigate('health')" });
+  if (pastDue > 0) alerts.push({ text: `${pastDue} payment${pastDue > 1 ? 's' : ''} past due`, color: 'var(--red)', icon: '⚠', action: "navigate('billing')" });
+  if (newLeads > 0) alerts.push({ text: `${newLeads} new lead${newLeads > 1 ? 's' : ''} awaiting response`, color: 'var(--amber)', icon: '📥', action: "navigate('lead-inbox')" });
+  if (overdueContent > 0) alerts.push({ text: `${overdueContent} content item${overdueContent > 1 ? 's' : ''} overdue`, color: 'var(--amber)', icon: '📅', action: "navigate('content')" });
+  if (pendingRequests > 0) alerts.push({ text: `${pendingRequests} change request${pendingRequests > 1 ? 's' : ''} pending`, color: 'var(--indigo)', icon: '🔧', action: "navigate('portal')" });
+  if (upcomingBilling.length > 0) alerts.push({ text: `${upcomingBilling.length} renewal${upcomingBilling.length > 1 ? 's' : ''} this week`, color: 'var(--indigo)', icon: '💳', action: "navigate('billing')" });
+
+  let alertsHtml = '';
+  if (alerts.length) {
+    alertsHtml = `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
+      ${alerts.map(a => `<div style="display:flex;align-items:center;gap:8px;padding:8px 16px;background:${a.color}10;border:1px solid ${a.color}30;border-radius:var(--radius);cursor:pointer;transition:all 0.2s;font-size:12px;font-weight:600;color:${a.color};" onclick="${a.action}" onmouseover="this.style.background='${a.color}20'" onmouseout="this.style.background='${a.color}10'">
+        <span>${a.icon}</span> ${a.text}
+      </div>`).join('')}
+    </div>`;
   }
 
-  // Activity
-  const al = document.getElementById('activity-list');
+  // KPIs — 5 cards
+  let kpiHtml = `<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px;">
+    <div class="kpi-card" style="--accent:var(--green);cursor:pointer;" onclick="navigate('billing')"><div class="kpi-glow" style="background:var(--green)"></div>
+      <div class="kpi-label">Monthly Revenue <span class="kpi-icon">💰</span></div>
+      <div class="kpi-value">$${mrr.toLocaleString()}</div>
+      <div class="kpi-trend ${netMonthly >= 0 ? 'up' : 'neutral'}">$${arr.toLocaleString()} ARR &middot; ${netMonthly >= 0 ? '+' : ''}$${netMonthly.toLocaleString()} net</div>
+    </div>
+    <div class="kpi-card" style="--accent:var(--indigo);cursor:pointer;" onclick="navigate('clients')"><div class="kpi-glow"></div>
+      <div class="kpi-label">Clients <span class="kpi-icon">👥</span></div>
+      <div class="kpi-value">${DB.clients.length}</div>
+      <div class="kpi-trend neutral">${active.length} active &middot; ${onboarding} onboarding</div>
+    </div>
+    <div class="kpi-card" style="--accent:${sitesDown > 0 ? 'var(--red)' : 'var(--green)'};cursor:pointer;" onclick="navigate('health')"><div class="kpi-glow" style="background:${sitesDown > 0 ? 'var(--red)' : 'var(--green)'}"></div>
+      <div class="kpi-label">Sites Live <span class="kpi-icon">🌐</span></div>
+      <div class="kpi-value">${live}</div>
+      <div class="kpi-trend ${sitesDown > 0 ? 'neutral' : 'up'}">${sitesDown > 0 ? sitesDown + ' down — check now' : sitesUp > 0 ? 'All operational' : 'Run health check'}</div>
+    </div>
+    <div class="kpi-card" style="--accent:var(--amber);cursor:pointer;" onclick="navigate('lead-inbox')"><div class="kpi-glow" style="background:var(--amber)"></div>
+      <div class="kpi-label">Leads <span class="kpi-icon">📥</span></div>
+      <div class="kpi-value">${newLeads}</div>
+      <div class="kpi-trend ${newLeads > 0 ? 'up' : 'neutral'}">${weekLeads} this week &middot; ${(DB.leadInbox||[]).length} total</div>
+    </div>
+    <div class="kpi-card" style="--accent:var(--purple);cursor:pointer;" onclick="navigate('proposals')"><div class="kpi-glow" style="background:var(--purple)"></div>
+      <div class="kpi-label">Pipeline <span class="kpi-icon">📋</span></div>
+      <div class="kpi-value">${pendingProposals}</div>
+      <div class="kpi-trend neutral">${pendingProposals} proposal${pendingProposals !== 1 ? 's' : ''} awaiting response</div>
+    </div>
+  </div>`;
+
+  // Revenue by plan — horizontal bars
+  const maxRev = Math.max(planBreak.starter.rev, planBreak.standard.rev, planBreak.premium.rev, 1);
+  let revenueHtml = `<div class="panel" style="padding:20px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div class="panel-title">Revenue by Plan</div>
+      <div style="font-family:var(--font-head);font-size:20px;font-weight:700;color:var(--white);">$${mrr.toLocaleString()}<span style="font-size:12px;color:var(--muted);font-weight:500;">/mo</span></div>
+    </div>
+    ${[['Premium', planBreak.premium, 'var(--indigo)'], ['Standard', planBreak.standard, 'var(--green)'], ['Starter', planBreak.starter, 'var(--amber)']].map(([label, data, col]) => `
+      <div style="margin-bottom:12px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+          <span style="font-size:12px;font-weight:600;color:var(--white);">${label} <span style="color:var(--muted);font-weight:400;">(${data.count} client${data.count!==1?'s':''})</span></span>
+          <span style="font-size:12px;font-weight:700;color:${col};">$${data.rev.toLocaleString()}/mo</span>
+        </div>
+        <div style="height:8px;background:var(--surface);border-radius:4px;overflow:hidden;">
+          <div style="height:100%;width:${mrr > 0 ? (data.rev/mrr*100) : 0}%;background:${col};border-radius:4px;transition:width 0.5s;"></div>
+        </div>
+      </div>`).join('')}
+  </div>`;
+
+  // Middle row: Recent Clients + Activity + Quick Actions
+  let recentHtml = `<div class="panel" style="padding:0;">
+    <div class="panel-header"><div><div class="panel-title">Recent Clients</div><div class="panel-subtitle">Latest additions</div></div><button class="panel-link" onclick="navigate('clients')">View all →</button></div>
+    <div class="table-wrap"><table><thead><tr><th>Business</th><th>Template</th><th>Status</th><th>MRR</th><th>Health</th></tr></thead><tbody>`;
+  if (!DB.clients.length) {
+    recentHtml += '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:28px;">No clients yet — click "+ New Client" to get started</td></tr>';
+  } else {
+    [...DB.clients].reverse().slice(0, 6).forEach(c => {
+      const hc = healthChecks[c.id];
+      const hLast = hc && hc.history && hc.history.length ? hc.history[hc.history.length-1] : null;
+      const [hDot, hTip] = hLast ? (hLast.status === 'up' ? ['var(--green)', 'Online'] : ['var(--red)', 'Down']) : ['var(--muted)', 'Not checked'];
+      recentHtml += `<tr style="cursor:pointer;" onclick="navigate('clients')">
+        <td class="bold">${c.bizName}</td>
+        <td style="color:var(--muted);font-size:12px;">${getTplName(c.template)}</td>
+        <td>${statusBadge(c.status)}</td>
+        <td style="color:var(--green);font-weight:700;font-size:12px;">$${c.monthlyRate||0}/mo</td>
+        <td><span title="${hTip}" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${hDot};"></span></td>
+      </tr>`;
+    });
+  }
+  recentHtml += '</tbody></table></div></div>';
+
+  let activityHtml = `<div class="panel" style="padding:0;">
+    <div class="panel-header"><div><div class="panel-title">Activity Feed</div><div class="panel-subtitle">Recent updates</div></div></div>
+    <div class="panel-body">
+      <div class="activity-list">`;
   if (DB.activity?.length) {
-    al.innerHTML = DB.activity.slice(0,7).map(a => `
+    activityHtml += DB.activity.slice(0, 10).map(a => `
       <div class="activity-item">
         <div class="activity-pip ${a.type}"></div>
         <div class="activity-text">${a.text}</div>
         <div class="activity-time">${a.time}</div>
       </div>`).join('');
+  } else {
+    activityHtml += '<div style="color:var(--muted);font-size:13px;text-align:center;padding:20px;">Activity will appear here as you manage clients</div>';
+  }
+  activityHtml += '</div></div></div>';
+
+  // Quick Actions panel
+  let quickHtml = `<div class="panel" style="padding:20px;">
+    <div class="panel-title" style="margin-bottom:14px;">Quick Actions</div>
+    <div style="display:grid;gap:8px;">
+      ${[
+        { label: 'Add New Client', icon: '👤', action: 'openAddClient()', color: 'var(--indigo)' },
+        { label: 'Create Proposal', icon: '📋', action: "navigate('proposals');setTimeout(openNewProposal,100)", color: 'var(--purple)' },
+        { label: 'Log a Lead', icon: '📥', action: "navigate('lead-inbox');setTimeout(openAddLead,100)", color: 'var(--amber)' },
+        { label: 'Check All Sites', icon: '🩺', action: "navigate('health');setTimeout(checkAllSites,100)", color: 'var(--green)' },
+        { label: 'Add Content Item', icon: '📝', action: "navigate('content');setTimeout(()=>openAddContent(),100)", color: 'var(--teal)' },
+        { label: 'Run SEO Audits', icon: '⚡', action: "navigate('pagespeed')", color: 'var(--red)' },
+      ].map(a => `<button style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:${a.color}08;border:1px solid ${a.color}20;border-radius:8px;cursor:pointer;transition:all 0.2s;font-size:12px;font-weight:600;color:var(--text);text-align:left;font-family:var(--font);width:100%;" onclick="${a.action}" onmouseover="this.style.background='${a.color}15';this.style.borderColor='${a.color}40';this.style.color='var(--white)'" onmouseout="this.style.background='${a.color}08';this.style.borderColor='${a.color}20';this.style.color='var(--text)'">
+        <span style="font-size:16px;">${a.icon}</span> ${a.label}
+      </button>`).join('')}
+    </div>
+  </div>`;
+
+  // Upcoming deadlines (content due within 7 days)
+  const upcomingContent = (DB.contentItems || []).filter(i => i.status !== 'published' && i.dueDate >= todayStr && i.dueDate <= weekFromNow).sort((a, b) => a.dueDate.localeCompare(b.dueDate));
+  let deadlinesHtml = '';
+  if (upcomingContent.length > 0 || upcomingBilling.length > 0) {
+    deadlinesHtml = `<div class="panel" style="padding:0;">
+      <div class="panel-header"><div><div class="panel-title">Upcoming This Week</div><div class="panel-subtitle">Deadlines and renewals</div></div></div>
+      <div style="padding:4px 0;">`;
+    upcomingContent.slice(0, 4).forEach(i => {
+      const client = DB.clients.find(c => c.id === i.clientId);
+      const daysLeft = Math.ceil((new Date(i.dueDate) - new Date(todayStr)) / 86400000);
+      const urgency = daysLeft === 0 ? 'Today' : daysLeft === 1 ? 'Tomorrow' : daysLeft + 'd';
+      deadlinesHtml += `<div style="display:flex;align-items:center;gap:10px;padding:10px 20px;border-bottom:1px solid var(--border);cursor:pointer;" onclick="navigate('content')">
+        <span style="font-size:14px;">📝</span>
+        <div style="flex:1;min-width:0;"><div style="font-size:12px;font-weight:600;color:var(--white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${i.title}</div><div style="font-size:10px;color:var(--muted);">${client ? client.bizName : '—'}</div></div>
+        <span style="font-size:11px;font-weight:700;color:${daysLeft <= 1 ? 'var(--red)' : 'var(--amber)'};">${urgency}</span>
+      </div>`;
+    });
+    upcomingBilling.slice(0, 3).forEach(c => {
+      deadlinesHtml += `<div style="display:flex;align-items:center;gap:10px;padding:10px 20px;border-bottom:1px solid var(--border);cursor:pointer;" onclick="navigate('billing')">
+        <span style="font-size:14px;">💳</span>
+        <div style="flex:1;"><div style="font-size:12px;font-weight:600;color:var(--white);">${c.bizName} renewal</div><div style="font-size:10px;color:var(--muted);">$${c.monthlyRate||0}/mo</div></div>
+        <span style="font-size:11px;color:var(--indigo);">${new Date(c.billingDate).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>
+      </div>`;
+    });
+    deadlinesHtml += '</div></div>';
   }
 
-  // Revenue breakdown
-  const bp = {starter:0,standard:0,premium:0};
-  active.forEach(c => { bp[c.plan] = (bp[c.plan]||0) + (c.monthlyRate||0); });
-  const pc = {starter:'var(--muted)',standard:'var(--indigo2)',premium:'var(--green)'};
-  document.getElementById('revenue-breakdown').innerHTML = Object.entries(bp).map(([p,v]) => `
-    <div style="display:flex;flex-direction:column;gap:4px;min-width:100px;">
-      <div style="font-size:10.5px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);">${p}</div>
-      <div style="font-size:24px;font-weight:800;color:${pc[p]};letter-spacing:-0.02em;">$${v}<span style="font-size:13px;font-weight:400;color:var(--muted)">/mo</span></div>
+  // Assemble layout
+  container.innerHTML = `
+    ${alertsHtml}
+    ${kpiHtml}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+      ${revenueHtml}
+      ${quickHtml}
     </div>
-    <div style="width:1px;background:var(--border);align-self:stretch;"></div>
-  `).join('').replace(/<div[^>]*style="width:1px[^<]*<\/div>\s*$/, '');
+    <div style="display:grid;grid-template-columns:1.4fr 1fr${deadlinesHtml ? ' 0.8fr' : ''};gap:16px;margin-bottom:16px;">
+      ${recentHtml}
+      ${activityHtml}
+      ${deadlinesHtml}
+    </div>`;
 }
 
 // ════════════════════════════════════════════════════
