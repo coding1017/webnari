@@ -7,7 +7,7 @@
   var easeIn3 = function(t){return t*t*t;};
 
   // Timer-driven progress (set by initMobileShowcase in index.html)
-  window.__mobRoofProgress = 0.15;
+  window.__mobRoofProgress = 0.05;
 
   var seqEl=document.getElementById('mr-hero'), stickyEl=document.getElementById('mr-seqSticky');
   if(seqEl&&stickyEl){

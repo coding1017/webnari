@@ -167,7 +167,9 @@ section{padding:120px 48px;position:relative}
 
 /* ── Mobile Showcase (sequential scroll-locked parallaxes) ── */
 .showcase-mobile-wrap{display:none}
-.mob-parallax{height:100vh;position:relative;overflow:hidden;background:#000}
+.mob-parallax{height:400vh;position:relative;background:#000}
+.mob-parallax .mr-scroll-sequence{height:100%;position:relative}
+.mob-parallax .mr-sequence-sticky{position:sticky;top:0}
 /* Namespaced RoofPro parallax styles (mr-*) */
 .mr-scroll-sequence{height:100vh;position:relative}
 .mr-sequence-sticky{position:relative;top:0;left:0;right:0;height:100vh;overflow:hidden;background:#0A0E12}
@@ -368,9 +370,10 @@ footer{border-top:1px solid var(--border);padding:48px}
   .footer-bottom{flex-direction:column;gap:8px}
   .portal-kpis{grid-template-columns:repeat(2,1fr)}
   .portal-grid{grid-template-columns:1fr}
-  .hero h1{font-size:clamp(48px,12vw,88px)!important;color:var(--white)!important}
+  .hero h1{font-size:clamp(64px,18vw,120px)!important;color:var(--white)!important;font-weight:800!important}
   .showcase-wrap{display:none!important}
   .showcase-mobile-wrap{display:block!important}
+  .transition-diagonal,.transition-diagonal-rev{display:none!important}
   .cursor-canvas{display:none!important}
 }
 </style>
@@ -1091,7 +1094,7 @@ function initShowcase(){
 }
 
 // ── Mobile Parallax Showcase ──
-// ── Mobile Parallax: inlined RoofPro code (no iframes) ──
+// ── Mobile Parallax: inlined RoofPro (scroll-driven, native code) ──
 function initMobileShowcase(){
   if(window.innerWidth>768)return;
   // Load the namespaced parallax JS
@@ -1099,27 +1102,22 @@ function initMobileShowcase(){
   script.src='mob-roof-parallax.js';
   document.body.appendChild(script);
 
-  // Auto-play: when the parallax container enters view, animate progress 15%→90% over 6s
+  // Scroll-driven: read scroll position of the 400vh wrapper
   const wrap=document.getElementById('mob-roof-wrap');
   if(!wrap)return;
-  let playing=false;
-  const obs=new IntersectionObserver(entries=>{
-    entries.forEach(entry=>{
-      if(entry.isIntersecting&&!playing){
-        playing=true;
-        const DURATION=6000;
-        const start=performance.now();
-        function tick(){
-          const t=Math.min((performance.now()-start)/DURATION,1);
-          const ease=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
-          window.__mobRoofProgress=.15+ease*.75; // 15%→90%
-          if(t<1)requestAnimationFrame(tick);
-        }
-        requestAnimationFrame(tick);
-      }
-    });
-  },{threshold:.1});
-  obs.observe(wrap);
+  window.__mobRoofProgress=0.05; // start at 5%
+
+  let ticking=false;
+  function update(){
+    ticking=false;
+    const rect=wrap.getBoundingClientRect();
+    const total=wrap.offsetHeight-window.innerHeight;
+    const scrolled=Math.max(0,-rect.top);
+    const p=Math.max(0,Math.min(1,scrolled/total));
+    // Map scroll 0→1 to parallax 5%→90%
+    window.__mobRoofProgress=.05+p*.85;
+  }
+  window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(update);ticking=true}},{passive:true});
 }
 
 // ── Horizontal Scroll Steps ──
