@@ -2390,47 +2390,13 @@ td.bold { color: var(--white); font-weight: 600; }
         <h1>Analytics</h1>
         <p>Website traffic, conversions, and audience insights — per client</p>
       </div>
-    </div>
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
-      <select class="form-select" id="an-select" onchange="loadAnalytics(this.value)" style="max-width:280px;"></select>
-    </div>
-    <div id="an-empty" style="text-align:center;padding:80px 40px;">
-      <div style="font-size:48px;margin-bottom:16px;">📈</div>
-      <div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px;">Select a client to begin</div>
-      <div style="color:var(--muted);">View traffic, sources, and conversion data for each client.</div>
-    </div>
-    <div id="an-content" style="display:none;">
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;">
-        <div class="kpi-card"><div class="kpi-label">SESSIONS / MO</div><div class="kpi-value" id="an-sessions">0</div><div class="kpi-change" id="an-sessions-delta"></div></div>
-        <div class="kpi-card"><div class="kpi-label">ORGANIC TRAFFIC</div><div class="kpi-value" id="an-organic">0</div></div>
-        <div class="kpi-card"><div class="kpi-label">CONVERSIONS</div><div class="kpi-value" id="an-convs">0</div><div class="kpi-change" id="an-convs-delta"></div></div>
-        <div class="kpi-card"><div class="kpi-label">BOUNCE RATE</div><div class="kpi-value" id="an-bounce">—</div></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;">
-        <div class="panel" style="padding:20px;">
-          <div style="font-size:15px;font-weight:700;color:var(--white);margin-bottom:20px;">Traffic Sources</div>
-          <div id="an-sources" style="display:flex;flex-direction:column;gap:14px;"></div>
-        </div>
-        <div class="panel">
-          <div class="panel-header"><div class="panel-title">Top Pages</div></div>
-          <div class="table-wrap">
-            <table><thead><tr><th>Page</th><th>Sessions</th><th>Bounce</th></tr></thead><tbody id="an-pages"></tbody></table>
-          </div>
-        </div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;">
-        <div class="panel" style="padding:24px;">
-          <div style="font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;">CONVERSION RATE</div>
-          <div id="an-conv-rate" style="font-size:40px;font-weight:800;color:var(--green);line-height:1;margin-bottom:4px;">—</div>
-          <div style="font-size:12px;color:var(--muted);">of all sessions converted</div>
-        </div>
-        <div class="panel" style="padding:24px;">
-          <div style="font-size:12px;font-weight:700;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;">AVG SESSION DURATION</div>
-          <div id="an-duration" style="font-size:40px;font-weight:800;color:var(--indigo2);line-height:1;margin-bottom:4px;">—</div>
-          <div style="font-size:12px;color:var(--muted);">minutes per visit</div>
-        </div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <select class="form-select" id="an-select" onchange="loadAnalytics(this.value)" style="max-width:280px;"></select>
+        <button class="btn btn-ghost" onclick="exportAnalyticsCSV()">↓ Export</button>
+        <button class="btn btn-primary" onclick="logAnalyticsSnapshot()">+ Log Snapshot</button>
       </div>
     </div>
+    <div id="an-dynamic"></div>
   </div>
 
   <!-- ══════════════════════════════════════
@@ -7376,53 +7342,352 @@ function copyTemplate(n) {
 function renderAnSelect() { fillToolSelect('an-select'); }
 
 function loadAnalytics(id) {
+  const el = document.getElementById('an-dynamic');
   const c = DB.clients.find(x => x.id === id);
-  document.getElementById('an-empty').style.display   = c ? 'none' : '';
-  document.getElementById('an-content').style.display = c ? ''     : 'none';
-  if (!c) return;
-  const a = c.analytics || {};
-
-  document.getElementById('an-sessions').textContent = (a.sessions||0).toLocaleString();
-  document.getElementById('an-organic').textContent  = (a.organic||0).toLocaleString();
-  document.getElementById('an-convs').textContent    = (a.conversions||0).toLocaleString();
-  document.getElementById('an-bounce').textContent   = a.bounceRate ? a.bounceRate+'%' : '—';
-  document.getElementById('an-conv-rate').textContent = a.convRate  ? a.convRate+'%'  : '—';
-  document.getElementById('an-duration').textContent  = a.avgDuration || '—';
-
-  const pctChange = (cur, prev) => prev ? Math.round(((cur-prev)/prev)*100) : 0;
-  const deltaHtml = (n) => n ? `<span style="color:${n>0?'var(--green)':'var(--red)'};">${n>0?'▲':'▼'} ${Math.abs(n)}% vs last month</span>` : '';
-  document.getElementById('an-sessions-delta').innerHTML = deltaHtml(pctChange(a.sessions, a.prevSessions));
-  document.getElementById('an-convs-delta').innerHTML    = deltaHtml(pctChange(a.conversions, a.prevConversions));
-
-  const total = a.sessions || 1;
-  const srcData = [
-    { label:'Organic Search', val:a.organic||0,  color:'var(--teal)' },
-    { label:'Paid (Ads)',      val:a.paid||0,     color:'var(--indigo)' },
-    { label:'Direct',          val:a.direct||0,   color:'var(--gold)' },
-    { label:'Social',          val:a.social||0,   color:'var(--purple)' },
-    { label:'Referral',        val:a.referral||0, color:'var(--rose)' },
-  ];
-  document.getElementById('an-sources').innerHTML = srcData.map(s => {
-    const pct = Math.round((s.val/total)*100);
-    return `<div>
-      <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-        <span style="font-size:13px;color:var(--text);">${s.label}</span>
-        <span style="font-size:13px;font-weight:600;color:var(--white);">${s.val.toLocaleString()} <span style="color:var(--muted);font-weight:400;">(${pct}%)</span></span>
-      </div>
-      <div style="height:6px;background:var(--surface3);border-radius:3px;overflow:hidden;">
-        <div style="height:100%;width:${pct}%;background:${s.color};border-radius:3px;"></div>
-      </div>
+  if(!c) {
+    el.innerHTML = `<div class="panel" style="text-align:center;padding:80px 40px;">
+      <svg style="width:48px;height:48px;color:var(--indigo);margin-bottom:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10M12 20V4M6 20v-6"/></svg>
+      <div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px;">Select a client to begin</div>
+      <div style="color:var(--muted);">View traffic, sources, and conversion data for each client.</div>
     </div>`;
+    return;
+  }
+  const a = c.analytics || {};
+  const hist = a.history || [];
+  const total = a.sessions || 1;
+
+  // Delta calculations
+  const pctChange = (cur,prev) => prev ? Math.round(((cur-prev)/prev)*100) : 0;
+  const sDelta = pctChange(a.sessions, a.prevSessions);
+  const cDelta = pctChange(a.conversions, a.prevConversions);
+  const deltaTag = (n) => n ? `<div style="font-size:11px;margin-top:4px;color:${n>0?'var(--green)':'var(--red)'};">${n>0?'▲':'▼'} ${Math.abs(n)}% vs last month</div>` : '';
+
+  // Traffic source breakdown
+  const srcData = [
+    {label:'Organic Search', val:a.organic||0, color:'var(--teal)'},
+    {label:'Paid (Ads)', val:a.paid||0, color:'var(--indigo)'},
+    {label:'Direct', val:a.direct||0, color:'var(--gold)'},
+    {label:'Social', val:a.social||0, color:'var(--purple)'},
+    {label:'Referral', val:a.referral||0, color:'var(--rose)'},
+  ];
+  const srcTotal = srcData.reduce((s,d)=>s+d.val,0)||1;
+
+  // Traffic trend chart (12 months from history)
+  const months = [];
+  const now = new Date();
+  for(let i=11;i>=0;i--){
+    const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+    const key = d.toISOString().slice(0,7);
+    const label = d.toLocaleDateString('en',{month:'short'});
+    const rec = hist.find(h=>h.month===key);
+    months.push({label, sessions:rec?rec.sessions:0, conversions:rec?rec.conversions:0, key});
+  }
+  const maxS = Math.max(...months.map(m=>m.sessions),100);
+
+  // SVG traffic chart
+  const cW=700,cH=180,pL=50,pR=10,pT=15,pB=25;
+  const plotW=cW-pL-pR, plotH=cH-pT-pB;
+  const sessionPts = months.map((m,i)=>{
+    const x=pL+(i/(months.length-1))*plotW;
+    const y=pT+plotH-(m.sessions/maxS)*plotH;
+    return `${x},${y}`;
+  });
+  const convPts = months.map((m,i)=>{
+    const x=pL+(i/(months.length-1))*plotW;
+    const maxC=Math.max(...months.map(m=>m.conversions),10);
+    const y=pT+plotH-(m.conversions/maxC)*plotH;
+    return `${x},${y}`;
+  });
+  const sPath=`M${sessionPts.join(' L')}`;
+  const sArea=`${sPath} L${pL+plotW},${pT+plotH} L${pL},${pT+plotH} Z`;
+  const gridLines=[0,.25,.5,.75,1].map(pct=>{
+    const y=pT+plotH-pct*plotH;
+    const val=Math.round(maxS*pct);
+    return `<line x1="${pL}" y1="${y}" x2="${pL+plotW}" y2="${y}" stroke="var(--border)" stroke-width="0.5"/>
+            <text x="${pL-8}" y="${y+4}" fill="var(--muted)" font-size="9" text-anchor="end">${val>=1000?(val/1000).toFixed(1)+'k':val}</text>`;
+  }).join('');
+  const xLabels=months.map((m,i)=>{
+    const x=pL+(i/(months.length-1))*plotW;
+    return `<text x="${x}" y="${cH-2}" fill="var(--muted)" font-size="9" text-anchor="middle">${m.label}</text>`;
   }).join('');
 
+  // Top pages
   const pages = a.topPages || [];
-  document.getElementById('an-pages').innerHTML = pages.length
-    ? pages.map(p => `<tr>
-        <td><div style="font-weight:600;color:var(--white);font-size:13px;">${p.title}</div><div style="font-size:11px;color:var(--muted);">${p.path}</div></td>
-        <td>${p.sessions.toLocaleString()}</td>
-        <td style="color:${p.bounce>55?'var(--red)':p.bounce>40?'var(--amber)':'var(--green)'};">${p.bounce}%</td>
-      </tr>`).join('')
-    : `<tr><td colspan="3" style="text-align:center;color:var(--muted);padding:32px;">No page data yet</td></tr>`;
+
+  // Conversion funnel
+  const convRate = a.convRate ? parseFloat(a.convRate) : (a.sessions ? Math.round((a.conversions/a.sessions)*100*10)/10 : 0);
+
+  // Device breakdown (if tracked)
+  const devices = a.devices || {desktop:60, mobile:35, tablet:5};
+  const devTotal = (devices.desktop||0)+(devices.mobile||0)+(devices.tablet||0)||1;
+
+  // Referral sources
+  const referrals = a.referrals || [];
+
+  el.innerHTML = `
+    <!-- KPI Row -->
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:24px;">
+      <div class="panel" style="padding:18px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--indigo);"></div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:6px;">SESSIONS</div>
+        <div style="font-size:26px;font-weight:800;color:var(--indigo2);">${(a.sessions||0).toLocaleString()}</div>
+        ${deltaTag(sDelta)}
+      </div>
+      <div class="panel" style="padding:18px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--teal);"></div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:6px;">ORGANIC</div>
+        <div style="font-size:26px;font-weight:800;color:var(--teal);">${(a.organic||0).toLocaleString()}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">${Math.round(((a.organic||0)/total)*100)}% of traffic</div>
+      </div>
+      <div class="panel" style="padding:18px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--green);"></div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:6px;">CONVERSIONS</div>
+        <div style="font-size:26px;font-weight:800;color:var(--green);">${(a.conversions||0).toLocaleString()}</div>
+        ${deltaTag(cDelta)}
+      </div>
+      <div class="panel" style="padding:18px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--green);"></div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:6px;">CONV. RATE</div>
+        <div style="font-size:26px;font-weight:800;color:var(--green);">${convRate}%</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">of sessions</div>
+      </div>
+      <div class="panel" style="padding:18px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:${(a.bounceRate||0)>55?'var(--red)':(a.bounceRate||0)>40?'var(--amber)':'var(--green)'};"></div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:6px;">BOUNCE RATE</div>
+        <div style="font-size:26px;font-weight:800;color:${(a.bounceRate||0)>55?'var(--red)':(a.bounceRate||0)>40?'var(--amber)':'var(--green)'};">${a.bounceRate||'--'}%</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">${(a.bounceRate||0)>55?'Needs work':(a.bounceRate||0)>40?'Average':'Great'}</div>
+      </div>
+      <div class="panel" style="padding:18px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--purple);"></div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:6px;">AVG DURATION</div>
+        <div style="font-size:26px;font-weight:800;color:var(--purple2);">${a.avgDuration||'--'}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">min per session</div>
+      </div>
+    </div>
+
+    <!-- Traffic Trend Chart -->
+    <div class="panel" style="padding:20px;margin-bottom:24px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div class="panel-title">Traffic Trend (12 months)</div>
+        <div style="display:flex;gap:16px;font-size:11px;">
+          <span style="color:var(--indigo);"><span style="display:inline-block;width:12px;height:3px;background:var(--indigo);border-radius:2px;vertical-align:middle;margin-right:4px;"></span>Sessions</span>
+          <span style="color:var(--green);"><span style="display:inline-block;width:12px;height:3px;background:var(--green);border-radius:2px;vertical-align:middle;margin-right:4px;"></span>Conversions</span>
+        </div>
+      </div>
+      <svg viewBox="0 0 ${cW} ${cH}" style="width:100%;height:auto;">
+        ${gridLines}
+        <defs>
+          <linearGradient id="sessGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--indigo)" stop-opacity="0.25"/><stop offset="100%" stop-color="var(--indigo)" stop-opacity="0.02"/></linearGradient>
+        </defs>
+        <path d="${sArea}" fill="url(#sessGrad)"/>
+        <path d="${sPath}" fill="none" stroke="var(--indigo)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M${convPts.join(' L')}" fill="none" stroke="var(--green)" stroke-width="1.5" stroke-dasharray="4 3" stroke-linecap="round"/>
+        ${months.map((m,i)=>{
+          const x=pL+(i/(months.length-1))*plotW;
+          const y=pT+plotH-(m.sessions/maxS)*plotH;
+          return m.sessions>0?`<circle cx="${x}" cy="${y}" r="3" fill="var(--indigo)" stroke="var(--surface)" stroke-width="1.5"/>`:'';
+        }).join('')}
+        ${xLabels}
+      </svg>
+    </div>
+
+    <!-- Sources + Pages + Devices -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:24px;">
+      <!-- Traffic Sources -->
+      <div class="panel" style="padding:20px;">
+        <div class="panel-title" style="margin-bottom:16px;">Traffic Sources</div>
+        ${srcData.map(s => {
+          const pct = Math.round((s.val/srcTotal)*100);
+          return `<div style="margin-bottom:12px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+              <span style="font-size:12px;font-weight:600;color:var(--text);">${s.label}</span>
+              <span style="font-size:12px;color:var(--white);font-weight:700;">${s.val.toLocaleString()} <span style="color:var(--muted);font-weight:400;font-size:10px;">${pct}%</span></span>
+            </div>
+            <div style="height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;">
+              <div style="height:100%;width:${pct}%;background:${s.color};border-radius:3px;transition:width .5s;"></div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+
+      <!-- Top Pages -->
+      <div class="panel" style="padding:0;">
+        <div style="padding:16px 20px;border-bottom:1px solid var(--border);">
+          <div class="panel-title">Top Pages</div>
+        </div>
+        ${pages.length ? pages.slice(0,8).map((p,i) => `
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 20px;border-bottom:1px solid var(--border);">
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:12px;font-weight:600;color:var(--white);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.title||p.path}</div>
+              <div style="font-size:10px;color:var(--muted);">${p.path}</div>
+            </div>
+            <div style="display:flex;gap:16px;flex-shrink:0;">
+              <span style="font-size:12px;font-weight:600;color:var(--indigo2);">${p.sessions.toLocaleString()}</span>
+              <span style="font-size:12px;font-weight:600;color:${p.bounce>55?'var(--red)':p.bounce>40?'var(--amber)':'var(--green)'};">${p.bounce}%</span>
+            </div>
+          </div>`).join('') : `<div style="text-align:center;padding:32px;color:var(--muted);font-size:13px;">No page data — log a snapshot to start tracking</div>`}
+      </div>
+
+      <!-- Device Breakdown + Referrals -->
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <div class="panel" style="padding:20px;flex:1;">
+          <div class="panel-title" style="margin-bottom:16px;">Device Breakdown</div>
+          ${[{label:'Desktop',val:devices.desktop||0,color:'var(--indigo)',icon:'M4 6h16v10H4z M8 20h8 M12 16v4'},{label:'Mobile',val:devices.mobile||0,color:'var(--teal)',icon:'M7 4h10v16H7z'},{label:'Tablet',val:devices.tablet||0,color:'var(--purple)',icon:'M6 3h12v18H6z'}].map(d => {
+            const pct = Math.round((d.val/devTotal)*100);
+            return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+              <svg style="width:16px;height:16px;color:${d.color};flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="${d.icon}"/></svg>
+              <div style="flex:1;">
+                <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;">
+                  <span style="color:var(--text);font-weight:600;">${d.label}</span>
+                  <span style="color:var(--muted);">${pct}%</span>
+                </div>
+                <div style="height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;">
+                  <div style="height:100%;width:${pct}%;background:${d.color};border-radius:3px;"></div>
+                </div>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>
+        <div class="panel" style="padding:20px;flex:1;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <div class="panel-title">Top Referrers</div>
+            <button class="btn btn-ghost btn-sm" style="font-size:10px;" onclick="addReferral('${c.id}')">+ Add</button>
+          </div>
+          ${referrals.length ? referrals.slice(0,5).map(r => `
+            <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;">
+              <span style="color:var(--text);font-weight:500;">${r.source}</span>
+              <span style="color:var(--indigo2);font-weight:700;">${r.sessions||0}</span>
+            </div>`).join('') : `<div style="font-size:12px;color:var(--muted);text-align:center;padding:12px;">No referral data yet</div>`}
+        </div>
+      </div>
+    </div>
+
+    <!-- Conversion Funnel + Notes -->
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;">
+      <div class="panel" style="padding:20px;">
+        <div class="panel-title" style="margin-bottom:16px;">Conversion Funnel</div>
+        <div style="display:flex;align-items:center;gap:0;">
+          ${[
+            {label:'Visitors', val:a.sessions||0, color:'var(--indigo)'},
+            {label:'Engaged', val:Math.round((a.sessions||0)*(1-(a.bounceRate||50)/100)), color:'var(--teal)'},
+            {label:'Leads', val:a.conversions||0, color:'var(--green)'},
+            {label:'Customers', val:a.customers||0, color:'var(--gold)'},
+          ].map((step,i,arr) => {
+            const maxV = arr[0].val||1;
+            const w = Math.max(20, Math.round((step.val/maxV)*100));
+            return `<div style="flex:1;text-align:center;">
+              <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:6px;">${step.label}</div>
+              <div style="height:${w}px;background:${step.color};border-radius:${i===0?'var(--radius) 0 0 var(--radius)':i===arr.length-1?'0 var(--radius) var(--radius) 0':'0'};margin:0 1px;display:flex;align-items:center;justify-content:center;min-height:30px;">
+                <span style="font-size:13px;font-weight:800;color:#fff;">${step.val.toLocaleString()}</span>
+              </div>
+              ${i<arr.length-1?`<div style="font-size:9px;color:var(--muted);margin-top:4px;">${step.val?Math.round((arr[i+1].val/step.val)*100):0}% →</div>`:''}
+            </div>`;
+          }).join('')}
+        </div>
+      </div>
+      <div class="panel" style="padding:20px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <div class="panel-title">Performance Notes</div>
+          <button class="btn btn-ghost btn-sm" style="font-size:10px;" onclick="addAnalyticsNote('${c.id}')">+ Add</button>
+        </div>
+        ${(a.notes||[]).length ? (a.notes||[]).slice(0,6).map(n => `
+          <div style="padding:8px 0;border-bottom:1px solid var(--border);">
+            <div style="font-size:12px;color:var(--text);">${n.text}</div>
+            <div style="font-size:10px;color:var(--muted);margin-top:2px;">${n.date}</div>
+          </div>`).join('') : `<div style="font-size:12px;color:var(--muted);text-align:center;padding:20px;">No notes yet. Track insights, wins, or issues.</div>`}
+      </div>
+    </div>`;
+}
+
+function logAnalyticsSnapshot() {
+  const id = document.getElementById('an-select').value;
+  if(!id){toast('Select a client first','error');return;}
+  const c = DB.clients.find(x=>x.id===id); if(!c) return;
+  if(!c.analytics) c.analytics = {};
+  const a = c.analytics;
+
+  const sessions = parseInt(prompt('Total sessions this month:', a.sessions||0));
+  if(isNaN(sessions)) return;
+  const organic = parseInt(prompt('Organic sessions:', a.organic||0))||0;
+  const paid = parseInt(prompt('Paid/Ads sessions:', a.paid||0))||0;
+  const direct = parseInt(prompt('Direct sessions:', a.direct||0))||0;
+  const social = parseInt(prompt('Social sessions:', a.social||0))||0;
+  const referral = parseInt(prompt('Referral sessions:', a.referral||0))||0;
+  const conversions = parseInt(prompt('Conversions (form fills, calls):', a.conversions||0))||0;
+  const bounceRate = parseInt(prompt('Bounce rate %:', a.bounceRate||40))||0;
+  const avgDuration = prompt('Avg session duration (min):', a.avgDuration||'2:30')||'--';
+
+  // Save prev values for delta
+  a.prevSessions = a.sessions||0;
+  a.prevConversions = a.conversions||0;
+
+  // Update current
+  a.sessions = sessions;
+  a.organic = organic;
+  a.paid = paid;
+  a.direct = direct;
+  a.social = social;
+  a.referral = referral;
+  a.conversions = conversions;
+  a.bounceRate = bounceRate;
+  a.avgDuration = avgDuration;
+  a.convRate = sessions ? (conversions/sessions*100).toFixed(1) : '0';
+
+  // Track history
+  if(!a.history) a.history = [];
+  const thisMonth = new Date().toISOString().slice(0,7);
+  const existing = a.history.find(h=>h.month===thisMonth);
+  if(existing) { existing.sessions=sessions; existing.conversions=conversions; }
+  else a.history.push({month:thisMonth, sessions, conversions});
+
+  save(); loadAnalytics(id);
+  addActivity(`Analytics snapshot for <strong>${c.bizName}</strong>: ${sessions} sessions, ${conversions} conversions`, 'indigo');
+  toast('Analytics snapshot saved!','success');
+}
+
+function addAnalyticsNote(clientId) {
+  const c = DB.clients.find(x=>x.id===clientId); if(!c) return;
+  const text = prompt('Add a performance note:');
+  if(!text) return;
+  if(!c.analytics) c.analytics = {};
+  if(!c.analytics.notes) c.analytics.notes = [];
+  c.analytics.notes.unshift({text, date:today()});
+  if(c.analytics.notes.length>20) c.analytics.notes = c.analytics.notes.slice(0,20);
+  save(); loadAnalytics(clientId);
+  toast('Note added!','success');
+}
+
+function addReferral(clientId) {
+  const c = DB.clients.find(x=>x.id===clientId); if(!c) return;
+  const source = prompt('Referral source (e.g. "yelp.com", "nextdoor"):');
+  if(!source) return;
+  const sessions = parseInt(prompt('Sessions from this source:','0'))||0;
+  if(!c.analytics) c.analytics = {};
+  if(!c.analytics.referrals) c.analytics.referrals = [];
+  const existing = c.analytics.referrals.find(r=>r.source===source);
+  if(existing) existing.sessions = sessions;
+  else c.analytics.referrals.push({source, sessions});
+  c.analytics.referrals.sort((a,b)=>b.sessions-a.sessions);
+  save(); loadAnalytics(clientId);
+  toast('Referral source added!','success');
+}
+
+function exportAnalyticsCSV() {
+  const id = document.getElementById('an-select').value;
+  const c = id ? DB.clients.find(x=>x.id===id) : null;
+  if(!c?.analytics){toast('No analytics data to export','error');return;}
+  const a = c.analytics;
+  const rows = [['Metric','Value'],
+    ['Sessions',a.sessions||0],['Organic',a.organic||0],['Paid',a.paid||0],
+    ['Direct',a.direct||0],['Social',a.social||0],['Referral',a.referral||0],
+    ['Conversions',a.conversions||0],['Bounce Rate',a.bounceRate||0],
+    ['Conv Rate',a.convRate||0],['Avg Duration',a.avgDuration||'']
+  ];
+  if(a.history) { rows.push(['',''],['Monthly History',''],...a.history.map(h=>[h.month,h.sessions])); }
+  const csv = rows.map(r=>r.map(v=>`"${v}"`).join(',')).join('\n');
+  const blob = new Blob([csv],{type:'text/csv'});
+  const aa = document.createElement('a'); aa.href=URL.createObjectURL(blob); aa.download=`analytics-${c.bizName}-${today()}.csv`; aa.click();
+  toast('Analytics exported!','success');
 }
 
 // ════════════════════════════════════════════════════
