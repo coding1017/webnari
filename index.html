@@ -719,18 +719,18 @@ function initOrb(){
 
   // Pulse waves — gold to cyan cycling
   const pulses=[];
-  setInterval(()=>{if(pulses.length<4)pulses.push({y:-1.2,speed:.008+Math.random()*.006,hue:pulses.length%2})},1800);
+  setInterval(()=>{if(pulses.length<5)pulses.push({y:-1.2,speed:.014+Math.random()*.008,hue:pulses.length%2})},1000);
 
   // Satellites — 3 orbital dots at different inclinations
   const sats=[
-    {angle:0,speed:.012,incl:0.3,dist:1.18,trail:[]},
-    {angle:2.1,speed:-.009,incl:0.6,dist:1.25,trail:[]},
-    {angle:4.2,speed:.015,incl:0.15,dist:1.32,trail:[]},
+    {angle:0,speed:.022,incl:0.3,dist:1.18,trail:[]},
+    {angle:2.1,speed:-.018,incl:0.6,dist:1.25,trail:[]},
+    {angle:4.2,speed:.025,incl:0.15,dist:1.32,trail:[]},
   ];
 
   let t=0;
   function draw(){
-    t+=.004;
+    t+=.008;
     // Smooth mouse lerp
     tmx+=(mx-tmx)*.06;tmy+=(my-tmy)*.06;
     ctx.clearRect(0,0,W,H);
@@ -895,7 +895,7 @@ function initShowcase(){
         const seqTop=seq.offsetTop;
         const seqHeight=seq.offsetHeight;
         // 2x speed, cap at 82% (before glow finale / brand name)
-        const cappedProgress=Math.min(progress*2,0.82);
+        const cappedProgress=Math.min(progress,0.82);
         iframe.contentWindow.scrollTo(0,seqTop+cappedProgress*seqHeight);
       }catch(e){}
     });
