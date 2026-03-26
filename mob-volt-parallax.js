@@ -433,20 +433,18 @@
       intro.style.opacity = map(p,0,0.06,1,0);
       intro.style.pointerEvents = p>0.03?'none':'auto';
 
-      // Background
-      var bgB = map(p,0.05,0.15,0,1)*(p<0.82?1:map(p,0.82,1,1,0.3));
-      bg.style.background = 'rgb('+Math.round(7+bgB*10)+','+Math.round(7+bgB*4)+','+Math.round(17+bgB*18)+')';
+      // Background — keep black, no color changes
 
       // Panel container
       var pScale = map(p,0.05,0.14,0.9,1);
       var pOp = map(p,0.05,0.12,0,1);
       var fadeOut = p<0.84?1:map(p,0.84,0.94,1,0);
       panelContainer.style.opacity = String(pOp*fadeOut);
-      panelContainer.style.transform = 'translate(-50%, -50%) scale('+(pScale*(p<0.84?1:map(p,0.84,0.94,1,0.88)))+')';
+      panelContainer.style.transform = 'scale('+(pScale*(p<0.84?1:map(p,0.84,0.94,1,0.88)))+')';
 
-      // SVG sizing
-      var vh = seqEl.offsetHeight||400;
-      var svgH = Math.min(vh*0.82,650);
+      // SVG sizing — use pane height
+      var vh = seqEl.clientHeight||seqEl.offsetHeight||400;
+      var svgH = Math.min(vh*0.9,650);
       var svgW = svgH*(480/750);
       svg.setAttribute('width',svgW);
       svg.setAttribute('height',svgH);
@@ -567,11 +565,7 @@
         pl.style.boxShadow = warmth>0.1?'0 0 '+Math.round(warmth*120)+'px '+Math.round(warmth*60)+'px rgba(251,191,36,'+(warmth*0.6)+'), 0 0 '+Math.round(warmth*200)+'px '+Math.round(warmth*100)+'px rgba(250,204,21,'+(warmth*0.25)+')':'none';
       });
 
-      // Blast the background warm during power-on
-      if(p>0.86&&p<1.0){
-        var blastP = easeOut3(map(p,0.86,0.91,0,1))*map(p,0.97,1.0,1,0);
-        bg.style.background = 'rgb('+Math.round(7+blastP*80)+','+Math.round(7+blastP*50)+','+Math.round(17+blastP*10)+')';
-      }
+      // Background warm blast removed — keep black
 
       // VOLTPRO text
       var powIn = easeOut3(clamp((p-0.86)/0.04,0,1));
