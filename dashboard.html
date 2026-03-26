@@ -3581,12 +3581,13 @@ function renderParallaxLibrary() {
     const cardOpacity = isReady ? '1' : '0.6';
     const clickAction = isReady ? `onclick="window.open('${p.url}','_blank')"` : '';
     const cursorStyle = isReady ? 'cursor:pointer;' : 'cursor:default;';
-    html += `<div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s;${cursorStyle}opacity:${cardOpacity};" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 30px rgba(0,0,0,0.3)'" onmouseout="this.style.transform='';this.style.boxShadow=''" ${clickAction}>
-      <div style="height:140px;background:linear-gradient(135deg,${p.color}18,${p.color}35);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;">
-        <div style="width:56px;height:56px;border-radius:14px;background:${p.color}20;display:flex;align-items:center;justify-content:center;border:1px solid ${p.color}30;">
-          <div style="width:28px;height:28px;color:${p.color};">${p.icon||''}</div>
-        </div>
-        <div style="position:absolute;top:10px;right:10px;">${statusBadge}</div>
+    const previewHtml = isReady
+      ? `<iframe src="${p.url}" loading="lazy" scrolling="no" data-plx-preview style="width:400%;height:400%;transform:scale(0.25);transform-origin:0 0;pointer-events:none;border:none;position:absolute;top:0;left:0;"></iframe>`
+      : `<div style="width:56px;height:56px;border-radius:14px;background:${p.color}20;display:flex;align-items:center;justify-content:center;border:1px solid ${p.color}30;"><div style="width:28px;height:28px;color:${p.color};">${p.icon||''}</div></div>`;
+    html += `<div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:transform 0.35s,box-shadow 0.35s;${cursorStyle}opacity:${cardOpacity};" onmouseover="this.style.transform='perspective(800px) rotateX(-1deg) rotateY(1.5deg) translateY(-4px)';this.style.boxShadow='0 16px 40px rgba(0,0,0,0.4),0 0 20px ${p.color}15'" onmouseout="this.style.transform='';this.style.boxShadow=''" ${clickAction}>
+      <div style="height:180px;background:linear-gradient(135deg,${p.color}10,${p.color}25);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;">
+        ${previewHtml}
+        <div style="position:absolute;top:10px;right:10px;z-index:2;">${statusBadge}</div>
       </div>
       <div style="padding:16px 18px 18px;">
         <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:${p.color};margin-bottom:6px;">${p.niche}</div>
@@ -3605,6 +3606,17 @@ function renderParallaxLibrary() {
   }
 
   container.innerHTML = html;
+
+  // Scroll iframe previews to ~50% after they load
+  container.querySelectorAll('iframe[data-plx-preview]').forEach(iframe => {
+    iframe.addEventListener('load', function() {
+      try {
+        const doc = iframe.contentDocument || iframe.contentWindow.document;
+        const totalH = doc.documentElement.scrollHeight;
+        iframe.contentWindow.scrollTo(0, totalH * 0.45);
+      } catch(e) { /* cross-origin fallback — won't happen for same-origin */ }
+    });
+  });
 }
 
 function renderTemplateDetail(id) {
