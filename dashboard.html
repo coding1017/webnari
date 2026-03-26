@@ -2344,12 +2344,16 @@ td.bold { color: var(--white); font-weight: 600; }
   ══════════════════════════════════════ -->
   <div class="page" id="page-pagespeed">
     <div class="page-header">
-      <div class="page-header-left"><h1>PageSpeed Audits</h1><p>Lighthouse scores for all client sites</p></div>
+      <div class="page-header-left"><h1>PageSpeed Audits</h1><p>Lighthouse performance scores for all client websites</p></div>
       <div style="display:flex;gap:10px;align-items:center;">
-        <input id="ps-api-key" type="text" placeholder="PageSpeed API Key (optional)" style="padding:8px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:12px;width:240px;" onchange="DB.pagespeedData.apiKey=this.value;save();">
-        <button class="btn btn-primary" onclick="runAllAudits()">⚡ Run All Audits</button>
+        <input id="ps-api-key" type="password" placeholder="Google PageSpeed API Key" style="padding:8px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:12px;width:200px;" onchange="DB.pagespeedData.apiKey=this.value;save();" title="Get one free at console.cloud.google.com">
+        <select id="ps-strategy" style="padding:8px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:12px;">
+          <option value="mobile">Mobile</option><option value="desktop">Desktop</option>
+        </select>
+        <button class="btn btn-primary" onclick="runAllAudits()">⚡ Audit All</button>
       </div>
     </div>
+    <div id="ps-summary"></div>
     <div id="ps-grid"></div>
   </div>
 
@@ -4533,67 +4537,222 @@ function openGenericModal(title, bodyHtml) {
 function closeGenericModal() { const m = document.getElementById('generic-modal'); if (m) m.innerHTML = ''; }
 
 // ════════════════════════════════════════════════════
-//  TOOL: PAGESPEED AUDITS
+//  TOOL: PAGESPEED AUDITS (Enterprise)
 // ════════════════════════════════════════════════════
+function scoreRing(val, size, label) {
+  // SVG circular gauge like Lighthouse
+  const r = (size - 6) / 2;
+  const circ = 2 * Math.PI * r;
+  const offset = circ * (1 - val / 100);
+  const col = val >= 90 ? 'var(--green)' : val >= 50 ? 'var(--amber)' : 'var(--red)';
+  const colRaw = val >= 90 ? '#5EBD8A' : val >= 50 ? '#D4956B' : '#E85D75';
+  return `<div style="text-align:center;">
+    <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="transform:rotate(-90deg);">
+      <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="rgba(255,255,255,0.06)" stroke-width="3"/>
+      <circle cx="${size/2}" cy="${size/2}" r="${r}" fill="none" stroke="${colRaw}" stroke-width="3" stroke-dasharray="${circ}" stroke-dashoffset="${offset}" stroke-linecap="round" style="transition:stroke-dashoffset 0.8s ease;filter:drop-shadow(0 0 4px ${colRaw}40);"/>
+    </svg>
+    <div style="margin-top:-${size-6}px;height:${size-6}px;display:flex;align-items:center;justify-content:center;">
+      <span style="font-family:var(--font-head);font-size:${size > 60 ? 20 : 14}px;font-weight:700;color:${col};">${val}</span>
+    </div>
+    <div style="font-size:${size > 60 ? 10 : 8}px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-top:4px;">${label}</div>
+  </div>`;
+}
+
+function getTrend(scores, key) {
+  if (scores.length < 2) return { arrow: '', color: 'var(--muted)', delta: 0 };
+  const prev = scores[scores.length - 2][key] || 0;
+  const curr = scores[scores.length - 1][key] || 0;
+  const delta = curr - prev;
+  if (delta > 0) return { arrow: '↑', color: 'var(--green)', delta: '+' + delta };
+  if (delta < 0) return { arrow: '↓', color: 'var(--red)', delta: String(delta) };
+  return { arrow: '→', color: 'var(--muted)', delta: '0' };
+}
+
 function renderPageSpeed() {
   if (!DB.pagespeedData) DB.pagespeedData = { apiKey: '' };
   const apiInput = document.getElementById('ps-api-key');
-  if (apiInput) apiInput.value = DB.pagespeedData.apiKey || '';
+  if (apiInput && !apiInput.matches(':focus')) apiInput.value = DB.pagespeedData.apiKey || '';
+
   const liveSites = DB.clients.filter(c => c.liveUrl && c.status === 'live');
+  const summaryEl = document.getElementById('ps-summary');
   const grid = document.getElementById('ps-grid');
-  if (!liveSites.length) { grid.innerHTML = '<div style="text-align:center;padding:60px;color:var(--muted);">No live sites to audit</div>'; return; }
-  let html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;">';
+
+  // Calculate averages across all sites
+  let totalPerf = 0, totalAcc = 0, totalBP = 0, totalSEO = 0, audited = 0;
   liveSites.forEach(c => {
+    const d = DB.pagespeedData[c.id];
+    if (d && d.scores && d.scores.length) {
+      const s = d.scores[d.scores.length - 1];
+      totalPerf += s.performance || 0; totalAcc += s.accessibility || 0;
+      totalBP += s.bestPractices || 0; totalSEO += s.seo || 0;
+      audited++;
+    }
+  });
+  const avgPerf = audited > 0 ? Math.round(totalPerf / audited) : 0;
+  const avgAcc = audited > 0 ? Math.round(totalAcc / audited) : 0;
+  const avgBP = audited > 0 ? Math.round(totalBP / audited) : 0;
+  const avgSEO = audited > 0 ? Math.round(totalSEO / audited) : 0;
+  const avgAll = audited > 0 ? Math.round((avgPerf + avgAcc + avgBP + avgSEO) / 4) : 0;
+
+  // Summary
+  summaryEl.innerHTML = `<div class="panel" style="padding:24px;margin-bottom:20px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;">
+      <div>
+        <div style="font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--white);margin-bottom:4px;">Fleet Average Scores</div>
+        <div style="font-size:12px;color:var(--muted);">${audited} of ${liveSites.length} sites audited${!DB.pagespeedData.apiKey ? ' &middot; <span style="color:var(--amber);">Add API key for auto-audits</span>' : ''}</div>
+      </div>
+      <div style="display:flex;gap:24px;align-items:center;">
+        ${scoreRing(avgPerf, 70, 'Performance')}
+        ${scoreRing(avgAcc, 70, 'Accessibility')}
+        ${scoreRing(avgBP, 70, 'Best Practices')}
+        ${scoreRing(avgSEO, 70, 'SEO')}
+        <div style="width:1px;height:50px;background:var(--border);margin:0 8px;"></div>
+        ${scoreRing(avgAll, 80, 'Overall')}
+      </div>
+    </div>
+  </div>`;
+
+  if (!liveSites.length) { grid.innerHTML = '<div style="text-align:center;padding:60px;color:var(--muted);">No live client sites to audit. Add clients with live URLs first.</div>'; return; }
+
+  // Sort: lowest overall score first (needs most work)
+  const sorted = [...liveSites].sort((a, b) => {
+    const sa = DB.pagespeedData[a.id], sb = DB.pagespeedData[b.id];
+    const avgA = sa && sa.scores && sa.scores.length ? (() => { const s = sa.scores[sa.scores.length-1]; return (s.performance+s.accessibility+s.bestPractices+s.seo)/4; })() : 999;
+    const avgB = sb && sb.scores && sb.scores.length ? (() => { const s = sb.scores[sb.scores.length-1]; return (s.performance+s.accessibility+s.bestPractices+s.seo)/4; })() : 999;
+    return avgA - avgB;
+  });
+
+  let html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:16px;">';
+  sorted.forEach(c => {
     const data = DB.pagespeedData[c.id];
-    const latest = data && data.scores && data.scores.length ? data.scores[data.scores.length - 1] : null;
-    html += `<div class="panel" style="padding:20px;">
-      <div style="font-weight:700;color:var(--white);font-family:var(--font-head);margin-bottom:4px;">${c.bizName}</div>
-      <div style="font-size:11px;color:var(--muted);margin-bottom:16px;">${c.liveUrl}</div>
-      ${latest ? `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;">
-        ${['Performance','Accessibility','Best Practices','SEO'].map((label,i) => {
-          const val = [latest.performance, latest.accessibility, latest.bestPractices, latest.seo][i] || 0;
-          const col = val >= 90 ? 'var(--green)' : val >= 50 ? 'var(--amber)' : 'var(--red)';
-          return `<div><div style="font-family:var(--font-head);font-size:24px;font-weight:700;color:${col};">${val}</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">${label}</div></div>`;
+    const scores = data && data.scores ? data.scores : [];
+    const latest = scores.length ? scores[scores.length - 1] : null;
+    const siteAvg = latest ? Math.round((latest.performance + latest.accessibility + latest.bestPractices + latest.seo) / 4) : 0;
+    const borderCol = latest ? (siteAvg >= 90 ? 'var(--green)' : siteAvg >= 50 ? 'var(--amber)' : 'var(--red)') : 'var(--border)';
+
+    // Score history mini chart (last 5 audits — overall average)
+    let historyChart = '';
+    if (scores.length > 1) {
+      const histScores = scores.slice(-6).map(s => Math.round((s.performance + s.accessibility + s.bestPractices + s.seo) / 4));
+      const maxH = Math.max(...histScores, 1);
+      historyChart = `<div style="display:flex;align-items:flex-end;gap:2px;height:30px;margin-top:12px;">
+        ${histScores.map((v, i) => {
+          const pct = (v / 100) * 100;
+          const c2 = v >= 90 ? '#5EBD8A' : v >= 50 ? '#D4956B' : '#E85D75';
+          return `<div title="Score: ${v} — ${new Date(scores[scores.length - histScores.length + i].date).toLocaleDateString()}" style="flex:1;height:${pct}%;background:${c2};border-radius:2px 2px 0 0;min-height:2px;opacity:${i === histScores.length-1 ? '1' : '0.4'};"></div>`;
         }).join('')}
-      </div><div style="font-size:10px;color:var(--muted);margin-top:10px;">Last: ${new Date(latest.date).toLocaleDateString()}</div>` : '<div style="color:var(--muted);font-size:13px;">No audits yet</div>'}
-      <div style="display:flex;gap:8px;margin-top:14px;">
-        <button class="btn btn-ghost btn-sm" style="font-size:11px;" onclick="runAudit('${c.id}','${c.liveUrl}')">Run Audit</button>
-        <button class="btn btn-ghost btn-sm" style="font-size:11px;" onclick="manualAudit('${c.id}')">Enter Scores</button>
+      </div><div style="font-size:9px;color:var(--muted);margin-top:3px;">${scores.length} audits — trend over time</div>`;
+    }
+
+    // Trend arrows for each metric
+    const trends = latest && scores.length > 1 ? ['performance','accessibility','bestPractices','seo'].map(k => getTrend(scores, k)) : null;
+
+    html += `<div class="panel" style="padding:0;border-left:3px solid ${borderCol};overflow:hidden;">
+      <div style="padding:20px 20px 0;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px;">
+          <div>
+            <div style="font-weight:700;color:var(--white);font-family:var(--font-head);font-size:15px;">${c.bizName}</div>
+            <a href="${c.liveUrl}" target="_blank" style="font-size:11px;color:var(--muted);text-decoration:none;" onmouseover="this.style.color='var(--indigo)'" onmouseout="this.style.color='var(--muted)'">${c.liveUrl} ↗</a>
+          </div>
+          ${latest ? `<div style="text-align:center;">${scoreRing(siteAvg, 56, 'Overall')}</div>` : '<span class="badge" style="background:rgba(255,255,255,0.04);color:var(--muted);">Not audited</span>'}
+        </div>
+        ${latest ? `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;text-align:center;">
+          ${[['Performance', latest.performance],['Accessibility', latest.accessibility],['Best Practices', latest.bestPractices],['SEO', latest.seo]].map(([label, val], idx) => {
+            const col = val >= 90 ? 'var(--green)' : val >= 50 ? 'var(--amber)' : 'var(--red)';
+            const trend = trends ? trends[idx] : null;
+            return `<div style="padding:10px 4px;background:var(--surface);border-radius:8px;">
+              ${scoreRing(val, 50, '')}
+              <div style="font-size:9px;color:var(--muted);margin-top:2px;">${label}</div>
+              ${trend ? `<div style="font-size:9px;color:${trend.color};margin-top:2px;">${trend.arrow} ${trend.delta}</div>` : ''}
+            </div>`;
+          }).join('')}
+        </div>
+        ${historyChart}
+        <div style="font-size:10px;color:var(--muted);margin-top:8px;">Last audited: ${new Date(latest.date).toLocaleDateString('en-US', {month:'short',day:'numeric',year:'numeric'})}${latest.strategy ? ' ('+latest.strategy+')' : ''}</div>` : '<div style="color:var(--muted);font-size:13px;padding:20px 0;">Run an audit or enter scores manually to see Lighthouse metrics.</div>'}
+      </div>
+      <div style="display:flex;gap:0;margin-top:14px;border-top:1px solid var(--border);">
+        <button style="flex:1;padding:10px;background:none;border:none;border-right:1px solid var(--border);color:var(--indigo);font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);transition:background 0.15s;" onmouseover="this.style.background='rgba(201,169,110,0.05)'" onmouseout="this.style.background=''" onclick="runAudit('${c.id}','${c.liveUrl}')">⚡ Run Audit</button>
+        <button style="flex:1;padding:10px;background:none;border:none;border-right:1px solid var(--border);color:var(--text);font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);transition:background 0.15s;" onmouseover="this.style.background='rgba(201,169,110,0.05)'" onmouseout="this.style.background=''" onclick="manualAudit('${c.id}')">✏️ Enter Scores</button>
+        <button style="flex:1;padding:10px;background:none;border:none;color:var(--text);font-size:11px;font-weight:600;cursor:pointer;font-family:var(--font);transition:background 0.15s;" onmouseover="this.style.background='rgba(201,169,110,0.05)'" onmouseout="this.style.background=''" onclick="window.open('https://pagespeed.web.dev/analysis?url='+encodeURIComponent('${c.liveUrl}'),'_blank')">↗ PageSpeed</button>
       </div>
     </div>`;
   });
   html += '</div>';
   grid.innerHTML = html;
 }
+
 function runAudit(clientId, url) {
   const key = DB.pagespeedData.apiKey;
-  if (!key) { window.open('https://pagespeed.web.dev/analysis?url=' + encodeURIComponent(url), '_blank'); toast('No API key — opened PageSpeed Insights in new tab', 'info'); return; }
-  toast('Running audit...', 'info');
-  fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&key=${key}&category=PERFORMANCE&category=ACCESSIBILITY&category=BEST_PRACTICES&category=SEO`)
-    .then(r => r.json()).then(data => {
+  const strategy = document.getElementById('ps-strategy')?.value || 'mobile';
+  if (!key) {
+    window.open('https://pagespeed.web.dev/analysis?url=' + encodeURIComponent(url), '_blank');
+    toast('No API key — opened PageSpeed Insights. Enter scores manually after.', 'info');
+    return;
+  }
+  toast('Running ' + strategy + ' audit for ' + url.replace(/https?:\/\//,'') + '...', 'info');
+  fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&key=${key}&strategy=${strategy}&category=PERFORMANCE&category=ACCESSIBILITY&category=BEST_PRACTICES&category=SEO`)
+    .then(r => { if (!r.ok) throw new Error('API error ' + r.status); return r.json(); })
+    .then(data => {
       const cats = data.lighthouseResult?.categories || {};
-      const scores = { date: new Date().toISOString(), performance: Math.round((cats.performance?.score||0)*100), accessibility: Math.round((cats.accessibility?.score||0)*100), bestPractices: Math.round((cats['best-practices']?.score||0)*100), seo: Math.round((cats.seo?.score||0)*100) };
+      const scores = {
+        date: new Date().toISOString(),
+        strategy: strategy,
+        performance: Math.round((cats.performance?.score || 0) * 100),
+        accessibility: Math.round((cats.accessibility?.score || 0) * 100),
+        bestPractices: Math.round((cats['best-practices']?.score || 0) * 100),
+        seo: Math.round((cats.seo?.score || 0) * 100)
+      };
       if (!DB.pagespeedData[clientId]) DB.pagespeedData[clientId] = { scores: [] };
       DB.pagespeedData[clientId].scores.push(scores);
-      if (DB.pagespeedData[clientId].scores.length > 10) DB.pagespeedData[clientId].scores.shift();
-      save(); renderPageSpeed(); toast('Audit complete!', 'success');
-    }).catch(() => toast('Audit failed — check API key', 'error'));
+      if (DB.pagespeedData[clientId].scores.length > 20) DB.pagespeedData[clientId].scores.shift();
+      save(); renderPageSpeed();
+      const avg = Math.round((scores.performance + scores.accessibility + scores.bestPractices + scores.seo) / 4);
+      toast(`Audit complete — overall score: ${avg}/100`, avg >= 90 ? 'success' : avg >= 50 ? 'info' : 'error');
+    }).catch(err => {
+      toast('Audit failed: ' + err.message, 'error');
+    });
 }
+
+function runAllAudits() {
+  const sites = DB.clients.filter(c => c.liveUrl && c.status === 'live');
+  let delay = 0;
+  sites.forEach(c => {
+    setTimeout(() => runAudit(c.id, c.liveUrl), delay);
+    delay += 2000; // PageSpeed API needs spacing
+  });
+  toast('Auditing ' + sites.length + ' sites (2s between each)...', 'info');
+}
+
 function manualAudit(clientId) {
-  openGenericModal('Enter Lighthouse Scores', `<div style="display:grid;gap:12px;">
-    <input id="ma-perf" type="number" placeholder="Performance (0-100)" min="0" max="100" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);">
-    <input id="ma-acc" type="number" placeholder="Accessibility (0-100)" min="0" max="100" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);">
-    <input id="ma-bp" type="number" placeholder="Best Practices (0-100)" min="0" max="100" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);">
-    <input id="ma-seo" type="number" placeholder="SEO (0-100)" min="0" max="100" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);">
-    <button class="btn btn-primary" onclick="saveManualAudit('${clientId}')">Save Scores</button>
+  const existing = DB.pagespeedData[clientId];
+  const last = existing && existing.scores && existing.scores.length ? existing.scores[existing.scores.length - 1] : {};
+  const inputStyle = 'padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:14px;font-family:var(--font-head);font-weight:700;text-align:center;width:100%;';
+  openGenericModal('Enter Lighthouse Scores', `<div style="display:grid;gap:16px;">
+    <div style="font-size:12px;color:var(--muted);">Run your audit at <a href="https://pagespeed.web.dev" target="_blank" style="color:var(--indigo);">pagespeed.web.dev</a> and enter the scores below.</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;">
+      <div style="text-align:center;"><label style="font-size:10px;color:var(--muted);display:block;margin-bottom:6px;">Performance</label><input id="ma-perf" type="number" value="${last.performance||''}" placeholder="0-100" min="0" max="100" style="${inputStyle}"></div>
+      <div style="text-align:center;"><label style="font-size:10px;color:var(--muted);display:block;margin-bottom:6px;">Accessibility</label><input id="ma-acc" type="number" value="${last.accessibility||''}" placeholder="0-100" min="0" max="100" style="${inputStyle}"></div>
+      <div style="text-align:center;"><label style="font-size:10px;color:var(--muted);display:block;margin-bottom:6px;">Best Practices</label><input id="ma-bp" type="number" value="${last.bestPractices||''}" placeholder="0-100" min="0" max="100" style="${inputStyle}"></div>
+      <div style="text-align:center;"><label style="font-size:10px;color:var(--muted);display:block;margin-bottom:6px;">SEO</label><input id="ma-seo" type="number" value="${last.seo||''}" placeholder="0-100" min="0" max="100" style="${inputStyle}"></div>
+    </div>
+    <button class="btn btn-primary" onclick="saveManualAudit('${clientId}')" style="justify-content:center;">Save Scores</button>
   </div>`);
 }
+
 function saveManualAudit(clientId) {
   if (!DB.pagespeedData[clientId]) DB.pagespeedData[clientId] = { scores: [] };
-  DB.pagespeedData[clientId].scores.push({ date: new Date().toISOString(), performance: parseInt(document.getElementById('ma-perf').value)||0, accessibility: parseInt(document.getElementById('ma-acc').value)||0, bestPractices: parseInt(document.getElementById('ma-bp').value)||0, seo: parseInt(document.getElementById('ma-seo').value)||0 });
+  const strategy = document.getElementById('ps-strategy')?.value || 'mobile';
+  DB.pagespeedData[clientId].scores.push({
+    date: new Date().toISOString(),
+    strategy: strategy,
+    performance: parseInt(document.getElementById('ma-perf').value) || 0,
+    accessibility: parseInt(document.getElementById('ma-acc').value) || 0,
+    bestPractices: parseInt(document.getElementById('ma-bp').value) || 0,
+    seo: parseInt(document.getElementById('ma-seo').value) || 0
+  });
+  if (DB.pagespeedData[clientId].scores.length > 20) DB.pagespeedData[clientId].scores.shift();
   save(); closeGenericModal(); renderPageSpeed(); toast('Scores saved!', 'success');
 }
-function runAllAudits() { DB.clients.filter(c => c.liveUrl && c.status === 'live').forEach(c => runAudit(c.id, c.liveUrl)); }
 
 // ════════════════════════════════════════════════════
 //  TOOL: CONTENT CALENDAR (Enterprise)
