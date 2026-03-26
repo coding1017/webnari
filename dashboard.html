@@ -2437,31 +2437,7 @@ td.bold { color: var(--white); font-weight: 600; }
         <div id="leads-client-list" data-active=""></div>
       </div>
       <div>
-        <div id="leads-empty" style="text-align:center;padding:80px 40px;">
-          <svg style="width:48px;height:48px;color:var(--indigo);margin-bottom:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
-          <div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px;">Select a client to begin</div>
-          <div style="color:var(--muted);">Track leads and manage the sales pipeline for each client.</div>
-        </div>
-        <div id="leads-content" style="display:none;">
-          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;">
-            <div class="kpi-card" style="border-top:3px solid var(--indigo);"><div class="kpi-label">NEW</div><div class="kpi-value" id="ld-new">0</div></div>
-            <div class="kpi-card" style="border-top:3px solid var(--amber);"><div class="kpi-label">CONTACTED</div><div class="kpi-value" id="ld-contacted">0</div></div>
-            <div class="kpi-card" style="border-top:3px solid var(--teal);"><div class="kpi-label">QUALIFIED</div><div class="kpi-value" id="ld-qualified">0</div></div>
-            <div class="kpi-card" style="border-top:3px solid var(--green);"><div class="kpi-label">CLOSED WON</div><div class="kpi-value" id="ld-closed">0</div></div>
-          </div>
-          <div class="panel">
-            <div class="panel-header">
-              <div class="panel-title">All Leads</div>
-              <button class="btn btn-ghost btn-sm" onclick="openAddLead()">+ Add Lead</button>
-            </div>
-            <div class="table-wrap">
-              <table>
-                <thead><tr><th>Name</th><th>Phone</th><th>Source</th><th>Stage</th><th>Date</th><th>Value</th><th>Notes</th><th></th></tr></thead>
-                <tbody id="leads-tbody"></tbody>
-              </table>
-            </div>
-          </div>
-        </div>
+        <div id="leads-dynamic"></div>
       </div>
     </div>
   </div>
@@ -7781,48 +7757,249 @@ const STAGE_COLORS = { new:'var(--indigo)', contacted:'var(--amber)', qualified:
 
 function renderLeadsSelect() { fillToolSelect('leads-select'); initToolWithSidebar('leads', loadLeads); }
 
+let leadsFilter='all', leadsSearch='', leadsSortCol='date', leadsSortAsc=false;
+
 function loadLeads(id) {
+  const el = document.getElementById('leads-dynamic');
   const c = DB.clients.find(x => x.id === id);
-  document.getElementById('leads-empty').style.display   = c ? 'none' : '';
-  document.getElementById('leads-content').style.display = c ? ''     : 'none';
-  if (!c) return;
-  const leads = c.leads || [];
-  ['new','contacted','qualified','closed'].forEach(stage => {
-    const el = document.getElementById('ld-'+stage);
-    if (el) el.textContent = leads.filter(l => l.stage === stage).length;
-  });
-  const tbody = document.getElementById('leads-tbody');
-  if (!leads.length) {
-    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:48px;">No leads yet — click "Add Lead" above</td></tr>`;
+  if(!c) {
+    el.innerHTML = `<div class="panel" style="text-align:center;padding:80px 40px;">
+      <svg style="width:48px;height:48px;color:var(--indigo);margin-bottom:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px;">Select a client to begin</div>
+      <div style="color:var(--muted);">Track leads and manage the sales pipeline for each client.</div>
+    </div>`;
     return;
   }
-  tbody.innerHTML = leads.map((l, i) => {
-    const sc = STAGE_COLORS[l.stage]||'var(--muted)';
-    return `<tr>
-      <td style="font-weight:600;color:var(--white);">${l.name}</td>
-      <td style="color:var(--text);font-size:13px;">${l.phone||'—'}</td>
-      <td style="font-size:12px;color:var(--muted);">${l.source}</td>
-      <td><span style="display:inline-block;padding:2px 10px;border-radius:12px;font-size:11px;font-weight:700;background:${sc}22;color:${sc};text-transform:capitalize;">${l.stage}</span></td>
-      <td style="color:var(--muted);font-size:12px;">${l.date||'—'}</td>
-      <td style="color:${l.value?'var(--green)':'var(--muted)'};">${l.value?'$'+l.value:'—'}</td>
-      <td style="color:var(--muted);font-size:12px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${l.notes||'—'}</td>
-      <td>
-        <select class="form-select" style="padding:4px 8px;font-size:11px;width:110px;" onchange="updateLeadStage('${id}',${i},this.value)">
-          ${['new','contacted','qualified','closed','lost'].map(s=>`<option value="${s}"${l.stage===s?' selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}
-        </select>
-      </td>
-    </tr>`;
-  }).join('');
+  const leads = c.leads || [];
+  const stages = ['new','contacted','qualified','closed','lost'];
+  const stageCounts = {}; stages.forEach(s => stageCounts[s] = leads.filter(l=>l.stage===s).length);
+  const totalValue = leads.filter(l=>l.stage!=='lost').reduce((s,l)=>s+(l.value||0),0);
+  const closedValue = leads.filter(l=>l.stage==='closed').reduce((s,l)=>s+(l.value||0),0);
+  const winRate = (stageCounts.closed+stageCounts.lost) ? Math.round((stageCounts.closed/(stageCounts.closed+stageCounts.lost))*100) : 0;
+
+  // Stale leads (new or contacted for >7 days)
+  const now = new Date();
+  const staleLeads = leads.filter(l => {
+    if(l.stage!=='new' && l.stage!=='contacted') return false;
+    if(!l.date) return false;
+    const days = Math.ceil((now - new Date(l.date))/(1000*60*60*24));
+    return days > 7;
+  });
+
+  // Source breakdown
+  const sources = {};
+  leads.forEach(l => { const s=l.source||'Unknown'; sources[s]=(sources[s]||0)+1; });
+  const srcArr = Object.entries(sources).sort((a,b)=>b[1]-a[1]);
+  const srcMax = srcArr.length ? srcArr[0][1] : 1;
+
+  // Filter & sort
+  let filtered = [...leads];
+  if(leadsFilter!=='all') filtered = filtered.filter(l=>l.stage===leadsFilter);
+  if(leadsSearch) {
+    const q = leadsSearch.toLowerCase();
+    filtered = filtered.filter(l => (l.name||'').toLowerCase().includes(q) || (l.phone||'').includes(q) || (l.source||'').toLowerCase().includes(q) || (l.notes||'').toLowerCase().includes(q));
+  }
+  filtered.sort((a,b) => {
+    let va=a[leadsSortCol], vb=b[leadsSortCol];
+    if(leadsSortCol==='value'){va=va||0;vb=vb||0;return leadsSortAsc?va-vb:vb-va;}
+    va=(va||'').toString().toLowerCase(); vb=(vb||'').toString().toLowerCase();
+    return leadsSortAsc ? va.localeCompare(vb) : vb.localeCompare(va);
+  });
+
+  const stageLabels = {new:'New',contacted:'Contacted',qualified:'Qualified',closed:'Closed Won',lost:'Lost'};
+  const stageIcons = {new:'indigo',contacted:'amber',qualified:'teal',closed:'green',lost:'red'};
+
+  el.innerHTML = `
+    <!-- KPI Row -->
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-bottom:24px;">
+      ${stages.map(s => `
+        <div class="panel" style="padding:16px;text-align:center;position:relative;overflow:hidden;cursor:pointer;${leadsFilter===s?'border-color:var(--'+stageIcons[s]+');box-shadow:0 0 0 1px var(--'+stageIcons[s]+');':''}" onclick="leadsFilter=leadsFilter==='${s}'?'all':'${s}';loadLeads('${c.id}')">
+          <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--${stageIcons[s]});"></div>
+          <div style="font-size:10px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:4px;">${stageLabels[s].toUpperCase()}</div>
+          <div style="font-size:24px;font-weight:800;color:var(--${stageIcons[s]});">${stageCounts[s]}</div>
+        </div>`).join('')}
+      <div class="panel" style="padding:16px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold);"></div>
+        <div style="font-size:10px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:4px;">PIPELINE VALUE</div>
+        <div style="font-size:24px;font-weight:800;color:var(--gold);">$${totalValue.toLocaleString()}</div>
+      </div>
+    </div>
+
+    <!-- Pipeline Funnel + Source Breakdown + Alerts -->
+    <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:16px;margin-bottom:24px;">
+      <!-- Visual Pipeline -->
+      <div class="panel" style="padding:20px;">
+        <div class="panel-title" style="margin-bottom:16px;">Pipeline Funnel</div>
+        <div style="display:flex;align-items:center;gap:0;">
+          ${['new','contacted','qualified','closed'].map((s,i,arr) => {
+            const count = stageCounts[s];
+            const maxCount = Math.max(...arr.map(st=>stageCounts[st]),1);
+            const w = Math.max(25, Math.round((count/maxCount)*100));
+            return `<div style="flex:1;text-align:center;">
+              <div style="font-size:10px;font-weight:600;color:var(--muted);margin-bottom:6px;">${stageLabels[s]}</div>
+              <div style="height:${w}px;background:var(--${stageIcons[s]});border-radius:${i===0?'var(--radius) 0 0 var(--radius)':i===arr.length-1?'0 var(--radius) var(--radius) 0':'0'};margin:0 1px;display:flex;align-items:center;justify-content:center;min-height:30px;">
+                <span style="font-size:14px;font-weight:800;color:#fff;">${count}</span>
+              </div>
+              ${i<arr.length-1?`<div style="font-size:9px;color:var(--muted);margin-top:4px;">${count?Math.round((stageCounts[arr[i+1]]/count)*100):0}% →</div>`:''}
+            </div>`;
+          }).join('')}
+        </div>
+        <div style="display:flex;justify-content:space-between;margin-top:16px;padding-top:12px;border-top:1px solid var(--border);font-size:12px;">
+          <span style="color:var(--green);font-weight:600;">Win rate: ${winRate}%</span>
+          <span style="color:var(--green);font-weight:600;">Closed: $${closedValue.toLocaleString()}</span>
+          <span style="color:var(--red);">Lost: ${stageCounts.lost}</span>
+        </div>
+      </div>
+
+      <!-- Source Breakdown -->
+      <div class="panel" style="padding:20px;">
+        <div class="panel-title" style="margin-bottom:16px;">Lead Sources</div>
+        ${srcArr.length ? srcArr.slice(0,6).map(([src,count]) => {
+          const pct = Math.round((count/srcMax)*100);
+          return `<div style="margin-bottom:10px;">
+            <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;">
+              <span style="color:var(--text);font-weight:600;">${src}</span>
+              <span style="color:var(--muted);">${count}</span>
+            </div>
+            <div style="height:5px;background:var(--surface2);border-radius:3px;overflow:hidden;">
+              <div style="height:100%;width:${pct}%;background:var(--indigo);border-radius:3px;"></div>
+            </div>
+          </div>`;
+        }).join('') : `<div style="color:var(--muted);font-size:12px;text-align:center;padding:20px;">No leads yet</div>`}
+      </div>
+
+      <!-- Stale Alerts -->
+      <div class="panel" style="padding:20px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <div class="panel-title">Stale Leads</div>
+          ${staleLeads.length ? `<span style="background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:2px 10px;border-radius:12px;">${staleLeads.length}</span>` : ''}
+        </div>
+        ${staleLeads.length ? staleLeads.slice(0,5).map(l => {
+          const days = Math.ceil((now - new Date(l.date))/(1000*60*60*24));
+          return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">
+            <div>
+              <div style="font-size:12px;font-weight:600;color:var(--white);">${l.name}</div>
+              <div style="font-size:10px;color:var(--muted);">${l.stage} · ${l.source||'—'}</div>
+            </div>
+            <span style="font-size:11px;font-weight:700;color:var(--red);">${days}d</span>
+          </div>`;
+        }).join('') : `<div style="text-align:center;padding:20px;color:var(--muted);font-size:12px;">
+          <svg style="width:24px;height:24px;color:var(--green);margin-bottom:8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          <div>No stale leads</div>
+        </div>`}
+      </div>
+    </div>
+
+    <!-- Leads Table -->
+    <div class="panel">
+      <div class="panel-header" style="flex-wrap:wrap;gap:12px;">
+        <div class="panel-title">All Leads (${filtered.length}${leadsFilter!=='all'?' filtered':''})</div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div style="position:relative;">
+            <svg style="position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--muted);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input placeholder="Search leads..." value="${leadsSearch}" oninput="leadsSearch=this.value;loadLeads('${c.id}')" style="padding:7px 12px 7px 32px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:12px;width:180px;">
+          </div>
+          <button class="btn btn-ghost btn-sm" onclick="exportLeadsCSV('${c.id}')">↓ CSV</button>
+          <button class="btn btn-primary btn-sm" onclick="openAddLead()">+ Add Lead</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="cursor:pointer;" onclick="toggleLeadsSort('name')">Name ${leadsSortCol==='name'?(leadsSortAsc?'↑':'↓'):''}</th>
+              <th>Phone / Email</th>
+              <th style="cursor:pointer;" onclick="toggleLeadsSort('source')">Source ${leadsSortCol==='source'?(leadsSortAsc?'↑':'↓'):''}</th>
+              <th>Stage</th>
+              <th style="cursor:pointer;" onclick="toggleLeadsSort('date')">Date ${leadsSortCol==='date'?(leadsSortAsc?'↑':'↓'):''}</th>
+              <th style="cursor:pointer;" onclick="toggleLeadsSort('value')">Value ${leadsSortCol==='value'?(leadsSortAsc?'↑':'↓'):''}</th>
+              <th>Notes</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${!filtered.length ? `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:48px;">No leads match your criteria</td></tr>` :
+              filtered.map((l,fi) => {
+                const origIdx = leads.indexOf(l);
+                const sc = STAGE_COLORS[l.stage]||'var(--muted)';
+                const days = l.date ? Math.ceil((now - new Date(l.date))/(1000*60*60*24)) : null;
+                const stale = (l.stage==='new'||l.stage==='contacted') && days && days>7;
+                return `<tr style="${stale?'background:rgba(255,77,109,0.04);':''}">
+                  <td>
+                    <div style="font-weight:600;color:var(--white);">${l.name}</div>
+                    ${l.email?`<div style="font-size:10px;color:var(--muted);">${l.email}</div>`:''}
+                  </td>
+                  <td style="color:var(--text);font-size:12px;">${l.phone||'—'}</td>
+                  <td style="font-size:12px;color:var(--muted);">${l.source||'—'}</td>
+                  <td>
+                    <select style="background:${sc}15;border:1px solid ${sc}33;color:${sc};font-size:11px;font-weight:700;padding:3px 8px;border-radius:12px;cursor:pointer;text-transform:capitalize;" onchange="updateLeadStage('${c.id}',${origIdx},this.value)">
+                      ${stages.map(s=>`<option value="${s}"${l.stage===s?' selected':''}>${stageLabels[s]}</option>`).join('')}
+                    </select>
+                  </td>
+                  <td style="color:var(--muted);font-size:12px;white-space:nowrap;">${l.date||'—'}${stale?` <span style="color:var(--red);font-size:9px;font-weight:700;">${days}d</span>`:''}</td>
+                  <td style="color:${l.value?'var(--green)':'var(--muted)'};font-weight:${l.value?'700':'400'};">${l.value?'$'+l.value.toLocaleString():'—'}</td>
+                  <td style="max-width:180px;"><div style="color:var(--muted);font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${(l.notes||'').replace(/"/g,'&quot;')}">${l.notes||'—'}</div></td>
+                  <td style="white-space:nowrap;">
+                    <button class="btn btn-ghost btn-sm" style="font-size:10px;" onclick="editLeadNote('${c.id}',${origIdx})">Note</button>
+                    <button class="btn btn-ghost btn-sm" style="font-size:10px;color:var(--red);" onclick="deleteLead('${c.id}',${origIdx})">Del</button>
+                  </td>
+                </tr>`;
+              }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+function toggleLeadsSort(col) {
+  if(leadsSortCol===col) leadsSortAsc=!leadsSortAsc;
+  else { leadsSortCol=col; leadsSortAsc=col==='name'||col==='source'; }
+  const id = document.getElementById('leads-client-list')?.dataset.active || document.getElementById('leads-select')?.value;
+  if(id) loadLeads(id);
 }
 
 function updateLeadStage(clientId, idx, stage) {
   const c = DB.clients.find(x => x.id === clientId); if (!c?.leads) return;
-  c.leads[idx].stage = stage; save(); loadLeads(clientId);
+  const old = c.leads[idx].stage;
+  c.leads[idx].stage = stage;
+  save();
+  addActivity(`Lead <strong>${c.leads[idx].name}</strong> moved: ${old} → ${stage}`, stage==='closed'?'green':stage==='lost'?'red':'indigo');
+  loadLeads(clientId);
+}
+
+function editLeadNote(clientId, idx) {
+  const c = DB.clients.find(x=>x.id===clientId); if(!c?.leads) return;
+  const l = c.leads[idx];
+  const note = prompt('Edit notes for '+l.name+':', l.notes||'');
+  if(note===null) return;
+  l.notes = note;
+  save(); loadLeads(clientId);
+  toast('Note updated','success');
+}
+
+function deleteLead(clientId, idx) {
+  const c = DB.clients.find(x=>x.id===clientId); if(!c?.leads) return;
+  if(!confirm(`Delete lead "${c.leads[idx].name}"?`)) return;
+  const name = c.leads[idx].name;
+  c.leads.splice(idx,1);
+  save(); loadLeads(clientId);
+  addActivity(`Deleted lead <strong>${name}</strong> from <strong>${c.bizName}</strong>`, 'red');
+  toast('Lead deleted','success');
+}
+
+function exportLeadsCSV(clientId) {
+  const c = DB.clients.find(x=>x.id===clientId); if(!c?.leads?.length){toast('No leads to export','error');return;}
+  const rows = [['Name','Phone','Email','Source','Stage','Date','Value','Notes']];
+  c.leads.forEach(l => rows.push([l.name||'',l.phone||'',l.email||'',l.source||'',l.stage||'',l.date||'',l.value||0,l.notes||'']));
+  const csv = rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv],{type:'text/csv'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`leads-${c.bizName}-${today()}.csv`; a.click();
+  toast('Leads exported!','success');
 }
 
 let addLeadClientId = null;
 function openAddLead() {
-  addLeadClientId = document.getElementById('leads-select').value;
+  addLeadClientId = document.getElementById('leads-client-list')?.dataset.active || document.getElementById('leads-select')?.value;
   if (!addLeadClientId) { toast('Select a client first', 'error'); return; }
   ['lead-name','lead-phone','lead-notes','lead-value'].forEach(id => gv(id,''));
   gv('lead-source','Google'); gv('lead-stage','new');
@@ -7834,7 +8011,9 @@ function saveLead() {
   if (!c.leads) c.leads = [];
   const name = rv('lead-name').trim(); if (!name) { toast('Name is required','error'); return; }
   c.leads.unshift({ id:'l'+Date.now(), name, phone:rv('lead-phone'), source:rv('lead-source'), stage:rv('lead-stage'), date:new Date().toISOString().split('T')[0], notes:rv('lead-notes'), value:parseFloat(rv('lead-value'))||0 });
-  save(); closeModal('modal-lead'); loadLeads(addLeadClientId); toast('Lead added!','success');
+  save(); closeModal('modal-lead'); loadLeads(addLeadClientId);
+  addActivity(`New lead <strong>${name}</strong> for <strong>${c.bizName}</strong>`, 'indigo');
+  toast('Lead added!','success');
 }
 
 // ════════════════════════════════════════════════════
