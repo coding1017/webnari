@@ -3404,25 +3404,86 @@ function renderTemplates() {
 
 // ── Parallax Library ──────────────────────────────────
 const PARALLAX_DATA = [
-  // Home & Construction
-  {id:'breaker-panel',   name:'Breaker Panel Build',   niche:'Electrical',    category:'home-construction', color:'#EAB308', url:'https://webnari.io/voltpro-parallax',
+  // Home & Construction — ready
+  {id:'breaker-panel',   name:'Breaker Panel Build',   niche:'Electrical',    category:'home-construction', color:'#EAB308', status:'ready', url:'https://webnari.io/voltpro-parallax',
    icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>`},
-  {id:'shield-barrier',  name:'Shield Barrier',        niche:'Pest Control',  category:'home-construction', color:'#F45C0A', url:'https://webnari.io/pestpro-parallax',
+  {id:'shield-barrier',  name:'Shield Barrier',        niche:'Pest Control',  category:'home-construction', color:'#F45C0A', status:'ready', url:'https://webnari.io/pestpro-parallax',
    icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.5-2.5 8-6.5 8-12V5l-8-3-8 3v5c0 5.5 2.5 9.5 8 12z"/></svg>`},
-  {id:'roof-build',      name:'Roof Cross-Section',    niche:'Roofing',       category:'home-construction', color:'#E63946', url:'https://webnari.io/roofpro-parallax',
+  {id:'roof-build',      name:'Roof Cross-Section',    niche:'Roofing',       category:'home-construction', color:'#E63946', status:'ready', url:'https://webnari.io/roofpro-parallax',
    icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/></svg>`},
-  {id:'lock-assembly',   name:'Lock Assembly',         niche:'Locksmith',     category:'home-construction', color:'#8B5CF6', url:'https://webnari.io/lockpro-parallax',
+  {id:'lock-assembly',   name:'Lock Assembly',         niche:'Locksmith',     category:'home-construction', color:'#8B5CF6', status:'ready', url:'https://webnari.io/lockpro-parallax',
    icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`},
-  // Landscaping
-  {id:'garden-build',    name:'Garden Build',          niche:'Lawn Care',     category:'landscaping',       color:'#10B981', url:'https://webnari.io/greenscape-parallax',
+  // Home & Construction — planned
+  {id:'pipe-system',     name:'Pipe System Assembly',  niche:'Plumbing',      category:'home-construction', color:'#0EA5E9', status:'planned', url:'',
+   icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h4m4 0h4"/><rect x="10" y="8" width="4" height="8" rx="1"/></svg>`},
+  {id:'ac-unit-build',   name:'AC Unit Assembly',      niche:'HVAC',          category:'home-construction', color:'#06B6D4', status:'planned', url:'',
+   icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M12 12m-4 0a4 4 0 1 0 8 0 4 4 0 1 0-8 0"/></svg>`},
+  {id:'window-install',  name:'Window Installation',   niche:'Windows & Doors', category:'home-construction', color:'#64748B', status:'planned', url:'',
+   icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="3" x2="12" y2="21"/><line x1="3" y1="12" x2="21" y2="12"/></svg>`},
+
+  // Landscaping — ready
+  {id:'garden-build',    name:'Garden Build',          niche:'Lawn Care',     category:'landscaping',       color:'#10B981', status:'ready', url:'https://webnari.io/greenscape-parallax',
    icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>`},
-  // Food & Dining
-  {id:'sushi-roll',      name:'Sushi Roll Build',      niche:'Sushi',         category:'food-dining',       color:'#E74C3C', url:'https://webnari.io/sushiroll',
+  // Landscaping — planned
+  {id:'tree-growth',     name:'Tree Growth Sequence',  niche:'Tree Service',  category:'landscaping',       color:'#059669', status:'planned', url:'',
+   icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V8"/><path d="M5 12l7-8 7 8"/><path d="M8 17l4-5 4 5"/></svg>`},
+  {id:'irrigation-build', name:'Irrigation System',    niche:'Sprinklers',    category:'landscaping',       color:'#34D399', status:'planned', url:'',
+   icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v6m0 0l-3 3m3-3l3 3"/><circle cx="12" cy="16" r="4"/></svg>`},
+
+  // Food & Dining — ready
+  {id:'sushi-roll',      name:'Sushi Roll Build',      niche:'Sushi',         category:'food-dining',       color:'#E74C3C', status:'ready', url:'https://webnari.io/sushiroll',
    icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></svg>`},
-  {id:'sub-build',       name:'Sub Sandwich Build',    niche:'Sandwiches',    category:'food-dining',       color:'#D4A017', url:'https://webnari.io/sub-parallax',
+  {id:'sub-build',       name:'Sub Sandwich Build',    niche:'Sandwiches',    category:'food-dining',       color:'#D4A017', status:'ready', url:'https://webnari.io/sub-parallax',
    icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>`},
-  {id:'pizza-build',     name:'Wood-Fired Pizza Build', niche:'Pizza',        category:'food-dining',       color:'#E25822', url:'https://webnari.io/pizza-parallax',
+  {id:'pizza-build',     name:'Wood-Fired Pizza Build', niche:'Pizza',        category:'food-dining',       color:'#E25822', status:'ready', url:'https://webnari.io/pizza-parallax',
    icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M12 2l3 18-9-8h12l-9 8z"/></svg>`},
+  // Food & Dining — planned
+  {id:'cake-layer',      name:'Layer Cake Stack',      niche:'Bakery',        category:'food-dining',       color:'#F472B6', status:'planned', url:'',
+   icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18h20v2a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2v-2z"/><path d="M4 14h16v4H4z"/><path d="M6 10h12v4H6z"/><path d="M12 2l2 4H10l2-4z"/></svg>`},
+  {id:'coffee-pour',     name:'Coffee Pour Sequence',  niche:'Coffee Shop',   category:'food-dining',       color:'#92400E', status:'planned', url:'',
+   icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>`},
+
+  // Retail & Shopping — planned
+  {id:'product-unbox',   name:'Product Unboxing',      niche:'Boutique',      category:'retail',            color:'#EC4899', status:'planned', url:'',
+   icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>`},
+  {id:'rack-display',    name:'Display Rack Setup',    niche:'Merchandise',   category:'retail',            color:'#F9A8D4', status:'planned', url:'',
+   icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>`},
+
+  // Health & Wellness — planned
+  {id:'smile-restore',   name:'Smile Restoration',     niche:'Dental',        category:'health',            color:'#14B8A6', status:'planned', url:'',
+   icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>`},
+  {id:'skin-treatment',  name:'Treatment Sequence',    niche:'Med Spa',       category:'health',            color:'#2DD4BF', status:'planned', url:'',
+   icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.5-2.5 8-6.5 8-12V5l-8-3-8 3v5c0 5.5 2.5 9.5 8 12z"/></svg>`},
+
+  // Fitness — planned
+  {id:'gym-equipment',   name:'Equipment Assembly',    niche:'Gym',           category:'fitness',           color:'#8B5CF6', status:'planned', url:'',
+   icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 6.5h11"/><path d="M6.5 17.5h11"/><path d="M4 10V6.5a2.5 2.5 0 0 1 5 0v11a2.5 2.5 0 0 0 5 0V14"/><path d="M20 14v3.5a2.5 2.5 0 0 1-5 0v-11a2.5 2.5 0 0 0-5 0V10"/></svg>`},
+  {id:'boxing-ring',     name:'Boxing Ring Setup',     niche:'Boxing',        category:'fitness',           color:'#A78BFA', status:'planned', url:'',
+   icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/><line x1="2" y1="14" x2="22" y2="14"/></svg>`},
+
+  // Automotive — planned
+  {id:'engine-rebuild',  name:'Engine Rebuild',        niche:'Auto Repair',   category:'automotive',        color:'#EF4444', status:'planned', url:'',
+   icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`},
+  {id:'detail-polish',   name:'Detail & Polish',       niche:'Auto Detailing', category:'automotive',       color:'#F87171', status:'planned', url:'',
+   icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/></svg>`},
+
+  // Professional Services — planned
+  {id:'gavel-verdict',   name:'Gavel & Verdict',       niche:'Law Firm',      category:'professional',      color:'#3B82F6', status:'planned', url:'',
+   icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>`},
+  {id:'blueprint-draw',  name:'Blueprint Draw',        niche:'Architecture',  category:'professional',      color:'#60A5FA', status:'planned', url:'',
+   icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`},
+
+  // Beauty — planned
+  {id:'hair-styling',    name:'Hair Styling Sequence',  niche:'Salon',        category:'beauty',            color:'#D946EF', status:'planned', url:'',
+   icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2m-9-11h2m18 0h2m-3.64-6.36l-1.42 1.42M6.06 17.94l-1.42 1.42m0-12.72l1.42 1.42m11.88 11.88l1.42 1.42"/></svg>`},
+  {id:'tattoo-needle',   name:'Tattoo Needle Work',    niche:'Tattoo',       category:'beauty',            color:'#E879F9', status:'planned', url:'',
+   icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/></svg>`},
+
+  // E-Commerce — planned
+  {id:'package-ship',    name:'Package & Ship',        niche:'Fulfillment',   category:'ecommerce',         color:'#6366F1', status:'planned', url:'',
+   icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>`},
+  {id:'cart-checkout',   name:'Cart to Checkout',      niche:'Online Store',  category:'ecommerce',         color:'#818CF8', status:'planned', url:'',
+   icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>`},
 ];
 let plxCat = 'all';
 
@@ -3436,6 +3497,8 @@ function renderParallaxLibrary() {
   // Count per category
   const counts = {};
   PARALLAX_DATA.forEach(p => { counts[p.category] = (counts[p.category]||0)+1; });
+  const readyCounts = {};
+  PARALLAX_DATA.filter(p => p.status === 'ready').forEach(p => { readyCounts[p.category] = (readyCounts[p.category]||0)+1; });
 
   // Get unique categories
   const catIds = [...new Set(PARALLAX_DATA.map(p => p.category))];
@@ -3451,13 +3514,14 @@ function renderParallaxLibrary() {
     let html = '<div class="cat-grid">';
     cats.forEach(cat => {
       const n = counts[cat.id] || 0;
+      const ready = readyCounts[cat.id] || 0;
       html += `<div class="cat-card" style="${getCatVars(cat)}" onclick="plxCat='${cat.id}';renderParallaxLibrary();">
         <div class="cat-card-glow"></div>
         <div class="cat-card-icon">${cat.icon}</div>
         <h3>${cat.label}</h3>
         <p>${cat.desc}</p>
         <div class="cat-card-footer">
-          <div class="cat-card-count"><strong>${n}</strong> animation${n!==1?'s':''}</div>
+          <div class="cat-card-count"><strong>${n}</strong> animation${n!==1?'s':''} ${ready ? '&middot; '+ready+' live' : ''}</div>
           <div class="cat-card-arrow">&rarr;</div>
         </div>
       </div>`;
@@ -3488,19 +3552,27 @@ function renderParallaxLibrary() {
   // Render template-style cards
   let html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;padding:20px 0;">';
   items.forEach(p => {
-    html += `<div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s;cursor:pointer;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 30px rgba(0,0,0,0.3)'" onmouseout="this.style.transform='';this.style.boxShadow=''" onclick="window.open('${p.url}','_blank')">
+    const isReady = p.status === 'ready';
+    const statusBadge = isReady
+      ? '<span style="font-size:10px;padding:3px 8px;border-radius:6px;background:rgba(16,185,129,0.15);color:#10B981;font-weight:600;">LIVE</span>'
+      : '<span style="font-size:10px;padding:3px 8px;border-radius:6px;background:rgba(255,255,255,0.06);color:var(--muted);font-weight:600;">PLANNED</span>';
+    const cardOpacity = isReady ? '1' : '0.6';
+    const clickAction = isReady ? `onclick="window.open('${p.url}','_blank')"` : '';
+    const cursorStyle = isReady ? 'cursor:pointer;' : 'cursor:default;';
+    html += `<div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s;${cursorStyle}opacity:${cardOpacity};" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 30px rgba(0,0,0,0.3)'" onmouseout="this.style.transform='';this.style.boxShadow=''" ${clickAction}>
       <div style="height:140px;background:linear-gradient(135deg,${p.color}18,${p.color}35);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;">
         <div style="width:56px;height:56px;border-radius:14px;background:${p.color}20;display:flex;align-items:center;justify-content:center;border:1px solid ${p.color}30;">
           <div style="width:28px;height:28px;color:${p.color};">${p.icon||''}</div>
         </div>
+        <div style="position:absolute;top:10px;right:10px;">${statusBadge}</div>
       </div>
       <div style="padding:16px 18px 18px;">
         <div style="font-size:11px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:${p.color};margin-bottom:6px;">${p.niche}</div>
         <h3 style="margin:0 0 10px;font-size:16px;font-weight:700;color:var(--white);line-height:1.3;">${p.name}</h3>
-        <a href="${p.url}" target="_blank" onclick="event.stopPropagation();" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:${p.color};text-decoration:none;padding:7px 16px;border:1px solid ${p.color}40;border-radius:8px;letter-spacing:0.04em;text-transform:uppercase;transition:background 0.2s;" onmouseover="this.style.background='${p.color}15'" onmouseout="this.style.background=''">
+        ${isReady ? `<a href="${p.url}" target="_blank" onclick="event.stopPropagation();" style="display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:${p.color};text-decoration:none;padding:7px 16px;border:1px solid ${p.color}40;border-radius:8px;letter-spacing:0.04em;text-transform:uppercase;transition:background 0.2s;" onmouseover="this.style.background='${p.color}15'" onmouseout="this.style.background=''">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
           View Animation
-        </a>
+        </a>` : '<span style="font-size:12px;color:var(--muted);font-style:italic;">Coming soon</span>'}
       </div>
     </div>`;
   });
