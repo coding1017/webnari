@@ -179,7 +179,9 @@
     var cart = getCart();
     for (var i = 0; i < cart.length; i++) {
       if (cart[i].id === id) {
-        cart[i].qty = Math.max(1, cart[i].qty + delta);
+        var newQty = cart[i].qty + delta;
+        if (newQty <= 0) { cart.splice(i, 1); saveCart(cart); return; }
+        cart[i].qty = newQty;
         break;
       }
     }
