@@ -2423,9 +2423,12 @@ td.bold { color: var(--white); font-weight: 600; }
   ══════════════════════════════════════ -->
   <div class="page" id="page-proposals">
     <div class="page-header">
-      <div class="page-header-left"><h1>Proposal Generator</h1><p>Create branded proposals for prospects</p></div>
+      <div class="page-header-left"><h1>Proposal Generator</h1><p>Create branded, shareable proposals that close deals</p></div>
       <button class="btn btn-primary" onclick="openNewProposal()">+ New Proposal</button>
     </div>
+    <!-- Stats -->
+    <div id="proposals-stats"></div>
+    <!-- Proposals list -->
     <div id="proposals-content"></div>
   </div>
 
@@ -5304,75 +5307,307 @@ function saveChangeRequest(clientId) {
 function cycleRequest(id) { const r = DB.changeRequests.find(x => x.id === id); if (!r) return; r.status = r.status === 'pending' ? 'in-progress' : r.status === 'in-progress' ? 'done' : 'pending'; save(); renderPortal(); }
 
 // ════════════════════════════════════════════════════
-//  TOOL: PROPOSAL GENERATOR
+//  TOOL: PROPOSAL GENERATOR (Enterprise)
 // ════════════════════════════════════════════════════
+const PROPOSAL_STATUSES = [
+  { id: 'draft', label: 'Draft', color: 'var(--muted)', bg: 'rgba(255,255,255,0.04)', icon: '○' },
+  { id: 'sent', label: 'Sent', color: 'var(--amber)', bg: 'var(--amber-bg)', icon: '◐' },
+  { id: 'viewed', label: 'Viewed', color: 'var(--indigo)', bg: 'var(--indigo-bg)', icon: '◑' },
+  { id: 'accepted', label: 'Accepted', color: 'var(--green)', bg: 'var(--green-bg)', icon: '●' },
+  { id: 'declined', label: 'Declined', color: 'var(--red)', bg: 'var(--red-bg)', icon: '✕' },
+];
+function getProposalStatus(id) { return PROPOSAL_STATUSES.find(s => s.id === id) || PROPOSAL_STATUSES[0]; }
+function getProposalPrice(plan) { return plan === 'starter' ? (DB.pricing?.starter||158) : plan === 'standard' ? (DB.pricing?.standard||258) : (DB.pricing?.premium||378); }
+function getProposalFeatures(plan) {
+  const raw = DB.pricing?.[plan + 'Features'];
+  if (raw) return Array.isArray(raw) ? raw : String(raw).split('\n').filter(f => f.trim());
+  const defaults = { starter: ['1 professionally built website','Up to 5 pages','Mobile-responsive design','Search-ranked page structure','SSL certificate & hosting','Google Business integration','Monthly performance snapshot','Email support'], standard: ['1 professionally built website','Up to 12 pages','Scroll-driven parallax effects','Advanced search ranking strategy','Blog with monthly content','Contact & lead capture forms','Google Analytics dashboard','Schema markup for local search','Priority support','Monthly growth report'], premium: ['1 professionally built website','Unlimited pages','Custom parallax animations','Full search ranking management','Weekly blog content','E-commerce or booking integration','Conversion-optimized landing pages','Reputation & review management','Dedicated account manager','Bi-weekly strategy reports','Priority 24-hour support'] };
+  return defaults[plan] || defaults.standard;
+}
+
 function renderProposals() {
   if (!DB.proposals) DB.proposals = [];
+  const statsEl = document.getElementById('proposals-stats');
   const container = document.getElementById('proposals-content');
-  if (!DB.proposals.length) { container.innerHTML = '<div style="text-align:center;padding:60px;color:var(--muted);">No proposals yet. Click "+ New Proposal" to create one.</div>'; return; }
-  let html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;">';
+
+  // Stats
+  const total = DB.proposals.length;
+  const sent = DB.proposals.filter(p => p.status !== 'draft').length;
+  const accepted = DB.proposals.filter(p => p.status === 'accepted').length;
+  const winRate = sent > 0 ? Math.round((accepted / sent) * 100) : 0;
+  const totalValue = DB.proposals.filter(p => p.status === 'accepted').reduce((s, p) => s + getProposalPrice(p.plan) * 12, 0);
+
+  statsEl.innerHTML = `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px;">
+    <div class="kpi-card" style="--accent:var(--indigo)"><div class="kpi-glow"></div><div class="kpi-label">Total Proposals</div><div class="kpi-value">${total}</div><div class="kpi-trend neutral">${DB.proposals.filter(p=>p.status==='draft').length} drafts</div></div>
+    <div class="kpi-card" style="--accent:var(--amber)"><div class="kpi-glow" style="background:var(--amber)"></div><div class="kpi-label">Sent</div><div class="kpi-value">${sent}</div><div class="kpi-trend neutral">${DB.proposals.filter(p=>p.status==='sent'||p.status==='viewed').length} awaiting response</div></div>
+    <div class="kpi-card" style="--accent:var(--green)"><div class="kpi-glow" style="background:var(--green)"></div><div class="kpi-label">Win Rate</div><div class="kpi-value">${winRate}%</div><div class="kpi-trend ${winRate >= 50 ? 'up' : 'neutral'}">${accepted} accepted</div></div>
+    <div class="kpi-card" style="--accent:var(--green)"><div class="kpi-glow" style="background:var(--green)"></div><div class="kpi-label">Revenue Won</div><div class="kpi-value">$${totalValue.toLocaleString()}</div><div class="kpi-trend up">Annual from accepted</div></div>
+  </div>`;
+
+  if (!total) { container.innerHTML = '<div style="text-align:center;padding:60px;color:var(--muted);">No proposals yet. Click "+ New Proposal" to create one for a prospect.</div>'; return; }
+
+  let html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;">';
   [...DB.proposals].reverse().forEach(p => {
-    const [sbg,sc] = p.status==='accepted'?['var(--green-bg)','var(--green)']:p.status==='sent'?['var(--amber-bg)','var(--amber)']:p.status==='declined'?['var(--red-bg)','var(--red)']:['var(--surface2)','var(--muted)'];
-    const plan = p.plan ? p.plan.charAt(0).toUpperCase()+p.plan.slice(1) : '';
-    const price = p.plan === 'starter' ? (DB.pricing?.starter||158) : p.plan === 'standard' ? (DB.pricing?.standard||258) : (DB.pricing?.premium||378);
-    html += `<div class="panel" style="padding:20px;">
-      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px;">
-        <div style="font-family:var(--font-head);font-weight:700;color:var(--white);">${p.bizName}</div>
-        <span class="badge" style="background:${sbg};color:${sc};cursor:pointer;" onclick="cycleProposal('${p.id}')">${p.status}</span>
-      </div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">${p.niche || 'General'} &middot; ${plan} Plan</div>
-      <div style="font-family:var(--font-head);font-size:20px;font-weight:700;color:var(--indigo);margin:12px 0;">$${price}/mo</div>
-      <div style="font-size:11px;color:var(--muted);">Created ${new Date(p.createdAt).toLocaleDateString()}</div>
-      <div style="display:flex;gap:8px;margin-top:14px;">
-        <button class="btn btn-ghost btn-sm" style="font-size:11px;" onclick="viewProposal('${p.id}')">Preview</button>
-        <button class="btn btn-ghost btn-sm btn-icon" onclick="deleteProposal('${p.id}')" style="font-size:11px;">🗑</button>
+    const st = getProposalStatus(p.status);
+    const plan = p.plan ? p.plan.charAt(0).toUpperCase() + p.plan.slice(1) : 'Standard';
+    const price = getProposalPrice(p.plan);
+    const cat = CATEGORIES.find(c => c.id === p.niche);
+    const age = timeAgo(new Date(p.createdAt));
+    const tplMatch = DB.templates.find(t => t.category === p.niche && t.status === 'ready');
+
+    html += `<div class="panel" style="padding:0;border-left:3px solid ${st.color};overflow:hidden;">
+      ${tplMatch && tplMatch.path ? `<div style="height:80px;overflow:hidden;position:relative;background:var(--surface);">
+        <iframe src="${tplMatch.path}" scrolling="no" loading="lazy" tabindex="-1" style="width:400%;height:400%;transform:scale(0.25);transform-origin:0 0;pointer-events:none;border:none;"></iframe>
+        <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent,var(--surface));"></div>
+      </div>` : ''}
+      <div style="padding:18px 20px;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;">
+          <div>
+            <div style="font-family:var(--font-head);font-weight:700;color:var(--white);font-size:16px;">${p.bizName}</div>
+            ${p.contactName ? `<div style="font-size:11px;color:var(--muted);margin-top:2px;">${p.contactName}${p.contactEmail ? ' &middot; ' + p.contactEmail : ''}</div>` : ''}
+          </div>
+          <span class="badge" style="background:${st.bg};color:${st.color};cursor:pointer;font-size:10px;" onclick="event.stopPropagation();cycleProposalStatus('${p.id}')" title="Click to advance">${st.icon} ${st.label}</span>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;margin:12px 0;">
+          <div style="font-family:var(--font-head);font-size:24px;font-weight:700;color:var(--indigo);">$${price}<span style="font-size:12px;color:var(--muted);font-weight:500;">/mo</span></div>
+          <div style="font-size:11px;padding:4px 10px;border-radius:6px;background:var(--surface);border:1px solid var(--border);color:var(--text);">${plan} Plan</div>
+          ${cat ? `<div style="font-size:11px;color:var(--muted);">${cat.label}</div>` : ''}
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:12px;">Created ${age}${p.sentDate ? ' &middot; Sent ' + new Date(p.sentDate).toLocaleDateString() : ''}</div>
+        ${p.notes ? `<div style="font-size:12px;color:var(--text);padding:8px 10px;background:var(--surface);border-radius:6px;margin-bottom:12px;border-left:2px solid var(--indigo);max-height:48px;overflow:hidden;">${p.notes}</div>` : ''}
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="btn btn-primary btn-sm" style="font-size:11px;" onclick="viewProposal('${p.id}')">Preview</button>
+          <button class="btn btn-ghost btn-sm" style="font-size:11px;" onclick="editProposal('${p.id}')">Edit</button>
+          <button class="btn btn-ghost btn-sm" style="font-size:11px;" onclick="duplicateProposal('${p.id}')">Duplicate</button>
+          <button class="btn btn-ghost btn-sm btn-icon" style="font-size:11px;color:var(--red);margin-left:auto;" onclick="deleteProposal('${p.id}')" title="Delete">✕</button>
+        </div>
       </div>
     </div>`;
   });
   html += '</div>';
   container.innerHTML = html;
 }
+
 function openNewProposal() {
   const niches = CATEGORIES.map(c => `<option value="${c.id}">${c.label}</option>`).join('');
-  openGenericModal('Create Proposal', `<div style="display:grid;gap:12px;">
-    <input id="np-biz" placeholder="Business Name" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);">
-    <select id="np-niche" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);"><option value="">Select Niche</option>${niches}</select>
-    <select id="np-plan" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);"><option value="starter">Starter ($${DB.pricing?.starter||158}/mo)</option><option value="standard" selected>Standard ($${DB.pricing?.standard||258}/mo)</option><option value="premium">Premium ($${DB.pricing?.premium||378}/mo)</option></select>
-    <textarea id="np-notes" placeholder="Custom notes..." rows="3" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);resize:vertical;"></textarea>
-    <button class="btn btn-primary" onclick="saveProposal()">Create Proposal</button>
+  const inputStyle = 'padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:13px;width:100%;';
+  openGenericModal('Create Proposal', `<div style="display:grid;gap:14px;">
+    <div style="font-size:12px;color:var(--muted);padding:10px 14px;background:var(--surface);border-radius:8px;border-left:2px solid var(--indigo);">Fill in prospect details below. You can preview, edit, and print the proposal after creating it.</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Business Name *</label><input id="np-biz" placeholder="Mike's Plumbing" style="${inputStyle}"></div>
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Contact Name</label><input id="np-contact" placeholder="Mike Johnson" style="${inputStyle}"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Contact Email</label><input id="np-email" type="email" placeholder="mike@email.com" style="${inputStyle}"></div>
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Contact Phone</label><input id="np-phone" type="tel" placeholder="(555) 123-4567" style="${inputStyle}"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Business Niche</label><select id="np-niche" style="${inputStyle}"><option value="">Select Niche</option>${niches}</select></div>
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Plan</label><select id="np-plan" style="${inputStyle}"><option value="starter">Starter — $${DB.pricing?.starter||158}/mo</option><option value="standard" selected>Standard — $${DB.pricing?.standard||258}/mo</option><option value="premium">Premium — $${DB.pricing?.premium||378}/mo</option></select></div>
+    </div>
+    <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Custom Notes / Special Requirements</label><textarea id="np-notes" placeholder="Any special requirements, custom features, timeline preferences..." rows="3" style="${inputStyle}resize:vertical;"></textarea></div>
+    <button class="btn btn-primary" onclick="saveProposal()" style="justify-content:center;">Create Proposal</button>
   </div>`);
 }
+
 function saveProposal() {
   if (!DB.proposals) DB.proposals = [];
-  const biz = document.getElementById('np-biz').value;
-  if (!biz) { toast('Business name required', 'error'); return; }
-  DB.proposals.push({ id: 'pr' + Date.now(), bizName: biz, niche: document.getElementById('np-niche').value, plan: document.getElementById('np-plan').value, notes: document.getElementById('np-notes').value, status: 'draft', createdAt: new Date().toISOString() });
+  const biz = document.getElementById('np-biz').value.trim();
+  if (!biz) { toast('Business name is required', 'error'); return; }
+  const proposal = {
+    id: 'pr' + Date.now(), bizName: biz,
+    contactName: document.getElementById('np-contact').value.trim(),
+    contactEmail: document.getElementById('np-email').value.trim(),
+    contactPhone: document.getElementById('np-phone').value.trim(),
+    niche: document.getElementById('np-niche').value,
+    plan: document.getElementById('np-plan').value,
+    notes: document.getElementById('np-notes').value.trim(),
+    status: 'draft', createdAt: new Date().toISOString(), sentDate: null
+  };
+  DB.proposals.push(proposal);
+  DB.activity = DB.activity || [];
+  DB.activity.unshift({ text: `<strong>New proposal:</strong> ${biz} (${proposal.plan})`, time: 'Just now', type: 'indigo' });
+  if (DB.activity.length > 20) DB.activity.pop();
   save(); closeGenericModal(); renderProposals(); toast('Proposal created!', 'success');
 }
-function cycleProposal(id) { const p = DB.proposals.find(x => x.id === id); if (!p) return; p.status = p.status === 'draft' ? 'sent' : p.status === 'sent' ? 'accepted' : p.status === 'accepted' ? 'declined' : 'draft'; save(); renderProposals(); }
-function deleteProposal(id) { DB.proposals = DB.proposals.filter(x => x.id !== id); save(); renderProposals(); toast('Proposal deleted', 'success'); }
+
+function editProposal(id) {
+  const p = DB.proposals.find(x => x.id === id); if (!p) return;
+  const niches = CATEGORIES.map(c => `<option value="${c.id}"${c.id===p.niche?' selected':''}>${c.label}</option>`).join('');
+  const statuses = PROPOSAL_STATUSES.map(s => `<option value="${s.id}"${s.id===p.status?' selected':''}>${s.label}</option>`).join('');
+  const inputStyle = 'padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:13px;width:100%;';
+  openGenericModal('Edit Proposal', `<div style="display:grid;gap:14px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Business Name</label><input id="ep-biz" value="${p.bizName||''}" style="${inputStyle}"></div>
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Status</label><select id="ep-status" style="${inputStyle}">${statuses}</select></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Contact Name</label><input id="ep-contact" value="${p.contactName||''}" style="${inputStyle}"></div>
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Contact Email</label><input id="ep-email" value="${p.contactEmail||''}" style="${inputStyle}"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Niche</label><select id="ep-niche" style="${inputStyle}"><option value="">—</option>${niches}</select></div>
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Plan</label><select id="ep-plan" style="${inputStyle}"><option value="starter"${p.plan==='starter'?' selected':''}>Starter</option><option value="standard"${p.plan==='standard'?' selected':''}>Standard</option><option value="premium"${p.plan==='premium'?' selected':''}>Premium</option></select></div>
+    </div>
+    <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Notes</label><textarea id="ep-notes" rows="3" style="${inputStyle}resize:vertical;">${p.notes||''}</textarea></div>
+    <button class="btn btn-primary" onclick="saveEditProposal('${id}')" style="justify-content:center;">Save Changes</button>
+  </div>`);
+}
+
+function saveEditProposal(id) {
+  const p = DB.proposals.find(x => x.id === id); if (!p) return;
+  p.bizName = document.getElementById('ep-biz').value.trim();
+  p.status = document.getElementById('ep-status').value;
+  p.contactName = document.getElementById('ep-contact').value.trim();
+  p.contactEmail = document.getElementById('ep-email').value.trim();
+  p.niche = document.getElementById('ep-niche').value;
+  p.plan = document.getElementById('ep-plan').value;
+  p.notes = document.getElementById('ep-notes').value.trim();
+  if (p.status === 'sent' && !p.sentDate) p.sentDate = new Date().toISOString();
+  save(); closeGenericModal(); renderProposals(); toast('Proposal updated', 'success');
+}
+
+function cycleProposalStatus(id) {
+  const p = DB.proposals.find(x => x.id === id); if (!p) return;
+  const order = ['draft', 'sent', 'viewed', 'accepted'];
+  const idx = order.indexOf(p.status);
+  if (idx < order.length - 1) {
+    p.status = order[idx + 1];
+    if (p.status === 'sent' && !p.sentDate) p.sentDate = new Date().toISOString();
+    save(); renderProposals();
+  }
+}
+
+function duplicateProposal(id) {
+  const p = DB.proposals.find(x => x.id === id); if (!p) return;
+  const dup = JSON.parse(JSON.stringify(p));
+  dup.id = 'pr' + Date.now();
+  dup.status = 'draft';
+  dup.createdAt = new Date().toISOString();
+  dup.sentDate = null;
+  dup.bizName = p.bizName + ' (Copy)';
+  DB.proposals.push(dup);
+  save(); renderProposals(); toast('Proposal duplicated', 'success');
+}
+
+function deleteProposal(id) {
+  if (!confirm('Delete this proposal?')) return;
+  DB.proposals = DB.proposals.filter(x => x.id !== id);
+  save(); renderProposals(); toast('Proposal deleted', 'success');
+}
+
 function viewProposal(id) {
   const p = DB.proposals.find(x => x.id === id); if (!p) return;
-  const plan = p.plan ? p.plan.charAt(0).toUpperCase()+p.plan.slice(1) : 'Standard';
-  const price = p.plan === 'starter' ? (DB.pricing?.starter||158) : p.plan === 'standard' ? (DB.pricing?.standard||258) : (DB.pricing?.premium||378);
+  const plan = p.plan ? p.plan.charAt(0).toUpperCase() + p.plan.slice(1) : 'Standard';
+  const price = getProposalPrice(p.plan);
+  const setup = DB.pricing?.setup || 1000;
   const cat = CATEGORIES.find(c => c.id === p.niche);
-  const features = DB.pricing?.[p.plan+'Features'] || ['Professional website','Mobile responsive','SEO optimized','Contact forms','Hosting included'];
-  const featureList = (Array.isArray(features) ? features : (features||'').split('\n')).filter(f=>f.trim()).map(f => `<div style="display:flex;gap:8px;align-items:center;padding:6px 0;font-size:13px;color:var(--text);"><span style="color:var(--green);">✓</span> ${f.trim()}</div>`).join('');
-  openGenericModal('Proposal Preview', `<div style="text-align:center;margin-bottom:24px;">
-    <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--indigo);margin-bottom:8px;">PROPOSAL FROM WEBNARI</div>
-    <div style="font-family:var(--font-head);font-size:26px;font-weight:700;color:var(--white);margin-bottom:4px;">Website for ${p.bizName}</div>
-    <div style="color:var(--muted);font-size:13px;">${cat ? cat.label : 'Custom'} &middot; ${plan} Plan</div>
-  </div>
-  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;margin-bottom:20px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
-      <div style="font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--white);">What's Included</div>
-      <div style="font-family:var(--font-head);font-size:28px;font-weight:700;color:var(--indigo);">$${price}<span style="font-size:14px;color:var(--muted);">/mo</span></div>
+  const features = getProposalFeatures(p.plan);
+  const tplMatch = DB.templates.find(t => t.category === p.niche && t.status === 'ready');
+
+  const featureList = features.map(f => `<div style="display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.03);"><span style="color:var(--green);font-size:14px;flex-shrink:0;margin-top:1px;">✓</span><span style="font-size:13px;color:var(--text);line-height:1.4;">${f.trim()}</span></div>`).join('');
+
+  // All 3 plans for comparison
+  const plans = ['starter','standard','premium'].map(pl => {
+    const pr = getProposalPrice(pl);
+    const isActive = pl === p.plan;
+    const label = pl.charAt(0).toUpperCase() + pl.slice(1);
+    const feats = getProposalFeatures(pl);
+    return { id: pl, label, price: pr, features: feats, isActive };
+  });
+
+  openGenericModal('Proposal Preview', `<div id="proposal-print-area">
+    <!-- Header -->
+    <div style="text-align:center;padding:24px 0 20px;border-bottom:1px solid var(--border);margin-bottom:24px;">
+      <div style="font-family:var(--font-head);font-size:10px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:var(--indigo);margin-bottom:10px;">WEBSITE PROPOSAL FROM WEBNARI</div>
+      <div style="font-family:var(--font-head);font-size:28px;font-weight:700;color:var(--white);margin-bottom:6px;">Website for ${p.bizName}</div>
+      <div style="color:var(--muted);font-size:13px;">${cat ? cat.label : 'Custom Website'} &middot; Prepared ${new Date(p.createdAt).toLocaleDateString('en-US', {month:'long',day:'numeric',year:'numeric'})}</div>
+      ${p.contactName ? `<div style="color:var(--text);font-size:13px;margin-top:8px;">For: ${p.contactName}${p.contactEmail ? ' ('+p.contactEmail+')' : ''}</div>` : ''}
     </div>
-    ${featureList}
-    <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);">One-time setup fee: $${DB.pricing?.setup||1000}</div>
-  </div>
-  ${p.notes ? `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;"><div style="font-size:12px;font-weight:700;color:var(--white);margin-bottom:8px;">Notes</div><div style="font-size:13px;color:var(--text);line-height:1.6;">${p.notes}</div></div>` : ''}
-  <div style="text-align:center;margin-top:20px;"><button class="btn btn-primary" onclick="window.print()">Print / Save PDF</button></div>`);
+
+    ${tplMatch && tplMatch.path ? `<!-- Template Preview -->
+    <div style="margin-bottom:24px;border-radius:var(--radius-lg);overflow:hidden;border:1px solid var(--border);height:200px;position:relative;">
+      <iframe src="${tplMatch.path}" scrolling="no" loading="lazy" tabindex="-1" style="width:300%;height:300%;transform:scale(0.333);transform-origin:0 0;pointer-events:none;border:none;"></iframe>
+      <div style="position:absolute;bottom:0;left:0;right:0;padding:12px 16px;background:linear-gradient(to top,var(--surface),transparent);"><span style="font-size:11px;color:var(--muted);">Preview of your ${cat ? cat.label.toLowerCase() : ''} website template</span></div>
+    </div>` : ''}
+
+    <!-- Why Webnari -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;margin-bottom:20px;">
+      <div style="font-family:var(--font-head);font-size:15px;font-weight:700;color:var(--white);margin-bottom:14px;">Why Webnari?</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+        <div style="text-align:center;padding:16px 12px;background:rgba(201,169,110,0.04);border-radius:10px;border:1px solid rgba(201,169,110,0.08);">
+          <div style="font-family:var(--font-head);font-size:22px;font-weight:700;color:var(--indigo);margin-bottom:4px;">100%</div>
+          <div style="font-size:11px;color:var(--muted);">Custom-Built<br>No Templates</div>
+        </div>
+        <div style="text-align:center;padding:16px 12px;background:rgba(94,189,138,0.04);border-radius:10px;border:1px solid rgba(94,189,138,0.08);">
+          <div style="font-family:var(--font-head);font-size:22px;font-weight:700;color:var(--green);margin-bottom:4px;">24/7</div>
+          <div style="font-size:11px;color:var(--muted);">Managed Hosting<br>& Support</div>
+        </div>
+        <div style="text-align:center;padding:16px 12px;background:rgba(176,124,255,0.04);border-radius:10px;border:1px solid rgba(176,124,255,0.08);">
+          <div style="font-family:var(--font-head);font-size:22px;font-weight:700;color:var(--purple);margin-bottom:4px;">SEO</div>
+          <div style="font-size:11px;color:var(--muted);">Built to Rank<br>on Google</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Selected Plan Details -->
+    <div style="background:var(--surface);border:1px solid var(--indigo-border);border-radius:var(--radius-lg);padding:24px;margin-bottom:20px;position:relative;overflow:hidden;">
+      <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--indigo);"></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <div>
+          <div style="font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--white);">${plan} Plan — What's Included</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:2px;">${features.length} features included</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-family:var(--font-head);font-size:32px;font-weight:700;color:var(--indigo);">$${price}<span style="font-size:14px;color:var(--muted);font-weight:500;">/mo</span></div>
+          <div style="font-size:11px;color:var(--muted);">+ $${setup} one-time setup</div>
+        </div>
+      </div>
+      <div style="columns:2;column-gap:20px;">${featureList}</div>
+    </div>
+
+    <!-- Plan Comparison -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;margin-bottom:20px;">
+      <div style="font-family:var(--font-head);font-size:15px;font-weight:700;color:var(--white);margin-bottom:16px;">Plan Comparison</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+        ${plans.map(pl => `<div style="padding:16px;border-radius:10px;border:${pl.isActive ? '2px solid var(--indigo)' : '1px solid var(--border)'};background:${pl.isActive ? 'rgba(201,169,110,0.05)' : 'transparent'};text-align:center;position:relative;">
+          ${pl.isActive ? '<div style="position:absolute;top:-1px;left:50%;transform:translateX(-50%);font-size:8px;padding:2px 8px;background:var(--indigo);color:#0A0A12;border-radius:0 0 6px 6px;font-weight:700;letter-spacing:0.08em;">RECOMMENDED</div>' : ''}
+          <div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--white);margin-bottom:4px;">${pl.label}</div>
+          <div style="font-family:var(--font-head);font-size:24px;font-weight:700;color:${pl.isActive ? 'var(--indigo)' : 'var(--text)'};margin-bottom:8px;">$${pl.price}<span style="font-size:11px;color:var(--muted);">/mo</span></div>
+          <div style="font-size:11px;color:var(--muted);">${pl.features.length} features</div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    ${p.notes ? `<!-- Notes -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;margin-bottom:20px;">
+      <div style="font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--white);margin-bottom:8px;">Additional Notes</div>
+      <div style="font-size:13px;color:var(--text);line-height:1.6;">${p.notes}</div>
+    </div>` : ''}
+
+    <!-- Timeline -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;margin-bottom:20px;">
+      <div style="font-family:var(--font-head);font-size:15px;font-weight:700;color:var(--white);margin-bottom:16px;">Estimated Timeline</div>
+      <div style="display:flex;gap:0;position:relative;">
+        ${[{week:'Week 1',task:'Discovery & Design',desc:'Gather business info, choose design direction'},{week:'Week 2',task:'Build & Content',desc:'Build site with your branding, write initial content'},{week:'Week 3',task:'Review & Refine',desc:'Your feedback, revisions, final adjustments'},{week:'Week 4',task:'Launch & Optimize',desc:'Go live, set up SEO, Google Business, analytics'}].map((step,i) => `
+        <div style="flex:1;text-align:center;position:relative;">
+          <div style="width:28px;height:28px;border-radius:50%;background:var(--indigo-bg);border:2px solid var(--indigo);margin:0 auto 10px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--indigo);">${i+1}</div>
+          ${i < 3 ? '<div style="position:absolute;top:14px;left:calc(50% + 14px);right:calc(-50% + 14px);height:2px;background:var(--border);"></div>' : ''}
+          <div style="font-size:11px;font-weight:700;color:var(--indigo);margin-bottom:2px;">${step.week}</div>
+          <div style="font-size:11px;font-weight:600;color:var(--white);margin-bottom:2px;">${step.task}</div>
+          <div style="font-size:10px;color:var(--muted);line-height:1.3;">${step.desc}</div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- CTA -->
+    <div style="text-align:center;padding:20px 0;">
+      <div style="font-size:13px;color:var(--muted);margin-bottom:12px;">Ready to get started?</div>
+      <div style="display:flex;gap:10px;justify-content:center;">
+        <button class="btn btn-primary" onclick="window.print()">Print / Save as PDF</button>
+      </div>
+    </div>
+  </div>`);
 }
 
 function renderTemplateDetail(id) {
