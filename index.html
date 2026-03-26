@@ -127,8 +127,8 @@ nav.scrolled{background:rgba(6,6,10,.8);backdrop-filter:blur(20px) saturate(150%
 .transition-diagonal::before{content:'';position:absolute;inset:0;background:var(--surface);clip-path:polygon(0 0,100% 70%,100% 100%,0 100%)}
 .transition-diagonal-rev{width:100%;height:100px;position:relative;overflow:hidden;background:var(--surface)}
 .transition-diagonal-rev::before{content:'';position:absolute;inset:0;background:var(--bg);clip-path:polygon(0 30%,100% 0,100% 100%,0 100%)}
-/* Quick whip-pan between showcase and features */
-.cam-barrel-transition{height:60vh;position:relative;overflow:hidden;background:var(--bg)}
+/* Quick transition between showcase and features */
+.cam-barrel-transition{height:10vh;position:relative;overflow:hidden;background:var(--bg)}
 .cam-barrel-inner{position:sticky;top:0;height:100vh;perspective:600px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .cam-barrel-flash{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(201,169,110,.15),transparent 70%);opacity:0;transition:opacity .3s}
 
@@ -984,11 +984,11 @@ function initShowcase(){
   },1200);
 
   /*
-    380vh scroll — tight, no dead space:
-    Initial state: both pairs start at 15% so content is visible immediately
-    0-45%   → Pair 1 plays from 15% → 82%
-    45-55%  → Camera pan to Pair 2
-    55-100% → Pair 2 plays from 15% → 82%
+    320vh scroll — tight:
+    0-42%   → Pair 1 plays 15%→78%
+    42-52%  → Camera pan to Pair 2
+    52-97%  → Pair 2 plays 15%→78%
+    97-100% → Release (minimal)
   */
   // Set initial 15% position once iframes load
   function setInitialPos(){
@@ -1009,17 +1009,17 @@ function initShowcase(){
     const scrolled=Math.max(0,-rect.top);
     const p=Math.max(0,Math.min(1,scrolled/total));
 
-    // Horizontal pan: transitions .45-.55
+    // Horizontal pan: transitions .42-.52
     let panProgress=0;
-    if(p>=.45&&p<=.55)panProgress=(p-.45)/.1;
-    else if(p>.55)panProgress=1;
+    if(p>=.42&&p<=.52)panProgress=(p-.42)/.1;
+    else if(p>.52)panProgress=1;
     const easedPan=panProgress<1?panProgress*panProgress*(3-2*panProgress):1;
     const tiltY=(panProgress>0&&panProgress<1)?Math.sin(panProgress*Math.PI)*8:0;
     const tiltX=(panProgress>0&&panProgress<1)?Math.sin(panProgress*Math.PI)*3:0;
     track.style.transform=`translateX(${-easedPan*50}%) perspective(1200px) rotateY(${tiltY}deg) rotateX(${-tiltX}deg)`;
 
-    // Pair 1: 0→.45 maps to 15%→82% of parallax (starts with content visible)
-    const p1=.15+Math.min(p/.45,1)*(.82-.15);
+    // Pair 1: 0→.42 maps to 15%→78% (stop before branding/empty zone)
+    const p1=.15+Math.min(p/.42,1)*(.78-.15);
     [iframes.volt,iframes.roof].forEach(f=>{
       if(!f||!f.contentWindow)return;
       try{const doc=f.contentDocument;const seq=doc.querySelector('.scroll-sequence')||doc.getElementById('hero');
@@ -1027,9 +1027,9 @@ function initShowcase(){
       }catch(e){}
     });
 
-    // Pair 2: .55→1.0 maps to 15%→82% of parallax
-    const p2Raw=(p-.55)/.45;
-    const p2=.15+Math.max(0,Math.min(p2Raw,1))*(.82-.15);
+    // Pair 2: .52→.97 maps to 15%→78% (ends right before release)
+    const p2Raw=(p-.52)/.45;
+    const p2=.15+Math.max(0,Math.min(p2Raw,1))*(.78-.15);
     [iframes.green,iframes.pizza].forEach(f=>{
       if(!f||!f.contentWindow)return;
       try{const doc=f.contentDocument;const seq=doc.querySelector('.scroll-sequence')||doc.getElementById('hero');
@@ -1199,7 +1199,7 @@ function initCursor(){
       s.trail.push({x:s.x,y:s.y,z:s.z});
       if(s.trail.length>8)s.trail.shift();
 
-      const alpha=s.life*.5;
+      const alpha=s.life*.25;
 
       // Draw jagged trail with perspective
       if(s.trail.length>1){
@@ -1250,7 +1250,7 @@ function initCursor(){
 
     // Very subtle glow at cursor (no dot)
     const grd=ctx.createRadialGradient(mx,my,0,mx,my,20);
-    grd.addColorStop(0,'rgba(80,160,255,.06)');
+    grd.addColorStop(0,'rgba(80,160,255,.03)');
     grd.addColorStop(1,'rgba(80,160,255,0)');
     ctx.beginPath();ctx.arc(mx,my,20,0,Math.PI*2);
     ctx.fillStyle=grd;ctx.fill();
