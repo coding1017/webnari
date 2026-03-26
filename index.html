@@ -1011,8 +1011,8 @@ function initShowcase(){
     const tiltX=(panProgress>0&&panProgress<1)?Math.sin(panProgress*Math.PI)*3:0;
     track.style.transform=`translateX(${-easedPan*50}%) perspective(1200px) rotateY(${tiltY}deg) rotateX(${-tiltX}deg)`;
 
-    // Pair 1: 0→.42 maps to 15%→78% (stop before branding/empty zone)
-    const p1=.15+Math.min(p/.42,1)*(.78-.15);
+    // Pair 1: 0→.42 maps to 15%→72% (stop at ~90% of animation)
+    const p1=.15+Math.min(p/.42,1)*(.72-.15);
     [iframes.volt,iframes.roof].forEach(f=>{
       if(!f||!f.contentWindow)return;
       try{const doc=f.contentDocument;const seq=doc.querySelector('.scroll-sequence')||doc.getElementById('hero');
@@ -1020,9 +1020,27 @@ function initShowcase(){
       }catch(e){}
     });
 
-    // Pair 2: .52→.97 maps to 15%→78% (ends right before release)
-    const p2Raw=(p-.52)/.45;
-    const p2=.15+Math.max(0,Math.min(p2Raw,1))*(.78-.15);
+    // Pair 2: .52→.92 maps to 15%→72%, then .92→1.0 = vertical tilt out
+    const p2Raw=(p-.52)/.4;
+    const p2=.15+Math.max(0,Math.min(p2Raw,1))*(.72-.15);
+
+    // Vertical 3D tilt-down at end (.92→1.0): showcase tilts away as you scroll into features
+    let exitProgress=0;
+    if(p>=.92)exitProgress=(p-.92)/.08;
+    const exitEase=exitProgress*exitProgress*(3-2*exitProgress);
+    const exitTiltX=exitEase*25;  // tilt forward (rotateX)
+    const exitScale=1-exitEase*.15;  // slight shrink
+    const exitY=exitEase*-60;  // slide up
+    const stickyEl=document.getElementById('showcase-sticky');
+    if(stickyEl){
+      if(exitProgress>0){
+        stickyEl.style.transform=`perspective(800px) rotateX(${exitTiltX}deg) scale(${exitScale}) translateY(${exitY}px)`;
+        stickyEl.style.opacity=`${1-exitEase*.7}`;
+      }else{
+        stickyEl.style.transform='none';
+        stickyEl.style.opacity='1';
+      }
+    }
     [iframes.green,iframes.pizza].forEach(f=>{
       if(!f||!f.contentWindow)return;
       try{const doc=f.contentDocument;const seq=doc.querySelector('.scroll-sequence')||doc.getElementById('hero');
@@ -1150,7 +1168,7 @@ function initCursor(){
       s.trail.push({x:s.x,y:s.y,z:s.z});
       if(s.trail.length>8)s.trail.shift();
 
-      const alpha=s.life*.04;
+      const alpha=s.life*.07;
 
       // Draw jagged trail with perspective
       if(s.trail.length>1){
