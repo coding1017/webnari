@@ -164,7 +164,15 @@ section{padding:120px 48px;position:relative}
 .showcase-pane-label{position:absolute;bottom:16px;left:16px;z-index:2;font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--white);
   background:rgba(0,0,0,.7);backdrop-filter:blur(8px);padding:6px 14px;border-radius:6px;pointer-events:none;opacity:.6}
 
-/* (browser mockup + site-inside styles removed — replaced by showcase grid) */
+/* ── Mobile Showcase (static cards instead of iframes) ── */
+.showcase-mobile{display:none;padding:40px 16px 60px}
+.showcase-mobile-title{text-align:center;font-family:var(--font-head);font-size:28px;font-weight:700;color:var(--white);margin-bottom:8px}
+.showcase-mobile-sub{text-align:center;font-size:14px;color:var(--text);margin-bottom:32px}
+.showcase-mobile-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.showcase-mobile-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px 16px;text-align:center;text-decoration:none;transition:border-color .2s}
+.showcase-mobile-card:active{border-color:var(--accent)}
+.showcase-mobile-card .smc-name{font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--white);margin-bottom:4px}
+.showcase-mobile-card .smc-type{font-size:12px;color:var(--muted)}
 
 /* ── Features ── */
 .features-section{background:var(--surface);
@@ -357,11 +365,10 @@ footer{border-top:1px solid var(--border);padding:48px}
   .footer-bottom{flex-direction:column;gap:8px}
   .portal-kpis{grid-template-columns:repeat(2,1fr)}
   .portal-grid{grid-template-columns:1fr}
-  .showcase-wrap{height:auto}
-  .showcase-sticky{position:relative;height:auto}
-  .showcase-track{width:100%;flex-direction:column}
-  .showcase-pair{width:100%;flex-direction:column;padding:64px 4px 4px}
-  .showcase-pane{height:50vh;min-height:300px}
+  .showcase-wrap{height:auto;overflow:hidden}
+  .showcase-sticky{position:relative;height:auto;overflow:hidden}
+  .showcase-track{display:none!important}
+  .showcase-mobile{display:block!important}
   .cursor-canvas{display:none!important}
 }
 </style>
@@ -460,6 +467,17 @@ footer{border-top:1px solid var(--border);padding:48px}
           <iframe id="iframe-pizza" scrolling="no" tabindex="-1"></iframe>
           <div class="showcase-pane-label">FireCrust</div>
         </div>
+      </div>
+    </div>
+    <!-- Mobile: static cards instead of broken iframes -->
+    <div class="showcase-mobile">
+      <div class="showcase-mobile-title">Our work</div>
+      <div class="showcase-mobile-sub">Scroll-driven parallax, built from scratch.</div>
+      <div class="showcase-mobile-grid">
+        <a class="showcase-mobile-card" href="voltpro.html"><div class="smc-name">VoltPro</div><div class="smc-type">Electrician</div></a>
+        <a class="showcase-mobile-card" href="roofpro.html"><div class="smc-name">RoofPro</div><div class="smc-type">Roofing</div></a>
+        <a class="showcase-mobile-card" href="greenscape.html"><div class="smc-name">GreenScape</div><div class="smc-type">Landscaping</div></a>
+        <a class="showcase-mobile-card" href="pizza-parallax.html"><div class="smc-name">FireCrust</div><div class="smc-type">Restaurant</div></a>
       </div>
     </div>
   </div>
@@ -938,6 +956,8 @@ function initOrb(){
 // ── Parallax Showcase ──
 function initShowcase(){
   const wrap=document.getElementById('showcase');if(!wrap)return;
+  // Skip on mobile — show static cards instead
+  if(window.innerWidth<=768)return;
   const track=document.getElementById('showcase-track');
   const iframes={
     volt:document.getElementById('iframe-volt'),
