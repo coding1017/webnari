@@ -131,6 +131,18 @@
     return null;
   }
 
+  function getParentProduct(variantId) {
+    var products = getProducts();
+    for (var i = 0; i < products.length; i++) {
+      if (products[i].variants) {
+        for (var v = 0; v < products[i].variants.length; v++) {
+          if (products[i].variants[v].id === variantId) return products[i];
+        }
+      }
+    }
+    return null;
+  }
+
   function generateId(name) {
     return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') + '-' + Date.now().toString(36);
   }
@@ -267,6 +279,7 @@
     getProducts: getProducts,
     saveProducts: saveProducts,
     getProductById: getProductById,
+    getParentProduct: getParentProduct,
     generateId: generateId,
     getCart: getCart,
     saveCart: saveCart,

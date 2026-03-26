@@ -123,6 +123,20 @@ body::after {
 }
 .nav-link:hover { color: var(--white); background: rgba(168,85,247,0.06); }
 .nav-link.active { color: var(--pink); }
+.nav-dropdown { position: relative; }
+.nav-dropdown-menu {
+  position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+  background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+  padding: 6px 0; min-width: 120px; opacity: 0; pointer-events: none;
+  transition: opacity 0.15s, transform 0.15s; transform: translateX(-50%) translateY(4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3); z-index: 1001;
+}
+.nav-dropdown:hover .nav-dropdown-menu { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+.nav-dropdown-menu a {
+  display: block; padding: 8px 16px; font-size: 13px; font-weight: 500;
+  color: var(--text); transition: all 0.15s; white-space: nowrap;
+}
+.nav-dropdown-menu a:hover { color: var(--white); background: rgba(168,85,247,0.08); }
 .nav-cart {
   position: relative; display: flex; align-items: center; justify-content: center;
   width: 42px; height: 42px; margin-left: 12px; border-radius: var(--radius);
@@ -617,7 +631,13 @@ body::after {
       <a href="wookwear-about.html" class="nav-link">About</a>
       <a href="wookwear-gallery.html" class="nav-link">Gallery</a>
       <a href="wookwear-contact.html" class="nav-link">Contact</a>
-      <a href="wookwear-blog.html" class="nav-link">Blog</a>
+      <div class="nav-dropdown">
+        <a href="wookwear-blog.html" class="nav-link">Blog</a>
+        <div class="nav-dropdown-menu">
+          <a href="wookwear-blog.html">All Posts</a>
+          <a href="wookwear-glossary.html">Craft Glossary</a>
+        </div>
+      </div>
     </div>
     <button class="nav-cart" id="cartToggle" aria-label="Shopping cart">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -935,9 +955,11 @@ function renderFeatured() {
         '</div>' +
       '</a>' +
       '<div style="padding:0 18px 20px;">' +
-        '<button class="product-add" data-id="' + p.id + '"' + (!p.inStock ? ' disabled' : '') + '>' +
-          (p.inStock ? 'Add to Cart' : 'Sold Out') +
-        '</button>' +
+        (p.isCollection
+          ? '<a href="wookwear-product.html?id=' + p.id + '" class="product-add" style="display:block;text-align:center;text-decoration:none;">Select Style</a>'
+          : '<button class="product-add" data-id="' + p.id + '"' + (!p.inStock ? ' disabled' : '') + '>' +
+              (p.inStock ? 'Add to Cart' : 'Sold Out') +
+            '</button>') +
       '</div></div>';
   }).join('');
 }
@@ -983,9 +1005,11 @@ function renderCartSidebar() {
   for (var i = 0; i < cart.length; i++) {
     var product = WookWearData.getProductById(cart[i].id);
     if (!product) continue;
+    var parentProd = WookWearData.getParentProduct(cart[i].id);
+    var parentLabel = parentProd ? '<div style="font-size:11px;color:var(--muted);margin-bottom:2px;">' + parentProd.name + '</div>' : '';
     html += '<div class="cart-item">' +
       '<div class="cart-item-img">' + (product.img || (product.imgs && product.imgs[0]) ? '<img src="' + (product.img || product.imgs[0]) + '" alt="' + product.name + '" style="width:64px;height:64px;object-fit:cover;border-radius:8px;">' : '<div class="product-img-placeholder bg1" style="width:64px;height:64px;border-radius:8px;"></div>') + '</div>' +
-      '<div class="cart-item-details">' +
+      '<div class="cart-item-details">' + parentLabel +
         '<div class="cart-item-name">' + product.name + '</div>' +
         '<div class="cart-item-price">$' + product.price.toFixed(2) + '</div>' +
         '<div class="cart-item-qty">' +
