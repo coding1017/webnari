@@ -624,44 +624,94 @@ td.bold { color: var(--white); font-weight: 600; }
   gap: 18px;
 }
 .cat-card {
-  background: linear-gradient(160deg, var(--surface2) 0%, var(--surface) 100%);
+  background: var(--surface);
   border: 1px solid var(--_cat-border, var(--border));
   border-radius: var(--radius-xl);
   padding: 0; position: relative; overflow: hidden;
-  cursor: pointer; transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+  cursor: pointer; transition: transform 0.4s cubic-bezier(0.03,0.98,0.52,0.99), box-shadow 0.4s, border-color 0.3s;
 }
 .cat-card:hover {
   border-color: var(--_cat-color, var(--border3));
-  transform: perspective(800px) rotateX(-2deg) rotateY(2deg) translateY(-6px);
-  box-shadow: 0 20px 50px rgba(0,0,0,0.5), 0 0 30px var(--_cat-glow, rgba(201,169,110,0.2)), inset 0 1px 0 rgba(255,255,255,0.06);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.5), 0 0 40px var(--_cat-glow, rgba(201,169,110,0.2));
 }
-/* Top gradient banner with animated shimmer */
-.cat-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 100%;
-  background: linear-gradient(135deg, var(--_cat-color, var(--indigo)) 0%, transparent 50%);
-  opacity: 0.06; transition: opacity 0.3s; pointer-events: none; z-index: 0;
-}
-.cat-card:hover::before { opacity: 0.12; }
+/* Top accent bar */
 .cat-card::after {
   content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
   background: linear-gradient(90deg, var(--_cat-color, var(--indigo)), var(--_cat-color, var(--indigo))88, transparent);
-  border-radius: 3px 3px 0 0; z-index: 2;
+  border-radius: 3px 3px 0 0; z-index: 5;
 }
-/* Inner content wrapper */
-.cat-card-inner { position: relative; z-index: 1; padding: 26px 24px; }
+/* ── Showcase strip (top area) ── */
+.cat-card-showcase {
+  position: relative; height: 110px; overflow: hidden;
+  background: linear-gradient(135deg, rgba(0,0,0,0.4), var(--surface));
+}
+.cat-card-showcase-slide {
+  position: absolute; inset: 0; opacity: 0; transition: opacity 1s ease;
+}
+.cat-card-showcase-slide.active { opacity: 1; }
+.cat-card-showcase-slide iframe {
+  width: 400%; height: 400%; transform: scale(0.25); transform-origin: 0 0;
+  border: none; pointer-events: none;
+}
+.cat-card-showcase-empty {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--_cat-color, var(--indigo))08, var(--_cat-color, var(--indigo))18);
+}
+/* Animated gradient mesh overlay */
+.cat-card-mesh {
+  position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  background:
+    radial-gradient(ellipse 60% 80% at 20% 30%, var(--_cat-color, var(--indigo))12, transparent),
+    radial-gradient(ellipse 50% 60% at 80% 70%, var(--_cat-color, var(--indigo))08, transparent);
+  animation: meshShift 8s ease-in-out infinite alternate;
+}
+@keyframes meshShift {
+  0% { background-position: 0% 0%, 100% 100%; opacity: 0.6; }
+  100% { background-position: 100% 100%, 0% 0%; opacity: 1; }
+}
+.cat-card:hover .cat-card-mesh { opacity: 1.3; }
+/* Floating particles */
+.cat-card-particles {
+  position: absolute; inset: 0; pointer-events: none; z-index: 2; overflow: hidden;
+}
+.cat-card-particle {
+  position: absolute; width: 3px; height: 3px; border-radius: 50%;
+  background: var(--_cat-color, var(--indigo)); opacity: 0;
+  animation: particleFloat 6s infinite ease-in-out;
+}
+.cat-card:hover .cat-card-particle { opacity: 0.5; }
+@keyframes particleFloat {
+  0% { transform: translateY(0) scale(0.5); opacity: 0; }
+  20% { opacity: 0.6; }
+  100% { transform: translateY(-80px) scale(0); opacity: 0; }
+}
+/* Dot indicator for slides */
+.cat-card-dots {
+  position: absolute; bottom: 6px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 4px; z-index: 3;
+}
+.cat-card-dot {
+  width: 4px; height: 4px; border-radius: 50%;
+  background: var(--_cat-color, var(--indigo)); opacity: 0.25;
+  transition: opacity 0.3s, transform 0.3s;
+}
+.cat-card-dot.active { opacity: 0.9; transform: scale(1.4); }
+
+/* ── Inner content ── */
+.cat-card-inner { position: relative; z-index: 3; padding: 20px 24px 22px; }
 .cat-card-glow {
   position: absolute; top: -40px; right: -40px;
   width: 180px; height: 180px; border-radius: 50%;
   background: var(--_cat-color, var(--indigo));
-  opacity: 0.08; filter: blur(50px); pointer-events: none;
+  opacity: 0.06; filter: blur(50px); pointer-events: none;
   transition: all 0.35s;
 }
-.cat-card:hover .cat-card-glow { opacity: 0.18; transform: scale(1.2); }
+.cat-card:hover .cat-card-glow { opacity: 0.15; transform: scale(1.3); }
 /* Decorative rings */
 .cat-card-rings {
   position: absolute; bottom: -20px; left: -20px; width: 100px; height: 100px;
   border: 2px solid var(--_cat-color, var(--indigo)); border-radius: 50%;
-  opacity: 0.04; pointer-events: none;
+  opacity: 0.03; pointer-events: none; transition: opacity 0.3s;
 }
 .cat-card-rings::before {
   content: ''; position: absolute; inset: 12px;
@@ -671,27 +721,33 @@ td.bold { color: var(--white); font-weight: 600; }
   content: ''; position: absolute; inset: 28px;
   border: 1px solid var(--_cat-color, var(--indigo)); border-radius: 50%;
 }
-.cat-card:hover .cat-card-rings { opacity: 0.10; }
+.cat-card:hover .cat-card-rings { opacity: 0.08; }
+/* Animated icon */
 .cat-card-icon {
-  width: 52px; height: 52px; border-radius: 14px;
+  width: 48px; height: 48px; border-radius: 13px;
   display: flex; align-items: center; justify-content: center;
   background: linear-gradient(135deg, var(--_cat-bg, var(--indigo-bg)), transparent);
   border: 1.5px solid var(--_cat-border, var(--indigo-border));
   color: var(--_cat-color, var(--indigo2));
-  margin-bottom: 18px;
-  box-shadow: 0 4px 16px var(--_cat-glow, rgba(201,169,110,0.15));
+  margin-bottom: 14px;
+  box-shadow: 0 4px 16px var(--_cat-glow, rgba(201,169,110,0.12));
   transition: all 0.3s;
 }
 .cat-card:hover .cat-card-icon {
-  transform: scale(1.08);
+  transform: scale(1.1);
   box-shadow: 0 6px 24px var(--_cat-glow, rgba(201,169,110,0.25));
+  animation: iconPulse 1.5s ease-in-out infinite;
 }
-.cat-card-icon svg { width: 26px; height: 26px; }
+@keyframes iconPulse {
+  0%, 100% { transform: scale(1.1); }
+  50% { transform: scale(1.15) rotate(3deg); }
+}
+.cat-card-icon svg { width: 24px; height: 24px; }
 .cat-card h3 {
   font-family: var(--font-head); font-size: 17px; font-weight: 700; color: var(--white);
-  letter-spacing: -0.02em; margin-bottom: 5px;
+  letter-spacing: -0.02em; margin-bottom: 4px;
 }
-.cat-card p { font-size: 12.5px; color: var(--muted); margin-bottom: 18px; line-height: 1.4; }
+.cat-card p { font-size: 12.5px; color: var(--muted); margin-bottom: 14px; line-height: 1.4; }
 .cat-card-footer {
   display: flex; align-items: center; justify-content: space-between;
 }
@@ -3407,7 +3463,38 @@ function renderTemplates() {
     cats.forEach(cat => {
       const n = counts[cat.id] || 0;
       const ready = readyCounts[cat.id] || 0;
-      html += `<div class="cat-card" style="${getCatVars(cat)}" onclick="activeCat='${cat.id}';tplSearch='';document.getElementById('tpl-search-input').value='';renderTemplates();">
+      // Get live website URLs for this category's showcase strip
+      const liveUrls = DB.templates.filter(t => t.category === cat.id && t.status === 'ready' && t.path).map(t => t.path);
+      // Build showcase slides
+      let showcaseHtml = '';
+      if (liveUrls.length > 0) {
+        liveUrls.forEach((url, i) => {
+          showcaseHtml += `<div class="cat-card-showcase-slide${i===0?' active':''}" data-slide="${i}"><iframe src="${url}" scrolling="no" loading="lazy" tabindex="-1"></iframe></div>`;
+        });
+        // Dot indicators
+        if (liveUrls.length > 1) {
+          showcaseHtml += '<div class="cat-card-dots">';
+          liveUrls.forEach((_, i) => { showcaseHtml += `<div class="cat-card-dot${i===0?' active':''}"></div>`; });
+          showcaseHtml += '</div>';
+        }
+      } else {
+        showcaseHtml = `<div class="cat-card-showcase-empty"><div style="width:40px;height:40px;color:var(--_cat-color,var(--indigo));opacity:0.4;">${cat.icon}</div></div>`;
+      }
+      // Floating particles (5 per card, random positions)
+      let particlesHtml = '<div class="cat-card-particles">';
+      for (let pi = 0; pi < 5; pi++) {
+        const left = 10 + Math.random() * 80;
+        const delay = Math.random() * 6;
+        const size = 2 + Math.random() * 3;
+        particlesHtml += `<div class="cat-card-particle" style="left:${left}%;bottom:10%;width:${size}px;height:${size}px;animation-delay:${delay}s;"></div>`;
+      }
+      particlesHtml += '</div>';
+      html += `<div class="cat-card" style="${getCatVars(cat)}" data-cat-card data-slide-count="${liveUrls.length}" onclick="activeCat='${cat.id}';tplSearch='';document.getElementById('tpl-search-input').value='';renderTemplates();">
+        <div class="cat-card-showcase">
+          ${showcaseHtml}
+          <div class="cat-card-mesh"></div>
+          ${particlesHtml}
+        </div>
         <div class="cat-card-glow"></div>
         <div class="cat-card-rings"></div>
         <div class="cat-card-inner">
@@ -3585,7 +3672,31 @@ function renderParallaxLibrary() {
     cats.forEach(cat => {
       const n = counts[cat.id] || 0;
       const ready = readyCounts[cat.id] || 0;
-      html += `<div class="cat-card" style="${getCatVars(cat)}" onclick="plxCat='${cat.id}';renderParallaxLibrary();">
+      const plxLiveUrls = PARALLAX_DATA.filter(p => p.category === cat.id && p.status === 'ready' && p.url).map(p => p.url);
+      let plxShowcase = '';
+      if (plxLiveUrls.length > 0) {
+        plxLiveUrls.forEach((url, i) => {
+          plxShowcase += `<div class="cat-card-showcase-slide${i===0?' active':''}" data-slide="${i}"><iframe src="${url}" scrolling="no" loading="lazy" tabindex="-1"></iframe></div>`;
+        });
+        if (plxLiveUrls.length > 1) {
+          plxShowcase += '<div class="cat-card-dots">';
+          plxLiveUrls.forEach((_, i) => { plxShowcase += `<div class="cat-card-dot${i===0?' active':''}"></div>`; });
+          plxShowcase += '</div>';
+        }
+      } else {
+        plxShowcase = `<div class="cat-card-showcase-empty"><div style="width:40px;height:40px;color:var(--_cat-color,var(--indigo));opacity:0.4;">${cat.icon}</div></div>`;
+      }
+      let plxParticles = '<div class="cat-card-particles">';
+      for (let pi = 0; pi < 5; pi++) {
+        plxParticles += `<div class="cat-card-particle" style="left:${10+Math.random()*80}%;bottom:10%;width:${2+Math.random()*3}px;height:${2+Math.random()*3}px;animation-delay:${Math.random()*6}s;"></div>`;
+      }
+      plxParticles += '</div>';
+      html += `<div class="cat-card" style="${getCatVars(cat)}" data-cat-card data-slide-count="${plxLiveUrls.length}" onclick="plxCat='${cat.id}';renderParallaxLibrary();">
+        <div class="cat-card-showcase">
+          ${plxShowcase}
+          <div class="cat-card-mesh"></div>
+          ${plxParticles}
+        </div>
         <div class="cat-card-glow"></div>
         <div class="cat-card-rings"></div>
         <div class="cat-card-inner">
@@ -3594,8 +3705,8 @@ function renderParallaxLibrary() {
           <p>${cat.desc}</p>
           <div class="cat-card-footer">
             <div class="cat-card-count"><strong>${n}</strong> animation${n!==1?'s':''} ${ready ? '&middot; '+ready+' live' : ''}</div>
-          <div class="cat-card-arrow">&rarr;</div>
-        </div>
+            <div class="cat-card-arrow">&rarr;</div>
+          </div>
         </div>
       </div>`;
     });
@@ -5109,6 +5220,40 @@ async function doLogout() {
   }
 
   syncSidebar(); updateBadge(); renderOverview();
+
+  // ── Category card showcase auto-cycling ──
+  setInterval(function() {
+    document.querySelectorAll('[data-cat-card]').forEach(function(card) {
+      var count = parseInt(card.dataset.slideCount) || 0;
+      if (count < 2) return;
+      var slides = card.querySelectorAll('.cat-card-showcase-slide');
+      var dots = card.querySelectorAll('.cat-card-dot');
+      var current = -1;
+      slides.forEach(function(s, i) { if (s.classList.contains('active')) current = i; });
+      var next = (current + 1) % count;
+      slides.forEach(function(s) { s.classList.remove('active'); });
+      dots.forEach(function(d) { d.classList.remove('active'); });
+      if (slides[next]) slides[next].classList.add('active');
+      if (dots[next]) dots[next].classList.add('active');
+    });
+  }, 3500);
+
+  // ── Mouse-tracking parallax for category cards ──
+  document.addEventListener('mousemove', function(e) {
+    document.querySelectorAll('[data-cat-card]').forEach(function(card) {
+      var rect = card.getBoundingClientRect();
+      if (e.clientX < rect.left || e.clientX > rect.right || e.clientY < rect.top || e.clientY > rect.bottom) {
+        card.style.transform = '';
+        return;
+      }
+      var x = (e.clientX - rect.left) / rect.width - 0.5;
+      var y = (e.clientY - rect.top) / rect.height - 0.5;
+      card.style.transform = 'perspective(800px) rotateX(' + (-y * 6) + 'deg) rotateY(' + (x * 6) + 'deg) translateY(-4px)';
+      // Parallax inner elements
+      var inner = card.querySelector('.cat-card-inner');
+      if (inner) inner.style.transform = 'translateX(' + (x * 8) + 'px) translateY(' + (y * 8) + 'px)';
+    });
+  });
 })();
 </script>
 </body>
