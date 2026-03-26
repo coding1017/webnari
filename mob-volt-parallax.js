@@ -8,7 +8,9 @@
 
   window.__mobVoltProgress = 0.15;
 
-    if (seqEl && stickyEl) {
+  var seqEl = document.getElementById('mv-hero');
+  var stickyEl = document.getElementById('mv-seqSticky') || seqEl; // stickyEl is a dummy on mobile
+  if (seqEl) {
       const bg         = document.getElementById('mv-seqBg');
       const panelContainer = document.getElementById('mv-panelContainer');
       const panelGlow  = document.getElementById('mv-panelGlow');
