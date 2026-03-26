@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PestPro | Shield Barrier Build</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────────── */
+:root {
+  --black:   #0A0A0A;
+  --dark:    #111111;
+  --surface: #181818;
+  --surface2:#1F1F1F;
+  --border:  #2A2A2A;
+  --orange:  #F45C0A;
+  --orange2: #FF7A30;
+  --white:   #F5F2ED;
+  --muted:   #888880;
+  --text:    #D8D4CC;
+  --font-head: 'Barlow Condensed', sans-serif;
+  --font-body: 'Barlow', sans-serif;
+  --radius:  4px;
+  --radius-lg: 8px;
+}
+/* ─── RESET ──────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--black);
+  color: var(--text);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+/* ─── NOISE TEXTURE ──────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+/* ════════════════════════════════════════════════════
+   SCROLL SEQUENCE HERO
+   ════════════════════════════════════════════════════ */
+.scroll-sequence {
+  height: 400vh;
+  position: relative;
+}
+.sequence-sticky {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 100vh;
+  overflow: hidden;
+  background: #0A0A0A;
+}
+/* — Background — */
+.seq-bg {
+  position: absolute;
+  inset: 0;
+  background: #0A0A0A;
+  z-index: 0;
+  will-change: background;
+}
+/* — Grid — */
+.seq-grid {
+  position: absolute;
+  inset: -20%;
+  background-image:
+    linear-gradient(rgba(244,92,10,0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(244,92,10,0.07) 1px, transparent 1px);
+  background-size: 72px 72px;
+  z-index: 1;
+  will-change: transform, opacity;
+  mask-image: radial-gradient(ellipse 85% 85% at 50% 50%, black 20%, transparent 80%);
+}
+/* — Radar — */
+.seq-radar {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(75vw, 75vh);
+  height: min(75vw, 75vh);
+  z-index: 2;
+  will-change: opacity;
+}
+.radar-ring {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px solid rgba(244,92,10,0.18);
+}
+.rr1 { width: 22%; height: 22%; }
+.rr2 { width: 44%; height: 44%; }
+.rr3 { width: 66%; height: 66%; }
+.rr4 { width: 88%; height: 88%; }
+.rr5 { width: 110%; height: 110%; border-color: rgba(244,92,10,0.08); }
+.radar-sweep {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(244,92,10,0.14) 45deg,
+    rgba(244,92,10,0.04) 80deg,
+    transparent 100deg
+  );
+  animation: radarSpin 2.6s linear infinite;
+}
+@keyframes radarSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+/* — Intro overlay — */
+.seq-intro {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9;
+  text-align: center;
+  pointer-events: none;
+  will-change: opacity;
+}
+.seq-intro-logo {
+  font-family: var(--font-head);
+  font-size: clamp(52px, 9vw, 88px);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--white);
+  line-height: 1;
+  margin-bottom: 14px;
+  animation: fadeSlideUp 0.7s 0.2s ease both;
+}
+.seq-intro-logo span { color: var(--orange); }
+.seq-intro-sub {
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  animation: fadeSlideUp 0.7s 0.4s ease both;
+}
+.seq-scroll-hint {
+  position: absolute;
+  bottom: 52px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-head);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--muted);
+  animation: fadeIn 0.8s 1s ease both;
+}
+.seq-scroll-line {
+  width: 1px; height: 40px;
+  background: linear-gradient(180deg, var(--orange), transparent);
+  animation: scrollPulse 1.6s ease-in-out infinite;
+}
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.4; transform: scaleY(1); }
+  50%       { opacity: 1;   transform: scaleY(1.2); }
+}
+@keyframes fadeIn      { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+/* — Pest system — */
+.seq-pest-system {
+  position: absolute;
+  top: 50%; left: 50%;
+  z-index: 5;
+  pointer-events: none;
+}
+.seq-pest {
+  position: absolute;
+  font-size: 280px;
+  line-height: 1;
+  top: 0; left: 0;
+  transform: translate(-50%, -50%) scale(0.08);
+  transform-origin: center center;
+  will-change: transform, opacity, filter;
+  filter: drop-shadow(0 0 60px rgba(244,92,10,0.25));
+  opacity: 0;
+}
+/* — Crosshair — */
+.seq-crosshair {
+  position: absolute;
+  top: 0; left: 0;
+  width: 220px; height: 220px;
+  transform: translate(-50%, -50%) scale(2.4);
+  opacity: 0;
+  will-change: transform, opacity;
+  pointer-events: none;
+}
+.ch-bracket {
+  position: absolute;
+  width: 30px; height: 30px;
+  border-color: var(--orange);
+  border-style: solid;
+  border-width: 0;
+}
+.ch-tl { top: 0; left: 0; border-top-width: 2px; border-left-width: 2px; }
+.ch-tr { top: 0; right: 0; border-top-width: 2px; border-right-width: 2px; }
+.ch-bl { bottom: 0; left: 0; border-bottom-width: 2px; border-left-width: 2px; }
+.ch-br { bottom: 0; right: 0; border-bottom-width: 2px; border-right-width: 2px; }
+.ch-tl::before { content:''; position:absolute; top:-1px; left:34px; width:20px; height:1px; background:rgba(244,92,10,0.3); }
+.ch-tl::after  { content:''; position:absolute; top:34px; left:-1px; width:1px; height:20px; background:rgba(244,92,10,0.3); }
+.ch-tr::before { content:''; position:absolute; top:-1px; right:34px; width:20px; height:1px; background:rgba(244,92,10,0.3); }
+.ch-tr::after  { content:''; position:absolute; top:34px; right:-1px; width:1px; height:20px; background:rgba(244,92,10,0.3); }
+.ch-bl::before { content:''; position:absolute; bottom:-1px; left:34px; width:20px; height:1px; background:rgba(244,92,10,0.3); }
+.ch-bl::after  { content:''; position:absolute; bottom:34px; left:-1px; width:1px; height:20px; background:rgba(244,92,10,0.3); }
+.ch-br::before { content:''; position:absolute; bottom:-1px; right:34px; width:20px; height:1px; background:rgba(244,92,10,0.3); }
+.ch-br::after  { content:''; position:absolute; bottom:34px; right:-1px; width:1px; height:20px; background:rgba(244,92,10,0.3); }
+.ch-dot {
+  position: absolute; top:50%; left:50%;
+  transform: translate(-50%,-50%);
+  width: 8px; height: 8px;
+  background: var(--orange);
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(244,92,10,0.9);
+}
+.ch-hline {
+  position: absolute; top:50%; left:50%;
+  transform: translate(-50%,-50%);
+  width: 80px; height: 1px;
+  background: rgba(244,92,10,0.35);
+}
+.ch-vline {
+  position: absolute; top:50%; left:50%;
+  transform: translate(-50%,-50%);
+  width: 1px; height: 80px;
+  background: rgba(244,92,10,0.35);
+}
+/* — Target rings — */
+.seq-target-rings {
+  position: absolute;
+  top: 0; left: 0;
+  opacity: 0;
+  will-change: opacity;
+  pointer-events: none;
+}
+.tr {
+  position: absolute;
+  top: 0; left: 0;
+  border: 1px solid rgba(244,92,10,0.35);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: trPulse 1.9s ease-in-out infinite;
+}
+.tr1 { width: 90px;  height: 90px; }
+.tr2 { width: 160px; height: 160px; animation-delay: 0.38s; border-color: rgba(244,92,10,0.22); }
+.tr3 { width: 260px; height: 260px; animation-delay: 0.76s; border-color: rgba(244,92,10,0.13); }
+@keyframes trPulse {
+  0%, 100% { opacity: 0.3; }
+  50%       { opacity: 0.75; }
+}
+/* — HUD overlays — */
+.seq-hud {
+  position: absolute;
+  inset: 0;
+  z-index: 7;
+  pointer-events: none;
+  opacity: 0;
+  will-change: opacity;
+  font-family: var(--font-head);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--orange);
+  text-transform: uppercase;
+  line-height: 1.75;
+}
+.hud-item {
+  position: absolute;
+  padding: 10px 14px;
+  border: 1px solid rgba(244,92,10,0.2);
+  background: rgba(10,10,10,0.55);
+  backdrop-filter: blur(4px);
+}
+.hud-item::before {
+  content: '';
+  display: block;
+  width: 16px; height: 1px;
+  background: rgba(244,92,10,0.5);
+  margin-bottom: 6px;
+}
+.hud-tl { top: 44px; left: 44px; }
+.hud-tr { top: 44px; right: 44px; text-align: right; }
+.hud-bl { bottom: 64px; left: 44px; }
+.hud-br { bottom: 64px; right: 44px; text-align: right; }
+.hud-scan-line {
+  position: absolute;
+  left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(244,92,10,0.5), transparent);
+  animation: hudScan 2.4s linear infinite;
+  z-index: 7;
+}
+@keyframes hudScan {
+  0%   { top: 0%;   opacity: 0; }
+  5%   { opacity: 1; }
+  95%  { opacity: 1; }
+  100% { top: 100%; opacity: 0; }
+}
+/* — Alert flash — */
+.seq-alert {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  background: rgba(244,92,10,0.08);
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity;
+}
+/* — Spray wipe — */
+.seq-spray {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  clip-path: inset(0 100% 0 0);
+  pointer-events: none;
+  will-change: clip-path;
+  background:
+    radial-gradient(ellipse 55% 90% at 25% 50%, rgba(255,110,20,0.35) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 70% at 75% 40%, rgba(255,140,40,0.2) 0%, transparent 55%),
+    linear-gradient(108deg,
+      #a33500 0%,
+      #d44f08 15%,
+      #f45c0a 35%,
+      #ff7a30 55%,
+      #f45c0a 75%,
+      #c44000 100%
+    );
+}
+.seq-spray::after {
+  content: '';
+  position: absolute;
+  top: -10%; bottom: -10%; right: -80px;
+  width: 160px;
+  background: linear-gradient(90deg, transparent, rgba(255,100,20,0.5));
+  filter: blur(24px);
+}
+/* — ELIMINATED text — */
+.seq-eliminated {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 12;
+  pointer-events: none;
+  opacity: 0;
+  will-change: opacity, transform;
+}
+.seq-eliminated-text {
+  font-family: var(--font-head);
+  font-size: clamp(56px, 11vw, 130px);
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  color: var(--white);
+  text-shadow:
+    0 0 40px rgba(255,255,255,0.3),
+    0 0 80px rgba(255,200,100,0.2);
+}
+.seq-eliminated-check {
+  color: var(--orange);
+  margin-right: 12px;
+}
+/* — Phase label — */
+.seq-phase {
+  position: absolute;
+  bottom: 42px;
+  left: 50%;
+  transform: translateX(-50%) translateY(0);
+  font-family: var(--font-head);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--orange);
+  z-index: 20;
+  white-space: nowrap;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+/* — Progress scrub — */
+.seq-scrub {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: rgba(255,255,255,0.05);
+  z-index: 25;
+}
+.seq-scrub-fill {
+  height: 100%;
+  background: var(--orange);
+  width: 0%;
+  will-change: width;
+}
+/* — Brand glow finale — */
+.seq-brand-finale {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 15;
+  opacity: 0;
+  pointer-events: none;
+  will-change: opacity, transform;
+}
+.seq-brand-finale-text {
+  font-family: var(--font-head);
+  font-size: clamp(64px, 12vw, 140px);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--white);
+  text-shadow:
+    0 0 60px rgba(244,92,10,0.6),
+    0 0 120px rgba(244,92,10,0.3),
+    0 0 200px rgba(244,92,10,0.15);
+}
+.seq-brand-finale-text span {
+  color: var(--orange);
+}
+</style>
+</head>
+<body>
+
+<div class="scroll-sequence" id="hero">
+  <div class="sequence-sticky" id="seqSticky">
+    <div class="seq-bg" id="seqBg"></div>
+    <div class="seq-grid" id="seqGrid"></div>
+    <div class="seq-radar" id="seqRadar">
+      <div class="radar-ring rr1"></div>
+      <div class="radar-ring rr2"></div>
+      <div class="radar-ring rr3"></div>
+      <div class="radar-ring rr4"></div>
+      <div class="radar-ring rr5"></div>
+      <div class="radar-sweep"></div>
+    </div>
+    <div class="seq-pest-system" id="seqPestSystem">
+      <div class="seq-pest" id="seqPest">&#x1FAB3;</div>
+      <div class="seq-crosshair" id="seqCrosshair">
+        <div class="ch-bracket ch-tl"></div>
+        <div class="ch-bracket ch-tr"></div>
+        <div class="ch-bracket ch-bl"></div>
+        <div class="ch-bracket ch-br"></div>
+        <div class="ch-dot"></div>
+        <div class="ch-hline"></div>
+        <div class="ch-vline"></div>
+      </div>
+      <div class="seq-target-rings" id="seqRings">
+        <div class="tr tr1"></div>
+        <div class="tr tr2"></div>
+        <div class="tr tr3"></div>
+      </div>
+    </div>
+    <div class="seq-hud" id="seqHud">
+      <div class="hud-scan-line"></div>
+      <div class="hud-item hud-tl">Species: Blattodea<br>Threat: <span style="color:#ff5555">HIGH</span></div>
+      <div class="hud-item hud-tr">Lat: 26.4615&deg; N<br>Lon: 80.0728&deg; W</div>
+      <div class="hud-item hud-bl">Heat Signature: Active<br>Population Est: 200+</div>
+      <div class="hud-item hud-br">Treatment: Ready<br>ETA: Immediate</div>
+    </div>
+    <div class="seq-alert" id="seqAlert"></div>
+    <div class="seq-spray" id="seqSpray"></div>
+    <div class="seq-eliminated" id="seqEliminated">
+      <span class="seq-eliminated-text"><span class="seq-eliminated-check">&#10003;</span>Eliminated</span>
+    </div>
+    <div class="seq-intro" id="seqIntro">
+      <div class="seq-intro-logo">PEST<span>PRO</span></div>
+      <div class="seq-intro-sub">South Florida Pest Elimination</div>
+      <div class="seq-scroll-hint">
+        <span>Scroll</span>
+        <div class="seq-scroll-line"></div>
+      </div>
+    </div>
+    <div class="seq-phase" id="seqPhase"></div>
+    <div class="seq-scrub"><div class="seq-scrub-fill" id="seqScrubFill"></div></div>
+    <div class="seq-brand-finale" id="seqBrandFinale">
+      <div class="seq-brand-finale-text">PEST<span>PRO</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  const clamp   = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+  const map     = (v, a, b, c, d) => c + (d - c) * clamp((v - a) / (b - a), 0, 1);
+  const easeIn3 = t => t * t * t;
+  const easeOut3= t => 1 - Math.pow(1 - t, 3);
+
+  const seqEl    = document.getElementById('hero');
+  const stickyEl = document.getElementById('seqSticky');
+  if (!seqEl || !stickyEl) return;
+
+  const bg         = document.getElementById('seqBg');
+  const grid       = document.getElementById('seqGrid');
+  const radar      = document.getElementById('seqRadar');
+  const pest       = document.getElementById('seqPest');
+  const crosshair  = document.getElementById('seqCrosshair');
+  const rings      = document.getElementById('seqRings');
+  const hud        = document.getElementById('seqHud');
+  const alert_     = document.getElementById('seqAlert');
+  const spray      = document.getElementById('seqSpray');
+  const eliminated = document.getElementById('seqEliminated');
+  const intro      = document.getElementById('seqIntro');
+  const phaseEl    = document.getElementById('seqPhase');
+  const scrubFill  = document.getElementById('seqScrubFill');
+  const brandFinale= document.getElementById('seqBrandFinale');
+
+  function getProgress() {
+    const scrolled = -seqEl.getBoundingClientRect().top;
+    const total    = seqEl.offsetHeight - stickyEl.offsetHeight;
+    return clamp(scrolled / total, 0, 1);
+  }
+
+  let lastPhase = '';
+  function setPhase(text) {
+    if (text === lastPhase) return;
+    lastPhase = text;
+    phaseEl.style.opacity   = '0';
+    phaseEl.style.transform = 'translateX(-50%) translateY(7px)';
+    setTimeout(() => {
+      phaseEl.textContent     = text;
+      phaseEl.style.opacity   = '1';
+      phaseEl.style.transform = 'translateX(-50%) translateY(0)';
+    }, 190);
+  }
+
+  function update() {
+    const p = getProgress();
+    scrubFill.style.width = (p * 100) + '%';
+    intro.style.opacity      = map(p, 0, 0.07, 1, 0);
+    intro.style.pointerEvents= p > 0.04 ? 'none' : 'auto';
+
+    let r, g, b2;
+    if (p < 0.65) {
+      r  = Math.round(map(p, 0, 0.65, 10, 24));
+      g  = Math.round(map(p, 0, 0.65, 10, 4));
+      b2 = 0;
+    } else {
+      const cool = map(p, 0.82, 1.0, 0, 1);
+      r  = Math.round(map(cool, 0, 1, 24, 10));
+      g  = Math.round(map(cool, 0, 1, 4, 10));
+      b2 = 0;
+    }
+    bg.style.background = `rgb(${r},${g},${b2})`;
+
+    grid.style.transform = `translateY(${-p * 130}px)`;
+    grid.style.opacity   = String(map(p, 0, 0.1, 0.5, 1) * (p < 0.62 ? 1 : map(p, 0.62, 0.78, 1, 0)));
+    radar.style.opacity = String(map(p, 0.04, 0.22, 1, 0));
+
+    const pestProgress = easeIn3(clamp((p - 0.05) / 0.60, 0, 1));
+    const pestScale    = map(pestProgress, 0, 1, 0.08, 4.8);
+    const pestOpacity  = p < 0.06 ? map(p, 0.04, 0.07, 0, 1) : p < 0.62 ? 1 : map(p, 0.62, 0.79, 1, 0);
+    pest.style.transform = `translate(-50%,-50%) scale(${pestScale})`;
+    pest.style.opacity   = String(Math.max(0, pestOpacity));
+    const glow = Math.round(pestProgress * 80);
+    pest.style.filter = `drop-shadow(0 0 ${glow}px rgba(244,92,10,${pestProgress * 0.4}))`;
+
+    const chIn  = map(p, 0.08, 0.20, 0, 1);
+    const chOut = p < 0.62 ? 1 : map(p, 0.62, 0.76, 1, 0);
+    crosshair.style.opacity   = String(clamp(chIn * chOut, 0, 1));
+    const chScale = map(easeOut3(clamp((p - 0.08) / 0.57, 0, 1)), 0, 1, 2.6, 0.7);
+    crosshair.style.transform = `translate(-50%,-50%) scale(${chScale})`;
+
+    const rIn  = map(p, 0.30, 0.48, 0, 1);
+    const rOut = p < 0.59 ? 1 : map(p, 0.59, 0.72, 1, 0);
+    rings.style.opacity = String(clamp(rIn * rOut, 0, 1));
+
+    const hudIn  = map(p, 0.38, 0.54, 0, 1);
+    const hudOut = p < 0.58 ? 1 : map(p, 0.58, 0.68, 1, 0);
+    hud.style.opacity = String(clamp(hudIn * hudOut, 0, 1));
+
+    const alertVal = p < 0.50 ? 0 : map(Math.sin(p * 28), -1, 1, 0, 0.12) * map(p, 0.50, 0.58, 0, 1) * (p < 0.62 ? 1 : map(p, 0.62, 0.68, 1, 0));
+    alert_.style.opacity = String(Math.max(0, alertVal));
+
+    if (p < 0.65) {
+      spray.style.clipPath = 'inset(0 100% 0 0)';
+    } else if (p < 0.82) {
+      const right = map(easeOut3((p - 0.65) / 0.17), 0, 1, 100, -2);
+      spray.style.clipPath = `inset(0 ${right}% 0 0)`;
+    } else if (p < 0.94) {
+      const left = map(easeIn3((p - 0.82) / 0.12), 0, 1, 0, 102);
+      spray.style.clipPath = `inset(0 0 0 ${left}%)`;
+    } else {
+      spray.style.clipPath = 'inset(0 0 0 102%)';
+    }
+
+    const elimVal = map(p, 0.80, 0.84, 0, 1) * map(p, 0.84, 0.94, 1, 0);
+    eliminated.style.opacity   = String(Math.max(0, elimVal));
+    eliminated.style.transform = `scale(${map(p, 0.80, 0.84, 0.75, 1)})`;
+
+    /* Brand glow finale instead of hero CTA */
+    const finaleP  = map(p, 0.88, 0.98, 0, 1);
+    const finaleOp = easeOut3(finaleP);
+    brandFinale.style.opacity   = String(finaleOp);
+    brandFinale.style.transform = `scale(${map(finaleP, 0, 1, 0.85, 1.05)})`;
+
+    if      (p < 0.04) setPhase('');
+    else if (p < 0.20) setPhase('SCANNING PREMISES');
+    else if (p < 0.43) setPhase('THREAT DETECTED');
+    else if (p < 0.64) setPhase('TARGET ACQUIRED');
+    else if (p < 0.85) setPhase('ELIMINATING...');
+    else               setPhase('ELIMINATED \u2713');
+  }
+
+  function updateSticky() {
+    const rect = seqEl.getBoundingClientRect();
+    const sH   = stickyEl.offsetHeight;
+    if (rect.top > 0) {
+      stickyEl.style.position = 'absolute';
+      stickyEl.style.top      = '0';
+      stickyEl.style.bottom   = 'auto';
+    } else if (rect.bottom <= sH) {
+      stickyEl.style.position = 'absolute';
+      stickyEl.style.top      = 'auto';
+      stickyEl.style.bottom   = '0';
+    } else {
+      stickyEl.style.position = 'fixed';
+      stickyEl.style.top      = '0';
+      stickyEl.style.bottom   = 'auto';
+    }
+  }
+
+  (function loop() {
+    requestAnimationFrame(loop);
+    updateSticky();
+    try { update(); } catch(e) {}
+  })();
+
+  window.addEventListener('resize', update, { passive: true });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LockPro | Lock Assembly Build</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ─── TOKENS ──────────────────────────────────────────────────────────────── */
+:root {
+  --black:   #08060F;
+  --dark:    #120E1E;
+  --surface: #1A1428;
+  --surface2:#221A35;
+  --border:  #2E2248;
+  --purple:  #A855F7;
+  --purple2: #C084FC;
+  --purple3: #D8B4FE;
+  --gold:    #F59E0B;
+  --gold2:   #FBBF24;
+  --white:   #F5F0FF;
+  --muted:   #7868A0;
+  --text:    #C0B0E0;
+  --font-head: 'Barlow Condensed', sans-serif;
+  --font-body: 'Barlow', sans-serif;
+  --radius:    6px;
+  --radius-lg: 12px;
+  --glow: 0 0 36px rgba(168,85,247,0.16);
+}
+
+/* ─── RESET ───────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--black);
+  color: var(--text);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* ─── NOISE TEXTURE ───────────────────────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.028'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ─── SCROLL SEQUENCE (Parallax) ──────────────────────────────────────────── */
+.scroll-sequence { height: 500vh; position: relative; }
+.sequence-sticky {
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 100vh; overflow: hidden; background: var(--black);
+}
+.seq-bg {
+  position: absolute; inset: 0; z-index: 1;
+  background: var(--black); transition: background 0.3s;
+}
+.lock-glow {
+  position: absolute; inset: 0; z-index: 2;
+  background: radial-gradient(ellipse 50% 50% at 50% 50%, rgba(168,85,247,0.15), transparent 70%);
+  opacity: 0; will-change: opacity;
+}
+.lock-container {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  z-index: 3; will-change: transform, opacity; opacity: 0;
+}
+.lock-energize {
+  position: absolute; inset: 0; z-index: 4;
+  background: linear-gradient(90deg, transparent, rgba(168,85,247,0.12), rgba(245,158,11,0.08), transparent);
+  clip-path: inset(0 100% 0 0); pointer-events: none;
+}
+.lock-hud {
+  position: absolute; z-index: 5; pointer-events: none; opacity: 0;
+  transition: opacity 0.3s;
+}
+.lock-hud-item {
+  position: absolute; padding: 8px 14px;
+  background: rgba(8,6,15,0.6); border: 1px solid rgba(168,85,247,0.2);
+  border-radius: var(--radius); font-family: var(--font-head);
+  font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--purple2); white-space: nowrap; line-height: 1.5;
+}
+.lock-hud-tl { top: 12%; left: 5%; }
+.lock-hud-br { bottom: 15%; right: 5%; text-align: right; }
+.lock-powered {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.85);
+  z-index: 6; opacity: 0; will-change: transform, opacity; pointer-events: none;
+}
+.lock-powered-text {
+  font-family: var(--font-head); font-weight: 900; font-size: clamp(52px, 10vw, 88px);
+  color: var(--white); letter-spacing: 0.08em;
+  text-shadow: 0 0 60px rgba(168,85,247,0.5), 0 0 120px rgba(245,158,11,0.2);
+}
+.lock-powered-text span { color: var(--purple); }
+
+.power-light {
+  position: absolute; z-index: 5; width: 4px; height: 4px; border-radius: 50%;
+  pointer-events: none; will-change: box-shadow, background;
+}
+.pl-1 { top: 20%; left: 10%; }
+.pl-2 { top: 15%; right: 12%; }
+.pl-3 { bottom: 25%; left: 8%; }
+.pl-4 { bottom: 20%; right: 10%; }
+.pl-5 { top: 40%; left: 4%; }
+.pl-6 { top: 35%; right: 6%; }
+
+/* Intro overlay */
+.seq-intro {
+  position: absolute; inset: 0; z-index: 10;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; will-change: opacity;
+}
+.seq-intro-logo {
+  font-family: var(--font-head); font-weight: 900;
+  font-size: clamp(56px, 12vw, 96px); color: var(--white);
+  letter-spacing: 0.06em; margin-bottom: 12px;
+}
+.seq-intro-logo span { color: var(--purple); }
+.seq-intro-sub {
+  font-family: var(--font-head); font-size: clamp(13px, 2vw, 16px);
+  font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 48px;
+}
+.seq-scroll-hint {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+.seq-scroll-hint span {
+  font-family: var(--font-head); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.3em; text-transform: uppercase; color: var(--muted);
+}
+.seq-scroll-line {
+  width: 1px; height: 48px;
+  background: linear-gradient(180deg, var(--purple), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+@keyframes scrollPulse { 0%, 100% { opacity: 0.3; transform: scaleY(0.7); } 50% { opacity: 1; transform: scaleY(1); } }
+
+/* Phase label */
+.seq-phase {
+  position: absolute; bottom: 42px; left: 50%;
+  transform: translateX(-50%) translateY(0); z-index: 10;
+  font-family: var(--font-head); font-size: 11px; letter-spacing: 0.28em;
+  text-transform: uppercase; color: var(--purple);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* Progress scrub */
+.seq-scrub { position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: rgba(255,255,255,0.05); z-index: 10; }
+.seq-scrub-fill { height: 100%; background: var(--purple); width: 0%; will-change: width; }
+</style>
+</head>
+<body>
+
+<!-- ── PARALLAX HERO ──────────────────────────────────────────────────────── -->
+<div class="scroll-sequence" id="hero">
+  <div class="sequence-sticky" id="seqSticky">
+    <div class="seq-bg" id="seqBg"></div>
+    <div class="lock-glow" id="lockGlow"></div>
+    <div class="lock-container" id="lockContainer">
+      <svg id="lockSvg" class="lock-svg" viewBox="0 0 700 700"></svg>
+    </div>
+    <div class="lock-energize" id="lockEnergize"></div>
+    <div class="lock-hud" id="lockHud">
+      <div class="lock-hud-item lock-hud-tl">Vault: Class M<br>Type: TXTL-60</div>
+      <div class="lock-hud-item lock-hud-br">Bolts: <span id="hudBolts">0</span>/8 Retracted<br>UL Listed</div>
+    </div>
+    <div class="lock-powered" id="lockPowered">
+      <span class="lock-powered-text">LOCK<span>PRO</span></span>
+    </div>
+    <div class="power-light pl-1" id="pl1"></div>
+    <div class="power-light pl-2" id="pl2"></div>
+    <div class="power-light pl-3" id="pl3"></div>
+    <div class="power-light pl-4" id="pl4"></div>
+    <div class="power-light pl-5" id="pl5"></div>
+    <div class="power-light pl-6" id="pl6"></div>
+
+    <div class="seq-intro" id="seqIntro">
+      <div class="seq-intro-logo">LOCK<span>PRO</span></div>
+      <div class="seq-intro-sub">South Florida's Premier Locksmith</div>
+      <div class="seq-scroll-hint">
+        <span>Scroll</span>
+        <div class="seq-scroll-line"></div>
+      </div>
+    </div>
+
+    <div class="seq-phase" id="seqPhase"></div>
+    <div class="seq-scrub"><div class="seq-scrub-fill" id="seqScrubFill"></div></div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ═══ UTILITIES ═══
+  var clamp   = function(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); };
+  var map     = function(v, a, b, c, d) { return c + (d - c) * clamp((v - a) / (b - a), 0, 1); };
+  var easeIn3 = function(t) { return t * t * t; };
+  var easeOut3= function(t) { return 1 - Math.pow(1 - t, 3); };
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // ═══ BANK VAULT DOOR PARALLAX ═══
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  var seqEl    = document.getElementById('hero');
+  var stickyEl = document.getElementById('seqSticky');
+
+  if (seqEl && stickyEl) {
+    var bg            = document.getElementById('seqBg');
+    var lockContainer = document.getElementById('lockContainer');
+    var lockGlow      = document.getElementById('lockGlow');
+    var lockEnergize  = document.getElementById('lockEnergize');
+    var lockHud       = document.getElementById('lockHud');
+    var lockPowered   = document.getElementById('lockPowered');
+    var hudBolts      = document.getElementById('hudBolts');
+    var intro         = document.getElementById('seqIntro');
+    var phaseEl       = document.getElementById('seqPhase');
+    var scrubFill     = document.getElementById('seqScrubFill');
+    var svg           = document.getElementById('lockSvg');
+    var ns            = 'http://www.w3.org/2000/svg';
+
+    function getProgress() {
+      var scrolled = -seqEl.getBoundingClientRect().top;
+      var total    = seqEl.offsetHeight - stickyEl.offsetHeight;
+      return clamp(scrolled / total, 0, 1);
+    }
+
+    var lastPhase = '';
+    function setPhase(text) {
+      if (text === lastPhase) return;
+      lastPhase = text;
+      phaseEl.style.opacity   = '0';
+      phaseEl.style.transform = 'translateX(-50%) translateY(7px)';
+      setTimeout(function () {
+        phaseEl.textContent     = text;
+        phaseEl.style.opacity   = '1';
+        phaseEl.style.transform = 'translateX(-50%) translateY(0)';
+      }, 190);
+    }
+
+    function svgEl(tag, attrs) {
+      var e = document.createElementNS(ns, tag);
+      for (var k in attrs) { if (attrs.hasOwnProperty(k)) e.setAttribute(k, String(attrs[k])); }
+      return e;
+    }
+
+    // ═══ GEOMETRY CONSTANTS ═══
+    var CX = 350, CY = 350;    // Vault center
+    var DOOR_R = 220;           // Door radius
+    var FRAME_R = 240;          // Frame radius
+    var BOLT_LEN = 40;          // Bolt extension length
+    var NUM_BOLTS = 8;
+    var PI2 = Math.PI * 2;
+
+    // ═══ SVG DEFS ═══
+    var defs = svgEl('defs', {});
+
+    // Wall steel gradient
+    var wallGrad = svgEl('linearGradient', { id: 'wallGrad', x1: '0', y1: '0', x2: '0', y2: '1' });
+    wallGrad.appendChild(svgEl('stop', { offset: '0%', 'stop-color': '#4A4A55' }));
+    wallGrad.appendChild(svgEl('stop', { offset: '50%', 'stop-color': '#35353F' }));
+    wallGrad.appendChild(svgEl('stop', { offset: '100%', 'stop-color': '#2A2A34' }));
+    defs.appendChild(wallGrad);
+
+    // Door brushed steel gradient
+    var doorGrad = svgEl('radialGradient', { id: 'doorGrad', cx: '45%', cy: '40%', r: '60%' });
+    doorGrad.appendChild(svgEl('stop', { offset: '0%', 'stop-color': '#7A7A8A' }));
+    doorGrad.appendChild(svgEl('stop', { offset: '40%', 'stop-color': '#5A5A6A' }));
+    doorGrad.appendChild(svgEl('stop', { offset: '100%', 'stop-color': '#3A3A4A' }));
+    defs.appendChild(doorGrad);
+
+    // Gear steel gradient
+    var gearGrad = svgEl('linearGradient', { id: 'gearGrad', x1: '0', y1: '0', x2: '1', y2: '1' });
+    gearGrad.appendChild(svgEl('stop', { offset: '0%', 'stop-color': '#6A6A7A' }));
+    gearGrad.appendChild(svgEl('stop', { offset: '50%', 'stop-color': '#505060' }));
+    gearGrad.appendChild(svgEl('stop', { offset: '100%', 'stop-color': '#6A6A7A' }));
+    defs.appendChild(gearGrad);
+
+    // Bolt chrome gradient
+    var boltGrad = svgEl('linearGradient', { id: 'boltGrad', x1: '0', y1: '0', x2: '1', y2: '0' });
+    boltGrad.appendChild(svgEl('stop', { offset: '0%', 'stop-color': '#888898' }));
+    boltGrad.appendChild(svgEl('stop', { offset: '50%', 'stop-color': '#AAABB8' }));
+    boltGrad.appendChild(svgEl('stop', { offset: '100%', 'stop-color': '#888898' }));
+    defs.appendChild(boltGrad);
+
+    // Golden interior gradient
+    var goldInterior = svgEl('radialGradient', { id: 'goldInterior', cx: '50%', cy: '50%', r: '60%' });
+    goldInterior.appendChild(svgEl('stop', { offset: '0%', 'stop-color': '#F5C84A' }));
+    goldInterior.appendChild(svgEl('stop', { offset: '60%', 'stop-color': '#C8940A' }));
+    goldInterior.appendChild(svgEl('stop', { offset: '100%', 'stop-color': '#8A6500' }));
+    defs.appendChild(goldInterior);
+
+    // Handle metallic gradient
+    var handleGrad = svgEl('linearGradient', { id: 'handleGrad', x1: '0', y1: '0', x2: '0', y2: '1' });
+    handleGrad.appendChild(svgEl('stop', { offset: '0%', 'stop-color': '#999' }));
+    handleGrad.appendChild(svgEl('stop', { offset: '50%', 'stop-color': '#CCC' }));
+    handleGrad.appendChild(svgEl('stop', { offset: '100%', 'stop-color': '#999' }));
+    defs.appendChild(handleGrad);
+
+    svg.appendChild(defs);
+
+    // ═══ GEAR PATH HELPER ═══
+    function makeGearPath(gcx, gcy, outerR, innerR, teeth) {
+      var d = '';
+      for (var i = 0; i < teeth; i++) {
+        var a1 = (i / teeth) * PI2 - Math.PI / 2;
+        var a15 = ((i + 0.3) / teeth) * PI2 - Math.PI / 2;
+        var a2 = ((i + 0.5) / teeth) * PI2 - Math.PI / 2;
+        var a25 = ((i + 0.7) / teeth) * PI2 - Math.PI / 2;
+        d += (i === 0 ? 'M' : 'L');
+        d += (gcx + outerR * Math.cos(a1)).toFixed(1) + ',' + (gcy + outerR * Math.sin(a1)).toFixed(1);
+        d += ' L' + (gcx + outerR * Math.cos(a15)).toFixed(1) + ',' + (gcy + outerR * Math.sin(a15)).toFixed(1);
+        d += ' L' + (gcx + innerR * Math.cos(a2)).toFixed(1) + ',' + (gcy + innerR * Math.sin(a2)).toFixed(1);
+        d += ' L' + (gcx + innerR * Math.cos(a25)).toFixed(1) + ',' + (gcy + innerR * Math.sin(a25)).toFixed(1);
+      }
+      return d + 'Z';
+    }
+
+    // ═══ BUILD SVG ELEMENTS ═══
+
+    // 1. VAULT INTERIOR (golden glow behind door -- revealed when open)
+    var gInterior = svgEl('g', { opacity: 0 });
+    gInterior.appendChild(svgEl('circle', { cx: CX, cy: CY, r: FRAME_R - 8, fill: 'url(#goldInterior)' }));
+    // Safety deposit box grid
+    for (var row = 0; row < 6; row++) {
+      for (var col = 0; col < 4; col++) {
+        var bx = CX - 80 + col * 42;
+        var by = CY - 110 + row * 38;
+        gInterior.appendChild(svgEl('rect', {
+          x: bx, y: by, width: 36, height: 30, rx: 2,
+          fill: 'none', stroke: '#A07820', 'stroke-width': 0.8, opacity: 0.5
+        }));
+        gInterior.appendChild(svgEl('circle', { cx: bx + 28, cy: by + 15, r: 2, fill: '#8A6500', opacity: 0.6 }));
+      }
+    }
+    // Glow rays from center
+    for (var ri = 0; ri < 12; ri++) {
+      var ra = (ri / 12) * PI2;
+      gInterior.appendChild(svgEl('line', {
+        x1: CX, y1: CY,
+        x2: CX + Math.cos(ra) * FRAME_R, y2: CY + Math.sin(ra) * FRAME_R,
+        stroke: '#F5D060', 'stroke-width': 2, opacity: 0.15
+      }));
+    }
+
+    // 2. WALL (steel vault wall with rivets)
+    var gWall = svgEl('g', { opacity: 0 });
+    gWall.appendChild(svgEl('rect', { x: 20, y: 60, width: 660, height: 580, rx: 8, fill: 'url(#wallGrad)', stroke: '#555', 'stroke-width': 2 }));
+    gWall.appendChild(svgEl('circle', { cx: CX, cy: CY, r: FRAME_R + 4, fill: '#1A1A22' }));
+    var rivetPos = [[55, 95], [645, 95], [55, 605], [645, 605], [55, 350], [645, 350], [350, 95], [350, 605]];
+    rivetPos.forEach(function(rp) {
+      gWall.appendChild(svgEl('circle', { cx: rp[0], cy: rp[1], r: 7, fill: '#3A3A44', stroke: '#555', 'stroke-width': 1 }));
+      gWall.appendChild(svgEl('circle', { cx: rp[0], cy: rp[1], r: 3, fill: '#4A4A55' }));
+    });
+    for (var rvi = 0; rvi < 5; rvi++) {
+      var rvx = 140 + rvi * 105;
+      gWall.appendChild(svgEl('circle', { cx: rvx, cy: 95, r: 5, fill: '#3A3A44', stroke: '#4A4A55', 'stroke-width': 0.8 }));
+      gWall.appendChild(svgEl('circle', { cx: rvx, cy: 605, r: 5, fill: '#3A3A44', stroke: '#4A4A55', 'stroke-width': 0.8 }));
+    }
+    svg.appendChild(gWall);
+
+    // 3. DOOR FRAME (thick ring)
+    var gFrame = svgEl('g', { opacity: 0 });
+    gFrame.appendChild(svgEl('circle', { cx: CX, cy: CY, r: FRAME_R, fill: 'none', stroke: '#4A4A55', 'stroke-width': 14 }));
+    gFrame.appendChild(svgEl('circle', { cx: CX, cy: CY, r: FRAME_R + 7, fill: 'none', stroke: '#555', 'stroke-width': 1 }));
+    gFrame.appendChild(svgEl('circle', { cx: CX, cy: CY, r: FRAME_R - 7, fill: 'none', stroke: '#555', 'stroke-width': 1 }));
+    for (var bhi = 0; bhi < NUM_BOLTS; bhi++) {
+      var bha = (bhi / NUM_BOLTS) * PI2 - Math.PI / 2;
+      var bhx = CX + Math.cos(bha) * FRAME_R;
+      var bhy = CY + Math.sin(bha) * FRAME_R;
+      gFrame.appendChild(svgEl('rect', {
+        x: bhx - 10, y: bhy - 6, width: 20, height: 12, rx: 2,
+        fill: '#2A2A34', stroke: '#444', 'stroke-width': 0.5,
+        transform: 'rotate(' + (bhi * 45) + ',' + bhx + ',' + bhy + ')'
+      }));
+    }
+    svg.appendChild(gFrame);
+
+    // Golden interior sits above wall/frame but below door
+    svg.appendChild(gInterior);
+
+    // 4. HINGES (left side -- 3 barrel hinges)
+    var gHinges = svgEl('g', { opacity: 0 });
+    [-100, 0, 100].forEach(function(hy) {
+      var hx = CX - FRAME_R - 12;
+      gHinges.appendChild(svgEl('rect', { x: hx - 10, y: CY + hy - 18, width: 22, height: 36, rx: 4, fill: '#4A4A55', stroke: '#666', 'stroke-width': 1 }));
+      gHinges.appendChild(svgEl('circle', { cx: hx + 1, cy: CY + hy, r: 5, fill: '#666', stroke: '#777', 'stroke-width': 0.8 }));
+      gHinges.appendChild(svgEl('circle', { cx: hx + 1, cy: CY + hy, r: 2, fill: '#555' }));
+    });
+    svg.appendChild(gHinges);
+
+    // ═══ DOOR GROUP (everything that swings open) ═══
+    var gDoorSwing = svgEl('g', {});
+
+    // 5. DOOR FACE
+    var gDoor = svgEl('g', { opacity: 0 });
+    gDoor.appendChild(svgEl('circle', { cx: CX, cy: CY, r: DOOR_R, fill: 'url(#doorGrad)', stroke: '#666', 'stroke-width': 2 }));
+    gDoor.appendChild(svgEl('circle', { cx: CX, cy: CY, r: DOOR_R - 15, fill: 'none', stroke: '#5A5A6A', 'stroke-width': 1 }));
+    gDoor.appendChild(svgEl('circle', { cx: CX, cy: CY, r: DOOR_R - 40, fill: 'none', stroke: '#5A5A6A', 'stroke-width': 0.5 }));
+    gDoor.appendChild(svgEl('circle', { cx: CX, cy: CY, r: 80, fill: 'none', stroke: '#5A5A6A', 'stroke-width': 0.5 }));
+    gDoor.appendChild(svgEl('circle', { cx: CX, cy: CY, r: 35, fill: '#4A4A55', stroke: '#666', 'stroke-width': 1.5 }));
+    gDoor.appendChild(svgEl('circle', { cx: CX, cy: CY, r: 20, fill: '#3A3A44', stroke: '#555', 'stroke-width': 1 }));
+    var lpEngrave = svgEl('text', {
+      x: CX, y: CY + DOOR_R - 35, 'text-anchor': 'middle',
+      fill: '#5A5A6A', 'font-size': 14, 'font-family': 'var(--font-head)', 'font-weight': 900,
+      'letter-spacing': '0.2em'
+    });
+    lpEngrave.textContent = 'LOCKPRO';
+    gDoor.appendChild(lpEngrave);
+    gDoorSwing.appendChild(gDoor);
+
+    // 6. LOCKING BOLTS (8 around perimeter)
+    var gBoltWork = svgEl('g', { opacity: 0 });
+    var bolts = [];
+    for (var bi = 0; bi < NUM_BOLTS; bi++) {
+      var ba = (bi / NUM_BOLTS) * PI2 - Math.PI / 2;
+      var boltCx = CX + Math.cos(ba) * (DOOR_R - 5);
+      var boltCy = CY + Math.sin(ba) * (DOOR_R - 5);
+      var boltAngleDeg = bi * 45;
+
+      var boltRect = svgEl('rect', {
+        x: -BOLT_LEN / 2, y: -7, width: BOLT_LEN, height: 14, rx: 3,
+        fill: 'url(#boltGrad)', stroke: '#999', 'stroke-width': 0.8
+      });
+      var boltG = svgEl('g', {
+        transform: 'translate(' + boltCx + ',' + boltCy + ') rotate(' + boltAngleDeg + ')'
+      });
+      boltG.appendChild(boltRect);
+      boltG.appendChild(svgEl('line', { x1: -BOLT_LEN/2 + 4, y1: 0, x2: BOLT_LEN/2 - 4, y2: 0, stroke: '#BBB', 'stroke-width': 0.5 }));
+      gBoltWork.appendChild(boltG);
+
+      bolts.push({
+        el: boltG, angle: ba, angleDeg: boltAngleDeg, idx: bi,
+        baseCx: boltCx, baseCy: boltCy
+      });
+    }
+    gDoorSwing.appendChild(gBoltWork);
+
+    // 7. GEAR CUTAWAY WINDOW
+    var gGearWindow = svgEl('g', { opacity: 0 });
+    gGearWindow.appendChild(svgEl('ellipse', {
+      cx: CX + 60, cy: CY - 50, rx: 65, ry: 50,
+      fill: '#1A1A22', stroke: '#555', 'stroke-width': 1.5
+    }));
+    gDoorSwing.appendChild(gGearWindow);
+
+    // 8. GEARS (visible through cutaway window)
+    var GEAR_L_CX = CX + 35, GEAR_L_CY = CY - 55;
+    var GEAR_M_CX = CX + 85, GEAR_M_CY = CY - 35;
+    var GEAR_S_CX = CX + 100, GEAR_S_CY = CY - 70;
+
+    var gGearLarge = svgEl('g', { opacity: 0 });
+    var gearLargePath = svgEl('path', {
+      d: makeGearPath(GEAR_L_CX, GEAR_L_CY, 38, 30, 16),
+      fill: 'url(#gearGrad)', stroke: '#777', 'stroke-width': 0.8
+    });
+    gGearLarge.appendChild(gearLargePath);
+    gGearLarge.appendChild(svgEl('circle', { cx: GEAR_L_CX, cy: GEAR_L_CY, r: 8, fill: '#3A3A44', stroke: '#666', 'stroke-width': 1 }));
+    gGearLarge.appendChild(svgEl('circle', { cx: GEAR_L_CX, cy: GEAR_L_CY, r: 3, fill: '#555' }));
+    gDoorSwing.appendChild(gGearLarge);
+
+    var gGearMed = svgEl('g', { opacity: 0 });
+    var gearMedPath = svgEl('path', {
+      d: makeGearPath(GEAR_M_CX, GEAR_M_CY, 26, 20, 12),
+      fill: 'url(#gearGrad)', stroke: '#777', 'stroke-width': 0.8
+    });
+    gGearMed.appendChild(gearMedPath);
+    gGearMed.appendChild(svgEl('circle', { cx: GEAR_M_CX, cy: GEAR_M_CY, r: 6, fill: '#3A3A44', stroke: '#666', 'stroke-width': 1 }));
+    gDoorSwing.appendChild(gGearMed);
+
+    var gGearSmall = svgEl('g', { opacity: 0 });
+    var gearSmallPath = svgEl('path', {
+      d: makeGearPath(GEAR_S_CX, GEAR_S_CY, 18, 13, 8),
+      fill: 'url(#gearGrad)', stroke: '#777', 'stroke-width': 0.8
+    });
+    gGearSmall.appendChild(gearSmallPath);
+    gGearSmall.appendChild(svgEl('circle', { cx: GEAR_S_CX, cy: GEAR_S_CY, r: 4, fill: '#3A3A44', stroke: '#666', 'stroke-width': 1 }));
+    gDoorSwing.appendChild(gGearSmall);
+
+    // 9. SPINDLE RODS (connecting gears to bolts)
+    var gSpindles = svgEl('g', { opacity: 0 });
+    for (var si = 0; si < NUM_BOLTS; si++) {
+      var sa = (si / NUM_BOLTS) * PI2 - Math.PI / 2;
+      var sx2 = CX + Math.cos(sa) * (DOOR_R - 50);
+      var sy2 = CY + Math.sin(sa) * (DOOR_R - 50);
+      var rod = svgEl('line', {
+        x1: CX, y1: CY, x2: sx2, y2: sy2,
+        stroke: '#666', 'stroke-width': 1.5, 'stroke-linecap': 'round'
+      });
+      gSpindles.appendChild(rod);
+      gSpindles.appendChild(svgEl('circle', { cx: sx2, cy: sy2, r: 3, fill: '#555', stroke: '#777', 'stroke-width': 0.5 }));
+    }
+    gDoorSwing.appendChild(gSpindles);
+
+    // 10. HANDLE WHEEL (classic 4-spoke vault handle)
+    var gHandle = svgEl('g', { opacity: 0 });
+    var HANDLE_R = 55;
+    gHandle.appendChild(svgEl('circle', { cx: CX, cy: CY, r: HANDLE_R, fill: 'none', stroke: 'url(#handleGrad)', 'stroke-width': 8 }));
+    gHandle.appendChild(svgEl('circle', { cx: CX, cy: CY, r: HANDLE_R - 5, fill: 'none', stroke: '#AAA', 'stroke-width': 1 }));
+    gHandle.appendChild(svgEl('circle', { cx: CX, cy: CY, r: HANDLE_R + 4, fill: 'none', stroke: '#888', 'stroke-width': 0.5 }));
+    for (var spi = 0; spi < 4; spi++) {
+      var spA = (spi / 4) * PI2;
+      var spoke = svgEl('line', {
+        x1: CX + Math.cos(spA) * 22, y1: CY + Math.sin(spA) * 22,
+        x2: CX + Math.cos(spA) * (HANDLE_R - 6), y2: CY + Math.sin(spA) * (HANDLE_R - 6),
+        stroke: 'url(#handleGrad)', 'stroke-width': 6, 'stroke-linecap': 'round'
+      });
+      gHandle.appendChild(spoke);
+    }
+    for (var gki = 0; gki < 4; gki++) {
+      var gkA = (gki / 4) * PI2;
+      gHandle.appendChild(svgEl('circle', {
+        cx: CX + Math.cos(gkA) * HANDLE_R, cy: CY + Math.sin(gkA) * HANDLE_R,
+        r: 7, fill: '#AAA', stroke: '#888', 'stroke-width': 1
+      }));
+      gHandle.appendChild(svgEl('circle', {
+        cx: CX + Math.cos(gkA) * HANDLE_R, cy: CY + Math.sin(gkA) * HANDLE_R,
+        r: 3, fill: '#CCC'
+      }));
+    }
+    gHandle.appendChild(svgEl('circle', { cx: CX, cy: CY, r: 18, fill: '#4A4A55', stroke: '#777', 'stroke-width': 1.5 }));
+    gHandle.appendChild(svgEl('circle', { cx: CX, cy: CY, r: 5, fill: '#222', stroke: '#444', 'stroke-width': 0.5 }));
+    gHandle.appendChild(svgEl('rect', { x: CX - 1.5, y: CY - 5, width: 3, height: 8, rx: 0.5, fill: '#333' }));
+    gDoorSwing.appendChild(gHandle);
+
+    // 11. DIAL RING (combination markings around door edge)
+    var gDial = svgEl('g', { opacity: 0 });
+    for (var di = 0; di < 60; di++) {
+      var da = (di / 60) * PI2 - Math.PI / 2;
+      var isMajor = di % 5 === 0;
+      var tr1 = DOOR_R - (isMajor ? 22 : 18);
+      var tr2 = DOOR_R - 12;
+      gDial.appendChild(svgEl('line', {
+        x1: CX + Math.cos(da) * tr1, y1: CY + Math.sin(da) * tr1,
+        x2: CX + Math.cos(da) * tr2, y2: CY + Math.sin(da) * tr2,
+        stroke: isMajor ? '#888' : '#666', 'stroke-width': isMajor ? 1.5 : 0.5
+      }));
+      if (isMajor) {
+        var numR = DOOR_R - 28;
+        var numEl = svgEl('text', {
+          x: CX + Math.cos(da) * numR, y: CY + Math.sin(da) * numR + 3,
+          'text-anchor': 'middle', fill: '#777', 'font-size': 7,
+          'font-family': 'var(--font-head)', 'font-weight': 700
+        });
+        numEl.textContent = String(di / 5 * 5);
+        gDial.appendChild(numEl);
+      }
+    }
+    gDoorSwing.appendChild(gDial);
+
+    svg.appendChild(gDoorSwing);
+
+    // Power light elements
+    var powerLights = [];
+    for (var pli = 1; pli <= 6; pli++) {
+      var plEl = document.getElementById('pl' + pli);
+      if (plEl) powerLights.push(plEl);
+    }
+
+    // ═══ SCROLL ANIMATION ═══
+    function update() {
+      var p = getProgress();
+      scrubFill.style.width = (p * 100) + '%';
+
+      // Intro fade
+      intro.style.opacity       = map(p, 0, 0.06, 1, 0);
+      intro.style.pointerEvents = p > 0.03 ? 'none' : 'auto';
+
+      // Background
+      var bgB = map(p, 0.05, 0.15, 0, 1) * (p < 0.88 ? 1 : map(p, 0.88, 1, 1, 0.3));
+      bg.style.background = 'rgb(' + Math.round(8 + bgB * 12) + ',' + Math.round(6 + bgB * 6) + ',' + Math.round(15 + bgB * 20) + ')';
+
+      // Vault container
+      var lcScale = map(p, 0.05, 0.14, 0.88, 1);
+      var lcOp = map(p, 0.05, 0.12, 0, 1);
+      var fadeOut = p < 0.88 ? 1 : map(p, 0.88, 0.95, 1, 0);
+      lockContainer.style.opacity = String(lcOp * fadeOut);
+      lockContainer.style.transform = 'translate(-50%, -50%) scale(' + (lcScale * (p < 0.88 ? 1 : map(p, 0.88, 0.95, 1, 0.92))) + ')';
+
+      // SVG sizing
+      var vh = stickyEl.offsetHeight;
+      var svgH = Math.min(vh * 0.85, 650);
+      var svgW = svgH; // Square viewBox
+      svg.setAttribute('width', svgW);
+      svg.setAttribute('height', svgH);
+
+      // ═══ PHASE 1: WALL + FRAME (6-14%) ═══
+      var wallP = easeOut3(clamp((p - 0.06) / 0.08, 0, 1));
+      gWall.setAttribute('opacity', String(wallP));
+      gFrame.setAttribute('opacity', String(map(p, 0.08, 0.14, 0, 1)));
+
+      // ═══ PHASE 2: DOOR INSTALLS (14-22%) ═══
+      var doorP = easeOut3(clamp((p - 0.14) / 0.08, 0, 1));
+      gDoor.setAttribute('opacity', String(doorP));
+      var doorSlideX = (1 - doorP) * 120;
+      if (p < 0.76) {
+        gDoorSwing.setAttribute('transform', 'translate(' + doorSlideX + ', 0)');
+      }
+      gHinges.setAttribute('opacity', String(map(p, 0.16, 0.22, 0, 1) * fadeOut));
+
+      // ═══ PHASE 3: BOLT WORK (22-30%) ═══
+      var boltAppearP = easeOut3(clamp((p - 0.22) / 0.08, 0, 1));
+      gBoltWork.setAttribute('opacity', String(boltAppearP));
+
+      // ═══ PHASE 4: GEARS (30-38%) ═══
+      var gearWinP = map(p, 0.30, 0.33, 0, 1);
+      gGearWindow.setAttribute('opacity', String(gearWinP));
+      gGearLarge.setAttribute('opacity', String(map(p, 0.31, 0.34, 0, 1)));
+      gGearMed.setAttribute('opacity', String(map(p, 0.33, 0.36, 0, 1)));
+      gGearSmall.setAttribute('opacity', String(map(p, 0.35, 0.38, 0, 1)));
+
+      // ═══ PHASE 5: SPINDLE RODS (38-44%) ═══
+      gSpindles.setAttribute('opacity', String(map(p, 0.38, 0.44, 0, 1)));
+
+      // ═══ PHASE 6: HANDLE (44-50%) ═══
+      gHandle.setAttribute('opacity', String(map(p, 0.44, 0.50, 0, 1)));
+
+      // ═══ PHASE 7: DIAL RING (50-56%) ═══
+      var dialP = map(p, 0.50, 0.56, 0, 1);
+      gDial.setAttribute('opacity', String(dialP));
+
+      // ═══ PHASE 8: ENTER COMBINATION (56-60%) ═══
+      var comboP = clamp((p - 0.56) / 0.04, 0, 1);
+      var dialRotation = 0;
+      if (comboP < 0.33) {
+        dialRotation = easeOut3(comboP / 0.33) * 25; // CW
+      } else if (comboP < 0.66) {
+        dialRotation = 25 - easeOut3((comboP - 0.33) / 0.33) * 40; // CCW
+      } else {
+        dialRotation = -15 + easeOut3((comboP - 0.66) / 0.34) * 25; // CW
+      }
+      gDial.setAttribute('transform', 'rotate(' + dialRotation + ',' + CX + ',' + CY + ')');
+
+      // ═══ PHASE 9: TURN HANDLE + SPIN GEARS (60-70%) ═══
+      var turnP = easeOut3(clamp((p - 0.60) / 0.10, 0, 1));
+      var handleAngle = turnP * 720;
+
+      gHandle.setAttribute('transform', 'rotate(' + handleAngle + ',' + CX + ',' + CY + ')');
+
+      var gearBaseAngle = turnP * 720;
+      gGearLarge.setAttribute('transform', 'rotate(' + (gearBaseAngle) + ',' + GEAR_L_CX + ',' + GEAR_L_CY + ')');
+      gGearMed.setAttribute('transform', 'rotate(' + (-gearBaseAngle * 1.33) + ',' + GEAR_M_CX + ',' + GEAR_M_CY + ')');
+      gGearSmall.setAttribute('transform', 'rotate(' + (gearBaseAngle * 2) + ',' + GEAR_S_CX + ',' + GEAR_S_CY + ')');
+
+      // ═══ PHASE 10: BOLTS RETRACT (70-76%) ═══
+      var retractP = easeOut3(clamp((p - 0.70) / 0.06, 0, 1));
+      var boltsRetracted = 0;
+      bolts.forEach(function(b) {
+        var bRetractStart = b.idx * 0.01;
+        var bRetractP = easeOut3(clamp((retractP - bRetractStart) / 0.6, 0, 1));
+        var retractDist = bRetractP * BOLT_LEN;
+        var bNewCx = b.baseCx - Math.cos(b.angle) * retractDist;
+        var bNewCy = b.baseCy - Math.sin(b.angle) * retractDist;
+        b.el.setAttribute('transform',
+          'translate(' + bNewCx.toFixed(1) + ',' + bNewCy.toFixed(1) + ') rotate(' + b.angleDeg + ')');
+        if (bRetractP > 0.9) boltsRetracted++;
+      });
+      if (hudBolts) hudBolts.textContent = String(boltsRetracted);
+
+      gSpindles.setAttribute('transform', 'rotate(' + (turnP * 15) + ',' + CX + ',' + CY + ')');
+
+      // ═══ PHASE 11: DOOR SWINGS OPEN (76-84%) ═══
+      var openP = easeOut3(clamp((p - 0.76) / 0.08, 0, 1));
+      if (p >= 0.76) {
+        var hingeX = CX - DOOR_R;
+        var doorScaleX = 1 - openP * 0.85;
+        var doorShiftX = -openP * (DOOR_R * 0.8);
+        var skewAngle = openP * 8;
+        gDoorSwing.setAttribute('transform',
+          'translate(' + (hingeX + doorShiftX) + ', 0) ' +
+          'translate(' + (-hingeX) + ', 0) ' +
+          'scale(' + doorScaleX + ', 1) ' +
+          'translate(' + hingeX + ', 0) ' +
+          'skewY(' + skewAngle + ')'
+        );
+      }
+
+      // Golden interior reveals
+      var interiorP = map(p, 0.78, 0.86, 0, 1);
+      gInterior.setAttribute('opacity', String(interiorP * fadeOut));
+
+      // ═══ PHASE 13: FINALE GLOW (90-100%) ═══
+      var glowVal = map(p, 0.90, 0.95, 0, 1);
+      lockGlow.style.opacity = String(Math.max(0, glowVal));
+
+      // Energize sweep
+      if (p < 0.90) {
+        lockEnergize.style.clipPath = 'inset(0 100% 0 0)';
+      } else if (p < 0.94) {
+        var right2 = map(easeOut3((p - 0.90) / 0.04), 0, 1, 100, -2);
+        lockEnergize.style.clipPath = 'inset(0 ' + right2 + '% 0 0)';
+      } else if (p < 0.96) {
+        var left2 = map(easeIn3((p - 0.94) / 0.02), 0, 1, 0, 102);
+        lockEnergize.style.clipPath = 'inset(0 0 0 ' + left2 + '%)';
+      } else {
+        lockEnergize.style.clipPath = 'inset(0 0 0 102%)';
+      }
+
+      // Power lights -- purple/gold
+      powerLights.forEach(function(pl, li) {
+        var lightStart = 0.90 + li * 0.005;
+        var lightEnd = lightStart + 0.04;
+        var lightP2 = clamp((p - lightStart) / (lightEnd - lightStart), 0, 1);
+        var warmth = easeOut3(lightP2);
+        pl.style.background = 'rgba(168,85,247,' + (warmth * 0.85) + ')';
+        pl.style.boxShadow = warmth > 0.1
+          ? '0 0 ' + Math.round(warmth * 120) + 'px ' + Math.round(warmth * 60) + 'px rgba(168,85,247,' + (warmth * 0.6) + '), 0 0 ' + Math.round(warmth * 200) + 'px ' + Math.round(warmth * 100) + 'px rgba(245,158,11,' + (warmth * 0.25) + ')'
+          : 'none';
+      });
+
+      // Background warm blast
+      if (p > 0.90) {
+        var blastP2 = easeOut3(map(p, 0.90, 0.95, 0, 1));
+        bg.style.background = 'rgb(' + Math.round(8 + blastP2 * 50) + ',' + Math.round(6 + blastP2 * 30) + ',' + Math.round(15 + blastP2 * 30) + ')';
+      }
+
+      // LOCKPRO text
+      var powIn2 = easeOut3(clamp((p - 0.90) / 0.04, 0, 1));
+      lockPowered.style.opacity = String(Math.max(0, powIn2));
+      lockPowered.style.transform = 'translate(-50%, -50%) scale(' + map(p, 0.90, 0.94, 0.85, 1.05) + ')';
+
+      // HUD panels
+      var hudIn2 = map(p, 0.14, 0.24, 0, 1);
+      var hudOut2 = p < 0.84 ? 1 : map(p, 0.84, 0.90, 1, 0);
+      lockHud.style.opacity = String(clamp(hudIn2 * hudOut2, 0, 1));
+
+      // Phase labels
+      if      (p < 0.05) setPhase('');
+      else if (p < 0.14) setPhase('REINFORCING VAULT');
+      else if (p < 0.22) setPhase('INSTALLING DOOR');
+      else if (p < 0.30) setPhase('MACHINING BOLT WORK');
+      else if (p < 0.38) setPhase('ASSEMBLING GEARS');
+      else if (p < 0.44) setPhase('CONNECTING DRIVE');
+      else if (p < 0.50) setPhase('FORGING HANDLE');
+      else if (p < 0.56) setPhase('SETTING COMBINATION');
+      else if (p < 0.60) setPhase('ENTERING COMBINATION');
+      else if (p < 0.70) setPhase('TURNING HANDLE');
+      else if (p < 0.76) setPhase('RETRACTING BOLTS');
+      else if (p < 0.84) setPhase('OPENING VAULT');
+      else if (p < 0.92) setPhase('VAULT OPEN');
+      else               setPhase('SECURED BY LOCKPRO');
+    }
+
+    function updateSticky() {
+      var rect = seqEl.getBoundingClientRect();
+      var sH   = stickyEl.offsetHeight;
+      if (rect.top > 0) {
+        stickyEl.style.position = 'absolute';
+        stickyEl.style.top      = '0';
+        stickyEl.style.bottom   = 'auto';
+      } else if (rect.bottom <= sH) {
+        stickyEl.style.position = 'absolute';
+        stickyEl.style.top      = 'auto';
+        stickyEl.style.bottom   = '0';
+      } else {
+        stickyEl.style.position = 'fixed';
+        stickyEl.style.top      = '0';
+        stickyEl.style.bottom   = 'auto';
+      }
+    }
+
+    (function loop() {
+      requestAnimationFrame(loop);
+      updateSticky();
+      try { update(); } catch(e) {}
+    })();
+
+    window.addEventListener('resize', update, { passive: true });
+  }
+})();
+</script>
+</body>
+</html>

@@ -3010,7 +3010,7 @@ const SEED = {
      icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>`},
     {id:'sushiroll',    name:'SushiRoll',  niche:'Premium Sushi Bar',  category:'food-dining', color:'#E74C3C', status:'planned', path:'',
      icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></svg>`},
-    {id:'subcraft',     name:'SubCraft',   niche:'Premium Deli Subs',  category:'food-dining', color:'#D4A017', status:'ready', path:'https://webnari.io/subcraft',
+    {id:'gastrosubs',   name:'GastroSubs', niche:'Premium Deli Subs',  category:'food-dining', color:'#D4A017', status:'ready', path:'https://webnari.io/gastrosubs',
      icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>`},
     // Retail
     {id:'boutique',     name:'ShopPro',    niche:'Boutique',     category:'retail', color:'#EC4899', status:'planned', path:'',
@@ -3402,15 +3402,14 @@ function renderTemplates() {
 
 // ── Parallax Library ──────────────────────────────────
 const PARALLAX_DATA = [
-  {id:'voltpro-plx',   name:'VoltPro',    desc:'Breaker Panel Build',    category:'home-construction', color:'#EAB308', url:'https://webnari.io/voltpro',    hasWebsite:true},
-  {id:'pestpro-plx',   name:'PestPro',    desc:'Shield Barrier',         category:'home-construction', color:'#F45C0A', url:'https://webnari.io/pestpro',    hasWebsite:true},
-  {id:'roofpro-plx',   name:'RoofPro',    desc:'Roof Cross-Section',     category:'home-construction', color:'#E63946', url:'https://webnari.io/roofpro',    hasWebsite:true},
-  {id:'lockpro-plx',   name:'LockPro',    desc:'Lock Assembly',          category:'home-construction', color:'#8B5CF6', url:'https://webnari.io/lockpro',    hasWebsite:true},
-  {id:'greenscape-plx', name:'GreenScape', desc:'Garden Build',          category:'landscaping',       color:'#10B981', url:'https://webnari.io/greenscape', hasWebsite:true},
-  {id:'omakase-plx',   name:'Omakase',    desc:'Sushi Plating',          category:'food-dining',       color:'#C8A96E', url:'https://webnari.io/omakase',    hasWebsite:true},
-  {id:'sushiroll-plx', name:'SushiRoll',  desc:'Sushi Roll Build',       category:'food-dining',       color:'#E74C3C', url:'https://webnari.io/sushiroll',  hasWebsite:false},
-  {id:'subcraft-plx',  name:'SubCraft',   desc:'Sub Sandwich Build',     category:'food-dining',       color:'#D4A017', url:'https://webnari.io/subcraft',   hasWebsite:true},
-  {id:'firecrust-plx', name:'FireCrust',  desc:'Wood-Fired Pizza Build', category:'food-dining',       color:'#E25822', url:'https://webnari.io/pizza-parallax', hasWebsite:false},
+  {id:'voltpro-plx',    name:'VoltPro',    desc:'Breaker Panel Build',    category:'home-construction', color:'#EAB308', url:'https://webnari.io/voltpro-parallax'},
+  {id:'pestpro-plx',    name:'PestPro',    desc:'Shield Barrier',         category:'home-construction', color:'#F45C0A', url:'https://webnari.io/pestpro-parallax'},
+  {id:'roofpro-plx',    name:'RoofPro',    desc:'Roof Cross-Section',     category:'home-construction', color:'#E63946', url:'https://webnari.io/roofpro-parallax'},
+  {id:'lockpro-plx',    name:'LockPro',    desc:'Lock Assembly',          category:'home-construction', color:'#8B5CF6', url:'https://webnari.io/lockpro-parallax'},
+  {id:'greenscape-plx', name:'GreenScape', desc:'Garden Build',           category:'landscaping',       color:'#10B981', url:'https://webnari.io/greenscape-parallax'},
+  {id:'sushiroll-plx',  name:'SushiRoll',  desc:'Sushi Roll Build',       category:'food-dining',       color:'#E74C3C', url:'https://webnari.io/sushiroll'},
+  {id:'sub-plx',        name:'GastroSubs', desc:'Sub Sandwich Build',     category:'food-dining',       color:'#D4A017', url:'https://webnari.io/sub-parallax'},
+  {id:'firecrust-plx',  name:'FireCrust',  desc:'Wood-Fired Pizza Build', category:'food-dining',       color:'#E25822', url:'https://webnari.io/pizza-parallax'},
 ];
 let plxCat = 'all';
 
@@ -3440,9 +3439,6 @@ function renderParallaxLibrary() {
     html += `<div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 30px rgba(0,0,0,0.3)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
       <div style="height:120px;background:linear-gradient(135deg,${p.color}22,${p.color}44);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;">
         <div style="font-size:36px;font-weight:900;color:${p.color};opacity:0.25;letter-spacing:4px;">${p.name.toUpperCase()}</div>
-        <div style="position:absolute;top:10px;right:10px;display:flex;gap:6px;">
-          ${p.hasWebsite ? '<span style="font-size:10px;padding:3px 8px;border-radius:6px;background:rgba(16,185,129,0.15);color:#10B981;font-weight:600;">HAS WEBSITE</span>' : '<span style="font-size:10px;padding:3px 8px;border-radius:6px;background:rgba(255,255,255,0.08);color:var(--muted);font-weight:600;">PARALLAX ONLY</span>'}
-        </div>
         <div style="position:absolute;bottom:10px;left:12px;">
           <span style="font-size:10px;padding:3px 8px;border-radius:6px;background:${cat?cat.color:'#666'}22;color:${cat?cat.color:'#999'};font-weight:600;">${cat?cat.label:p.category}</span>
         </div>
