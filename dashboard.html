@@ -2372,53 +2372,13 @@ td.bold { color: var(--white); font-weight: 600; }
         <h1>Reputation Manager</h1>
         <p>Monitor reviews, ratings, and sentiment across all platforms</p>
       </div>
-    </div>
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
-      <select class="form-select" id="rep-select" onchange="loadReputation(this.value)" style="max-width:280px;"></select>
-      <button class="btn btn-primary btn-sm" onclick="saveReputation()">Save Changes</button>
-    </div>
-    <div id="rep-empty" style="text-align:center;padding:80px 40px;">
-      <div style="font-size:48px;margin-bottom:16px;">⭐</div>
-      <div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px;">Select a client to begin</div>
-      <div style="color:var(--muted);">Manage reviews and online reputation for each client.</div>
-    </div>
-    <div id="rep-content" style="display:none;">
-      <div style="display:grid;grid-template-columns:180px 1fr;gap:20px;margin-bottom:20px;">
-        <div class="panel" style="padding:24px;text-align:center;">
-          <div style="font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--muted);margin-bottom:12px;">OVERALL RATING</div>
-          <div id="rep-overall" style="font-size:48px;font-weight:800;color:var(--white);line-height:1;">—</div>
-          <div id="rep-stars" style="color:var(--gold);font-size:18px;margin:8px 0;letter-spacing:2px;">—</div>
-          <div id="rep-total" style="font-size:12px;color:var(--muted);">— reviews</div>
-          <div style="height:1px;background:var(--border);margin:16px 0;"></div>
-          <div id="rep-resp-rate" style="font-size:11px;color:var(--teal);font-weight:600;">—</div>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;" id="rep-platforms"></div>
-      </div>
-      <div style="display:grid;grid-template-columns:300px 1fr;gap:20px;">
-        <div class="panel" style="padding:20px;">
-          <div style="font-size:14px;font-weight:700;color:var(--white);margin-bottom:16px;">Review Request</div>
-          <div class="form-group">
-            <label class="form-label">GOOGLE REVIEW URL</label>
-            <input class="form-input" id="rep-google-url" placeholder="https://g.page/r/..." style="font-size:12px;">
-          </div>
-          <button class="btn btn-primary" style="width:100%;margin-bottom:20px;" onclick="copyReviewMsg()">📋 Copy Request Message</button>
-          <div style="height:1px;background:var(--border);margin-bottom:16px;"></div>
-          <div style="font-size:13px;font-weight:700;color:var(--white);margin-bottom:12px;">Response Templates</div>
-          <div style="display:flex;flex-direction:column;gap:8px;">
-            <button class="btn btn-ghost btn-sm" style="justify-content:flex-start;font-size:11px;" onclick="copyTemplate(0)">★ Positive response</button>
-            <button class="btn btn-ghost btn-sm" style="justify-content:flex-start;font-size:11px;" onclick="copyTemplate(1)">⚠ Negative response</button>
-            <button class="btn btn-ghost btn-sm" style="justify-content:flex-start;font-size:11px;" onclick="copyTemplate(2)">— Neutral response</button>
-          </div>
-        </div>
-        <div class="panel">
-          <div class="panel-header">
-            <div class="panel-title">Recent Reviews</div>
-            <div id="rep-needs-resp" style="display:none;background:var(--red);color:#fff;font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px;"></div>
-          </div>
-          <div id="rep-reviews-list"></div>
-        </div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <select class="form-select" id="rep-select" onchange="loadReputation(this.value)" style="max-width:280px;"></select>
+        <button class="btn btn-ghost" onclick="exportReputationCSV()">↓ Export</button>
+        <button class="btn btn-primary" onclick="openAddReview()">+ Add Review</button>
       </div>
     </div>
+    <div id="rep-dynamic"></div>
   </div>
 
   <!-- ══════════════════════════════════════
@@ -7004,97 +6964,410 @@ const PLATFORMS = [
 
 function renderRepSelect() { fillToolSelect('rep-select'); }
 
+let repFilter='all', repPlatformFilter='all', repSortNewest=true;
+
 function loadReputation(id) {
+  const el = document.getElementById('rep-dynamic');
   const c = DB.clients.find(x => x.id === id);
-  document.getElementById('rep-empty').style.display   = c ? 'none' : '';
-  document.getElementById('rep-content').style.display = c ? ''     : 'none';
-  if (!c) return;
-  const r = c.reputation || {};
-
-  // Overall weighted rating
-  let totalR = 0, totalC = 0;
-  PLATFORMS.forEach(p => { const pd = r[p.key]||{}; if (pd.reviews) { totalR += (pd.rating||0)*pd.reviews; totalC += pd.reviews; } });
-  const overall = totalC ? (totalR/totalC).toFixed(1) : null;
-  document.getElementById('rep-overall').textContent = overall || '—';
-  document.getElementById('rep-stars').textContent   = overall ? starsStr(parseFloat(overall)) : '—';
-  document.getElementById('rep-total').textContent   = totalC ? `${totalC} total reviews` : 'No reviews yet';
-
-  // Response rate
-  const reviews = r.recentReviews || [];
-  const responded = reviews.filter(rv => rv.responded).length;
-  const rate = reviews.length ? Math.round((responded/reviews.length)*100) : null;
-  document.getElementById('rep-resp-rate').textContent = rate !== null ? `${rate}% response rate` : 'No reviews yet';
-
-  // Platform cards
-  document.getElementById('rep-platforms').innerHTML = PLATFORMS.map(p => {
-    const pd = r[p.key] || { rating:0, reviews:0 };
-    const has = pd.reviews > 0;
-    return `<div class="panel" style="padding:16px;text-align:center;">
-      <div style="font-size:10px;font-weight:700;letter-spacing:.08em;color:${p.color};margin-bottom:8px;">${p.label.toUpperCase()}</div>
-      <div style="font-size:28px;font-weight:800;color:var(--white);line-height:1;">${has ? pd.rating.toFixed(1) : '—'}</div>
-      <div style="color:var(--gold);font-size:12px;margin:4px 0;">${has ? starsStr(pd.rating) : ''}</div>
-      <div style="font-size:11px;color:var(--muted);">${has ? pd.reviews+' reviews' : 'Not set up'}</div>
+  if(!c) {
+    el.innerHTML = `<div class="panel" style="text-align:center;padding:80px 40px;">
+      <svg style="width:48px;height:48px;color:var(--gold);margin-bottom:16px;" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      <div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px;">Select a client to begin</div>
+      <div style="color:var(--muted);">Manage reviews and online reputation for each client.</div>
     </div>`;
-  }).join('');
-
-  document.getElementById('rep-google-url').value = r.googleUrl || '';
-
-  // Reviews list
-  const needs = reviews.filter(rv => !rv.responded);
-  const badge = document.getElementById('rep-needs-resp');
-  badge.style.display = needs.length ? '' : 'none';
-  if (needs.length) badge.textContent = `${needs.length} need response`;
-
-  const list = document.getElementById('rep-reviews-list');
-  if (!reviews.length) {
-    list.innerHTML = `<div style="text-align:center;padding:48px;color:var(--muted);">No reviews tracked yet</div>`;
     return;
   }
-  list.innerHTML = reviews.map((rv, i) => {
-    const pl = PLATFORMS.find(p => p.key === rv.platform) || { label: rv.platform, color:'var(--muted)' };
-    const stars = '★'.repeat(rv.rating) + '☆'.repeat(5-rv.rating);
-    return `<div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start;">
-      <div style="flex-shrink:0;width:36px;height:36px;border-radius:50%;background:${pl.color}22;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:${pl.color};">${pl.label[0]}</div>
-      <div style="flex:1;min-width:0;">
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
-          <span style="font-weight:600;color:var(--white);font-size:13px;">${rv.author}</span>
-          <span style="font-size:10px;font-weight:700;color:${pl.color};">${pl.label}</span>
-          <span style="color:var(--gold);font-size:12px;">${stars}</span>
-          ${!rv.responded ? `<span style="background:rgba(255,77,109,.12);color:var(--red);font-size:10px;font-weight:700;padding:1px 8px;border-radius:12px;">NEEDS RESPONSE</span>` : ''}
-        </div>
-        <div style="color:var(--text);font-size:13px;margin-bottom:4px;">"${rv.text}"</div>
-        <div style="font-size:11px;color:var(--muted);">${rv.date}</div>
+  const r = c.reputation || {};
+  const reviews = r.recentReviews || [];
+
+  // Weighted overall
+  let totalR=0, totalC=0;
+  PLATFORMS.forEach(p => { const pd=r[p.key]||{}; if(pd.reviews){totalR+=(pd.rating||0)*pd.reviews; totalC+=pd.reviews;} });
+  const overall = totalC ? (totalR/totalC).toFixed(1) : null;
+
+  // Response metrics
+  const responded = reviews.filter(rv=>rv.responded).length;
+  const respRate = reviews.length ? Math.round((responded/reviews.length)*100) : 0;
+  const needsResp = reviews.filter(rv=>!rv.responded);
+
+  // Sentiment breakdown
+  const positive = reviews.filter(rv=>rv.rating>=4).length;
+  const neutral = reviews.filter(rv=>rv.rating===3).length;
+  const negative = reviews.filter(rv=>rv.rating<=2).length;
+  const sentTotal = reviews.length || 1;
+
+  // Star distribution
+  const dist = [0,0,0,0,0];
+  reviews.forEach(rv => { if(rv.rating>=1 && rv.rating<=5) dist[rv.rating-1]++; });
+  const maxDist = Math.max(...dist,1);
+
+  // Review growth (last 6 months)
+  const months = [];
+  const now = new Date();
+  for(let i=5;i>=0;i--){
+    const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+    const key = d.toISOString().slice(0,7);
+    const label = d.toLocaleDateString('en',{month:'short'});
+    const count = reviews.filter(rv => rv.date && rv.date.startsWith(key)).length;
+    months.push({label,count,key});
+  }
+  const maxMonth = Math.max(...months.map(m=>m.count),1);
+
+  // Filter reviews
+  let filtered = [...reviews];
+  if(repFilter==='needs_response') filtered = filtered.filter(rv=>!rv.responded);
+  else if(repFilter==='positive') filtered = filtered.filter(rv=>rv.rating>=4);
+  else if(repFilter==='negative') filtered = filtered.filter(rv=>rv.rating<=2);
+  if(repPlatformFilter!=='all') filtered = filtered.filter(rv=>rv.platform===repPlatformFilter);
+  if(repSortNewest) filtered.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+  else filtered.sort((a,b)=>(a.date||'').localeCompare(b.date||''));
+
+  // Review request campaigns
+  if(!r.campaigns) r.campaigns = [];
+  const totalSent = r.campaigns.reduce((s,c)=>s+(c.sent||0),0);
+  const totalReceived = r.campaigns.reduce((s,c)=>s+(c.received||0),0);
+  const conversionRate = totalSent ? Math.round((totalReceived/totalSent)*100) : 0;
+
+  el.innerHTML = `
+    <!-- KPI Row -->
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-bottom:24px;">
+      <div class="panel" style="padding:20px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--gold);"></div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;">OVERALL RATING</div>
+        <div style="font-size:32px;font-weight:800;color:var(--gold);">${overall||'--'}</div>
+        <div style="color:var(--gold);font-size:14px;margin-top:2px;">${overall ? starsStr(parseFloat(overall)) : ''}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">${totalC} total reviews</div>
       </div>
-      <button class="btn btn-ghost btn-sm" onclick="markResponded('${id}',${i})" style="flex-shrink:0;font-size:11px;">${rv.responded ? '✓ Responded' : 'Mark Responded'}</button>
+      <div class="panel" style="padding:20px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--green);"></div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;">RESPONSE RATE</div>
+        <div style="font-size:32px;font-weight:800;color:${respRate>=80?'var(--green)':respRate>=50?'var(--amber)':'var(--red)'};">${respRate}%</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">${responded}/${reviews.length} responded</div>
+      </div>
+      <div class="panel" style="padding:20px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--green);"></div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;">POSITIVE</div>
+        <div style="font-size:32px;font-weight:800;color:var(--green);">${Math.round((positive/sentTotal)*100)}%</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">${positive} reviews (4-5 stars)</div>
+      </div>
+      <div class="panel" style="padding:20px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--red);"></div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;">NEEDS RESPONSE</div>
+        <div style="font-size:32px;font-weight:800;color:${needsResp.length?'var(--red)':'var(--green)'};">${needsResp.length}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">${needsResp.length?'Action required':'All caught up'}</div>
+      </div>
+      <div class="panel" style="padding:20px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--indigo);"></div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;">REQUEST CONV.</div>
+        <div style="font-size:32px;font-weight:800;color:var(--indigo2);">${conversionRate}%</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">${totalReceived}/${totalSent} converted</div>
+      </div>
+    </div>
+
+    <!-- Platform Cards + Star Distribution + Review Growth -->
+    <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:16px;margin-bottom:24px;">
+      <!-- Platform Cards -->
+      <div class="panel" style="padding:20px;">
+        <div class="panel-title" style="margin-bottom:16px;">Platform Breakdown</div>
+        <div style="display:grid;grid-template-columns:repeat(${PLATFORMS.length},1fr);gap:10px;">
+          ${PLATFORMS.map(p => {
+            const pd = r[p.key]||{rating:0,reviews:0};
+            const has = pd.reviews>0;
+            const url = r[p.key+'Url']||'';
+            return `<div style="text-align:center;padding:14px 8px;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border);position:relative;">
+              <div style="font-size:10px;font-weight:700;letter-spacing:.06em;color:${p.color};margin-bottom:8px;">${p.label.toUpperCase()}</div>
+              <div style="font-size:24px;font-weight:800;color:var(--white);">${has?pd.rating.toFixed(1):'--'}</div>
+              <div style="color:var(--gold);font-size:11px;margin:2px 0;">${has?starsStr(pd.rating):''}</div>
+              <div style="font-size:10px;color:var(--muted);">${has?pd.reviews+' reviews':'Not tracked'}</div>
+              ${url?`<a href="${url}" target="_blank" style="display:block;font-size:9px;color:${p.color};margin-top:6px;text-decoration:none;">View Profile →</a>`:''}
+            </div>`;
+          }).join('')}
+        </div>
+        <!-- Platform URL management -->
+        <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border);">
+          <div style="font-size:11px;font-weight:600;color:var(--muted);margin-bottom:8px;">REVIEW PROFILE URLS</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            ${PLATFORMS.map(p => `<div style="display:flex;gap:6px;align-items:center;">
+              <span style="font-size:10px;font-weight:700;color:${p.color};width:60px;">${p.label}</span>
+              <input class="form-input" id="rep-url-${p.key}" value="${r[p.key+'Url']||''}" placeholder="https://..." style="font-size:11px;padding:5px 8px;flex:1;" onchange="saveRepUrl('${c.id}','${p.key}',this.value)">
+            </div>`).join('')}
+          </div>
+        </div>
+      </div>
+
+      <!-- Star Distribution -->
+      <div class="panel" style="padding:20px;">
+        <div class="panel-title" style="margin-bottom:16px;">Rating Distribution</div>
+        ${[5,4,3,2,1].map(s => {
+          const count = dist[s-1];
+          const pct = Math.round((count/maxDist)*100);
+          const color = s>=4?'var(--green)':s===3?'var(--amber)':'var(--red)';
+          return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+            <span style="font-size:12px;font-weight:700;color:var(--gold);width:16px;">${s}</span>
+            <svg style="width:12px;height:12px;color:var(--gold);" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <div style="flex:1;height:8px;background:var(--surface2);border-radius:4px;overflow:hidden;">
+              <div style="height:100%;width:${pct}%;background:${color};border-radius:4px;transition:width .5s;"></div>
+            </div>
+            <span style="font-size:11px;color:var(--muted);width:24px;text-align:right;">${count}</span>
+          </div>`;
+        }).join('')}
+        <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--border);">
+          <div style="display:flex;justify-content:space-between;font-size:11px;">
+            <span style="color:var(--green);">Positive: ${positive}</span>
+            <span style="color:var(--amber);">Neutral: ${neutral}</span>
+            <span style="color:var(--red);">Negative: ${negative}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Review Growth Chart -->
+      <div class="panel" style="padding:20px;">
+        <div class="panel-title" style="margin-bottom:16px;">Monthly Reviews</div>
+        <div style="display:flex;align-items:flex-end;gap:6px;height:120px;padding-bottom:20px;position:relative;">
+          ${months.map(m => {
+            const h = Math.max(4, (m.count/maxMonth)*100);
+            return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;">
+              <div style="font-size:10px;font-weight:700;color:var(--indigo2);margin-bottom:4px;">${m.count||''}</div>
+              <div style="width:100%;height:${h}%;background:linear-gradient(180deg,var(--indigo),var(--indigo)44);border-radius:4px 4px 0 0;min-height:4px;"></div>
+              <div style="font-size:9px;color:var(--muted);margin-top:6px;">${m.label}</div>
+            </div>`;
+          }).join('')}
+        </div>
+        <!-- Review Request Campaign -->
+        <div style="margin-top:12px;padding-top:12px;border-top:1px solid var(--border);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+            <span style="font-size:11px;font-weight:600;color:var(--muted);">REVIEW REQUESTS</span>
+            <button class="btn btn-ghost btn-sm" style="font-size:10px;" onclick="logReviewCampaign('${c.id}')">+ Log Campaign</button>
+          </div>
+          <div style="font-size:12px;color:var(--text);">${totalSent} sent → ${totalReceived} received (${conversionRate}%)</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Review Request Tools + Response Templates -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
+      <div class="panel" style="padding:20px;">
+        <div class="panel-title" style="margin-bottom:16px;">Review Request Generator</div>
+        <div class="form-group">
+          <label class="form-label">MESSAGE STYLE</label>
+          <select class="form-select" id="rep-msg-style" onchange="previewReviewMsg('${c.id}')">
+            <option value="friendly">Friendly & Casual</option>
+            <option value="professional">Professional</option>
+            <option value="sms">SMS (Short)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">PREFERRED PLATFORM</label>
+          <select class="form-select" id="rep-msg-platform">
+            ${PLATFORMS.map(p => `<option value="${p.key}" ${p.key==='google'?'selected':''}>${p.label}</option>`).join('')}
+          </select>
+        </div>
+        <div id="rep-msg-preview" style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:14px;font-size:12px;color:var(--text);line-height:1.6;margin-bottom:12px;max-height:160px;overflow-y:auto;"></div>
+        <button class="btn btn-primary" style="width:100%;" onclick="copyReviewMsg()">Copy Review Request</button>
+      </div>
+
+      <div class="panel" style="padding:20px;">
+        <div class="panel-title" style="margin-bottom:16px;">Response Templates</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          ${[
+            {label:'5-Star Thank You', icon:'★★★★★', color:'var(--green)', key:'positive'},
+            {label:'4-Star Appreciation', icon:'★★★★☆', color:'var(--green)', key:'good'},
+            {label:'3-Star Improvement', icon:'★★★☆☆', color:'var(--amber)', key:'neutral'},
+            {label:'Negative Recovery', icon:'★★☆☆☆', color:'var(--red)', key:'negative'},
+            {label:'Service Issue Apology', icon:'★☆☆☆☆', color:'var(--red)', key:'apology'}
+          ].map(t => `<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);cursor:pointer;transition:border-color .2s;" onclick="copyRepTemplate('${c.id}','${t.key}')" onmouseover="this.style.borderColor='var(--indigo)'" onmouseout="this.style.borderColor='var(--border)'">
+            <span style="font-size:10px;color:var(--gold);letter-spacing:-1px;">${t.icon}</span>
+            <span style="font-size:12px;font-weight:600;color:var(--white);flex:1;">${t.label}</span>
+            <span style="font-size:10px;color:var(--muted);">Click to copy</span>
+          </div>`).join('')}
+        </div>
+        <div class="form-group" style="margin-top:12px;margin-bottom:0;">
+          <label class="form-label">CUSTOM RESPONSE</label>
+          <div style="display:flex;gap:8px;">
+            <textarea class="form-input" id="rep-custom-response" rows="2" placeholder="Write a custom response..." style="flex:1;font-size:12px;resize:vertical;"></textarea>
+            <button class="btn btn-ghost btn-sm" style="align-self:flex-end;" onclick="copyCustomResponse()">Copy</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reviews List -->
+    <div class="panel">
+      <div class="panel-header" style="flex-wrap:wrap;gap:12px;">
+        <div class="panel-title">All Reviews (${reviews.length})</div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+          <button class="btn btn-sm ${repFilter==='all'?'btn-primary':'btn-ghost'}" onclick="repFilter='all';loadReputation('${c.id}')">All</button>
+          <button class="btn btn-sm ${repFilter==='needs_response'?'btn-primary':'btn-ghost'}" style="${needsResp.length?'border-color:var(--red);color:var(--red);':''}" onclick="repFilter='needs_response';loadReputation('${c.id}')">Needs Response (${needsResp.length})</button>
+          <button class="btn btn-sm ${repFilter==='positive'?'btn-primary':'btn-ghost'}" onclick="repFilter='positive';loadReputation('${c.id}')">Positive</button>
+          <button class="btn btn-sm ${repFilter==='negative'?'btn-primary':'btn-ghost'}" onclick="repFilter='negative';loadReputation('${c.id}')">Negative</button>
+          <select class="form-select" style="font-size:11px;padding:4px 8px;width:auto;" onchange="repPlatformFilter=this.value;loadReputation('${c.id}')">
+            <option value="all" ${repPlatformFilter==='all'?'selected':''}>All platforms</option>
+            ${PLATFORMS.map(p=>`<option value="${p.key}" ${repPlatformFilter===p.key?'selected':''}>${p.label}</option>`).join('')}
+          </select>
+          <button class="btn btn-ghost btn-sm" style="font-size:10px;" onclick="repSortNewest=!repSortNewest;loadReputation('${c.id}')">${repSortNewest?'Newest first':'Oldest first'}</button>
+        </div>
+      </div>
+      ${!filtered.length ? `<div style="text-align:center;padding:48px;color:var(--muted);">No reviews match your filters</div>` :
+        filtered.map((rv,i) => {
+          const origIdx = reviews.indexOf(rv);
+          const pl = PLATFORMS.find(p=>p.key===rv.platform)||{label:rv.platform,color:'var(--muted)'};
+          const stars = '★'.repeat(rv.rating)+'☆'.repeat(5-rv.rating);
+          const sentiment = rv.rating>=4 ? 'Positive' : rv.rating===3 ? 'Neutral' : 'Negative';
+          const sentColor = rv.rating>=4 ? 'var(--green)' : rv.rating===3 ? 'var(--amber)' : 'var(--red)';
+          return `<div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;gap:14px;align-items:flex-start;">
+            <div style="flex-shrink:0;width:40px;height:40px;border-radius:50%;background:${pl.color}18;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:${pl.color};border:2px solid ${pl.color}33;">${(rv.author||'?')[0].toUpperCase()}</div>
+            <div style="flex:1;min-width:0;">
+              <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
+                <span style="font-weight:600;color:var(--white);font-size:13px;">${rv.author||'Anonymous'}</span>
+                <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:12px;background:${pl.color}18;color:${pl.color};">${pl.label}</span>
+                <span style="color:var(--gold);font-size:12px;letter-spacing:-0.5px;">${stars}</span>
+                <span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:12px;background:${sentColor}15;color:${sentColor};">${sentiment}</span>
+                ${!rv.responded ? `<span style="background:rgba(255,77,109,.12);color:var(--red);font-size:9px;font-weight:700;padding:2px 8px;border-radius:12px;animation:pulse 2s infinite;">NEEDS RESPONSE</span>` : `<span style="font-size:9px;color:var(--green);">Responded</span>`}
+              </div>
+              <div style="color:var(--text);font-size:13px;line-height:1.5;margin-bottom:6px;">"${rv.text||'No review text'}"</div>
+              ${rv.response ? `<div style="background:var(--surface2);border-left:3px solid var(--indigo);padding:8px 12px;border-radius:0 var(--radius) var(--radius) 0;margin-bottom:6px;">
+                <div style="font-size:10px;font-weight:600;color:var(--indigo2);margin-bottom:4px;">YOUR RESPONSE</div>
+                <div style="font-size:12px;color:var(--text);">${rv.response}</div>
+              </div>` : ''}
+              <div style="font-size:11px;color:var(--muted);">${rv.date||'No date'}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0;">
+              <button class="btn btn-ghost btn-sm" style="font-size:10px;" onclick="markResponded('${c.id}',${origIdx})">${rv.responded ? 'Undo' : 'Mark Done'}</button>
+              <button class="btn btn-ghost btn-sm" style="font-size:10px;" onclick="addReviewResponse('${c.id}',${origIdx})">Reply</button>
+              <button class="btn btn-ghost btn-sm" style="font-size:10px;color:var(--red);" onclick="deleteReview('${c.id}',${origIdx})">Delete</button>
+            </div>
+          </div>`;
+        }).join('')}
     </div>`;
-  }).join('');
+
+  // Trigger review message preview
+  setTimeout(()=>previewReviewMsg(c.id),0);
 }
 
 function markResponded(clientId, idx) {
-  const c = DB.clients.find(x => x.id === clientId); if (!c?.reputation) return;
+  const c = DB.clients.find(x=>x.id===clientId); if(!c?.reputation?.recentReviews) return;
   c.reputation.recentReviews[idx].responded = !c.reputation.recentReviews[idx].responded;
   save(); loadReputation(clientId);
 }
 
-function saveReputation() {
-  const id = document.getElementById('rep-select').value; if (!id) return;
-  const c = DB.clients.find(x => x.id === id); if (!c) return;
-  if (!c.reputation) c.reputation = {};
-  c.reputation.googleUrl = document.getElementById('rep-google-url').value;
-  save(); toast('Reputation saved!', 'success');
+function addReviewResponse(clientId, idx) {
+  const c = DB.clients.find(x=>x.id===clientId); if(!c?.reputation?.recentReviews) return;
+  const rv = c.reputation.recentReviews[idx];
+  const resp = prompt('Enter your response to this review:', rv.response||'');
+  if(resp===null) return;
+  rv.response = resp;
+  rv.responded = true;
+  save(); loadReputation(clientId);
+  toast('Response saved!','success');
+}
+
+function deleteReview(clientId, idx) {
+  const c = DB.clients.find(x=>x.id===clientId); if(!c?.reputation?.recentReviews) return;
+  if(!confirm('Delete this review entry?')) return;
+  c.reputation.recentReviews.splice(idx,1);
+  save(); loadReputation(clientId);
+  toast('Review deleted','success');
+}
+
+function saveRepUrl(clientId, platform, url) {
+  const c = DB.clients.find(x=>x.id===clientId); if(!c) return;
+  if(!c.reputation) c.reputation = {};
+  c.reputation[platform+'Url'] = url;
+  save(); toast(`${platform} URL saved`,'success');
+}
+
+function openAddReview() {
+  const id = document.getElementById('rep-select').value;
+  if(!id) { toast('Select a client first','error'); return; }
+  const c = DB.clients.find(x=>x.id===id); if(!c) return;
+  const author = prompt('Reviewer name:');
+  if(!author) return;
+  const platform = prompt('Platform (google/yelp/facebook/homeadvisor):','google');
+  if(!platform) return;
+  const rating = parseInt(prompt('Rating (1-5):','5'));
+  if(!rating||rating<1||rating>5) return;
+  const text = prompt('Review text:');
+  if(!text) return;
+  if(!c.reputation) c.reputation = {};
+  if(!c.reputation.recentReviews) c.reputation.recentReviews = [];
+  c.reputation.recentReviews.unshift({author, platform, rating, text, date:today(), responded:false});
+  // Update platform stats
+  if(!c.reputation[platform]) c.reputation[platform] = {rating:0,reviews:0};
+  const pd = c.reputation[platform];
+  const newTotal = pd.reviews+1;
+  pd.rating = ((pd.rating*pd.reviews)+rating)/newTotal;
+  pd.reviews = newTotal;
+  save(); loadReputation(id);
+  addActivity(`New ${rating}-star ${platform} review for <strong>${c.bizName}</strong>`, rating>=4?'green':'red');
+  toast('Review added!','success');
+}
+
+function previewReviewMsg(clientId) {
+  const c = DB.clients.find(x=>x.id===clientId); if(!c) return;
+  const style = document.getElementById('rep-msg-style')?.value||'friendly';
+  const platform = document.getElementById('rep-msg-platform')?.value||'google';
+  const pl = PLATFORMS.find(p=>p.key===platform)||PLATFORMS[0];
+  const url = c.reputation?.[platform+'Url']||'[your review link]';
+  const biz = c.bizName||'our business';
+  let msg;
+  if(style==='friendly') msg=`Hi! Thank you so much for choosing ${biz}! We'd love to hear about your experience — could you take 30 seconds to leave us a review on ${pl.label}? It means the world to us!\n\n${url}\n\nThank you!`;
+  else if(style==='professional') msg=`Dear valued customer,\n\nThank you for choosing ${biz}. Your feedback helps us improve our services and helps others find quality local businesses.\n\nWe would greatly appreciate if you could share your experience on ${pl.label}:\n${url}\n\nBest regards,\n${biz}`;
+  else msg=`Hey! Thanks for choosing ${biz}! Mind leaving us a quick ${pl.label} review? ${url}`;
+  const preview = document.getElementById('rep-msg-preview');
+  if(preview) preview.textContent = msg;
 }
 
 function copyReviewMsg() {
+  const preview = document.getElementById('rep-msg-preview');
+  if(!preview||!preview.textContent) { toast('No message to copy','error'); return; }
+  navigator.clipboard.writeText(preview.textContent).then(()=>toast('Review request copied!','success'));
+}
+
+function copyRepTemplate(clientId, key) {
+  const c = DB.clients.find(x=>x.id===clientId);
+  const biz = c ? c.bizName : 'our business';
+  const templates = {
+    positive: `Thank you so much for your wonderful 5-star review! We're thrilled to hear you had a great experience with ${biz}. It's customers like you that make what we do so rewarding. We look forward to serving you again!`,
+    good: `Thank you for your kind review! We're glad you had a positive experience with ${biz}. We're always working to make every visit even better — we'd love to see you again soon!`,
+    neutral: `Thank you for taking the time to share your feedback about ${biz}. We truly value your honest review and would love the chance to exceed your expectations next time. Please don't hesitate to reach out if there's anything we can do to improve your experience.`,
+    negative: `We sincerely apologize that your experience with ${biz} didn't meet your expectations. This is not the level of service we strive for. We'd love the opportunity to make this right — please reach out to us directly so we can address your concerns personally.`,
+    apology: `We're deeply sorry about your experience. At ${biz}, we take every piece of feedback seriously and your review highlights areas where we need to improve. Please contact us directly so we can resolve this issue and restore your confidence in our service.`
+  };
+  navigator.clipboard.writeText(templates[key]||'').then(()=>toast('Response template copied!','success'));
+}
+
+function copyCustomResponse() {
+  const text = document.getElementById('rep-custom-response')?.value;
+  if(!text) { toast('Write a response first','error'); return; }
+  navigator.clipboard.writeText(text).then(()=>toast('Custom response copied!','success'));
+}
+
+function logReviewCampaign(clientId) {
+  const c = DB.clients.find(x=>x.id===clientId); if(!c) return;
+  const sent = parseInt(prompt('How many review requests did you send?','10'));
+  if(!sent) return;
+  const received = parseInt(prompt('How many reviews did you receive from this campaign?','0'))||0;
+  if(!c.reputation) c.reputation = {};
+  if(!c.reputation.campaigns) c.reputation.campaigns = [];
+  c.reputation.campaigns.push({date:today(), sent, received});
+  save(); loadReputation(clientId);
+  toast('Campaign logged!','success');
+}
+
+function exportReputationCSV() {
   const id = document.getElementById('rep-select').value;
-  const c  = id ? DB.clients.find(x => x.id === id) : null;
-  const link = document.getElementById('rep-google-url').value || '[your Google review link]';
-  const biz  = c ? c.bizName : 'our business';
-  const msg  = `Hi! Thank you for choosing ${biz}. We'd love to hear about your experience — could you take 30 seconds to leave us a Google review? It means the world to us!\n\n${link}\n\nThank you so much! 🙏`;
-  navigator.clipboard.writeText(msg).then(() => toast('Review request copied!', 'success'));
+  const c = id ? DB.clients.find(x=>x.id===id) : null;
+  if(!c?.reputation?.recentReviews?.length) { toast('No reviews to export','error'); return; }
+  const rows = [['Author','Platform','Rating','Text','Date','Responded','Response']];
+  c.reputation.recentReviews.forEach(rv => rows.push([rv.author||'',rv.platform||'',rv.rating||'',rv.text||'',rv.date||'',rv.responded?'Yes':'No',rv.response||'']));
+  const csv = rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv],{type:'text/csv'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`reviews-${c.bizName}-${today()}.csv`; a.click();
+  toast('Reviews exported!','success');
 }
 
 function copyTemplate(n) {
-  navigator.clipboard.writeText(REP_TEMPLATES[n]).then(() => toast('Template copied!', 'success'));
+  navigator.clipboard.writeText(REP_TEMPLATES[n]).then(()=>toast('Template copied!','success'));
 }
 
 // ════════════════════════════════════════════════════
