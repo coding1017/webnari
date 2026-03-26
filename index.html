@@ -127,6 +127,11 @@ nav.scrolled{background:rgba(6,6,10,.8);backdrop-filter:blur(20px) saturate(150%
 .transition-diagonal::before{content:'';position:absolute;inset:0;background:var(--surface);clip-path:polygon(0 0,100% 70%,100% 100%,0 100%)}
 .transition-diagonal-rev{width:100%;height:100px;position:relative;overflow:hidden;background:var(--surface)}
 .transition-diagonal-rev::before{content:'';position:absolute;inset:0;background:var(--bg);clip-path:polygon(0 30%,100% 0,100% 100%,0 100%)}
+/* Dramatic barrel-roll / whip-pan between showcase and features */
+.cam-barrel-transition{height:200vh;position:relative;overflow:hidden;background:#000}
+.cam-barrel-inner{position:sticky;top:0;height:100vh;perspective:600px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.cam-barrel-flash{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(201,169,110,.15),transparent 70%);opacity:0;transition:opacity .3s}
+
 /* Camera tilt transition */
 .cam-tilt{perspective:800px;overflow:hidden}
 .cam-tilt-inner{transform-origin:center top;transition:transform .8s cubic-bezier(.25,.46,.45,.94);transform:perspective(800px) rotateX(3deg) translateY(20px);opacity:0}
@@ -459,8 +464,12 @@ footer{border-top:1px solid var(--border);padding:48px}
   </div>
 </div>
 
-<!-- Camera tilt down: showcase → features -->
-<div class="transition-diagonal"></div>
+<!-- Dramatic 3D barrel-roll transition: showcase → features -->
+<div class="cam-barrel-transition" id="barrel-transition">
+  <div class="cam-barrel-inner" id="barrel-inner">
+    <div class="cam-barrel-flash"></div>
+  </div>
+</div>
 
 <!-- Features (camera tilts in) -->
 <section id="features" class="features-section cam-tilt">
@@ -793,20 +802,24 @@ function initOrb(){
 
   // Satellites — 3 orbital dots at different inclinations
   const sats=[];
+  // Two orbital planes: group A (7 sats, clockwise, ~30deg tilt) and group B (6 sats, counter-clockwise, ~60deg tilt)
   for(let i=0;i<13;i++){
+    const groupA=i<7;
+    const idx=groupA?i:(i-7);
+    const count=groupA?7:6;
     sats.push({
-      angle:i*(Math.PI*2/13),
-      speed:(.01+Math.random()*.015)*(i%2?-1:1),
-      incl:.05+i*.07+Math.random()*.1,  // spread inclinations evenly
-      dist:1.15+i*.04,                   // spread distances from 1.15 to 1.67
+      angle:idx*(Math.PI*2/count)+Math.random()*.15,
+      speed:groupA?.003:-.004,                     // very slow, opposing directions
+      incl:groupA?.45+idx*.02:.95+idx*.02,          // two distinct orbital planes
+      dist:1.08+idx*.025,                            // tight to orb: 1.08 to ~1.23
       trail:[],
-      hue:i%3===1?1:0
+      hue:groupA?0:1                                 // gold vs cyan
     });
   }
 
   let t=0;
   function draw(){
-    t+=.008;
+    t+=.005; // slower base rotation
     // Smooth mouse lerp
     tmx+=(mx-tmx)*.06;tmy+=(my-tmy)*.06;
     ctx.clearRect(0,0,W,H);
@@ -899,14 +912,12 @@ function initOrb(){
           ctx.fill();
         }
       });
-      // Draw satellite dot
-      ctx.beginPath();ctx.arc(px,py,7,0,Math.PI*2);
-      ctx.fillStyle=sat.hue?'rgba(120,200,255,.9)':'rgba(255,220,140,.9)';ctx.fill();
-      // Satellite glow — large
-      ctx.beginPath();ctx.arc(px,py,22,0,Math.PI*2);
-      ctx.fillStyle=sat.hue?'rgba(80,170,255,.12)':'rgba(255,210,120,.12)';ctx.fill();
-      ctx.beginPath();ctx.arc(px,py,40,0,Math.PI*2);
-      ctx.fillStyle=sat.hue?'rgba(80,170,255,.04)':'rgba(255,210,120,.04)';ctx.fill();
+      // Draw satellite dot (smaller, subtler)
+      ctx.beginPath();ctx.arc(px,py,4.5,0,Math.PI*2);
+      ctx.fillStyle=sat.hue?'rgba(120,200,255,.85)':'rgba(255,220,140,.85)';ctx.fill();
+      // Satellite glow — medium
+      ctx.beginPath();ctx.arc(px,py,14,0,Math.PI*2);
+      ctx.fillStyle=sat.hue?'rgba(80,170,255,.08)':'rgba(255,210,120,.08)';ctx.fill();
     });
 
     requestAnimationFrame(draw);
@@ -998,6 +1009,50 @@ function initShowcase(){
         if(seq)f.contentWindow.scrollTo(0,seq.offsetTop+p2*seq.offsetHeight);
       }catch(e){}
     });
+  }
+  window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(update);ticking=true}},{passive:true});
+}
+
+// ── Barrel-Roll Transition (showcase → features) ──
+function initBarrelTransition(){
+  const wrap=document.getElementById('barrel-transition');if(!wrap)return;
+  const inner=wrap.querySelector('.cam-barrel-inner');
+  const flash=wrap.querySelector('.cam-barrel-flash');
+  let ticking=false;
+  function update(){
+    ticking=false;
+    const rect=wrap.getBoundingClientRect();
+    const total=wrap.offsetHeight-window.innerHeight;
+    const scrolled=Math.max(0,-rect.top);
+    const p=Math.max(0,Math.min(1,scrolled/total));
+    /*
+      0-30%  : Camera pulls back (scale down + slight rotateX)
+      30-70% : Whip pan — fast rotateY spin + rotateZ tilt + zoom through
+      70-100%: Camera settles (scale back to 1, all rotations to 0)
+    */
+    let rX=0,rY=0,rZ=0,sc=1,op=1;
+    if(p<.3){
+      const t=p/.3;
+      rX=t*12;sc=1-t*.15;op=1;
+    }else if(p<.7){
+      const t=(p-.3)/.4;
+      const ease=t<.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2; // cubic ease in-out
+      rY=ease*180;
+      rZ=Math.sin(ease*Math.PI)*15;
+      rX=12-ease*12;
+      sc=.85+ease*.3; // zoom through
+      // Flash at the peak of the spin
+      const flashInt=Math.sin(ease*Math.PI);
+      flash.style.opacity=flashInt*.6;
+    }else{
+      const t=(p-.7)/.3;
+      const ease=1-Math.pow(1-t,3); // ease out
+      rY=180+ease*180; // complete the 360
+      rZ=(1-ease)*5;
+      sc=1.15-ease*.15;
+      flash.style.opacity=(1-ease)*.1;
+    }
+    inner.style.transform=`perspective(600px) rotateX(${rX}deg) rotateY(${rY}deg) rotateZ(${rZ}deg) scale(${sc})`;
   }
   window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(update);ticking=true}},{passive:true});
 }
@@ -1103,6 +1158,7 @@ function initLoader(){
   renderPricing();
   initOrb();
   initShowcase();
+  initBarrelTransition();
   initHorizontalScroll();
   initReveal();
   initScrollProgress();
