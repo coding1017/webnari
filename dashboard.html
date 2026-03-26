@@ -1200,6 +1200,9 @@ td.bold { color: var(--white); font-weight: 600; }
     <button class="nav-item" onclick="navigate('templates')">
       <span class="nav-icon">🎨</span> Templates
     </button>
+    <button class="nav-item" onclick="navigate('parallax')">
+      <span class="nav-icon">🎬</span> Parallax Library
+    </button>
 
     <div class="nav-divider"></div>
     <div class="nav-section-label">Tools</div>
@@ -1454,6 +1457,20 @@ td.bold { color: var(--white); font-weight: 600; }
     </div>
     <div class="cat-bar" id="cat-bar"></div>
     <div id="templates-container"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PARALLAX LIBRARY PAGE
+  ══════════════════════════════════════ -->
+  <div class="page" id="page-parallax">
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1>Parallax Library</h1>
+        <p>Scroll-driven SVG animations — browse and reuse across templates</p>
+      </div>
+    </div>
+    <div class="cat-bar" id="plx-cat-bar"></div>
+    <div id="parallax-container"></div>
   </div>
 
   <!-- ══════════════════════════════════════
@@ -2991,7 +3008,7 @@ const SEED = {
     // Food & Dining
     {id:'omakase',      name:'Omakase',    niche:'Premium Sushi & Japanese', category:'food-dining', color:'#C8A96E', status:'ready', path:'https://webnari.io/omakase',
      icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>`},
-    {id:'sushiroll',    name:'SushiRoll',  niche:'Premium Sushi Bar',  category:'food-dining', color:'#E74C3C', status:'ready', path:'https://webnari.io/sushiroll',
+    {id:'sushiroll',    name:'SushiRoll',  niche:'Premium Sushi Bar',  category:'food-dining', color:'#E74C3C', status:'planned', path:'',
      icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></svg>`},
     {id:'subcraft',     name:'SubCraft',   niche:'Premium Deli Subs',  category:'food-dining', color:'#D4A017', status:'ready', path:'https://webnari.io/subcraft',
      icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>`},
@@ -3016,6 +3033,8 @@ const SEED = {
     {id:'salon',        name:'StylePro',   niche:'Salon',        category:'beauty', color:'#D946EF', status:'planned', path:'',
      icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2m-9-11h2m18 0h2m-3.64-6.36l-1.42 1.42M6.06 17.94l-1.42 1.42m0-12.72l1.42 1.42m11.88 11.88l1.42 1.42"/></svg>`},
     // E-Commerce
+    {id:'wookwear',      name:'Wook Wear',  niche:'Handmade E-commerce', category:'ecommerce', color:'#FF2D9B', status:'ready', path:'https://webnari.io/wookwear',
+     icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2 12 5.5 8 2l-4.38 1.46a2 2 0 0 0-1.34 2.23l2.1 12.42A2 2 0 0 0 6.35 20h11.3a2 2 0 0 0 1.97-1.89l2.1-12.42a2 2 0 0 0-1.34-2.23z"/></svg>`},
     {id:'fashion-store', name:'ThreadPro',  niche:'Fashion Store',     category:'ecommerce', color:'#6366F1', status:'planned', path:'',
      icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2 12 5.5 8 2l-4.38 1.46a2 2 0 0 0-1.34 2.23l2.1 12.42A2 2 0 0 0 6.35 20h11.3a2 2 0 0 0 1.97-1.89l2.1-12.42a2 2 0 0 0-1.34-2.23z"/></svg>`},
     {id:'dropship',     name:'DropPro',    niche:'Dropshipping',      category:'ecommerce', color:'#818CF8', status:'planned', path:'',
@@ -3088,7 +3107,7 @@ localStorage.setItem(KEY, JSON.stringify(DB));
 // ════════════════════════════════════════════════════
 //  NAVIGATION
 // ════════════════════════════════════════════════════
-const TITLES = { overview:'Overview', clients:'Clients', templates:'Template Library', 'template-detail':'Template', seo:'SEO Manager', reputation:'Reputation Manager', analytics:'Analytics', leads:'Lead Tracker', ads:'Ad Campaigns', billing:'Billing', settings:'Settings', 'review-resp':'Review Responder', 'seo-writer':'SEO Writer', 'site-gen':'Site Generator', onboarding:'Client Onboarding' };
+const TITLES = { overview:'Overview', clients:'Clients', templates:'Template Library', 'template-detail':'Template', parallax:'Parallax Library', seo:'SEO Manager', reputation:'Reputation Manager', analytics:'Analytics', leads:'Lead Tracker', ads:'Ad Campaigns', billing:'Billing', settings:'Settings', 'review-resp':'Review Responder', 'seo-writer':'SEO Writer', 'site-gen':'Site Generator', onboarding:'Client Onboarding' };
 
 // ── Mobile sidebar ────────────────────────────────────
 function openSidebar() {
@@ -3116,7 +3135,7 @@ function navigate(page, param) {
     if (n.getAttribute('onclick')?.includes("'" + navPage + "'")) n.classList.add('active');
   });
   document.getElementById('topbar-title').textContent = TITLES[page] || page;
-  const renders = { overview: renderOverview, clients: renderClients, templates: renderTemplates, seo: renderSeoSelect, reputation: renderRepSelect, analytics: renderAnSelect, leads: renderLeadsSelect, ads: renderAdsSelect, billing: renderBilling, settings: loadSettings, 'review-resp': initReviewResp, 'seo-writer': initSeoWriter, 'site-gen': initSiteGen, onboarding: initOnboarding };
+  const renders = { overview: renderOverview, clients: renderClients, templates: renderTemplates, parallax: renderParallaxLibrary, seo: renderSeoSelect, reputation: renderRepSelect, analytics: renderAnSelect, leads: renderLeadsSelect, ads: renderAdsSelect, billing: renderBilling, settings: loadSettings, 'review-resp': initReviewResp, 'seo-writer': initSeoWriter, 'site-gen': initSiteGen, onboarding: initOnboarding };
   if (page === 'template-detail') renderTemplateDetail(param);
   else {
     if (page === 'templates') { activeCat = 'all'; tplSearch = ''; const si = document.getElementById('tpl-search-input'); if (si) si.value = ''; }
@@ -3376,6 +3395,72 @@ function renderTemplates() {
       <div class="template-card add-card" onclick="openAddTemplate()"><span style="font-size:28px;">+</span><span>Add Template</span></div></div>`;
   } else {
     html += `<div class="cat-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg><p>No templates${tplSearch ? ' matching "'+tplSearch+'"' : ' in this category yet'}</p><button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="openAddTemplate()">+ Add Template</button></div>`;
+  }
+
+  container.innerHTML = html;
+}
+
+// ── Parallax Library ──────────────────────────────────
+const PARALLAX_DATA = [
+  {id:'voltpro-plx',   name:'VoltPro',    desc:'Breaker Panel Build',    category:'home-construction', color:'#EAB308', url:'https://webnari.io/voltpro',    hasWebsite:true},
+  {id:'pestpro-plx',   name:'PestPro',    desc:'Shield Barrier',         category:'home-construction', color:'#F45C0A', url:'https://webnari.io/pestpro',    hasWebsite:true},
+  {id:'roofpro-plx',   name:'RoofPro',    desc:'Roof Cross-Section',     category:'home-construction', color:'#E63946', url:'https://webnari.io/roofpro',    hasWebsite:true},
+  {id:'lockpro-plx',   name:'LockPro',    desc:'Lock Assembly',          category:'home-construction', color:'#8B5CF6', url:'https://webnari.io/lockpro',    hasWebsite:true},
+  {id:'greenscape-plx', name:'GreenScape', desc:'Garden Build',          category:'landscaping',       color:'#10B981', url:'https://webnari.io/greenscape', hasWebsite:true},
+  {id:'omakase-plx',   name:'Omakase',    desc:'Sushi Plating',          category:'food-dining',       color:'#C8A96E', url:'https://webnari.io/omakase',    hasWebsite:true},
+  {id:'sushiroll-plx', name:'SushiRoll',  desc:'Sushi Roll Build',       category:'food-dining',       color:'#E74C3C', url:'https://webnari.io/sushiroll',  hasWebsite:false},
+  {id:'subcraft-plx',  name:'SubCraft',   desc:'Sub Sandwich Build',     category:'food-dining',       color:'#D4A017', url:'https://webnari.io/subcraft',   hasWebsite:true},
+  {id:'firecrust-plx', name:'FireCrust',  desc:'Wood-Fired Pizza Build', category:'food-dining',       color:'#E25822', url:'https://webnari.io/pizza-parallax', hasWebsite:false},
+];
+let plxCat = 'all';
+
+function renderParallaxLibrary() {
+  const container = document.getElementById('parallax-container');
+  const catBar = document.getElementById('plx-cat-bar');
+
+  // Get unique categories from parallax data
+  const catIds = [...new Set(PARALLAX_DATA.map(p => p.category))];
+  const cats = CATEGORIES.filter(c => catIds.includes(c.id));
+
+  // Render category bar
+  let barHtml = `<button class="cat-chip${plxCat==='all'?' active':''}" onclick="plxCat='all';renderParallaxLibrary();">All</button>`;
+  cats.forEach(c => {
+    barHtml += `<button class="cat-chip${plxCat===c.id?' active':''}" style="--cat-color:${c.color}" onclick="plxCat='${c.id}';renderParallaxLibrary();">${c.label}</button>`;
+  });
+  catBar.innerHTML = barHtml;
+  catBar.style.display = '';
+
+  // Filter
+  let items = plxCat === 'all' ? PARALLAX_DATA : PARALLAX_DATA.filter(p => p.category === plxCat);
+
+  // Render grid
+  let html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;padding:20px 0;">';
+  items.forEach(p => {
+    const cat = CATEGORIES.find(c => c.id === p.category);
+    html += `<div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s;" onmouseover="this.style.transform='translateY(-4px)';this.style.boxShadow='0 8px 30px rgba(0,0,0,0.3)'" onmouseout="this.style.transform='';this.style.boxShadow=''">
+      <div style="height:120px;background:linear-gradient(135deg,${p.color}22,${p.color}44);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;">
+        <div style="font-size:36px;font-weight:900;color:${p.color};opacity:0.25;letter-spacing:4px;">${p.name.toUpperCase()}</div>
+        <div style="position:absolute;top:10px;right:10px;display:flex;gap:6px;">
+          ${p.hasWebsite ? '<span style="font-size:10px;padding:3px 8px;border-radius:6px;background:rgba(16,185,129,0.15);color:#10B981;font-weight:600;">HAS WEBSITE</span>' : '<span style="font-size:10px;padding:3px 8px;border-radius:6px;background:rgba(255,255,255,0.08);color:var(--muted);font-weight:600;">PARALLAX ONLY</span>'}
+        </div>
+        <div style="position:absolute;bottom:10px;left:12px;">
+          <span style="font-size:10px;padding:3px 8px;border-radius:6px;background:${cat?cat.color:'#666'}22;color:${cat?cat.color:'#999'};font-weight:600;">${cat?cat.label:p.category}</span>
+        </div>
+      </div>
+      <div style="padding:16px;">
+        <h3 style="margin:0 0 4px;font-size:16px;font-weight:700;color:var(--white);">${p.name}</h3>
+        <p style="margin:0 0 14px;font-size:13px;color:var(--muted);">${p.desc}</p>
+        <a href="${p.url}" target="_blank" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:${p.color};text-decoration:none;padding:6px 14px;border:1px solid ${p.color}44;border-radius:8px;transition:background 0.2s;" onmouseover="this.style.background='${p.color}15'" onmouseout="this.style.background=''">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          View Parallax
+        </a>
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+
+  if (!items.length) {
+    html = '<div style="text-align:center;padding:60px 20px;color:var(--muted);">No parallax animations in this category</div>';
   }
 
   container.innerHTML = html;
