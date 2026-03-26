@@ -2313,14 +2313,30 @@ td.bold { color: var(--white); font-weight: 600; }
   ══════════════════════════════════════ -->
   <div class="page" id="page-lead-inbox">
     <div class="page-header">
-      <div class="page-header-left"><h1>Lead Inbox</h1><p>Centralized form submissions from all client sites</p></div>
-      <button class="btn btn-primary" onclick="openAddLead()">+ Log Lead</button>
+      <div class="page-header-left"><h1>Lead Inbox</h1><p>Centralized form submissions from all client websites</p></div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-ghost" onclick="exportLeads()">↓ Export CSV</button>
+        <button class="btn btn-primary" onclick="openAddLead()">+ Log Lead</button>
+      </div>
     </div>
-    <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
-      <select id="li-filter-client" onchange="renderLeadInbox()" style="padding:8px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:13px;"><option value="">All Clients</option></select>
-      <select id="li-filter-status" onchange="renderLeadInbox()" style="padding:8px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:13px;"><option value="">All Status</option><option value="new">New</option><option value="contacted">Contacted</option><option value="converted">Converted</option></select>
+    <!-- KPI Summary -->
+    <div id="li-summary"></div>
+    <!-- Filters -->
+    <div style="display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;align-items:center;">
+      <div style="position:relative;flex:1;min-width:200px;max-width:320px;">
+        <svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--muted);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input id="li-search" placeholder="Search leads..." oninput="renderLeadInbox()" style="width:100%;padding:9px 14px 9px 34px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:13px;">
+      </div>
+      <select id="li-filter-client" onchange="renderLeadInbox()" style="padding:9px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:13px;"><option value="">All Clients</option></select>
+      <select id="li-filter-status" onchange="renderLeadInbox()" style="padding:9px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:13px;">
+        <option value="">All Status</option><option value="new">New</option><option value="contacted">Contacted</option><option value="qualified">Qualified</option><option value="converted">Converted</option><option value="lost">Lost</option>
+      </select>
+      <select id="li-sort" onchange="renderLeadInbox()" style="padding:9px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:13px;">
+        <option value="newest">Newest First</option><option value="oldest">Oldest First</option><option value="value-high">Highest Value</option><option value="name">Name A-Z</option>
+      </select>
     </div>
-    <div class="panel"><div class="table-wrap"><table><thead><tr><th>Client</th><th>Name</th><th>Email</th><th>Phone</th><th>Source</th><th>Status</th><th>Date</th><th></th></tr></thead><tbody id="li-tbody"></tbody></table></div></div>
+    <!-- Lead list -->
+    <div id="li-content"></div>
   </div>
 
   <!-- ══════════════════════════════════════
@@ -4207,57 +4223,286 @@ function removeMonitor(id) {
 }
 
 // ════════════════════════════════════════════════════
-//  TOOL: LEAD INBOX
+//  TOOL: LEAD INBOX (Enterprise)
 // ════════════════════════════════════════════════════
-function renderLeadInbox() {
-  if (!DB.leadInbox) DB.leadInbox = [];
-  const sel = document.getElementById('li-filter-client');
-  sel.innerHTML = '<option value="">All Clients</option>' + DB.clients.map(c => `<option value="${c.id}">${c.bizName}</option>`).join('');
-  const filterClient = document.getElementById('li-filter-client').value;
-  const filterStatus = document.getElementById('li-filter-status').value;
-  let items = [...DB.leadInbox].reverse();
-  if (filterClient) items = items.filter(l => l.clientId === filterClient);
-  if (filterStatus) items = items.filter(l => l.status === filterStatus);
-  const tbody = document.getElementById('li-tbody');
-  if (!items.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:28px;">No leads yet. Click "Log Lead" to add one.</td></tr>'; return; }
-  tbody.innerHTML = items.map(l => {
-    const client = DB.clients.find(c => c.id === l.clientId);
-    const [sbg, sc] = l.status === 'new' ? ['var(--green-bg)', 'var(--green)'] : l.status === 'contacted' ? ['var(--amber-bg)', 'var(--amber)'] : ['var(--indigo-bg)', 'var(--indigo)'];
-    return `<tr>
-      <td style="font-size:12px;color:var(--muted);">${client ? client.bizName : '—'}</td>
-      <td class="bold">${l.name}</td><td>${l.email||'—'}</td><td>${l.phone||'—'}</td>
-      <td style="font-size:12px;">${l.sourceUrl||'—'}</td>
-      <td><span class="badge" style="background:${sbg};color:${sc};cursor:pointer;" onclick="cycleLead('${l.id}')">${l.status}</span></td>
-      <td style="font-size:12px;color:var(--muted);">${l.createdAt ? new Date(l.createdAt).toLocaleDateString() : ''}</td>
-      <td><button class="btn btn-ghost btn-sm btn-icon" onclick="deleteLead('${l.id}')" title="Delete" style="font-size:11px;">🗑</button></td>
-    </tr>`;
-  }).join('');
-  // Update badge
+const LEAD_STATUSES = [
+  { id: 'new',       label: 'New',       color: 'var(--red)',    bg: 'var(--red-bg)',    icon: '●' },
+  { id: 'contacted', label: 'Contacted', color: 'var(--amber)',  bg: 'var(--amber-bg)',  icon: '◐' },
+  { id: 'qualified', label: 'Qualified', color: 'var(--indigo)', bg: 'var(--indigo-bg)', icon: '◑' },
+  { id: 'converted', label: 'Converted', color: 'var(--green)',  bg: 'var(--green-bg)',  icon: '●' },
+  { id: 'lost',      label: 'Lost',      color: 'var(--muted)',  bg: 'rgba(255,255,255,0.04)', icon: '○' },
+];
+function getLeadStatus(id) { return LEAD_STATUSES.find(s => s.id === id) || LEAD_STATUSES[0]; }
+
+function updateLeadBadge() {
+  if (!DB.leadInbox) return;
   const newCount = DB.leadInbox.filter(l => l.status === 'new').length;
   const badge = document.getElementById('lead-inbox-badge');
-  if (newCount > 0) { badge.style.display = ''; badge.textContent = newCount; } else { badge.style.display = 'none'; }
+  if (badge) { if (newCount > 0) { badge.style.display = ''; badge.textContent = newCount; } else { badge.style.display = 'none'; } }
 }
+
+function renderLeadInbox() {
+  if (!DB.leadInbox) DB.leadInbox = [];
+  // Populate client filter (preserve selection)
+  const clientSel = document.getElementById('li-filter-client');
+  const prevClient = clientSel.value;
+  clientSel.innerHTML = '<option value="">All Clients</option>' + DB.clients.map(c => `<option value="${c.id}"${c.id===prevClient?' selected':''}>${c.bizName}</option>`).join('');
+
+  // Read filters
+  const search = (document.getElementById('li-search').value || '').toLowerCase();
+  const filterClient = clientSel.value;
+  const filterStatus = document.getElementById('li-filter-status').value;
+  const sort = document.getElementById('li-sort').value;
+
+  // Filter
+  let items = [...DB.leadInbox];
+  if (filterClient) items = items.filter(l => l.clientId === filterClient);
+  if (filterStatus) items = items.filter(l => l.status === filterStatus);
+  if (search) items = items.filter(l => (l.name||'').toLowerCase().includes(search) || (l.email||'').toLowerCase().includes(search) || (l.phone||'').includes(search) || (l.message||'').toLowerCase().includes(search));
+
+  // Sort
+  if (sort === 'newest') items.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  else if (sort === 'oldest') items.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+  else if (sort === 'value-high') items.sort((a, b) => (b.value || 0) - (a.value || 0));
+  else if (sort === 'name') items.sort((a, b) => (a.name || '').localeCompare(b.name || ''));
+
+  // KPI Summary
+  const allLeads = DB.leadInbox;
+  const newLeads = allLeads.filter(l => l.status === 'new').length;
+  const contactedLeads = allLeads.filter(l => l.status === 'contacted').length;
+  const qualifiedLeads = allLeads.filter(l => l.status === 'qualified').length;
+  const convertedLeads = allLeads.filter(l => l.status === 'converted').length;
+  const totalValue = allLeads.filter(l => l.status === 'converted').reduce((s, l) => s + (l.value || 0), 0);
+  const convRate = allLeads.length > 0 ? ((convertedLeads / allLeads.length) * 100).toFixed(0) : 0;
+  // Leads this week
+  const weekAgo = Date.now() - 7 * 86400000;
+  const thisWeek = allLeads.filter(l => new Date(l.createdAt).getTime() > weekAgo).length;
+
+  document.getElementById('li-summary').innerHTML = `<div class="kpi-grid" style="margin-bottom:20px;">
+    <div class="kpi-card" style="--accent:var(--red)"><div class="kpi-glow" style="background:var(--red)"></div>
+      <div class="kpi-label">New Leads <span class="kpi-icon">🔴</span></div>
+      <div class="kpi-value">${newLeads}</div>
+      <div class="kpi-trend ${newLeads > 0 ? 'up' : 'neutral'}">${newLeads > 0 ? 'Needs attention' : 'All caught up'}</div>
+    </div>
+    <div class="kpi-card" style="--accent:var(--indigo)"><div class="kpi-glow"></div>
+      <div class="kpi-label">In Pipeline <span class="kpi-icon">📊</span></div>
+      <div class="kpi-value">${contactedLeads + qualifiedLeads}</div>
+      <div class="kpi-trend neutral">${contactedLeads} contacted, ${qualifiedLeads} qualified</div>
+    </div>
+    <div class="kpi-card" style="--accent:var(--green)"><div class="kpi-glow" style="background:var(--green)"></div>
+      <div class="kpi-label">Converted <span class="kpi-icon">✓</span></div>
+      <div class="kpi-value">${convertedLeads}</div>
+      <div class="kpi-trend up">${convRate}% conversion rate</div>
+    </div>
+    <div class="kpi-card" style="--accent:var(--amber)"><div class="kpi-glow" style="background:var(--amber)"></div>
+      <div class="kpi-label">This Week <span class="kpi-icon">📅</span></div>
+      <div class="kpi-value">${thisWeek}</div>
+      <div class="kpi-trend neutral">${allLeads.length} total all time</div>
+    </div>
+  </div>`;
+
+  // Lead cards
+  const container = document.getElementById('li-content');
+  if (!items.length) {
+    container.innerHTML = `<div style="text-align:center;padding:60px;color:var(--muted);">
+      ${allLeads.length === 0 ? 'No leads yet. Form submissions from your client websites will appear here.<br><br>Click "+ Log Lead" to manually add one, or leads auto-populate when clients submit forms.' : 'No leads match your filters.'}
+    </div>`;
+    updateLeadBadge();
+    return;
+  }
+
+  let html = '';
+  items.forEach(l => {
+    const client = DB.clients.find(c => c.id === l.clientId);
+    const st = getLeadStatus(l.status);
+    const age = timeAgo(new Date(l.createdAt));
+    const isUrgent = l.status === 'new' && (Date.now() - new Date(l.createdAt).getTime()) > 86400000; // >24h old and still new
+
+    html += `<div class="panel" style="padding:0;margin-bottom:12px;border-left:3px solid ${st.color};${isUrgent ? 'animation:pulse 2s infinite;' : ''}">
+      <div style="padding:18px 20px;display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;">
+        <!-- Left: Avatar + Main Info -->
+        <div style="width:40px;height:40px;border-radius:10px;background:${st.bg};display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:${st.color};flex-shrink:0;">${(l.name||'?').charAt(0).toUpperCase()}</div>
+        <div style="flex:1;min-width:200px;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+            <span style="font-family:var(--font-head);font-weight:700;color:var(--white);font-size:15px;">${l.name}</span>
+            <span class="badge" style="background:${st.bg};color:${st.color};font-size:10px;cursor:pointer;" onclick="event.stopPropagation();cycleLeadStatus('${l.id}')" title="Click to advance status">${st.icon} ${st.label}</span>
+            ${isUrgent ? '<span style="font-size:9px;padding:2px 6px;border-radius:4px;background:var(--red-bg);color:var(--red);font-weight:700;animation:pulse 2s infinite;">URGENT — 24h+</span>' : ''}
+          </div>
+          <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:12px;color:var(--text);margin-bottom:6px;">
+            ${l.email ? `<a href="mailto:${l.email}" style="color:var(--text);text-decoration:none;" onmouseover="this.style.color='var(--indigo)'" onmouseout="this.style.color='var(--text)'">${l.email}</a>` : ''}
+            ${l.phone ? `<a href="tel:${l.phone}" style="color:var(--text);text-decoration:none;" onmouseover="this.style.color='var(--indigo)'" onmouseout="this.style.color='var(--text)'">${l.phone}</a>` : ''}
+          </div>
+          ${l.message ? `<div style="font-size:13px;color:var(--muted);line-height:1.5;padding:10px 12px;background:var(--surface);border-radius:8px;margin-top:8px;border-left:2px solid ${st.color};max-height:80px;overflow:hidden;">${l.message}</div>` : ''}
+          ${l.notes ? `<div style="font-size:11px;color:var(--amber);margin-top:6px;font-style:italic;">Note: ${l.notes}</div>` : ''}
+        </div>
+        <!-- Right: Meta + Actions -->
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;min-width:140px;">
+          <div style="font-size:11px;color:var(--muted);">${age}</div>
+          ${client ? `<div style="font-size:11px;padding:3px 8px;border-radius:6px;background:var(--surface);color:var(--text);">${client.bizName}</div>` : ''}
+          ${l.sourceUrl ? `<div style="font-size:10px;color:var(--muted);word-break:break-all;">via ${l.sourceUrl.replace(/https?:\/\//,'')}</div>` : ''}
+          ${l.value ? `<div style="font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--green);">$${l.value}</div>` : ''}
+          <div style="display:flex;gap:4px;margin-top:4px;">
+            <button class="btn btn-ghost btn-sm" style="font-size:10px;padding:4px 10px;" onclick="openEditLead('${l.id}')">Edit</button>
+            <button class="btn btn-ghost btn-sm" style="font-size:10px;padding:4px 10px;" onclick="addLeadNote('${l.id}')">Note</button>
+            <button class="btn btn-ghost btn-sm btn-icon" style="font-size:10px;padding:4px 6px;color:var(--red);" onclick="deleteLead('${l.id}')" title="Delete">✕</button>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  });
+
+  container.innerHTML = html;
+  updateLeadBadge();
+}
+
 function openAddLead() {
   const clients = DB.clients.map(c => `<option value="${c.id}">${c.bizName}</option>`).join('');
-  const html = `<div style="display:grid;gap:14px;max-width:500px;">
-    <select id="al-client" style="padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);"><option value="">Select Client</option>${clients}</select>
-    <input id="al-name" placeholder="Lead Name" style="padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);">
-    <input id="al-email" placeholder="Email" style="padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);">
-    <input id="al-phone" placeholder="Phone" style="padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);">
-    <input id="al-source" placeholder="Source URL (e.g. webnari.io/voltpro)" style="padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);">
-    <textarea id="al-msg" placeholder="Message" rows="3" style="padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);resize:vertical;"></textarea>
-    <button class="btn btn-primary" onclick="saveLead()">Save Lead</button>
-  </div>`;
-  openGenericModal('Log New Lead', html);
+  const inputStyle = 'padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:13px;width:100%;';
+  openGenericModal('Log New Lead', `<div style="display:grid;gap:14px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Name *</label><input id="al-name" placeholder="John Smith" style="${inputStyle}"></div>
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Client Site</label><select id="al-client" style="${inputStyle}"><option value="">— Select —</option>${clients}</select></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Email</label><input id="al-email" type="email" placeholder="john@email.com" style="${inputStyle}"></div>
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Phone</label><input id="al-phone" type="tel" placeholder="(555) 123-4567" style="${inputStyle}"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Source URL</label><input id="al-source" placeholder="webnari.io/voltpro" style="${inputStyle}"></div>
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Estimated Value ($)</label><input id="al-value" type="number" placeholder="0" style="${inputStyle}"></div>
+    </div>
+    <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Message</label><textarea id="al-msg" placeholder="What did the lead ask about?" rows="3" style="${inputStyle}resize:vertical;"></textarea></div>
+    <button class="btn btn-primary" onclick="saveLead()" style="justify-content:center;">Save Lead</button>
+  </div>`);
 }
+
 function saveLead() {
   if (!DB.leadInbox) DB.leadInbox = [];
-  const lead = { id: 'l' + Date.now(), clientId: document.getElementById('al-client').value, name: document.getElementById('al-name').value, email: document.getElementById('al-email').value, phone: document.getElementById('al-phone').value, sourceUrl: document.getElementById('al-source').value, message: document.getElementById('al-msg').value, status: 'new', createdAt: new Date().toISOString(), notes: '' };
-  if (!lead.name) { toast('Name is required', 'error'); return; }
-  DB.leadInbox.push(lead); save(); closeGenericModal(); renderLeadInbox(); toast('Lead logged!', 'success');
+  const name = document.getElementById('al-name').value.trim();
+  if (!name) { toast('Lead name is required', 'error'); return; }
+  const lead = {
+    id: 'li' + Date.now(),
+    clientId: document.getElementById('al-client').value,
+    name: name,
+    email: document.getElementById('al-email').value.trim(),
+    phone: document.getElementById('al-phone').value.trim(),
+    sourceUrl: document.getElementById('al-source').value.trim(),
+    message: document.getElementById('al-msg').value.trim(),
+    value: parseFloat(document.getElementById('al-value').value) || 0,
+    status: 'new',
+    createdAt: new Date().toISOString(),
+    notes: '',
+    history: [{ action: 'created', timestamp: new Date().toISOString() }]
+  };
+  DB.leadInbox.push(lead);
+  // Also add to the client's per-client leads if a client was selected
+  if (lead.clientId) {
+    const client = DB.clients.find(c => c.id === lead.clientId);
+    if (client) {
+      if (!client.leads) client.leads = [];
+      client.leads.push({ id: lead.id, name: lead.name, phone: lead.phone, source: lead.sourceUrl || 'Lead Inbox', stage: 'new', date: new Date().toISOString().slice(0,10), value: lead.value, notes: lead.message });
+    }
+  }
+  save(); closeGenericModal(); renderLeadInbox();
+  DB.activity = DB.activity || [];
+  DB.activity.unshift({ text: `<strong>New lead:</strong> ${lead.name}${lead.clientId ? ' for ' + (DB.clients.find(c=>c.id===lead.clientId)||{}).bizName : ''}`, time: 'Just now', type: 'green' });
+  if (DB.activity.length > 20) DB.activity.pop();
+  save();
+  toast('Lead logged!', 'success');
 }
-function cycleLead(id) { const l = DB.leadInbox.find(x => x.id === id); if (!l) return; l.status = l.status === 'new' ? 'contacted' : l.status === 'contacted' ? 'converted' : 'new'; save(); renderLeadInbox(); }
-function deleteLead(id) { DB.leadInbox = DB.leadInbox.filter(x => x.id !== id); save(); renderLeadInbox(); toast('Lead removed', 'success'); }
+
+function cycleLeadStatus(id) {
+  const l = DB.leadInbox.find(x => x.id === id);
+  if (!l) return;
+  const order = ['new', 'contacted', 'qualified', 'converted', 'lost'];
+  const idx = order.indexOf(l.status);
+  l.status = order[(idx + 1) % order.length];
+  if (!l.history) l.history = [];
+  l.history.push({ action: 'status_changed', to: l.status, timestamp: new Date().toISOString() });
+  save(); renderLeadInbox();
+}
+
+function addLeadNote(id) {
+  const l = DB.leadInbox.find(x => x.id === id);
+  if (!l) return;
+  openGenericModal('Add Note', `<div style="display:grid;gap:12px;">
+    <div style="font-size:13px;color:var(--white);font-weight:600;">Lead: ${l.name}</div>
+    ${l.notes ? `<div style="font-size:12px;color:var(--muted);padding:10px;background:var(--surface);border-radius:8px;">Current: ${l.notes}</div>` : ''}
+    <textarea id="ln-text" placeholder="Add a follow-up note..." rows="3" style="padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:13px;resize:vertical;">${l.notes||''}</textarea>
+    <button class="btn btn-primary" onclick="saveLeadNote('${id}')">Save Note</button>
+  </div>`);
+}
+
+function saveLeadNote(id) {
+  const l = DB.leadInbox.find(x => x.id === id);
+  if (!l) return;
+  l.notes = document.getElementById('ln-text').value;
+  if (!l.history) l.history = [];
+  l.history.push({ action: 'note_added', timestamp: new Date().toISOString() });
+  save(); closeGenericModal(); renderLeadInbox(); toast('Note saved', 'success');
+}
+
+function openEditLead(id) {
+  const l = DB.leadInbox.find(x => x.id === id);
+  if (!l) return;
+  const clients = DB.clients.map(c => `<option value="${c.id}"${c.id===l.clientId?' selected':''}>${c.bizName}</option>`).join('');
+  const statuses = LEAD_STATUSES.map(s => `<option value="${s.id}"${s.id===l.status?' selected':''}>${s.label}</option>`).join('');
+  const inputStyle = 'padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:13px;width:100%;';
+  openGenericModal('Edit Lead', `<div style="display:grid;gap:14px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Name</label><input id="el-name" value="${l.name||''}" style="${inputStyle}"></div>
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Status</label><select id="el-status" style="${inputStyle}">${statuses}</select></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Email</label><input id="el-email" value="${l.email||''}" style="${inputStyle}"></div>
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Phone</label><input id="el-phone" value="${l.phone||''}" style="${inputStyle}"></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Client</label><select id="el-client" style="${inputStyle}"><option value="">—</option>${clients}</select></div>
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Value ($)</label><input id="el-value" type="number" value="${l.value||0}" style="${inputStyle}"></div>
+    </div>
+    <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Message</label><textarea id="el-msg" rows="3" style="${inputStyle}resize:vertical;">${l.message||''}</textarea></div>
+    ${l.history && l.history.length ? `<div style="font-size:11px;color:var(--muted);"><strong>History:</strong> ${l.history.map(h => h.action + (h.to?' → '+h.to:'') + ' (' + timeAgo(new Date(h.timestamp)) + ')').join(' · ')}</div>` : ''}
+    <button class="btn btn-primary" onclick="saveEditLead('${id}')" style="justify-content:center;">Save Changes</button>
+  </div>`);
+}
+
+function saveEditLead(id) {
+  const l = DB.leadInbox.find(x => x.id === id);
+  if (!l) return;
+  l.name = document.getElementById('el-name').value.trim();
+  l.email = document.getElementById('el-email').value.trim();
+  l.phone = document.getElementById('el-phone').value.trim();
+  l.clientId = document.getElementById('el-client').value;
+  l.status = document.getElementById('el-status').value;
+  l.value = parseFloat(document.getElementById('el-value').value) || 0;
+  l.message = document.getElementById('el-msg').value.trim();
+  if (!l.history) l.history = [];
+  l.history.push({ action: 'edited', timestamp: new Date().toISOString() });
+  save(); closeGenericModal(); renderLeadInbox(); toast('Lead updated', 'success');
+}
+
+function deleteLead(id) {
+  if (!confirm('Delete this lead? This cannot be undone.')) return;
+  DB.leadInbox = DB.leadInbox.filter(x => x.id !== id);
+  save(); renderLeadInbox(); toast('Lead removed', 'success');
+}
+
+function exportLeads() {
+  if (!DB.leadInbox || !DB.leadInbox.length) { toast('No leads to export', 'error'); return; }
+  const headers = ['Name','Email','Phone','Client','Source','Status','Value','Message','Date','Notes'];
+  const rows = DB.leadInbox.map(l => {
+    const client = DB.clients.find(c => c.id === l.clientId);
+    return [l.name, l.email, l.phone, client ? client.bizName : '', l.sourceUrl, l.status, l.value || 0, '"'+(l.message||'').replace(/"/g,'""')+'"', l.createdAt ? new Date(l.createdAt).toLocaleDateString() : '', '"'+(l.notes||'').replace(/"/g,'""')+'"'];
+  });
+  const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'webnari-leads-' + new Date().toISOString().slice(0,10) + '.csv';
+  a.click(); URL.revokeObjectURL(url);
+  toast('Leads exported as CSV', 'success');
+}
 
 // Generic modal helper
 function openGenericModal(title, bodyHtml) {
