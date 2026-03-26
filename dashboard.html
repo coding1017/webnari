@@ -1461,50 +1461,37 @@ td.bold { color: var(--white); font-weight: 600; }
     <div class="page-header">
       <div class="page-header-left">
         <h1>Clients</h1>
-        <p>Manage all your Webnari clients and their sites</p>
+        <p>Manage all your Webnari clients and their websites</p>
       </div>
-      <button class="btn btn-primary" onclick="openAddClient()">+ Add Client</button>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-ghost" onclick="exportClients()">↓ Export CSV</button>
+        <button class="btn btn-primary" onclick="openAddClient()">+ Add Client</button>
+      </div>
     </div>
-
-    <div class="filter-bar">
-      <input class="filter-input" type="text" id="client-search" placeholder="🔎  Search by name, city, template…" oninput="renderClients()">
+    <!-- KPI Summary -->
+    <div id="clients-summary"></div>
+    <!-- Filters -->
+    <div class="filter-bar" style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:16px;">
+      <div style="position:relative;flex:1;min-width:200px;max-width:340px;">
+        <svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--muted);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input class="filter-input" type="text" id="client-search" placeholder="Search by name, contact, template..." oninput="renderClients()" style="padding-left:34px;width:100%;">
+      </div>
       <select class="filter-select" id="filter-status" onchange="renderClients()">
-        <option value="">All Statuses</option>
-        <option value="live">Live</option>
-        <option value="onboarding">Onboarding</option>
-        <option value="draft">Draft</option>
-        <option value="maintenance">Maintenance</option>
+        <option value="">All Statuses</option><option value="live">Live</option><option value="onboarding">Onboarding</option><option value="draft">Draft</option><option value="maintenance">Maintenance</option>
       </select>
       <select class="filter-select" id="filter-plan" onchange="renderClients()">
-        <option value="">All Plans</option>
-        <option value="starter">Starter</option>
-        <option value="standard">Standard</option>
-        <option value="premium">Premium</option>
+        <option value="">All Plans</option><option value="starter">Starter</option><option value="standard">Standard</option><option value="premium">Premium</option>
       </select>
-      <div class="filter-count" id="client-filter-count"></div>
+      <select class="filter-select" id="filter-payment" onchange="renderClients()">
+        <option value="">All Payments</option><option value="active">Active</option><option value="past_due">Past Due</option><option value="cancelled">Cancelled</option>
+      </select>
+      <select class="filter-select" id="client-sort" onchange="renderClients()">
+        <option value="newest">Newest First</option><option value="name">Name A-Z</option><option value="mrr-high">Highest MRR</option><option value="mrr-low">Lowest MRR</option><option value="billing">Next Billing</option>
+      </select>
+      <div class="filter-count" id="client-filter-count" style="font-size:12px;color:var(--muted);"></div>
     </div>
-
-    <div class="panel">
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Business</th>
-              <th>Template</th>
-              <th>Status</th>
-              <th>Plan</th>
-              <th>Monthly</th>
-              <th>Live URL</th>
-              <th>Next Bill</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="clients-tbody">
-            <tr><td colspan="8" style="text-align:center;color:var(--muted);padding:48px;">No clients yet. Add your first one!</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <!-- Table -->
+    <div id="clients-table-wrap"></div>
   </div>
 
   <!-- ══════════════════════════════════════
@@ -3596,40 +3583,154 @@ function renderOverview() {
 //  CLIENTS
 // ════════════════════════════════════════════════════
 function renderClients() {
-  const q = (document.getElementById('client-search')?.value||'').toLowerCase();
-  const sf = document.getElementById('filter-status')?.value||'';
-  const pf = document.getElementById('filter-plan')?.value||'';
-  const filtered = DB.clients.filter(c => {
-    const ms = !q || c.bizName.toLowerCase().includes(q) || (c.contactName||'').toLowerCase().includes(q) || (c.template||'').includes(q) || (c.notes||'').toLowerCase().includes(q);
-    return ms && (!sf||c.status===sf) && (!pf||c.plan===pf);
-  });
-  document.getElementById('client-filter-count').textContent = `${filtered.length} of ${DB.clients.length}`;
+  const q = (document.getElementById('client-search')?.value || '').toLowerCase();
+  const sf = document.getElementById('filter-status')?.value || '';
+  const pf = document.getElementById('filter-plan')?.value || '';
+  const payf = document.getElementById('filter-payment')?.value || '';
+  const sort = document.getElementById('client-sort')?.value || 'newest';
 
-  const tb = document.getElementById('clients-tbody');
+  // Filter
+  let filtered = DB.clients.filter(c => {
+    const ms = !q || c.bizName.toLowerCase().includes(q) || (c.contactName || '').toLowerCase().includes(q) || (c.template || '').includes(q) || (c.email || '').toLowerCase().includes(q) || (c.notes || '').toLowerCase().includes(q);
+    return ms && (!sf || c.status === sf) && (!pf || c.plan === pf) && (!payf || c.paymentStatus === payf);
+  });
+
+  // Sort
+  if (sort === 'name') filtered.sort((a, b) => (a.bizName || '').localeCompare(b.bizName || ''));
+  else if (sort === 'mrr-high') filtered.sort((a, b) => (b.monthlyRate || 0) - (a.monthlyRate || 0));
+  else if (sort === 'mrr-low') filtered.sort((a, b) => (a.monthlyRate || 0) - (b.monthlyRate || 0));
+  else if (sort === 'billing') filtered.sort((a, b) => (a.billingDate || 'z').localeCompare(b.billingDate || 'z'));
+  else filtered.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+
+  document.getElementById('client-filter-count').textContent = `Showing ${filtered.length} of ${DB.clients.length} clients`;
+
+  // KPI Summary
+  const allActive = DB.clients.filter(c => c.paymentStatus === 'active');
+  const totalMRR = allActive.reduce((s, c) => s + (c.monthlyRate || 0), 0);
+  const filteredMRR = filtered.filter(c => c.paymentStatus === 'active').reduce((s, c) => s + (c.monthlyRate || 0), 0);
+  const liveCount = DB.clients.filter(c => c.status === 'live').length;
+  const onboardCount = DB.clients.filter(c => c.status === 'onboarding').length;
+  const pastDueCount = DB.clients.filter(c => c.paymentStatus === 'past_due').length;
+  const avgMRR = allActive.length > 0 ? Math.round(totalMRR / allActive.length) : 0;
+
+  document.getElementById('clients-summary').innerHTML = `<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px;">
+    <div class="kpi-card" style="--accent:var(--green);padding:16px;"><div class="kpi-glow" style="background:var(--green)"></div>
+      <div class="kpi-label">Total MRR</div><div class="kpi-value" style="font-size:26px;">$${totalMRR.toLocaleString()}</div><div class="kpi-trend up">${allActive.length} paying</div></div>
+    <div class="kpi-card" style="--accent:var(--indigo);padding:16px;"><div class="kpi-glow"></div>
+      <div class="kpi-label">Total Clients</div><div class="kpi-value" style="font-size:26px;">${DB.clients.length}</div><div class="kpi-trend neutral">${liveCount} live, ${onboardCount} onboarding</div></div>
+    <div class="kpi-card" style="--accent:var(--amber);padding:16px;"><div class="kpi-glow" style="background:var(--amber)"></div>
+      <div class="kpi-label">Avg Revenue</div><div class="kpi-value" style="font-size:26px;">$${avgMRR}</div><div class="kpi-trend neutral">Per active client</div></div>
+    <div class="kpi-card" style="--accent:${pastDueCount > 0 ? 'var(--red)' : 'var(--green)'};padding:16px;"><div class="kpi-glow" style="background:${pastDueCount > 0 ? 'var(--red)' : 'var(--green)'}"></div>
+      <div class="kpi-label">Past Due</div><div class="kpi-value" style="font-size:26px;">${pastDueCount}</div><div class="kpi-trend ${pastDueCount > 0 ? 'neutral' : 'up'}">${pastDueCount > 0 ? 'Needs attention' : 'All current'}</div></div>
+    <div class="kpi-card" style="--accent:var(--purple);padding:16px;"><div class="kpi-glow" style="background:var(--purple)"></div>
+      <div class="kpi-label">Filtered MRR</div><div class="kpi-value" style="font-size:26px;">$${filteredMRR.toLocaleString()}</div><div class="kpi-trend neutral">From ${filtered.filter(c=>c.paymentStatus==='active').length} shown</div></div>
+  </div>`;
+
+  // Table
+  const wrap = document.getElementById('clients-table-wrap');
   if (!filtered.length) {
-    tb.innerHTML = `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:48px;">No clients match filters</td></tr>`;
+    wrap.innerHTML = `<div class="panel" style="padding:60px;text-align:center;color:var(--muted);">${DB.clients.length === 0 ? 'No clients yet. Click "+ Add Client" to get started.' : 'No clients match your current filters.'}</div>`;
     return;
   }
-  tb.innerHTML = filtered.map(c => `
-    <tr>
+
+  const healthChecks = DB.healthChecks || {};
+  let html = `<div class="panel" style="padding:0;"><div class="table-wrap"><table><thead><tr>
+    <th style="width:30px;"><input type="checkbox" id="client-select-all" onchange="toggleAllClients(this.checked)" style="accent-color:var(--indigo);"></th>
+    <th>Business</th><th>Template</th><th>Status</th><th>Plan</th><th>Monthly</th><th>Payment</th><th>Health</th><th>Next Bill</th><th>Actions</th>
+  </tr></thead><tbody>`;
+
+  filtered.forEach(c => {
+    const hc = healthChecks[c.id];
+    const hLast = hc && hc.history && hc.history.length ? hc.history[hc.history.length - 1] : null;
+    const [hDot, hTip] = hLast ? (hLast.status === 'up' ? ['var(--green)', 'Online — ' + hLast.responseMs + 'ms'] : ['var(--red)', 'Down']) : ['var(--muted)', 'Not checked'];
+    const [payBg, payCol, payLabel] = c.paymentStatus === 'active' ? ['var(--green-bg)', 'var(--green)', 'Active'] : c.paymentStatus === 'past_due' ? ['var(--red-bg)', 'var(--red)', 'Past Due'] : c.paymentStatus === 'cancelled' ? ['rgba(255,255,255,0.04)', 'var(--muted)', 'Cancelled'] : ['rgba(255,255,255,0.04)', 'var(--muted)', c.paymentStatus || '—'];
+    const billingDue = c.billingDate && c.billingDate <= new Date().toISOString().slice(0, 10);
+
+    html += `<tr style="transition:background 0.15s;">
+      <td><input type="checkbox" class="client-checkbox" data-id="${c.id}" style="accent-color:var(--indigo);"></td>
       <td>
-        <div style="font-weight:600;color:var(--white);">${c.bizName}</div>
-        <div style="font-size:12px;color:var(--muted);">${c.contactName||''}</div>
-      </td>
-      <td style="font-size:13px;">${getTplName(c.template)||'—'}</td>
-      <td>${statusBadge(c.status)}</td>
-      <td>${planBadge(c.plan)}</td>
-      <td style="color:var(--green);font-weight:700;">$${c.monthlyRate||0}<span style="color:var(--muted);font-weight:400;font-size:11px;">/mo</span></td>
-      <td>${c.liveUrl ? `<a href="${c.liveUrl}" target="_blank" style="color:var(--indigo2);font-size:12px;">${c.liveUrl.replace('https://','')}</a>` : '<span style="color:var(--muted);">—</span>'}</td>
-      <td style="color:var(--muted);font-size:12.5px;">${c.billingDate||'—'}</td>
-      <td>
-        <div style="display:flex;gap:5px;">
-          <button class="btn btn-ghost btn-sm btn-icon" title="Edit" onclick="editClient('${c.id}')">✏️</button>
-          <button class="btn btn-ghost btn-sm btn-icon" title="SEO" onclick="navigate('seo');setTimeout(()=>selectSeoClient('${c.id}'),60)">🔍</button>
-          <button class="btn btn-danger btn-sm btn-icon" title="Delete" onclick="deleteClient('${c.id}')">🗑</button>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <div style="width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--indigo-bg),var(--surface));display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--indigo);font-size:13px;flex-shrink:0;">${(c.bizName||'?').charAt(0).toUpperCase()}</div>
+          <div>
+            <div style="font-weight:600;color:var(--white);font-size:13px;">${c.bizName}</div>
+            <div style="font-size:11px;color:var(--muted);">${c.contactName || ''}${c.email ? ' · ' + c.email : ''}</div>
+          </div>
         </div>
       </td>
-    </tr>`).join('');
+      <td style="font-size:12px;color:var(--text);">${getTplName(c.template) || '—'}</td>
+      <td>${statusBadge(c.status)}</td>
+      <td>${planBadge(c.plan)}</td>
+      <td><span style="font-family:var(--font-head);font-weight:700;color:var(--green);font-size:14px;">$${c.monthlyRate || 0}</span><span style="font-size:10px;color:var(--muted);">/mo</span></td>
+      <td><span class="badge" style="background:${payBg};color:${payCol};font-size:10px;">${payLabel}</span></td>
+      <td><span title="${hTip}" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${hDot};"></span></td>
+      <td style="font-size:12px;color:${billingDue ? 'var(--red)' : 'var(--muted)'};">${c.billingDate ? new Date(c.billingDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '—'}</td>
+      <td>
+        <div style="display:flex;gap:4px;">
+          <button class="btn btn-ghost btn-sm btn-icon" title="Edit" onclick="editClient('${c.id}')" style="font-size:11px;padding:4px 6px;">✏️</button>
+          <button class="btn btn-ghost btn-sm btn-icon" title="Portal" onclick="document.getElementById('portal-client').value='${c.id}';navigate('portal');setTimeout(renderPortal,60)" style="font-size:11px;padding:4px 6px;">👁️</button>
+          <button class="btn btn-ghost btn-sm btn-icon" title="SEO" onclick="navigate('seo');setTimeout(()=>selectSeoClient('${c.id}'),60)" style="font-size:11px;padding:4px 6px;">🔍</button>
+          <button class="btn btn-ghost btn-sm btn-icon" title="Delete" onclick="deleteClient('${c.id}')" style="font-size:11px;padding:4px 6px;color:var(--red);">✕</button>
+        </div>
+      </td>
+    </tr>`;
+  });
+
+  html += '</tbody></table></div>';
+  // Bulk actions bar
+  html += `<div id="bulk-actions" style="display:none;padding:12px 20px;background:var(--indigo-bg);border-top:1px solid var(--indigo-border);display:none;align-items:center;gap:12px;">
+    <span style="font-size:12px;color:var(--indigo);font-weight:600;" id="bulk-count">0 selected</span>
+    <button class="btn btn-ghost btn-sm" style="font-size:11px;" onclick="bulkAction('live')">Set Live</button>
+    <button class="btn btn-ghost btn-sm" style="font-size:11px;" onclick="bulkAction('onboarding')">Set Onboarding</button>
+    <button class="btn btn-ghost btn-sm" style="font-size:11px;" onclick="bulkAction('maintenance')">Set Maintenance</button>
+    <button class="btn btn-ghost btn-sm" style="font-size:11px;color:var(--red);margin-left:auto;" onclick="bulkDelete()">Delete Selected</button>
+  </div>`;
+  html += '</div>';
+  wrap.innerHTML = html;
+
+  // Wire up checkbox listeners
+  document.querySelectorAll('.client-checkbox').forEach(cb => {
+    cb.addEventListener('change', updateBulkBar);
+  });
+}
+
+function toggleAllClients(checked) {
+  document.querySelectorAll('.client-checkbox').forEach(cb => { cb.checked = checked; });
+  updateBulkBar();
+}
+
+function updateBulkBar() {
+  const checked = document.querySelectorAll('.client-checkbox:checked');
+  const bar = document.getElementById('bulk-actions');
+  if (checked.length > 0) {
+    bar.style.display = 'flex';
+    document.getElementById('bulk-count').textContent = checked.length + ' selected';
+  } else {
+    bar.style.display = 'none';
+  }
+}
+
+function bulkAction(status) {
+  const ids = [...document.querySelectorAll('.client-checkbox:checked')].map(cb => cb.dataset.id);
+  ids.forEach(id => { const c = DB.clients.find(x => x.id === id); if (c) c.status = status; });
+  save(); renderClients(); toast(ids.length + ' clients updated to ' + status, 'success');
+}
+
+function bulkDelete() {
+  const ids = [...document.querySelectorAll('.client-checkbox:checked')].map(cb => cb.dataset.id);
+  if (!confirm('Delete ' + ids.length + ' client(s)? This cannot be undone.')) return;
+  DB.clients = DB.clients.filter(c => !ids.includes(c.id));
+  save(); renderClients(); toast(ids.length + ' clients deleted', 'success');
+}
+
+function exportClients() {
+  if (!DB.clients.length) { toast('No clients to export', 'error'); return; }
+  const headers = ['Business','Contact','Email','Phone','Template','Status','Plan','Monthly','Payment','Live URL','Billing Date','Notes'];
+  const rows = DB.clients.map(c => [c.bizName, c.contactName, c.email, c.phone, getTplName(c.template), c.status, c.plan, c.monthlyRate || 0, c.paymentStatus, c.liveUrl, c.billingDate, '"' + (c.notes || '').replace(/"/g, '""') + '"']);
+  const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'webnari-clients-' + new Date().toISOString().slice(0, 10) + '.csv'; a.click(); URL.revokeObjectURL(url);
+  toast('Clients exported as CSV', 'success');
 }
 
 // ════════════════════════════════════════════════════
