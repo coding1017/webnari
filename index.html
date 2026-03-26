@@ -168,9 +168,9 @@ section{padding:120px 48px;position:relative}
 
 /* ── Mobile Showcase (sequential scroll-locked parallaxes) ── */
 .showcase-mobile-wrap{display:none}
-.mob-parallax{height:400vh;position:relative;background:#000}
-.mob-parallax .mr-scroll-sequence{height:100%;position:relative}
-.mob-parallax .mr-sequence-sticky{position:sticky;top:0}
+.mob-parallax-pair{height:400vh;position:relative;background:#000}
+.mob-parallax-sticky{position:sticky;top:0;height:100vh;display:flex;flex-direction:column}
+.mob-pane{flex:1;position:relative;overflow:hidden;background:#000}
 .mr-scene-glow{opacity:0!important}
 .mr-seq-bg{background:#000!important}
 /* Namespaced RoofPro parallax styles (mr-*) */
@@ -178,8 +178,8 @@ section{padding:120px 48px;position:relative}
 .mr-sequence-sticky{position:relative;top:0;left:0;right:0;height:100vh;overflow:hidden;background:#000}
 .mr-seq-bg{position:absolute;inset:0;z-index:1;transition:background .1s}
 .mr-scene-glow{position:absolute;inset:0;z-index:2;background:radial-gradient(ellipse 60% 60% at 50% 60%,rgba(230,57,70,.1),transparent 70%);opacity:0}
-.mr-scene-container{position:absolute;inset:0;z-index:3;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.mr-scene-svg{width:260%;height:auto;max-height:none;margin-left:-80%}
+.mr-scene-container{position:absolute;inset:0;z-index:3;display:flex;align-items:center;justify-content:center}
+.mr-scene-svg{width:100%;height:auto}
 .mr-scene-energize{position:absolute;inset:0;z-index:4;background:linear-gradient(90deg,transparent,rgba(230,57,70,.08),rgba(247,127,138,.06),transparent);clip-path:inset(0 100% 0 0);pointer-events:none}
 /* Namespaced VoltPro parallax styles (mv-*) */
 .mv-scroll-sequence{height:100%;position:relative}
@@ -493,56 +493,52 @@ footer{border-top:1px solid var(--border);padding:48px}
 
 <!-- Mobile Parallax Showcase (sequential scroll-locked, hidden on desktop) -->
 <div class="showcase-mobile-wrap" id="mob-showcase">
-  <!-- VoltPro parallax inlined (namespaced mv-*) -->
-  <div class="mob-parallax" id="mob-volt-wrap">
-    <div class="mv-scroll-sequence" id="mv-hero">
-      <div class="mv-sequence-sticky" id="mv-seqSticky">
-        <div class="mv-seq-bg" id="mv-seqBg"></div>
-        <div class="mv-panel-glow" id="mv-panelGlow"></div>
-        <div class="mv-panel-container" id="mv-panelContainer">
-          <svg id="mv-panelSvg" class="mv-panel-svg" viewBox="0 0 480 750" preserveAspectRatio="xMidYMid meet">
+  <!-- Split-screen: VoltPro (top) + RoofPro (bottom), scroll-locked together -->
+  <div class="mob-parallax-pair" id="mob-pair-wrap">
+    <div class="mob-parallax-sticky">
+      <!-- Top pane: VoltPro -->
+      <div class="mob-pane" id="mv-hero">
+        <div id="mv-seqBg" style="position:absolute;inset:0;background:#000"></div>
+        <div id="mv-panelGlow" style="position:absolute;inset:0;opacity:0"></div>
+        <div id="mv-panelContainer" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+          <svg id="mv-panelSvg" viewBox="0 0 480 750" preserveAspectRatio="xMidYMid meet" style="max-height:100%">
             <defs>
               <linearGradient id="mv-copperGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#D4956B"/><stop offset="100%" stop-color="#B87333"/></linearGradient>
               <linearGradient id="mv-dinRailGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#BBB"/><stop offset="50%" stop-color="#999"/><stop offset="100%" stop-color="#BBB"/></linearGradient>
             </defs>
           </svg>
         </div>
-        <div class="mv-panel-energize" id="mv-panelEnergize"></div>
-        <div id="mv-panelHud" style="display:none"></div>
-        <div id="mv-hudCircuits" style="display:none"></div>
+        <div id="mv-panelEnergize" style="position:absolute;inset:0;pointer-events:none;opacity:0"></div>
+        <div id="mv-panelHud" style="display:none"></div><div id="mv-hudCircuits" style="display:none"></div>
         <div id="mv-panelPowered" style="display:none"></div>
         <div id="mv-pl1" style="display:none"></div><div id="mv-pl2" style="display:none"></div>
         <div id="mv-pl3" style="display:none"></div><div id="mv-pl4" style="display:none"></div>
         <div id="mv-pl5" style="display:none"></div><div id="mv-pl6" style="display:none"></div>
-        <div id="mv-seqIntro" style="display:none"></div>
-        <div id="mv-seqPhase" style="display:none"></div>
+        <div id="mv-seqIntro" style="display:none"></div><div id="mv-seqPhase" style="display:none"></div>
         <div style="display:none"><div id="mv-seqScrubFill"></div></div>
         <div id="mv-seqFinal" style="display:none"></div>
+        <div id="mv-seqSticky" style="display:none"></div>
       </div>
-    </div>
-  </div>
-  <!-- RoofPro parallax inlined (namespaced mr-*) -->
-  <div class="mob-parallax" id="mob-roof-wrap">
-    <div class="mr-scroll-sequence" id="mr-hero">
-      <div class="mr-sequence-sticky" id="mr-seqSticky">
-        <div class="mr-seq-bg" id="mr-seqBg"></div>
-        <div class="mr-scene-glow" id="mr-sceneGlow"></div>
+      <!-- Bottom pane: RoofPro -->
+      <div class="mob-pane" id="mr-hero">
+        <div id="mr-seqBg" style="position:absolute;inset:0;background:#000"></div>
+        <div id="mr-sceneGlow" style="position:absolute;inset:0;opacity:0"></div>
         <div class="mr-scene-container" id="mr-sceneContainer">
           <svg id="mr-sceneSvg" class="mr-scene-svg" viewBox="0 0 1050 600" preserveAspectRatio="xMidYMid meet"></svg>
         </div>
-        <div class="mr-scene-energize" id="mr-sceneEnergize"></div>
-        <div id="mr-sceneHud" style="display:none"></div>
-        <div id="mr-scenePowered" style="display:none"></div>
+        <div id="mr-sceneEnergize" style="position:absolute;inset:0;pointer-events:none;opacity:0"></div>
+        <div id="mr-sceneHud" style="display:none"></div><div id="mr-scenePowered" style="display:none"></div>
         <div id="mr-pl1" style="display:none"></div><div id="mr-pl2" style="display:none"></div>
         <div id="mr-pl3" style="display:none"></div><div id="mr-pl4" style="display:none"></div>
         <div id="mr-pl5" style="display:none"></div><div id="mr-pl6" style="display:none"></div>
-        <div id="mr-seqIntro" style="display:none"></div>
-        <div id="mr-seqPhase" style="display:none"></div>
+        <div id="mr-seqIntro" style="display:none"></div><div id="mr-seqPhase" style="display:none"></div>
         <div style="display:none"><div id="mr-seqScrubFill"></div></div>
         <div id="mr-seqFinal" style="display:none"></div>
+        <div id="mr-seqSticky" style="display:none"></div>
       </div>
     </div>
   </div>
+</div>
 </div>
 
 <!-- Diagonal wipe: showcase → features -->
@@ -1145,23 +1141,20 @@ function initMobileShowcase(){
   window.__mobVoltProgress=0.15;
   window.__mobRoofProgress=0.15;
 
-  const items=[
-    {wrap:'mob-volt-wrap',progressKey:'__mobVoltProgress'},
-    {wrap:'mob-roof-wrap',progressKey:'__mobRoofProgress'}
-  ];
+  // Both parallaxes share one scroll-locked wrapper — synced progress
+  const wrap=document.getElementById('mob-pair-wrap');
+  if(!wrap)return;
 
   let ticking=false;
   function update(){
     ticking=false;
-    items.forEach(item=>{
-      const wrap=document.getElementById(item.wrap);
-      if(!wrap)return;
-      const rect=wrap.getBoundingClientRect();
-      const total=wrap.offsetHeight-window.innerHeight;
-      const scrolled=Math.max(0,-rect.top);
-      const p=Math.max(0,Math.min(1,scrolled/total));
-      window[item.progressKey]=.15+p*.75; // 15%→90%
-    });
+    const rect=wrap.getBoundingClientRect();
+    const total=wrap.offsetHeight-window.innerHeight;
+    const scrolled=Math.max(0,-rect.top);
+    const p=Math.max(0,Math.min(1,scrolled/total));
+    const progress=.15+p*.75; // 15%→90%
+    window.__mobVoltProgress=progress;
+    window.__mobRoofProgress=progress;
   }
   window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(update);ticking=true}},{passive:true});
 }
