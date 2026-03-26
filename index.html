@@ -816,26 +816,16 @@ function initOrb(){
   const pulses=[];
   setInterval(()=>{if(pulses.length<5)pulses.push({y:-1.2,speed:.014+Math.random()*.008,hue:pulses.length%2})},1000);
 
-  // Satellites — two opposing orbital rings tight to the orb
+  // Satellites — 13 with wide spread, two slow opposing flight patterns
   const sats=[];
-  // Ring A: 7 gold satellites, slow clockwise, ~35deg tilt
-  for(let i=0;i<7;i++){
+  for(let i=0;i<13;i++){
     sats.push({
-      angle:i*(Math.PI*2/7),
-      speed:.0015,                    // very slow clockwise
-      incl:.55,                       // single consistent tilt plane
-      dist:1.06+i*.012,              // tight: 1.06 to 1.13
-      trail:[],hue:0
-    });
-  }
-  // Ring B: 6 cyan satellites, slow counter-clockwise, ~70deg tilt (opposing)
-  for(let i=0;i<6;i++){
-    sats.push({
-      angle:i*(Math.PI*2/6),
-      speed:-.002,                    // very slow counter-clockwise
-      incl:1.15,                      // distinctly different tilt plane
-      dist:1.06+i*.012,              // tight: 1.06 to 1.13
-      trail:[],hue:1
+      angle:i*(Math.PI*2/13),
+      speed:(i%2?-.002:.0015),        // slow opposing directions
+      incl:.05+i*.07+Math.random()*.1, // spread inclinations evenly
+      dist:1.15+i*.04,                 // wide spread: 1.15 to 1.67
+      trail:[],
+      hue:i%3===1?1:0
     });
   }
 
