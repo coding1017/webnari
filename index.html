@@ -167,9 +167,8 @@ section{padding:120px 48px;position:relative}
 
 /* ── Mobile Showcase (sequential scroll-locked parallaxes) ── */
 .showcase-mobile-wrap{display:none}
-.mob-parallax{height:300vh;position:relative}
-.mob-parallax-sticky{position:sticky;top:0;height:100vh;overflow:hidden;background:#000}
-.mob-parallax-sticky iframe{width:100%;height:100%;border:none;pointer-events:none}
+.mob-parallax{height:100vh;position:relative;overflow:hidden;background:#000}
+.mob-parallax iframe{width:100%;height:100%;border:none;pointer-events:none;position:absolute;top:0;left:0}
 .mob-parallax-label{position:absolute;bottom:16px;left:16px;z-index:2;font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--white);
   background:rgba(0,0,0,.7);backdrop-filter:blur(8px);padding:5px 12px;border-radius:6px;opacity:.6}
 
@@ -474,16 +473,12 @@ footer{border-top:1px solid var(--border);padding:48px}
 <!-- Mobile Parallax Showcase (sequential scroll-locked, hidden on desktop) -->
 <div class="showcase-mobile-wrap" id="mob-showcase">
   <div class="mob-parallax" id="mob-p1">
-    <div class="mob-parallax-sticky">
-      <iframe id="mob-iframe-1" scrolling="no" tabindex="-1"></iframe>
-      <div class="mob-parallax-label">VoltPro</div>
-    </div>
+    <iframe id="mob-iframe-1" scrolling="no" tabindex="-1"></iframe>
+    <div class="mob-parallax-label">VoltPro</div>
   </div>
   <div class="mob-parallax" id="mob-p2">
-    <div class="mob-parallax-sticky">
-      <iframe id="mob-iframe-2" scrolling="no" tabindex="-1"></iframe>
-      <div class="mob-parallax-label">RoofPro</div>
-    </div>
+    <iframe id="mob-iframe-2" scrolling="no" tabindex="-1"></iframe>
+    <div class="mob-parallax-label">RoofPro</div>
   </div>
 </div>
 
@@ -1086,13 +1081,14 @@ function initMobileShowcase(){
     html,body{background:#000!important}
     .sequence-sticky{top:0!important;height:100vh!important}
   `;
-  const pairs=[
-    {wrap:'mob-p1',iframe:'mob-iframe-1',src:'voltpro.html'},
-    {wrap:'mob-p2',iframe:'mob-iframe-2',src:'roofpro.html'}
+  const items=[
+    {wrap:'mob-p1',iframe:'mob-iframe-1',src:'voltpro.html',playing:false,done:false,progress:.15},
+    {wrap:'mob-p2',iframe:'mob-iframe-2',src:'roofpro.html',playing:false,done:false,progress:.15}
   ];
   let readyCount=0;
-  pairs.forEach(p=>{
-    const f=document.getElementById(p.iframe);if(!f)return;
+
+  items.forEach(item=>{
+    const f=document.getElementById(item.iframe);if(!f)return;
     f.addEventListener('load',()=>{
       try{
         const doc=f.contentDocument||f.contentWindow.document;
@@ -1102,31 +1098,51 @@ function initMobileShowcase(){
       }catch(e){}
       readyCount++;
     });
-    f.src=p.src;
+    f.src=item.src;
   });
 
-  let ticking=false;
-  function update(){
-    ticking=false;
-    if(readyCount<2)return;
-    pairs.forEach(p=>{
-      const wrap=document.getElementById(p.wrap);
-      const f=document.getElementById(p.iframe);
-      if(!wrap||!f||!f.contentWindow)return;
-      const rect=wrap.getBoundingClientRect();
-      const total=wrap.offsetHeight-window.innerHeight;
-      const scrolled=Math.max(0,-rect.top);
-      const prog=Math.max(0,Math.min(1,scrolled/total));
-      // Map 0→1 to 15%→85% of parallax
-      const mapped=.15+prog*.7;
-      try{
-        const doc=f.contentDocument;
-        const seq=doc.querySelector('.scroll-sequence')||doc.getElementById('hero');
-        if(seq)f.contentWindow.scrollTo(0,seq.offsetTop+mapped*seq.offsetHeight);
-      }catch(e){}
+  // Auto-play: when parallax enters viewport, smoothly animate 15%→85% over ~4 seconds
+  const DURATION=4000; // ms
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      const item=items.find(i=>i.wrap===entry.target.id);
+      if(!item)return;
+      if(entry.isIntersecting&&!item.playing&&!item.done){
+        item.playing=true;
+        const startTime=performance.now();
+        const f=document.getElementById(item.iframe);
+        function animate(now){
+          const elapsed=now-startTime;
+          const t=Math.min(elapsed/DURATION,1);
+          // Smooth ease-in-out
+          const ease=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+          item.progress=.15+ease*.7; // 15%→85%
+          try{
+            const doc=f.contentDocument;
+            const seq=doc.querySelector('.scroll-sequence')||doc.getElementById('hero');
+            if(seq)f.contentWindow.scrollTo(0,seq.offsetTop+item.progress*seq.offsetHeight);
+          }catch(e){}
+          if(t<1){
+            requestAnimationFrame(animate);
+          }else{
+            item.done=true;
+          }
+        }
+        requestAnimationFrame(animate);
+      }
     });
-  }
-  window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(update);ticking=true}},{passive:true});
+  },{threshold:.3}); // trigger when 30% visible
+
+  // Wait for iframes to load, then observe
+  const checkReady=setInterval(()=>{
+    if(readyCount>=2){
+      clearInterval(checkReady);
+      items.forEach(item=>{
+        const wrap=document.getElementById(item.wrap);
+        if(wrap)obs.observe(wrap);
+      });
+    }
+  },200);
 }
 
 // ── Horizontal Scroll Steps ──
