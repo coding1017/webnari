@@ -1672,12 +1672,19 @@ td.bold { color: var(--white); font-weight: 600; }
         <p>Rankings, metadata, schema, and local optimization — per client</p>
       </div>
       <div style="display:flex;gap:10px;align-items:center;">
-        <select class="seo-select-wrap" id="seo-client-select" onchange="loadSeoClient()">
+        <select class="seo-select-wrap" id="seo-client-select" onchange="loadSeoClient()" style="display:none;">
           <option value="">— Select a client —</option>
         </select>
         <button class="btn btn-primary" onclick="saveSeo()">Save Changes</button>
       </div>
     </div>
+
+    <div style="display:grid;grid-template-columns:200px 1fr;gap:20px;">
+    <div>
+      <div style="font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--muted);margin-bottom:10px;">CLIENTS</div>
+      <div id="seo-client-list" data-active=""></div>
+    </div>
+    <div>
 
     <div id="seo-empty" class="panel">
       <div class="empty-state">
@@ -2049,6 +2056,8 @@ td.bold { color: var(--white); font-weight: 600; }
       </div>
 
     </div>
+    </div><!-- /seo grid col -->
+    </div><!-- /seo grid wrapper -->
   </div>
 
   <!-- ══════════════════════════════════════
@@ -2373,12 +2382,18 @@ td.bold { color: var(--white); font-weight: 600; }
         <p>Monitor reviews, ratings, and sentiment across all platforms</p>
       </div>
       <div style="display:flex;gap:10px;align-items:center;">
-        <select class="form-select" id="rep-select" onchange="loadReputation(this.value)" style="max-width:280px;"></select>
+        <select class="form-select" id="rep-select" onchange="loadReputation(this.value)" style="display:none;"></select>
         <button class="btn btn-ghost" onclick="exportReputationCSV()">↓ Export</button>
         <button class="btn btn-primary" onclick="openAddReview()">+ Add Review</button>
       </div>
     </div>
-    <div id="rep-dynamic"></div>
+    <div style="display:grid;grid-template-columns:200px 1fr;gap:20px;">
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--muted);margin-bottom:10px;">CLIENTS</div>
+        <div id="rep-client-list" data-active=""></div>
+      </div>
+      <div id="rep-dynamic"></div>
+    </div>
   </div>
 
   <!-- ══════════════════════════════════════
@@ -2391,12 +2406,18 @@ td.bold { color: var(--white); font-weight: 600; }
         <p>Website traffic, conversions, and audience insights — per client</p>
       </div>
       <div style="display:flex;gap:10px;align-items:center;">
-        <select class="form-select" id="an-select" onchange="loadAnalytics(this.value)" style="max-width:280px;"></select>
+        <select class="form-select" id="an-select" onchange="loadAnalytics(this.value)" style="display:none;"></select>
         <button class="btn btn-ghost" onclick="exportAnalyticsCSV()">↓ Export</button>
         <button class="btn btn-primary" onclick="logAnalyticsSnapshot()">+ Log Snapshot</button>
       </div>
     </div>
-    <div id="an-dynamic"></div>
+    <div style="display:grid;grid-template-columns:200px 1fr;gap:20px;">
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--muted);margin-bottom:10px;">CLIENTS</div>
+        <div id="an-client-list" data-active=""></div>
+      </div>
+      <div id="an-dynamic"></div>
+    </div>
   </div>
 
   <!-- ══════════════════════════════════════
@@ -2409,32 +2430,37 @@ td.bold { color: var(--white); font-weight: 600; }
         <p>Track incoming leads and manage your sales pipeline</p>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
-      <select class="form-select" id="leads-select" onchange="loadLeads(this.value)" style="max-width:280px;"></select>
-      <button class="btn btn-primary btn-sm" onclick="openAddLead()">+ Add Lead</button>
-    </div>
-    <div id="leads-empty" style="text-align:center;padding:80px 40px;">
-      <div style="font-size:48px;margin-bottom:16px;">🎯</div>
-      <div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px;">Select a client to begin</div>
-      <div style="color:var(--muted);">Track leads and manage the sales pipeline for each client.</div>
-    </div>
-    <div id="leads-content" style="display:none;">
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;">
-        <div class="kpi-card" style="border-top:3px solid var(--indigo);"><div class="kpi-label">NEW</div><div class="kpi-value" id="ld-new">0</div></div>
-        <div class="kpi-card" style="border-top:3px solid var(--amber);"><div class="kpi-label">CONTACTED</div><div class="kpi-value" id="ld-contacted">0</div></div>
-        <div class="kpi-card" style="border-top:3px solid var(--teal);"><div class="kpi-label">QUALIFIED</div><div class="kpi-value" id="ld-qualified">0</div></div>
-        <div class="kpi-card" style="border-top:3px solid var(--green);"><div class="kpi-label">CLOSED WON</div><div class="kpi-value" id="ld-closed">0</div></div>
+    <select class="form-select" id="leads-select" onchange="loadLeads(this.value)" style="display:none;"></select>
+    <div style="display:grid;grid-template-columns:200px 1fr;gap:20px;">
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--muted);margin-bottom:10px;">CLIENTS</div>
+        <div id="leads-client-list" data-active=""></div>
       </div>
-      <div class="panel">
-        <div class="panel-header">
-          <div class="panel-title">All Leads</div>
-          <button class="btn btn-ghost btn-sm" onclick="openAddLead()">+ Add Lead</button>
+      <div>
+        <div id="leads-empty" style="text-align:center;padding:80px 40px;">
+          <svg style="width:48px;height:48px;color:var(--indigo);margin-bottom:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+          <div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px;">Select a client to begin</div>
+          <div style="color:var(--muted);">Track leads and manage the sales pipeline for each client.</div>
         </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Name</th><th>Phone</th><th>Source</th><th>Stage</th><th>Date</th><th>Value</th><th>Notes</th><th></th></tr></thead>
-            <tbody id="leads-tbody"></tbody>
-          </table>
+        <div id="leads-content" style="display:none;">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;">
+            <div class="kpi-card" style="border-top:3px solid var(--indigo);"><div class="kpi-label">NEW</div><div class="kpi-value" id="ld-new">0</div></div>
+            <div class="kpi-card" style="border-top:3px solid var(--amber);"><div class="kpi-label">CONTACTED</div><div class="kpi-value" id="ld-contacted">0</div></div>
+            <div class="kpi-card" style="border-top:3px solid var(--teal);"><div class="kpi-label">QUALIFIED</div><div class="kpi-value" id="ld-qualified">0</div></div>
+            <div class="kpi-card" style="border-top:3px solid var(--green);"><div class="kpi-label">CLOSED WON</div><div class="kpi-value" id="ld-closed">0</div></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">All Leads</div>
+              <button class="btn btn-ghost btn-sm" onclick="openAddLead()">+ Add Lead</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Name</th><th>Phone</th><th>Source</th><th>Stage</th><th>Date</th><th>Value</th><th>Notes</th><th></th></tr></thead>
+                <tbody id="leads-tbody"></tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -2450,32 +2476,37 @@ td.bold { color: var(--white); font-weight: 600; }
         <p>Track PPC spend, conversions, and ROAS across all platforms</p>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px;">
-      <select class="form-select" id="ads-select" onchange="loadAds(this.value)" style="max-width:280px;"></select>
-      <button class="btn btn-primary btn-sm" onclick="openAddCampaign()">+ Add Campaign</button>
-    </div>
-    <div id="ads-empty" style="text-align:center;padding:80px 40px;">
-      <div style="font-size:48px;margin-bottom:16px;">📣</div>
-      <div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px;">Select a client to begin</div>
-      <div style="color:var(--muted);">Monitor ad spend, clicks, and conversions for each client.</div>
-    </div>
-    <div id="ads-content" style="display:none;">
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;">
-        <div class="kpi-card"><div class="kpi-label">TOTAL SPEND</div><div class="kpi-value" id="ads-spend">$0</div></div>
-        <div class="kpi-card"><div class="kpi-label">TOTAL CLICKS</div><div class="kpi-value" id="ads-clicks">0</div></div>
-        <div class="kpi-card"><div class="kpi-label">COST PER CONV.</div><div class="kpi-value" id="ads-cpa">—</div></div>
-        <div class="kpi-card"><div class="kpi-label">EST. ROAS</div><div class="kpi-value" id="ads-roas">—</div></div>
+    <select class="form-select" id="ads-select" onchange="loadAds(this.value)" style="display:none;"></select>
+    <div style="display:grid;grid-template-columns:200px 1fr;gap:20px;">
+      <div>
+        <div style="font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--muted);margin-bottom:10px;">CLIENTS</div>
+        <div id="ads-client-list" data-active=""></div>
       </div>
-      <div class="panel">
-        <div class="panel-header">
-          <div class="panel-title">Active Campaigns</div>
-          <button class="btn btn-ghost btn-sm" onclick="openAddCampaign()">+ Add Campaign</button>
+      <div>
+        <div id="ads-empty" style="text-align:center;padding:80px 40px;">
+          <svg style="width:48px;height:48px;color:var(--indigo);margin-bottom:16px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+          <div style="font-size:18px;font-weight:700;color:var(--text);margin-bottom:8px;">Select a client to begin</div>
+          <div style="color:var(--muted);">Monitor ad spend, clicks, and conversions for each client.</div>
         </div>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Campaign</th><th>Platform</th><th>Budget</th><th>Spend</th><th>Clicks</th><th>Conv.</th><th>CPC</th><th></th></tr></thead>
-            <tbody id="ads-tbody"></tbody>
-          </table>
+        <div id="ads-content" style="display:none;">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px;">
+            <div class="kpi-card"><div class="kpi-label">TOTAL SPEND</div><div class="kpi-value" id="ads-spend">$0</div></div>
+            <div class="kpi-card"><div class="kpi-label">TOTAL CLICKS</div><div class="kpi-value" id="ads-clicks">0</div></div>
+            <div class="kpi-card"><div class="kpi-label">COST PER CONV.</div><div class="kpi-value" id="ads-cpa">—</div></div>
+            <div class="kpi-card"><div class="kpi-label">EST. ROAS</div><div class="kpi-value" id="ads-roas">—</div></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header">
+              <div class="panel-title">Active Campaigns</div>
+              <button class="btn btn-ghost btn-sm" onclick="openAddCampaign()">+ Add Campaign</button>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Campaign</th><th>Platform</th><th>Budget</th><th>Spend</th><th>Clicks</th><th>Conv.</th><th>CPC</th><th></th></tr></thead>
+                <tbody id="ads-tbody"></tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -6222,10 +6253,15 @@ function renderSeoSelect() {
   const cur = sel.value;
   sel.innerHTML = `<option value="">— Select a client —</option>` + DB.clients.map(c => `<option value="${c.id}">${c.bizName}</option>`).join('');
   if (cur) { sel.value = cur; loadSeoClient(); }
+  // Build sidebar and auto-select
+  initToolWithSidebar('seo', function(id){ document.getElementById('seo-client-select').value=id; loadSeoClient(); });
 }
 
 function selectSeoClient(id) {
   document.getElementById('seo-client-select').value = id;
+  const container = document.getElementById('seo-client-list');
+  if(container) container.dataset.active = id;
+  buildClientSidebar('seo', function(cid){ document.getElementById('seo-client-select').value=cid; loadSeoClient(); });
   loadSeoClient();
 }
 
@@ -6908,6 +6944,54 @@ function fillToolSelect(selectId) {
     DB.clients.map(c => `<option value="${c.id}">${c.bizName}</option>`).join('');
 }
 
+// Reusable client sidebar for all tools
+function buildClientSidebar(prefix, loadFn) {
+  const container = document.getElementById(prefix+'-client-list');
+  if(!container) return;
+  const activeId = container.dataset.active||'';
+  if(!DB.clients.length) {
+    container.innerHTML = `<div style="text-align:center;padding:24px;color:var(--muted);font-size:12px;">No clients yet. Add one from the Clients tab.</div>`;
+    return;
+  }
+  container.innerHTML = DB.clients.map(c => {
+    const isActive = c.id===activeId;
+    const tpl = DB.templates.find(t=>t.id===c.template);
+    const statusColor = c.status==='live'?'var(--green)':c.status==='building'?'var(--amber)':'var(--indigo)';
+    return `<div onclick="selectToolClient('${prefix}','${c.id}',${loadFn})" style="padding:12px 14px;border-radius:var(--radius);cursor:pointer;border:1px solid ${isActive?'var(--indigo)':'var(--border)'};background:${isActive?'var(--indigo)11':'var(--surface2)'};margin-bottom:6px;transition:all .15s;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div style="width:8px;height:8px;border-radius:50%;background:${statusColor};flex-shrink:0;"></div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:600;color:${isActive?'var(--white)':'var(--text)'};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${c.bizName}</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:1px;">${tpl?tpl.niche:c.plan||'—'}</div>
+        </div>
+        ${isActive?`<svg style="width:14px;height:14px;color:var(--indigo2);flex-shrink:0;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>`:''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function selectToolClient(prefix, clientId, loadFn) {
+  const container = document.getElementById(prefix+'-client-list');
+  if(container) container.dataset.active = clientId;
+  // Also update hidden select for compatibility
+  const sel = document.getElementById(prefix+'-select');
+  if(sel) sel.value = clientId;
+  buildClientSidebar(prefix, loadFn);
+  loadFn(clientId);
+}
+
+function initToolWithSidebar(prefix, loadFn) {
+  buildClientSidebar(prefix, loadFn);
+  // Auto-select first client
+  if(DB.clients.length) {
+    const first = DB.clients[0].id;
+    const container = document.getElementById(prefix+'-client-list');
+    if(container) container.dataset.active = first;
+    buildClientSidebar(prefix, loadFn);
+    loadFn(first);
+  }
+}
+
 function starsStr(rating) {
   const full = Math.min(Math.round(rating), 5);
   return '★'.repeat(full) + '☆'.repeat(5 - full);
@@ -6928,7 +7012,7 @@ const PLATFORMS = [
   { key:'homeadvisor', label:'HomeAdvisor',  color:'#F68B1F' },
 ];
 
-function renderRepSelect() { fillToolSelect('rep-select'); }
+function renderRepSelect() { fillToolSelect('rep-select'); initToolWithSidebar('rep', loadReputation); }
 
 let repFilter='all', repPlatformFilter='all', repSortNewest=true;
 
@@ -7339,7 +7423,7 @@ function copyTemplate(n) {
 // ════════════════════════════════════════════════════
 //  ANALYTICS
 // ════════════════════════════════════════════════════
-function renderAnSelect() { fillToolSelect('an-select'); }
+function renderAnSelect() { fillToolSelect('an-select'); initToolWithSidebar('an', loadAnalytics); }
 
 function loadAnalytics(id) {
   const el = document.getElementById('an-dynamic');
@@ -7695,7 +7779,7 @@ function exportAnalyticsCSV() {
 // ════════════════════════════════════════════════════
 const STAGE_COLORS = { new:'var(--indigo)', contacted:'var(--amber)', qualified:'var(--teal)', closed:'var(--green)', lost:'var(--red)' };
 
-function renderLeadsSelect() { fillToolSelect('leads-select'); }
+function renderLeadsSelect() { fillToolSelect('leads-select'); initToolWithSidebar('leads', loadLeads); }
 
 function loadLeads(id) {
   const c = DB.clients.find(x => x.id === id);
@@ -7756,7 +7840,7 @@ function saveLead() {
 // ════════════════════════════════════════════════════
 //  AD CAMPAIGNS
 // ════════════════════════════════════════════════════
-function renderAdsSelect() { fillToolSelect('ads-select'); }
+function renderAdsSelect() { fillToolSelect('ads-select'); initToolWithSidebar('ads', loadAds); }
 
 function loadAds(id) {
   const c = DB.clients.find(x => x.id === id);
