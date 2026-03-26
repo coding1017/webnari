@@ -2057,59 +2057,16 @@ td.bold { color: var(--white); font-weight: 600; }
   <div class="page" id="page-billing">
     <div class="page-header">
       <div class="page-header-left">
-        <h1>Billing</h1>
-        <p>Monthly recurring revenue and subscription tracking</p>
+        <h1>Billing & Revenue</h1>
+        <p>Subscription management, revenue tracking, and pricing</p>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-ghost" onclick="exportBillingCSV()">↓ Export</button>
+        <button class="btn btn-primary" onclick="openAddClient()">+ Add Client</button>
       </div>
     </div>
-
-    <div class="panel" style="margin-bottom:24px;">
-      <div class="mrr-hero">
-        <div>
-          <div class="mrr-label">Monthly Recurring Revenue</div>
-          <div class="mrr-value">$<span id="billing-mrr">0</span></div>
-          <div class="mrr-arr" id="billing-arr">$0 ARR</div>
-        </div>
-      </div>
-      <div class="billing-stats-bar">
-        <div class="billing-stat">
-          <div class="billing-stat-label">Active</div>
-          <div class="billing-stat-value green" id="b-active">0</div>
-        </div>
-        <div class="billing-stat">
-          <div class="billing-stat-label">Past Due</div>
-          <div class="billing-stat-value amber" id="b-pastdue">0</div>
-        </div>
-        <div class="billing-stat">
-          <div class="billing-stat-label">Cancelled</div>
-          <div class="billing-stat-value red" id="b-cancelled">0</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="panel">
-      <div class="panel-header">
-        <div class="panel-title">All Subscriptions</div>
-        <button class="btn btn-ghost btn-sm" onclick="openAddClient()">+ Add Client</button>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Client</th>
-              <th>Plan</th>
-              <th>Monthly</th>
-              <th>Next Billing</th>
-              <th>Payment</th>
-              <th>Setup Fee</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="billing-tbody">
-            <tr><td colspan="7" style="text-align:center;color:var(--muted);padding:48px;">No billing records yet</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <!-- Dynamic content -->
+    <div id="billing-dynamic"></div>
 
     <!-- Pricing Tiers -->
     <div style="margin-top:24px;">
@@ -6434,36 +6391,295 @@ function charHint(inputId, hintId, max) {
 // ════════════════════════════════════════════════════
 //  BILLING
 // ════════════════════════════════════════════════════
+let billingSort={col:'bizName',asc:true}, billingFilter='all';
+
 function renderBilling() {
   loadPricingFields();
+  const el = document.getElementById('billing-dynamic');
   const act = DB.clients.filter(c => c.paymentStatus==='active');
   const pd  = DB.clients.filter(c => c.paymentStatus==='past_due');
   const can = DB.clients.filter(c => c.paymentStatus==='cancelled');
   const mrr = act.reduce((s,c) => s+(c.monthlyRate||0), 0);
-  document.getElementById('billing-mrr').textContent = mrr.toLocaleString();
-  document.getElementById('billing-arr').textContent = `$${(mrr*12).toLocaleString()} ARR`;
-  document.getElementById('b-active').textContent = act.length;
-  document.getElementById('b-pastdue').textContent = pd.length;
-  document.getElementById('b-cancelled').textContent = can.length;
+  const arr = mrr * 12;
+  const totalSetup = DB.clients.reduce((s,c) => s+(c.setupFee||0), 0);
+  const collectedSetup = act.reduce((s,c) => s+(c.setupFee||0), 0);
+  const churnRate = DB.clients.length ? Math.round((can.length / DB.clients.length)*100) : 0;
+  const avgLTV = act.length ? Math.round((mrr / act.length) * 12) : 0;
 
-  const tb = document.getElementById('billing-tbody');
-  if (!DB.clients.length) {
-    tb.innerHTML = `<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:48px;">No billing records</td></tr>`;
-    return;
+  // Revenue history (build from billing snapshots or simulate from clients)
+  if(!DB.revenueHistory) DB.revenueHistory = [];
+  const now = new Date();
+  const thisMonth = now.toISOString().slice(0,7);
+  const existing = DB.revenueHistory.find(r => r.month === thisMonth);
+  if(!existing) { DB.revenueHistory.push({month:thisMonth, mrr, clients:act.length}); save(); }
+  else if(existing.mrr !== mrr) { existing.mrr = mrr; existing.clients = act.length; save(); }
+
+  // Build 12-month revenue chart data
+  const months = [];
+  for(let i=11;i>=0;i--){
+    const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
+    const key = d.toISOString().slice(0,7);
+    const rec = DB.revenueHistory.find(r => r.month === key);
+    months.push({label: d.toLocaleDateString('en',{month:'short'}), mrr: rec ? rec.mrr : 0, clients: rec ? rec.clients : 0});
   }
-  tb.innerHTML = DB.clients.map(c => `
-    <tr>
-      <td>
-        <div style="font-weight:600;color:var(--white);">${c.bizName}</div>
-        <div style="font-size:12px;color:var(--muted);">${c.email||''}</div>
-      </td>
-      <td>${planBadge(c.plan)}</td>
-      <td style="color:var(--green);font-weight:700;">$${c.monthlyRate||0}/mo</td>
-      <td style="color:var(--muted);font-size:12.5px;">${c.billingDate||'—'}</td>
-      <td>${payBadge(c.paymentStatus)}</td>
-      <td style="color:var(--muted);">$${c.setupFee||0}</td>
-      <td><button class="btn btn-ghost btn-sm" onclick="editClient('${c.id}')">Edit</button></td>
-    </tr>`).join('');
+  const maxMRR = Math.max(...months.map(m=>m.mrr), 100);
+
+  // SVG sparkline chart
+  const chartW=680, chartH=160, padL=50, padR=10, padT=10, padB=25;
+  const plotW=chartW-padL-padR, plotH=chartH-padT-padB;
+  let sparkPoints = months.map((m,i) => {
+    const x = padL + (i/(months.length-1)) * plotW;
+    const y = padT + plotH - (m.mrr/maxMRR)*plotH;
+    return `${x},${y}`;
+  });
+  const sparkPath = `M${sparkPoints.join(' L')}`;
+  const areaPath = `${sparkPath} L${padL+plotW},${padT+plotH} L${padL},${padT+plotH} Z`;
+  const gridLines = [0,0.25,0.5,0.75,1].map(pct => {
+    const y = padT + plotH - pct*plotH;
+    const val = Math.round(maxMRR*pct);
+    return `<line x1="${padL}" y1="${y}" x2="${padL+plotW}" y2="${y}" stroke="var(--border)" stroke-width="0.5"/>
+            <text x="${padL-8}" y="${y+4}" fill="var(--muted)" font-size="9" text-anchor="end">$${val>=1000?(val/1000).toFixed(1)+'k':val}</text>`;
+  }).join('');
+  const xLabels = months.map((m,i) => {
+    const x = padL + (i/(months.length-1)) * plotW;
+    return `<text x="${x}" y="${chartH-2}" fill="var(--muted)" font-size="9" text-anchor="middle">${m.label}</text>`;
+  }).join('');
+
+  // Upcoming renewals (next 7 days)
+  const todayStr = today();
+  const in7 = new Date(); in7.setDate(in7.getDate()+7);
+  const in7Str = in7.toISOString().slice(0,10);
+  const upcoming = act.filter(c => c.billingDate && c.billingDate >= todayStr && c.billingDate <= in7Str)
+                      .sort((a,b) => (a.billingDate||'').localeCompare(b.billingDate||''));
+
+  // Revenue by plan
+  const planRevenue = {starter:0, standard:0, premium:0};
+  act.forEach(c => { if(planRevenue[c.plan]!==undefined) planRevenue[c.plan]+=(c.monthlyRate||0); });
+  const planTotal = Object.values(planRevenue).reduce((a,b)=>a+b,0)||1;
+  const planColors = {starter:'var(--muted)',standard:'var(--indigo)',premium:'var(--purple)'};
+
+  // Filtered + sorted clients for table
+  let filtered = billingFilter==='all' ? [...DB.clients] :
+                 billingFilter==='active' ? act :
+                 billingFilter==='past_due' ? pd : can;
+  filtered.sort((a,b) => {
+    let va=a[billingSort.col], vb=b[billingSort.col];
+    if(billingSort.col==='monthlyRate'||billingSort.col==='setupFee'){va=va||0;vb=vb||0;return billingSort.asc?va-vb:vb-va;}
+    va=(va||'').toString().toLowerCase(); vb=(vb||'').toString().toLowerCase();
+    return billingSort.asc ? va.localeCompare(vb) : vb.localeCompare(va);
+  });
+
+  // Payment log per client
+  function getPaymentLog(c) {
+    if(!c.paymentLog||!c.paymentLog.length) return `<span style="color:var(--muted);font-size:11px;">No payment history</span>`;
+    return c.paymentLog.slice(0,3).map(l =>
+      `<div style="display:flex;justify-content:space-between;font-size:11px;padding:3px 0;border-bottom:1px solid var(--border);">
+        <span style="color:var(--text);">$${l.amount}</span>
+        <span style="color:var(--muted);">${l.date}</span>
+        <span class="badge badge-${l.status==='paid'?'green':l.status==='failed'?'red':'amber'}" style="font-size:9px;">${l.status}</span>
+      </div>`
+    ).join('');
+  }
+
+  el.innerHTML = `
+    <!-- KPI Hero Row -->
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr 1fr;gap:16px;margin-bottom:24px;">
+      <div class="panel" style="padding:20px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--green);"></div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;">MRR</div>
+        <div style="font-size:28px;font-weight:800;color:var(--green);">$${mrr.toLocaleString()}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">$${arr.toLocaleString()} ARR</div>
+      </div>
+      <div class="panel" style="padding:20px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--indigo);"></div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;">ACTIVE</div>
+        <div style="font-size:28px;font-weight:800;color:var(--indigo2);">${act.length}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">of ${DB.clients.length} total</div>
+      </div>
+      <div class="panel" style="padding:20px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--amber);"></div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;">PAST DUE</div>
+        <div style="font-size:28px;font-weight:800;color:var(--amber);">${pd.length}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">$${pd.reduce((s,c)=>s+(c.monthlyRate||0),0).toLocaleString()} at risk</div>
+      </div>
+      <div class="panel" style="padding:20px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--red);"></div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;">CHURN</div>
+        <div style="font-size:28px;font-weight:800;color:var(--red);">${churnRate}%</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">${can.length} cancelled</div>
+      </div>
+      <div class="panel" style="padding:20px;text-align:center;position:relative;overflow:hidden;">
+        <div style="position:absolute;top:0;left:0;right:0;height:3px;background:var(--purple);"></div>
+        <div style="font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:8px;">AVG LTV</div>
+        <div style="font-size:28px;font-weight:800;color:var(--purple2);">$${avgLTV.toLocaleString()}</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:4px;">per active client/yr</div>
+      </div>
+    </div>
+
+    <!-- Revenue Chart + Plan Breakdown + Upcoming Renewals -->
+    <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:24px;">
+      <div class="panel" style="padding:20px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <div class="panel-title">Revenue Trend (12 months)</div>
+        </div>
+        <svg viewBox="0 0 ${chartW} ${chartH}" style="width:100%;height:auto;">
+          ${gridLines}
+          <defs><linearGradient id="mrrGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--green)" stop-opacity="0.3"/><stop offset="100%" stop-color="var(--green)" stop-opacity="0.02"/></linearGradient></defs>
+          <path d="${areaPath}" fill="url(#mrrGrad)"/>
+          <path d="${sparkPath}" fill="none" stroke="var(--green)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          ${months.map((m,i) => {
+            const x = padL + (i/(months.length-1)) * plotW;
+            const y = padT + plotH - (m.mrr/maxMRR)*plotH;
+            return m.mrr>0 ? `<circle cx="${x}" cy="${y}" r="3" fill="var(--green)" stroke="var(--surface)" stroke-width="1.5"/>` : '';
+          }).join('')}
+          ${xLabels}
+        </svg>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:16px;">
+        <!-- Revenue by Plan -->
+        <div class="panel" style="padding:20px;flex:1;">
+          <div class="panel-title" style="margin-bottom:12px;">Revenue by Plan</div>
+          ${['starter','standard','premium'].map(p => {
+            const pct = Math.round((planRevenue[p]/planTotal)*100);
+            const name = (DB.pricing&&DB.pricing[p+'Name'])||p.charAt(0).toUpperCase()+p.slice(1);
+            return `<div style="margin-bottom:10px;">
+              <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">
+                <span style="color:var(--text);font-weight:600;">${name}</span>
+                <span style="color:var(--muted);">$${planRevenue[p].toLocaleString()}/mo · ${pct}%</span>
+              </div>
+              <div style="height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;">
+                <div style="height:100%;width:${pct}%;background:${planColors[p]};border-radius:3px;transition:width .5s;"></div>
+              </div>
+            </div>`;
+          }).join('')}
+          <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:12px;">
+            <span style="color:var(--muted);">Setup fees earned</span>
+            <span style="color:var(--green);font-weight:700;">$${collectedSetup.toLocaleString()} / $${totalSetup.toLocaleString()}</span>
+          </div>
+        </div>
+
+        <!-- Upcoming Renewals -->
+        <div class="panel" style="padding:20px;flex:1;">
+          <div class="panel-title" style="margin-bottom:12px;">Upcoming Renewals (7 days)</div>
+          ${upcoming.length ? upcoming.map(c => `
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">
+              <div>
+                <div style="font-size:13px;font-weight:600;color:var(--white);">${c.bizName}</div>
+                <div style="font-size:11px;color:var(--muted);">${c.billingDate}</div>
+              </div>
+              <div style="font-size:13px;font-weight:700;color:var(--green);">$${c.monthlyRate||0}</div>
+            </div>`).join('') : `<div style="text-align:center;color:var(--muted);font-size:13px;padding:20px 0;">No renewals this week</div>`}
+        </div>
+      </div>
+    </div>
+
+    <!-- Subscription Table -->
+    <div class="panel">
+      <div class="panel-header" style="flex-wrap:wrap;gap:12px;">
+        <div class="panel-title">All Subscriptions</div>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <button class="btn btn-sm ${billingFilter==='all'?'btn-primary':'btn-ghost'}" onclick="billingFilter='all';renderBilling()">All (${DB.clients.length})</button>
+          <button class="btn btn-sm ${billingFilter==='active'?'btn-primary':'btn-ghost'}" onclick="billingFilter='active';renderBilling()">Active (${act.length})</button>
+          <button class="btn btn-sm ${billingFilter==='past_due'?'btn-primary':'btn-ghost'}" style="${pd.length?'border-color:var(--amber);color:var(--amber);':''}" onclick="billingFilter='past_due';renderBilling()">Past Due (${pd.length})</button>
+          <button class="btn btn-sm ${billingFilter==='cancelled'?'btn-primary':'btn-ghost'}" onclick="billingFilter='cancelled';renderBilling()">Cancelled (${can.length})</button>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th style="cursor:pointer;" onclick="toggleBillingSort('bizName')">Client ${billingSort.col==='bizName'?(billingSort.asc?'↑':'↓'):''}</th>
+              <th>Plan</th>
+              <th style="cursor:pointer;" onclick="toggleBillingSort('monthlyRate')">Monthly ${billingSort.col==='monthlyRate'?(billingSort.asc?'↑':'↓'):''}</th>
+              <th style="cursor:pointer;" onclick="toggleBillingSort('billingDate')">Next Billing ${billingSort.col==='billingDate'?(billingSort.asc?'↑':'↓'):''}</th>
+              <th>Status</th>
+              <th>Payment History</th>
+              <th>Setup Fee</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${!filtered.length ? `<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:48px;">No billing records</td></tr>` :
+              filtered.map(c => {
+                const daysUntil = c.billingDate ? Math.ceil((new Date(c.billingDate)-now)/(1000*60*60*24)) : null;
+                const dueTag = daysUntil!==null && daysUntil<=3 && daysUntil>=0 ? `<span style="font-size:10px;color:var(--amber);margin-left:4px;">(${daysUntil===0?'today':'in '+daysUntil+'d'})</span>` : '';
+                return `<tr>
+                  <td>
+                    <div style="font-weight:600;color:var(--white);">${c.bizName}</div>
+                    <div style="font-size:11px;color:var(--muted);">${c.email||''}</div>
+                  </td>
+                  <td>${planBadge(c.plan)}</td>
+                  <td style="color:var(--green);font-weight:700;">$${c.monthlyRate||0}/mo</td>
+                  <td style="font-size:12.5px;color:var(--muted);">${c.billingDate||'—'}${dueTag}</td>
+                  <td>
+                    <select onchange="updatePaymentStatus('${c.id}',this.value)" style="background:var(--surface2);border:1px solid var(--border);color:var(--white);font-size:12px;padding:4px 8px;border-radius:var(--radius);cursor:pointer;">
+                      <option value="active" ${c.paymentStatus==='active'?'selected':''} style="color:var(--green);">Active</option>
+                      <option value="past_due" ${c.paymentStatus==='past_due'?'selected':''} style="color:var(--amber);">Past Due</option>
+                      <option value="cancelled" ${c.paymentStatus==='cancelled'?'selected':''} style="color:var(--red);">Cancelled</option>
+                    </select>
+                  </td>
+                  <td style="min-width:160px;">${getPaymentLog(c)}</td>
+                  <td style="color:var(--muted);">$${c.setupFee||0}</td>
+                  <td style="white-space:nowrap;">
+                    <button class="btn btn-ghost btn-sm" onclick="logPayment('${c.id}')" title="Log payment">$</button>
+                    <button class="btn btn-ghost btn-sm" onclick="editClient('${c.id}')">Edit</button>
+                  </td>
+                </tr>`;
+              }).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+}
+
+function toggleBillingSort(col) {
+  if(billingSort.col===col) billingSort.asc=!billingSort.asc;
+  else { billingSort.col=col; billingSort.asc=true; }
+  renderBilling();
+}
+
+function updatePaymentStatus(id, status) {
+  const c = DB.clients.find(x=>x.id===id); if(!c) return;
+  const old = c.paymentStatus;
+  c.paymentStatus = status;
+  if(!c.paymentLog) c.paymentLog = [];
+  c.paymentLog.unshift({date:today(), amount:c.monthlyRate||0, status: status==='active'?'paid':status==='past_due'?'pending':'cancelled', note:`Status: ${old} → ${status}`});
+  if(c.paymentLog.length>12) c.paymentLog = c.paymentLog.slice(0,12);
+  save();
+  addActivity(`Payment status for <strong>${c.bizName}</strong>: ${old} → ${status}`, status==='active'?'green':status==='past_due'?'amber':'red');
+  toast(`${c.bizName} → ${status.replace('_',' ')}`,'success');
+  renderBilling();
+}
+
+function logPayment(id) {
+  const c = DB.clients.find(x=>x.id===id); if(!c) return;
+  const amount = prompt(`Log payment for ${c.bizName}.\nAmount:`, c.monthlyRate||0);
+  if(!amount) return;
+  if(!c.paymentLog) c.paymentLog = [];
+  c.paymentLog.unshift({date:today(), amount:parseFloat(amount), status:'paid', note:'Manual entry'});
+  if(c.paymentLog.length>12) c.paymentLog = c.paymentLog.slice(0,12);
+  // Advance billing date by 1 month
+  if(c.billingDate) {
+    const d = new Date(c.billingDate);
+    d.setMonth(d.getMonth()+1);
+    c.billingDate = d.toISOString().slice(0,10);
+  }
+  c.paymentStatus = 'active';
+  save();
+  addActivity(`Payment of <strong>$${amount}</strong> logged for <strong>${c.bizName}</strong>`, 'green');
+  toast(`$${amount} payment logged for ${c.bizName}`,'success');
+  renderBilling();
+}
+
+function exportBillingCSV() {
+  if(!DB.clients.length){toast('No billing data to export','error');return;}
+  const rows = [['Business','Contact','Email','Plan','Monthly Rate','Billing Date','Payment Status','Setup Fee','Created']];
+  DB.clients.forEach(c => rows.push([c.bizName,c.contactName||'',c.email||'',c.plan||'',c.monthlyRate||0,c.billingDate||'',c.paymentStatus||'',c.setupFee||0,c.createdAt||'']));
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv],{type:'text/csv'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`billing-export-${today()}.csv`; a.click();
+  toast('Billing exported!','success');
 }
 
 // ════════════════════════════════════════════════════
