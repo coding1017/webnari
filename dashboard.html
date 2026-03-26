@@ -2311,42 +2311,75 @@ td.bold { color: var(--white); font-weight: 600; }
     <div class="page-header">
       <div class="page-header-left">
         <h1>Settings</h1>
-        <p>Agency info and data management</p>
+        <p>Agency configuration, integrations, and data management</p>
       </div>
     </div>
 
     <div class="settings-layout">
       <div class="settings-nav">
-        <button class="settings-nav-item active" onclick="switchSettingsTab('agency')">🏢 Agency Info</button>
-        <button class="settings-nav-item" onclick="switchSettingsTab('data')">🗄 Data</button>
+        <button class="settings-nav-item active" onclick="switchSettingsTab('agency')">Agency Info</button>
+        <button class="settings-nav-item" onclick="switchSettingsTab('branding')">Branding</button>
+        <button class="settings-nav-item" onclick="switchSettingsTab('notifications')">Notifications</button>
+        <button class="settings-nav-item" onclick="switchSettingsTab('integrations')">Integrations</button>
+        <button class="settings-nav-item" onclick="switchSettingsTab('team')">Team</button>
+        <button class="settings-nav-item" onclick="switchSettingsTab('data')">Data</button>
       </div>
 
       <!-- Agency -->
       <div class="settings-panel" id="stab-agency">
         <div class="settings-panel-hd">
           <h2>Agency Information</h2>
-          <p>Your business details — appears in exports and client reports</p>
+          <p>Your business details — appears in exports, reports, and client communications</p>
         </div>
         <div class="settings-body">
-          <div class="form-group">
-            <label class="form-label">Agency / Business Name</label>
-            <input class="form-input" id="s-agency-name" type="text" placeholder="Your Agency Name">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="form-group">
+              <label class="form-label">Agency / Business Name</label>
+              <input class="form-input" id="s-agency-name" type="text" placeholder="Your Agency Name">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Legal Entity Name</label>
+              <input class="form-input" id="s-legal-name" type="text" placeholder="Your LLC / Inc">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Owner / Primary Contact</label>
+              <input class="form-input" id="s-owner-name" type="text" placeholder="Luis Ballen">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Title / Role</label>
+              <input class="form-input" id="s-title" type="text" placeholder="Founder & CEO">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input class="form-input" id="s-email" type="email" placeholder="you@youragency.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Phone</label>
+              <input class="form-input" id="s-phone" type="text" placeholder="(561) 555-0000">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Website</label>
+              <input class="form-input" id="s-website" type="url" placeholder="https://youragency.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Timezone</label>
+              <select class="form-select" id="s-timezone">
+                <option value="America/New_York">Eastern (ET)</option>
+                <option value="America/Chicago">Central (CT)</option>
+                <option value="America/Denver">Mountain (MT)</option>
+                <option value="America/Los_Angeles">Pacific (PT)</option>
+              </select>
+            </div>
           </div>
-          <div class="form-group">
-            <label class="form-label">Your Name</label>
-            <input class="form-input" id="s-owner-name" type="text" placeholder="Luis Ballen">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Email</label>
-            <input class="form-input" id="s-email" type="email" placeholder="you@youragency.com">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Phone</label>
-            <input class="form-input" id="s-phone" type="text" placeholder="(561) 555-0000">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Website</label>
-            <input class="form-input" id="s-website" type="url" placeholder="https://youragency.com">
+          <div style="margin-top:16px;">
+            <div class="form-group">
+              <label class="form-label">Business Address</label>
+              <input class="form-input" id="s-address" type="text" placeholder="123 Main St, Suite 100, Miami, FL 33101">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Agency Bio (for proposals and reports)</label>
+              <textarea class="form-input" id="s-bio" rows="3" placeholder="A brief description of your agency..." style="resize:vertical;"></textarea>
+            </div>
           </div>
         </div>
         <div class="settings-ft">
@@ -2355,17 +2388,272 @@ td.bold { color: var(--white); font-weight: 600; }
         </div>
       </div>
 
+      <!-- Branding -->
+      <div class="settings-panel" id="stab-branding" style="display:none;">
+        <div class="settings-panel-hd">
+          <h2>Branding & Appearance</h2>
+          <p>Customize colors, logo, and default assets for client deliverables</p>
+        </div>
+        <div class="settings-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="form-group">
+              <label class="form-label">Primary Brand Color</label>
+              <div style="display:flex;gap:10px;align-items:center;">
+                <input type="color" id="s-brand-color" value="#8B5CF6" style="width:48px;height:36px;border:none;border-radius:var(--radius);cursor:pointer;background:none;">
+                <input class="form-input" id="s-brand-color-hex" value="#8B5CF6" style="flex:1;font-family:monospace;" oninput="document.getElementById('s-brand-color').value=this.value">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Secondary Color</label>
+              <div style="display:flex;gap:10px;align-items:center;">
+                <input type="color" id="s-brand-color2" value="#D4A843" style="width:48px;height:36px;border:none;border-radius:var(--radius);cursor:pointer;background:none;">
+                <input class="form-input" id="s-brand-color2-hex" value="#D4A843" style="flex:1;font-family:monospace;" oninput="document.getElementById('s-brand-color2').value=this.value">
+              </div>
+            </div>
+          </div>
+          <div class="form-group" style="margin-top:16px;">
+            <label class="form-label">Logo URL</label>
+            <input class="form-input" id="s-logo-url" type="url" placeholder="https://youragency.com/logo.png">
+            <div style="font-size:11px;color:var(--muted);margin-top:4px;">Used in proposals, reports, and email templates</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Favicon URL</label>
+            <input class="form-input" id="s-favicon-url" type="url" placeholder="https://youragency.com/favicon.ico">
+          </div>
+          <div style="margin-top:16px;padding:16px;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border);">
+            <div style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.06em;margin-bottom:12px;">PREVIEW</div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <div id="s-brand-preview-circle" style="width:40px;height:40px;border-radius:50%;background:var(--indigo);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:16px;">W</div>
+              <div>
+                <div id="s-brand-preview-name" style="font-size:14px;font-weight:700;color:var(--white);">Webnari</div>
+                <div style="font-size:11px;color:var(--muted);">Your brand appearance in reports</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="settings-ft">
+          <button class="btn btn-ghost" onclick="loadSettings()">Reset</button>
+          <button class="btn btn-primary" onclick="saveSettings()">Save Changes</button>
+        </div>
+      </div>
+
+      <!-- Notifications -->
+      <div class="settings-panel" id="stab-notifications" style="display:none;">
+        <div class="settings-panel-hd">
+          <h2>Notification Preferences</h2>
+          <p>Control which events trigger alerts and how you receive them</p>
+        </div>
+        <div class="settings-body">
+          <div style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.06em;margin-bottom:12px;">EMAIL NOTIFICATIONS</div>
+          <div style="display:flex;flex-direction:column;gap:2px;">
+            <label style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer;">
+              <div><div style="font-size:13px;font-weight:600;color:var(--white);">New form submission</div><div style="font-size:11px;color:var(--muted);">When a visitor submits a contact form on any client site</div></div>
+              <input type="checkbox" id="s-notif-form" checked style="width:18px;height:18px;accent-color:var(--indigo);">
+            </label>
+            <label style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer;">
+              <div><div style="font-size:13px;font-weight:600;color:var(--white);">New review received</div><div style="font-size:11px;color:var(--muted);">When a client gets a new Google, Yelp, or Facebook review</div></div>
+              <input type="checkbox" id="s-notif-review" checked style="width:18px;height:18px;accent-color:var(--indigo);">
+            </label>
+            <label style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer;">
+              <div><div style="font-size:13px;font-weight:600;color:var(--white);">Payment past due</div><div style="font-size:11px;color:var(--muted);">When a client's payment status changes to past due</div></div>
+              <input type="checkbox" id="s-notif-pastdue" checked style="width:18px;height:18px;accent-color:var(--indigo);">
+            </label>
+            <label style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer;">
+              <div><div style="font-size:13px;font-weight:600;color:var(--white);">Site health alert</div><div style="font-size:11px;color:var(--muted);">When a monitored site goes down or returns errors</div></div>
+              <input type="checkbox" id="s-notif-health" checked style="width:18px;height:18px;accent-color:var(--indigo);">
+            </label>
+            <label style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);cursor:pointer;">
+              <div><div style="font-size:13px;font-weight:600;color:var(--white);">Billing renewal reminder</div><div style="font-size:11px;color:var(--muted);">3 days before a client's billing date</div></div>
+              <input type="checkbox" id="s-notif-renewal" checked style="width:18px;height:18px;accent-color:var(--indigo);">
+            </label>
+            <label style="display:flex;align-items:center;justify-content:space-between;padding:12px 0;cursor:pointer;">
+              <div><div style="font-size:13px;font-weight:600;color:var(--white);">Weekly digest</div><div style="font-size:11px;color:var(--muted);">Summary of all client activity, revenue, and metrics</div></div>
+              <input type="checkbox" id="s-notif-digest" style="width:18px;height:18px;accent-color:var(--indigo);">
+            </label>
+          </div>
+          <div style="margin-top:20px;">
+            <div class="form-group">
+              <label class="form-label">Notification Email</label>
+              <input class="form-input" id="s-notif-email" type="email" placeholder="alerts@youragency.com">
+              <div style="font-size:11px;color:var(--muted);margin-top:4px;">Leave blank to use your agency email</div>
+            </div>
+          </div>
+        </div>
+        <div class="settings-ft">
+          <button class="btn btn-ghost" onclick="loadSettings()">Reset</button>
+          <button class="btn btn-primary" onclick="saveSettings()">Save Changes</button>
+        </div>
+      </div>
+
+      <!-- Integrations -->
+      <div class="settings-panel" id="stab-integrations" style="display:none;">
+        <div class="settings-panel-hd">
+          <h2>Integrations & API Keys</h2>
+          <p>Connect third-party services to unlock more dashboard features</p>
+        </div>
+        <div class="settings-body">
+          <div style="display:flex;flex-direction:column;gap:2px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border);">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <div style="width:36px;height:36px;border-radius:8px;background:#4285F4;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:14px;">G</div>
+                <div><div style="font-size:13px;font-weight:600;color:var(--white);">Google Analytics</div><div style="font-size:11px;color:var(--muted);">Import traffic data automatically</div></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span id="s-ga-status" class="badge badge-amber" style="font-size:9px;">Not Connected</span>
+                <button class="btn btn-ghost btn-sm" onclick="toggleIntegrationField('ga')">Configure</button>
+              </div>
+            </div>
+            <div id="s-ga-field" style="display:none;padding:12px 0 16px 48px;border-bottom:1px solid var(--border);">
+              <div class="form-group" style="margin-bottom:8px;">
+                <label class="form-label">GA4 Measurement ID</label>
+                <input class="form-input" id="s-ga-id" type="text" placeholder="G-XXXXXXXXXX">
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">GA4 API Key (optional)</label>
+                <input class="form-input" id="s-ga-key" type="password" placeholder="Your API key">
+              </div>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border);">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <div style="width:36px;height:36px;border-radius:8px;background:#635BFF;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:14px;">S</div>
+                <div><div style="font-size:13px;font-weight:600;color:var(--white);">Stripe</div><div style="font-size:11px;color:var(--muted);">Sync billing and payment data</div></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span id="s-stripe-status" class="badge badge-amber" style="font-size:9px;">Not Connected</span>
+                <button class="btn btn-ghost btn-sm" onclick="toggleIntegrationField('stripe')">Configure</button>
+              </div>
+            </div>
+            <div id="s-stripe-field" style="display:none;padding:12px 0 16px 48px;border-bottom:1px solid var(--border);">
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Stripe Secret Key</label>
+                <input class="form-input" id="s-stripe-key" type="password" placeholder="sk_live_...">
+              </div>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border);">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <div style="width:36px;height:36px;border-radius:8px;background:#0ACF83;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:14px;">F</div>
+                <div><div style="font-size:13px;font-weight:600;color:var(--white);">Formspree</div><div style="font-size:11px;color:var(--muted);">Pull form submissions into Lead Inbox</div></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span id="s-formspree-status" class="badge badge-amber" style="font-size:9px;">Not Connected</span>
+                <button class="btn btn-ghost btn-sm" onclick="toggleIntegrationField('formspree')">Configure</button>
+              </div>
+            </div>
+            <div id="s-formspree-field" style="display:none;padding:12px 0 16px 48px;border-bottom:1px solid var(--border);">
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Formspree API Key</label>
+                <input class="form-input" id="s-formspree-key" type="password" placeholder="Your API key">
+              </div>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;border-bottom:1px solid var(--border);">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <div style="width:36px;height:36px;border-radius:8px;background:#F48120;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:14px;">CF</div>
+                <div><div style="font-size:13px;font-weight:600;color:var(--white);">Cloudflare</div><div style="font-size:11px;color:var(--muted);">Deploy sites and manage DNS</div></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span id="s-cf-status" class="badge badge-amber" style="font-size:9px;">Not Connected</span>
+                <button class="btn btn-ghost btn-sm" onclick="toggleIntegrationField('cf')">Configure</button>
+              </div>
+            </div>
+            <div id="s-cf-field" style="display:none;padding:12px 0 16px 48px;border-bottom:1px solid var(--border);">
+              <div class="form-group" style="margin-bottom:8px;">
+                <label class="form-label">Cloudflare API Token</label>
+                <input class="form-input" id="s-cf-token" type="password" placeholder="Your API token">
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Account ID</label>
+                <input class="form-input" id="s-cf-account" type="text" placeholder="Your account ID">
+              </div>
+            </div>
+
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 0;">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <div style="width:36px;height:36px;border-radius:8px;background:#4A154B;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;font-size:14px;">Sl</div>
+                <div><div style="font-size:13px;font-weight:600;color:var(--white);">Slack</div><div style="font-size:11px;color:var(--muted);">Get alerts in your Slack channel</div></div>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span id="s-slack-status" class="badge badge-amber" style="font-size:9px;">Not Connected</span>
+                <button class="btn btn-ghost btn-sm" onclick="toggleIntegrationField('slack')">Configure</button>
+              </div>
+            </div>
+            <div id="s-slack-field" style="display:none;padding:12px 0 16px 48px;">
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Webhook URL</label>
+                <input class="form-input" id="s-slack-webhook" type="url" placeholder="https://hooks.slack.com/services/...">
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="settings-ft">
+          <button class="btn btn-ghost" onclick="loadSettings()">Reset</button>
+          <button class="btn btn-primary" onclick="saveSettings()">Save Changes</button>
+        </div>
+      </div>
+
+      <!-- Team -->
+      <div class="settings-panel" id="stab-team" style="display:none;">
+        <div class="settings-panel-hd">
+          <h2>Team Members</h2>
+          <p>Manage who has access to the dashboard</p>
+        </div>
+        <div class="settings-body">
+          <div id="s-team-list"></div>
+          <button class="btn btn-ghost" style="margin-top:16px;width:100%;" onclick="addTeamMember()">+ Add Team Member</button>
+        </div>
+      </div>
+
       <!-- Data -->
       <div class="settings-panel" id="stab-data" style="display:none;">
         <div class="settings-panel-hd">
           <h2>Data Management</h2>
-          <p>Export your data or reset the dashboard</p>
+          <p>Export, import, and manage your dashboard data</p>
         </div>
         <div class="settings-body">
-          <button class="btn btn-ghost" style="justify-content:flex-start;width:100%;" onclick="exportData()">⬇ Export All Data as JSON</button>
-          <button class="btn btn-ghost" style="justify-content:flex-start;width:100%;" onclick="importData()">⬆ Import Data from JSON</button>
-          <div style="height:1px;background:var(--border);"></div>
-          <button class="btn btn-danger" style="justify-content:flex-start;width:100%;" onclick="resetData()">🗑 Reset All Data to Defaults</button>
+          <div style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.06em;margin-bottom:12px;">STORAGE</div>
+          <div class="panel" style="padding:16px;margin-bottom:16px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+              <span style="font-size:12px;font-weight:600;color:var(--text);">LocalStorage Usage</span>
+              <span id="s-storage-size" style="font-size:12px;color:var(--muted);">--</span>
+            </div>
+            <div style="height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;">
+              <div id="s-storage-bar" style="height:100%;width:0%;background:var(--indigo);border-radius:3px;transition:width .5s;"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:10px;color:var(--muted);">
+              <span id="s-storage-items">-- items</span>
+              <span>5 MB max (localStorage)</span>
+            </div>
+          </div>
+
+          <div style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.06em;margin-bottom:12px;">BACKUP & RESTORE</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <button class="btn btn-ghost" style="justify-content:flex-start;width:100%;padding:14px 16px;" onclick="exportData()">
+              <svg style="width:16px;height:16px;margin-right:8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+              Export All Data as JSON
+            </button>
+            <button class="btn btn-ghost" style="justify-content:flex-start;width:100%;padding:14px 16px;" onclick="importData()">
+              <svg style="width:16px;height:16px;margin-right:8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+              Import Data from JSON Backup
+            </button>
+            <button class="btn btn-ghost" style="justify-content:flex-start;width:100%;padding:14px 16px;" onclick="exportClientReport()">
+              <svg style="width:16px;height:16px;margin-right:8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Export Client Summary CSV
+            </button>
+          </div>
+
+          <div style="margin-top:24px;font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.06em;margin-bottom:12px;">ACTIVITY LOG</div>
+          <div id="s-activity-log" style="max-height:200px;overflow-y:auto;"></div>
+
+          <div style="margin-top:24px;padding-top:20px;border-top:1px solid var(--border);">
+            <div style="font-size:11px;font-weight:600;color:var(--red);letter-spacing:.06em;margin-bottom:12px;">DANGER ZONE</div>
+            <button class="btn btn-danger" style="justify-content:flex-start;width:100%;padding:14px 16px;" onclick="resetData()">
+              <svg style="width:16px;height:16px;margin-right:8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              Reset All Data to Defaults
+            </button>
+            <div style="font-size:11px;color:var(--red);margin-top:8px;opacity:0.7;">This permanently erases all clients, templates, analytics, and settings. This cannot be undone.</div>
+          </div>
         </div>
       </div>
     </div>
@@ -6723,16 +7011,142 @@ function deleteTemplate(id) {
 //  SETTINGS
 // ════════════════════════════════════════════════════
 function switchSettingsTab(tab) {
-  ['agency','data'].forEach((t,i) => {
-    document.getElementById('stab-'+t).style.display = t===tab?'':'none';
-    document.querySelectorAll('.settings-nav-item')[i].classList.toggle('active', t===tab);
+  const tabs = ['agency','branding','notifications','integrations','team','data'];
+  tabs.forEach((t,i) => {
+    const panel = document.getElementById('stab-'+t);
+    if(panel) panel.style.display = t===tab?'':'none';
+    const btns = document.querySelectorAll('.settings-nav-item');
+    if(btns[i]) btns[i].classList.toggle('active', t===tab);
   });
+  if(tab==='team') renderTeamList();
+  if(tab==='data') renderDataTab();
 }
 
 function loadSettings() {
   const a = DB.agency||{};
   gv('s-agency-name',a.name||''); gv('s-owner-name',a.ownerName||'');
   gv('s-email',a.email||''); gv('s-phone',a.phone||''); gv('s-website',a.website||'');
+  gv('s-legal-name',a.legalName||''); gv('s-title',a.title||'');
+  gv('s-address',a.address||''); gv('s-bio',a.bio||'');
+  if(document.getElementById('s-timezone')) document.getElementById('s-timezone').value = a.timezone||'America/New_York';
+  // Branding
+  const b = DB.branding||{};
+  if(document.getElementById('s-brand-color')) {
+    document.getElementById('s-brand-color').value = b.primaryColor||'#8B5CF6';
+    gv('s-brand-color-hex', b.primaryColor||'#8B5CF6');
+    document.getElementById('s-brand-color2').value = b.secondaryColor||'#D4A843';
+    gv('s-brand-color2-hex', b.secondaryColor||'#D4A843');
+    gv('s-logo-url', b.logoUrl||'');
+    gv('s-favicon-url', b.faviconUrl||'');
+    updateBrandPreview();
+  }
+  // Notifications
+  const n = DB.notifications||{};
+  const notifFields = ['form','review','pastdue','health','renewal','digest'];
+  notifFields.forEach(f => {
+    const el = document.getElementById('s-notif-'+f);
+    if(el) el.checked = n[f]!==false;
+  });
+  gv('s-notif-email', n.email||'');
+  // Integrations
+  const ig = DB.integrations||{};
+  gv('s-ga-id', ig.gaId||''); gv('s-ga-key', ig.gaKey||'');
+  gv('s-stripe-key', ig.stripeKey||'');
+  gv('s-formspree-key', ig.formspreeKey||'');
+  gv('s-cf-token', ig.cfToken||''); gv('s-cf-account', ig.cfAccount||'');
+  gv('s-slack-webhook', ig.slackWebhook||'');
+  // Update integration status badges
+  ['ga','stripe','formspree','cf','slack'].forEach(k => {
+    const hasKey = k==='ga'?ig.gaId:k==='stripe'?ig.stripeKey:k==='formspree'?ig.formspreeKey:k==='cf'?ig.cfToken:ig.slackWebhook;
+    const badge = document.getElementById('s-'+k+'-status');
+    if(badge) { badge.textContent = hasKey?'Connected':'Not Connected'; badge.className = 'badge badge-'+(hasKey?'green':'amber'); badge.style.fontSize='9px'; }
+  });
+}
+
+function updateBrandPreview() {
+  const name = document.getElementById('s-agency-name')?.value || 'Webnari';
+  const color = document.getElementById('s-brand-color')?.value || '#8B5CF6';
+  const circle = document.getElementById('s-brand-preview-circle');
+  const nameEl = document.getElementById('s-brand-preview-name');
+  if(circle) { circle.style.background = color; circle.textContent = name.charAt(0).toUpperCase(); }
+  if(nameEl) nameEl.textContent = name || 'Your Agency';
+}
+
+function toggleIntegrationField(key) {
+  const el = document.getElementById('s-'+key+'-field');
+  if(el) el.style.display = el.style.display==='none'?'':'none';
+}
+
+function renderTeamList() {
+  const el = document.getElementById('s-team-list');
+  if(!el) return;
+  if(!DB.team) DB.team = [{name:DB.agency?.ownerName||'Owner', email:DB.agency?.email||'', role:'admin', added:today()}];
+  el.innerHTML = DB.team.map((m,i) => `
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border);">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div style="width:36px;height:36px;border-radius:50%;background:var(--indigo);display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:14px;">${(m.name||'?')[0].toUpperCase()}</div>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--white);">${m.name}</div>
+          <div style="font-size:11px;color:var(--muted);">${m.email||'No email'}</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="badge badge-${m.role==='admin'?'indigo':m.role==='editor'?'teal':'default'}" style="font-size:9px;text-transform:uppercase;">${m.role}</span>
+        ${i>0?`<button class="btn btn-ghost btn-sm" style="font-size:10px;color:var(--red);" onclick="removeTeamMember(${i})">Remove</button>`:'<span style="font-size:10px;color:var(--muted);">(you)</span>'}
+      </div>
+    </div>`).join('');
+}
+
+function addTeamMember() {
+  const name = prompt('Team member name:');
+  if(!name) return;
+  const email = prompt('Email:');
+  const role = prompt('Role (admin, editor, viewer):','viewer');
+  if(!DB.team) DB.team = [];
+  DB.team.push({name, email:email||'', role:role||'viewer', added:today()});
+  save(); renderTeamList();
+  toast('Team member added','success');
+}
+
+function removeTeamMember(idx) {
+  if(!confirm('Remove this team member?')) return;
+  DB.team.splice(idx,1);
+  save(); renderTeamList();
+  toast('Team member removed','success');
+}
+
+function renderDataTab() {
+  // Storage usage
+  const data = localStorage.getItem('waas_os')||'';
+  const bytes = new Blob([data]).size;
+  const kb = (bytes/1024).toFixed(1);
+  const pct = Math.min(Math.round((bytes/(5*1024*1024))*100),100);
+  const sizeEl = document.getElementById('s-storage-size');
+  const barEl = document.getElementById('s-storage-bar');
+  const itemsEl = document.getElementById('s-storage-items');
+  if(sizeEl) sizeEl.textContent = bytes>1024*1024?`${(bytes/(1024*1024)).toFixed(1)} MB`:`${kb} KB`;
+  if(barEl) { barEl.style.width=pct+'%'; barEl.style.background=pct>80?'var(--red)':pct>50?'var(--amber)':'var(--indigo)'; }
+  if(itemsEl) itemsEl.textContent = `${DB.clients?.length||0} clients · ${DB.templates?.length||0} templates`;
+  // Activity log
+  const logEl = document.getElementById('s-activity-log');
+  if(logEl) {
+    const logs = (DB.activity||[]).slice(0,15);
+    logEl.innerHTML = logs.length ? logs.map(a => `
+      <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;">
+        <span style="color:var(--text);">${a.text}</span>
+        <span style="color:var(--muted);flex-shrink:0;margin-left:12px;">${a.date||''}</span>
+      </div>`).join('') : `<div style="color:var(--muted);font-size:12px;text-align:center;padding:20px;">No activity recorded yet</div>`;
+  }
+}
+
+function exportClientReport() {
+  if(!DB.clients.length){toast('No clients to export','error');return;}
+  const rows = [['Business','Contact','Email','Phone','Plan','Monthly Rate','Status','Payment','Template','Live URL','Created']];
+  DB.clients.forEach(c => rows.push([c.bizName,c.contactName||'',c.email||'',c.phone||'',c.plan||'',c.monthlyRate||0,c.status||'',c.paymentStatus||'',c.template||'',c.liveUrl||'',c.createdAt||'']));
+  const csv = rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv],{type:'text/csv'});
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`client-summary-${today()}.csv`; a.click();
+  toast('Client report exported!','success');
 }
 
 function loadPricingFields() {
@@ -6753,9 +7167,33 @@ function loadPricingFields() {
 function saveSettings() {
   DB.agency = {
     name: rv('s-agency-name')||'Your Agency', ownerName: rv('s-owner-name'),
-    email: rv('s-email'), phone: rv('s-phone'), website: rv('s-website')
+    email: rv('s-email'), phone: rv('s-phone'), website: rv('s-website'),
+    legalName: rv('s-legal-name'), title: rv('s-title'),
+    address: rv('s-address'), bio: rv('s-bio'),
+    timezone: document.getElementById('s-timezone')?.value||'America/New_York'
   };
-  save(); syncSidebar(); toast('Settings saved!','success');
+  DB.branding = {
+    primaryColor: document.getElementById('s-brand-color')?.value||'#8B5CF6',
+    secondaryColor: document.getElementById('s-brand-color2')?.value||'#D4A843',
+    logoUrl: rv('s-logo-url'), faviconUrl: rv('s-favicon-url')
+  };
+  DB.notifications = {
+    form: document.getElementById('s-notif-form')?.checked!==false,
+    review: document.getElementById('s-notif-review')?.checked!==false,
+    pastdue: document.getElementById('s-notif-pastdue')?.checked!==false,
+    health: document.getElementById('s-notif-health')?.checked!==false,
+    renewal: document.getElementById('s-notif-renewal')?.checked!==false,
+    digest: document.getElementById('s-notif-digest')?.checked||false,
+    email: rv('s-notif-email')
+  };
+  DB.integrations = {
+    gaId: rv('s-ga-id'), gaKey: rv('s-ga-key'),
+    stripeKey: rv('s-stripe-key'),
+    formspreeKey: rv('s-formspree-key'),
+    cfToken: rv('s-cf-token'), cfAccount: rv('s-cf-account'),
+    slackWebhook: rv('s-slack-webhook')
+  };
+  save(); syncSidebar(); loadSettings(); toast('Settings saved!','success');
 }
 
 function savePricing() {
