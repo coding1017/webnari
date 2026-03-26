@@ -2358,19 +2358,28 @@ td.bold { color: var(--white); font-weight: 600; }
   ══════════════════════════════════════ -->
   <div class="page" id="page-content">
     <div class="page-header">
-      <div class="page-header-left"><h1>Content Calendar</h1><p>Plan and track blog posts, social content, and updates</p></div>
-      <div style="display:flex;gap:10px;">
+      <div class="page-header-left"><h1>Content Calendar</h1><p>Plan, track, and deliver content for all clients</p></div>
+      <div style="display:flex;gap:10px;align-items:center;">
         <select id="cc-filter-client" onchange="renderContent()" style="padding:8px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:13px;"><option value="">All Clients</option></select>
+        <select id="cc-filter-type" onchange="renderContent()" style="padding:8px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:13px;"><option value="">All Types</option><option value="blog">Blog</option><option value="social">Social</option><option value="seo">SEO Content</option><option value="email">Email</option><option value="update">Site Update</option></select>
         <button class="btn btn-primary" onclick="openAddContent()">+ Add Content</button>
       </div>
     </div>
-    <div style="display:flex;gap:12px;margin-bottom:16px;">
-      <button class="btn btn-ghost btn-sm" onclick="ccMonth(-1)">← Prev</button>
-      <span id="cc-month-label" style="font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--white);padding:6px 0;"></span>
-      <button class="btn btn-ghost btn-sm" onclick="ccMonth(1)">Next →</button>
+    <!-- KPI Summary -->
+    <div id="cc-summary"></div>
+    <!-- Calendar nav -->
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="btn btn-ghost btn-sm" onclick="ccMonth(-1)">←</button>
+        <span id="cc-month-label" style="font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--white);padding:4px 8px;min-width:180px;text-align:center;"></span>
+        <button class="btn btn-ghost btn-sm" onclick="ccMonth(1)">→</button>
+        <button class="btn btn-ghost btn-sm" onclick="ccDate=new Date();renderContent();" style="font-size:11px;margin-left:4px;">Today</button>
+      </div>
     </div>
     <div id="cc-calendar"></div>
-    <div id="cc-list" style="margin-top:20px;"></div>
+    <!-- Upcoming deadlines + list -->
+    <div id="cc-upcoming" style="margin-top:20px;"></div>
+    <div id="cc-list" style="margin-top:16px;"></div>
   </div>
 
   <!-- ══════════════════════════════════════
@@ -4587,70 +4596,260 @@ function saveManualAudit(clientId) {
 function runAllAudits() { DB.clients.filter(c => c.liveUrl && c.status === 'live').forEach(c => runAudit(c.id, c.liveUrl)); }
 
 // ════════════════════════════════════════════════════
-//  TOOL: CONTENT CALENDAR
+//  TOOL: CONTENT CALENDAR (Enterprise)
 // ════════════════════════════════════════════════════
 var ccDate = new Date();
+const CONTENT_TYPES = { blog: { label: 'Blog Post', icon: '📝', color: 'var(--indigo)' }, social: { label: 'Social', icon: '📱', color: 'var(--purple)' }, seo: { label: 'SEO Content', icon: '🔍', color: 'var(--green)' }, email: { label: 'Email', icon: '✉️', color: 'var(--amber)' }, update: { label: 'Site Update', icon: '🔧', color: 'var(--teal)' } };
+const CONTENT_STATUSES = { planned: { label: 'Planned', color: 'var(--muted)', bg: 'rgba(255,255,255,0.04)' }, writing: { label: 'Writing', color: 'var(--amber)', bg: 'var(--amber-bg)' }, review: { label: 'In Review', color: 'var(--indigo)', bg: 'var(--indigo-bg)' }, published: { label: 'Published', color: 'var(--green)', bg: 'var(--green-bg)' } };
+
 function ccMonth(d) { ccDate.setMonth(ccDate.getMonth() + d); renderContent(); }
+
 function renderContent() {
   if (!DB.contentItems) DB.contentItems = [];
-  const sel = document.getElementById('cc-filter-client');
-  sel.innerHTML = '<option value="">All Clients</option>' + DB.clients.map(c => `<option value="${c.id}">${c.bizName}</option>`).join('');
-  const filterClient = sel.value;
+  // Populate filters (preserve selection)
+  const clientSel = document.getElementById('cc-filter-client');
+  const prevClient = clientSel.value;
+  clientSel.innerHTML = '<option value="">All Clients</option>' + DB.clients.map(c => `<option value="${c.id}"${c.id===prevClient?' selected':''}>${c.bizName}</option>`).join('');
+  const filterClient = clientSel.value;
+  const filterType = document.getElementById('cc-filter-type').value;
+
   const y = ccDate.getFullYear(), m = ccDate.getMonth();
+  const todayStr = new Date().toISOString().slice(0, 10);
   document.getElementById('cc-month-label').textContent = ccDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-  const firstDay = new Date(y, m, 1).getDay();
-  const daysInMonth = new Date(y, m + 1, 0).getDate();
+
+  // All items for stats (unfiltered)
+  const allItems = DB.contentItems;
+  const planned = allItems.filter(i => i.status === 'planned').length;
+  const writing = allItems.filter(i => i.status === 'writing' || i.status === 'review').length;
+  const published = allItems.filter(i => i.status === 'published').length;
+  const overdue = allItems.filter(i => i.status !== 'published' && i.dueDate < todayStr).length;
+  // This month items
+  const thisMonthAll = allItems.filter(i => { const d = new Date(i.dueDate); return d.getFullYear() === y && d.getMonth() === m; });
+  const thisMonthPublished = thisMonthAll.filter(i => i.status === 'published').length;
+
+  // KPI Summary
+  document.getElementById('cc-summary').innerHTML = `<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px;">
+    <div class="kpi-card" style="--accent:var(--muted)"><div class="kpi-glow"></div><div class="kpi-label">Planned</div><div class="kpi-value">${planned}</div><div class="kpi-trend neutral">Awaiting start</div></div>
+    <div class="kpi-card" style="--accent:var(--amber)"><div class="kpi-glow" style="background:var(--amber)"></div><div class="kpi-label">In Progress</div><div class="kpi-value">${writing}</div><div class="kpi-trend neutral">Writing or review</div></div>
+    <div class="kpi-card" style="--accent:var(--green)"><div class="kpi-glow" style="background:var(--green)"></div><div class="kpi-label">Published</div><div class="kpi-value">${published}</div><div class="kpi-trend up">${thisMonthPublished} this month</div></div>
+    <div class="kpi-card" style="--accent:${overdue > 0 ? 'var(--red)' : 'var(--green)'}"><div class="kpi-glow" style="background:${overdue > 0 ? 'var(--red)' : 'var(--green)'}"></div><div class="kpi-label">Overdue</div><div class="kpi-value">${overdue}</div><div class="kpi-trend ${overdue > 0 ? 'neutral' : 'up'}">${overdue > 0 ? 'Needs attention' : 'All on track'}</div></div>
+    <div class="kpi-card" style="--accent:var(--indigo)"><div class="kpi-glow"></div><div class="kpi-label">This Month</div><div class="kpi-value">${thisMonthAll.length}</div><div class="kpi-trend neutral">${thisMonthPublished}/${thisMonthAll.length} delivered</div></div>
+  </div>`;
+
+  // Filter items for calendar
   let items = DB.contentItems.filter(i => { const d = new Date(i.dueDate); return d.getFullYear() === y && d.getMonth() === m; });
   if (filterClient) items = items.filter(i => i.clientId === filterClient);
-  // Calendar grid
-  let cal = '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;">';
-  ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d => { cal += `<div style="text-align:center;font-size:10px;font-weight:700;color:var(--muted);padding:8px;text-transform:uppercase;letter-spacing:0.08em;">${d}</div>`; });
-  for (let i = 0; i < firstDay; i++) cal += '<div></div>';
+  if (filterType) items = items.filter(i => i.type === filterType);
+
+  // ── Calendar Grid ──
+  const firstDay = new Date(y, m, 1).getDay();
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+
+  let cal = '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:3px;">';
+  ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d => {
+    cal += `<div style="text-align:center;font-size:10px;font-weight:700;color:var(--muted);padding:10px 4px;text-transform:uppercase;letter-spacing:0.08em;">${d}</div>`;
+  });
+  // Empty cells before month starts
+  for (let i = 0; i < firstDay; i++) {
+    cal += '<div style="min-height:90px;background:rgba(255,255,255,0.01);border-radius:6px;"></div>';
+  }
   for (let d = 1; d <= daysInMonth; d++) {
     const dateStr = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
     const dayItems = items.filter(i => i.dueDate === dateStr);
-    const isToday = new Date().toISOString().slice(0,10) === dateStr;
-    cal += `<div style="min-height:70px;padding:6px;background:${isToday ? 'rgba(201,169,110,0.08)' : 'var(--surface2)'};border:1px solid ${isToday ? 'var(--indigo-border)' : 'var(--border)'};border-radius:6px;cursor:pointer;" onclick="openAddContent('${dateStr}')">
-      <div style="font-size:11px;font-weight:${isToday?'700':'500'};color:${isToday?'var(--indigo)':'var(--muted)'};margin-bottom:4px;">${d}</div>
-      ${dayItems.map(i => { const col = i.status === 'published' ? 'var(--green)' : i.status === 'writing' ? 'var(--amber)' : 'var(--muted)'; return `<div style="font-size:9px;padding:2px 4px;background:${col}20;color:${col};border-radius:3px;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${i.title}">${i.title}</div>`; }).join('')}
+    const isToday = todayStr === dateStr;
+    const isPast = dateStr < todayStr;
+    const hasOverdue = dayItems.some(i => i.status !== 'published' && isPast);
+
+    cal += `<div style="min-height:90px;padding:6px 7px;background:${isToday ? 'rgba(201,169,110,0.08)' : 'var(--surface2)'};border:1px solid ${isToday ? 'var(--indigo-border)' : hasOverdue ? 'rgba(232,93,117,0.3)' : 'var(--border)'};border-radius:8px;cursor:pointer;transition:border-color 0.2s,background 0.2s;position:relative;" onmouseover="this.style.borderColor='var(--indigo-border)';this.style.background='rgba(201,169,110,0.06)'" onmouseout="this.style.borderColor='${isToday ? 'var(--indigo-border)' : hasOverdue ? 'rgba(232,93,117,0.3)' : 'var(--border)'}';this.style.background='${isToday ? 'rgba(201,169,110,0.08)' : 'var(--surface2)'}'" onclick="openDayView('${dateStr}')">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;">
+        <span style="font-size:12px;font-weight:${isToday?'800':'500'};color:${isToday?'var(--indigo)':'var(--muted)'};">${d}</span>
+        ${isToday ? '<span style="font-size:8px;background:var(--indigo-bg);color:var(--indigo);padding:1px 5px;border-radius:4px;font-weight:700;">TODAY</span>' : ''}
+        ${dayItems.length > 0 && !isToday ? `<span style="font-size:8px;background:var(--surface);color:var(--text);padding:1px 5px;border-radius:4px;">${dayItems.length}</span>` : ''}
+      </div>
+      ${dayItems.slice(0, 3).map(i => {
+        const ct = CONTENT_TYPES[i.type] || CONTENT_TYPES.blog;
+        const cs = CONTENT_STATUSES[i.status] || CONTENT_STATUSES.planned;
+        const isItemOverdue = i.status !== 'published' && isPast;
+        return `<div style="font-size:9px;padding:3px 5px;background:${isItemOverdue ? 'var(--red-bg)' : cs.bg};color:${isItemOverdue ? 'var(--red)' : cs.color};border-radius:4px;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:flex;align-items:center;gap:3px;border-left:2px solid ${ct.color};" title="${i.title} — ${cs.label}" onclick="event.stopPropagation();openEditContent('${i.id}')">${i.title}</div>`;
+      }).join('')}
+      ${dayItems.length > 3 ? `<div style="font-size:8px;color:var(--muted);text-align:center;margin-top:2px;">+${dayItems.length - 3} more</div>` : ''}
     </div>`;
   }
   cal += '</div>';
   document.getElementById('cc-calendar').innerHTML = cal;
-  // Stats + list
-  const planned = DB.contentItems.filter(i => i.status === 'planned').length;
-  const writing = DB.contentItems.filter(i => i.status === 'writing').length;
-  const published = DB.contentItems.filter(i => i.status === 'published').length;
-  let list = `<div style="display:flex;gap:16px;margin-bottom:16px;"><div class="badge" style="background:var(--surface2);color:var(--muted);">Planned: ${planned}</div><div class="badge" style="background:var(--amber-bg);color:var(--amber);">Writing: ${writing}</div><div class="badge" style="background:var(--green-bg);color:var(--green);">Published: ${published}</div></div>`;
-  list += '<div class="panel"><div class="table-wrap"><table><thead><tr><th>Title</th><th>Client</th><th>Type</th><th>Status</th><th>Due</th><th></th></tr></thead><tbody>';
-  const allItems = filterClient ? DB.contentItems.filter(i => i.clientId === filterClient) : DB.contentItems;
-  [...allItems].sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate)).forEach(i => {
-    const client = DB.clients.find(c => c.id === i.clientId);
-    const [sbg,sc] = i.status === 'published' ? ['var(--green-bg)','var(--green)'] : i.status === 'writing' ? ['var(--amber-bg)','var(--amber)'] : ['var(--surface2)','var(--muted)'];
-    list += `<tr><td class="bold">${i.title}</td><td style="font-size:12px;color:var(--muted);">${client?client.bizName:'—'}</td><td style="font-size:12px;">${i.type}</td><td><span class="badge" style="background:${sbg};color:${sc};cursor:pointer;" onclick="cycleContent('${i.id}')">${i.status}</span></td><td style="font-size:12px;color:var(--muted);">${i.dueDate}</td><td><button class="btn btn-ghost btn-sm btn-icon" onclick="deleteContent('${i.id}')" style="font-size:11px;">🗑</button></td></tr>`;
-  });
+
+  // ── Upcoming Deadlines (next 7 days, unpublished) ──
+  const weekFromNow = new Date(); weekFromNow.setDate(weekFromNow.getDate() + 7);
+  const weekStr = weekFromNow.toISOString().slice(0, 10);
+  let upcoming = DB.contentItems.filter(i => i.status !== 'published' && i.dueDate >= todayStr && i.dueDate <= weekStr);
+  if (filterClient) upcoming = upcoming.filter(i => i.clientId === filterClient);
+  upcoming.sort((a, b) => a.dueDate.localeCompare(b.dueDate));
+
+  let upHtml = '';
+  if (upcoming.length > 0) {
+    upHtml = `<div class="panel" style="padding:0;margin-bottom:16px;">
+      <div class="panel-header"><div class="panel-title">Upcoming Deadlines (Next 7 Days)</div><span class="badge" style="background:var(--amber-bg);color:var(--amber);">${upcoming.length}</span></div>
+      <div style="padding:4px 0;">
+        ${upcoming.map(i => {
+          const client = DB.clients.find(c => c.id === i.clientId);
+          const ct = CONTENT_TYPES[i.type] || CONTENT_TYPES.blog;
+          const cs = CONTENT_STATUSES[i.status] || CONTENT_STATUSES.planned;
+          const daysLeft = Math.ceil((new Date(i.dueDate) - new Date(todayStr)) / 86400000);
+          const urgency = daysLeft === 0 ? 'Today' : daysLeft === 1 ? 'Tomorrow' : daysLeft + ' days';
+          return `<div style="display:flex;align-items:center;gap:12px;padding:10px 20px;border-bottom:1px solid var(--border);cursor:pointer;" onclick="openEditContent('${i.id}')" onmouseover="this.style.background='rgba(201,169,110,0.04)'" onmouseout="this.style.background=''">
+            <span style="font-size:14px;">${ct.icon}</span>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:13px;font-weight:600;color:var(--white);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${i.title}</div>
+              <div style="font-size:11px;color:var(--muted);">${client ? client.bizName : '—'} &middot; ${ct.label}</div>
+            </div>
+            <span class="badge" style="background:${cs.bg};color:${cs.color};font-size:10px;cursor:pointer;" onclick="event.stopPropagation();cycleContent('${i.id}')">${cs.label}</span>
+            <span style="font-size:11px;font-weight:700;color:${daysLeft <= 1 ? 'var(--red)' : 'var(--amber)'};">${urgency}</span>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+  }
+  document.getElementById('cc-upcoming').innerHTML = upHtml;
+
+  // ── Full List ──
+  let listItems = filterClient ? DB.contentItems.filter(i => i.clientId === filterClient) : [...DB.contentItems];
+  if (filterType) listItems = listItems.filter(i => i.type === filterType);
+  listItems.sort((a, b) => new Date(b.dueDate) - new Date(a.dueDate));
+
+  let list = `<div class="panel" style="padding:0;">
+    <div class="panel-header"><div class="panel-title">All Content Items</div><span style="font-size:12px;color:var(--muted);">${listItems.length} items</span></div>
+    <div class="table-wrap"><table><thead><tr><th>Title</th><th>Client</th><th>Type</th><th>Status</th><th>Due</th><th></th></tr></thead><tbody>`;
+  if (!listItems.length) {
+    list += '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:28px;">No content items. Click "+ Add Content" to start planning.</td></tr>';
+  } else {
+    listItems.forEach(i => {
+      const client = DB.clients.find(c => c.id === i.clientId);
+      const ct = CONTENT_TYPES[i.type] || CONTENT_TYPES.blog;
+      const cs = CONTENT_STATUSES[i.status] || CONTENT_STATUSES.planned;
+      const isOverdue = i.status !== 'published' && i.dueDate < todayStr;
+      list += `<tr style="cursor:pointer;" onclick="openEditContent('${i.id}')">
+        <td><div style="display:flex;align-items:center;gap:8px;"><span style="font-size:13px;">${ct.icon}</span><span class="bold" style="${isOverdue?'color:var(--red);':''}">${i.title}</span>${isOverdue?'<span style="font-size:8px;background:var(--red-bg);color:var(--red);padding:1px 5px;border-radius:4px;font-weight:700;">OVERDUE</span>':''}</div></td>
+        <td style="font-size:12px;color:var(--muted);">${client ? client.bizName : '—'}</td>
+        <td><span style="font-size:11px;color:${ct.color};">${ct.label}</span></td>
+        <td><span class="badge" style="background:${cs.bg};color:${cs.color};cursor:pointer;" onclick="event.stopPropagation();cycleContent('${i.id}')">${cs.label}</span></td>
+        <td style="font-size:12px;color:var(--muted);">${i.dueDate}</td>
+        <td><button class="btn btn-ghost btn-sm btn-icon" onclick="event.stopPropagation();deleteContent('${i.id}')" style="font-size:11px;color:var(--red);">✕</button></td>
+      </tr>`;
+    });
+  }
   list += '</tbody></table></div></div>';
   document.getElementById('cc-list').innerHTML = list;
 }
+
+function openDayView(dateStr) {
+  const dayItems = DB.contentItems.filter(i => i.dueDate === dateStr);
+  const dateLabel = new Date(dateStr + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+  let body = `<div style="margin-bottom:16px;font-size:13px;color:var(--muted);">${dateLabel}</div>`;
+  if (dayItems.length) {
+    dayItems.forEach(i => {
+      const ct = CONTENT_TYPES[i.type] || CONTENT_TYPES.blog;
+      const cs = CONTENT_STATUSES[i.status] || CONTENT_STATUSES.planned;
+      const client = DB.clients.find(c => c.id === i.clientId);
+      body += `<div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--surface);border-radius:8px;margin-bottom:8px;cursor:pointer;border:1px solid var(--border);" onclick="closeGenericModal();openEditContent('${i.id}')">
+        <span style="font-size:18px;">${ct.icon}</span>
+        <div style="flex:1;"><div style="font-weight:600;color:var(--white);">${i.title}</div><div style="font-size:11px;color:var(--muted);">${client ? client.bizName : '—'} &middot; ${ct.label}</div>${i.description ? `<div style="font-size:11px;color:var(--text);margin-top:4px;">${i.description}</div>` : ''}</div>
+        <span class="badge" style="background:${cs.bg};color:${cs.color};">${cs.label}</span>
+      </div>`;
+    });
+  } else {
+    body += '<div style="color:var(--muted);font-size:13px;padding:20px;text-align:center;">No content scheduled for this day.</div>';
+  }
+  body += `<button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:12px;" onclick="closeGenericModal();openAddContent('${dateStr}')">+ Add Content for ${new Date(dateStr+'T12:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric'})}</button>`;
+  openGenericModal('Day View', body);
+}
+
 function openAddContent(dateStr) {
   const clients = DB.clients.map(c => `<option value="${c.id}">${c.bizName}</option>`).join('');
-  const today = dateStr || new Date().toISOString().slice(0,10);
-  openGenericModal('Add Content Item', `<div style="display:grid;gap:12px;">
-    <select id="ac-client" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);"><option value="">Select Client</option>${clients}</select>
-    <input id="ac-title" placeholder="Title" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);">
-    <select id="ac-type" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);"><option value="blog">Blog Post</option><option value="social">Social Post</option><option value="update">Site Update</option></select>
-    <input id="ac-date" type="date" value="${today}" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);">
-    <button class="btn btn-primary" onclick="saveContent()">Add</button>
+  const types = Object.entries(CONTENT_TYPES).map(([k,v]) => `<option value="${k}">${v.icon} ${v.label}</option>`).join('');
+  const today = dateStr || new Date().toISOString().slice(0, 10);
+  const inputStyle = 'padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:13px;width:100%;';
+  openGenericModal('Add Content Item', `<div style="display:grid;gap:14px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Title *</label><input id="ac-title" placeholder="Blog post title..." style="${inputStyle}"></div>
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Client</label><select id="ac-client" style="${inputStyle}"><option value="">— Select —</option>${clients}</select></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Type</label><select id="ac-type" style="${inputStyle}">${types}</select></div>
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Due Date</label><input id="ac-date" type="date" value="${today}" style="${inputStyle}"></div>
+    </div>
+    <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Description / Brief</label><textarea id="ac-desc" placeholder="What needs to be written? Keywords to target? Notes..." rows="3" style="${inputStyle}resize:vertical;"></textarea></div>
+    <button class="btn btn-primary" onclick="saveContent()" style="justify-content:center;">Add to Calendar</button>
   </div>`);
 }
+
 function saveContent() {
   if (!DB.contentItems) DB.contentItems = [];
-  const item = { id: 'ci' + Date.now(), clientId: document.getElementById('ac-client').value, title: document.getElementById('ac-title').value, type: document.getElementById('ac-type').value, status: 'planned', dueDate: document.getElementById('ac-date').value, notes: '' };
-  if (!item.title) { toast('Title required', 'error'); return; }
-  DB.contentItems.push(item); save(); closeGenericModal(); renderContent(); toast('Content added!', 'success');
+  const title = document.getElementById('ac-title').value.trim();
+  if (!title) { toast('Title required', 'error'); return; }
+  DB.contentItems.push({
+    id: 'ci' + Date.now(),
+    clientId: document.getElementById('ac-client').value,
+    title: title,
+    type: document.getElementById('ac-type').value,
+    status: 'planned',
+    dueDate: document.getElementById('ac-date').value,
+    description: document.getElementById('ac-desc').value.trim(),
+    createdAt: new Date().toISOString()
+  });
+  save(); closeGenericModal(); renderContent(); toast('Content added!', 'success');
 }
-function cycleContent(id) { const i = DB.contentItems.find(x => x.id === id); if (!i) return; i.status = i.status === 'planned' ? 'writing' : i.status === 'writing' ? 'published' : 'planned'; save(); renderContent(); }
-function deleteContent(id) { DB.contentItems = DB.contentItems.filter(x => x.id !== id); save(); renderContent(); }
+
+function openEditContent(id) {
+  const i = DB.contentItems.find(x => x.id === id);
+  if (!i) return;
+  const clients = DB.clients.map(c => `<option value="${c.id}"${c.id===i.clientId?' selected':''}>${c.bizName}</option>`).join('');
+  const types = Object.entries(CONTENT_TYPES).map(([k,v]) => `<option value="${k}"${k===i.type?' selected':''}>${v.icon} ${v.label}</option>`).join('');
+  const statuses = Object.entries(CONTENT_STATUSES).map(([k,v]) => `<option value="${k}"${k===i.status?' selected':''}>${v.label}</option>`).join('');
+  const inputStyle = 'padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:13px;width:100%;';
+  openGenericModal('Edit Content Item', `<div style="display:grid;gap:14px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Title</label><input id="ec-title" value="${i.title||''}" style="${inputStyle}"></div>
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Status</label><select id="ec-status" style="${inputStyle}">${statuses}</select></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;">
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Client</label><select id="ec-client" style="${inputStyle}"><option value="">—</option>${clients}</select></div>
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Type</label><select id="ec-type" style="${inputStyle}">${types}</select></div>
+      <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Due Date</label><input id="ec-date" type="date" value="${i.dueDate||''}" style="${inputStyle}"></div>
+    </div>
+    <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Description / Brief</label><textarea id="ec-desc" rows="4" style="${inputStyle}resize:vertical;">${i.description||''}</textarea></div>
+    <div style="display:flex;gap:10px;">
+      <button class="btn btn-primary" onclick="saveEditContent('${id}')" style="flex:1;justify-content:center;">Save Changes</button>
+      <button class="btn btn-ghost" onclick="deleteContent('${id}')" style="color:var(--red);">Delete</button>
+    </div>
+  </div>`);
+}
+
+function saveEditContent(id) {
+  const i = DB.contentItems.find(x => x.id === id);
+  if (!i) return;
+  i.title = document.getElementById('ec-title').value.trim();
+  i.status = document.getElementById('ec-status').value;
+  i.clientId = document.getElementById('ec-client').value;
+  i.type = document.getElementById('ec-type').value;
+  i.dueDate = document.getElementById('ec-date').value;
+  i.description = document.getElementById('ec-desc').value.trim();
+  save(); closeGenericModal(); renderContent(); toast('Content updated', 'success');
+}
+
+function cycleContent(id) {
+  const i = DB.contentItems.find(x => x.id === id);
+  if (!i) return;
+  const order = ['planned', 'writing', 'review', 'published'];
+  const idx = order.indexOf(i.status);
+  i.status = order[Math.min(idx + 1, order.length - 1)]; // Only advances forward
+  save(); renderContent();
+}
+
+function deleteContent(id) {
+  if (!confirm('Delete this content item?')) return;
+  DB.contentItems = DB.contentItems.filter(x => x.id !== id);
+  save(); closeGenericModal(); renderContent(); toast('Content removed', 'success');
+}
 
 // ════════════════════════════════════════════════════
 //  TOOL: REVENUE FORECAST (Enterprise)
