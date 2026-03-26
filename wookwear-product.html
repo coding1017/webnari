@@ -491,11 +491,43 @@ body::after {
 </div>
 
 <!-- ─── REVIEWS ─────────────────────────────────────────────────────────── -->
-<section class="section" id="reviewsSection" style="display:none; padding: 64px 0;">
+<section class="section" id="reviewsSection" style="padding: 64px 0;">
   <div class="container" style="max-width:800px;">
     <h2 style="font-family:var(--font-head);font-weight:900;font-size:clamp(28px,4vw,42px);line-height:1.05;color:var(--white);margin-bottom:32px;">Customer <span style="background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Reviews</span></h2>
     <div class="reviews-summary" id="reviewsSummary"></div>
     <div class="reviews-list" id="reviewsList"></div>
+
+    <!-- Write a Review Form -->
+    <div id="writeReviewSection" style="margin-top:48px;padding-top:40px;border-top:1px solid var(--border);">
+      <h3 style="font-family:var(--font-head);font-weight:800;font-size:20px;color:var(--white);margin-bottom:24px;">Write a Review</h3>
+      <form id="reviewForm" onsubmit="submitReview(event)">
+        <div style="margin-bottom:20px;">
+          <label style="display:block;font-family:var(--font-head);font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Your Rating</label>
+          <div id="starPicker" style="display:flex;gap:4px;cursor:pointer;">
+            <svg class="star-pick" data-star="1" viewBox="0 0 24 24" fill="currentColor" style="width:32px;height:32px;color:var(--border);transition:color 0.15s;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="star-pick" data-star="2" viewBox="0 0 24 24" fill="currentColor" style="width:32px;height:32px;color:var(--border);transition:color 0.15s;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="star-pick" data-star="3" viewBox="0 0 24 24" fill="currentColor" style="width:32px;height:32px;color:var(--border);transition:color 0.15s;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="star-pick" data-star="4" viewBox="0 0 24 24" fill="currentColor" style="width:32px;height:32px;color:var(--border);transition:color 0.15s;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg class="star-pick" data-star="5" viewBox="0 0 24 24" fill="currentColor" style="width:32px;height:32px;color:var(--border);transition:color 0.15s;"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <input type="hidden" id="reviewRating" value="0">
+        </div>
+        <div style="margin-bottom:20px;">
+          <label for="reviewName" style="display:block;font-family:var(--font-head);font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Your Name</label>
+          <input type="text" id="reviewName" placeholder="e.g. Sarah or @your_handle" required style="width:100%;padding:12px 16px;background:var(--dark);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-family:var(--font-body);font-size:15px;outline:none;transition:border-color 0.2s;">
+        </div>
+        <div style="margin-bottom:24px;">
+          <label for="reviewText" style="display:block;font-family:var(--font-head);font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;">Your Review</label>
+          <textarea id="reviewText" rows="4" placeholder="What did you love about this piece?" required style="width:100%;padding:12px 16px;background:var(--dark);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-family:var(--font-body);font-size:15px;outline:none;resize:vertical;transition:border-color 0.2s;"></textarea>
+        </div>
+        <button type="submit" style="display:inline-flex;align-items:center;gap:8px;padding:14px 32px;background:var(--gradient);color:var(--white);font-family:var(--font-head);font-size:14px;font-weight:800;letter-spacing:0.08em;text-transform:uppercase;border:none;border-radius:var(--radius);cursor:pointer;transition:all 0.25s;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:16px;height:16px;"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          Submit Review
+        </button>
+        <div id="reviewError" style="display:none;margin-top:12px;color:#EF4444;font-size:13px;font-family:var(--font-head);"></div>
+        <div id="reviewSuccess" style="display:none;margin-top:12px;color:var(--neon);font-size:13px;font-family:var(--font-head);"></div>
+      </form>
+    </div>
   </div>
 </section>
 
@@ -570,8 +602,18 @@ function init() {
   if (!product) { showNotFound(); return; }
 
   document.title = product.name + ' | Wook Wear';
+
+  // Merge stored user reviews with default reviews
+  var storedReviews = getStoredReviews(product.id);
+  if (storedReviews.length > 0) {
+    if (!product.reviews) product.reviews = [];
+    product.reviews = storedReviews.concat(product.reviews);
+    product.reviewCount = (product.reviewCount || 0) + storedReviews.length;
+  }
+
   renderProduct();
   renderReviews();
+  initStarPicker();
 }
 
 /* ─── NOT FOUND ──────────────────────────────────────────────────────────── */
@@ -699,8 +741,12 @@ function renderReviewStars(rating) {
 
 /* ─── REVIEWS SECTION ────────────────────────────────────────────────────── */
 function renderReviews() {
-  if (!product.reviews || product.reviews.length === 0) return;
   document.getElementById('reviewsSection').style.display = '';
+  if (!product.reviews || product.reviews.length === 0) {
+    document.getElementById('reviewsSummary').innerHTML = '<div style="color:var(--muted);font-size:15px;">No reviews yet. Be the first to share your thoughts!</div>';
+    document.getElementById('reviewsList').innerHTML = '';
+    return;
+  }
 
   var summaryHtml =
     '<div class="reviews-big-rating">' + product.rating.toFixed(1) + '</div>' +
@@ -730,6 +776,103 @@ function renderReviews() {
       '</div>';
   }
   document.getElementById('reviewsList').innerHTML = listHtml;
+}
+
+/* ─── STAR PICKER + REVIEW SUBMISSION ────────────────────────────────────── */
+var pickedRating = 0;
+
+function initStarPicker() {
+  var stars = document.querySelectorAll('.star-pick');
+  for (var i = 0; i < stars.length; i++) {
+    stars[i].addEventListener('mouseenter', function() {
+      var val = parseInt(this.getAttribute('data-star'));
+      highlightStars(val);
+    });
+    stars[i].addEventListener('mouseleave', function() {
+      highlightStars(pickedRating);
+    });
+    stars[i].addEventListener('click', function() {
+      pickedRating = parseInt(this.getAttribute('data-star'));
+      document.getElementById('reviewRating').value = pickedRating;
+      highlightStars(pickedRating);
+    });
+  }
+}
+
+function highlightStars(count) {
+  var stars = document.querySelectorAll('.star-pick');
+  for (var i = 0; i < stars.length; i++) {
+    stars[i].style.color = (i < count) ? '#FACC15' : 'var(--border)';
+  }
+}
+
+function getStoredReviews(productId) {
+  try {
+    var all = JSON.parse(localStorage.getItem('ww_reviews')) || {};
+    return all[productId] || [];
+  } catch(e) { return []; }
+}
+
+function saveReview(productId, review) {
+  try {
+    var all = JSON.parse(localStorage.getItem('ww_reviews')) || {};
+    if (!all[productId]) all[productId] = [];
+    all[productId].unshift(review);
+    localStorage.setItem('ww_reviews', JSON.stringify(all));
+  } catch(e) {}
+}
+
+function submitReview(e) {
+  e.preventDefault();
+  var errEl = document.getElementById('reviewError');
+  var successEl = document.getElementById('reviewSuccess');
+  errEl.style.display = 'none';
+  successEl.style.display = 'none';
+
+  var rating = parseInt(document.getElementById('reviewRating').value);
+  var name = document.getElementById('reviewName').value.trim();
+  var text = document.getElementById('reviewText').value.trim();
+
+  if (!rating || rating < 1) {
+    errEl.textContent = 'Please select a star rating.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (!name) {
+    errEl.textContent = 'Please enter your name.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (!text) {
+    errEl.textContent = 'Please write a review.';
+    errEl.style.display = 'block';
+    return;
+  }
+
+  var today = new Date();
+  var dateStr = today.getFullYear() + '-' + String(today.getMonth() + 1).padStart(2, '0') + '-' + String(today.getDate()).padStart(2, '0');
+
+  var review = { name: name.replace('@', ''), text: text, rating: rating, date: dateStr };
+  saveReview(product.id, review);
+
+  // Add to current product reviews for immediate display
+  if (!product.reviews) product.reviews = [];
+  product.reviews.unshift(review);
+  product.reviewCount = (product.reviewCount || 0) + 1;
+
+  // Re-render reviews
+  renderReviews();
+
+  // Reset form
+  document.getElementById('reviewName').value = '';
+  document.getElementById('reviewText').value = '';
+  pickedRating = 0;
+  highlightStars(0);
+  document.getElementById('reviewRating').value = '0';
+
+  successEl.textContent = 'Thank you for your review!';
+  successEl.style.display = 'block';
+  setTimeout(function() { successEl.style.display = 'none'; }, 3000);
 }
 
 /* ─── BADGE HTML ─────────────────────────────────────────────────────────── */
