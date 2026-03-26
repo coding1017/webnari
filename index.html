@@ -110,7 +110,7 @@ section{padding:120px 48px;position:relative}
 .showcase-section{background:var(--bg);overflow:hidden;padding-bottom:0}
 .showcase-split{display:flex;gap:4px;margin-top:56px;height:80vh;min-height:500px;position:relative}
 .showcase-pane{flex:1;position:relative;overflow:hidden;border-radius:8px;background:#000}
-.showcase-pane iframe{width:100%;height:500%;border:none;pointer-events:none;position:absolute;top:0;left:0}
+.showcase-pane iframe{width:100%;height:100%;border:none;pointer-events:none;position:absolute;top:0;left:0}
 .showcase-pane-label{position:absolute;bottom:20px;left:20px;z-index:2;font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--white);
   background:rgba(0,0,0,.7);backdrop-filter:blur(8px);padding:6px 14px;border-radius:6px;pointer-events:none;opacity:.6}
 
@@ -694,72 +694,141 @@ function showPortal(user){
 function initOrb(){
   const canvas=document.getElementById('hero-canvas');if(!canvas)return;
   const ctx=canvas.getContext('2d');
-  let W,H,mx=0,my=0;
-  function resize(){W=canvas.width=canvas.offsetWidth*2;H=canvas.height=canvas.offsetHeight*2;canvas.style.width=canvas.offsetWidth+'px';canvas.style.height=canvas.offsetHeight+'px'}
+  let W,H,mx=0,my=0,tmx=0,tmy=0;
+  const dpr=Math.min(window.devicePixelRatio||1,2);
+  function resize(){
+    const cw=canvas.offsetWidth,ch=canvas.offsetHeight;
+    W=canvas.width=cw*dpr;H=canvas.height=ch*dpr;
+    canvas.style.width=cw+'px';canvas.style.height=ch+'px';
+  }
   resize();window.addEventListener('resize',resize);
-  document.querySelector('.hero').addEventListener('mousemove',e=>{const r=canvas.getBoundingClientRect();mx=(e.clientX-r.left)/r.width-.5;my=(e.clientY-r.top)/r.height-.5});
+  document.addEventListener('mousemove',e=>{mx=(e.clientX/window.innerWidth-.5);my=(e.clientY/window.innerHeight-.5)});
 
-  // Dense sphere — 300 points, tight edges like the OG image
-  const N=300,pts=[];
+  // Dense sphere
+  const N=280,pts=[];
   for(let i=0;i<N;i++){
     const y=-1+2*i/(N-1);const r=Math.sqrt(Math.max(0,1-y*y));
     const phi=i*2.399963;
     pts.push({x:r*Math.cos(phi),y,z:r*Math.sin(phi)});
   }
-  const edges=[];const thresh=0.35;
+  const edges=[];
   for(let i=0;i<N;i++)for(let j=i+1;j<N;j++){
     const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,dz=pts[i].z-pts[j].z;
-    if(Math.sqrt(dx*dx+dy*dy+dz*dz)<thresh)edges.push([i,j]);
+    if(Math.sqrt(dx*dx+dy*dy+dz*dz)<.35)edges.push([i,j]);
   }
+
+  // Pulse waves — gold to cyan cycling
+  const pulses=[];
+  setInterval(()=>{if(pulses.length<4)pulses.push({y:-1.2,speed:.008+Math.random()*.006,hue:pulses.length%2})},1800);
+
+  // Satellites — 3 orbital dots at different inclinations
+  const sats=[
+    {angle:0,speed:.012,incl:0.3,dist:1.18,trail:[]},
+    {angle:2.1,speed:-.009,incl:0.6,dist:1.25,trail:[]},
+    {angle:4.2,speed:.015,incl:0.15,dist:1.32,trail:[]},
+  ];
 
   let t=0;
   function draw(){
-    t+=.002;ctx.clearRect(0,0,W,H);
+    t+=.004;
+    // Smooth mouse lerp
+    tmx+=(mx-tmx)*.06;tmy+=(my-tmy)*.06;
+    ctx.clearRect(0,0,W,H);
     const radius=Math.min(W,H)*.38;
     const cosT=Math.cos(t),sinT=Math.sin(t);
-    const cosM=Math.cos(mx*.6),sinM=Math.sin(mx*.6);
+    const cosM=Math.cos(tmx*1.2),sinM=Math.sin(tmx*1.2);
+    const cosM2=Math.cos(tmy*.8),sinM2=Math.sin(tmy*.8);
 
-    // Warm glow behind sphere (like OG image)
-    for(let i=6;i>=1;i--){
-      const r=radius*(1+i*.18);
-      const alpha=.012*(7-i);
-      const grd=ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,r);
-      grd.addColorStop(0,`rgba(201,169,110,${alpha})`);
-      grd.addColorStop(1,'transparent');
-      ctx.fillStyle=grd;ctx.fillRect(0,0,W,H);
-    }
+    // Update pulses
+    pulses.forEach(p=>{p.y+=p.speed});
+    while(pulses.length&&pulses[0].y>1.5)pulses.shift();
 
-    // Project points
+    // Warm glow behind sphere
+    const grd=ctx.createRadialGradient(W/2,H/2,radius*.2,W/2,H/2,radius*1.6);
+    grd.addColorStop(0,'rgba(201,169,110,.06)');grd.addColorStop(.5,'rgba(201,169,110,.02)');grd.addColorStop(1,'transparent');
+    ctx.fillStyle=grd;ctx.fillRect(0,0,W,H);
+
+    // Project points with rotation on 2 axes
     const proj=pts.map(p=>{
-      let x=p.x*cosT+p.z*sinT,y=p.y,z=-p.x*sinT+p.z*cosT;
-      let y2=y*cosM-z*sinM,z2=y*sinM+z*cosM;
-      const scale=1/(1-z2*.3);
-      return{x:W/2+x*radius*scale,y:H/2+y2*radius*scale,z:z2,s:scale};
+      // Y rotation (auto + mouse X)
+      let x1=p.x*cosT+p.z*sinT,y1=p.y,z1=-p.x*sinT+p.z*cosT;
+      // X rotation (mouse Y)
+      let y2=y1*cosM2-z1*sinM2,z2=y1*sinM2+z1*cosM2;
+      // Additional Y from mouse X
+      let x3=x1*cosM+z2*sinM,z3=-x1*sinM+z2*cosM;
+      const scale=1/(1-z3*.3);
+      // Check pulse proximity
+      let pulse=0;
+      pulses.forEach(ring=>{const d=Math.abs(y2-ring.y);if(d<.18)pulse=Math.max(pulse,(1-d/.18)*(ring.hue?.5:1))});
+      return{x:W/2+x3*radius*scale,y:H/2+y2*radius*scale,z:z3,s:scale,pulse,pulseHue:pulse>.1&&pulses.find(r=>Math.abs(y2-r.y)<.18)?.hue||0};
     });
 
-    // Draw edges — bright gold, thicker, high contrast like OG
+    // Draw edges
     edges.forEach(([a,b])=>{
       const pa=proj[a],pb=proj[b];
       const depth=Math.min((pa.z+1)/2,(pb.z+1)/2);
-      const alpha=depth*.55+.08;
+      const pulse=Math.max(pa.pulse,pb.pulse);
+      const hue=pa.pulseHue||pb.pulseHue;
+      const alpha=depth*.5+.08+pulse*.25;
+      // Pulse glow layer
+      if(pulse>.15){
+        ctx.beginPath();ctx.moveTo(pa.x,pa.y);ctx.lineTo(pb.x,pb.y);
+        const gc=hue?`rgba(80,170,255,${pulse*.4})`:`rgba(255,210,120,${pulse*.4})`;
+        ctx.strokeStyle=gc;ctx.lineWidth=3;ctx.stroke();
+      }
       ctx.beginPath();ctx.moveTo(pa.x,pa.y);ctx.lineTo(pb.x,pb.y);
-      ctx.strokeStyle=`rgba(210,175,105,${alpha})`;
-      ctx.lineWidth=depth*1.2+.4;
+      // Gold base, shifting toward cyan on hue=1 pulses
+      const rr=hue&&pulse>.1?Math.round(210-130*pulse):210;
+      const gg=hue&&pulse>.1?Math.round(175+55*pulse):175;
+      const bb=hue&&pulse>.1?Math.round(105+150*pulse):105;
+      ctx.strokeStyle=`rgba(${rr},${gg},${bb},${alpha})`;
+      ctx.lineWidth=depth*1.1+.5+(pulse>.1?pulse*.5:0);
       ctx.stroke();
     });
 
-    // Draw vertex dots — bright gold, sized by depth
+    // Draw vertex dots
     proj.forEach(p=>{
-      const alpha=(p.z+1)/2*.8+.15;
-      const sz=p.s*2.2;
-      // Bright dot
+      const alpha=(p.z+1)/2*.7+.2;const sz=p.s*2;
+      if(p.pulse>.2){
+        ctx.beginPath();ctx.arc(p.x,p.y,sz*3.5,0,Math.PI*2);
+        const gc=p.pulseHue?`rgba(80,170,255,${p.pulse*.12})`:`rgba(255,210,120,${p.pulse*.12})`;
+        ctx.fillStyle=gc;ctx.fill();
+      }
       ctx.beginPath();ctx.arc(p.x,p.y,sz,0,Math.PI*2);
       ctx.fillStyle=`rgba(230,195,120,${alpha})`;ctx.fill();
-      // Subtle glow around front-facing dots
-      if(p.z>.2){
-        ctx.beginPath();ctx.arc(p.x,p.y,sz*2.5,0,Math.PI*2);
-        ctx.fillStyle=`rgba(201,169,110,${(p.z-.2)*.06})`;ctx.fill();
-      }
+    });
+
+    // Draw satellites with trails
+    sats.forEach((sat,si)=>{
+      sat.angle+=sat.speed;
+      const sa=sat.angle,sd=sat.dist,sinc=Math.sin(sat.incl),cinc=Math.cos(sat.incl);
+      // Satellite position in 3D (orbiting the sphere)
+      let sx=Math.cos(sa)*sd,sy=Math.sin(sa)*sd*sinc,sz2=Math.sin(sa)*sd*cinc;
+      // Apply same rotation as sphere
+      let sx2=sx*cosT+sz2*sinT,sz3=-sx*sinT+sz2*cosT;
+      let sy2=sy*cosM2-sz3*sinM2,sz4=sy*sinM2+sz3*cosM2;
+      let sx3=sx2*cosM+sz4*sinM;
+      const sScale=1/(1-sz4*.15);
+      const px=W/2+sx3*radius*sScale,py=H/2+sy2*radius*sScale;
+      // Add to trail
+      sat.trail.push({x:px,y:py,a:1});
+      if(sat.trail.length>20)sat.trail.shift();
+      // Draw trail
+      sat.trail.forEach((tp,ti)=>{
+        tp.a*=.88;
+        const ts=2*tp.a;
+        if(ts>.3){
+          ctx.beginPath();ctx.arc(tp.x,tp.y,ts,0,Math.PI*2);
+          ctx.fillStyle=si===1?`rgba(80,170,255,${tp.a*.4})`:`rgba(255,210,120,${tp.a*.4})`;
+          ctx.fill();
+        }
+      });
+      // Draw satellite dot
+      ctx.beginPath();ctx.arc(px,py,4,0,Math.PI*2);
+      ctx.fillStyle=si===1?'rgba(120,200,255,.9)':'rgba(255,220,140,.9)';ctx.fill();
+      // Satellite glow
+      ctx.beginPath();ctx.arc(px,py,12,0,Math.PI*2);
+      ctx.fillStyle=si===1?'rgba(80,170,255,.15)':'rgba(255,210,120,.15)';ctx.fill();
     });
 
     requestAnimationFrame(draw);
@@ -782,35 +851,25 @@ function initShowcase(){
     function onLoad(iframe){
       try{
         const doc=iframe.contentDocument||iframe.contentWindow.document;
-        // Nuclear CSS: hide EVERYTHING, then whitelist only scroll-sequence and its children
         const style=doc.createElement('style');
         style.textContent=`
-          /* Hide all top-level elements */
-          body > * { display:none!important; visibility:hidden!important; }
-          /* Show ONLY the scroll-sequence */
-          body > .scroll-sequence,
-          body > div.scroll-sequence,
-          body > #hero { display:block!important; visibility:visible!important; }
-          /* Make sure children of scroll-sequence are visible */
-          .scroll-sequence * { visibility:visible!important; }
-          /* Hide branding elements INSIDE the parallax */
+          /* Hide nav and everything after the parallax */
+          nav, .mobile-menu { position:fixed!important; opacity:0!important; pointer-events:none!important; }
+          .scroll-sequence ~ * { display:none!important; }
+          /* Hide branding overlays inside the parallax */
           #seqIntro, #seqFinal, #panelPowered, #scenePowered,
           #panelHud, #sceneHud, #panelEnergize, #sceneEnergize,
-          #panelGlow, #sceneGlow { display:none!important; }
-          /* Hide power lights */
-          [id^="pl"] { display:none!important; }
-          /* Hide phase scrub bar but keep phase label */
-          #seqScrubFill { opacity:0!important; }
-          /* Clean background */
-          html, body { background:#000!important; margin:0!important; padding:0!important; overflow-x:hidden!important; }
-          /* Also hide nav if it somehow shows */
-          nav, header, footer { display:none!important; }
+          #panelGlow, #sceneGlow, [id^="pl"] { opacity:0!important; }
+          /* Black background */
+          html, body { background:#000!important; }
+          /* Remove top padding from sticky to fill viewport */
+          .sequence-sticky { top:0!important; height:100vh!important; }
         `;
         doc.head.appendChild(style);
-        // Also scroll to the parallax section start
+        // Scroll to the start of the parallax section
         const seq=doc.querySelector('.scroll-sequence')||doc.getElementById('hero');
         if(seq) iframe.contentWindow.scrollTo(0,seq.offsetTop);
-      }catch(e){console.log('iframe inject error:',e)}
+      }catch(e){}
       loaded++;
       if(loaded>=2){ready=true;}
     }
