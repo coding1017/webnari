@@ -158,7 +158,7 @@ section{padding:120px 48px;position:relative}
 .section-sub{font-size:17px;color:var(--text);max-width:480px;margin-top:16px;line-height:1.7}
 
 /* ── Parallax Showcase (full-screen sticky, horizontal pan between pairs) ── */
-.showcase-wrap{height:380vh;position:relative}
+.showcase-wrap{height:320vh;position:relative}
 .showcase-sticky{position:sticky;top:0;height:100vh;overflow:hidden;background:#000}
 .showcase-track{display:flex;width:200%;height:100%;will-change:transform;transition:none}
 .showcase-pair{width:50%;height:100%;display:flex;gap:4px;padding:64px 4px 4px;flex-shrink:0}
@@ -1137,7 +1137,7 @@ function initGrain(){
   setInterval(()=>{turb.setAttribute('seed',++seed)},120);
 }
 
-// ── Electric Pulse Cursor ──
+// ── Tron Electric Pulse Cursor ──
 function initCursor(){
   if(!window.matchMedia('(hover:hover)').matches)return;
   const canvas=document.getElementById('cursor-canvas');if(!canvas)return;
@@ -1147,67 +1147,95 @@ function initCursor(){
   resize();window.addEventListener('resize',resize);
 
   let mx=W/2,my=H/2;
-  const trail=[];const MAX_TRAIL=18;
   document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY});
+
+  // Lightning bolts that radiate outward in random directions
+  const bolts=[];
+
+  function spawnBolts(){
+    // Spawn 2-4 bolts per frame radiating from cursor
+    const count=2+Math.floor(Math.random()*3);
+    for(let i=0;i<count;i++){
+      const angle=Math.random()*Math.PI*2;
+      const len=25+Math.random()*45; // bolt length
+      const segs=3+Math.floor(Math.random()*3); // jagged segments
+      const points=[{x:mx,y:my}];
+      for(let s=1;s<=segs;s++){
+        const t=s/segs;
+        // Main direction + perpendicular jitter for jaggedness
+        const jitter=(Math.random()-.5)*len*.35;
+        const px=mx+Math.cos(angle)*len*t+Math.cos(angle+Math.PI/2)*jitter;
+        const py=my+Math.sin(angle)*len*t+Math.sin(angle+Math.PI/2)*jitter;
+        points.push({x:px,y:py});
+      }
+      // Occasionally fork a branch
+      const hasBranch=Math.random()>.5;
+      let branch=null;
+      if(hasBranch&&points.length>2){
+        const bi=1+Math.floor(Math.random()*(points.length-2));
+        const bp=points[bi];
+        const ba=angle+(Math.random()-.5)*1.2;
+        const bl=12+Math.random()*20;
+        branch=[{x:bp.x,y:bp.y}];
+        for(let s=1;s<=2;s++){
+          branch.push({
+            x:bp.x+Math.cos(ba)*bl*(s/2)+(Math.random()-.5)*8,
+            y:bp.y+Math.sin(ba)*bl*(s/2)+(Math.random()-.5)*8
+          });
+        }
+      }
+      bolts.push({points,branch,life:1,gold:Math.random()>.3});
+    }
+  }
 
   function draw(){
     ctx.clearRect(0,0,W,H);
-    trail.push({x:mx,y:my,life:1});
-    if(trail.length>MAX_TRAIL)trail.shift();
+    spawnBolts();
 
-    // Draw electric arcs between trail points
-    for(let i=1;i<trail.length;i++){
-      const a=trail[i-1],b=trail[i];
-      const dx=b.x-a.x,dy=b.y-a.y;
-      const dist=Math.sqrt(dx*dx+dy*dy);
-      if(dist<2)continue;
-      const alpha=b.life*(i/trail.length)*.6;
+    // Draw + decay bolts
+    for(let i=bolts.length-1;i>=0;i--){
+      const b=bolts[i];
+      b.life*=.82; // fast decay for shimmer effect
+      if(b.life<.05){bolts.splice(i,1);continue}
 
-      // Main arc with slight random jitter for electric feel
+      const alpha=b.life*.5;
+      // Main bolt
       ctx.beginPath();
-      ctx.moveTo(a.x,a.y);
-      const segments=3;
-      for(let s=1;s<=segments;s++){
-        const t=s/segments;
-        const jx=(Math.random()-.5)*Math.min(dist*.3,8);
-        const jy=(Math.random()-.5)*Math.min(dist*.3,8);
-        if(s<segments){
-          ctx.lineTo(a.x+dx*t+jx,a.y+dy*t+jy);
-        }else{
-          ctx.lineTo(b.x,b.y);
-        }
-      }
-      ctx.strokeStyle=`rgba(201,169,110,${alpha})`;
-      ctx.lineWidth=1.5;
+      ctx.moveTo(b.points[0].x,b.points[0].y);
+      for(let j=1;j<b.points.length;j++)ctx.lineTo(b.points[j].x,b.points[j].y);
+      ctx.strokeStyle=b.gold?`rgba(201,169,110,${alpha})`:`rgba(120,200,255,${alpha})`;
+      ctx.lineWidth=b.gold?1.2:.8;
       ctx.stroke();
 
-      // Secondary thinner arc (branching spark)
-      if(i%3===0&&dist>10){
+      // Glow layer (thicker, more transparent)
+      ctx.beginPath();
+      ctx.moveTo(b.points[0].x,b.points[0].y);
+      for(let j=1;j<b.points.length;j++)ctx.lineTo(b.points[j].x,b.points[j].y);
+      ctx.strokeStyle=b.gold?`rgba(201,169,110,${alpha*.3})`:`rgba(120,200,255,${alpha*.3})`;
+      ctx.lineWidth=b.gold?3.5:2.5;
+      ctx.stroke();
+
+      // Branch
+      if(b.branch){
         ctx.beginPath();
-        ctx.moveTo(a.x+dx*.3+(Math.random()-.5)*6,a.y+dy*.3+(Math.random()-.5)*6);
-        ctx.lineTo(a.x+dx*.6+(Math.random()-.5)*12,a.y+dy*.6+(Math.random()-.5)*12);
-        ctx.strokeStyle=`rgba(120,200,255,${alpha*.4})`;
-        ctx.lineWidth=.8;
+        ctx.moveTo(b.branch[0].x,b.branch[0].y);
+        for(let j=1;j<b.branch.length;j++)ctx.lineTo(b.branch[j].x,b.branch[j].y);
+        ctx.strokeStyle=b.gold?`rgba(232,213,168,${alpha*.6})`:`rgba(160,220,255,${alpha*.6})`;
+        ctx.lineWidth=.6;
         ctx.stroke();
       }
     }
 
-    // Glow at cursor tip
-    if(trail.length>0){
-      const tip=trail[trail.length-1];
-      const grd=ctx.createRadialGradient(tip.x,tip.y,0,tip.x,tip.y,12);
-      grd.addColorStop(0,'rgba(201,169,110,.25)');
-      grd.addColorStop(.5,'rgba(201,169,110,.06)');
-      grd.addColorStop(1,'rgba(201,169,110,0)');
-      ctx.beginPath();ctx.arc(tip.x,tip.y,12,0,Math.PI*2);
-      ctx.fillStyle=grd;ctx.fill();
-      // Tiny bright core
-      ctx.beginPath();ctx.arc(tip.x,tip.y,2,0,Math.PI*2);
-      ctx.fillStyle='rgba(255,230,180,.7)';ctx.fill();
-    }
+    // Subtle radial glow at cursor center (no dot)
+    const grd=ctx.createRadialGradient(mx,my,0,mx,my,30);
+    grd.addColorStop(0,'rgba(201,169,110,.08)');
+    grd.addColorStop(.4,'rgba(201,169,110,.03)');
+    grd.addColorStop(1,'rgba(201,169,110,0)');
+    ctx.beginPath();ctx.arc(mx,my,30,0,Math.PI*2);
+    ctx.fillStyle=grd;ctx.fill();
 
-    // Decay trail life
-    trail.forEach(p=>p.life*=.92);
+    // Cap bolt count to prevent memory issues
+    if(bolts.length>80)bolts.splice(0,bolts.length-80);
 
     requestAnimationFrame(draw);
   }
