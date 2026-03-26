@@ -196,10 +196,30 @@ body::after {
   font-size: clamp(28px, 4vw, 42px); line-height: 1.1;
   color: var(--white); margin-bottom: 12px;
 }
+.product-price-row { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
 .product-price-lg {
   font-family: var(--font-head); font-size: 28px; font-weight: 800;
-  color: var(--pink); margin-bottom: 16px;
+  color: var(--pink); margin-bottom: 0;
 }
+.product-rating-inline { display: flex; align-items: center; gap: 6px; }
+.product-stars { display: flex; gap: 1px; }
+.product-stars svg { width: 16px; height: 16px; }
+.product-stars .star-filled { color: #FACC15; }
+.product-stars .star-empty { color: var(--border); }
+.product-rating-count { font-size: 13px; color: var(--muted); }
+.reviews-summary { display: flex; align-items: center; gap: 16px; margin-bottom: 32px; padding: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); }
+.reviews-big-rating { font-family: var(--font-head); font-size: 48px; font-weight: 900; color: var(--white); }
+.reviews-stars-big { display: flex; gap: 2px; }
+.reviews-stars-big svg { width: 24px; height: 24px; color: #FACC15; }
+.reviews-count-text { font-size: 14px; color: var(--muted); }
+.review-card { padding: 24px 0; border-bottom: 1px solid var(--border); }
+.review-card:last-child { border-bottom: none; }
+.review-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.review-author { font-family: var(--font-head); font-weight: 700; font-size: 14px; color: var(--white); }
+.review-date { font-size: 12px; color: var(--muted); }
+.review-stars { display: flex; gap: 1px; }
+.review-stars svg { width: 14px; height: 14px; color: #FACC15; }
+.review-text { font-size: 15px; color: var(--text); line-height: 1.6; }
 .product-desc {
   font-size: 16px; line-height: 1.7; color: var(--text); margin-bottom: 24px;
 }
@@ -470,6 +490,15 @@ body::after {
   <div class="lightbox-counter" id="lightboxCounter">1 / 1</div>
 </div>
 
+<!-- ─── REVIEWS ─────────────────────────────────────────────────────────── -->
+<section class="section" id="reviewsSection" style="display:none; padding: 64px 0;">
+  <div class="container" style="max-width:800px;">
+    <h2 style="font-family:var(--font-head);font-weight:900;font-size:clamp(28px,4vw,42px);line-height:1.05;color:var(--white);margin-bottom:32px;">Customer <span style="background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Reviews</span></h2>
+    <div class="reviews-summary" id="reviewsSummary"></div>
+    <div class="reviews-list" id="reviewsList"></div>
+  </div>
+</section>
+
 <!-- ─── FOOTER ───────────────────────────────────────────────────────────── -->
 <footer class="site-footer">
   <div class="container">
@@ -542,6 +571,7 @@ function init() {
 
   document.title = product.name + ' | Wook Wear';
   renderProduct();
+  renderReviews();
 }
 
 /* ─── NOT FOUND ──────────────────────────────────────────────────────────── */
@@ -593,7 +623,10 @@ function renderProduct() {
             '<a href="wookwear-shop.html" class="back-link"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg> Back to Shop</a>' +
             badgeHtml +
             '<h1 class="product-title">' + product.name + '</h1>' +
-            '<div class="product-price-lg" id="productPrice">$' + priceVal.toFixed(2) + '</div>' +
+            '<div class="product-price-row">' +
+              '<div class="product-price-lg" id="productPrice">$' + priceVal.toFixed(2) + '</div>' +
+              (product.rating ? '<div class="product-rating-inline">' + renderStars(product.rating) + '<span class="product-rating-count">(' + (product.reviewCount || 0) + ')</span></div>' : '') +
+            '</div>' +
             '<p class="product-desc">' + (product.desc || '') + '</p>' +
             variantHtml +
             '<div class="product-meta">' +
@@ -618,6 +651,85 @@ function renderProduct() {
   if (product.isCollection && product.variants && product.variants.length > 0) {
     renderVariants();
   }
+}
+
+/* ─── STAR RATING ────────────────────────────────────────────────────────── */
+function renderStars(rating) {
+  var html = '<div class="product-stars">';
+  for (var s = 1; s <= 5; s++) {
+    if (s <= Math.floor(rating)) {
+      html += '<svg viewBox="0 0 24 24" fill="currentColor" class="star-filled"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+    } else if (s === Math.ceil(rating) && rating % 1 >= 0.5) {
+      html += '<svg viewBox="0 0 24 24" fill="currentColor" class="star-filled"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+    } else {
+      html += '<svg viewBox="0 0 24 24" fill="currentColor" class="star-empty"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+    }
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderStarsBig(rating) {
+  var html = '<div class="reviews-stars-big">';
+  for (var s = 1; s <= 5; s++) {
+    if (s <= Math.floor(rating)) {
+      html += '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+    } else if (s === Math.ceil(rating) && rating % 1 >= 0.5) {
+      html += '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+    } else {
+      html += '<svg viewBox="0 0 24 24" fill="currentColor" style="color:var(--border)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+    }
+  }
+  html += '</div>';
+  return html;
+}
+
+function renderReviewStars(rating) {
+  var html = '<div class="review-stars">';
+  for (var s = 1; s <= 5; s++) {
+    if (s <= rating) {
+      html += '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+    } else {
+      html += '<svg viewBox="0 0 24 24" fill="currentColor" style="color:var(--border)"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+    }
+  }
+  html += '</div>';
+  return html;
+}
+
+/* ─── REVIEWS SECTION ────────────────────────────────────────────────────── */
+function renderReviews() {
+  if (!product.reviews || product.reviews.length === 0) return;
+  document.getElementById('reviewsSection').style.display = '';
+
+  var summaryHtml =
+    '<div class="reviews-big-rating">' + product.rating.toFixed(1) + '</div>' +
+    '<div>' +
+      renderStarsBig(product.rating) +
+      '<div class="reviews-count-text">' + (product.reviewCount || product.reviews.length) + ' reviews</div>' +
+    '</div>';
+  document.getElementById('reviewsSummary').innerHTML = summaryHtml;
+
+  var listHtml = '';
+  for (var i = 0; i < product.reviews.length; i++) {
+    var r = product.reviews[i];
+    var dateStr = '';
+    if (r.date) {
+      var d = new Date(r.date + 'T00:00:00');
+      var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      dateStr = months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+    }
+    listHtml +=
+      '<div class="review-card">' +
+        '<div class="review-header">' +
+          renderReviewStars(r.rating) +
+          '<span class="review-author">@' + r.name + '</span>' +
+          (dateStr ? '<span class="review-date">' + dateStr + '</span>' : '') +
+        '</div>' +
+        '<div class="review-text">' + r.text + '</div>' +
+      '</div>';
+  }
+  document.getElementById('reviewsList').innerHTML = listHtml;
 }
 
 /* ─── BADGE HTML ─────────────────────────────────────────────────────────── */

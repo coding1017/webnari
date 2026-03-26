@@ -213,6 +213,12 @@ body::after {
 .product-actions { padding: 0 18px 20px; }
 .product-info { padding: 16px 18px 20px; }
 .product-name { font-family: var(--font-head); font-weight: 700; font-size: 16px; color: var(--white); margin-bottom: 4px; }
+.product-rating { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+.product-stars { display: flex; gap: 1px; }
+.product-stars svg { width: 14px; height: 14px; }
+.product-stars .star-filled { color: #FACC15; }
+.product-stars .star-empty { color: var(--border); }
+.product-rating-count { font-size: 12px; color: var(--muted); }
 .product-price { font-size: 14px; color: var(--purple2); font-weight: 600; margin-bottom: 14px; }
 .product-add {
   width: 100%; padding: 10px; background: rgba(168,85,247,0.08);
@@ -452,6 +458,21 @@ var WW_PRODUCTS = WookWearData.getProducts();
 var currentCat = 'all';
 var currentSort = 'newest';
 
+function renderStars(rating) {
+  var html = '<div class="product-stars">';
+  for (var s = 1; s <= 5; s++) {
+    if (s <= Math.floor(rating)) {
+      html += '<svg viewBox="0 0 24 24" fill="currentColor" class="star-filled"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+    } else if (s === Math.ceil(rating) && rating % 1 >= 0.5) {
+      html += '<svg viewBox="0 0 24 24" fill="currentColor" class="star-filled"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+    } else {
+      html += '<svg viewBox="0 0 24 24" fill="currentColor" class="star-empty"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>';
+    }
+  }
+  html += '</div>';
+  return html;
+}
+
 function renderGrid() {
   var grid = document.getElementById('productGrid');
   var filtered = currentCat === 'all' ? WW_PRODUCTS.slice() : WW_PRODUCTS.filter(function(p) { return p.category === currentCat; });
@@ -478,6 +499,7 @@ function renderGrid() {
         '<div class="product-img">' + imgHtml + '</div>' +
         '<div class="product-info">' +
           '<div class="product-name">' + p.name + '</div>' +
+          (p.rating ? '<div class="product-rating">' + renderStars(p.rating) + '<span class="product-rating-count">(' + (p.reviewCount || 0) + ')</span></div>' : '') +
           '<div class="product-price">$' + p.price.toFixed(2) + '</div>' +
         '</div>' +
       '</a>' +
