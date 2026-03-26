@@ -89,8 +89,9 @@ nav.scrolled{background:rgba(6,6,10,.8);backdrop-filter:blur(20px) saturate(150%
 @keyframes scrollLine{0%{opacity:1;transform:scaleY(1)}50%{opacity:.3}100%{opacity:1;transform:scaleY(1)}}
 
 /* ── Trust Bar ── */
-.trust-bar{padding:0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;height:56px;display:flex;align-items:center}
-.trust-label{font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--muted);white-space:nowrap;padding:0 32px;flex-shrink:0}
+.trust-wrap{display:flex;flex-direction:column}
+.trust-label{font-family:var(--font-body);font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--muted);white-space:nowrap;padding:12px 32px 8px;flex-shrink:0}
+.trust-bar{padding:0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;height:44px;display:flex;align-items:center}
 .trust-track{display:flex;gap:0;animation:marquee 30s linear infinite;flex-shrink:0}
 .trust-track:hover{animation-play-state:paused}
 .trust-logo{font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--muted);opacity:.4;white-space:nowrap;padding:0 28px;
@@ -164,15 +165,13 @@ section{padding:120px 48px;position:relative}
 .showcase-pane-label{position:absolute;bottom:16px;left:16px;z-index:2;font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--white);
   background:rgba(0,0,0,.7);backdrop-filter:blur(8px);padding:6px 14px;border-radius:6px;pointer-events:none;opacity:.6}
 
-/* ── Mobile Showcase (static cards instead of iframes) ── */
-.showcase-mobile{display:none;padding:40px 16px 60px}
-.showcase-mobile-title{text-align:center;font-family:var(--font-head);font-size:28px;font-weight:700;color:var(--white);margin-bottom:8px}
-.showcase-mobile-sub{text-align:center;font-size:14px;color:var(--text);margin-bottom:32px}
-.showcase-mobile-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.showcase-mobile-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px 16px;text-align:center;text-decoration:none;transition:border-color .2s}
-.showcase-mobile-card:active{border-color:var(--accent)}
-.showcase-mobile-card .smc-name{font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--white);margin-bottom:4px}
-.showcase-mobile-card .smc-type{font-size:12px;color:var(--muted)}
+/* ── Mobile Showcase (sequential scroll-locked parallaxes) ── */
+.showcase-mobile-wrap{display:none}
+.mob-parallax{height:300vh;position:relative}
+.mob-parallax-sticky{position:sticky;top:0;height:100vh;overflow:hidden;background:#000}
+.mob-parallax-sticky iframe{width:100%;height:100%;border:none;pointer-events:none}
+.mob-parallax-label{position:absolute;bottom:16px;left:16px;z-index:2;font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--white);
+  background:rgba(0,0,0,.7);backdrop-filter:blur(8px);padding:5px 12px;border-radius:6px;opacity:.6}
 
 /* ── Features ── */
 .features-section{background:var(--surface);
@@ -365,10 +364,8 @@ footer{border-top:1px solid var(--border);padding:48px}
   .footer-bottom{flex-direction:column;gap:8px}
   .portal-kpis{grid-template-columns:repeat(2,1fr)}
   .portal-grid{grid-template-columns:1fr}
-  .showcase-wrap{height:auto;overflow:hidden}
-  .showcase-sticky{position:relative;height:auto;overflow:hidden}
-  .showcase-track{display:none!important}
-  .showcase-mobile{display:block!important}
+  .showcase-wrap{display:none!important}
+  .showcase-mobile-wrap{display:block!important}
   .cursor-canvas{display:none!important}
 }
 </style>
@@ -420,8 +417,9 @@ footer{border-top:1px solid var(--border);padding:48px}
 </section>
 
 <!-- Trust Bar -->
+<div class="trust-wrap">
+<span class="trust-label">TRUSTED ACROSS INDUSTRIES</span>
 <div class="trust-bar">
-  <span class="trust-label">TRUSTED ACROSS INDUSTRIES</span>
   <div class="trust-track">
     <a class="trust-logo" href="pestpro.html">Pest Control</a>
     <a class="trust-logo" href="voltpro.html">Electricians</a>
@@ -440,6 +438,7 @@ footer{border-top:1px solid var(--border);padding:48px}
     <a class="trust-logo" href="omakase.html">Restaurants</a>
     <a class="trust-logo" href="roofpro.html">Roofing</a>
   </div>
+</div>
 </div>
 
 <!-- Parallax Showcase (full-screen, horizontal pan between 2 pairs) -->
@@ -469,16 +468,21 @@ footer{border-top:1px solid var(--border);padding:48px}
         </div>
       </div>
     </div>
-    <!-- Mobile: static cards instead of broken iframes -->
-    <div class="showcase-mobile">
-      <div class="showcase-mobile-title">Our work</div>
-      <div class="showcase-mobile-sub">Scroll-driven parallax, built from scratch.</div>
-      <div class="showcase-mobile-grid">
-        <a class="showcase-mobile-card" href="voltpro.html"><div class="smc-name">VoltPro</div><div class="smc-type">Electrician</div></a>
-        <a class="showcase-mobile-card" href="roofpro.html"><div class="smc-name">RoofPro</div><div class="smc-type">Roofing</div></a>
-        <a class="showcase-mobile-card" href="greenscape.html"><div class="smc-name">GreenScape</div><div class="smc-type">Landscaping</div></a>
-        <a class="showcase-mobile-card" href="pizza-parallax.html"><div class="smc-name">FireCrust</div><div class="smc-type">Restaurant</div></a>
-      </div>
+  </div>
+</div>
+
+<!-- Mobile Parallax Showcase (sequential scroll-locked, hidden on desktop) -->
+<div class="showcase-mobile-wrap" id="mob-showcase">
+  <div class="mob-parallax" id="mob-p1">
+    <div class="mob-parallax-sticky">
+      <iframe id="mob-iframe-1" scrolling="no" tabindex="-1"></iframe>
+      <div class="mob-parallax-label">VoltPro</div>
+    </div>
+  </div>
+  <div class="mob-parallax" id="mob-p2">
+    <div class="mob-parallax-sticky">
+      <iframe id="mob-iframe-2" scrolling="no" tabindex="-1"></iframe>
+      <div class="mob-parallax-label">RoofPro</div>
     </div>
   </div>
 </div>
@@ -1071,7 +1075,59 @@ function initShowcase(){
   window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(update);ticking=true}},{passive:true});
 }
 
-// (barrel-roll transition removed)
+// ── Mobile Parallax Showcase ──
+function initMobileShowcase(){
+  if(window.innerWidth>768)return;
+  const cssInject=`
+    nav,.mobile-menu{position:fixed!important;opacity:0!important;pointer-events:none!important}
+    .scroll-sequence~*{display:none!important}
+    #seqIntro,#seqFinal,#panelPowered,#scenePowered,#panelHud,#sceneHud,
+    #panelEnergize,#sceneEnergize,#panelGlow,#sceneGlow,[id^="pl"]{opacity:0!important}
+    html,body{background:#000!important}
+    .sequence-sticky{top:0!important;height:100vh!important}
+  `;
+  const pairs=[
+    {wrap:'mob-p1',iframe:'mob-iframe-1',src:'voltpro.html'},
+    {wrap:'mob-p2',iframe:'mob-iframe-2',src:'roofpro.html'}
+  ];
+  let readyCount=0;
+  pairs.forEach(p=>{
+    const f=document.getElementById(p.iframe);if(!f)return;
+    f.addEventListener('load',()=>{
+      try{
+        const doc=f.contentDocument||f.contentWindow.document;
+        const style=doc.createElement('style');style.textContent=cssInject;doc.head.appendChild(style);
+        const seq=doc.querySelector('.scroll-sequence')||doc.getElementById('hero');
+        if(seq)f.contentWindow.scrollTo(0,seq.offsetTop+.15*seq.offsetHeight);
+      }catch(e){}
+      readyCount++;
+    });
+    f.src=p.src;
+  });
+
+  let ticking=false;
+  function update(){
+    ticking=false;
+    if(readyCount<2)return;
+    pairs.forEach(p=>{
+      const wrap=document.getElementById(p.wrap);
+      const f=document.getElementById(p.iframe);
+      if(!wrap||!f||!f.contentWindow)return;
+      const rect=wrap.getBoundingClientRect();
+      const total=wrap.offsetHeight-window.innerHeight;
+      const scrolled=Math.max(0,-rect.top);
+      const prog=Math.max(0,Math.min(1,scrolled/total));
+      // Map 0→1 to 15%→85% of parallax
+      const mapped=.15+prog*.7;
+      try{
+        const doc=f.contentDocument;
+        const seq=doc.querySelector('.scroll-sequence')||doc.getElementById('hero');
+        if(seq)f.contentWindow.scrollTo(0,seq.offsetTop+mapped*seq.offsetHeight);
+      }catch(e){}
+    });
+  }
+  window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(update);ticking=true}},{passive:true});
+}
 
 // ── Horizontal Scroll Steps ──
 function initHorizontalScroll(){
@@ -1295,6 +1351,7 @@ function initLoader(){
   renderPricing();
   initOrb();
   initShowcase();
+  initMobileShowcase();
   // (barrel-roll removed)
   initHorizontalScroll();
   initReveal();
