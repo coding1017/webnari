@@ -7,7 +7,7 @@
   var easeIn3 = function(t){return t*t*t;};
 
   // Timer-driven progress (set by initMobileShowcase in index.html)
-  window.__mobRoofProgress = 0.05;
+  window.__mobRoofProgress = 0.15;
 
   var seqEl=document.getElementById('mr-hero'), stickyEl=document.getElementById('mr-seqSticky');
   if(seqEl&&stickyEl){
@@ -518,13 +518,7 @@
       var hudOut=p<0.88?1:map(p,0.88,0.92,1,0);
       sceneHud.style.opacity=String(clamp(hudIn*hudOut,0,1));
 
-      // ═══ FINALE — RED GLOW (87-93%) ═══
-      var glowVal=map(p,0.87,0.93,0,1);
-      sceneGlow.style.opacity=String(clamp(glowVal,0,1));
-      if(p>=0.87){
-        var glowSpread=easeOut3(clamp((p-0.87)/0.06,0,1));
-        sceneGlow.style.background='radial-gradient(ellipse '+(50+glowSpread*50)+'% '+(50+glowSpread*50)+'% at 50% 50%, rgba(230,57,70,'+(0.15+glowSpread*0.85)+'), rgba(230,57,70,'+(glowSpread*0.4)+') 50%, transparent 80%)';
-      }
+      // (red glow disabled on mobile — keep black background)
 
       // ROOFPRO text
       var pi3=easeOut3(clamp((p-0.87)/0.03,0,1));
@@ -541,12 +535,9 @@
         pl.style.boxShadow=w>0.1?'0 0 '+Math.round(w*120)+'px '+Math.round(w*60)+'px rgba(230,57,70,'+(w*0.7)+'), 0 0 '+Math.round(w*200)+'px '+Math.round(w*100)+'px rgba(230,57,70,'+(w*0.3)+')':'none';
       });
 
-      // Background goes red-warm
-      if(p>0.86){
-        var bgRed=easeOut3(clamp((p-0.86)/0.05,0,1))*poHold;
-        bg.style.background='rgb('+Math.round(10+bgRed*60)+','+Math.round(14+bgRed*15)+','+Math.round(18+bgRed*10)+')';
-        bg.style.opacity=String(Math.min(bgRed*0.75,0.75));
-      }
+      // Background stays black on mobile (no red glow)
+      bg.style.background='#000';
+      bg.style.opacity='0';
 
       // Hero CTA (93-100%)
       var fP=map(p,0.93,1.0,0,1);

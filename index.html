@@ -75,6 +75,7 @@ nav.scrolled{background:rgba(6,6,10,.8);backdrop-filter:blur(20px) saturate(150%
 .hero-content{position:relative;z-index:2;text-align:center;max-width:720px;padding:0 24px}
 .hero-eyebrow{font-family:var(--font-body);font-size:13px;font-weight:500;letter-spacing:.04em;color:var(--accent);margin-bottom:24px}
 .hero h1{font-family:var(--font-head);font-size:clamp(44px,7vw,88px);font-weight:700;line-height:1.05;letter-spacing:-.04em;color:var(--white)}
+.mob-br{display:none}
 .hero-sub{font-size:18px;color:var(--text);max-width:520px;margin:24px auto;line-height:1.7}
 .hero-ctas{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:32px}
 .btn-hero{padding:16px 36px;border-radius:10px;font-family:var(--font-body);font-size:16px;font-weight:600;cursor:pointer;transition:all .2s;border:none}
@@ -170,9 +171,11 @@ section{padding:120px 48px;position:relative}
 .mob-parallax{height:400vh;position:relative;background:#000}
 .mob-parallax .mr-scroll-sequence{height:100%;position:relative}
 .mob-parallax .mr-sequence-sticky{position:sticky;top:0}
+.mr-scene-glow{opacity:0!important}
+.mr-seq-bg{background:#000!important}
 /* Namespaced RoofPro parallax styles (mr-*) */
 .mr-scroll-sequence{height:100vh;position:relative}
-.mr-sequence-sticky{position:relative;top:0;left:0;right:0;height:100vh;overflow:hidden;background:#0A0E12}
+.mr-sequence-sticky{position:relative;top:0;left:0;right:0;height:100vh;overflow:hidden;background:#000}
 .mr-seq-bg{position:absolute;inset:0;z-index:1;transition:background .1s}
 .mr-scene-glow{position:absolute;inset:0;z-index:2;background:radial-gradient(ellipse 60% 60% at 50% 60%,rgba(230,57,70,.1),transparent 70%);opacity:0}
 .mr-scene-container{position:absolute;inset:0;z-index:3;display:flex;align-items:center;justify-content:center}
@@ -370,7 +373,8 @@ footer{border-top:1px solid var(--border);padding:48px}
   .footer-bottom{flex-direction:column;gap:8px}
   .portal-kpis{grid-template-columns:repeat(2,1fr)}
   .portal-grid{grid-template-columns:1fr}
-  .hero h1{font-size:clamp(64px,18vw,120px)!important;color:var(--white)!important;font-weight:800!important}
+  .hero h1{font-size:clamp(52px,14vw,100px)!important;color:var(--white)!important;font-weight:800!important}
+  .mob-br{display:inline}
   .showcase-wrap{display:none!important}
   .showcase-mobile-wrap{display:block!important}
   .transition-diagonal,.transition-diagonal-rev{display:none!important}
@@ -411,7 +415,7 @@ footer{border-top:1px solid var(--border);padding:48px}
   <canvas id="hero-canvas"></canvas>
   <div class="hero-content">
     <div class="hero-eyebrow">Web agency for local businesses</div>
-    <h1>Websites that work<br>while you work.</h1>
+    <h1>Websites that <br class="mob-br">work<br>while you<br class="mob-br"> work.</h1>
     <p class="hero-sub">We design, build, and manage immersive websites with scroll-driven effects, e-commerce, and SEO that ranks. One monthly rate.</p>
     <div class="hero-ctas">
       <button class="btn-hero btn-hero-primary" onclick="openAuth()">Start your project</button>
@@ -1105,7 +1109,7 @@ function initMobileShowcase(){
   // Scroll-driven: read scroll position of the 400vh wrapper
   const wrap=document.getElementById('mob-roof-wrap');
   if(!wrap)return;
-  window.__mobRoofProgress=0.05; // start at 5%
+  window.__mobRoofProgress=0.15; // start at 15%
 
   let ticking=false;
   function update(){
@@ -1114,8 +1118,8 @@ function initMobileShowcase(){
     const total=wrap.offsetHeight-window.innerHeight;
     const scrolled=Math.max(0,-rect.top);
     const p=Math.max(0,Math.min(1,scrolled/total));
-    // Map scroll 0→1 to parallax 5%→90%
-    window.__mobRoofProgress=.05+p*.85;
+    // Map scroll 0→1 to parallax 15%→90%
+    window.__mobRoofProgress=.15+p*.75;
   }
   window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(update);ticking=true}},{passive:true});
 }
