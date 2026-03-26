@@ -120,25 +120,31 @@ nav.scrolled{background:rgba(6,6,10,.8);backdrop-filter:blur(20px) saturate(150%
 .trust-logo:hover{opacity:1!important;color:var(--accent)!important;text-shadow:0 0 16px rgba(201,169,110,.6)!important}
 @keyframes marquee{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
-/* ── Section Transitions ── */
+/* ── Section Transitions (dynamic camera movements) ── */
 .section-line-glow{width:100%;height:2px;background:linear-gradient(90deg,transparent 5%,var(--accent) 50%,transparent 95%);opacity:.2}
-/* Diagonal wipe — angled clip that reveals on scroll */
-.transition-diagonal{width:100%;height:80px;position:relative;overflow:hidden;background:var(--bg)}
-.transition-diagonal::before{content:'';position:absolute;inset:0;background:var(--surface);clip-path:polygon(0 0,100% 60%,100% 100%,0 100%)}
-.transition-diagonal-rev{width:100%;height:80px;position:relative;overflow:hidden;background:var(--surface)}
-.transition-diagonal-rev::before{content:'';position:absolute;inset:0;background:var(--bg);clip-path:polygon(0 40%,100% 0,100% 100%,0 100%)}
-/* Horizontal slide accent line */
+/* Diagonal wipe — angled clip */
+.transition-diagonal{width:100%;height:100px;position:relative;overflow:hidden;background:var(--bg)}
+.transition-diagonal::before{content:'';position:absolute;inset:0;background:var(--surface);clip-path:polygon(0 0,100% 70%,100% 100%,0 100%)}
+.transition-diagonal-rev{width:100%;height:100px;position:relative;overflow:hidden;background:var(--surface)}
+.transition-diagonal-rev::before{content:'';position:absolute;inset:0;background:var(--bg);clip-path:polygon(0 30%,100% 0,100% 100%,0 100%)}
+/* Camera tilt transition */
+.cam-tilt{perspective:800px;overflow:hidden}
+.cam-tilt-inner{transform-origin:center top;transition:transform .8s cubic-bezier(.25,.46,.45,.94);transform:perspective(800px) rotateX(3deg) translateY(20px);opacity:0}
+.cam-tilt-inner.revealed{transform:perspective(800px) rotateX(0) translateY(0);opacity:1}
+/* Camera slide from right */
+.cam-slide-right{overflow:hidden}
+.cam-slide-right-inner{transform:translateX(80px) scale(.97);opacity:0;transition:all .8s cubic-bezier(.25,.46,.45,.94)}
+.cam-slide-right-inner.revealed{transform:translateX(0) scale(1);opacity:1}
+/* Camera zoom in */
+.cam-zoom{overflow:hidden}
+.cam-zoom-inner{transform:scale(.88);opacity:0;transition:all .9s cubic-bezier(.25,.46,.45,.94)}
+.cam-zoom-inner.revealed{transform:scale(1);opacity:1}
+/* Sweep line */
 .transition-sweep{width:100%;height:48px;position:relative;overflow:hidden;display:flex;align-items:center}
 .transition-sweep::before{content:'';position:absolute;left:-100%;width:100%;height:1px;
   background:linear-gradient(90deg,transparent,var(--accent),var(--accent),transparent);
   animation:sweepLine 3s ease-in-out infinite}
 @keyframes sweepLine{0%{left:-100%}100%{left:100%}}
-/* Vertical expand divider */
-.transition-expand{width:100%;height:120px;position:relative;display:flex;align-items:center;justify-content:center}
-.transition-expand::before{content:'';width:1px;height:0;background:linear-gradient(to bottom,transparent,var(--accent),transparent);
-  animation:expandLine 2s ease forwards;animation-play-state:paused}
-.transition-expand.revealed::before{animation-play-state:running}
-@keyframes expandLine{to{height:100%}}
 
 /* ── Section commons ── */
 section{padding:120px 48px;position:relative}
@@ -146,12 +152,12 @@ section{padding:120px 48px;position:relative}
 .section-title{font-family:var(--font-head);font-size:clamp(32px,4vw,56px);font-weight:700;letter-spacing:-.03em;line-height:1.1;color:var(--white);max-width:600px}
 .section-sub{font-size:17px;color:var(--text);max-width:480px;margin-top:16px;line-height:1.7}
 
-/* ── Parallax Showcase (sticky scroll-lock) ── */
-.showcase-wrap{height:280vh;position:relative}
-.showcase-sticky{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;overflow:hidden;background:var(--bg);padding:64px 24px 16px}
-.showcase-header{text-align:center;margin-bottom:32px;position:relative;z-index:2}
-.showcase-split{display:flex;gap:4px;width:100%;height:calc(100vh - 120px);min-height:500px;position:relative}
-.showcase-pane{flex:1;position:relative;overflow:hidden;border-radius:8px;background:#000}
+/* ── Parallax Showcase (full-screen sticky, horizontal pan between pairs) ── */
+.showcase-wrap{height:600vh;position:relative}
+.showcase-sticky{position:sticky;top:0;height:100vh;overflow:hidden;background:#000}
+.showcase-track{display:flex;width:200%;height:100%;will-change:transform;transition:none}
+.showcase-pair{width:50%;height:100%;display:flex;gap:4px;padding:64px 4px 4px;flex-shrink:0}
+.showcase-pane{flex:1;position:relative;overflow:hidden;background:#000}
 .showcase-pane iframe{width:100%;height:100%;border:none;pointer-events:none;position:absolute;top:0;left:0}
 .showcase-pane-label{position:absolute;bottom:16px;left:16px;z-index:2;font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--white);
   background:rgba(0,0,0,.7);backdrop-filter:blur(8px);padding:6px 14px;border-radius:6px;pointer-events:none;opacity:.6}
@@ -346,8 +352,9 @@ footer{border-top:1px solid var(--border);padding:48px}
   .portal-kpis{grid-template-columns:repeat(2,1fr)}
   .portal-grid{grid-template-columns:1fr}
   .showcase-wrap{height:auto}
-  .showcase-sticky{position:relative;height:auto;padding:60px 24px}
-  .showcase-split{flex-direction:column;height:auto}
+  .showcase-sticky{position:relative;height:auto}
+  .showcase-track{width:100%;flex-direction:column}
+  .showcase-pair{width:100%;flex-direction:column;padding:64px 4px 4px}
   .showcase-pane{height:50vh;min-height:300px}
   .cursor-dot{display:none!important}
 }
@@ -422,33 +429,42 @@ footer{border-top:1px solid var(--border);padding:48px}
   </div>
 </div>
 
-<!-- Parallax Showcase (sticky scroll-lock) -->
+<!-- Parallax Showcase (full-screen, horizontal pan between 2 pairs) -->
 <div class="showcase-wrap" id="showcase">
-  <div class="showcase-sticky">
-    <div class="showcase-header">
-      <div class="section-eyebrow" style="text-align:center">Our work</div>
-      <div class="section-title" style="margin:0 auto;text-align:center;max-width:700px">Scroll-driven parallax,<br>built from scratch.</div>
-      <div class="section-sub" style="margin:20px auto 0;text-align:center;max-width:480px">Both animations play simultaneously as you scroll. Hand-coded, no plugins.</div>
-    </div>
-    <div class="showcase-split" id="showcase-split">
-      <div class="showcase-pane" id="pane-left">
-        <iframe id="iframe-left" scrolling="no" tabindex="-1"></iframe>
-        <div class="showcase-pane-label">VoltPro</div>
+  <div class="showcase-sticky" id="showcase-sticky">
+    <div class="showcase-track" id="showcase-track">
+      <!-- Pair 1: VoltPro + RoofPro -->
+      <div class="showcase-pair" id="pair-1">
+        <div class="showcase-pane">
+          <iframe id="iframe-volt" scrolling="no" tabindex="-1"></iframe>
+          <div class="showcase-pane-label">VoltPro</div>
+        </div>
+        <div class="showcase-pane">
+          <iframe id="iframe-roof" scrolling="no" tabindex="-1"></iframe>
+          <div class="showcase-pane-label">RoofPro</div>
+        </div>
       </div>
-      <div class="showcase-pane" id="pane-right">
-        <iframe id="iframe-right" scrolling="no" tabindex="-1"></iframe>
-        <div class="showcase-pane-label">RoofPro</div>
+      <!-- Pair 2: GreenScape + FireCrust -->
+      <div class="showcase-pair" id="pair-2">
+        <div class="showcase-pane">
+          <iframe id="iframe-green" scrolling="no" tabindex="-1"></iframe>
+          <div class="showcase-pane-label">GreenScape</div>
+        </div>
+        <div class="showcase-pane">
+          <iframe id="iframe-pizza" scrolling="no" tabindex="-1"></iframe>
+          <div class="showcase-pane-label">FireCrust</div>
+        </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- Diagonal wipe: showcase → features -->
+<!-- Camera tilt down: showcase → features -->
 <div class="transition-diagonal"></div>
 
-<!-- Features -->
-<section id="features" class="features-section">
-  <div class="reveal-slide">
+<!-- Features (camera tilts in) -->
+<section id="features" class="features-section cam-tilt">
+  <div class="cam-tilt-inner reveal-fade">
     <div class="section-eyebrow">Everything included</div>
     <div class="section-title">Parallax. E-commerce. SEO. All in one.</div>
     <div class="section-sub">We specialize in scroll-driven digital effects, full shopping integrations, and search rankings that put you on page one.</div>
@@ -487,11 +503,11 @@ footer{border-top:1px solid var(--border);padding:48px}
   </div>
 </section>
 
-<!-- Sweep line: features → process -->
+<!-- Camera slide: features → process -->
 <div class="transition-sweep"></div>
 <div class="transition-diagonal-rev"></div>
 
-<!-- How It Works: Horizontal Scroll -->
+<!-- How It Works: Horizontal Scroll (slides in from right) -->
 <div class="steps-wrap" id="process">
   <div class="steps-sticky" id="steps-sticky">
     <div class="steps-track" id="steps-track">
@@ -528,12 +544,12 @@ footer{border-top:1px solid var(--border);padding:48px}
   </div>
 </div>
 
-<!-- Diagonal wipe: process → pricing -->
+<!-- Camera zoom: process → pricing -->
 <div class="transition-diagonal"></div>
 
-<!-- Pricing -->
-<section id="pricing" style="text-align:center">
-  <div class="reveal-slide">
+<!-- Pricing (zooms in) -->
+<section id="pricing" class="cam-zoom" style="text-align:center">
+  <div class="cam-zoom-inner reveal-fade">
     <div class="section-eyebrow" style="text-align:center">Transparent pricing</div>
     <div class="section-title" style="margin:0 auto;text-align:center">No contracts. No surprises.</div>
     <div class="section-sub" style="margin:16px auto 0;">Cancel any time. All plans include hosting, SSL, support, and your client dashboard.</div>
@@ -541,13 +557,12 @@ footer{border-top:1px solid var(--border);padding:48px}
   <div class="pricing-grid reveal-scale" id="pricing-grid"></div>
 </section>
 
-<!-- Expand line: pricing → testimonials -->
-<div class="transition-expand reveal-fade"></div>
+<!-- Camera slide: pricing → testimonials -->
 <div class="transition-diagonal-rev"></div>
 
-<!-- Testimonials -->
-<section class="testimonials-section">
-  <div class="reveal-slide">
+<!-- Testimonials (slides from right) -->
+<section class="testimonials-section cam-slide-right">
+  <div class="cam-slide-right-inner reveal-fade">
     <div class="section-eyebrow">Client stories</div>
     <div class="section-title">Real results for real businesses</div>
   </div>
@@ -780,10 +795,10 @@ function initOrb(){
   const sats=[];
   for(let i=0;i<13;i++){
     sats.push({
-      angle:i*(Math.PI*2/13)+Math.random()*.3,
-      speed:(.012+Math.random()*.018)*(i%2?-1:1),
-      incl:.1+Math.random()*.8,
-      dist:1.12+Math.random()*.28,
+      angle:i*(Math.PI*2/13),
+      speed:(.01+Math.random()*.015)*(i%2?-1:1),
+      incl:.05+i*.07+Math.random()*.1,  // spread inclinations evenly
+      dist:1.15+i*.04,                   // spread distances from 1.15 to 1.67
       trail:[],
       hue:i%3===1?1:0
     });
@@ -901,68 +916,90 @@ function initOrb(){
 
 // ── Parallax Showcase ──
 function initShowcase(){
-  const split=document.getElementById('showcase-split');if(!split)return;
-  const iframeL=document.getElementById('iframe-left');
-  const iframeR=document.getElementById('iframe-right');
+  const wrap=document.getElementById('showcase');if(!wrap)return;
+  const track=document.getElementById('showcase-track');
+  const iframes={
+    volt:document.getElementById('iframe-volt'),
+    roof:document.getElementById('iframe-roof'),
+    green:document.getElementById('iframe-green'),
+    pizza:document.getElementById('iframe-pizza')
+  };
+  const cssInject=`
+    nav,.mobile-menu{position:fixed!important;opacity:0!important;pointer-events:none!important}
+    .scroll-sequence~*{display:none!important}
+    #seqIntro,#seqFinal,#panelPowered,#scenePowered,#panelHud,#sceneHud,
+    #panelEnergize,#sceneEnergize,#panelGlow,#sceneGlow,[id^="pl"]{opacity:0!important}
+    html,body{background:#000!important}
+    .sequence-sticky{top:0!important;height:100vh!important}
+  `;
 
-  // Lazy-load iframes, then aggressively strip to parallax-only
-  let ready=false;
+  let readyCount=0;const TOTAL=4;
+  function onLoad(iframe){
+    try{
+      const doc=iframe.contentDocument||iframe.contentWindow.document;
+      const style=doc.createElement('style');style.textContent=cssInject;doc.head.appendChild(style);
+      const seq=doc.querySelector('.scroll-sequence')||doc.getElementById('hero');
+      if(seq)iframe.contentWindow.scrollTo(0,seq.offsetTop);
+    }catch(e){}
+    readyCount++;
+  }
+
+  // Lazy-load all 4 iframes
   setTimeout(()=>{
-    iframeL.src='voltpro.html';
-    iframeR.src='roofpro.html';
-    let loaded=0;
-    function onLoad(iframe){
-      try{
-        const doc=iframe.contentDocument||iframe.contentWindow.document;
-        const style=doc.createElement('style');
-        style.textContent=`
-          /* Hide nav and everything after the parallax */
-          nav, .mobile-menu { position:fixed!important; opacity:0!important; pointer-events:none!important; }
-          .scroll-sequence ~ * { display:none!important; }
-          /* Hide branding overlays inside the parallax */
-          #seqIntro, #seqFinal, #panelPowered, #scenePowered,
-          #panelHud, #sceneHud, #panelEnergize, #sceneEnergize,
-          #panelGlow, #sceneGlow, [id^="pl"] { opacity:0!important; }
-          /* Black background */
-          html, body { background:#000!important; }
-          /* Remove top padding from sticky to fill viewport */
-          .sequence-sticky { top:0!important; height:100vh!important; }
-        `;
-        doc.head.appendChild(style);
-        // Scroll to the start of the parallax section
-        const seq=doc.querySelector('.scroll-sequence')||doc.getElementById('hero');
-        if(seq) iframe.contentWindow.scrollTo(0,seq.offsetTop);
-      }catch(e){}
-      loaded++;
-      if(loaded>=2){ready=true;}
-    }
-    iframeL.addEventListener('load',()=>onLoad(iframeL));
-    iframeR.addEventListener('load',()=>onLoad(iframeR));
+    const srcs={volt:'voltpro.html',roof:'roofpro.html',green:'greenscape.html',pizza:'pizza-parallax.html'};
+    Object.keys(iframes).forEach(k=>{
+      const f=iframes[k];if(!f)return;
+      f.addEventListener('load',()=>onLoad(f));
+      f.src=srcs[k];
+    });
   },1200);
 
-  // Scroll-locked: progress driven by the 400vh wrapper
-  const wrap=document.getElementById('showcase');
+  /*
+    600vh scroll:
+    0-40%   → Pair 1 (VoltPro+RoofPro) parallax plays
+    40-50%  → Camera shift: track slides left to Pair 2 (with 3D tilt)
+    50-90%  → Pair 2 (GreenScape+Pizza) parallax plays
+    90-100% → Release
+  */
   let ticking=false;
-  function syncScroll(){
+  function update(){
     ticking=false;
-    if(!ready||!wrap)return;
+    if(readyCount<TOTAL)return;
     const rect=wrap.getBoundingClientRect();
     const total=wrap.offsetHeight-window.innerHeight;
     const scrolled=Math.max(0,-rect.top);
-    const progress=Math.max(0,Math.min(1,scrolled/total));
-    // Cap at 82% to stop before brand name glow finale
-    const capped=Math.min(progress,0.82);
-    [iframeL,iframeR].forEach(iframe=>{
-      if(!iframe||!iframe.contentWindow)return;
-      try{
-        const doc=iframe.contentDocument||iframe.contentWindow.document;
-        const seq=doc.querySelector('.scroll-sequence')||doc.getElementById('hero');
-        if(!seq)return;
-        iframe.contentWindow.scrollTo(0,seq.offsetTop+capped*seq.offsetHeight);
+    const p=Math.max(0,Math.min(1,scrolled/total));
+
+    // Horizontal pan: 0% at p<.4, transitions .4-.5, 100% at p>.5
+    let panProgress=0;
+    if(p>=.4&&p<=.5)panProgress=(p-.4)/.1;
+    else if(p>.5)panProgress=1;
+    // Eased pan with 3D tilt
+    const easedPan=panProgress<1?panProgress*panProgress*(3-2*panProgress):1; // smoothstep
+    const tiltY=(panProgress>0&&panProgress<1)?Math.sin(panProgress*Math.PI)*8:0;
+    const tiltX=(panProgress>0&&panProgress<1)?Math.sin(panProgress*Math.PI)*3:0;
+    track.style.transform=`translateX(${-easedPan*50}%) perspective(1200px) rotateY(${tiltY}deg) rotateX(${-tiltX}deg)`;
+
+    // Pair 1 parallax progress: 0→.4 maps to 0→82% of parallax
+    const p1=Math.min(p/.4,1)*.82;
+    [iframes.volt,iframes.roof].forEach(f=>{
+      if(!f||!f.contentWindow)return;
+      try{const doc=f.contentDocument;const seq=doc.querySelector('.scroll-sequence')||doc.getElementById('hero');
+        if(seq)f.contentWindow.scrollTo(0,seq.offsetTop+p1*seq.offsetHeight);
+      }catch(e){}
+    });
+
+    // Pair 2 parallax progress: .5→.9 maps to 0→82% of parallax
+    const p2Raw=(p-.5)/.4;
+    const p2=Math.max(0,Math.min(p2Raw,1))*.82;
+    [iframes.green,iframes.pizza].forEach(f=>{
+      if(!f||!f.contentWindow)return;
+      try{const doc=f.contentDocument;const seq=doc.querySelector('.scroll-sequence')||doc.getElementById('hero');
+        if(seq)f.contentWindow.scrollTo(0,seq.offsetTop+p2*seq.offsetHeight);
       }catch(e){}
     });
   }
-  window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(syncScroll);ticking=true}},{passive:true});
+  window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(update);ticking=true}},{passive:true});
 }
 
 // ── Horizontal Scroll Steps ──
@@ -988,7 +1025,7 @@ function initReveal(){
   const obs=new IntersectionObserver(entries=>{
     entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('revealed');obs.unobserve(e.target)}});
   },{threshold:.1});
-  document.querySelectorAll('.reveal-fade,.reveal-slide,.reveal-left,.reveal-right,.reveal-scale').forEach(el=>obs.observe(el));
+  document.querySelectorAll('.reveal-fade,.reveal-slide,.reveal-left,.reveal-right,.reveal-scale,.cam-tilt-inner,.cam-slide-right-inner,.cam-zoom-inner').forEach(el=>obs.observe(el));
 }
 
 // ── Scroll Progress ──
