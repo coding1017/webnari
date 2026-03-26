@@ -3533,12 +3533,17 @@ function renderParallaxLibrary() {
 
   // ── LEVEL 2: Single Category View ──
   catBar.style.display = '';
-  // Render category chips
-  let barHtml = '';
-  cats.forEach(c => {
-    barHtml += `<button class="cat-chip${plxCat===c.id?' active':''}" style="--cat-color:${c.color}" onclick="plxCat='${c.id}';renderParallaxLibrary();">${c.label}</button>`;
-  });
-  catBar.innerHTML = barHtml;
+  // Render category pills (same style as templates)
+  const plxCounts = {};
+  PARALLAX_DATA.forEach(p => { plxCounts[p.category] = (plxCounts[p.category]||0)+1; });
+  const plxTotal = PARALLAX_DATA.length;
+  catBar.innerHTML = `<button class="cat-pill${plxCat==='all'?' active':''}" onclick="plxCat='all';renderParallaxLibrary()"><span class="cat-count">${plxTotal}</span> All</button>` +
+    cats.map(c => {
+      const n = plxCounts[c.id]||0;
+      if (n === 0 && plxCat !== c.id) return '';
+      const isActive = plxCat === c.id;
+      return `<button class="cat-pill${isActive?' active':''}" style="${getCatVars(c)}" onclick="plxCat='${c.id}';renderParallaxLibrary()">${c.icon}<span>${c.label}</span><span class="cat-count">${n}</span></button>`;
+    }).join('');
 
   const cat = CATEGORIES.find(c => c.id === plxCat);
   breadcrumb.innerHTML = `<a onclick="plxCat='all';renderParallaxLibrary();">Categories</a>
