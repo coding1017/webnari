@@ -70,6 +70,11 @@
   --topbar:       62px;
 }
 
+/* ── CURSOR CANVAS ──────────────────────────────────── */
+.cursor-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:10001;display:none}
+@media(hover:hover){.cursor-canvas{display:block}}
+@media(max-width:768px){.cursor-canvas{display:none!important}}
+
 /* ── RESET ───────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
@@ -367,8 +372,10 @@ h1, h2, h3, .page-header h1, .stat-number, .logo-text { font-family: var(--font-
 }
 .kpi-icon { font-size: 14px; opacity: 0.7; }
 .kpi-value {
-  font-size: 34px; font-weight: 900; color: var(--white);
-  letter-spacing: -0.05em; line-height: 1; margin-bottom: 12px;
+  font-family: var(--font-head); font-size: 36px; font-weight: 700; color: var(--white);
+  letter-spacing: -0.04em; line-height: 1; margin-bottom: 12px;
+  background: linear-gradient(135deg, var(--white) 30%, var(--indigo2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
 }
 .kpi-value sub { font-size: 14px; font-weight: 500; color: var(--muted); vertical-align: baseline; }
 .kpi-trend { display: flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600; }
@@ -382,14 +389,20 @@ h1, h2, h3, .page-header h1, .stat-number, .logo-text { font-family: var(--font-
   border-radius: var(--radius-lg);
   overflow: hidden;
   box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+  backdrop-filter: blur(8px);
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+.panel:hover {
+  border-color: var(--border2);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.35), 0 0 16px rgba(201,169,110,0.05);
 }
 .panel-header {
   padding: 18px 22px;
   border-bottom: 1px solid rgba(255,255,255,0.04);
   display: flex; align-items: center; justify-content: space-between;
-  background: rgba(255,255,255,0.02);
+  background: linear-gradient(90deg, rgba(201,169,110,0.03), transparent);
 }
-.panel-title { font-size: 14px; font-weight: 700; color: var(--white); letter-spacing: -0.01em; }
+.panel-title { font-family: var(--font-head); font-size: 14px; font-weight: 700; color: var(--white); letter-spacing: -0.01em; }
 .panel-subtitle { font-size: 12px; color: var(--muted); margin-top: 2px; }
 .panel-body { padding: 22px; }
 .panel-link {
@@ -1288,6 +1301,8 @@ td.bold { color: var(--white); font-weight: 600; }
 </style>
 </head>
 <body>
+
+<canvas class="cursor-canvas" id="cursor-canvas"></canvas>
 
 <!-- Mobile sidebar overlay (tap to close) -->
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
@@ -5232,6 +5247,79 @@ async function doLogout() {
   }
 
   syncSidebar(); updateBadge(); renderOverview();
+
+  // ── Cursor sparks (matching webnari.io landing page) ──
+  (function(){
+    const canvas=document.getElementById('cursor-canvas');if(!canvas)return;
+    const ctx=canvas.getContext('2d');
+    let W,H;
+    function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+    resize();window.addEventListener('resize',resize);
+    let mx=W/2,my=H/2;
+    document.addEventListener('mousemove',function(e){mx=e.clientX;my=e.clientY});
+    const sparks=[];
+    function spawnSparks(){
+      var count=3+Math.floor(Math.random()*3);
+      for(var i=0;i<count;i++){
+        var angle=Math.random()*Math.PI*2;
+        var speed=.6+Math.random()*1.2;
+        var zSpeed=1.5+Math.random()*2.5;
+        sparks.push({x:mx,y:my,z:0,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,vz:zSpeed,life:1,maxLife:1,trail:[{x:mx,y:my,z:0}]});
+      }
+    }
+    function project(x,y,z){
+      var fov=400;var scale=fov/(fov+z);
+      return{x:mx+(x-mx)*scale,y:my+(y-my)*scale,scale:scale};
+    }
+    function draw(){
+      ctx.clearRect(0,0,W,H);
+      if(Math.random()>.3)spawnSparks();
+      for(var i=sparks.length-1;i>=0;i--){
+        var s=sparks[i];
+        s.x+=s.vx;s.y+=s.vy;s.z+=s.vz;s.life-=.03;
+        if(s.life<=0||s.z>600){sparks.splice(i,1);continue}
+        s.trail.push({x:s.x,y:s.y,z:s.z});
+        if(s.trail.length>8)s.trail.shift();
+        var alpha=s.life*.07;
+        if(s.trail.length>1){
+          ctx.beginPath();
+          var p0=project(s.trail[0].x,s.trail[0].y,s.trail[0].z);
+          ctx.moveTo(p0.x,p0.y);
+          for(var j=1;j<s.trail.length;j++){
+            var tp=s.trail[j];
+            var jx=(Math.random()-.5)*4*s.life;
+            var jy=(Math.random()-.5)*4*s.life;
+            var pp=project(tp.x+jx,tp.y+jy,tp.z);
+            ctx.lineTo(pp.x,pp.y);
+          }
+          var endScale=project(s.x,s.y,s.z).scale;
+          ctx.strokeStyle='rgba(201,169,110,'+alpha+')';
+          ctx.lineWidth=Math.max(.3,1.5*endScale);ctx.stroke();
+          ctx.strokeStyle='rgba(212,149,107,'+alpha*.25+')';
+          ctx.lineWidth=Math.max(.5,4*endScale);ctx.stroke();
+        }
+        var tip=project(s.x,s.y,s.z);
+        var dotSize=Math.max(.5,2.5*tip.scale);
+        ctx.beginPath();ctx.arc(tip.x,tip.y,dotSize,0,Math.PI*2);
+        ctx.fillStyle='rgba(232,213,168,'+alpha*.8+')';ctx.fill();
+        if(s.trail.length>3&&Math.random()>.92){
+          var bi=Math.floor(Math.random()*s.trail.length);
+          var bp=s.trail[bi];var bProj=project(bp.x,bp.y,bp.z);
+          var bAngle=Math.random()*Math.PI*2;var bLen=6+Math.random()*10;
+          ctx.beginPath();ctx.moveTo(bProj.x,bProj.y);
+          ctx.lineTo(bProj.x+Math.cos(bAngle)*bLen*bProj.scale,bProj.y+Math.sin(bAngle)*bLen*bProj.scale);
+          ctx.strokeStyle='rgba(201,169,110,'+alpha*.4+')';ctx.lineWidth=.5;ctx.stroke();
+        }
+      }
+      var grd=ctx.createRadialGradient(mx,my,0,mx,my,20);
+      grd.addColorStop(0,'rgba(201,169,110,.03)');
+      grd.addColorStop(1,'rgba(201,169,110,0)');
+      ctx.beginPath();ctx.arc(mx,my,20,0,Math.PI*2);ctx.fillStyle=grd;ctx.fill();
+      if(sparks.length>100)sparks.splice(0,sparks.length-100);
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
 
   // ── Category card showcase auto-cycling ──
   setInterval(function() {
