@@ -129,12 +129,14 @@ section{padding:120px 48px;position:relative}
 .section-title{font-family:var(--font-head);font-size:clamp(32px,4vw,56px);font-weight:700;letter-spacing:-.03em;line-height:1.1;color:var(--white);max-width:600px}
 .section-sub{font-size:17px;color:var(--text);max-width:480px;margin-top:16px;line-height:1.7}
 
-/* ── Parallax Showcase (split-screen) ── */
-.showcase-section{background:var(--bg);overflow:hidden;padding-bottom:0}
-.showcase-split{display:flex;gap:4px;margin-top:56px;height:80vh;min-height:500px;position:relative}
+/* ── Parallax Showcase (sticky scroll-lock) ── */
+.showcase-wrap{height:400vh;position:relative}
+.showcase-sticky{position:sticky;top:0;height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;background:var(--bg);padding:0 48px}
+.showcase-header{text-align:center;margin-bottom:32px;position:relative;z-index:2}
+.showcase-split{display:flex;gap:4px;width:100%;height:65vh;min-height:400px;position:relative}
 .showcase-pane{flex:1;position:relative;overflow:hidden;border-radius:8px;background:#000}
 .showcase-pane iframe{width:100%;height:100%;border:none;pointer-events:none;position:absolute;top:0;left:0}
-.showcase-pane-label{position:absolute;bottom:20px;left:20px;z-index:2;font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--white);
+.showcase-pane-label{position:absolute;bottom:16px;left:16px;z-index:2;font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--white);
   background:rgba(0,0,0,.7);backdrop-filter:blur(8px);padding:6px 14px;border-radius:6px;pointer-events:none;opacity:.6}
 
 /* (browser mockup + site-inside styles removed — replaced by showcase grid) */
@@ -296,10 +298,13 @@ footer{border-top:1px solid var(--border);padding:48px}
 .portal-contact h3{font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--white);margin-bottom:8px}
 .portal-contact p{font-size:13px;color:var(--text);margin-bottom:16px}
 
-/* ── Scroll reveal ── */
-.reveal-fade{opacity:0;transition:opacity .6s cubic-bezier(.25,.46,.45,.94)}
-.reveal-slide{opacity:0;transform:translateY(24px);transition:all .6s cubic-bezier(.25,.46,.45,.94)}
-.reveal-fade.revealed,.reveal-slide.revealed{opacity:1;transform:none}
+/* ── Scroll reveal (multi-directional) ── */
+.reveal-fade{opacity:0;transition:opacity .7s cubic-bezier(.25,.46,.45,.94)}
+.reveal-slide{opacity:0;transform:translateY(30px);transition:all .7s cubic-bezier(.25,.46,.45,.94)}
+.reveal-left{opacity:0;transform:translateX(-40px);transition:all .7s cubic-bezier(.25,.46,.45,.94)}
+.reveal-right{opacity:0;transform:translateX(40px);transition:all .7s cubic-bezier(.25,.46,.45,.94)}
+.reveal-scale{opacity:0;transform:scale(.92);transition:all .7s cubic-bezier(.25,.46,.45,.94)}
+.reveal-fade.revealed,.reveal-slide.revealed,.reveal-left.revealed,.reveal-right.revealed,.reveal-scale.revealed{opacity:1;transform:none}
 
 /* ── Responsive ── */
 @media(max-width:900px){
@@ -323,6 +328,8 @@ footer{border-top:1px solid var(--border);padding:48px}
   .footer-bottom{flex-direction:column;gap:8px}
   .portal-kpis{grid-template-columns:repeat(2,1fr)}
   .portal-grid{grid-template-columns:1fr}
+  .showcase-wrap{height:auto}
+  .showcase-sticky{position:relative;height:auto;padding:60px 24px}
   .showcase-split{flex-direction:column;height:auto}
   .showcase-pane{height:50vh;min-height:300px}
   .cursor-dot{display:none!important}
@@ -398,24 +405,26 @@ footer{border-top:1px solid var(--border);padding:48px}
   </div>
 </div>
 
-<!-- Parallax Showcase (split-screen) -->
-<section id="showcase" class="showcase-section">
-  <div class="reveal-slide">
-    <div class="section-eyebrow" style="text-align:center">Our work</div>
-    <div class="section-title" style="margin:0 auto;text-align:center;max-width:700px">Scroll-driven parallax,<br>built from scratch.</div>
-    <div class="section-sub" style="margin:20px auto 0;text-align:center">Both animations play simultaneously as you scroll — at double speed.</div>
-  </div>
-  <div class="showcase-split" id="showcase-split">
-    <div class="showcase-pane" id="pane-left">
-      <iframe id="iframe-left" scrolling="no" tabindex="-1"></iframe>
-      <div class="showcase-pane-label">VoltPro</div>
+<!-- Parallax Showcase (sticky scroll-lock) -->
+<div class="showcase-wrap" id="showcase">
+  <div class="showcase-sticky">
+    <div class="showcase-header">
+      <div class="section-eyebrow" style="text-align:center">Our work</div>
+      <div class="section-title" style="margin:0 auto;text-align:center;max-width:700px">Scroll-driven parallax,<br>built from scratch.</div>
+      <div class="section-sub" style="margin:20px auto 0;text-align:center;max-width:480px">Both animations play simultaneously as you scroll. Hand-coded, no plugins.</div>
     </div>
-    <div class="showcase-pane" id="pane-right">
-      <iframe id="iframe-right" scrolling="no" tabindex="-1"></iframe>
-      <div class="showcase-pane-label">RoofPro</div>
+    <div class="showcase-split" id="showcase-split">
+      <div class="showcase-pane" id="pane-left">
+        <iframe id="iframe-left" scrolling="no" tabindex="-1"></iframe>
+        <div class="showcase-pane-label">VoltPro</div>
+      </div>
+      <div class="showcase-pane" id="pane-right">
+        <iframe id="iframe-right" scrolling="no" tabindex="-1"></iframe>
+        <div class="showcase-pane-label">RoofPro</div>
+      </div>
     </div>
   </div>
-</section>
+</div>
 
 <div class="section-line"></div>
 
@@ -427,32 +436,32 @@ footer{border-top:1px solid var(--border);padding:48px}
     <div class="section-sub">We specialize in scroll-driven digital effects, full shopping integrations, and search rankings that put you on page one.</div>
   </div>
   <div class="features-grid">
-    <div class="feature-card reveal-slide">
+    <div class="feature-card reveal-left">
       <div class="feature-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
       <div class="feature-title">Scroll parallax & digital effects</div>
       <div class="feature-desc">Immersive scroll-driven animations, SVG parallax sequences, and cinematic transitions that make your site unforgettable.</div>
     </div>
-    <div class="feature-card reveal-slide">
+    <div class="feature-card reveal-right">
       <div class="feature-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></div>
       <div class="feature-title">SEO that ranks</div>
       <div class="feature-desc">On-page optimization, local schema markup, keyword tracking, and Google Business Profile management — built to get you on page one.</div>
     </div>
-    <div class="feature-card reveal-slide">
+    <div class="feature-card reveal-left">
       <div class="feature-icon"><svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg></div>
       <div class="feature-title">E-commerce integration</div>
       <div class="feature-desc">Full shopping cart, product catalogs, variant selectors, and Stripe checkout — sell online without a heavy platform.</div>
     </div>
-    <div class="feature-card reveal-slide">
+    <div class="feature-card reveal-right">
       <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M18 20V10M12 20V4M6 20v-6"/></svg></div>
       <div class="feature-title">Analytics dashboard</div>
       <div class="feature-desc">Live traffic, conversion tracking, and traffic source breakdown — updated monthly with a clean client report.</div>
     </div>
-    <div class="feature-card reveal-slide">
+    <div class="feature-card reveal-left">
       <div class="feature-icon"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg></div>
       <div class="feature-title">Lead tracker</div>
       <div class="feature-desc">Track every inbound call, form, and referral through a visual pipeline — from first contact to signed client.</div>
     </div>
-    <div class="feature-card reveal-slide">
+    <div class="feature-card reveal-right">
       <div class="feature-icon"><svg viewBox="0 0 24 24"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg></div>
       <div class="feature-title">Ad campaign tracking</div>
       <div class="feature-desc">Monitor Google Ads and Facebook spend, clicks, CPC, and ROAS. Know exactly what's working.</div>
@@ -508,7 +517,7 @@ footer{border-top:1px solid var(--border);padding:48px}
     <div class="section-title" style="margin:0 auto;text-align:center">No contracts. No surprises.</div>
     <div class="section-sub" style="margin:16px auto 0;">Cancel any time. All plans include hosting, SSL, support, and your client dashboard.</div>
   </div>
-  <div class="pricing-grid reveal-fade" id="pricing-grid"></div>
+  <div class="pricing-grid reveal-scale" id="pricing-grid"></div>
 </section>
 
 <div class="section-line"></div>
@@ -520,19 +529,19 @@ footer{border-top:1px solid var(--border);padding:48px}
     <div class="section-title">Real results for real businesses</div>
   </div>
   <div class="testi-grid">
-    <div class="testi-card featured reveal-slide">
+    <div class="testi-card featured reveal-left">
       <div class="testi-quote-mark">&ldquo;</div>
       <div class="testi-stars"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
       <div class="testi-text">"We went from invisible online to ranking #3 in Boca Raton for pest control in under 90 days. The monthly leads keep coming in. Best investment I've made."</div>
       <div class="testi-author"><div class="testi-avatar">MG</div><div><div class="testi-name">Maria Gonzalez</div><div class="testi-biz">PestPro South Florida</div></div></div>
     </div>
-    <div class="testi-card reveal-slide">
+    <div class="testi-card reveal-right">
       <div class="testi-quote-mark">&ldquo;</div>
       <div class="testi-stars"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
       <div class="testi-text">"Having everything in one dashboard — my website, reviews, and leads — saves me hours every week."</div>
       <div class="testi-author"><div class="testi-avatar">JT</div><div><div class="testi-name">James Torres</div><div class="testi-biz">Spark Electric Co.</div></div></div>
     </div>
-    <div class="testi-card reveal-slide">
+    <div class="testi-card reveal-left">
       <div class="testi-quote-mark">&ldquo;</div>
       <div class="testi-stars"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
       <div class="testi-text">"I was referred by a friend and signed up the same day. Onboarding was fast and the site looked incredible right out of the gate."</div>
@@ -544,7 +553,7 @@ footer{border-top:1px solid var(--border);padding:48px}
 <!-- CTA -->
 <section class="cta-banner">
   <div class="cta-line"></div>
-  <div class="reveal-slide">
+  <div class="reveal-scale">
     <h2>Let's build your website.</h2>
     <p>Join local businesses across South Florida growing with Webnari.</p>
     <button class="btn-hero btn-hero-primary" onclick="openAuth()">Get started today</button>
@@ -900,26 +909,25 @@ function initShowcase(){
     iframeR.addEventListener('load',()=>onLoad(iframeR));
   },1200);
 
-  // Both iframes scroll simultaneously at 2x speed — capped at 82% to stop before brand name finale
+  // Scroll-locked: progress driven by the 400vh wrapper
+  const wrap=document.getElementById('showcase');
   let ticking=false;
   function syncScroll(){
     ticking=false;
-    if(!ready)return;
-    const rect=split.getBoundingClientRect();
-    const visible=rect.top<window.innerHeight&&rect.bottom>0;
-    if(!visible)return;
-    const progress=Math.max(0,Math.min(1,(window.innerHeight-rect.top)/(window.innerHeight+rect.height)));
+    if(!ready||!wrap)return;
+    const rect=wrap.getBoundingClientRect();
+    const total=wrap.offsetHeight-window.innerHeight;
+    const scrolled=Math.max(0,-rect.top);
+    const progress=Math.max(0,Math.min(1,scrolled/total));
+    // Cap at 82% to stop before brand name glow finale
+    const capped=Math.min(progress,0.82);
     [iframeL,iframeR].forEach(iframe=>{
       if(!iframe||!iframe.contentWindow)return;
       try{
         const doc=iframe.contentDocument||iframe.contentWindow.document;
         const seq=doc.querySelector('.scroll-sequence')||doc.getElementById('hero');
         if(!seq)return;
-        const seqTop=seq.offsetTop;
-        const seqHeight=seq.offsetHeight;
-        // 2x speed, cap at 82% (before glow finale / brand name)
-        const cappedProgress=Math.min(progress,0.82);
-        iframe.contentWindow.scrollTo(0,seqTop+cappedProgress*seqHeight);
+        iframe.contentWindow.scrollTo(0,seq.offsetTop+capped*seq.offsetHeight);
       }catch(e){}
     });
   }
@@ -949,7 +957,7 @@ function initReveal(){
   const obs=new IntersectionObserver(entries=>{
     entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('revealed');obs.unobserve(e.target)}});
   },{threshold:.1});
-  document.querySelectorAll('.reveal-fade,.reveal-slide').forEach(el=>obs.observe(el));
+  document.querySelectorAll('.reveal-fade,.reveal-slide,.reveal-left,.reveal-right,.reveal-scale').forEach(el=>obs.observe(el));
 }
 
 // ── Scroll Progress ──
