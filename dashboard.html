@@ -1355,6 +1355,25 @@ td.bold { color: var(--white); font-weight: 600; }
     <button class="nav-item" onclick="navigate('billing')">
       <span class="nav-icon">💳</span> Billing
     </button>
+    <button class="nav-item" onclick="navigate('health')">
+      <span class="nav-icon">🩺</span> Site Health
+    </button>
+    <button class="nav-item" onclick="navigate('lead-inbox')">
+      <span class="nav-icon">📥</span> Lead Inbox
+      <span class="nav-badge" id="lead-inbox-badge" style="display:none">0</span>
+    </button>
+    <button class="nav-item" onclick="navigate('pagespeed')">
+      <span class="nav-icon">⚡</span> PageSpeed
+    </button>
+    <button class="nav-item" onclick="navigate('content')">
+      <span class="nav-icon">📅</span> Content
+    </button>
+    <button class="nav-item" onclick="navigate('forecast')">
+      <span class="nav-icon">📊</span> Forecast
+    </button>
+    <button class="nav-item" onclick="navigate('portal')">
+      <span class="nav-icon">👁️</span> Client Portal
+    </button>
 
     <div class="nav-divider"></div>
     <div class="nav-section-label">AI Tools</div>
@@ -1369,6 +1388,9 @@ td.bold { color: var(--white); font-weight: 600; }
     </button>
     <button class="nav-item" onclick="navigate('onboarding')">
       <span class="nav-icon">🚀</span> Onboarding
+    </button>
+    <button class="nav-item" onclick="navigate('proposals')">
+      <span class="nav-icon">📋</span> Proposals
     </button>
     <button class="nav-item" onclick="window.open('parallax-builder.html','_blank')">
       <span class="nav-icon">🎬</span> Parallax Builder
@@ -2267,6 +2289,103 @@ td.bold { color: var(--white); font-weight: 600; }
   </div>
 
   <!-- ══════════════════════════════════════
+       SITE HEALTH MONITOR
+  ══════════════════════════════════════ -->
+  <div class="page" id="page-health">
+    <div class="page-header">
+      <div class="page-header-left"><h1>Site Health Monitor</h1><p>Real-time status of all client websites</p></div>
+      <button class="btn btn-primary" onclick="checkAllSites()">🩺 Check All Sites</button>
+    </div>
+    <div id="health-grid"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       LEAD INBOX
+  ══════════════════════════════════════ -->
+  <div class="page" id="page-lead-inbox">
+    <div class="page-header">
+      <div class="page-header-left"><h1>Lead Inbox</h1><p>Centralized form submissions from all client sites</p></div>
+      <button class="btn btn-primary" onclick="openAddLead()">+ Log Lead</button>
+    </div>
+    <div style="display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;">
+      <select id="li-filter-client" onchange="renderLeadInbox()" style="padding:8px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:13px;"><option value="">All Clients</option></select>
+      <select id="li-filter-status" onchange="renderLeadInbox()" style="padding:8px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:13px;"><option value="">All Status</option><option value="new">New</option><option value="contacted">Contacted</option><option value="converted">Converted</option></select>
+    </div>
+    <div class="panel"><div class="table-wrap"><table><thead><tr><th>Client</th><th>Name</th><th>Email</th><th>Phone</th><th>Source</th><th>Status</th><th>Date</th><th></th></tr></thead><tbody id="li-tbody"></tbody></table></div></div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PAGESPEED AUDITS
+  ══════════════════════════════════════ -->
+  <div class="page" id="page-pagespeed">
+    <div class="page-header">
+      <div class="page-header-left"><h1>PageSpeed Audits</h1><p>Lighthouse scores for all client sites</p></div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <input id="ps-api-key" type="text" placeholder="PageSpeed API Key (optional)" style="padding:8px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:12px;width:240px;" onchange="DB.pagespeedData.apiKey=this.value;save();">
+        <button class="btn btn-primary" onclick="runAllAudits()">⚡ Run All Audits</button>
+      </div>
+    </div>
+    <div id="ps-grid"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       CONTENT CALENDAR
+  ══════════════════════════════════════ -->
+  <div class="page" id="page-content">
+    <div class="page-header">
+      <div class="page-header-left"><h1>Content Calendar</h1><p>Plan and track blog posts, social content, and updates</p></div>
+      <div style="display:flex;gap:10px;">
+        <select id="cc-filter-client" onchange="renderContent()" style="padding:8px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:13px;"><option value="">All Clients</option></select>
+        <button class="btn btn-primary" onclick="openAddContent()">+ Add Content</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:12px;margin-bottom:16px;">
+      <button class="btn btn-ghost btn-sm" onclick="ccMonth(-1)">← Prev</button>
+      <span id="cc-month-label" style="font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--white);padding:6px 0;"></span>
+      <button class="btn btn-ghost btn-sm" onclick="ccMonth(1)">Next →</button>
+    </div>
+    <div id="cc-calendar"></div>
+    <div id="cc-list" style="margin-top:20px;"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       REVENUE FORECAST
+  ══════════════════════════════════════ -->
+  <div class="page" id="page-forecast">
+    <div class="page-header">
+      <div class="page-header-left"><h1>Revenue Forecast</h1><p>Project your growth trajectory</p></div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost btn-sm fc-scenario active" data-s="moderate" onclick="setScenario('moderate')">Moderate</button>
+        <button class="btn btn-ghost btn-sm fc-scenario" data-s="conservative" onclick="setScenario('conservative')">Conservative</button>
+        <button class="btn btn-ghost btn-sm fc-scenario" data-s="aggressive" onclick="setScenario('aggressive')">Aggressive</button>
+      </div>
+    </div>
+    <div id="fc-content"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       CLIENT PORTAL PREVIEW
+  ══════════════════════════════════════ -->
+  <div class="page" id="page-portal">
+    <div class="page-header">
+      <div class="page-header-left"><h1>Client Portal Preview</h1><p>See what your client sees</p></div>
+      <select id="portal-client" onchange="renderPortal()" style="padding:8px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:13px;"></select>
+    </div>
+    <div id="portal-content"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       PROPOSAL GENERATOR
+  ══════════════════════════════════════ -->
+  <div class="page" id="page-proposals">
+    <div class="page-header">
+      <div class="page-header-left"><h1>Proposal Generator</h1><p>Create branded proposals for prospects</p></div>
+      <button class="btn btn-primary" onclick="openNewProposal()">+ New Proposal</button>
+    </div>
+    <div id="proposals-content"></div>
+  </div>
+
+  <!-- ══════════════════════════════════════
        SETTINGS PAGE
   ══════════════════════════════════════ -->
   <div class="page" id="page-settings">
@@ -3075,7 +3194,14 @@ let tplSearch = '';
 
 const SEED = {
   agency: { name: 'Your Agency', ownerName: '', email: '', phone: '', website: '' },
-  pricing: { starter: 79, standard: 129, premium: 189, setup: 500 },
+  pricing: { starter: 158, standard: 258, premium: 378, setup: 1000 },
+  healthChecks: {},
+  leadInbox: [],
+  pagespeedData: { apiKey: '' },
+  contentItems: [],
+  forecast: { growthRate: 2, churnRate: 5, avgNewRevenue: 250, fixedCosts: 2000 },
+  changeRequests: [],
+  proposals: [],
   clients: [
     {
       id:'demo1', bizName:'PestPro South Florida', contactName:'Maria Gonzalez',
@@ -3239,7 +3365,7 @@ localStorage.setItem(KEY, JSON.stringify(DB));
 // ════════════════════════════════════════════════════
 //  NAVIGATION
 // ════════════════════════════════════════════════════
-const TITLES = { overview:'Overview', clients:'Clients', templates:'Website Library', 'template-detail':'Website', parallax:'Parallax Library', seo:'SEO Manager', reputation:'Reputation Manager', analytics:'Analytics', leads:'Lead Tracker', ads:'Ad Campaigns', billing:'Billing', settings:'Settings', 'review-resp':'Review Responder', 'seo-writer':'SEO Writer', 'site-gen':'Site Generator', onboarding:'Client Onboarding' };
+const TITLES = { overview:'Overview', clients:'Clients', templates:'Website Library', 'template-detail':'Website', parallax:'Parallax Library', seo:'SEO Manager', reputation:'Reputation Manager', analytics:'Analytics', leads:'Lead Tracker', ads:'Ad Campaigns', billing:'Billing', health:'Site Health', 'lead-inbox':'Lead Inbox', pagespeed:'PageSpeed Audits', content:'Content Calendar', forecast:'Revenue Forecast', portal:'Client Portal', proposals:'Proposal Generator', settings:'Settings', 'review-resp':'Review Responder', 'seo-writer':'SEO Writer', 'site-gen':'Site Generator', onboarding:'Client Onboarding' };
 
 // ── Mobile sidebar ────────────────────────────────────
 function openSidebar() {
@@ -3267,7 +3393,7 @@ function navigate(page, param) {
     if (n.getAttribute('onclick')?.includes("'" + navPage + "'")) n.classList.add('active');
   });
   document.getElementById('topbar-title').textContent = TITLES[page] || page;
-  const renders = { overview: renderOverview, clients: renderClients, templates: renderTemplates, parallax: renderParallaxLibrary, seo: renderSeoSelect, reputation: renderRepSelect, analytics: renderAnSelect, leads: renderLeadsSelect, ads: renderAdsSelect, billing: renderBilling, settings: loadSettings, 'review-resp': initReviewResp, 'seo-writer': initSeoWriter, 'site-gen': initSiteGen, onboarding: initOnboarding };
+  const renders = { overview: renderOverview, clients: renderClients, templates: renderTemplates, parallax: renderParallaxLibrary, seo: renderSeoSelect, reputation: renderRepSelect, analytics: renderAnSelect, leads: renderLeadsSelect, ads: renderAdsSelect, billing: renderBilling, health: renderHealth, 'lead-inbox': renderLeadInbox, pagespeed: renderPageSpeed, content: renderContent, forecast: renderForecast, portal: renderPortal, proposals: renderProposals, settings: loadSettings, 'review-resp': initReviewResp, 'seo-writer': initSeoWriter, 'site-gen': initSiteGen, onboarding: initOnboarding };
   if (page === 'template-detail') renderTemplateDetail(param);
   else {
     if (page === 'templates') { activeCat = 'all'; tplSearch = ''; const si = document.getElementById('tpl-search-input'); if (si) si.value = ''; }
@@ -3811,6 +3937,440 @@ function renderParallaxLibrary() {
       } catch(e) { /* cross-origin fallback — won't happen for same-origin */ }
     });
   });
+}
+
+// ════════════════════════════════════════════════════
+//  TOOL: SITE HEALTH MONITOR
+// ════════════════════════════════════════════════════
+function renderHealth() {
+  if (!DB.healthChecks) DB.healthChecks = {};
+  const liveSites = DB.clients.filter(c => c.liveUrl && c.status === 'live');
+  const grid = document.getElementById('health-grid');
+  if (!liveSites.length) { grid.innerHTML = '<div style="text-align:center;padding:60px;color:var(--muted);">No live client sites to monitor</div>'; return; }
+  let html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;">';
+  liveSites.forEach(c => {
+    const h = DB.healthChecks[c.id] || { status: 'unknown', responseMs: 0, lastChecked: null };
+    const [col, bg, label] = h.status === 'up' ? ['var(--green)', 'var(--green-bg)', 'UP'] : h.status === 'down' ? ['var(--red)', 'var(--red-bg)', 'DOWN'] : ['var(--muted)', 'rgba(255,255,255,0.04)', 'UNKNOWN'];
+    html += `<div class="panel" style="padding:20px;position:relative;border-top:3px solid ${col};">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+        <div style="font-weight:700;color:var(--white);font-family:var(--font-head);">${c.bizName}</div>
+        <span class="badge" style="background:${bg};color:${col};">${label}</span>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px;word-break:break-all;">${c.liveUrl}</div>
+      <div style="display:flex;gap:20px;font-size:12px;color:var(--text);">
+        <div><strong style="color:var(--white);">${h.responseMs||'—'}ms</strong> response</div>
+        <div>Checked: ${h.lastChecked ? new Date(h.lastChecked).toLocaleTimeString() : 'Never'}</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:12px;font-size:11px;" onclick="checkSite('${c.id}','${c.liveUrl}')">Check Now</button>
+    </div>`;
+  });
+  html += '</div>';
+  grid.innerHTML = html;
+}
+function checkSite(clientId, url) {
+  if (!DB.healthChecks) DB.healthChecks = {};
+  const start = Date.now();
+  DB.healthChecks[clientId] = { status: 'checking', responseMs: 0, lastChecked: new Date().toISOString() };
+  renderHealth();
+  fetch(url, { mode: 'no-cors', cache: 'no-store' }).then(() => {
+    DB.healthChecks[clientId] = { status: 'up', responseMs: Date.now() - start, lastChecked: new Date().toISOString() };
+    save(); renderHealth();
+  }).catch(() => {
+    DB.healthChecks[clientId] = { status: 'down', responseMs: 0, lastChecked: new Date().toISOString() };
+    save(); renderHealth();
+  });
+}
+function checkAllSites() {
+  DB.clients.filter(c => c.liveUrl && c.status === 'live').forEach(c => checkSite(c.id, c.liveUrl));
+}
+
+// ════════════════════════════════════════════════════
+//  TOOL: LEAD INBOX
+// ════════════════════════════════════════════════════
+function renderLeadInbox() {
+  if (!DB.leadInbox) DB.leadInbox = [];
+  const sel = document.getElementById('li-filter-client');
+  sel.innerHTML = '<option value="">All Clients</option>' + DB.clients.map(c => `<option value="${c.id}">${c.bizName}</option>`).join('');
+  const filterClient = document.getElementById('li-filter-client').value;
+  const filterStatus = document.getElementById('li-filter-status').value;
+  let items = [...DB.leadInbox].reverse();
+  if (filterClient) items = items.filter(l => l.clientId === filterClient);
+  if (filterStatus) items = items.filter(l => l.status === filterStatus);
+  const tbody = document.getElementById('li-tbody');
+  if (!items.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:28px;">No leads yet. Click "Log Lead" to add one.</td></tr>'; return; }
+  tbody.innerHTML = items.map(l => {
+    const client = DB.clients.find(c => c.id === l.clientId);
+    const [sbg, sc] = l.status === 'new' ? ['var(--green-bg)', 'var(--green)'] : l.status === 'contacted' ? ['var(--amber-bg)', 'var(--amber)'] : ['var(--indigo-bg)', 'var(--indigo)'];
+    return `<tr>
+      <td style="font-size:12px;color:var(--muted);">${client ? client.bizName : '—'}</td>
+      <td class="bold">${l.name}</td><td>${l.email||'—'}</td><td>${l.phone||'—'}</td>
+      <td style="font-size:12px;">${l.sourceUrl||'—'}</td>
+      <td><span class="badge" style="background:${sbg};color:${sc};cursor:pointer;" onclick="cycleLead('${l.id}')">${l.status}</span></td>
+      <td style="font-size:12px;color:var(--muted);">${l.createdAt ? new Date(l.createdAt).toLocaleDateString() : ''}</td>
+      <td><button class="btn btn-ghost btn-sm btn-icon" onclick="deleteLead('${l.id}')" title="Delete" style="font-size:11px;">🗑</button></td>
+    </tr>`;
+  }).join('');
+  // Update badge
+  const newCount = DB.leadInbox.filter(l => l.status === 'new').length;
+  const badge = document.getElementById('lead-inbox-badge');
+  if (newCount > 0) { badge.style.display = ''; badge.textContent = newCount; } else { badge.style.display = 'none'; }
+}
+function openAddLead() {
+  const clients = DB.clients.map(c => `<option value="${c.id}">${c.bizName}</option>`).join('');
+  const html = `<div style="display:grid;gap:14px;max-width:500px;">
+    <select id="al-client" style="padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);"><option value="">Select Client</option>${clients}</select>
+    <input id="al-name" placeholder="Lead Name" style="padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);">
+    <input id="al-email" placeholder="Email" style="padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);">
+    <input id="al-phone" placeholder="Phone" style="padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);">
+    <input id="al-source" placeholder="Source URL (e.g. webnari.io/voltpro)" style="padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);">
+    <textarea id="al-msg" placeholder="Message" rows="3" style="padding:10px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);resize:vertical;"></textarea>
+    <button class="btn btn-primary" onclick="saveLead()">Save Lead</button>
+  </div>`;
+  openGenericModal('Log New Lead', html);
+}
+function saveLead() {
+  if (!DB.leadInbox) DB.leadInbox = [];
+  const lead = { id: 'l' + Date.now(), clientId: document.getElementById('al-client').value, name: document.getElementById('al-name').value, email: document.getElementById('al-email').value, phone: document.getElementById('al-phone').value, sourceUrl: document.getElementById('al-source').value, message: document.getElementById('al-msg').value, status: 'new', createdAt: new Date().toISOString(), notes: '' };
+  if (!lead.name) { toast('Name is required', 'error'); return; }
+  DB.leadInbox.push(lead); save(); closeGenericModal(); renderLeadInbox(); toast('Lead logged!', 'success');
+}
+function cycleLead(id) { const l = DB.leadInbox.find(x => x.id === id); if (!l) return; l.status = l.status === 'new' ? 'contacted' : l.status === 'contacted' ? 'converted' : 'new'; save(); renderLeadInbox(); }
+function deleteLead(id) { DB.leadInbox = DB.leadInbox.filter(x => x.id !== id); save(); renderLeadInbox(); toast('Lead removed', 'success'); }
+
+// Generic modal helper
+function openGenericModal(title, bodyHtml) {
+  let m = document.getElementById('generic-modal');
+  if (!m) { m = document.createElement('div'); m.id = 'generic-modal'; document.body.appendChild(m); }
+  m.innerHTML = `<div style="position:fixed;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);z-index:200;display:flex;align-items:center;justify-content:center;" onclick="if(event.target===this)closeGenericModal()">
+    <div style="background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-xl);padding:28px;max-width:560px;width:90%;max-height:80vh;overflow-y:auto;">
+      <div style="font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--white);margin-bottom:20px;">${title}</div>
+      ${bodyHtml}
+    </div>
+  </div>`;
+}
+function closeGenericModal() { const m = document.getElementById('generic-modal'); if (m) m.innerHTML = ''; }
+
+// ════════════════════════════════════════════════════
+//  TOOL: PAGESPEED AUDITS
+// ════════════════════════════════════════════════════
+function renderPageSpeed() {
+  if (!DB.pagespeedData) DB.pagespeedData = { apiKey: '' };
+  const apiInput = document.getElementById('ps-api-key');
+  if (apiInput) apiInput.value = DB.pagespeedData.apiKey || '';
+  const liveSites = DB.clients.filter(c => c.liveUrl && c.status === 'live');
+  const grid = document.getElementById('ps-grid');
+  if (!liveSites.length) { grid.innerHTML = '<div style="text-align:center;padding:60px;color:var(--muted);">No live sites to audit</div>'; return; }
+  let html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;">';
+  liveSites.forEach(c => {
+    const data = DB.pagespeedData[c.id];
+    const latest = data && data.scores && data.scores.length ? data.scores[data.scores.length - 1] : null;
+    html += `<div class="panel" style="padding:20px;">
+      <div style="font-weight:700;color:var(--white);font-family:var(--font-head);margin-bottom:4px;">${c.bizName}</div>
+      <div style="font-size:11px;color:var(--muted);margin-bottom:16px;">${c.liveUrl}</div>
+      ${latest ? `<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;">
+        ${['Performance','Accessibility','Best Practices','SEO'].map((label,i) => {
+          const val = [latest.performance, latest.accessibility, latest.bestPractices, latest.seo][i] || 0;
+          const col = val >= 90 ? 'var(--green)' : val >= 50 ? 'var(--amber)' : 'var(--red)';
+          return `<div><div style="font-family:var(--font-head);font-size:24px;font-weight:700;color:${col};">${val}</div><div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">${label}</div></div>`;
+        }).join('')}
+      </div><div style="font-size:10px;color:var(--muted);margin-top:10px;">Last: ${new Date(latest.date).toLocaleDateString()}</div>` : '<div style="color:var(--muted);font-size:13px;">No audits yet</div>'}
+      <div style="display:flex;gap:8px;margin-top:14px;">
+        <button class="btn btn-ghost btn-sm" style="font-size:11px;" onclick="runAudit('${c.id}','${c.liveUrl}')">Run Audit</button>
+        <button class="btn btn-ghost btn-sm" style="font-size:11px;" onclick="manualAudit('${c.id}')">Enter Scores</button>
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+  grid.innerHTML = html;
+}
+function runAudit(clientId, url) {
+  const key = DB.pagespeedData.apiKey;
+  if (!key) { window.open('https://pagespeed.web.dev/analysis?url=' + encodeURIComponent(url), '_blank'); toast('No API key — opened PageSpeed Insights in new tab', 'info'); return; }
+  toast('Running audit...', 'info');
+  fetch(`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(url)}&key=${key}&category=PERFORMANCE&category=ACCESSIBILITY&category=BEST_PRACTICES&category=SEO`)
+    .then(r => r.json()).then(data => {
+      const cats = data.lighthouseResult?.categories || {};
+      const scores = { date: new Date().toISOString(), performance: Math.round((cats.performance?.score||0)*100), accessibility: Math.round((cats.accessibility?.score||0)*100), bestPractices: Math.round((cats['best-practices']?.score||0)*100), seo: Math.round((cats.seo?.score||0)*100) };
+      if (!DB.pagespeedData[clientId]) DB.pagespeedData[clientId] = { scores: [] };
+      DB.pagespeedData[clientId].scores.push(scores);
+      if (DB.pagespeedData[clientId].scores.length > 10) DB.pagespeedData[clientId].scores.shift();
+      save(); renderPageSpeed(); toast('Audit complete!', 'success');
+    }).catch(() => toast('Audit failed — check API key', 'error'));
+}
+function manualAudit(clientId) {
+  openGenericModal('Enter Lighthouse Scores', `<div style="display:grid;gap:12px;">
+    <input id="ma-perf" type="number" placeholder="Performance (0-100)" min="0" max="100" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);">
+    <input id="ma-acc" type="number" placeholder="Accessibility (0-100)" min="0" max="100" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);">
+    <input id="ma-bp" type="number" placeholder="Best Practices (0-100)" min="0" max="100" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);">
+    <input id="ma-seo" type="number" placeholder="SEO (0-100)" min="0" max="100" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);">
+    <button class="btn btn-primary" onclick="saveManualAudit('${clientId}')">Save Scores</button>
+  </div>`);
+}
+function saveManualAudit(clientId) {
+  if (!DB.pagespeedData[clientId]) DB.pagespeedData[clientId] = { scores: [] };
+  DB.pagespeedData[clientId].scores.push({ date: new Date().toISOString(), performance: parseInt(document.getElementById('ma-perf').value)||0, accessibility: parseInt(document.getElementById('ma-acc').value)||0, bestPractices: parseInt(document.getElementById('ma-bp').value)||0, seo: parseInt(document.getElementById('ma-seo').value)||0 });
+  save(); closeGenericModal(); renderPageSpeed(); toast('Scores saved!', 'success');
+}
+function runAllAudits() { DB.clients.filter(c => c.liveUrl && c.status === 'live').forEach(c => runAudit(c.id, c.liveUrl)); }
+
+// ════════════════════════════════════════════════════
+//  TOOL: CONTENT CALENDAR
+// ════════════════════════════════════════════════════
+var ccDate = new Date();
+function ccMonth(d) { ccDate.setMonth(ccDate.getMonth() + d); renderContent(); }
+function renderContent() {
+  if (!DB.contentItems) DB.contentItems = [];
+  const sel = document.getElementById('cc-filter-client');
+  sel.innerHTML = '<option value="">All Clients</option>' + DB.clients.map(c => `<option value="${c.id}">${c.bizName}</option>`).join('');
+  const filterClient = sel.value;
+  const y = ccDate.getFullYear(), m = ccDate.getMonth();
+  document.getElementById('cc-month-label').textContent = ccDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+  const firstDay = new Date(y, m, 1).getDay();
+  const daysInMonth = new Date(y, m + 1, 0).getDate();
+  let items = DB.contentItems.filter(i => { const d = new Date(i.dueDate); return d.getFullYear() === y && d.getMonth() === m; });
+  if (filterClient) items = items.filter(i => i.clientId === filterClient);
+  // Calendar grid
+  let cal = '<div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;">';
+  ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d => { cal += `<div style="text-align:center;font-size:10px;font-weight:700;color:var(--muted);padding:8px;text-transform:uppercase;letter-spacing:0.08em;">${d}</div>`; });
+  for (let i = 0; i < firstDay; i++) cal += '<div></div>';
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dayItems = items.filter(i => i.dueDate === dateStr);
+    const isToday = new Date().toISOString().slice(0,10) === dateStr;
+    cal += `<div style="min-height:70px;padding:6px;background:${isToday ? 'rgba(201,169,110,0.08)' : 'var(--surface2)'};border:1px solid ${isToday ? 'var(--indigo-border)' : 'var(--border)'};border-radius:6px;cursor:pointer;" onclick="openAddContent('${dateStr}')">
+      <div style="font-size:11px;font-weight:${isToday?'700':'500'};color:${isToday?'var(--indigo)':'var(--muted)'};margin-bottom:4px;">${d}</div>
+      ${dayItems.map(i => { const col = i.status === 'published' ? 'var(--green)' : i.status === 'writing' ? 'var(--amber)' : 'var(--muted)'; return `<div style="font-size:9px;padding:2px 4px;background:${col}20;color:${col};border-radius:3px;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${i.title}">${i.title}</div>`; }).join('')}
+    </div>`;
+  }
+  cal += '</div>';
+  document.getElementById('cc-calendar').innerHTML = cal;
+  // Stats + list
+  const planned = DB.contentItems.filter(i => i.status === 'planned').length;
+  const writing = DB.contentItems.filter(i => i.status === 'writing').length;
+  const published = DB.contentItems.filter(i => i.status === 'published').length;
+  let list = `<div style="display:flex;gap:16px;margin-bottom:16px;"><div class="badge" style="background:var(--surface2);color:var(--muted);">Planned: ${planned}</div><div class="badge" style="background:var(--amber-bg);color:var(--amber);">Writing: ${writing}</div><div class="badge" style="background:var(--green-bg);color:var(--green);">Published: ${published}</div></div>`;
+  list += '<div class="panel"><div class="table-wrap"><table><thead><tr><th>Title</th><th>Client</th><th>Type</th><th>Status</th><th>Due</th><th></th></tr></thead><tbody>';
+  const allItems = filterClient ? DB.contentItems.filter(i => i.clientId === filterClient) : DB.contentItems;
+  [...allItems].sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate)).forEach(i => {
+    const client = DB.clients.find(c => c.id === i.clientId);
+    const [sbg,sc] = i.status === 'published' ? ['var(--green-bg)','var(--green)'] : i.status === 'writing' ? ['var(--amber-bg)','var(--amber)'] : ['var(--surface2)','var(--muted)'];
+    list += `<tr><td class="bold">${i.title}</td><td style="font-size:12px;color:var(--muted);">${client?client.bizName:'—'}</td><td style="font-size:12px;">${i.type}</td><td><span class="badge" style="background:${sbg};color:${sc};cursor:pointer;" onclick="cycleContent('${i.id}')">${i.status}</span></td><td style="font-size:12px;color:var(--muted);">${i.dueDate}</td><td><button class="btn btn-ghost btn-sm btn-icon" onclick="deleteContent('${i.id}')" style="font-size:11px;">🗑</button></td></tr>`;
+  });
+  list += '</tbody></table></div></div>';
+  document.getElementById('cc-list').innerHTML = list;
+}
+function openAddContent(dateStr) {
+  const clients = DB.clients.map(c => `<option value="${c.id}">${c.bizName}</option>`).join('');
+  const today = dateStr || new Date().toISOString().slice(0,10);
+  openGenericModal('Add Content Item', `<div style="display:grid;gap:12px;">
+    <select id="ac-client" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);"><option value="">Select Client</option>${clients}</select>
+    <input id="ac-title" placeholder="Title" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);">
+    <select id="ac-type" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);"><option value="blog">Blog Post</option><option value="social">Social Post</option><option value="update">Site Update</option></select>
+    <input id="ac-date" type="date" value="${today}" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);">
+    <button class="btn btn-primary" onclick="saveContent()">Add</button>
+  </div>`);
+}
+function saveContent() {
+  if (!DB.contentItems) DB.contentItems = [];
+  const item = { id: 'ci' + Date.now(), clientId: document.getElementById('ac-client').value, title: document.getElementById('ac-title').value, type: document.getElementById('ac-type').value, status: 'planned', dueDate: document.getElementById('ac-date').value, notes: '' };
+  if (!item.title) { toast('Title required', 'error'); return; }
+  DB.contentItems.push(item); save(); closeGenericModal(); renderContent(); toast('Content added!', 'success');
+}
+function cycleContent(id) { const i = DB.contentItems.find(x => x.id === id); if (!i) return; i.status = i.status === 'planned' ? 'writing' : i.status === 'writing' ? 'published' : 'planned'; save(); renderContent(); }
+function deleteContent(id) { DB.contentItems = DB.contentItems.filter(x => x.id !== id); save(); renderContent(); }
+
+// ════════════════════════════════════════════════════
+//  TOOL: REVENUE FORECAST
+// ════════════════════════════════════════════════════
+var fcScenario = 'moderate';
+function setScenario(s) { fcScenario = s; document.querySelectorAll('.fc-scenario').forEach(b => b.classList.toggle('active', b.dataset.s === s)); renderForecast(); }
+function renderForecast() {
+  if (!DB.forecast) DB.forecast = { growthRate: 2, churnRate: 5, avgNewRevenue: 250, fixedCosts: 2000 };
+  const fc = DB.forecast;
+  const active = DB.clients.filter(c => c.paymentStatus === 'active');
+  const currentMRR = active.reduce((s, c) => s + (c.monthlyRate || 0), 0);
+  const multiplier = fcScenario === 'conservative' ? 0.6 : fcScenario === 'aggressive' ? 1.5 : 1;
+  const gr = fc.growthRate * multiplier;
+  const cr = fc.churnRate / (fcScenario === 'aggressive' ? 1.5 : fcScenario === 'conservative' ? 0.8 : 1);
+  // Project 12 months
+  const months = [];
+  let mrr = currentMRR, clients = active.length;
+  for (let i = 0; i < 12; i++) {
+    const newClients = Math.round(gr);
+    const churned = Math.round(clients * (cr / 100));
+    clients = Math.max(0, clients + newClients - churned);
+    mrr = mrr + (newClients * fc.avgNewRevenue) - (churned * (mrr / Math.max(1, clients + churned)));
+    mrr = Math.max(0, Math.round(mrr));
+    const d = new Date(); d.setMonth(d.getMonth() + i + 1);
+    months.push({ label: d.toLocaleDateString('en-US', { month: 'short', year: '2-digit' }), mrr, clients });
+  }
+  const maxMRR = Math.max(...months.map(m => m.mrr), currentMRR);
+  const breakEvenMonths = fc.fixedCosts > 0 ? months.findIndex(m => m.mrr >= fc.fixedCosts) + 1 : 0;
+  let html = `
+  <div class="kpi-grid">
+    <div class="kpi-card" style="--accent:var(--green)"><div class="kpi-glow" style="background:var(--green)"></div><div class="kpi-label">Current MRR</div><div class="kpi-value">$${currentMRR.toLocaleString()}</div><div class="kpi-trend neutral">${active.length} active clients</div></div>
+    <div class="kpi-card" style="--accent:var(--indigo)"><div class="kpi-glow"></div><div class="kpi-label">Projected 6mo</div><div class="kpi-value">$${(months[5]||{mrr:0}).mrr.toLocaleString()}</div><div class="kpi-trend up">${(months[5]||{clients:0}).clients} clients</div></div>
+    <div class="kpi-card" style="--accent:var(--purple)"><div class="kpi-glow" style="background:var(--purple)"></div><div class="kpi-label">Projected 12mo</div><div class="kpi-value">$${(months[11]||{mrr:0}).mrr.toLocaleString()}</div><div class="kpi-trend up">${(months[11]||{clients:0}).clients} clients</div></div>
+    <div class="kpi-card" style="--accent:${breakEvenMonths > 0 ? 'var(--amber)' : 'var(--green)'}"><div class="kpi-glow" style="background:var(--amber)"></div><div class="kpi-label">Break-Even</div><div class="kpi-value">${breakEvenMonths > 0 ? breakEvenMonths + 'mo' : 'Now'}</div><div class="kpi-trend neutral">Fixed: $${fc.fixedCosts}/mo</div></div>
+  </div>
+  <div class="panel" style="padding:24px;margin-bottom:20px;">
+    <div style="font-family:var(--font-head);font-weight:700;color:var(--white);margin-bottom:16px;">12-Month Projection</div>
+    <div style="display:flex;align-items:flex-end;gap:6px;height:180px;">
+      <div style="display:flex;flex-direction:column;justify-content:space-between;height:100%;padding-right:8px;font-size:10px;color:var(--muted);">
+        <span>$${maxMRR.toLocaleString()}</span><span>$${Math.round(maxMRR/2).toLocaleString()}</span><span>$0</span>
+      </div>
+      ${months.map(m => {
+        const h = maxMRR > 0 ? (m.mrr / maxMRR * 100) : 0;
+        return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
+          <div style="font-size:9px;color:var(--white);font-weight:600;">$${(m.mrr/1000).toFixed(1)}k</div>
+          <div style="width:100%;height:${h}%;min-height:2px;background:linear-gradient(to top,var(--indigo),var(--indigo2));border-radius:4px 4px 0 0;transition:height 0.5s;"></div>
+          <div style="font-size:8px;color:var(--muted);white-space:nowrap;">${m.label}</div>
+        </div>`;
+      }).join('')}
+    </div>
+  </div>
+  <div class="panel" style="padding:24px;">
+    <div style="font-family:var(--font-head);font-weight:700;color:var(--white);margin-bottom:16px;">Growth Parameters</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
+      <label style="font-size:12px;color:var(--muted);">New clients/mo<input type="number" value="${fc.growthRate}" onchange="DB.forecast.growthRate=parseFloat(this.value)||0;save();renderForecast();" style="display:block;width:100%;margin-top:6px;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:14px;font-weight:700;"></label>
+      <label style="font-size:12px;color:var(--muted);">Churn rate %<input type="number" value="${fc.churnRate}" step="0.5" onchange="DB.forecast.churnRate=parseFloat(this.value)||0;save();renderForecast();" style="display:block;width:100%;margin-top:6px;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:14px;font-weight:700;"></label>
+      <label style="font-size:12px;color:var(--muted);">Avg new rev/client<input type="number" value="${fc.avgNewRevenue}" onchange="DB.forecast.avgNewRevenue=parseFloat(this.value)||0;save();renderForecast();" style="display:block;width:100%;margin-top:6px;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:14px;font-weight:700;"></label>
+      <label style="font-size:12px;color:var(--muted);">Fixed costs/mo<input type="number" value="${fc.fixedCosts}" onchange="DB.forecast.fixedCosts=parseFloat(this.value)||0;save();renderForecast();" style="display:block;width:100%;margin-top:6px;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:14px;font-weight:700;"></label>
+    </div>
+  </div>`;
+  document.getElementById('fc-content').innerHTML = html;
+}
+
+// ════════════════════════════════════════════════════
+//  TOOL: CLIENT PORTAL PREVIEW
+// ════════════════════════════════════════════════════
+function renderPortal() {
+  if (!DB.changeRequests) DB.changeRequests = [];
+  const sel = document.getElementById('portal-client');
+  sel.innerHTML = '<option value="">Select Client</option>' + DB.clients.map(c => `<option value="${c.id}">${c.bizName}</option>`).join('');
+  const container = document.getElementById('portal-content');
+  const cid = sel.value;
+  if (!cid) { container.innerHTML = '<div style="text-align:center;padding:60px;color:var(--muted);">Select a client to preview their portal</div>'; return; }
+  const c = DB.clients.find(x => x.id === cid);
+  if (!c) return;
+  const an = c.analytics || {};
+  const rep = c.reputation || {};
+  const leads = c.leads || [];
+  const reqs = DB.changeRequests.filter(r => r.clientId === cid);
+  const [stBg, stCol, stLbl] = c.status === 'live' ? ['var(--green-bg)','var(--green)','Live'] : ['var(--amber-bg)','var(--amber)','Building'];
+  container.innerHTML = `
+  <div style="background:linear-gradient(135deg,var(--surface2),var(--surface));border:1px solid var(--border);border-radius:var(--radius-xl);padding:28px;margin-bottom:20px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div><div style="font-family:var(--font-head);font-size:22px;font-weight:700;color:var(--white);">${c.bizName}</div><div style="color:var(--muted);font-size:13px;margin-top:4px;">${c.plan ? c.plan.charAt(0).toUpperCase()+c.plan.slice(1)+' Plan' : ''} &middot; $${c.monthlyRate||0}/mo</div></div>
+      <span class="badge" style="background:${stBg};color:${stCol};font-size:12px;padding:6px 14px;">${stLbl}</span>
+    </div>
+    ${c.liveUrl ? `<a href="${c.liveUrl}" target="_blank" style="color:var(--indigo);font-size:13px;">${c.liveUrl} ↗</a>` : ''}
+  </div>
+  <div class="kpi-grid">
+    <div class="kpi-card" style="--accent:var(--green)"><div class="kpi-glow" style="background:var(--green)"></div><div class="kpi-label">Sessions/mo</div><div class="kpi-value">${an.sessions||0}</div></div>
+    <div class="kpi-card" style="--accent:var(--indigo)"><div class="kpi-glow"></div><div class="kpi-label">Conversions</div><div class="kpi-value">${an.conversions||0}</div></div>
+    <div class="kpi-card" style="--accent:var(--amber)"><div class="kpi-glow" style="background:var(--amber)"></div><div class="kpi-label">Bounce Rate</div><div class="kpi-value">${an.bounceRate||0}%</div></div>
+    <div class="kpi-card" style="--accent:var(--purple)"><div class="kpi-glow" style="background:var(--purple)"></div><div class="kpi-label">Google Rating</div><div class="kpi-value">${rep.google?.rating||'—'}</div></div>
+  </div>
+  <div class="grid-2" style="margin-top:20px;">
+    <div class="panel">
+      <div class="panel-header"><div class="panel-title">Recent Leads</div></div>
+      <div class="table-wrap"><table><thead><tr><th>Name</th><th>Source</th><th>Date</th></tr></thead><tbody>
+        ${leads.length ? leads.slice(-5).reverse().map(l => `<tr><td class="bold">${l.name}</td><td style="color:var(--muted);font-size:12px;">${l.source||'—'}</td><td style="color:var(--muted);font-size:12px;">${l.date||''}</td></tr>`).join('') : '<tr><td colspan="3" style="text-align:center;color:var(--muted);padding:20px;">No leads yet</td></tr>'}
+      </tbody></table></div>
+    </div>
+    <div class="panel">
+      <div class="panel-header"><div class="panel-title">Change Requests</div><button class="btn btn-ghost btn-sm" onclick="openChangeRequest('${cid}')">+ New</button></div>
+      <div style="padding:16px;">
+        ${reqs.length ? reqs.map(r => { const [rbg,rc] = r.status==='done'?['var(--green-bg)','var(--green)']:r.status==='in-progress'?['var(--amber-bg)','var(--amber)']:['var(--surface2)','var(--muted)']; return `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);"><div><div style="font-size:13px;color:var(--white);font-weight:600;">${r.subject}</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">${r.description||''}</div></div><span class="badge" style="background:${rbg};color:${rc};cursor:pointer;align-self:center;" onclick="cycleRequest('${r.id}')">${r.status}</span></div>`; }).join('') : '<div style="color:var(--muted);font-size:13px;text-align:center;padding:20px;">No requests</div>'}
+      </div>
+    </div>
+  </div>`;
+}
+function openChangeRequest(clientId) {
+  openGenericModal('Submit Change Request', `<div style="display:grid;gap:12px;">
+    <input id="cr-subject" placeholder="Subject" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);">
+    <textarea id="cr-desc" placeholder="Describe the change..." rows="4" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);resize:vertical;"></textarea>
+    <button class="btn btn-primary" onclick="saveChangeRequest('${clientId}')">Submit</button>
+  </div>`);
+}
+function saveChangeRequest(clientId) {
+  if (!DB.changeRequests) DB.changeRequests = [];
+  DB.changeRequests.push({ id: 'cr' + Date.now(), clientId, subject: document.getElementById('cr-subject').value, description: document.getElementById('cr-desc').value, status: 'pending', createdAt: new Date().toISOString() });
+  save(); closeGenericModal(); renderPortal(); toast('Request submitted!', 'success');
+}
+function cycleRequest(id) { const r = DB.changeRequests.find(x => x.id === id); if (!r) return; r.status = r.status === 'pending' ? 'in-progress' : r.status === 'in-progress' ? 'done' : 'pending'; save(); renderPortal(); }
+
+// ════════════════════════════════════════════════════
+//  TOOL: PROPOSAL GENERATOR
+// ════════════════════════════════════════════════════
+function renderProposals() {
+  if (!DB.proposals) DB.proposals = [];
+  const container = document.getElementById('proposals-content');
+  if (!DB.proposals.length) { container.innerHTML = '<div style="text-align:center;padding:60px;color:var(--muted);">No proposals yet. Click "+ New Proposal" to create one.</div>'; return; }
+  let html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;">';
+  [...DB.proposals].reverse().forEach(p => {
+    const [sbg,sc] = p.status==='accepted'?['var(--green-bg)','var(--green)']:p.status==='sent'?['var(--amber-bg)','var(--amber)']:p.status==='declined'?['var(--red-bg)','var(--red)']:['var(--surface2)','var(--muted)'];
+    const plan = p.plan ? p.plan.charAt(0).toUpperCase()+p.plan.slice(1) : '';
+    const price = p.plan === 'starter' ? (DB.pricing?.starter||158) : p.plan === 'standard' ? (DB.pricing?.standard||258) : (DB.pricing?.premium||378);
+    html += `<div class="panel" style="padding:20px;">
+      <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:12px;">
+        <div style="font-family:var(--font-head);font-weight:700;color:var(--white);">${p.bizName}</div>
+        <span class="badge" style="background:${sbg};color:${sc};cursor:pointer;" onclick="cycleProposal('${p.id}')">${p.status}</span>
+      </div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">${p.niche || 'General'} &middot; ${plan} Plan</div>
+      <div style="font-family:var(--font-head);font-size:20px;font-weight:700;color:var(--indigo);margin:12px 0;">$${price}/mo</div>
+      <div style="font-size:11px;color:var(--muted);">Created ${new Date(p.createdAt).toLocaleDateString()}</div>
+      <div style="display:flex;gap:8px;margin-top:14px;">
+        <button class="btn btn-ghost btn-sm" style="font-size:11px;" onclick="viewProposal('${p.id}')">Preview</button>
+        <button class="btn btn-ghost btn-sm btn-icon" onclick="deleteProposal('${p.id}')" style="font-size:11px;">🗑</button>
+      </div>
+    </div>`;
+  });
+  html += '</div>';
+  container.innerHTML = html;
+}
+function openNewProposal() {
+  const niches = CATEGORIES.map(c => `<option value="${c.id}">${c.label}</option>`).join('');
+  openGenericModal('Create Proposal', `<div style="display:grid;gap:12px;">
+    <input id="np-biz" placeholder="Business Name" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);">
+    <select id="np-niche" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);"><option value="">Select Niche</option>${niches}</select>
+    <select id="np-plan" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);"><option value="starter">Starter ($${DB.pricing?.starter||158}/mo)</option><option value="standard" selected>Standard ($${DB.pricing?.standard||258}/mo)</option><option value="premium">Premium ($${DB.pricing?.premium||378}/mo)</option></select>
+    <textarea id="np-notes" placeholder="Custom notes..." rows="3" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);resize:vertical;"></textarea>
+    <button class="btn btn-primary" onclick="saveProposal()">Create Proposal</button>
+  </div>`);
+}
+function saveProposal() {
+  if (!DB.proposals) DB.proposals = [];
+  const biz = document.getElementById('np-biz').value;
+  if (!biz) { toast('Business name required', 'error'); return; }
+  DB.proposals.push({ id: 'pr' + Date.now(), bizName: biz, niche: document.getElementById('np-niche').value, plan: document.getElementById('np-plan').value, notes: document.getElementById('np-notes').value, status: 'draft', createdAt: new Date().toISOString() });
+  save(); closeGenericModal(); renderProposals(); toast('Proposal created!', 'success');
+}
+function cycleProposal(id) { const p = DB.proposals.find(x => x.id === id); if (!p) return; p.status = p.status === 'draft' ? 'sent' : p.status === 'sent' ? 'accepted' : p.status === 'accepted' ? 'declined' : 'draft'; save(); renderProposals(); }
+function deleteProposal(id) { DB.proposals = DB.proposals.filter(x => x.id !== id); save(); renderProposals(); toast('Proposal deleted', 'success'); }
+function viewProposal(id) {
+  const p = DB.proposals.find(x => x.id === id); if (!p) return;
+  const plan = p.plan ? p.plan.charAt(0).toUpperCase()+p.plan.slice(1) : 'Standard';
+  const price = p.plan === 'starter' ? (DB.pricing?.starter||158) : p.plan === 'standard' ? (DB.pricing?.standard||258) : (DB.pricing?.premium||378);
+  const cat = CATEGORIES.find(c => c.id === p.niche);
+  const features = DB.pricing?.[p.plan+'Features'] || ['Professional website','Mobile responsive','SEO optimized','Contact forms','Hosting included'];
+  const featureList = (Array.isArray(features) ? features : (features||'').split('\n')).filter(f=>f.trim()).map(f => `<div style="display:flex;gap:8px;align-items:center;padding:6px 0;font-size:13px;color:var(--text);"><span style="color:var(--green);">✓</span> ${f.trim()}</div>`).join('');
+  openGenericModal('Proposal Preview', `<div style="text-align:center;margin-bottom:24px;">
+    <div style="font-family:var(--font-head);font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--indigo);margin-bottom:8px;">PROPOSAL FROM WEBNARI</div>
+    <div style="font-family:var(--font-head);font-size:26px;font-weight:700;color:var(--white);margin-bottom:4px;">Website for ${p.bizName}</div>
+    <div style="color:var(--muted);font-size:13px;">${cat ? cat.label : 'Custom'} &middot; ${plan} Plan</div>
+  </div>
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;margin-bottom:20px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+      <div style="font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--white);">What's Included</div>
+      <div style="font-family:var(--font-head);font-size:28px;font-weight:700;color:var(--indigo);">$${price}<span style="font-size:14px;color:var(--muted);">/mo</span></div>
+    </div>
+    ${featureList}
+    <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);font-size:12px;color:var(--muted);">One-time setup fee: $${DB.pricing?.setup||1000}</div>
+  </div>
+  ${p.notes ? `<div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;"><div style="font-size:12px;font-weight:700;color:var(--white);margin-bottom:8px;">Notes</div><div style="font-size:13px;color:var(--text);line-height:1.6;">${p.notes}</div></div>` : ''}
+  <div style="text-align:center;margin-top:20px;"><button class="btn btn-primary" onclick="window.print()">Print / Save PDF</button></div>`);
 }
 
 function renderTemplateDetail(id) {
