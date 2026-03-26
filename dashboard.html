@@ -3515,6 +3515,12 @@ function renderTemplates() {
     }
 
     container.innerHTML = html;
+    // Scroll showcase iframes to 20% so they show the actual animation
+    container.querySelectorAll('.cat-card-showcase-slide iframe').forEach(function(iframe) {
+      iframe.addEventListener('load', function() {
+        try { iframe.contentWindow.scrollTo(0, iframe.contentDocument.documentElement.scrollHeight * 0.20); } catch(e) {}
+      });
+    });
     return;
   }
 
@@ -3712,6 +3718,12 @@ function renderParallaxLibrary() {
     });
     html += '</div>';
     container.innerHTML = html;
+    // Scroll showcase iframes to 20%
+    container.querySelectorAll('.cat-card-showcase-slide iframe').forEach(function(iframe) {
+      iframe.addEventListener('load', function() {
+        try { iframe.contentWindow.scrollTo(0, iframe.contentDocument.documentElement.scrollHeight * 0.20); } catch(e) {}
+      });
+    });
     return;
   }
 
