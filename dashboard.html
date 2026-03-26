@@ -2378,14 +2378,20 @@ td.bold { color: var(--white); font-weight: 600; }
   ══════════════════════════════════════ -->
   <div class="page" id="page-forecast">
     <div class="page-header">
-      <div class="page-header-left"><h1>Revenue Forecast</h1><p>Project your growth trajectory</p></div>
-      <div style="display:flex;gap:8px;">
-        <button class="btn btn-ghost btn-sm fc-scenario active" data-s="moderate" onclick="setScenario('moderate')">Moderate</button>
-        <button class="btn btn-ghost btn-sm fc-scenario" data-s="conservative" onclick="setScenario('conservative')">Conservative</button>
-        <button class="btn btn-ghost btn-sm fc-scenario" data-s="aggressive" onclick="setScenario('aggressive')">Aggressive</button>
+      <div class="page-header-left"><h1>Revenue Forecast</h1><p>12-month financial projection for your agency</p></div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span style="font-size:11px;color:var(--muted);margin-right:4px;">Scenario:</span>
+        <button class="btn btn-ghost btn-sm fc-scenario" data-s="conservative" onclick="setScenario('conservative')" style="border-color:var(--amber-bg);">Conservative</button>
+        <button class="btn btn-ghost btn-sm fc-scenario active" data-s="moderate" onclick="setScenario('moderate')" style="border-color:var(--indigo-border);">Moderate</button>
+        <button class="btn btn-ghost btn-sm fc-scenario" data-s="aggressive" onclick="setScenario('aggressive')" style="border-color:var(--green-bg);">Aggressive</button>
       </div>
     </div>
-    <div id="fc-content"></div>
+    <!-- Financial Overview -->
+    <div id="fc-overview"></div>
+    <!-- Charts Row -->
+    <div id="fc-charts" style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:20px;"></div>
+    <!-- Bottom Row: Breakdown + Parameters -->
+    <div id="fc-bottom" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;"></div>
   </div>
 
   <!-- ══════════════════════════════════════
@@ -4647,65 +4653,236 @@ function cycleContent(id) { const i = DB.contentItems.find(x => x.id === id); if
 function deleteContent(id) { DB.contentItems = DB.contentItems.filter(x => x.id !== id); save(); renderContent(); }
 
 // ════════════════════════════════════════════════════
-//  TOOL: REVENUE FORECAST
+//  TOOL: REVENUE FORECAST (Enterprise)
 // ════════════════════════════════════════════════════
 var fcScenario = 'moderate';
-function setScenario(s) { fcScenario = s; document.querySelectorAll('.fc-scenario').forEach(b => b.classList.toggle('active', b.dataset.s === s)); renderForecast(); }
+function setScenario(s) {
+  fcScenario = s;
+  document.querySelectorAll('.fc-scenario').forEach(b => {
+    b.classList.toggle('active', b.dataset.s === s);
+    if (b.dataset.s === s) { b.style.background = s==='conservative'?'var(--amber-bg)':s==='aggressive'?'var(--green-bg)':'var(--indigo-bg)'; b.style.color = s==='conservative'?'var(--amber)':s==='aggressive'?'var(--green)':'var(--indigo)'; }
+    else { b.style.background = ''; b.style.color = ''; }
+  });
+  renderForecast();
+}
+
+function projectRevenue(fc, currentMRR, clientCount, scenarioMultiplier) {
+  const gr = fc.growthRate * scenarioMultiplier;
+  const churnMult = scenarioMultiplier > 1 ? 0.7 : scenarioMultiplier < 1 ? 1.3 : 1;
+  const cr = fc.churnRate * churnMult;
+  const months = [];
+  let mrr = currentMRR, clients = clientCount, cumulativeRevenue = 0, cumulativeProfit = 0;
+
+  for (let i = 0; i < 12; i++) {
+    const newClients = Math.round(gr);
+    const avgRevPerClient = clients > 0 ? mrr / clients : fc.avgNewRevenue;
+    const churned = Math.max(0, Math.round(clients * (cr / 100)));
+    const churnedRevenue = churned * avgRevPerClient;
+    const newRevenue = newClients * fc.avgNewRevenue;
+
+    clients = Math.max(0, clients + newClients - churned);
+    mrr = Math.max(0, Math.round(mrr + newRevenue - churnedRevenue));
+    const netProfit = mrr - fc.fixedCosts;
+    cumulativeRevenue += mrr;
+    cumulativeProfit += netProfit;
+
+    const d = new Date(); d.setMonth(d.getMonth() + i + 1);
+    months.push({
+      label: d.toLocaleDateString('en-US', { month: 'short' }),
+      labelFull: d.toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+      mrr, clients, netProfit,
+      newClients, churned, newRevenue: Math.round(newRevenue), churnedRevenue: Math.round(churnedRevenue),
+      cumulativeRevenue: Math.round(cumulativeRevenue),
+      cumulativeProfit: Math.round(cumulativeProfit),
+      margin: mrr > 0 ? Math.round((netProfit / mrr) * 100) : 0
+    });
+  }
+  return months;
+}
+
 function renderForecast() {
   if (!DB.forecast) DB.forecast = { growthRate: 2, churnRate: 5, avgNewRevenue: 250, fixedCosts: 2000 };
   const fc = DB.forecast;
   const active = DB.clients.filter(c => c.paymentStatus === 'active');
   const currentMRR = active.reduce((s, c) => s + (c.monthlyRate || 0), 0);
+  const currentARR = currentMRR * 12;
+  const netMonthly = currentMRR - fc.fixedCosts;
+
   const multiplier = fcScenario === 'conservative' ? 0.6 : fcScenario === 'aggressive' ? 1.5 : 1;
-  const gr = fc.growthRate * multiplier;
-  const cr = fc.churnRate / (fcScenario === 'aggressive' ? 1.5 : fcScenario === 'conservative' ? 0.8 : 1);
-  // Project 12 months
-  const months = [];
-  let mrr = currentMRR, clients = active.length;
-  for (let i = 0; i < 12; i++) {
-    const newClients = Math.round(gr);
-    const churned = Math.round(clients * (cr / 100));
-    clients = Math.max(0, clients + newClients - churned);
-    mrr = mrr + (newClients * fc.avgNewRevenue) - (churned * (mrr / Math.max(1, clients + churned)));
-    mrr = Math.max(0, Math.round(mrr));
-    const d = new Date(); d.setMonth(d.getMonth() + i + 1);
-    months.push({ label: d.toLocaleDateString('en-US', { month: 'short', year: '2-digit' }), mrr, clients });
-  }
-  const maxMRR = Math.max(...months.map(m => m.mrr), currentMRR);
-  const breakEvenMonths = fc.fixedCosts > 0 ? months.findIndex(m => m.mrr >= fc.fixedCosts) + 1 : 0;
-  let html = `
-  <div class="kpi-grid">
-    <div class="kpi-card" style="--accent:var(--green)"><div class="kpi-glow" style="background:var(--green)"></div><div class="kpi-label">Current MRR</div><div class="kpi-value">$${currentMRR.toLocaleString()}</div><div class="kpi-trend neutral">${active.length} active clients</div></div>
-    <div class="kpi-card" style="--accent:var(--indigo)"><div class="kpi-glow"></div><div class="kpi-label">Projected 6mo</div><div class="kpi-value">$${(months[5]||{mrr:0}).mrr.toLocaleString()}</div><div class="kpi-trend up">${(months[5]||{clients:0}).clients} clients</div></div>
-    <div class="kpi-card" style="--accent:var(--purple)"><div class="kpi-glow" style="background:var(--purple)"></div><div class="kpi-label">Projected 12mo</div><div class="kpi-value">$${(months[11]||{mrr:0}).mrr.toLocaleString()}</div><div class="kpi-trend up">${(months[11]||{clients:0}).clients} clients</div></div>
-    <div class="kpi-card" style="--accent:${breakEvenMonths > 0 ? 'var(--amber)' : 'var(--green)'}"><div class="kpi-glow" style="background:var(--amber)"></div><div class="kpi-label">Break-Even</div><div class="kpi-value">${breakEvenMonths > 0 ? breakEvenMonths + 'mo' : 'Now'}</div><div class="kpi-trend neutral">Fixed: $${fc.fixedCosts}/mo</div></div>
-  </div>
-  <div class="panel" style="padding:24px;margin-bottom:20px;">
-    <div style="font-family:var(--font-head);font-weight:700;color:var(--white);margin-bottom:16px;">12-Month Projection</div>
-    <div style="display:flex;align-items:flex-end;gap:6px;height:180px;">
-      <div style="display:flex;flex-direction:column;justify-content:space-between;height:100%;padding-right:8px;font-size:10px;color:var(--muted);">
-        <span>$${maxMRR.toLocaleString()}</span><span>$${Math.round(maxMRR/2).toLocaleString()}</span><span>$0</span>
+  const months = projectRevenue(fc, currentMRR, active.length, multiplier);
+
+  // Also project other scenarios for comparison
+  const conservativeM = projectRevenue(fc, currentMRR, active.length, 0.6);
+  const aggressiveM = projectRevenue(fc, currentMRR, active.length, 1.5);
+
+  const m6 = months[5] || { mrr: 0, clients: 0 };
+  const m12 = months[11] || { mrr: 0, clients: 0, cumulativeRevenue: 0, cumulativeProfit: 0 };
+  const maxMRR = Math.max(...months.map(m => m.mrr), currentMRR, 1);
+  const breakEvenIdx = fc.fixedCosts > 0 ? months.findIndex(m => m.netProfit >= 0) : -1;
+  const breakEvenLabel = breakEvenIdx >= 0 ? (breakEvenIdx + 1) + ' month' + (breakEvenIdx > 0 ? 's' : '') : netMonthly >= 0 ? 'Profitable now' : '12+ months';
+
+  // Revenue by plan tier
+  const planBreakdown = {};
+  active.forEach(c => {
+    const plan = c.plan || 'unknown';
+    if (!planBreakdown[plan]) planBreakdown[plan] = { count: 0, revenue: 0 };
+    planBreakdown[plan].count++;
+    planBreakdown[plan].revenue += c.monthlyRate || 0;
+  });
+
+  const inputStyle = 'display:block;width:100%;margin-top:6px;padding:10px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-family:var(--font-head);font-size:16px;font-weight:700;text-align:center;';
+
+  // ── KPI Overview ──
+  document.getElementById('fc-overview').innerHTML = `
+  <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px;">
+    <div class="kpi-card" style="--accent:var(--green)"><div class="kpi-glow" style="background:var(--green)"></div>
+      <div class="kpi-label">Current MRR</div>
+      <div class="kpi-value">$${currentMRR.toLocaleString()}</div>
+      <div class="kpi-trend ${netMonthly >= 0 ? 'up' : 'neutral'}">${active.length} clients &middot; $${currentARR.toLocaleString()} ARR</div>
+    </div>
+    <div class="kpi-card" style="--accent:${netMonthly >= 0 ? 'var(--green)' : 'var(--red)'}"><div class="kpi-glow" style="background:${netMonthly >= 0 ? 'var(--green)' : 'var(--red)'}"></div>
+      <div class="kpi-label">Net Monthly</div>
+      <div class="kpi-value" style="${netMonthly < 0 ? '-webkit-text-fill-color:var(--red)':''}">$${Math.abs(netMonthly).toLocaleString()}</div>
+      <div class="kpi-trend ${netMonthly >= 0 ? 'up' : 'neutral'}">${netMonthly >= 0 ? 'Profit' : 'Loss'} after $${fc.fixedCosts.toLocaleString()} costs</div>
+    </div>
+    <div class="kpi-card" style="--accent:var(--indigo)"><div class="kpi-glow"></div>
+      <div class="kpi-label">6-Month MRR</div>
+      <div class="kpi-value">$${m6.mrr.toLocaleString()}</div>
+      <div class="kpi-trend up">${m6.clients} clients &middot; ${m6.mrr > currentMRR ? '+' : ''}${currentMRR > 0 ? Math.round(((m6.mrr - currentMRR) / currentMRR) * 100) : 0}%</div>
+    </div>
+    <div class="kpi-card" style="--accent:var(--purple)"><div class="kpi-glow" style="background:var(--purple)"></div>
+      <div class="kpi-label">12-Month MRR</div>
+      <div class="kpi-value">$${m12.mrr.toLocaleString()}</div>
+      <div class="kpi-trend up">${m12.clients} clients &middot; $${(m12.mrr * 12).toLocaleString()} ARR</div>
+    </div>
+    <div class="kpi-card" style="--accent:var(--amber)"><div class="kpi-glow" style="background:var(--amber)"></div>
+      <div class="kpi-label">Break-Even</div>
+      <div class="kpi-value" style="font-size:22px;">${breakEvenLabel}</div>
+      <div class="kpi-trend neutral">12mo cumulative: $${m12.cumulativeProfit >= 0 ? '' : '-'}${Math.abs(m12.cumulativeProfit).toLocaleString()}</div>
+    </div>
+  </div>`;
+
+  // ── Charts Row: MRR + Profit chart, Client growth ──
+  const maxVal = Math.max(maxMRR, fc.fixedCosts, 1);
+  let mrrChart = `<div class="panel" style="padding:24px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div style="font-family:var(--font-head);font-weight:700;color:var(--white);">MRR & Profit Projection</div>
+      <div style="display:flex;gap:12px;font-size:10px;">
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:3px;background:var(--indigo);border-radius:2px;"></span> MRR</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:3px;background:var(--green);border-radius:2px;"></span> Profit</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:1px;border-top:1px dashed var(--red);"></span> Costs</span>
       </div>
-      ${months.map(m => {
-        const h = maxMRR > 0 ? (m.mrr / maxMRR * 100) : 0;
-        return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;">
-          <div style="font-size:9px;color:var(--white);font-weight:600;">$${(m.mrr/1000).toFixed(1)}k</div>
-          <div style="width:100%;height:${h}%;min-height:2px;background:linear-gradient(to top,var(--indigo),var(--indigo2));border-radius:4px 4px 0 0;transition:height 0.5s;"></div>
-          <div style="font-size:8px;color:var(--muted);white-space:nowrap;">${m.label}</div>
+    </div>
+    <!-- Grid lines -->
+    <div style="position:relative;height:220px;margin-bottom:4px;">
+      <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:space-between;pointer-events:none;">
+        ${[1, 0.75, 0.5, 0.25, 0].map(pct => `<div style="display:flex;align-items:center;gap:8px;"><span style="font-size:9px;color:var(--muted);width:48px;text-align:right;">$${Math.round(maxVal*pct).toLocaleString()}</span><div style="flex:1;height:1px;background:rgba(255,255,255,0.04);"></div></div>`).join('')}
+      </div>
+      <!-- Fixed costs line -->
+      <div style="position:absolute;left:56px;right:0;top:${(1 - fc.fixedCosts / maxVal) * 100}%;height:1px;border-top:1px dashed var(--red);opacity:0.4;z-index:2;"></div>
+      <!-- Bars -->
+      <div style="position:absolute;left:56px;right:0;bottom:0;top:0;display:flex;align-items:flex-end;gap:4px;padding-bottom:0;">
+        ${months.map((m, i) => {
+          const mrrH = (m.mrr / maxVal) * 100;
+          const profitH = m.netProfit > 0 ? (m.netProfit / maxVal) * 100 : 0;
+          const isNeg = m.netProfit < 0;
+          return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:0;height:100%;justify-content:flex-end;position:relative;" title="${m.labelFull}\nMRR: $${m.mrr.toLocaleString()}\nProfit: $${m.netProfit.toLocaleString()}\nClients: ${m.clients}">
+            <div style="width:80%;display:flex;gap:1px;height:${mrrH}%;align-items:flex-end;">
+              <div style="flex:1;height:100%;background:linear-gradient(to top,var(--indigo),var(--indigo2));border-radius:3px 3px 0 0;opacity:0.8;transition:all 0.4s;"></div>
+              <div style="flex:1;height:${profitH > 0 ? (profitH/mrrH*100) : 0}%;background:${isNeg?'var(--red)':'var(--green)'};border-radius:3px 3px 0 0;opacity:0.6;transition:all 0.4s;"></div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+    <div style="display:flex;gap:4px;margin-left:56px;">
+      ${months.map(m => `<div style="flex:1;text-align:center;font-size:9px;color:var(--muted);">${m.label}</div>`).join('')}
+    </div>
+  </div>`;
+
+  // Client growth chart
+  const maxClients = Math.max(...months.map(m => m.clients), active.length, 1);
+  let clientChart = `<div class="panel" style="padding:24px;">
+    <div style="font-family:var(--font-head);font-weight:700;color:var(--white);margin-bottom:16px;">Client Growth</div>
+    <div style="display:flex;align-items:flex-end;gap:3px;height:180px;">
+      ${months.map((m, i) => {
+        const h = (m.clients / maxClients) * 100;
+        return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end;" title="${m.labelFull}: ${m.clients} clients (+${m.newClients} new, -${m.churned} churned)">
+          <div style="font-size:9px;color:var(--white);font-weight:600;">${m.clients}</div>
+          <div style="width:70%;height:${h}%;background:linear-gradient(to top,var(--purple),rgba(176,124,255,0.5));border-radius:3px 3px 0 0;transition:all 0.4s;"></div>
+          <div style="font-size:8px;color:var(--muted);">${m.label}</div>
         </div>`;
       }).join('')}
     </div>
-  </div>
-  <div class="panel" style="padding:24px;">
-    <div style="font-family:var(--font-head);font-weight:700;color:var(--white);margin-bottom:16px;">Growth Parameters</div>
-    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;">
-      <label style="font-size:12px;color:var(--muted);">New clients/mo<input type="number" value="${fc.growthRate}" onchange="DB.forecast.growthRate=parseFloat(this.value)||0;save();renderForecast();" style="display:block;width:100%;margin-top:6px;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:14px;font-weight:700;"></label>
-      <label style="font-size:12px;color:var(--muted);">Churn rate %<input type="number" value="${fc.churnRate}" step="0.5" onchange="DB.forecast.churnRate=parseFloat(this.value)||0;save();renderForecast();" style="display:block;width:100%;margin-top:6px;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:14px;font-weight:700;"></label>
-      <label style="font-size:12px;color:var(--muted);">Avg new rev/client<input type="number" value="${fc.avgNewRevenue}" onchange="DB.forecast.avgNewRevenue=parseFloat(this.value)||0;save();renderForecast();" style="display:block;width:100%;margin-top:6px;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:14px;font-weight:700;"></label>
-      <label style="font-size:12px;color:var(--muted);">Fixed costs/mo<input type="number" value="${fc.fixedCosts}" onchange="DB.forecast.fixedCosts=parseFloat(this.value)||0;save();renderForecast();" style="display:block;width:100%;margin-top:6px;padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:14px;font-weight:700;"></label>
+    <div style="display:flex;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);">
+      <span>Now: ${active.length} clients</span>
+      <span>12mo: ${m12.clients} clients</span>
     </div>
   </div>`;
-  document.getElementById('fc-content').innerHTML = html;
+
+  document.getElementById('fc-charts').innerHTML = mrrChart + clientChart;
+
+  // ── Bottom Row: Plan Breakdown + Parameters ──
+  const plans = Object.entries(planBreakdown).sort((a, b) => b[1].revenue - a[1].revenue);
+  let breakdownHtml = `<div class="panel" style="padding:24px;">
+    <div style="font-family:var(--font-head);font-weight:700;color:var(--white);margin-bottom:16px;">Revenue by Plan</div>
+    ${plans.length ? plans.map(([plan, data]) => {
+      const pct = currentMRR > 0 ? Math.round((data.revenue / currentMRR) * 100) : 0;
+      const planLabel = plan.charAt(0).toUpperCase() + plan.slice(1);
+      const planColor = plan === 'premium' ? 'var(--indigo)' : plan === 'standard' ? 'var(--green)' : 'var(--amber)';
+      return `<div style="margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+          <span style="font-size:13px;font-weight:600;color:var(--white);">${planLabel}</span>
+          <span style="font-size:13px;color:var(--text);">${data.count} clients &middot; $${data.revenue.toLocaleString()}/mo (${pct}%)</span>
+        </div>
+        <div style="height:6px;background:var(--surface);border-radius:3px;overflow:hidden;">
+          <div style="height:100%;width:${pct}%;background:${planColor};border-radius:3px;transition:width 0.5s;"></div>
+        </div>
+      </div>`;
+    }).join('') : '<div style="color:var(--muted);font-size:13px;">No active subscriptions</div>'}
+    <div style="border-top:1px solid var(--border);margin-top:16px;padding-top:16px;">
+      <div style="font-size:12px;font-weight:700;color:var(--white);margin-bottom:12px;">Scenario Comparison (12-Month MRR)</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;text-align:center;">
+        <div style="padding:12px;background:var(--surface);border-radius:8px;${fcScenario==='conservative'?'border:1px solid var(--amber);':'border:1px solid var(--border);'}">
+          <div style="font-size:9px;color:var(--amber);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Conservative</div>
+          <div style="font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--white);">$${conservativeM[11].mrr.toLocaleString()}</div>
+          <div style="font-size:10px;color:var(--muted);">${conservativeM[11].clients} clients</div>
+        </div>
+        <div style="padding:12px;background:var(--surface);border-radius:8px;${fcScenario==='moderate'?'border:1px solid var(--indigo);':'border:1px solid var(--border);'}">
+          <div style="font-size:9px;color:var(--indigo);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Moderate</div>
+          <div style="font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--white);">$${months[11].mrr.toLocaleString()}</div>
+          <div style="font-size:10px;color:var(--muted);">${months[11].clients} clients</div>
+        </div>
+        <div style="padding:12px;background:var(--surface);border-radius:8px;${fcScenario==='aggressive'?'border:1px solid var(--green);':'border:1px solid var(--border);'}">
+          <div style="font-size:9px;color:var(--green);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;">Aggressive</div>
+          <div style="font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--white);">$${aggressiveM[11].mrr.toLocaleString()}</div>
+          <div style="font-size:10px;color:var(--muted);">${aggressiveM[11].clients} clients</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+
+  let paramsHtml = `<div class="panel" style="padding:24px;">
+    <div style="font-family:var(--font-head);font-weight:700;color:var(--white);margin-bottom:16px;">Growth Parameters</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px;">
+      <label style="font-size:12px;color:var(--muted);">New clients per month<input type="number" value="${fc.growthRate}" step="0.5" onchange="DB.forecast.growthRate=parseFloat(this.value)||0;save();renderForecast();" style="${inputStyle}"></label>
+      <label style="font-size:12px;color:var(--muted);">Monthly churn rate (%)<input type="number" value="${fc.churnRate}" step="0.5" min="0" max="100" onchange="DB.forecast.churnRate=parseFloat(this.value)||0;save();renderForecast();" style="${inputStyle}"></label>
+      <label style="font-size:12px;color:var(--muted);">Avg revenue per new client ($)<input type="number" value="${fc.avgNewRevenue}" step="10" onchange="DB.forecast.avgNewRevenue=parseFloat(this.value)||0;save();renderForecast();" style="${inputStyle}"></label>
+      <label style="font-size:12px;color:var(--muted);">Fixed monthly costs ($)<input type="number" value="${fc.fixedCosts}" step="50" onchange="DB.forecast.fixedCosts=parseFloat(this.value)||0;save();renderForecast();" style="${inputStyle}"></label>
+    </div>
+    <div style="border-top:1px solid var(--border);padding-top:16px;">
+      <div style="font-size:12px;font-weight:700;color:var(--white);margin-bottom:12px;">12-Month Summary</div>
+      <div style="display:grid;gap:8px;font-size:12px;">
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Total Revenue Collected</span><span style="color:var(--white);font-weight:700;">$${m12.cumulativeRevenue.toLocaleString()}</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Total Fixed Costs</span><span style="color:var(--red);font-weight:700;">-$${(fc.fixedCosts * 12).toLocaleString()}</span></div>
+        <div style="display:flex;justify-content:space-between;border-top:1px solid var(--border);padding-top:8px;"><span style="color:var(--white);font-weight:700;">Net Profit (12mo)</span><span style="color:${m12.cumulativeProfit >= 0 ? 'var(--green)' : 'var(--red)'};font-family:var(--font-head);font-size:16px;font-weight:700;">${m12.cumulativeProfit >= 0 ? '' : '-'}$${Math.abs(m12.cumulativeProfit).toLocaleString()}</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Avg Profit Margin</span><span style="color:var(--text);">${months.length ? Math.round(months.reduce((s,m) => s + m.margin, 0) / months.length) : 0}%</span></div>
+        <div style="display:flex;justify-content:space-between;"><span style="color:var(--muted);">Peak Monthly Net</span><span style="color:var(--green);">$${Math.max(...months.map(m => m.netProfit)).toLocaleString()}</span></div>
+      </div>
+    </div>
+  </div>`;
+
+  document.getElementById('fc-bottom').innerHTML = breakdownHtml + paramsHtml;
 }
 
 // ════════════════════════════════════════════════════
