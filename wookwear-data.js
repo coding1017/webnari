@@ -25,15 +25,33 @@
       imgs: ['images/wookwear/denim-crossbody-1.jpg', 'images/wookwear/denim-crossbody-2.jpg'],
       desc: 'Cut & sew color-block crossbody with hand-stitched sashiko denim patchwork front panel. Waxed canvas body, adjustable strap, zippered main compartment. Built to last for years.' },
 
-    { id: 'mat-psychedelic-swirl', name: 'Psychedelic Display Mats', category: 'mats', price: 45, badge: 'new', inStock: true,
+    { id: 'mat-psychedelic-swirl', name: 'Psychedelic Display Mats', category: 'mats', price: 45, badge: 'collection', inStock: true,
       img: 'images/wookwear/display-mats-1.jpg',
       imgs: ['images/wookwear/display-mats-1.jpg', 'images/wookwear/display-mats-2.jpg'],
-      desc: 'Square display mats in vivid psychedelic prints -- donut circles, marbled swirls, geometric color blocks, and abstract waves. Navy and purple felt borders with woven label. Perfect for showcasing your prized possessions.' },
+      desc: 'Square display mats in vivid psychedelic prints -- donut circles, marbled swirls, geometric color blocks, and abstract waves. Navy and purple felt borders with woven label. Perfect for showcasing your prized possessions.',
+      isCollection: true,
+      variants: [
+        { id: 'mat-A-donut-circles', name: 'A - Donut Circles', color: '#E63946', imgs: ['images/wookwear/display-mat-A.jpg'], price: 45, inStock: true },
+        { id: 'mat-B-marbled-swirl', name: 'B - Marbled Swirl', color: '#7C3AED', imgs: ['images/wookwear/display-mat-B.jpg'], price: 45, inStock: true },
+        { id: 'mat-C-color-block', name: 'C - Color Block', color: '#3B82F6', imgs: ['images/wookwear/display-mat-C.jpg'], price: 45, inStock: true },
+        { id: 'mat-D-abstract-wave', name: 'D - Abstract Wave', color: '#F97316', imgs: ['images/wookwear/display-mat-D.jpg'], price: 45, inStock: true }
+      ]
+    },
 
-    { id: 'mat-buddy-blobs', name: 'Buddy Display Mats', category: 'mats', price: 42, badge: null, inStock: true,
+    { id: 'mat-buddy-blobs', name: 'Buddy Display Mats', category: 'mats', price: 42, badge: 'collection', inStock: true,
       img: 'images/wookwear/buddy-mats-1.jpg',
       imgs: ['images/wookwear/buddy-mats-1.jpg'],
-      desc: 'Organic blob-shaped display mats in fun psychedelic fabrics with contrast-color felt binding. Each one is a unique shape with its own personality. Laid flat for display or hang on the wall.' },
+      desc: 'Organic blob-shaped display mats in fun psychedelic fabrics with contrast-color felt binding. Each one is a unique shape with its own personality. Laid flat for display or hang on the wall.',
+      isCollection: true,
+      variants: [
+        { id: 'buddy-mat-A-blue-psych', name: 'A - Blue Psychedelic', color: '#3B82F6', imgs: ['images/wookwear/buddy-mat-A.jpg'], price: 42, inStock: true },
+        { id: 'buddy-mat-B-floral', name: 'B - Floral Burst', color: '#22C55E', imgs: ['images/wookwear/buddy-mat-B.jpg'], price: 42, inStock: true },
+        { id: 'buddy-mat-C-rainbow', name: 'C - Rainbow Flowers', color: '#FACC15', imgs: ['images/wookwear/buddy-mat-C.jpg'], price: 42, inStock: true },
+        { id: 'buddy-mat-D-swirl', name: 'D - Pink Swirl', color: '#EC4899', imgs: ['images/wookwear/buddy-mat-D.jpg'], price: 42, inStock: true },
+        { id: 'buddy-mat-E-paisley', name: 'E - Paisley Mix', color: '#A855F7', imgs: ['images/wookwear/buddy-mat-E.jpg'], price: 42, inStock: true },
+        { id: 'buddy-mat-F-green-checker', name: 'F - Green Checker', color: '#0D9488', imgs: ['images/wookwear/buddy-mat-F.jpg'], price: 42, inStock: true }
+      ]
+    },
 
     { id: 'bag-backpack-gray', name: 'Tie-Dye Canvas Backpack', category: 'bags', price: 150, badge: 'sold', inStock: false,
       img: 'images/wookwear/backpack-1.jpg',
