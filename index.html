@@ -168,9 +168,6 @@ section{padding:120px 48px;position:relative}
 /* ── Mobile Showcase (sequential scroll-locked parallaxes) ── */
 .showcase-mobile-wrap{display:none}
 .mob-parallax{height:100vh;position:relative;overflow:hidden;background:#000}
-.mob-parallax iframe{width:100%;height:100%;border:none;pointer-events:none;position:absolute;top:0;left:0}
-.mob-parallax-label{position:absolute;bottom:16px;left:16px;z-index:2;font-family:var(--font-head);font-size:13px;font-weight:700;color:var(--white);
-  background:rgba(0,0,0,.7);backdrop-filter:blur(8px);padding:5px 12px;border-radius:6px;opacity:.6}
 
 /* ── Features ── */
 .features-section{background:var(--surface);
@@ -472,14 +469,8 @@ footer{border-top:1px solid var(--border);padding:48px}
 
 <!-- Mobile Parallax Showcase (sequential scroll-locked, hidden on desktop) -->
 <div class="showcase-mobile-wrap" id="mob-showcase">
-  <div class="mob-parallax" id="mob-p1">
-    <iframe id="mob-iframe-1" scrolling="no" tabindex="-1"></iframe>
-    <div class="mob-parallax-label">VoltPro</div>
-  </div>
-  <div class="mob-parallax" id="mob-p2">
-    <iframe id="mob-iframe-2" scrolling="no" tabindex="-1"></iframe>
-    <div class="mob-parallax-label">RoofPro</div>
-  </div>
+  <div class="mob-parallax" id="mob-p1"></div>
+  <div class="mob-parallax" id="mob-p2"></div>
 </div>
 
 <!-- Diagonal wipe: showcase → features -->
@@ -1071,78 +1062,109 @@ function initShowcase(){
 }
 
 // ── Mobile Parallax Showcase ──
+// ── Mobile Parallax: fetch + inject native code (no iframes) ──
 function initMobileShowcase(){
   if(window.innerWidth>768)return;
-  const cssInject=`
-    nav,.mobile-menu{position:fixed!important;opacity:0!important;pointer-events:none!important}
-    .scroll-sequence~*{display:none!important}
-    #seqIntro,#seqFinal,#panelPowered,#scenePowered,#panelHud,#sceneHud,
-    #panelEnergize,#sceneEnergize,#panelGlow,#sceneGlow,[id^="pl"]{opacity:0!important}
-    html,body{background:#000!important}
-    .sequence-sticky{top:0!important;height:100vh!important}
-  `;
-  const items=[
-    {wrap:'mob-p1',iframe:'mob-iframe-1',src:'voltpro.html',playing:false,done:false,progress:.15},
-    {wrap:'mob-p2',iframe:'mob-iframe-2',src:'roofpro.html',playing:false,done:false,progress:.15}
+
+  const templates=[
+    {container:'mob-p1',src:'voltpro.html',label:'VoltPro'},
+    {container:'mob-p2',src:'roofpro.html',label:'RoofPro'}
   ];
-  let readyCount=0;
 
-  items.forEach(item=>{
-    const f=document.getElementById(item.iframe);if(!f)return;
-    f.addEventListener('load',()=>{
-      try{
-        const doc=f.contentDocument||f.contentWindow.document;
-        const style=doc.createElement('style');style.textContent=cssInject;doc.head.appendChild(style);
-        const seq=doc.querySelector('.scroll-sequence')||doc.getElementById('hero');
-        if(seq)f.contentWindow.scrollTo(0,seq.offsetTop+.15*seq.offsetHeight);
-      }catch(e){}
-      readyCount++;
-    });
-    f.src=item.src;
-  });
+  templates.forEach(tmpl=>{
+    const container=document.getElementById(tmpl.container);
+    if(!container)return;
 
-  // Auto-play: when parallax enters viewport, smoothly animate 15%→85% over ~4 seconds
-  const DURATION=4000; // ms
-  const obs=new IntersectionObserver(entries=>{
-    entries.forEach(entry=>{
-      const item=items.find(i=>i.wrap===entry.target.id);
-      if(!item)return;
-      if(entry.isIntersecting&&!item.playing&&!item.done){
-        item.playing=true;
-        const startTime=performance.now();
-        const f=document.getElementById(item.iframe);
-        function animate(now){
-          const elapsed=now-startTime;
-          const t=Math.min(elapsed/DURATION,1);
-          // Smooth ease-in-out
-          const ease=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
-          item.progress=.15+ease*.7; // 15%→85%
-          try{
-            const doc=f.contentDocument;
-            const seq=doc.querySelector('.scroll-sequence')||doc.getElementById('hero');
-            if(seq)f.contentWindow.scrollTo(0,seq.offsetTop+item.progress*seq.offsetHeight);
-          }catch(e){}
-          if(t<1){
-            requestAnimationFrame(animate);
-          }else{
-            item.done=true;
-          }
-        }
-        requestAnimationFrame(animate);
-      }
-    });
-  },{threshold:.3}); // trigger when 30% visible
+    fetch(tmpl.src).then(r=>r.text()).then(html=>{
+      const parser=new DOMParser();
+      const doc=parser.parseFromString(html,'text/html');
 
-  // Wait for iframes to load, then observe
-  const checkReady=setInterval(()=>{
-    if(readyCount>=2){
-      clearInterval(checkReady);
-      items.forEach(item=>{
-        const wrap=document.getElementById(item.wrap);
-        if(wrap)obs.observe(wrap);
+      // Extract CSS from the page
+      const styles=doc.querySelectorAll('style');
+      const styleEl=document.createElement('style');
+      // Scope styles to avoid conflicts: wrap in a unique container
+      const scopeId='mob-scope-'+tmpl.container;
+      container.id=scopeId;
+      let cssText='';
+      styles.forEach(s=>{cssText+=s.textContent+'\n'});
+      // Override scroll-sequence to be 100vh (not 500vh) and auto-play
+      cssText+=`
+        #${scopeId} .scroll-sequence{height:100vh!important;position:relative!important}
+        #${scopeId} .sequence-sticky{position:relative!important;height:100vh!important;top:0!important}
+        #${scopeId} nav,#${scopeId} .mobile-menu{display:none!important}
+        #${scopeId} .scroll-sequence~*{display:none!important}
+        #${scopeId} #seqIntro,#${scopeId} #seqFinal{display:none!important}
+        #${scopeId} #panelPowered,#${scopeId} #scenePowered{display:none!important}
+        #${scopeId} #panelHud,#${scopeId} #sceneHud{display:none!important}
+        #${scopeId} #panelGlow,#${scopeId} #sceneGlow{opacity:0!important}
+        #${scopeId} #panelEnergize,#${scopeId} #sceneEnergize{opacity:0!important}
+        #${scopeId} [id^="pl"]{display:none!important}
+        #${scopeId} .seq-phase,#${scopeId} .seq-scrub{display:none!important}
+      `;
+      styleEl.textContent=cssText;
+      document.head.appendChild(styleEl);
+
+      // Extract the scroll-sequence section
+      const seq=doc.querySelector('.scroll-sequence');
+      if(!seq)return;
+      container.appendChild(seq);
+
+      // Extract and run the parallax script
+      const scripts=doc.querySelectorAll('script:not([src])');
+      let parallaxCode='';
+      scripts.forEach(s=>{
+        if(s.textContent.includes('seqEl')&&s.textContent.includes('getProgress'))
+          parallaxCode=s.textContent;
       });
-    }
-  },200);
+
+      if(!parallaxCode)return;
+
+      // Override getProgress to use our auto-play timer instead of scroll
+      // We inject a global progress variable and replace the scroll-based reader
+      const progressVar='__mobProgress_'+tmpl.container.replace('-','_');
+      window[progressVar]=0.15;
+
+      // Replace getProgress function to read our timer variable
+      parallaxCode=parallaxCode.replace(
+        /function getProgress\(\)\s*\{[^}]+\}/,
+        `function getProgress(){return window['${progressVar}']}`
+      );
+      // Also remove updateSticky calls (no sticky needed)
+      parallaxCode=parallaxCode.replace(/updateSticky\(\);?/g,'');
+      // Remove any DOMContentLoaded or window.load wrappers
+      parallaxCode=parallaxCode.replace(/document\.addEventListener\(['"]DOMContentLoaded['"]/g,'(function(');
+
+      // Execute the parallax code
+      try{
+        const scriptEl=document.createElement('script');
+        scriptEl.textContent=parallaxCode;
+        document.body.appendChild(scriptEl);
+      }catch(e){console.log('Mob parallax error:',e)}
+
+      // Auto-play: animate progress from 15% to 85% when in view
+      const DURATION=5000;
+      let playing=false,done=false;
+      const obs=new IntersectionObserver(entries=>{
+        entries.forEach(entry=>{
+          if(entry.isIntersecting&&!playing&&!done){
+            playing=true;
+            const startTime=performance.now();
+            function animate(now){
+              const elapsed=now-startTime;
+              const t=Math.min(elapsed/DURATION,1);
+              const ease=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+              window[progressVar]=.15+ease*.7;
+              if(t<1)requestAnimationFrame(animate);
+              else done=true;
+            }
+            requestAnimationFrame(animate);
+          }
+        });
+      },{threshold:.2});
+      obs.observe(container);
+
+    }).catch(e=>console.log('Failed to load '+tmpl.src,e));
+  });
 }
 
 // ── Horizontal Scroll Steps ──
