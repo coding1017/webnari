@@ -2293,9 +2293,18 @@ td.bold { color: var(--white); font-weight: 600; }
   ══════════════════════════════════════ -->
   <div class="page" id="page-health">
     <div class="page-header">
-      <div class="page-header-left"><h1>Site Health Monitor</h1><p>Real-time status of all client websites</p></div>
-      <button class="btn btn-primary" onclick="checkAllSites()">🩺 Check All Sites</button>
+      <div class="page-header-left"><h1>Site Health Monitor</h1><p>Real-time uptime tracking for all client websites</p></div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer;">
+          <input type="checkbox" id="health-auto" onchange="toggleHealthAuto(this.checked)" style="accent-color:var(--indigo);"> Auto-refresh (60s)
+        </label>
+        <button class="btn btn-ghost btn-sm" onclick="openAddMonitor()">+ Add URL</button>
+        <button class="btn btn-primary" onclick="checkAllSites()">Check All</button>
+      </div>
     </div>
+    <!-- Summary KPIs -->
+    <div id="health-summary"></div>
+    <!-- Site Cards -->
     <div id="health-grid"></div>
   </div>
 
@@ -3196,6 +3205,7 @@ const SEED = {
   agency: { name: 'Your Agency', ownerName: '', email: '', phone: '', website: '' },
   pricing: { starter: 158, standard: 258, premium: 378, setup: 1000 },
   healthChecks: {},
+  customMonitors: [],
   leadInbox: [],
   pagespeedData: { apiKey: '' },
   contentItems: [],
@@ -3940,48 +3950,260 @@ function renderParallaxLibrary() {
 }
 
 // ════════════════════════════════════════════════════
-//  TOOL: SITE HEALTH MONITOR
+//  TOOL: SITE HEALTH MONITOR (Enterprise)
 // ════════════════════════════════════════════════════
+var healthAutoInterval = null;
+
+function getMonitoredSites() {
+  // Combine live client sites + any custom URLs
+  if (!DB.healthChecks) DB.healthChecks = {};
+  if (!DB.customMonitors) DB.customMonitors = [];
+  const sites = [];
+  DB.clients.filter(c => c.liveUrl && c.status === 'live').forEach(c => {
+    sites.push({ id: c.id, name: c.bizName, url: c.liveUrl, type: 'client', template: c.template });
+  });
+  // Always include webnari.io
+  if (!sites.find(s => s.url.includes('webnari.io'))) {
+    sites.unshift({ id: '_webnari', name: 'Webnari (Agency)', url: 'https://webnari.io', type: 'agency' });
+  }
+  DB.customMonitors.forEach(m => {
+    sites.push({ id: m.id, name: m.name, url: m.url, type: 'custom' });
+  });
+  return sites;
+}
+
 function renderHealth() {
   if (!DB.healthChecks) DB.healthChecks = {};
-  const liveSites = DB.clients.filter(c => c.liveUrl && c.status === 'live');
+  const sites = getMonitoredSites();
+  const summaryEl = document.getElementById('health-summary');
   const grid = document.getElementById('health-grid');
-  if (!liveSites.length) { grid.innerHTML = '<div style="text-align:center;padding:60px;color:var(--muted);">No live client sites to monitor</div>'; return; }
-  let html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;">';
-  liveSites.forEach(c => {
-    const h = DB.healthChecks[c.id] || { status: 'unknown', responseMs: 0, lastChecked: null };
-    const [col, bg, label] = h.status === 'up' ? ['var(--green)', 'var(--green-bg)', 'UP'] : h.status === 'down' ? ['var(--red)', 'var(--red-bg)', 'DOWN'] : ['var(--muted)', 'rgba(255,255,255,0.04)', 'UNKNOWN'];
-    html += `<div class="panel" style="padding:20px;position:relative;border-top:3px solid ${col};">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-        <div style="font-weight:700;color:var(--white);font-family:var(--font-head);">${c.bizName}</div>
-        <span class="badge" style="background:${bg};color:${col};">${label}</span>
+  const autoCheck = document.getElementById('health-auto');
+  if (autoCheck) autoCheck.checked = !!healthAutoInterval;
+
+  // Calculate summary stats
+  let totalUp = 0, totalDown = 0, totalUnknown = 0, totalChecks = 0, avgResponse = 0;
+  sites.forEach(s => {
+    const h = DB.healthChecks[s.id];
+    if (!h || !h.history || !h.history.length) { totalUnknown++; return; }
+    const latest = h.history[h.history.length - 1];
+    if (latest.status === 'up') totalUp++; else totalDown++;
+    // Uptime % from history
+    const upChecks = h.history.filter(x => x.status === 'up').length;
+    totalChecks += h.history.length;
+    avgResponse += latest.responseMs || 0;
+  });
+  const avgMs = (totalUp + totalDown) > 0 ? Math.round(avgResponse / (totalUp + totalDown)) : 0;
+  const uptimePct = totalChecks > 0 ? ((sites.reduce((s2, s) => { const h = DB.healthChecks[s.id]; if (!h || !h.history) return s2; return s2 + h.history.filter(x => x.status === 'up').length; }, 0) / totalChecks) * 100).toFixed(1) : '—';
+
+  // Summary KPIs
+  summaryEl.innerHTML = `<div class="kpi-grid" style="margin-bottom:20px;">
+    <div class="kpi-card" style="--accent:var(--green)"><div class="kpi-glow" style="background:var(--green)"></div>
+      <div class="kpi-label">Sites Up <span class="kpi-icon">✓</span></div>
+      <div class="kpi-value">${totalUp}<sub>/${sites.length}</sub></div>
+      <div class="kpi-trend ${totalDown === 0 ? 'up' : 'neutral'}">${totalDown === 0 ? 'All systems operational' : totalDown + ' site(s) down'}</div>
+    </div>
+    <div class="kpi-card" style="--accent:${totalDown > 0 ? 'var(--red)' : 'var(--green)'}"><div class="kpi-glow" style="background:${totalDown > 0 ? 'var(--red)' : 'var(--green)'}"></div>
+      <div class="kpi-label">Overall Uptime <span class="kpi-icon">📊</span></div>
+      <div class="kpi-value">${uptimePct}%</div>
+      <div class="kpi-trend neutral">Across all checks</div>
+    </div>
+    <div class="kpi-card" style="--accent:var(--indigo)"><div class="kpi-glow"></div>
+      <div class="kpi-label">Avg Response <span class="kpi-icon">⚡</span></div>
+      <div class="kpi-value">${avgMs}<sub>ms</sub></div>
+      <div class="kpi-trend ${avgMs < 500 ? 'up' : 'neutral'}">${avgMs < 500 ? 'Fast' : avgMs < 2000 ? 'Moderate' : 'Slow'}</div>
+    </div>
+    <div class="kpi-card" style="--accent:var(--amber)"><div class="kpi-glow" style="background:var(--amber)"></div>
+      <div class="kpi-label">Monitored Sites <span class="kpi-icon">🌐</span></div>
+      <div class="kpi-value">${sites.length}</div>
+      <div class="kpi-trend neutral">${totalUnknown > 0 ? totalUnknown + ' never checked' : 'All checked'}</div>
+    </div>
+  </div>`;
+
+  if (!sites.length) { grid.innerHTML = '<div style="text-align:center;padding:60px;color:var(--muted);">No sites to monitor. Add a client with a live URL or click "+ Add URL".</div>'; return; }
+
+  // Sort: down first, then checking, then up, then unknown
+  const order = { down: 0, checking: 1, up: 2, unknown: 3 };
+  const sorted = [...sites].sort((a, b) => {
+    const ha = DB.healthChecks[a.id], hb = DB.healthChecks[b.id];
+    const sa = ha && ha.history && ha.history.length ? ha.history[ha.history.length-1].status : 'unknown';
+    const sb = hb && hb.history && hb.history.length ? hb.history[hb.history.length-1].status : 'unknown';
+    return (order[sa]||3) - (order[sb]||3);
+  });
+
+  let html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;">';
+  sorted.forEach(s => {
+    const h = DB.healthChecks[s.id] || { history: [] };
+    const hist = h.history || [];
+    const latest = hist.length ? hist[hist.length - 1] : null;
+    const status = latest ? latest.status : 'unknown';
+    const [col, bg, label, icon] = status === 'up' ? ['var(--green)', 'var(--green-bg)', 'OPERATIONAL', '●']
+      : status === 'down' ? ['var(--red)', 'var(--red-bg)', 'DOWN', '●']
+      : status === 'checking' ? ['var(--amber)', 'var(--amber-bg)', 'CHECKING...', '◌']
+      : ['var(--muted)', 'rgba(255,255,255,0.04)', 'NOT CHECKED', '○'];
+
+    // Uptime percentage for this site
+    const upChecks = hist.filter(x => x.status === 'up').length;
+    const uptimeSite = hist.length > 0 ? ((upChecks / hist.length) * 100).toFixed(1) : '—';
+
+    // Response time sparkline (last 20 checks)
+    const recent = hist.slice(-20);
+    const maxMs = Math.max(...recent.map(r => r.responseMs || 0), 1);
+    let sparkline = '';
+    if (recent.length > 1) {
+      sparkline = '<div style="display:flex;align-items:flex-end;gap:1px;height:32px;margin:12px 0 0;">';
+      recent.forEach(r => {
+        const pct = Math.max(2, (r.responseMs || 0) / maxMs * 100);
+        const barCol = r.status === 'up' ? (r.responseMs < 500 ? 'var(--green)' : r.responseMs < 2000 ? 'var(--amber)' : 'var(--red)') : 'var(--red)';
+        sparkline += `<div title="${r.responseMs}ms — ${new Date(r.timestamp).toLocaleString()}" style="flex:1;height:${pct}%;background:${barCol};border-radius:2px 2px 0 0;min-width:3px;opacity:0.7;transition:opacity 0.15s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'"></div>`;
+      });
+      sparkline += '</div>';
+    }
+
+    // Type badge
+    const typeBadge = s.type === 'agency' ? '<span style="font-size:9px;padding:2px 6px;border-radius:4px;background:var(--indigo-bg);color:var(--indigo);font-weight:700;margin-left:6px;">AGENCY</span>'
+      : s.type === 'custom' ? '<span style="font-size:9px;padding:2px 6px;border-radius:4px;background:var(--amber-bg);color:var(--amber);font-weight:700;margin-left:6px;">CUSTOM</span>' : '';
+
+    html += `<div class="panel" style="padding:0;position:relative;overflow:hidden;border-left:3px solid ${col};">
+      <div style="padding:20px 20px 0;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;">
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;align-items:center;gap:4px;">
+              <span style="color:${col};font-size:10px;animation:${status==='checking'?'pulse 1.5s infinite':'none'}">${icon}</span>
+              <span style="font-weight:700;color:var(--white);font-family:var(--font-head);font-size:14px;">${s.name}</span>
+              ${typeBadge}
+            </div>
+            <a href="${s.url}" target="_blank" style="font-size:11px;color:var(--muted);word-break:break-all;text-decoration:none;transition:color 0.15s;" onmouseover="this.style.color='var(--indigo)'" onmouseout="this.style.color='var(--muted)'">${s.url} ↗</a>
+          </div>
+          <span class="badge" style="background:${bg};color:${col};font-size:10px;flex-shrink:0;">${label}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:14px;">
+          <div style="text-align:center;padding:10px;background:var(--surface);border-radius:8px;">
+            <div style="font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--white);">${latest ? latest.responseMs + 'ms' : '—'}</div>
+            <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-top:2px;">Response</div>
+          </div>
+          <div style="text-align:center;padding:10px;background:var(--surface);border-radius:8px;">
+            <div style="font-family:var(--font-head);font-size:18px;font-weight:700;color:${parseFloat(uptimeSite) >= 99 ? 'var(--green)' : parseFloat(uptimeSite) >= 95 ? 'var(--amber)' : 'var(--red)'};">${uptimeSite}%</div>
+            <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-top:2px;">Uptime</div>
+          </div>
+          <div style="text-align:center;padding:10px;background:var(--surface);border-radius:8px;">
+            <div style="font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--white);">${hist.length}</div>
+            <div style="font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;margin-top:2px;">Checks</div>
+          </div>
+        </div>
+        ${sparkline}
       </div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:8px;word-break:break-all;">${c.liveUrl}</div>
-      <div style="display:flex;gap:20px;font-size:12px;color:var(--text);">
-        <div><strong style="color:var(--white);">${h.responseMs||'—'}ms</strong> response</div>
-        <div>Checked: ${h.lastChecked ? new Date(h.lastChecked).toLocaleTimeString() : 'Never'}</div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 20px;margin-top:12px;border-top:1px solid var(--border);background:rgba(255,255,255,0.01);">
+        <div style="font-size:10px;color:var(--muted);">Last: ${latest ? timeAgo(new Date(latest.timestamp)) : 'Never'}</div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-ghost btn-sm" style="font-size:10px;padding:4px 10px;" onclick="checkSite('${s.id}','${s.url}')">Check Now</button>
+          ${s.type === 'custom' ? `<button class="btn btn-ghost btn-sm btn-icon" style="font-size:10px;padding:4px 8px;" onclick="removeMonitor('${s.id}')" title="Remove">🗑</button>` : ''}
+        </div>
       </div>
-      <button class="btn btn-ghost btn-sm" style="margin-top:12px;font-size:11px;" onclick="checkSite('${c.id}','${c.liveUrl}')">Check Now</button>
     </div>`;
   });
   html += '</div>';
   grid.innerHTML = html;
 }
-function checkSite(clientId, url) {
-  if (!DB.healthChecks) DB.healthChecks = {};
-  const start = Date.now();
-  DB.healthChecks[clientId] = { status: 'checking', responseMs: 0, lastChecked: new Date().toISOString() };
-  renderHealth();
-  fetch(url, { mode: 'no-cors', cache: 'no-store' }).then(() => {
-    DB.healthChecks[clientId] = { status: 'up', responseMs: Date.now() - start, lastChecked: new Date().toISOString() };
-    save(); renderHealth();
-  }).catch(() => {
-    DB.healthChecks[clientId] = { status: 'down', responseMs: 0, lastChecked: new Date().toISOString() };
-    save(); renderHealth();
-  });
+
+function timeAgo(date) {
+  const s = Math.floor((Date.now() - date.getTime()) / 1000);
+  if (s < 60) return s + 's ago';
+  if (s < 3600) return Math.floor(s/60) + 'm ago';
+  if (s < 86400) return Math.floor(s/3600) + 'h ago';
+  return Math.floor(s/86400) + 'd ago';
 }
+
+function checkSite(siteId, url) {
+  if (!DB.healthChecks) DB.healthChecks = {};
+  if (!DB.healthChecks[siteId]) DB.healthChecks[siteId] = { history: [] };
+  const record = DB.healthChecks[siteId];
+
+  // Show checking state immediately
+  record.history.push({ status: 'checking', responseMs: 0, timestamp: new Date().toISOString() });
+  if (record.history.length > 1) record.history.pop(); // remove temp checking entry after re-adding real one
+  renderHealth();
+
+  const start = performance.now();
+  // Use a real fetch (not no-cors) — for same-origin Cloudflare sites this works
+  // For cross-origin, we fallback to timing-based detection
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000); // 15s timeout
+
+  fetch(url, { method: 'HEAD', cache: 'no-store', signal: controller.signal })
+    .then(resp => {
+      clearTimeout(timeout);
+      const ms = Math.round(performance.now() - start);
+      const isUp = resp.ok || resp.type === 'opaque'; // opaque = CORS but server responded
+      record.history.push({ status: isUp ? 'up' : 'down', responseMs: ms, statusCode: resp.status || 0, timestamp: new Date().toISOString() });
+      if (record.history.length > 100) record.history = record.history.slice(-100);
+      save(); renderHealth();
+    })
+    .catch(err => {
+      clearTimeout(timeout);
+      const ms = Math.round(performance.now() - start);
+      // For CORS-blocked sites, try no-cors as fallback
+      if (err.name !== 'AbortError') {
+        fetch(url, { mode: 'no-cors', cache: 'no-store' }).then(() => {
+          record.history.push({ status: 'up', responseMs: ms, statusCode: 0, timestamp: new Date().toISOString() });
+          if (record.history.length > 100) record.history = record.history.slice(-100);
+          save(); renderHealth();
+        }).catch(() => {
+          record.history.push({ status: 'down', responseMs: 0, statusCode: 0, timestamp: new Date().toISOString() });
+          if (record.history.length > 100) record.history = record.history.slice(-100);
+          save(); renderHealth();
+        });
+      } else {
+        // Timeout = down
+        record.history.push({ status: 'down', responseMs: 15000, statusCode: 0, timestamp: new Date().toISOString() });
+        if (record.history.length > 100) record.history = record.history.slice(-100);
+        save(); renderHealth();
+      }
+    });
+}
+
 function checkAllSites() {
-  DB.clients.filter(c => c.liveUrl && c.status === 'live').forEach(c => checkSite(c.id, c.liveUrl));
+  const sites = getMonitoredSites();
+  let delay = 0;
+  sites.forEach(s => {
+    setTimeout(() => checkSite(s.id, s.url), delay);
+    delay += 300; // stagger requests by 300ms to avoid hammering
+  });
+  toast('Checking ' + sites.length + ' sites...', 'info');
+}
+
+function toggleHealthAuto(on) {
+  if (healthAutoInterval) { clearInterval(healthAutoInterval); healthAutoInterval = null; }
+  if (on) {
+    healthAutoInterval = setInterval(() => { checkAllSites(); }, 60000);
+    toast('Auto-refresh enabled (every 60s)', 'success');
+  } else {
+    toast('Auto-refresh disabled', 'info');
+  }
+}
+
+function openAddMonitor() {
+  if (!DB.customMonitors) DB.customMonitors = [];
+  openGenericModal('Add Custom URL to Monitor', `<div style="display:grid;gap:12px;">
+    <input id="am-name" placeholder="Site Name (e.g. Client Blog)" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);">
+    <input id="am-url" placeholder="https://example.com" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);">
+    <button class="btn btn-primary" onclick="saveMonitor()">Add to Monitor</button>
+  </div>`);
+}
+
+function saveMonitor() {
+  if (!DB.customMonitors) DB.customMonitors = [];
+  const name = document.getElementById('am-name').value;
+  const url = document.getElementById('am-url').value;
+  if (!name || !url) { toast('Name and URL required', 'error'); return; }
+  DB.customMonitors.push({ id: 'cm' + Date.now(), name, url });
+  save(); closeGenericModal(); renderHealth(); toast(name + ' added to monitoring', 'success');
+}
+
+function removeMonitor(id) {
+  if (!DB.customMonitors) return;
+  DB.customMonitors = DB.customMonitors.filter(m => m.id !== id);
+  delete DB.healthChecks[id];
+  save(); renderHealth(); toast('Monitor removed', 'success');
 }
 
 // ════════════════════════════════════════════════════
