@@ -517,11 +517,9 @@ td.bold { color: var(--white); font-weight: 600; }
 .tpl-search input::placeholder { color: var(--muted); }
 
 .cat-bar {
-  display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px;
-  scrollbar-width: none; -ms-overflow-style: none; flex: 1;
-  max-width: 100%;
+  display: flex; flex-wrap: wrap; gap: 8px; padding-bottom: 4px;
+  flex: 1; max-width: 100%;
 }
-.cat-bar::-webkit-scrollbar { display: none; }
 .cat-pill {
   display: flex; align-items: center; gap: 7px;
   padding: 7px 16px; border-radius: 100px;
@@ -3295,7 +3293,7 @@ function renderTemplateCard(t, usage, useMobilePreview) {
     <div class="template-preview" style="height:160px;">
         ${hasLiveUrl ? `
           <div style="position:absolute;inset:0;overflow:hidden;border-radius:var(--radius-lg) var(--radius-lg) 0 0;">
-            <iframe src="${t.path}" sandbox="" scrolling="no" loading="lazy" tabindex="-1" style="width:1280px;height:900px;border:none;transform:scale(0.3);transform-origin:top left;pointer-events:none;overflow:hidden;"></iframe>
+            <iframe src="${t.path}" scrolling="no" loading="lazy" tabindex="-1" data-tpl-preview style="width:1280px;height:900px;border:none;transform:scale(0.3);transform-origin:top left;pointer-events:none;overflow:hidden;"></iframe>
           </div>
           <div style="position:absolute;inset:0;z-index:2;"></div>
           <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 60%,rgba(0,0,0,0.35) 100%);z-index:3;pointer-events:none;"></div>
@@ -3417,6 +3415,13 @@ function renderTemplates() {
   }
 
   container.innerHTML = html;
+
+  // Scroll template iframe previews to ~40% to show parallax mid-build
+  container.querySelectorAll('iframe[data-tpl-preview]').forEach(iframe => {
+    iframe.addEventListener('load', function() {
+      try { iframe.contentWindow.scrollTo(0, iframe.contentDocument.documentElement.scrollHeight * 0.35); } catch(e) {}
+    });
+  });
 }
 
 // ── Parallax Library ──────────────────────────────────
