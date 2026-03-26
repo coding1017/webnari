@@ -1258,7 +1258,7 @@ td.bold { color: var(--white); font-weight: 600; }
       <span class="nav-badge" id="client-count-badge">0</span>
     </button>
     <button class="nav-item" onclick="navigate('templates')">
-      <span class="nav-icon">🎨</span> Templates
+      <span class="nav-icon">🎨</span> Websites
     </button>
     <button class="nav-item" onclick="navigate('parallax')">
       <span class="nav-icon">🎬</span> Parallax Library
@@ -1380,7 +1380,7 @@ td.bold { color: var(--white); font-weight: 600; }
       </div>
       <div class="kpi-card" style="--accent:var(--amber)">
         <div class="kpi-glow" style="background:var(--amber)"></div>
-        <div class="kpi-label">Templates <span class="kpi-icon">🎨</span></div>
+        <div class="kpi-label">Websites <span class="kpi-icon">🎨</span></div>
         <div class="kpi-value"><span id="kpi-templates">0</span></div>
         <div class="kpi-trend neutral">In library</div>
       </div>
@@ -1504,15 +1504,15 @@ td.bold { color: var(--white); font-weight: 600; }
     <div id="tpl-breadcrumb" class="tpl-breadcrumb"></div>
     <div class="page-header">
       <div class="page-header-left">
-        <h1 id="tpl-page-title">Template Library</h1>
-        <p id="tpl-page-sub">Your niche website templates — ready to deploy per client</p>
+        <h1 id="tpl-page-title">Website Library</h1>
+        <p id="tpl-page-sub">Your niche websites — ready to deploy per client</p>
       </div>
       <div style="display:flex;gap:10px;align-items:center;">
         <div class="tpl-search" id="tpl-search-wrap">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
           <input type="text" placeholder="Search..." id="tpl-search-input" oninput="tplSearch=this.value.toLowerCase();renderTemplates()">
         </div>
-        <button class="btn btn-primary" onclick="openAddTemplate()">+ Add Template</button>
+        <button class="btn btn-primary" onclick="openAddTemplate()">+ Add Website</button>
       </div>
     </div>
     <div class="cat-bar" id="cat-bar"></div>
@@ -2860,7 +2860,7 @@ td.bold { color: var(--white); font-weight: 600; }
 <div class="modal-overlay" id="modal-template">
   <div class="modal">
     <div class="modal-header">
-      <div class="modal-title">Add Template</div>
+      <div class="modal-title">Add Website</div>
       <button class="modal-close" onclick="closeModal('modal-template')">✕</button>
     </div>
     <div class="modal-body">
@@ -2897,7 +2897,7 @@ td.bold { color: var(--white); font-weight: 600; }
     </div>
     <div class="modal-footer">
       <button class="btn btn-ghost" onclick="closeModal('modal-template')">Cancel</button>
-      <button class="btn btn-primary" onclick="saveTemplate()">Add Template</button>
+      <button class="btn btn-primary" onclick="saveTemplate()">Add Website</button>
     </div>
   </div>
 </div>
@@ -3168,7 +3168,7 @@ localStorage.setItem(KEY, JSON.stringify(DB));
 // ════════════════════════════════════════════════════
 //  NAVIGATION
 // ════════════════════════════════════════════════════
-const TITLES = { overview:'Overview', clients:'Clients', templates:'Template Library', 'template-detail':'Template', parallax:'Parallax Library', seo:'SEO Manager', reputation:'Reputation Manager', analytics:'Analytics', leads:'Lead Tracker', ads:'Ad Campaigns', billing:'Billing', settings:'Settings', 'review-resp':'Review Responder', 'seo-writer':'SEO Writer', 'site-gen':'Site Generator', onboarding:'Client Onboarding' };
+const TITLES = { overview:'Overview', clients:'Clients', templates:'Website Library', 'template-detail':'Website', parallax:'Parallax Library', seo:'SEO Manager', reputation:'Reputation Manager', analytics:'Analytics', leads:'Lead Tracker', ads:'Ad Campaigns', billing:'Billing', settings:'Settings', 'review-resp':'Review Responder', 'seo-writer':'SEO Writer', 'site-gen':'Site Generator', onboarding:'Client Onboarding' };
 
 // ── Mobile sidebar ────────────────────────────────────
 function openSidebar() {
@@ -3391,8 +3391,8 @@ function renderTemplates() {
   if (activeCat === 'all') {
     catBar.style.display = 'none';
     breadcrumb.innerHTML = `<span class="bc-current">Categories</span>`;
-    pageTitle.textContent = 'Template Library';
-    pageSub.textContent = 'Your niche website templates — ready to deploy per client';
+    pageTitle.textContent = 'Website Library';
+    pageSub.textContent = 'Your niche websites — ready to deploy per client';
 
     // Filter categories by search
     let cats = CATEGORIES.filter(c => counts[c.id] > 0);
@@ -3415,7 +3415,7 @@ function renderTemplates() {
           <h3>${cat.label}</h3>
           <p>${cat.desc}</p>
           <div class="cat-card-footer">
-            <div class="cat-card-count"><strong>${n}</strong> template${n!==1?'s':''} ${ready ? '&middot; '+ready+' live' : ''}</div>
+            <div class="cat-card-count"><strong>${n}</strong> website${n!==1?'s':''} ${ready ? '&middot; '+ready+' live' : ''}</div>
             <div class="cat-card-arrow">&rarr;</div>
           </div>
         </div>
@@ -3441,7 +3441,7 @@ function renderTemplates() {
   breadcrumb.innerHTML = `<a onclick="activeCat='all';tplSearch='';document.getElementById('tpl-search-input').value='';renderTemplates();">Categories</a>
     <span class="bc-sep">/</span>
     <span class="bc-current">${cat ? cat.label : activeCat}</span>`;
-  pageTitle.textContent = cat ? cat.label : 'Templates';
+  pageTitle.textContent = cat ? cat.label : 'Websites';
   pageSub.textContent = cat ? cat.desc : '';
 
   // Filter by search within category
@@ -3457,9 +3457,9 @@ function renderTemplates() {
 
   if (filtered.length) {
     html += `<div class="templates-grid">${filtered.map(t => renderTemplateCard(t, usage, useMobilePreview)).join('')}
-      <div class="template-card add-card" onclick="openAddTemplate()"><span style="font-size:28px;">+</span><span>Add Template</span></div></div>`;
+      <div class="template-card add-card" onclick="openAddTemplate()"><span style="font-size:28px;">+</span><span>Add Website</span></div></div>`;
   } else {
-    html += `<div class="cat-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg><p>No templates${tplSearch ? ' matching "'+tplSearch+'"' : ' in this category yet'}</p><button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="openAddTemplate()">+ Add Template</button></div>`;
+    html += `<div class="cat-empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg><p>No websites${tplSearch ? ' matching "'+tplSearch+'"' : ' in this category yet'}</p><button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="openAddTemplate()">+ Add Website</button></div>`;
   }
 
   container.innerHTML = html;
