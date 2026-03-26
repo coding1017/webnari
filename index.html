@@ -816,26 +816,32 @@ function initOrb(){
   const pulses=[];
   setInterval(()=>{if(pulses.length<5)pulses.push({y:-1.2,speed:.014+Math.random()*.008,hue:pulses.length%2})},1000);
 
-  // Satellites — 3 orbital dots at different inclinations
+  // Satellites — two opposing orbital rings tight to the orb
   const sats=[];
-  // Two orbital planes: group A (7 sats, clockwise, ~30deg tilt) and group B (6 sats, counter-clockwise, ~60deg tilt)
-  for(let i=0;i<13;i++){
-    const groupA=i<7;
-    const idx=groupA?i:(i-7);
-    const count=groupA?7:6;
+  // Ring A: 7 gold satellites, slow clockwise, ~35deg tilt
+  for(let i=0;i<7;i++){
     sats.push({
-      angle:idx*(Math.PI*2/count)+Math.random()*.15,
-      speed:groupA?.003:-.004,                     // very slow, opposing directions
-      incl:groupA?.45+idx*.02:.95+idx*.02,          // two distinct orbital planes
-      dist:1.08+idx*.025,                            // tight to orb: 1.08 to ~1.23
-      trail:[],
-      hue:groupA?0:1                                 // gold vs cyan
+      angle:i*(Math.PI*2/7),
+      speed:.0015,                    // very slow clockwise
+      incl:.55,                       // single consistent tilt plane
+      dist:1.06+i*.012,              // tight: 1.06 to 1.13
+      trail:[],hue:0
+    });
+  }
+  // Ring B: 6 cyan satellites, slow counter-clockwise, ~70deg tilt (opposing)
+  for(let i=0;i<6;i++){
+    sats.push({
+      angle:i*(Math.PI*2/6),
+      speed:-.002,                    // very slow counter-clockwise
+      incl:1.15,                      // distinctly different tilt plane
+      dist:1.06+i*.012,              // tight: 1.06 to 1.13
+      trail:[],hue:1
     });
   }
 
   let t=0;
   function draw(){
-    t+=.005; // slower base rotation
+    t+=.003; // slow gentle rotation
     // Smooth mouse lerp
     tmx+=(mx-tmx)*.06;tmy+=(my-tmy)*.06;
     ctx.clearRect(0,0,W,H);
@@ -928,12 +934,12 @@ function initOrb(){
           ctx.fill();
         }
       });
-      // Draw satellite dot (smaller, subtler)
-      ctx.beginPath();ctx.arc(px,py,4.5,0,Math.PI*2);
-      ctx.fillStyle=sat.hue?'rgba(120,200,255,.85)':'rgba(255,220,140,.85)';ctx.fill();
-      // Satellite glow — medium
-      ctx.beginPath();ctx.arc(px,py,14,0,Math.PI*2);
-      ctx.fillStyle=sat.hue?'rgba(80,170,255,.08)':'rgba(255,210,120,.08)';ctx.fill();
+      // Draw satellite dot (bigger)
+      ctx.beginPath();ctx.arc(px,py,6,0,Math.PI*2);
+      ctx.fillStyle=sat.hue?'rgba(120,200,255,.9)':'rgba(255,220,140,.9)';ctx.fill();
+      // Satellite glow — larger
+      ctx.beginPath();ctx.arc(px,py,18,0,Math.PI*2);
+      ctx.fillStyle=sat.hue?'rgba(80,170,255,.1)':'rgba(255,210,120,.1)';ctx.fill();
     });
 
     requestAnimationFrame(draw);
