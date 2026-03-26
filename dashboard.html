@@ -2412,8 +2412,10 @@ td.bold { color: var(--white); font-weight: 600; }
   ══════════════════════════════════════ -->
   <div class="page" id="page-portal">
     <div class="page-header">
-      <div class="page-header-left"><h1>Client Portal Preview</h1><p>See what your client sees</p></div>
-      <select id="portal-client" onchange="renderPortal()" style="padding:8px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:13px;"></select>
+      <div class="page-header-left"><h1>Client Portal Preview</h1><p>Preview the client-facing dashboard experience</p></div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <select id="portal-client" onchange="renderPortal()" style="padding:8px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:13px;min-width:200px;"></select>
+      </div>
     </div>
     <div id="portal-content"></div>
   </div>
@@ -5247,64 +5249,238 @@ function renderForecast() {
 }
 
 // ════════════════════════════════════════════════════
-//  TOOL: CLIENT PORTAL PREVIEW
+//  TOOL: CLIENT PORTAL PREVIEW (Enterprise)
 // ════════════════════════════════════════════════════
 function renderPortal() {
   if (!DB.changeRequests) DB.changeRequests = [];
   const sel = document.getElementById('portal-client');
-  sel.innerHTML = '<option value="">Select Client</option>' + DB.clients.map(c => `<option value="${c.id}">${c.bizName}</option>`).join('');
+  const prevVal = sel.value;
+  sel.innerHTML = '<option value="">— Select a client —</option>' + DB.clients.map(c => `<option value="${c.id}"${c.id===prevVal?' selected':''}>${c.bizName}</option>`).join('');
   const container = document.getElementById('portal-content');
   const cid = sel.value;
-  if (!cid) { container.innerHTML = '<div style="text-align:center;padding:60px;color:var(--muted);">Select a client to preview their portal</div>'; return; }
+
+  if (!cid) {
+    container.innerHTML = `<div style="text-align:center;padding:80px 20px;">
+      <div style="font-size:40px;margin-bottom:16px;opacity:0.3;">👁️</div>
+      <div style="font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--white);margin-bottom:8px;">Client Portal Preview</div>
+      <div style="font-size:13px;color:var(--muted);max-width:400px;margin:0 auto;line-height:1.6;">Select a client above to preview what their portal dashboard would look like. This is the view your clients see when they log in to check their website performance.</div>
+    </div>`;
+    return;
+  }
+
   const c = DB.clients.find(x => x.id === cid);
   if (!c) return;
   const an = c.analytics || {};
   const rep = c.reputation || {};
+  const seo = c.seo || {};
   const leads = c.leads || [];
   const reqs = DB.changeRequests.filter(r => r.clientId === cid);
-  const [stBg, stCol, stLbl] = c.status === 'live' ? ['var(--green-bg)','var(--green)','Live'] : ['var(--amber-bg)','var(--amber)','Building'];
+  const tpl = DB.templates.find(t => t.id === c.template);
+  const plan = c.plan ? c.plan.charAt(0).toUpperCase() + c.plan.slice(1) : 'Standard';
+  const features = getProposalFeatures(c.plan || 'standard');
+  const [stBg, stCol, stLbl, stIcon] = c.status === 'live' ? ['var(--green-bg)','var(--green)','Live','●'] : c.status === 'onboarding' ? ['var(--amber-bg)','var(--amber)','Building','◐'] : ['var(--surface2)','var(--muted)','Draft','○'];
+
+  // Health check for this site
+  const health = DB.healthChecks?.[c.id];
+  const healthStatus = health?.history?.length ? health.history[health.history.length-1] : null;
+  const [hCol, hLabel] = healthStatus ? (healthStatus.status === 'up' ? ['var(--green)', 'Online'] : ['var(--red)', 'Offline']) : ['var(--muted)', 'Not checked'];
+
+  // Reputation platforms
+  const platforms = [];
+  if (rep.google?.rating) platforms.push({ name: 'Google', rating: rep.google.rating, reviews: rep.google.reviews || 0 });
+  if (rep.yelp?.rating) platforms.push({ name: 'Yelp', rating: rep.yelp.rating, reviews: rep.yelp.reviews || 0 });
+  if (rep.facebook?.rating) platforms.push({ name: 'Facebook', rating: rep.facebook.rating, reviews: rep.facebook.reviews || 0 });
+  if (rep.homeadvisor?.rating) platforms.push({ name: 'HomeAdvisor', rating: rep.homeadvisor.rating, reviews: rep.homeadvisor.reviews || 0 });
+
+  // Content items for this client
+  const clientContent = (DB.contentItems || []).filter(i => i.clientId === cid);
+  const publishedContent = clientContent.filter(i => i.status === 'published').length;
+
+  // PageSpeed for this site
+  const psData = DB.pagespeedData?.[c.id];
+  const psLatest = psData?.scores?.length ? psData.scores[psData.scores.length - 1] : null;
+
   container.innerHTML = `
-  <div style="background:linear-gradient(135deg,var(--surface2),var(--surface));border:1px solid var(--border);border-radius:var(--radius-xl);padding:28px;margin-bottom:20px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
-      <div><div style="font-family:var(--font-head);font-size:22px;font-weight:700;color:var(--white);">${c.bizName}</div><div style="color:var(--muted);font-size:13px;margin-top:4px;">${c.plan ? c.plan.charAt(0).toUpperCase()+c.plan.slice(1)+' Plan' : ''} &middot; $${c.monthlyRate||0}/mo</div></div>
-      <span class="badge" style="background:${stBg};color:${stCol};font-size:12px;padding:6px 14px;">${stLbl}</span>
+  <!-- Webnari branded header for client view -->
+  <div style="background:linear-gradient(135deg,var(--surface2),var(--surface));border:1px solid var(--border);border-radius:var(--radius-xl);overflow:hidden;margin-bottom:20px;">
+    <div style="padding:6px 20px;background:rgba(201,169,110,0.06);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;">
+      <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--indigo);letter-spacing:0.04em;">MANAGED BY WEBNARI</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span style="width:6px;height:6px;border-radius:50%;background:${hCol};"></span>
+        <span style="font-size:11px;color:${hCol};font-weight:600;">${hLabel}</span>
+      </div>
     </div>
-    ${c.liveUrl ? `<a href="${c.liveUrl}" target="_blank" style="color:var(--indigo);font-size:13px;">${c.liveUrl} ↗</a>` : ''}
+    <div style="padding:28px;">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:16px;">
+        <div>
+          <div style="font-family:var(--font-head);font-size:24px;font-weight:700;color:var(--white);margin-bottom:6px;">${c.bizName}</div>
+          <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+            <span class="badge" style="background:${stBg};color:${stCol};font-size:11px;padding:4px 12px;">${stIcon} ${stLbl}</span>
+            <span style="font-size:12px;color:var(--muted);">${plan} Plan &middot; $${c.monthlyRate||0}/mo</span>
+            ${c.billingDate ? `<span style="font-size:12px;color:var(--muted);">Next billing: ${new Date(c.billingDate).toLocaleDateString('en-US',{month:'short',day:'numeric'})}</span>` : ''}
+          </div>
+        </div>
+        ${c.liveUrl ? `<a href="${c.liveUrl}" target="_blank" class="btn btn-ghost btn-sm" style="font-size:11px;">↗ View My Website</a>` : ''}
+      </div>
+    </div>
   </div>
-  <div class="kpi-grid">
-    <div class="kpi-card" style="--accent:var(--green)"><div class="kpi-glow" style="background:var(--green)"></div><div class="kpi-label">Sessions/mo</div><div class="kpi-value">${an.sessions||0}</div></div>
-    <div class="kpi-card" style="--accent:var(--indigo)"><div class="kpi-glow"></div><div class="kpi-label">Conversions</div><div class="kpi-value">${an.conversions||0}</div></div>
-    <div class="kpi-card" style="--accent:var(--amber)"><div class="kpi-glow" style="background:var(--amber)"></div><div class="kpi-label">Bounce Rate</div><div class="kpi-value">${an.bounceRate||0}%</div></div>
-    <div class="kpi-card" style="--accent:var(--purple)"><div class="kpi-glow" style="background:var(--purple)"></div><div class="kpi-label">Google Rating</div><div class="kpi-value">${rep.google?.rating||'—'}</div></div>
+
+  <!-- Site Preview + Quick Stats -->
+  <div style="display:grid;grid-template-columns:${c.liveUrl ? '1.2fr' : ''} 1fr;gap:16px;margin-bottom:20px;">
+    ${c.liveUrl ? `<div class="panel" style="padding:0;overflow:hidden;height:260px;position:relative;">
+      <iframe src="${c.liveUrl}" scrolling="no" loading="lazy" tabindex="-1" style="width:200%;height:200%;transform:scale(0.5);transform-origin:0 0;pointer-events:none;border:none;"></iframe>
+      <div style="position:absolute;bottom:0;left:0;right:0;padding:10px 16px;background:linear-gradient(to top,var(--surface),transparent);"><span style="font-size:11px;color:var(--muted);">Your website preview</span></div>
+    </div>` : ''}
+    <div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+        <div class="kpi-card" style="--accent:var(--green);padding:18px;"><div class="kpi-glow" style="background:var(--green)"></div><div class="kpi-label">Sessions <span class="kpi-icon">📊</span></div><div class="kpi-value" style="font-size:28px;">${(an.sessions||0).toLocaleString()}</div><div class="kpi-trend neutral">${an.organic||0} organic</div></div>
+        <div class="kpi-card" style="--accent:var(--indigo);padding:18px;"><div class="kpi-glow"></div><div class="kpi-label">Conversions <span class="kpi-icon">🎯</span></div><div class="kpi-value" style="font-size:28px;">${an.conversions||0}</div><div class="kpi-trend ${(an.convRate||0) > 3 ? 'up' : 'neutral'}">${an.convRate||0}% rate</div></div>
+        <div class="kpi-card" style="--accent:var(--amber);padding:18px;"><div class="kpi-glow" style="background:var(--amber)"></div><div class="kpi-label">Bounce Rate <span class="kpi-icon">↩</span></div><div class="kpi-value" style="font-size:28px;">${an.bounceRate||0}%</div><div class="kpi-trend ${(an.bounceRate||0) < 50 ? 'up' : 'neutral'}">${(an.bounceRate||0) < 50 ? 'Healthy' : 'Needs work'}</div></div>
+        <div class="kpi-card" style="--accent:var(--purple);padding:18px;"><div class="kpi-glow" style="background:var(--purple)"></div><div class="kpi-label">Avg Duration <span class="kpi-icon">⏱</span></div><div class="kpi-value" style="font-size:28px;">${an.avgDuration||'0:00'}</div><div class="kpi-trend neutral">Per session</div></div>
+      </div>
+    </div>
   </div>
-  <div class="grid-2" style="margin-top:20px;">
-    <div class="panel">
-      <div class="panel-header"><div class="panel-title">Recent Leads</div></div>
-      <div class="table-wrap"><table><thead><tr><th>Name</th><th>Source</th><th>Date</th></tr></thead><tbody>
-        ${leads.length ? leads.slice(-5).reverse().map(l => `<tr><td class="bold">${l.name}</td><td style="color:var(--muted);font-size:12px;">${l.source||'—'}</td><td style="color:var(--muted);font-size:12px;">${l.date||''}</td></tr>`).join('') : '<tr><td colspan="3" style="text-align:center;color:var(--muted);padding:20px;">No leads yet</td></tr>'}
+
+  <!-- Three-column bottom section -->
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:20px;">
+    <!-- Reputation -->
+    <div class="panel" style="padding:0;">
+      <div class="panel-header"><div class="panel-title">Reputation</div></div>
+      <div style="padding:16px;">
+        ${platforms.length ? platforms.map(p => `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">
+          <span style="font-size:13px;font-weight:600;color:var(--white);">${p.name}</span>
+          <div style="display:flex;align-items:center;gap:6px;">
+            <span style="font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--amber);">${p.rating}</span>
+            <span style="font-size:10px;color:var(--muted);">(${p.reviews})</span>
+          </div>
+        </div>`).join('') : '<div style="color:var(--muted);font-size:12px;text-align:center;padding:16px;">No reviews tracked yet</div>'}
+        ${platforms.length ? `<div style="margin-top:12px;text-align:center;">
+          <div style="font-family:var(--font-head);font-size:24px;font-weight:700;color:var(--amber);">${(platforms.reduce((s,p)=>s+p.rating,0)/platforms.length).toFixed(1)}</div>
+          <div style="font-size:10px;color:var(--muted);">Average across ${platforms.length} platforms</div>
+        </div>` : ''}
+      </div>
+    </div>
+
+    <!-- PageSpeed -->
+    <div class="panel" style="padding:0;">
+      <div class="panel-header"><div class="panel-title">Site Performance</div></div>
+      <div style="padding:16px;">
+        ${psLatest ? `<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;text-align:center;">
+          ${[['Perf',psLatest.performance],['A11y',psLatest.accessibility],['BP',psLatest.bestPractices],['SEO',psLatest.seo]].map(([l,v]) => {
+            return `<div style="padding:10px;background:var(--surface);border-radius:8px;">${scoreRing(v||0, 48, '')}<div style="font-size:9px;color:var(--muted);margin-top:2px;">${l}</div></div>`;
+          }).join('')}
+        </div>
+        <div style="font-size:10px;color:var(--muted);text-align:center;margin-top:8px;">Last audit: ${new Date(psLatest.date).toLocaleDateString()}</div>` : '<div style="color:var(--muted);font-size:12px;text-align:center;padding:16px;">No performance data yet</div>'}
+      </div>
+    </div>
+
+    <!-- Your Plan -->
+    <div class="panel" style="padding:0;">
+      <div class="panel-header"><div class="panel-title">Your Plan</div></div>
+      <div style="padding:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+          <div style="font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--white);">${plan}</div>
+          <div style="font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--indigo);">$${c.monthlyRate||0}<span style="font-size:11px;color:var(--muted);">/mo</span></div>
+        </div>
+        <div style="max-height:140px;overflow-y:auto;">
+          ${features.slice(0, 6).map(f => `<div style="display:flex;gap:6px;align-items:flex-start;padding:4px 0;font-size:11px;color:var(--text);"><span style="color:var(--green);flex-shrink:0;">✓</span>${f.trim()}</div>`).join('')}
+          ${features.length > 6 ? `<div style="font-size:10px;color:var(--muted);margin-top:4px;">+ ${features.length - 6} more features</div>` : ''}
+        </div>
+        ${c.paymentStatus ? `<div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:11px;">
+          <span style="color:var(--muted);">Payment</span>
+          <span class="badge" style="background:${c.paymentStatus==='active'?'var(--green-bg)':'var(--red-bg)'};color:${c.paymentStatus==='active'?'var(--green)':'var(--red)'};">${c.paymentStatus}</span>
+        </div>` : ''}
+      </div>
+    </div>
+  </div>
+
+  <!-- Leads + Change Requests + Content -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <!-- Leads -->
+    <div class="panel" style="padding:0;">
+      <div class="panel-header"><div class="panel-title">Recent Leads</div><span class="badge" style="background:var(--green-bg);color:var(--green);">${leads.length} total</span></div>
+      <div class="table-wrap"><table><thead><tr><th>Name</th><th>Source</th><th>Stage</th><th>Date</th></tr></thead><tbody>
+        ${leads.length ? leads.slice(-6).reverse().map(l => {
+          const [lbg,lc] = l.stage==='closed'?['var(--green-bg)','var(--green)']:l.stage==='contacted'?['var(--amber-bg)','var(--amber)']:['var(--surface2)','var(--muted)'];
+          return `<tr><td class="bold">${l.name}</td><td style="font-size:12px;color:var(--muted);">${l.source||'—'}</td><td><span class="badge" style="background:${lbg};color:${lc};font-size:9px;">${l.stage||'new'}</span></td><td style="font-size:12px;color:var(--muted);">${l.date||''}</td></tr>`;
+        }).join('') : '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:20px;">No leads yet — they\'ll appear here as your website generates inquiries.</td></tr>'}
       </tbody></table></div>
     </div>
-    <div class="panel">
-      <div class="panel-header"><div class="panel-title">Change Requests</div><button class="btn btn-ghost btn-sm" onclick="openChangeRequest('${cid}')">+ New</button></div>
-      <div style="padding:16px;">
-        ${reqs.length ? reqs.map(r => { const [rbg,rc] = r.status==='done'?['var(--green-bg)','var(--green)']:r.status==='in-progress'?['var(--amber-bg)','var(--amber)']:['var(--surface2)','var(--muted)']; return `<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);"><div><div style="font-size:13px;color:var(--white);font-weight:600;">${r.subject}</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">${r.description||''}</div></div><span class="badge" style="background:${rbg};color:${rc};cursor:pointer;align-self:center;" onclick="cycleRequest('${r.id}')">${r.status}</span></div>`; }).join('') : '<div style="color:var(--muted);font-size:13px;text-align:center;padding:20px;">No requests</div>'}
+
+    <!-- Change Requests + Content Delivered -->
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div class="panel" style="padding:0;flex:1;">
+        <div class="panel-header"><div class="panel-title">Change Requests</div><button class="btn btn-ghost btn-sm" style="font-size:10px;" onclick="openChangeRequest('${cid}')">+ Submit Request</button></div>
+        <div style="padding:12px 16px;max-height:160px;overflow-y:auto;">
+          ${reqs.length ? [...reqs].reverse().slice(0,5).map(r => {
+            const [rbg,rc,rl] = r.status==='done'?['var(--green-bg)','var(--green)','Done']:r.status==='in-progress'?['var(--amber-bg)','var(--amber)','Working']:['var(--surface2)','var(--muted)','Pending'];
+            return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.03);">
+              <div style="flex:1;min-width:0;">
+                <div style="font-size:13px;color:var(--white);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${r.subject}</div>
+                <div style="font-size:10px;color:var(--muted);margin-top:2px;">${timeAgo(new Date(r.createdAt))}</div>
+              </div>
+              <span class="badge" style="background:${rbg};color:${rc};cursor:pointer;font-size:9px;flex-shrink:0;" onclick="cycleRequest('${r.id}')">${rl}</span>
+            </div>`;
+          }).join('') : '<div style="color:var(--muted);font-size:12px;text-align:center;padding:16px;">No change requests. Submit one if you need updates to your site.</div>'}
+        </div>
+      </div>
+      <div class="panel" style="padding:0;flex:0;">
+        <div class="panel-header"><div class="panel-title">Content Delivered</div></div>
+        <div style="padding:12px 16px;">
+          ${clientContent.length ? `<div style="display:flex;gap:16px;align-items:center;">
+            <div style="text-align:center;">
+              <div style="font-family:var(--font-head);font-size:24px;font-weight:700;color:var(--green);">${publishedContent}</div>
+              <div style="font-size:10px;color:var(--muted);">Published</div>
+            </div>
+            <div style="flex:1;height:6px;background:var(--surface);border-radius:3px;overflow:hidden;">
+              <div style="height:100%;width:${clientContent.length > 0 ? (publishedContent/clientContent.length*100) : 0}%;background:var(--green);border-radius:3px;"></div>
+            </div>
+            <div style="font-size:11px;color:var(--muted);">${publishedContent}/${clientContent.length} items</div>
+          </div>` : '<div style="color:var(--muted);font-size:12px;text-align:center;">No content scheduled yet</div>'}
+        </div>
       </div>
     </div>
   </div>`;
 }
+
 function openChangeRequest(clientId) {
-  openGenericModal('Submit Change Request', `<div style="display:grid;gap:12px;">
-    <input id="cr-subject" placeholder="Subject" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);">
-    <textarea id="cr-desc" placeholder="Describe the change..." rows="4" style="padding:10px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);resize:vertical;"></textarea>
-    <button class="btn btn-primary" onclick="saveChangeRequest('${clientId}')">Submit</button>
+  const inputStyle = 'padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);color:var(--white);font-size:13px;width:100%;';
+  openGenericModal('Submit Change Request', `<div style="display:grid;gap:14px;">
+    <div style="font-size:12px;color:var(--muted);padding:10px 14px;background:var(--surface);border-radius:8px;border-left:2px solid var(--indigo);">Describe what you'd like changed on your website. We'll review and get back to you.</div>
+    <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Subject *</label><input id="cr-subject" placeholder="e.g. Update phone number, Add new service..." style="${inputStyle}"></div>
+    <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Category</label><select id="cr-category" style="${inputStyle}"><option value="content">Content Change</option><option value="design">Design Update</option><option value="feature">New Feature</option><option value="bug">Bug Fix</option><option value="other">Other</option></select></div>
+    <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Priority</label><select id="cr-priority" style="${inputStyle}"><option value="low">Low — whenever convenient</option><option value="normal" selected>Normal — within a few days</option><option value="high">High — as soon as possible</option><option value="urgent">Urgent — needs immediate attention</option></select></div>
+    <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Description</label><textarea id="cr-desc" placeholder="Please describe exactly what needs to change, including any specific text, images, or links..." rows="4" style="${inputStyle}resize:vertical;"></textarea></div>
+    <button class="btn btn-primary" onclick="saveChangeRequest('${clientId}')" style="justify-content:center;">Submit Request</button>
   </div>`);
 }
+
 function saveChangeRequest(clientId) {
   if (!DB.changeRequests) DB.changeRequests = [];
-  DB.changeRequests.push({ id: 'cr' + Date.now(), clientId, subject: document.getElementById('cr-subject').value, description: document.getElementById('cr-desc').value, status: 'pending', createdAt: new Date().toISOString() });
+  const subject = document.getElementById('cr-subject').value.trim();
+  if (!subject) { toast('Subject is required', 'error'); return; }
+  DB.changeRequests.push({
+    id: 'cr' + Date.now(), clientId, subject,
+    category: document.getElementById('cr-category').value,
+    priority: document.getElementById('cr-priority').value,
+    description: document.getElementById('cr-desc').value.trim(),
+    status: 'pending', createdAt: new Date().toISOString(), response: ''
+  });
+  DB.activity = DB.activity || [];
+  const client = DB.clients.find(c => c.id === clientId);
+  DB.activity.unshift({ text: `<strong>Change request:</strong> ${subject} from ${client ? client.bizName : 'client'}`, time: 'Just now', type: 'amber' });
+  if (DB.activity.length > 20) DB.activity.pop();
   save(); closeGenericModal(); renderPortal(); toast('Request submitted!', 'success');
 }
-function cycleRequest(id) { const r = DB.changeRequests.find(x => x.id === id); if (!r) return; r.status = r.status === 'pending' ? 'in-progress' : r.status === 'in-progress' ? 'done' : 'pending'; save(); renderPortal(); }
+
+function cycleRequest(id) {
+  const r = DB.changeRequests.find(x => x.id === id);
+  if (!r) return;
+  const order = ['pending', 'in-progress', 'done'];
+  const idx = order.indexOf(r.status);
+  if (idx < order.length - 1) r.status = order[idx + 1];
+  save(); renderPortal();
+}
 
 // ════════════════════════════════════════════════════
 //  TOOL: PROPOSAL GENERATOR (Enterprise)
