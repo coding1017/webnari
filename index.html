@@ -269,7 +269,7 @@ section{padding:120px 48px;position:relative}
 /* ── CTA Banner ── */
 .cta-banner{min-height:50vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:var(--bg);padding:120px 48px;position:relative}
 .cta-line{width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);margin-bottom:80px;opacity:.3}
-.cta-banner h2{font-family:var(--font-head);font-size:clamp(36px,5vw,64px);font-weight:700;letter-spacing:-.03em;color:var(--white);margin-bottom:16px}
+.cta-banner h2{font-family:var(--font-head);font-size:clamp(48px,8vw,96px);font-weight:700;letter-spacing:-.04em;color:var(--white);margin-bottom:16px;width:100%;text-align:center}
 .cta-banner p{font-size:17px;color:var(--text);margin-bottom:40px}
 .cta-trust{font-size:13px;color:var(--muted);margin-top:20px}
 
@@ -1385,7 +1385,7 @@ function focusTier(tier){
 function initSectionTransitions(){
   if(window.innerWidth<=768)return;
   const sections=[
-    {sel:'#features',type:'barrel',exitType:'barrel-out'},
+    {sel:'#features',type:'barrel'},
     {sel:'#pricing',type:'flip'},
     {sel:'.testimonials-section',type:'swing'},
     {sel:'.cta-banner',type:'tunnel'}
@@ -1402,8 +1402,9 @@ function initSectionTransitions(){
     els.forEach(({el,type,exitType})=>{
       const rect=el.getBoundingClientRect();
 
-      // ENTRY: p=0 when section top hits viewport bottom, p=1 when top reaches 50% of viewport
-      const entryP=Math.max(0,Math.min(1,(vh-rect.top)/(vh*.5)));
+      // ENTRY: fast for most sections, slow for tunnel (CTA)
+      const entrySpeed=type==='tunnel'?.7:.2;
+      const entryP=Math.max(0,Math.min(1,(vh-rect.top)/(vh*entrySpeed)));
       const entryEase=entryP<1?entryP*entryP*(3-2*entryP):1;
 
       // EXIT: starts when section is halfway scrolled past (bottom at 50% of viewport)
@@ -1440,9 +1441,9 @@ function initSectionTransitions(){
         el.style.opacity=String(.15+t*.85);
         break;
       case 'tunnel':
-        el.style.transform=`scale(${.55+t*.45}) translateY(${inv*120}px)`;
-        el.style.opacity=String(.05+t*.95);
-        el.style.filter=`blur(${inv*10}px)`;
+        el.style.transform=`scale(${.4+t*.6}) translateY(${inv*150}px)`;
+        el.style.opacity=String(.02+t*.98);
+        el.style.filter=`blur(${inv*14}px)`;
         break;
     }
   }
