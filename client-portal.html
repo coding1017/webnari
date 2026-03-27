@@ -852,9 +852,100 @@ td.bold { color: var(--white); font-weight: 600; }
   .report-close, .report-actions { display: none !important; }
   .report-content { padding: 24px; }
 }
+
+/* ── MESSAGE THREAD (Feature 3) ── */
+.msg-thread{display:flex;flex-direction:column;gap:8px;max-height:400px;overflow-y:auto;padding:16px;background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-lg);margin-bottom:16px}
+.msg-bubble{max-width:75%;padding:12px 16px;border-radius:16px;font-size:13px;line-height:1.5;position:relative}
+.msg-bubble.client{align-self:flex-end;background:linear-gradient(135deg,rgba(201,169,110,.15),rgba(201,169,110,.08));border:1px solid var(--gold-border);color:var(--white);border-bottom-right-radius:4px}
+.msg-bubble.agency{align-self:flex-start;background:var(--surface2);border:1px solid var(--border);color:var(--text);border-bottom-left-radius:4px}
+.msg-meta{font-size:10px;color:var(--muted);margin-top:4px}
+.msg-input-row{display:flex;gap:8px}
+.msg-input-row input{flex:1}
+
+/* ── GOAL TRACKING (Feature 4) ── */
+.goal-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;display:flex;flex-direction:column;gap:8px}
+.goal-label{font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--muted)}
+.goal-values{display:flex;justify-content:space-between;align-items:baseline}
+.goal-current{font-family:var(--font-head);font-size:22px;font-weight:700;color:var(--white)}
+.goal-target{font-size:12px;color:var(--muted)}
+.goal-bar{height:8px;background:var(--surface2);border-radius:4px;overflow:hidden}
+.goal-bar-fill{height:100%;border-radius:4px;transition:width .8s ease}
+
+/* ── BEFORE/AFTER (Feature 5) ── */
+.ba-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px;display:flex;align-items:center;gap:14px}
+.ba-before,.ba-after{flex:1;text-align:center}
+.ba-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px}
+.ba-value{font-family:var(--font-head);font-size:20px;font-weight:700}
+.ba-before .ba-label{color:var(--red)}
+.ba-before .ba-value{color:var(--muted)}
+.ba-after .ba-label{color:var(--green)}
+.ba-after .ba-value{color:var(--gold)}
+.ba-arrow{color:var(--muted);flex-shrink:0}
+.ba-delta{font-size:11px;font-weight:700;color:var(--green);margin-top:2px}
+
+/* ── WELCOME SPLASH (Feature 6) ── */
+.welcome-splash{position:fixed;inset:0;z-index:9000;background:var(--bg);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;opacity:1;transition:opacity .5s ease}
+.welcome-splash.hidden{opacity:0;pointer-events:none;display:none}
+.welcome-logo{width:60px;height:60px;background:linear-gradient(135deg,#C9A96E,#E8D5A8,#D4956B);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:#0A0A12;animation:splashPulse 1.5s ease infinite;box-shadow:0 0 60px rgba(201,169,110,.4)}
+@keyframes splashPulse{0%,100%{transform:scale(1);box-shadow:0 0 40px rgba(201,169,110,.3)}50%{transform:scale(1.05);box-shadow:0 0 80px rgba(201,169,110,.5)}}
+.welcome-text{font-family:var(--font-head);font-size:20px;font-weight:700;color:var(--white);opacity:0;animation:splashFadeIn .5s ease .3s forwards}
+.welcome-sub{font-size:14px;color:var(--muted);opacity:0;animation:splashFadeIn .5s ease .5s forwards}
+@keyframes splashFadeIn{to{opacity:1}}
+
+/* ── LIGHT MODE (Feature 7) ── */
+body.light { --bg:#F5F3EE; --surface:#FFFFFF; --surface2:#F0EDE6; --surface3:#E8E4DC; --border:#D4CFC4; --border2:#C0BAB0; --white:#1A1A1A; --muted:#8A8580; --text:#4A4640; --indigo:#B08A40; --indigo2:#8A6A20; --gold:#B08A40; --gold2:#8A6A20; --indigo-bg:rgba(176,138,64,.08); --indigo-border:rgba(176,138,64,.2); --gold-bg:rgba(176,138,64,.08); --gold-border:rgba(176,138,64,.2); --green:#1A8A4A; --green-bg:rgba(26,138,74,.08); --amber:#B06A30; --amber-bg:rgba(176,106,48,.08); --red:#C04040; --red-bg:rgba(192,64,64,.08) }
+body.light .sidebar { background: linear-gradient(180deg,#FFFFFF 0%,#F5F3EE 100%); border-right-color: #D4CFC4; }
+body.light .sidebar::after { background: linear-gradient(180deg,rgba(176,138,64,.2) 0%,transparent 40%); }
+body.light .topbar { background: rgba(245,243,238,.9); border-bottom-color: #D4CFC4; box-shadow: 0 1px 0 rgba(176,138,64,.1); }
+body.light .panel, body.light .kpi-card { background: #FFFFFF; border-color: #D4CFC4; }
+body.light .report-overlay { background: rgba(0,0,0,.3); }
+body.light .notif-panel { background: #FFFFFF; border-color: #D4CFC4; }
+body.light .notif-item.unread { background: rgba(176,138,64,.06); }
+body.light .msg-thread { background: #F5F3EE; border-color: #D4CFC4; }
+body.light .msg-bubble.agency { background: #FFFFFF; border-color: #D4CFC4; }
+body.light body::before { display: none; }
+body.light .health-bar { background: #FFFFFF; border-color: #D4CFC4; }
+body.light .quick-action { background: #FFFFFF; border-color: #D4CFC4; }
+body.light .plan-card { background: #FFFFFF; border-color: rgba(176,138,64,.2); }
+body.light .goal-card { background: #FFFFFF; border-color: #D4CFC4; }
+body.light .ba-card { background: #FFFFFF; border-color: #D4CFC4; }
+body.light .contact-card { background: #FFFFFF; border-color: #D4CFC4; }
+body.light .platform-card { background: #FFFFFF; border-color: #D4CFC4; }
+body.light .bottom-tabs { background: rgba(245,243,238,.95); border-top-color: #D4CFC4; }
+body.light .kpi-value { background: linear-gradient(135deg, #1A1A1A 30%, #8A6A20); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+.theme-toggle{width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.03);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;position:relative}
+.theme-toggle:hover{border-color:var(--gold-border);background:var(--gold-bg)}
+.theme-toggle svg{width:18px;height:18px;stroke:var(--muted);transition:stroke .2s}
+.theme-toggle:hover svg{stroke:var(--gold)}
+
+/* ── BOTTOM TABS (Feature 8) ── */
+.bottom-tabs{display:none;position:fixed;bottom:0;left:0;right:0;z-index:60;background:rgba(12,12,20,.95);backdrop-filter:blur(16px);border-top:1px solid var(--border);padding:6px 0 env(safe-area-inset-bottom,6px);box-shadow:0 -4px 24px rgba(0,0,0,.4)}
+.bottom-tabs-inner{display:flex;justify-content:space-around;align-items:center}
+.bottom-tab{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 12px;border:none;background:none;cursor:pointer;color:var(--muted);transition:color .2s}
+.bottom-tab.active{color:var(--gold)}
+.bottom-tab svg{width:20px;height:20px}
+.bottom-tab-label{font-size:9px;font-weight:600;letter-spacing:.04em}
+@media(max-width:768px){
+  .bottom-tabs{display:block}
+  .page{padding-bottom:80px}
+}
+
+/* ── INSIGHTS (Feature 10) ── */
+.insight-card{display:flex;gap:14px;padding:14px 18px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);border-left:3px solid var(--accent-color,var(--gold));align-items:flex-start}
+.insight-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px}
+.insight-text{font-size:13px;color:var(--text);line-height:1.6}
+body.light .insight-card{background:#FFFFFF;border-color:#D4CFC4}
 </style>
 </head>
 <body>
+
+<!-- ═══ WELCOME SPLASH (Feature 6) ═══ -->
+<div class="welcome-splash" id="welcome-splash">
+  <div class="welcome-logo" id="welcome-logo-mark">W</div>
+  <div class="welcome-text" id="welcome-text">Welcome</div>
+  <div class="welcome-sub">Loading your dashboard...</div>
+</div>
 
 <canvas class="cursor-canvas" id="cursor-canvas"></canvas>
 <div class="sidebar-overlay" id="sidebar-overlay" onclick="closeSidebar()"></div>
@@ -946,6 +1037,10 @@ td.bold { color: var(--white); font-weight: 600; }
           <div class="notif-list" id="notif-list"></div>
         </div>
       </div>
+      <button class="theme-toggle" id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode">
+        <svg id="theme-icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        <svg id="theme-icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
       <button class="btn btn-ghost btn-sm" onclick="navigate('support')">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
         Support
@@ -987,6 +1082,32 @@ td.bold { color: var(--white); font-weight: 600; }
   <div class="page" id="page-account"></div>
 </div>
 
+<!-- ═══ BOTTOM TAB BAR (Feature 8) ═══ -->
+<div class="bottom-tabs" id="bottom-tabs">
+  <div class="bottom-tabs-inner">
+    <button class="bottom-tab active" onclick="navigateBottom('overview')" data-tab="overview">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span class="bottom-tab-label">Overview</span>
+    </button>
+    <button class="bottom-tab" onclick="navigateBottom('performance')" data-tab="performance">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      <span class="bottom-tab-label">Performance</span>
+    </button>
+    <button class="bottom-tab" onclick="navigateBottom('leads')" data-tab="leads">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span class="bottom-tab-label">Leads</span>
+    </button>
+    <button class="bottom-tab" onclick="navigateBottom('support')" data-tab="support">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span class="bottom-tab-label">Support</span>
+    </button>
+    <button class="bottom-tab" onclick="navigateBottom('account')" data-tab="account">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      <span class="bottom-tab-label">Account</span>
+    </button>
+  </div>
+</div>
+
 <script>
 // ════════════════════════════════════════════════════
 //  AUTH & DATA
@@ -1021,10 +1142,10 @@ function loadDB() {
     const r = localStorage.getItem(KEY);
     if (r) return JSON.parse(r);
     // Fallback: create seed DB
-    const seed = {clients:SEED_CLIENTS, changeRequests:[], contentItems:[], healthChecks:{}, pagespeedData:{}, pricing:{starter:158,standard:258,premium:378,setup:1000}};
+    const seed = {clients:SEED_CLIENTS, changeRequests:[], contentItems:[], healthChecks:{}, pagespeedData:{}, pricing:{starter:158,standard:258,premium:378,setup:1000}, messages:[]};
     localStorage.setItem(KEY, JSON.stringify(seed));
     return seed;
-  } catch { return {clients:SEED_CLIENTS, changeRequests:[], contentItems:[], healthChecks:{}, pagespeedData:{}, pricing:{starter:158,standard:258,premium:378,setup:1000}}; }
+  } catch { return {clients:SEED_CLIENTS, changeRequests:[], contentItems:[], healthChecks:{}, pagespeedData:{}, pricing:{starter:158,standard:258,premium:378,setup:1000}, messages:[]}; }
 }
 
 function saveDB() {
@@ -1348,6 +1469,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   DB = loadDB();
   if (!DB) { window.location.href = 'index.html'; return; }
+  DB.messages = DB.messages || [];
 
   const clientId = USER.clientId || USER.client_id;
   CLIENT = (DB.clients || []).find(function(c) { return c.id === clientId; });
@@ -1359,6 +1481,25 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('sidebar-logo-text').innerHTML = '<span>' + escHtml(CLIENT.bizName) + '</span>';
   document.getElementById('sidebar-avatar').textContent = USER.initials || bizInitials;
   document.getElementById('sidebar-name').textContent = USER.name || CLIENT.contactName;
+
+  // Welcome splash (Feature 6)
+  document.getElementById('welcome-logo-mark').textContent = bizInitials;
+  document.getElementById('welcome-text').textContent = 'Welcome, ' + escHtml(CLIENT.bizName);
+  var mainEl = document.querySelector('.main');
+  var sidebarEl = document.getElementById('sidebar');
+  mainEl.style.opacity = '0';
+  sidebarEl.style.opacity = '0';
+  setTimeout(function() {
+    document.getElementById('welcome-splash').classList.add('hidden');
+    mainEl.style.transition = 'opacity .5s ease';
+    sidebarEl.style.transition = 'opacity .5s ease';
+    mainEl.style.opacity = '1';
+    sidebarEl.style.opacity = '1';
+    window.scrollTo(0,0);
+  }, 1800);
+
+  // Theme init (Feature 7)
+  initTheme();
 
   // Leads badge
   var newLeads = (CLIENT.leads || []).filter(function(l){ return l.stage === 'new'; }).length;
@@ -1384,6 +1525,18 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
   });
+
+  // Seed demo messages if empty
+  var clientMsgs = DB.messages.filter(function(m){ return m.clientId === CLIENT.id; });
+  if (clientMsgs.length === 0) {
+    var now = new Date();
+    DB.messages.push(
+      {id:'msg-1',clientId:CLIENT.id,from:'agency',text:'Welcome to Webnari! Your portal is all set up. Let us know if you need anything.',timestamp:new Date(now - 86400000*2).toISOString()},
+      {id:'msg-2',clientId:CLIENT.id,from:'client',text:'Thanks! The site looks great. Can we update the hero image?',timestamp:new Date(now - 86400000).toISOString()},
+      {id:'msg-3',clientId:CLIENT.id,from:'agency',text:'Absolutely! Send over the new image and we\'ll get it swapped out today.',timestamp:new Date(now - 3600000*4).toISOString()}
+    );
+    saveDB();
+  }
 
   // Render all tabs
   renderOverview();
@@ -1501,6 +1654,7 @@ function navigate(page) {
     if (n.getAttribute('onclick') && n.getAttribute('onclick').indexOf("'" + page + "'") > -1) n.classList.add('active');
   });
   document.getElementById('topbar-title').textContent = TITLES[page] || page;
+  updateBottomTabs(page);
   closeSidebar();
 }
 
@@ -1619,6 +1773,105 @@ var FAQ_DATA = [
 ];
 
 // ════════════════════════════════════════════════════
+//  OVERVIEW HELPERS (Features 4, 5, 10)
+// ════════════════════════════════════════════════════
+function buildGoalsHtml(a, activeLeads) {
+  var goals = CLIENT.goals;
+  if (!goals || !goals.length) {
+    // Generate smart defaults
+    var totalReviews = 0;
+    ['google','yelp','facebook','homeadvisor'].forEach(function(p) {
+      var pd = (CLIENT.reputation || {})[p]; if (pd) totalReviews += pd.reviews || 0;
+    });
+    goals = [
+      {label:'SESSIONS',current:a.sessions||0,target:Math.round((a.sessions||100)*1.25),color:'var(--indigo)'},
+      {label:'REVIEWS',current:totalReviews,target:totalReviews+10,color:'var(--amber)'},
+      {label:'CONVERSIONS',current:a.conversions||0,target:Math.round((a.conversions||10)*1.3),color:'var(--green)'},
+      {label:'LEADS',current:(CLIENT.leads||[]).length,target:(CLIENT.leads||[]).length+5,color:'var(--purple)'}
+    ];
+  }
+
+  var html = '<div style="margin-bottom:20px"><div style="font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--white);margin-bottom:12px">Growth Goals</div>' +
+    '<div class="kpi-grid" style="gap:12px">';
+
+  goals.forEach(function(g) {
+    var pct = g.target > 0 ? Math.min(Math.round((g.current / g.target) * 100), 100) : 0;
+    html += '<div class="goal-card">' +
+      '<div class="goal-label">' + g.label + '</div>' +
+      '<div class="goal-values"><span class="goal-current">' + formatNum(g.current) + '</span>' +
+      '<span class="goal-target">/ ' + formatNum(g.target) + '</span></div>' +
+      '<div class="goal-bar"><div class="goal-bar-fill" style="width:' + pct + '%;background:' + g.color + '"></div></div>' +
+      '<div style="font-size:10px;color:var(--muted);text-align:right">' + pct + '%</div>' +
+      '</div>';
+  });
+
+  html += '</div></div>';
+  return html;
+}
+
+function buildBeforeAfterHtml() {
+  var a = CLIENT.analytics || {};
+  var totalReviews = 0;
+  ['google','yelp','facebook','homeadvisor'].forEach(function(p) {
+    var pd = (CLIENT.reputation || {})[p]; if (pd) totalReviews += pd.reviews || 0;
+  });
+
+  var items = [
+    {label:'Sessions',before:'0',after:formatNum(a.sessions||0),delta:'+'+(a.sessions||0)},
+    {label:'Reviews',before:'0',after:totalReviews.toString(),delta:'+'+totalReviews},
+    {label:'Conversions',before:'0',after:formatNum(a.conversions||0),delta:'+'+(a.conversions||0)},
+    {label:'Status',before:'No website',after:CLIENT.status==='live'?'Live':'Building',delta:''}
+  ];
+
+  var html = '<div style="margin-bottom:20px"><div style="font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--white);margin-bottom:12px">Since You Joined</div>' +
+    '<div class="kpi-grid" style="gap:12px">';
+
+  items.forEach(function(item) {
+    html += '<div class="ba-card">' +
+      '<div class="ba-before"><div class="ba-label">Before</div><div class="ba-value">' + item.before + '</div></div>' +
+      '<div class="ba-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>' +
+      '<div class="ba-after"><div class="ba-label">After</div><div class="ba-value">' + item.after + '</div>' +
+      (item.delta ? '<div class="ba-delta">' + item.delta + '</div>' : '') +
+      '</div></div>';
+  });
+
+  html += '</div></div>';
+  return html;
+}
+
+function buildInsightsHtml() {
+  var insights = generateInsights();
+  if (!insights.length) return '';
+
+  var iconSvgs = {
+    star: '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>',
+    alert: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+    trending: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>',
+    search: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>',
+    clock: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
+    trophy: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>',
+    megaphone: '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>'
+  };
+
+  var colorMap = {gold:'var(--gold)',amber:'var(--amber)',green:'var(--green)',red:'var(--red)',blue:'var(--blue)',purple:'var(--purple)'};
+  var bgMap = {gold:'var(--gold-bg)',amber:'var(--amber-bg)',green:'var(--green-bg)',red:'var(--red-bg)',blue:'rgba(107,163,212,.1)',purple:'rgba(176,124,255,.1)'};
+
+  var html = '<div style="margin-bottom:20px"><div style="font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--white);margin-bottom:12px">Smart Insights</div>' +
+    '<div style="display:flex;flex-direction:column;gap:10px">';
+
+  insights.forEach(function(ins) {
+    var c = colorMap[ins.color] || 'var(--gold)';
+    var bg = bgMap[ins.color] || 'var(--gold-bg)';
+    html += '<div class="insight-card" style="--accent-color:' + c + '">' +
+      '<div class="insight-icon" style="background:' + bg + ';color:' + c + '">' + (iconSvgs[ins.icon] || iconSvgs.star) + '</div>' +
+      '<div class="insight-text">' + ins.text + '</div></div>';
+  });
+
+  html += '</div></div>';
+  return html;
+}
+
+// ════════════════════════════════════════════════════
 //  TAB 1: OVERVIEW
 // ════════════════════════════════════════════════════
 function renderOverview() {
@@ -1689,6 +1942,15 @@ function renderOverview() {
     '<div class="kpi-value">' + activeLeads + '</div>' +
     '<span class="badge badge-indigo">' + (CLIENT.leads || []).length + ' total</span></div>' +
     '</div>' +
+
+    // Goals (Feature 4)
+    buildGoalsHtml(a, activeLeads) +
+
+    // Before/After (Feature 5)
+    buildBeforeAfterHtml() +
+
+    // Smart Insights (Feature 10)
+    buildInsightsHtml() +
 
     // Quick Actions
     '<div class="quick-actions">' +
@@ -1900,7 +2162,7 @@ function renderPerformance() {
   }).join('');
 
   document.getElementById('page-performance').innerHTML =
-    '<div class="page-header"><div class="page-header-left"><h1>Performance</h1><p>Website analytics and insights</p></div></div>' +
+    '<div class="page-header"><div class="page-header-left"><h1>Performance</h1><p>Website analytics and insights</p></div>' + freshnessHtml('performance') + '</div>' +
 
     kpiHtml +
 
@@ -2081,7 +2343,7 @@ function renderReputation() {
   var reviewLink = CLIENT.liveUrl ? CLIENT.liveUrl + '/reviews' : 'https://webnari.io/review/' + CLIENT.id;
 
   document.getElementById('page-reputation').innerHTML =
-    '<div class="page-header"><div class="page-header-left"><h1>Reputation</h1><p>Online reviews and ratings</p></div></div>' +
+    '<div class="page-header"><div class="page-header-left"><h1>Reputation</h1><p>Online reviews and ratings</p></div>' + freshnessHtml('reputation') + '</div>' +
 
     kpiHtml +
 
@@ -2224,7 +2486,7 @@ function renderLeads() {
   }
 
   document.getElementById('page-leads').innerHTML =
-    '<div class="page-header"><div class="page-header-left"><h1>Leads</h1><p>Your lead pipeline and contacts</p></div></div>' +
+    '<div class="page-header"><div class="page-header-left"><h1>Leads</h1><p>Your lead pipeline and contacts</p></div>' + freshnessHtml('leads') + '</div>' +
 
     staleAlertHtml +
     kpiHtml +
@@ -2314,7 +2576,7 @@ function renderAds() {
   var budgetPct = totalBudget > 0 ? Math.round(totalSpend / totalBudget * 100) : 0;
 
   document.getElementById('page-ads').innerHTML =
-    '<div class="page-header"><div class="page-header-left"><h1>Ad Campaigns</h1><p>Paid advertising performance</p></div></div>' +
+    '<div class="page-header"><div class="page-header-left"><h1>Ad Campaigns</h1><p>Paid advertising performance</p></div>' + freshnessHtml('ads') + '</div>' +
 
     kpiHtml +
 
@@ -2457,7 +2719,7 @@ function renderHealth() {
   var statusBgColor = health.status === 'healthy' ? 'rgba(94,189,138,0.08)' : health.status === 'down' ? 'rgba(232,93,117,0.08)' : 'rgba(212,149,107,0.08)';
 
   document.getElementById('page-health').innerHTML =
-    '<div class="page-header"><div class="page-header-left"><h1>Site Health</h1><p>Uptime monitoring and performance</p></div></div>' +
+    '<div class="page-header"><div class="page-header-left"><h1>Site Health</h1><p>Uptime monitoring and performance</p></div>' + freshnessHtml('health') + '</div>' +
 
     // Status banner
     '<div style="background:' + statusBgColor + ';border:1px solid ' + health.color + '30;border-radius:var(--radius-lg);padding:24px 28px;margin-bottom:20px;display:flex;align-items:center;gap:16px">' +
@@ -2664,8 +2926,29 @@ function renderSupport() {
       '<div class="faq-a">' + escHtml(f.a) + '</div></div>';
   }).join('');
 
+  // Message thread (Feature 3)
+  var messages = getMessages();
+  var threadHtml = '<div class="msg-thread" id="msg-thread">';
+  if (messages.length === 0) {
+    threadHtml += '<div style="text-align:center;color:var(--muted);font-size:13px;padding:20px">No messages yet. Start a conversation!</div>';
+  } else {
+    messages.forEach(function(m) {
+      threadHtml += '<div class="msg-bubble ' + m.from + '">' + escHtml(m.text) +
+        '<div class="msg-meta">' + (m.from === 'client' ? 'You' : 'Webnari') + ' &middot; ' + timeAgo(m.timestamp) + '</div></div>';
+    });
+  }
+  threadHtml += '</div>';
+  threadHtml += '<div class="msg-input-row">' +
+    '<input class="form-input" id="msg-input" type="text" placeholder="Type a message..." onkeydown="handleMsgKeydown(event)">' +
+    '<button class="btn btn-primary" onclick="sendMessage()">Send</button></div>';
+
   document.getElementById('page-support').innerHTML =
     '<div class="page-header"><div class="page-header-left"><h1>Support</h1><p>Submit requests and get help</p></div></div>' +
+
+    // Message Thread (Feature 3)
+    '<div class="panel" style="margin-bottom:16px"><div class="panel-header"><div class="panel-title">Messages</div>' +
+    '<span class="badge badge-gold">' + messages.length + '</span></div>' +
+    '<div class="panel-body">' + threadHtml + '</div></div>' +
 
     '<div class="grid-2">' +
     // Form
@@ -2818,6 +3101,149 @@ function saveAccount() {
   } else {
     toast('Error updating account', 'error');
   }
+}
+
+// ════════════════════════════════════════════════════
+//  THEME TOGGLE (Feature 7)
+// ════════════════════════════════════════════════════
+function initTheme() {
+  var saved = localStorage.getItem('waas_theme');
+  if (saved === 'light') {
+    document.body.classList.add('light');
+  }
+  updateThemeIcon();
+}
+
+function toggleTheme() {
+  document.body.classList.toggle('light');
+  var isLight = document.body.classList.contains('light');
+  localStorage.setItem('waas_theme', isLight ? 'light' : 'dark');
+  updateThemeIcon();
+}
+
+function updateThemeIcon() {
+  var isLight = document.body.classList.contains('light');
+  var sun = document.getElementById('theme-icon-sun');
+  var moon = document.getElementById('theme-icon-moon');
+  if (sun && moon) {
+    sun.style.display = isLight ? 'block' : 'none';
+    moon.style.display = isLight ? 'none' : 'block';
+  }
+}
+
+// ════════════════════════════════════════════════════
+//  BOTTOM TAB BAR (Feature 8)
+// ════════════════════════════════════════════════════
+function navigateBottom(page) {
+  navigate(page);
+  updateBottomTabs(page);
+}
+
+function updateBottomTabs(page) {
+  document.querySelectorAll('.bottom-tab').forEach(function(tab) {
+    tab.classList.remove('active');
+    if (tab.getAttribute('data-tab') === page) {
+      tab.classList.add('active');
+    }
+  });
+}
+
+// ════════════════════════════════════════════════════
+//  MESSAGE THREAD (Feature 3)
+// ════════════════════════════════════════════════════
+function getMessages() {
+  return (DB.messages || []).filter(function(m) { return m.clientId === CLIENT.id; });
+}
+
+function sendMessage() {
+  var input = document.getElementById('msg-input');
+  if (!input) return;
+  var text = input.value.trim();
+  if (!text) return;
+
+  DB.messages = DB.messages || [];
+  DB.messages.push({
+    id: 'msg-' + Date.now(),
+    clientId: CLIENT.id,
+    from: 'client',
+    text: text,
+    timestamp: new Date().toISOString()
+  });
+  saveDB();
+  input.value = '';
+  renderSupport();
+  navigate('support');
+
+  // Scroll thread to bottom
+  setTimeout(function() {
+    var thread = document.getElementById('msg-thread');
+    if (thread) thread.scrollTop = thread.scrollHeight;
+  }, 50);
+}
+
+function handleMsgKeydown(e) {
+  if (e.key === 'Enter') sendMessage();
+}
+
+// ════════════════════════════════════════════════════
+//  INSIGHTS (Feature 10)
+// ════════════════════════════════════════════════════
+function generateInsights() {
+  var insights = [];
+  var rep = CLIENT.reputation || {};
+  var a = CLIENT.analytics || {};
+  var leads = CLIENT.leads || [];
+
+  // Avg rating for use below
+  var totalReviews = 0, weightedSum = 0;
+  ['google','yelp','facebook','homeadvisor'].forEach(function(p) {
+    var pd = rep[p]; if (pd && pd.reviews) { totalReviews += pd.reviews; weightedSum += pd.rating * pd.reviews; }
+  });
+  var avgRating = totalReviews ? parseFloat((weightedSum / totalReviews).toFixed(1)) : 0;
+
+  // Unresponded reviews
+  var pending = (rep.recentReviews || []).filter(function(r) { return !r.responded; });
+  if (pending.length) insights.push({icon:'star', color:'gold', text:'You have ' + pending.length + ' unresponded review' + (pending.length > 1 ? 's' : '') + '. Responding within 24 hours improves your Google ranking.'});
+
+  // Bounce rate high
+  if (a.bounceRate > 50) insights.push({icon:'alert', color:'amber', text:'Your bounce rate is ' + a.bounceRate + '% — above the 50% threshold. Consider adding more engaging content to your landing page.'});
+
+  // Conversion improvement
+  if (a.prevConversions && a.conversions > a.prevConversions) {
+    var pct = Math.round(((a.conversions - a.prevConversions) / a.prevConversions) * 100);
+    insights.push({icon:'trending', color:'green', text:'Conversions are up ' + pct + '% this month. The SEO optimizations are paying off — keep it going!'});
+  }
+
+  // Low organic traffic
+  var totalTraffic = (a.sessions || 1);
+  if ((a.organic || 0) / totalTraffic < 0.3) insights.push({icon:'search', color:'blue', text:'Only ' + Math.round(((a.organic || 0) / totalTraffic) * 100) + '% of your traffic is organic. More blog content could help improve your search presence.'});
+
+  // Stale leads
+  var stale = leads.filter(function(l) { return l.stage === 'new' && new Date() - new Date(l.date) > 48 * 3600000; });
+  if (stale.length) insights.push({icon:'clock', color:'red', text:stale.length + ' lead' + (stale.length > 1 ? 's have' : ' has') + ' been waiting more than 48 hours. Quick follow-up increases close rates by 50%.'});
+
+  // Good rating
+  if (avgRating >= 4.5) insights.push({icon:'trophy', color:'gold', text:'Your ' + avgRating + '-star average rating is excellent! Consider adding a review widget to your website to showcase this.'});
+
+  // No ads
+  if (!CLIENT.ads || !CLIENT.ads.campaigns || !CLIENT.ads.campaigns.length) insights.push({icon:'megaphone', color:'purple', text:'You\'re not running any ad campaigns yet. Even a small Google Ads budget can drive immediate leads while SEO builds.'});
+
+  return insights.slice(0, 5);
+}
+
+// ════════════════════════════════════════════════════
+//  DATA FRESHNESS (Feature 9)
+// ════════════════════════════════════════════════════
+function freshnessHtml(label) {
+  var updatedAt = CLIENT.updatedAt || new Date().toISOString();
+  return '<span style="font-size:10px;color:var(--muted);margin-left:auto;display:flex;align-items:center;gap:6px;">Updated: ' + timeAgo(updatedAt) +
+    ' <button onclick="refreshTab(\'' + label + '\')" style="background:none;border:none;cursor:pointer;color:var(--muted);padding:2px;display:flex;align-items:center" title="Refresh">' +
+    '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button></span>';
+}
+
+function refreshTab(tab) {
+  var fn = {performance:renderPerformance, reputation:renderReputation, leads:renderLeads, ads:renderAds, health:renderHealth};
+  if (fn[tab]) { fn[tab](); toast('Data refreshed', 'info'); }
 }
 
 // ════════════════════════════════════════════════════
