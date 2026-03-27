@@ -604,8 +604,8 @@ footer{border-top:1px solid var(--border);padding:48px}
 <!-- Barrel roll: showcase → features -->
 
 <!-- Features (barrel roll in) -->
-<section id="features" class="features-section cam-barrel">
-  <div class="cam-barrel-inner reveal-fade">
+<section id="features" class="features-section">
+  <div class="reveal-fade">
     <div class="section-eyebrow">Everything included</div>
     <div class="section-title">Parallax. E-commerce. SEO. All in one.</div>
     <div class="section-sub">We specialize in scroll-driven digital effects, full shopping integrations, and search rankings that put you on page one.</div>
@@ -686,8 +686,8 @@ footer{border-top:1px solid var(--border);padding:48px}
 <!-- Flip forward: process → pricing -->
 
 <!-- Pricing (flips down from above) -->
-<section id="pricing" class="cam-flip" style="text-align:center">
-  <div class="cam-flip-inner reveal-fade">
+<section id="pricing" style="text-align:center">
+  <div class="reveal-fade">
     <div class="section-eyebrow" style="text-align:center">Transparent pricing</div>
     <div class="section-title" style="margin:0 auto;text-align:center">No contracts. No surprises.</div>
     <div class="section-sub" style="margin:16px auto 0;">Cancel any time. All plans include hosting, SSL, support, and your client dashboard.</div>
@@ -703,8 +703,8 @@ footer{border-top:1px solid var(--border);padding:48px}
 <!-- Swing: pricing → testimonials -->
 
 <!-- Testimonials (swings in from left like a door) -->
-<section class="testimonials-section cam-swing">
-  <div class="cam-swing-inner reveal-fade">
+<section class="testimonials-section">
+  <div class="reveal-fade">
     <div class="section-eyebrow">Client stories</div>
     <div class="section-title">Real results for real businesses</div>
   </div>
@@ -733,12 +733,12 @@ footer{border-top:1px solid var(--border);padding:48px}
 <!-- Zoom tunnel: testimonials → CTA -->
 
 <!-- CTA (tunnel zoom from far) -->
-<section class="cta-banner cam-tunnel">
+<section class="cta-banner">
   <div class="cta-line"></div>
-  <div class="cam-tunnel-inner reveal-fade">
+  <div class="reveal-fade">
     <h2>Let's build your website.</h2>
     <p>Join local businesses across South Florida growing with Webnari.</p>
-    <button class="btn-hero btn-hero-primary" onclick="openAuth()">Get started today</button>
+    <a href="start.html" class="btn-hero btn-hero-primary" style="text-decoration:none;display:inline-block">Get started today</a>
     <div class="cta-trust">No contracts. Cancel anytime.</div>
   </div>
 </section>
@@ -1385,40 +1385,38 @@ function focusTier(tier){
 function initSectionTransitions(){
   if(window.innerWidth<=768)return;
   const sections=[
-    {sel:'#features',type:'barrel'},      // rotateZ spin + scale
-    {sel:'#process',type:'dolly'},         // translateZ rush
-    {sel:'#pricing',type:'flip'},          // rotateX flip from above
-    {sel:'.testimonials-section',type:'swing'},  // rotateY door swing
-    {sel:'.cta-banner',type:'tunnel'}      // scale + blur tunnel
+    {sel:'#features',type:'barrel',exitType:'barrel-out'},
+    {sel:'#pricing',type:'flip'},
+    {sel:'.testimonials-section',type:'swing'},
+    {sel:'.cta-banner',type:'tunnel'}
   ];
   const els=sections.map(s=>{
     const el=document.querySelector(s.sel);
-    return el?{el,type:s.type}:null;
+    return el?{el,type:s.type,exitType:s.exitType||null}:null;
   }).filter(Boolean);
-
-  // Give each section its own perspective wrapper
-  els.forEach(({el})=>{el.style.perspective='1000px';el.style.overflow='visible'});
 
   let ticking=false;
   function update(){
     ticking=false;
     const vh=window.innerHeight;
-    els.forEach(({el,type})=>{
+    els.forEach(({el,type,exitType})=>{
       const rect=el.getBoundingClientRect();
-      // p = 0 when section top enters bottom of viewport, 1 when top reaches top
-      const p=Math.max(0,Math.min(1,(vh-rect.top)/vh));
-      // Only transform during entry (p 0→0.7), then settle
-      const t=Math.min(p/.7,1);
-      const ease=t<1?t*t*(3-2*t):1; // smoothstep
 
-      if(p<=0){
-        // Not yet visible — full pre-transform
+      // ENTRY: p=0 when top at viewport bottom, p=1 when top at 30% from top (triggers higher)
+      const entryP=Math.max(0,Math.min(1,(vh-rect.top)/(vh*.7)));
+      const entryEase=entryP<1?entryP*entryP*(3-2*entryP):1;
+
+      // EXIT: how far the section bottom has passed the viewport top
+      const exitP=exitType?Math.max(0,Math.min(1,-rect.bottom/(vh*.5)+1)):0;
+      const exitEase=exitP*exitP*(3-2*exitP);
+
+      if(entryP<=0){
         applyTransform(el,type,0);
-      }else if(t<1){
-        // Animating in
-        applyTransform(el,type,ease);
+      }else if(entryP<1){
+        applyTransform(el,type,entryEase);
+      }else if(exitType&&exitP>0){
+        applyExitTransform(el,exitType,exitEase);
       }else{
-        // Fully settled
         el.style.transform='none';
         el.style.opacity='1';
         el.style.filter='none';
@@ -1430,31 +1428,36 @@ function initSectionTransitions(){
     const inv=1-t;
     switch(type){
       case 'barrel':
-        el.style.transform=`rotateZ(${inv*-15}deg) rotateX(${inv*10}deg) scale(${.8+t*.2})`;
-        el.style.opacity=String(.3+t*.7);
-        break;
-      case 'dolly':
-        el.style.transform=`perspective(600px) translateZ(${inv*-200}px) rotateX(${inv*-10}deg)`;
+        el.style.transform=`perspective(1200px) rotateZ(${inv*-18}deg) rotateX(${inv*12}deg) scale(${.75+t*.25})`;
         el.style.opacity=String(.2+t*.8);
         break;
       case 'flip':
-        el.style.transform=`perspective(800px) rotateX(${inv*-60}deg) translateY(${inv*-60}px)`;
-        el.style.opacity=String(.2+t*.8);
+        el.style.transform=`perspective(800px) rotateX(${inv*-50}deg) translateY(${inv*-50}px)`;
+        el.style.opacity=String(.15+t*.85);
         break;
       case 'swing':
-        el.style.transform=`perspective(1000px) rotateY(${inv*50}deg) translateX(${inv*-100}px)`;
-        el.style.opacity=String(.2+t*.8);
+        el.style.transform=`perspective(1000px) rotateY(${inv*45}deg) translateX(${inv*-80}px)`;
+        el.style.opacity=String(.15+t*.85);
         break;
       case 'tunnel':
-        el.style.transform=`scale(${.6+t*.4}) translateY(${inv*100}px)`;
-        el.style.opacity=String(.1+t*.9);
-        el.style.filter=`blur(${inv*8}px)`;
+        el.style.transform=`scale(${.55+t*.45}) translateY(${inv*120}px)`;
+        el.style.opacity=String(.05+t*.95);
+        el.style.filter=`blur(${inv*10}px)`;
+        break;
+    }
+  }
+
+  function applyExitTransform(el,exitType,t){
+    switch(exitType){
+      case 'barrel-out':
+        el.style.transform=`perspective(1200px) rotateZ(${t*18}deg) rotateX(${t*-15}deg) scale(${1-t*.3})`;
+        el.style.opacity=String(1-t*.8);
         break;
     }
   }
 
   window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(update);ticking=true}},{passive:true});
-  update(); // initial run
+  update();
 }
 
 // ── Page Loader ──
