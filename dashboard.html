@@ -5870,7 +5870,7 @@ function renderProposals() {
     const price = getProposalPrice(p.plan);
     const cat = CATEGORIES.find(c => c.id === p.niche);
     const age = timeAgo(new Date(p.createdAt));
-    const tplMatch = DB.templates.find(t => t.category === p.niche && t.status === 'ready');
+    const tplMatch = findBestTemplate(p);
 
     html += `<div class="panel" style="padding:0;border-left:3px solid ${st.color};overflow:hidden;">
       ${tplMatch && tplMatch.path ? `<div style="height:80px;overflow:hidden;position:relative;background:var(--surface);">
@@ -5893,7 +5893,8 @@ function renderProposals() {
         <div style="font-size:11px;color:var(--muted);margin-bottom:12px;">Created ${age}${p.sentDate ? ' &middot; Sent ' + new Date(p.sentDate).toLocaleDateString() : ''}</div>
         ${p.notes ? `<div style="font-size:12px;color:var(--text);padding:8px 10px;background:var(--surface);border-radius:6px;margin-bottom:12px;border-left:2px solid var(--indigo);max-height:48px;overflow:hidden;">${p.notes}</div>` : ''}
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
-          <button class="btn btn-primary btn-sm" style="font-size:11px;" onclick="viewProposal('${p.id}')">Preview</button>
+          <button class="btn btn-primary btn-sm" style="font-size:11px;" onclick="openProposalPage('${p.id}')">Open</button>
+          <button class="btn btn-ghost btn-sm" style="font-size:11px;" onclick="copyProposalLink('${p.id}')">Copy Link</button>
           <button class="btn btn-ghost btn-sm" style="font-size:11px;" onclick="editProposal('${p.id}')">Edit</button>
           <button class="btn btn-ghost btn-sm" style="font-size:11px;" onclick="duplicateProposal('${p.id}')">Duplicate</button>
           <button class="btn btn-ghost btn-sm btn-icon" style="font-size:11px;color:var(--red);margin-left:auto;" onclick="deleteProposal('${p.id}')" title="Delete">✕</button>
@@ -5922,6 +5923,7 @@ function openNewProposal() {
       <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Business Niche</label><select id="np-niche" style="${inputStyle}"><option value="">Select Niche</option>${niches}</select></div>
       <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Plan</label><select id="np-plan" style="${inputStyle}"><option value="starter">Starter — $${DB.pricing?.starter||158}/mo</option><option value="standard" selected>Standard — $${DB.pricing?.standard||258}/mo</option><option value="premium">Premium — $${DB.pricing?.premium||378}/mo</option></select></div>
     </div>
+    <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Template Preview (optional)</label><select id="np-template" style="${inputStyle}"><option value="">Auto-detect from business name</option>${DB.templates.filter(t=>t.status==='ready'&&t.path).map(t=>'<option value="'+t.id+'">'+t.name+' — '+t.niche+'</option>').join('')}</select></div>
     <div><label style="font-size:11px;color:var(--muted);display:block;margin-bottom:4px;">Custom Notes / Special Requirements</label><textarea id="np-notes" placeholder="Any special requirements, custom features, timeline preferences..." rows="3" style="${inputStyle}resize:vertical;"></textarea></div>
     <button class="btn btn-primary" onclick="saveProposal()" style="justify-content:center;">Create Proposal</button>
   </div>`);
@@ -5938,6 +5940,7 @@ function saveProposal() {
     contactPhone: document.getElementById('np-phone').value.trim(),
     niche: document.getElementById('np-niche').value,
     plan: document.getElementById('np-plan').value,
+    templateId: document.getElementById('np-template')?.value || '',
     notes: document.getElementById('np-notes').value.trim(),
     status: 'draft', createdAt: new Date().toISOString(), sentDate: null
   };
@@ -6011,6 +6014,49 @@ function deleteProposal(id) {
   if (!confirm('Delete this proposal?')) return;
   DB.proposals = DB.proposals.filter(x => x.id !== id);
   save(); renderProposals(); toast('Proposal deleted', 'success');
+}
+
+function findBestTemplate(proposal) {
+  const readyTemplates = DB.templates.filter(t => t.status === 'ready' && t.path);
+  if (!readyTemplates.length) return null;
+  // 1. If proposal has a specific templateId, use that
+  if (proposal.templateId) {
+    const exact = readyTemplates.find(t => t.id === proposal.templateId);
+    if (exact) return exact;
+  }
+  // 2. Try to match by business name keywords
+  const bizLower = (proposal.bizName || '').toLowerCase();
+  const nameMatch = readyTemplates.find(t => {
+    const keywords = [t.name.toLowerCase(), t.niche.toLowerCase()];
+    return keywords.some(k => bizLower.includes(k.split(' ')[0]) || k.includes(bizLower.split(' ')[0]));
+  });
+  if (nameMatch) return nameMatch;
+  // 3. Try niche-specific keyword matching
+  const nicheKeywords = {
+    'sub':'gastrosubs', 'sandwich':'gastrosubs', 'deli':'gastrosubs', 'gastro':'gastrosubs',
+    'sushi':'omakase', 'japanese':'omakase', 'omakase':'omakase',
+    'pizza':'firecrust', 'italian':'firecrust',
+    'pest':'pest-control', 'exterminator':'pest-control',
+    'electric':'electrician', 'volt':'electrician', 'wiring':'electrician',
+    'plumb':'plumber', 'drain':'plumber', 'pipe':'plumber', 'flow':'plumber',
+    'hvac':'hvac', 'air':'hvac', 'cooling':'hvac', 'heating':'hvac',
+    'lock':'locksmith', 'key':'locksmith',
+    'roof':'roofing', 'shingle':'roofing',
+    'lawn':'landscaping', 'garden':'landscaping', 'landscape':'landscaping', 'tree':'landscaping',
+    'wook':'wookwear', 'pouch':'wookwear', 'handmade':'wookwear'
+  };
+  for (const [keyword, templateId] of Object.entries(nicheKeywords)) {
+    if (bizLower.includes(keyword)) {
+      const match = readyTemplates.find(t => t.id === templateId);
+      if (match) return match;
+    }
+  }
+  // 4. Fall back to category match
+  if (proposal.niche) {
+    const catMatch = readyTemplates.find(t => t.category === proposal.niche);
+    if (catMatch) return catMatch;
+  }
+  return null;
 }
 
 function encodeProposal(id) {
