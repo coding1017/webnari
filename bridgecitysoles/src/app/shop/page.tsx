@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { filterProducts, getAllSizesInUse } from '@/lib/data';
 import { brands } from '@/data/brands';
@@ -19,6 +19,14 @@ const SORT_OPTIONS: { value: SortOption; label: string }[] = [
 ];
 
 export default function ShopPage() {
+  return (
+    <Suspense fallback={<div className="max-w-7xl mx-auto px-4 py-20 text-center text-bcs-muted">Loading...</div>}>
+      <ShopContent />
+    </Suspense>
+  );
+}
+
+function ShopContent() {
   const searchParams = useSearchParams();
   const initialBrand = searchParams.get('brand');
   const initialCategory = searchParams.get('category');
