@@ -157,10 +157,10 @@ section{padding:120px 48px;position:relative}
 .section-sub{font-size:17px;color:var(--text);max-width:480px;margin-top:16px;line-height:1.7}
 
 /* ── Parallax Showcase (full-screen sticky, horizontal pan between pairs) ── */
-.showcase-wrap{height:320vh;position:relative}
+.showcase-wrap{height:280vh;position:relative}
 .showcase-sticky{position:sticky;top:0;height:100vh;overflow:hidden;background:#000}
-.showcase-track{display:flex;width:200%;height:100%;will-change:transform;transition:none}
-.showcase-pair{width:50%;height:100%;display:flex;gap:4px;padding:64px 4px 4px;flex-shrink:0}
+.showcase-track{display:flex;width:100%;height:100%;will-change:transform;transition:none}
+.showcase-pair{width:100%;height:100%;display:flex;gap:4px;padding:64px 4px 4px;flex-shrink:0}
 .showcase-pane{flex:1;position:relative;overflow:hidden;background:#000}
 .showcase-pane iframe{width:100%;height:100%;border:none;pointer-events:none;position:absolute;top:0;left:0}
 .showcase-pane-label{position:absolute;bottom:16px;left:16px;z-index:2;font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--white);
@@ -466,26 +466,47 @@ footer{border-top:1px solid var(--border);padding:48px}
 <div class="showcase-wrap" id="showcase">
   <div class="showcase-sticky" id="showcase-sticky">
     <div class="showcase-track" id="showcase-track">
-      <!-- Pair 1: VoltPro + RoofPro -->
+      <!-- Pair 1: VoltPro + RoofPro (inline SVG) -->
       <div class="showcase-pair" id="pair-1">
-        <div class="showcase-pane">
-          <iframe id="iframe-volt" scrolling="no" tabindex="-1"></iframe>
+        <div class="showcase-pane" id="dv-hero">
+          <div id="dv-seqBg" style="position:absolute;inset:0;background:#000"></div>
+          <div id="dv-panelGlow" style="position:absolute;inset:0;opacity:0"></div>
+          <div id="dv-panelContainer" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+            <svg id="dv-panelSvg" viewBox="0 0 480 750" preserveAspectRatio="xMidYMid meet" style="max-height:90%">
+              <defs>
+                <linearGradient id="dv-copperGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#D4956B"/><stop offset="100%" stop-color="#B87333"/></linearGradient>
+                <linearGradient id="dv-dinRailGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#BBB"/><stop offset="50%" stop-color="#999"/><stop offset="100%" stop-color="#BBB"/></linearGradient>
+              </defs>
+            </svg>
+          </div>
+          <div id="dv-panelEnergize" style="position:absolute;inset:0;pointer-events:none;opacity:0"></div>
+          <div id="dv-panelHud" style="display:none"></div><div id="dv-hudCircuits" style="display:none"></div>
+          <div id="dv-panelPowered" style="display:none"></div>
+          <div id="dv-pl1" style="display:none"></div><div id="dv-pl2" style="display:none"></div>
+          <div id="dv-pl3" style="display:none"></div><div id="dv-pl4" style="display:none"></div>
+          <div id="dv-pl5" style="display:none"></div><div id="dv-pl6" style="display:none"></div>
+          <div id="dv-seqIntro" style="display:none"></div><div id="dv-seqPhase" style="display:none"></div>
+          <div style="display:none"><div id="dv-seqScrubFill"></div></div>
+          <div id="dv-seqFinal" style="display:none"></div>
+          <div id="dv-seqSticky" style="display:none"></div>
           <div class="showcase-pane-label">VoltPro</div>
         </div>
-        <div class="showcase-pane">
-          <iframe id="iframe-roof" scrolling="no" tabindex="-1"></iframe>
+        <div class="showcase-pane" id="dr-hero">
+          <div id="dr-seqBg" style="position:absolute;inset:0;background:#000"></div>
+          <div id="dr-sceneGlow" style="position:absolute;inset:0;opacity:0"></div>
+          <div id="dr-sceneContainer" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+            <svg id="dr-sceneSvg" viewBox="0 0 1050 600" preserveAspectRatio="xMidYMid meet" style="max-height:90%"></svg>
+          </div>
+          <div id="dr-sceneEnergize" style="position:absolute;inset:0;pointer-events:none;opacity:0"></div>
+          <div id="dr-sceneHud" style="display:none"></div><div id="dr-scenePowered" style="display:none"></div>
+          <div id="dr-pl1" style="display:none"></div><div id="dr-pl2" style="display:none"></div>
+          <div id="dr-pl3" style="display:none"></div><div id="dr-pl4" style="display:none"></div>
+          <div id="dr-pl5" style="display:none"></div><div id="dr-pl6" style="display:none"></div>
+          <div id="dr-seqIntro" style="display:none"></div><div id="dr-seqPhase" style="display:none"></div>
+          <div style="display:none"><div id="dr-seqScrubFill"></div></div>
+          <div id="dr-seqFinal" style="display:none"></div>
+          <div id="dr-seqSticky" style="display:none"></div>
           <div class="showcase-pane-label">RoofPro</div>
-        </div>
-      </div>
-      <!-- Pair 2: GreenScape + FireCrust -->
-      <div class="showcase-pair" id="pair-2">
-        <div class="showcase-pane">
-          <iframe id="iframe-green" scrolling="no" tabindex="-1"></iframe>
-          <div class="showcase-pane-label">GreenScape</div>
-        </div>
-        <div class="showcase-pane">
-          <iframe id="iframe-pizza" scrolling="no" tabindex="-1"></iframe>
-          <div class="showcase-pane-label">FireCrust</div>
         </div>
       </div>
     </div>
@@ -1015,117 +1036,48 @@ function initOrb(){
 // ── Parallax Showcase ──
 function initShowcase(){
   const wrap=document.getElementById('showcase');if(!wrap)return;
-  // Skip on mobile — show static cards instead
   if(window.innerWidth<=768)return;
-  const track=document.getElementById('showcase-track');
-  const iframes={
-    volt:document.getElementById('iframe-volt'),
-    roof:document.getElementById('iframe-roof'),
-    green:document.getElementById('iframe-green'),
-    pizza:document.getElementById('iframe-pizza')
-  };
-  const cssInject=`
-    nav,.mobile-menu{position:fixed!important;opacity:0!important;pointer-events:none!important}
-    .scroll-sequence~*{display:none!important}
-    #seqIntro,#seqFinal,#panelPowered,#scenePowered,#panelHud,#sceneHud,
-    #panelEnergize,#sceneEnergize,#panelGlow,#sceneGlow,[id^="pl"]{opacity:0!important}
-    html,body{background:#000!important}
-    .sequence-sticky{top:0!important;height:100vh!important}
-  `;
 
-  let readyCount=0;const TOTAL=4;
-  function onLoad(iframe){
-    try{
-      const doc=iframe.contentDocument||iframe.contentWindow.document;
-      const style=doc.createElement('style');style.textContent=cssInject;doc.head.appendChild(style);
-      const seq=doc.querySelector('.scroll-sequence')||doc.getElementById('hero');
-      if(seq)iframe.contentWindow.scrollTo(0,seq.offsetTop+.15*seq.offsetHeight);
-    }catch(e){}
-    readyCount++;
-    if(readyCount>=TOTAL)setInitialPos();
-  }
+  // Load inline parallax scripts
+  const s1=document.createElement('script');s1.src='desk-volt-parallax.js';document.body.appendChild(s1);
+  const s2=document.createElement('script');s2.src='desk-roof-parallax.js';document.body.appendChild(s2);
 
-  // Lazy-load all 4 iframes
-  setTimeout(()=>{
-    const srcs={volt:'voltpro.html',roof:'roofpro.html',green:'greenscape.html',pizza:'pizza-parallax.html'};
-    Object.keys(iframes).forEach(k=>{
-      const f=iframes[k];if(!f)return;
-      f.addEventListener('load',()=>onLoad(f));
-      f.src=srcs[k];
-    });
-  },1200);
+  // Initialize progress
+  window.__deskVoltProgress=0.15;
+  window.__deskRoofProgress=0.15;
 
   /*
-    320vh scroll — tight:
-    0-42%   → Pair 1 plays 15%→78%
-    42-52%  → Camera pan to Pair 2
-    52-97%  → Pair 2 plays 15%→78%
-    97-100% → Release (minimal)
+    280vh scroll:
+    0-90%   → Both parallaxes play 15%→90%
+    90-100% → 3D tilt exit transition
   */
-  // Set initial 15% position once iframes load
-  function setInitialPos(){
-    [iframes.volt,iframes.roof,iframes.green,iframes.pizza].forEach(f=>{
-      if(!f||!f.contentWindow)return;
-      try{const doc=f.contentDocument;const seq=doc.querySelector('.scroll-sequence')||doc.getElementById('hero');
-        if(seq)f.contentWindow.scrollTo(0,seq.offsetTop+.15*seq.offsetHeight);
-      }catch(e){}
-    });
-  }
-
+  const stickyEl=document.getElementById('showcase-sticky');
   let ticking=false;
   function update(){
     ticking=false;
-    if(readyCount<TOTAL){return}
     const rect=wrap.getBoundingClientRect();
     const total=wrap.offsetHeight-window.innerHeight;
     const scrolled=Math.max(0,-rect.top);
     const p=Math.max(0,Math.min(1,scrolled/total));
 
-    // Horizontal pan: transitions .42-.52
-    let panProgress=0;
-    if(p>=.42&&p<=.52)panProgress=(p-.42)/.1;
-    else if(p>.52)panProgress=1;
-    const easedPan=panProgress<1?panProgress*panProgress*(3-2*panProgress):1;
-    const tiltY=(panProgress>0&&panProgress<1)?Math.sin(panProgress*Math.PI)*8:0;
-    const tiltX=(panProgress>0&&panProgress<1)?Math.sin(panProgress*Math.PI)*3:0;
-    track.style.transform=`translateX(${-easedPan*50}%) perspective(1200px) rotateY(${tiltY}deg) rotateX(${-tiltX}deg)`;
+    // Both parallaxes: 0→.90 maps to 15%→90% of animation
+    const prog=.15+Math.min(p/.90,1)*(.90-.15);
+    window.__deskVoltProgress=prog;
+    window.__deskRoofProgress=prog;
 
-    // Pair 1: 0→.42 maps to 15%→72% (stop at ~90% of animation)
-    const p1=.15+Math.min(p/.42,1)*(.72-.15);
-    [iframes.volt,iframes.roof].forEach(f=>{
-      if(!f||!f.contentWindow)return;
-      try{const doc=f.contentDocument;const seq=doc.querySelector('.scroll-sequence')||doc.getElementById('hero');
-        if(seq)f.contentWindow.scrollTo(0,seq.offsetTop+p1*seq.offsetHeight);
-      }catch(e){}
-    });
-
-    // Pair 2: .52→.92 maps to 15%→72%, then .92→1.0 = vertical tilt out
-    const p2Raw=(p-.52)/.4;
-    const p2=.15+Math.max(0,Math.min(p2Raw,1))*(.72-.15);
-
-    // Vertical 3D tilt-down at end (.92→1.0): showcase tilts away as you scroll into features
+    // 3D tilt exit at end (.90→1.0)
     let exitProgress=0;
-    if(p>=.92)exitProgress=(p-.92)/.08;
+    if(p>=.90)exitProgress=(p-.90)/.10;
     const exitEase=exitProgress*exitProgress*(3-2*exitProgress);
-    const exitTiltX=exitEase*25;  // tilt forward (rotateX)
-    const exitScale=1-exitEase*.15;  // slight shrink
-    const exitY=exitEase*-60;  // slide up
-    const stickyEl=document.getElementById('showcase-sticky');
     if(stickyEl){
       if(exitProgress>0){
-        stickyEl.style.transform=`perspective(800px) rotateX(${exitTiltX}deg) scale(${exitScale}) translateY(${exitY}px)`;
+        stickyEl.style.transform=`perspective(800px) rotateX(${exitEase*25}deg) scale(${1-exitEase*.15}) translateY(${exitEase*-60}px)`;
         stickyEl.style.opacity=`${1-exitEase*.7}`;
       }else{
         stickyEl.style.transform='none';
         stickyEl.style.opacity='1';
       }
     }
-    [iframes.green,iframes.pizza].forEach(f=>{
-      if(!f||!f.contentWindow)return;
-      try{const doc=f.contentDocument;const seq=doc.querySelector('.scroll-sequence')||doc.getElementById('hero');
-        if(seq)f.contentWindow.scrollTo(0,seq.offsetTop+p2*seq.offsetHeight);
-      }catch(e){}
-    });
   }
   window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(update);ticking=true}},{passive:true});
 }
