@@ -157,10 +157,10 @@ section{padding:120px 48px;position:relative}
 .section-sub{font-size:17px;color:var(--text);max-width:480px;margin-top:16px;line-height:1.7}
 
 /* ── Parallax Showcase (full-screen sticky, horizontal pan between pairs) ── */
-.showcase-wrap{height:280vh;position:relative}
+.showcase-wrap{height:500vh;position:relative}
 .showcase-sticky{position:sticky;top:0;height:100vh;overflow:hidden;background:#000}
-.showcase-track{display:flex;width:100%;height:100%;will-change:transform;transition:none}
-.showcase-pair{width:100%;height:100%;display:flex;gap:4px;padding:64px 4px 4px;flex-shrink:0}
+.showcase-track{display:flex;width:200%;height:100%;will-change:transform;transition:none}
+.showcase-pair{width:50%;height:100%;display:flex;gap:4px;padding:64px 4px 4px;flex-shrink:0}
 .showcase-pane{flex:1;position:relative;overflow:hidden;background:#000}
 .showcase-pane iframe{width:100%;height:100%;border:none;pointer-events:none;position:absolute;top:0;left:0}
 .showcase-pane-label{position:absolute;bottom:16px;left:16px;z-index:2;font-family:var(--font-head);font-size:14px;font-weight:700;color:var(--white);
@@ -509,6 +509,44 @@ footer{border-top:1px solid var(--border);padding:48px}
           <div class="showcase-pane-label">Roofing</div>
         </div>
       </div>
+      <!-- Pair 2: GreenScape + Pizza (inline SVG) -->
+      <div class="showcase-pair" id="pair-2">
+        <div class="showcase-pane" id="dg-hero">
+          <div id="dg-seqBg" style="position:absolute;inset:0;background:#000"></div>
+          <div id="dg-sceneGlow" style="position:absolute;inset:0;opacity:0"></div>
+          <div id="dg-sceneContainer" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+            <svg id="dg-sceneSvg" viewBox="0 0 1050 600" preserveAspectRatio="xMidYMid meet" style="max-height:90%"></svg>
+          </div>
+          <div id="dg-sceneEnergize" style="position:absolute;inset:0;pointer-events:none;opacity:0"></div>
+          <div id="dg-sceneHud" style="display:none"></div><div id="dg-hudStep" style="display:none"></div>
+          <div id="dg-scenePowered" style="display:none"></div>
+          <div id="dg-pl1" style="display:none"></div><div id="dg-pl2" style="display:none"></div>
+          <div id="dg-pl3" style="display:none"></div><div id="dg-pl4" style="display:none"></div>
+          <div id="dg-pl5" style="display:none"></div><div id="dg-pl6" style="display:none"></div>
+          <div id="dg-seqIntro" style="display:none"></div><div id="dg-seqPhase" style="display:none"></div>
+          <div style="display:none"><div id="dg-seqScrubFill"></div></div>
+          <div id="dg-seqFinal" style="display:none"></div>
+          <div id="dg-seqSticky" style="display:none"></div>
+          <div class="showcase-pane-label">Landscaping</div>
+        </div>
+        <div class="showcase-pane" id="dp-hero">
+          <div id="dp-seqBg" style="position:absolute;inset:0;background:#000"></div>
+          <div id="dp-sceneGlow" style="position:absolute;inset:0;opacity:0"></div>
+          <div id="dp-sceneContainer" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+            <svg id="dp-sceneSvg" viewBox="0 0 1050 600" preserveAspectRatio="xMidYMid meet" style="max-height:90%"></svg>
+          </div>
+          <div id="dp-sceneEnergize" style="position:absolute;inset:0;pointer-events:none;opacity:0"></div>
+          <div id="dp-scenePowered" style="display:none"></div>
+          <div id="dp-pl1" style="display:none"></div><div id="dp-pl2" style="display:none"></div>
+          <div id="dp-pl3" style="display:none"></div><div id="dp-pl4" style="display:none"></div>
+          <div id="dp-pl5" style="display:none"></div><div id="dp-pl6" style="display:none"></div>
+          <div id="dp-seqIntro" style="display:none"></div><div id="dp-seqPhase" style="display:none"></div>
+          <div style="display:none"><div id="dp-seqScrubFill"></div></div>
+          <div id="dp-seqFinal" style="display:none"></div>
+          <div id="dp-seqSticky" style="display:none"></div>
+          <div class="showcase-pane-label">Restaurant</div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -849,9 +887,9 @@ async function doLogin(){
   const errEl=document.getElementById('auth-error');errEl.style.display='none';
   if(_sb){const{data,error}=await _sb.auth.signInWithPassword({email,password:pass});if(error||!data.user){errEl.style.display='block';return}
     const{data:profile}=await _sb.from('profiles').select('role, name, initials, client_id').eq('id',data.user.id).single();if(!profile){errEl.style.display='block';return}
-    sessionStorage.setItem('waas_user',JSON.stringify({...profile,email}));closeAuth();if(profile.role==='admin'){window.location.href='dashboard.html'}else{showPortal({...profile,email})}
+    sessionStorage.setItem('waas_user',JSON.stringify({...profile,email}));closeAuth();if(profile.role==='admin'){window.location.href='dashboard.html'}else{window.location.href='client-portal.html'}
   }else{const user=USERS.find(u=>u.email===email&&u.password===pass);if(!user){errEl.style.display='block';return}
-    sessionStorage.setItem('waas_user',JSON.stringify(user));closeAuth();if(user.role==='admin'){window.location.href='dashboard.html'}else{showPortal(user)}}
+    sessionStorage.setItem('waas_user',JSON.stringify(user));closeAuth();if(user.role==='admin'){window.location.href='dashboard.html'}else{window.location.href='client-portal.html'}}
 }
 async function doLogout(){ sessionStorage.removeItem('waas_user');if(_sb)await _sb.auth.signOut();document.getElementById('landing').style.display='block';document.getElementById('portal-page').style.display='none' }
 
@@ -1038,20 +1076,26 @@ function initShowcase(){
   const wrap=document.getElementById('showcase');if(!wrap)return;
   if(window.innerWidth<=768)return;
 
-  // Load inline parallax scripts
-  const s1=document.createElement('script');s1.src='desk-volt-parallax.js';document.body.appendChild(s1);
-  const s2=document.createElement('script');s2.src='desk-roof-parallax.js';document.body.appendChild(s2);
+  // Load all 4 inline parallax scripts
+  ['desk-volt-parallax.js','desk-roof-parallax.js','desk-green-parallax.js','desk-pizza-parallax.js'].forEach(src=>{
+    const s=document.createElement('script');s.src=src;document.body.appendChild(s);
+  });
 
-  // Initialize progress
+  // Initialize progress for all 4
   window.__deskVoltProgress=0.15;
   window.__deskRoofProgress=0.15;
+  window.__deskGreenProgress=0.15;
+  window.__deskPizzaProgress=0.15;
 
   /*
-    280vh scroll:
-    0-90%   → Both parallaxes play 15%→90%
-    90-100% → 3D tilt exit transition
+    500vh scroll:
+    0-40%    → Pair 1 (Electrical+Roofing) plays 15%→90%
+    40-50%   → 3D horizontal pan to Pair 2
+    50-90%   → Pair 2 (Landscaping+Restaurant) plays 15%→90%
+    90-100%  → 3D tilt exit
   */
   const stickyEl=document.getElementById('showcase-sticky');
+  const track=document.getElementById('showcase-track');
   let ticking=false;
   function update(){
     ticking=false;
@@ -1060,17 +1104,32 @@ function initShowcase(){
     const scrolled=Math.max(0,-rect.top);
     const p=Math.max(0,Math.min(1,scrolled/total));
 
-    // Both parallaxes: 0→.90 maps to 15%→90% of animation
-    const prog=.15+Math.min(p/.90,1)*(.90-.15);
-    window.__deskVoltProgress=prog;
-    window.__deskRoofProgress=prog;
+    // Horizontal pan: .40→.50
+    let panP=0;
+    if(p>=.40&&p<=.50)panP=(p-.40)/.10;
+    else if(p>.50)panP=1;
+    const easedPan=panP<1?panP*panP*(3-2*panP):1;
+    const tiltY=(panP>0&&panP<1)?Math.sin(panP*Math.PI)*8:0;
+    const tiltX=(panP>0&&panP<1)?Math.sin(panP*Math.PI)*3:0;
+    track.style.transform=`translateX(${-easedPan*50}%) perspective(1200px) rotateY(${tiltY}deg) rotateX(${-tiltX}deg)`;
+
+    // Pair 1: 0→.40 maps to 15%→90%
+    const p1=.15+Math.min(p/.40,1)*(.90-.15);
+    window.__deskVoltProgress=p1;
+    window.__deskRoofProgress=p1;
+
+    // Pair 2: .50→.90 maps to 15%→90%
+    const p2raw=(p-.50)/.40;
+    const p2=.15+Math.max(0,Math.min(p2raw,1))*(.90-.15);
+    window.__deskGreenProgress=p2;
+    window.__deskPizzaProgress=p2;
 
     // 3D tilt exit at end (.90→1.0)
-    let exitProgress=0;
-    if(p>=.90)exitProgress=(p-.90)/.10;
-    const exitEase=exitProgress*exitProgress*(3-2*exitProgress);
+    let exitP=0;
+    if(p>=.90)exitP=(p-.90)/.10;
+    const exitEase=exitP*exitP*(3-2*exitP);
     if(stickyEl){
-      if(exitProgress>0){
+      if(exitP>0){
         stickyEl.style.transform=`perspective(800px) rotateX(${exitEase*25}deg) scale(${1-exitEase*.15}) translateY(${exitEase*-60}px)`;
         stickyEl.style.opacity=`${1-exitEase*.7}`;
       }else{
@@ -1330,7 +1389,7 @@ function initLoader(){
 // ── Init ──
 (function(){
   const stored=sessionStorage.getItem('waas_user');
-  if(stored){try{const user=JSON.parse(stored);if(user.role==='admin'){window.location.href='dashboard.html';return}if(user.role==='client'){showPortal(user);return}}catch{}}
+  if(stored){try{const user=JSON.parse(stored);if(user.role==='admin'){window.location.href='dashboard.html';return}if(user.role==='client'){window.location.href='client-portal.html';return}}catch{}}
   renderPricing();
   initOrb();
   initShowcase();
