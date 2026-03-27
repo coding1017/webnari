@@ -487,9 +487,9 @@
       var fadeOut=p<0.88?1:map(p,0.88,0.94,1,0);
       sceneContainer.style.opacity=String(map(p,0.05,0.10,0,1)*fadeOut);
 
-      // SVG sizing
-      var vh=stickyEl.offsetHeight;
-      var vw=stickyEl.offsetWidth;
+      // SVG sizing — use seqEl (stickyEl may be hidden)
+      var vh=seqEl.clientHeight||seqEl.offsetHeight||600;
+      var vw=seqEl.clientWidth||seqEl.offsetWidth||800;
       var svgAspect=1050/600;
       var svgW=vw, svgH=svgW/svgAspect;
       if(svgH>vh*0.95){svgH=vh*0.95;svgW=svgH*svgAspect;}
