@@ -227,9 +227,9 @@ section{padding:120px 48px;position:relative}
 .pricing-toggle-btn:hover{color:var(--text)}
 .pricing-toggle-btn.active{background:var(--accent);color:var(--bg)}
 .pricing-grid{display:flex;align-items:center;justify-content:center;gap:0;margin-top:32px;flex-wrap:wrap}
-.pricing-card{width:300px;padding:32px;background:var(--surface2);border:1px solid var(--border);border-radius:16px;transform:scale(.92);opacity:.55;transition:all .4s ease;position:relative;cursor:pointer}
+.pricing-card{width:260px;padding:24px;background:var(--surface2);border:1px solid var(--border);border-radius:16px;transform:scale(.88);opacity:.55;transition:all .4s ease;position:relative;cursor:pointer}
 .pricing-card:hover{opacity:.7;transform:scale(.94)}
-.pricing-card.focused{width:340px;padding:44px 36px;transform:scale(1);opacity:1;border-color:var(--accent);z-index:2;
+.pricing-card.focused{width:280px;padding:28px;transform:scale(.95);opacity:1;border-color:var(--accent);z-index:2;
   box-shadow:0 0 80px rgba(201,169,110,.06)}
 .pricing-card.focused:hover{transform:scale(1.02)}
 .pricing-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:var(--bg);
@@ -1381,6 +1381,82 @@ function focusTier(tier){
   document.querySelectorAll('.pricing-card').forEach(c=>{c.classList.toggle('focused',c.dataset.tier===tier)});
 }
 
+// ── Scroll-Driven Section Transitions (continuous 3D transforms) ──
+function initSectionTransitions(){
+  if(window.innerWidth<=768)return;
+  const sections=[
+    {sel:'#features',type:'barrel'},      // rotateZ spin + scale
+    {sel:'#process',type:'dolly'},         // translateZ rush
+    {sel:'#pricing',type:'flip'},          // rotateX flip from above
+    {sel:'.testimonials-section',type:'swing'},  // rotateY door swing
+    {sel:'.cta-banner',type:'tunnel'}      // scale + blur tunnel
+  ];
+  const els=sections.map(s=>{
+    const el=document.querySelector(s.sel);
+    return el?{el,type:s.type}:null;
+  }).filter(Boolean);
+
+  // Give each section its own perspective wrapper
+  els.forEach(({el})=>{el.style.perspective='1000px';el.style.overflow='visible'});
+
+  let ticking=false;
+  function update(){
+    ticking=false;
+    const vh=window.innerHeight;
+    els.forEach(({el,type})=>{
+      const rect=el.getBoundingClientRect();
+      // p = 0 when section top enters bottom of viewport, 1 when top reaches top
+      const p=Math.max(0,Math.min(1,(vh-rect.top)/vh));
+      // Only transform during entry (p 0→0.7), then settle
+      const t=Math.min(p/.7,1);
+      const ease=t<1?t*t*(3-2*t):1; // smoothstep
+
+      if(p<=0){
+        // Not yet visible — full pre-transform
+        applyTransform(el,type,0);
+      }else if(t<1){
+        // Animating in
+        applyTransform(el,type,ease);
+      }else{
+        // Fully settled
+        el.style.transform='none';
+        el.style.opacity='1';
+        el.style.filter='none';
+      }
+    });
+  }
+
+  function applyTransform(el,type,t){
+    const inv=1-t;
+    switch(type){
+      case 'barrel':
+        el.style.transform=`rotateZ(${inv*-15}deg) rotateX(${inv*10}deg) scale(${.8+t*.2})`;
+        el.style.opacity=String(.3+t*.7);
+        break;
+      case 'dolly':
+        el.style.transform=`perspective(600px) translateZ(${inv*-200}px) rotateX(${inv*-10}deg)`;
+        el.style.opacity=String(.2+t*.8);
+        break;
+      case 'flip':
+        el.style.transform=`perspective(800px) rotateX(${inv*-60}deg) translateY(${inv*-60}px)`;
+        el.style.opacity=String(.2+t*.8);
+        break;
+      case 'swing':
+        el.style.transform=`perspective(1000px) rotateY(${inv*50}deg) translateX(${inv*-100}px)`;
+        el.style.opacity=String(.2+t*.8);
+        break;
+      case 'tunnel':
+        el.style.transform=`scale(${.6+t*.4}) translateY(${inv*100}px)`;
+        el.style.opacity=String(.1+t*.9);
+        el.style.filter=`blur(${inv*8}px)`;
+        break;
+    }
+  }
+
+  window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(update);ticking=true}},{passive:true});
+  update(); // initial run
+}
+
 // ── Page Loader ──
 function initLoader(){
   // Remove loader immediately — don't wait for anything
@@ -1399,7 +1475,7 @@ function initLoader(){
   initOrb();
   initShowcase();
   initMobileShowcase();
-  // (barrel-roll removed)
+  initSectionTransitions();
   initHorizontalScroll();
   initReveal();
   initScrollProgress();
