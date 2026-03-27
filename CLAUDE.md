@@ -20,6 +20,7 @@ A **Website-as-a-Service (WaaS)** platform called **Webnari**. The agency landin
 | Pest Control | **PestPro** | `pestpro.html` | standalone | Green + dark | — |
 | Roofing | **RoofPro** | `roofpro.html` | standalone | Slate/Red `#E63946` + dark navy | (305) 555-0300 |
 | E-commerce | **Wook Wear** | `wookwear.html` | 3 subpages | Gradient pink/purple/cyan + deep purple-black | — |
+| Meal Prep | **Jade's Spice** | `jades-spice.html` | standalone | Warm red `#D94040` + gold `#F0A830` + dark brown | — |
 
 ### VoltPro Subpages (electrician)
 `panel-upgrades.html`, `ev-charger.html`, `home-rewiring.html`, `smart-home.html`, `commercial.html`, `emergency-service.html`, `about.html`, `team.html`, `blog.html`, `reviews.html`, `privacy.html`, `contact.html`
@@ -58,6 +59,27 @@ A **Website-as-a-Service (WaaS)** platform called **Webnari**. The agency landin
 - **Existing domain:** wookwearshop.com (currently GoDaddy placeholder, can point to Webnari later)
 - **Hero placeholder:** `.hero-placeholder` wrapper on wookwear.html ready for future parallax swap
 - **Parallax concept (future):** Sewing machine stitching a pouch together, thread pulling, button eyes snapping on, psychedelic glow finale
+
+## Jade's Spice Design Tokens (jades-spice.html reference)
+```css
+--black: #0C0806; --dark: #14100C; --surface: #1C1612;
+--surface2: #261E18; --border: #342A22;
+--red: #D94040; --red2: #E86565;
+--gold: #F0A830; --gold2: #F5C563;
+--green: #3DAA6D; --green2: #5BC88A;
+--white: #FFF8F0; --muted: #8A7A6E; --text: #D4C4B4;
+```
+
+## Jade's Spice Notes
+- **Brand:** Jade's Spice by Jade (@jades_spice on Instagram, personal @jadelalajade 27K followers)
+- **Tagline:** "Beautiful moments on your lips"
+- **Cuisine:** Chinese/Asian-inspired fusion, fitness-focused meal prep
+- **Differentiators:** Custom macros for fitness goals, glass containers only (no plastic), organic ingredients, from-scratch cooking, authentic Chinese home cooking
+- **Aesthetic:** Warm, food-inspired tones (reds, golds, greens on warm dark browns)
+- **Nav:** Logo + tagline → Menu, Why Us, How It Works, About, Reviews → Instagram link → Order Now CTA (no 24/7 badge, no service dropdowns)
+- **Sections:** Hero (with floating macro cards) → Featured Meals (with macro breakdowns) → Why Us (4 cards) → How It Works (3 steps) → Full Menu (filterable by category) → About Jade → Testimonials → Order CTA → Footer
+- **Menu filter:** JS category filter (All, Chinese, Fusion, Healthy) toggles menu items
+- **Order flow:** DM on Instagram (no e-commerce backend)
 
 ## Templates Planned (not yet built)
 - **LockPro** — Locksmith — purple/gold palette

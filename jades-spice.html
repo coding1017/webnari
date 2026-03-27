@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jade's Spice — Meal Prep That Feels Like Home</title>
+<meta name="description" content="Asian-inspired meal prep with custom macros for your fitness goals. Freshly made from scratch with organic ingredients, served in glass containers. Beautiful moments on your lips.">
+<meta property="og:title" content="Jade's Spice — Meal Prep That Feels Like Home">
+<meta property="og:description" content="Asian-inspired meal prep with custom macros. Freshly made from scratch with love.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────────── */
+:root {
+  --black:   #0C0806;
+  --dark:    #14100C;
+  --surface: #1C1612;
+  --surface2:#261E18;
+  --border:  #342A22;
+  --red:     #D94040;
+  --red2:    #E86565;
+  --gold:    #F0A830;
+  --gold2:   #F5C563;
+  --green:   #3DAA6D;
+  --green2:  #5BC88A;
+  --white:   #FFF8F0;
+  --muted:   #8A7A6E;
+  --text:    #D4C4B4;
+  --font-head: 'Barlow Condensed', sans-serif;
+  --font-body: 'Barlow', sans-serif;
+  --radius:  4px;
+  --radius-lg: 8px;
+  --gradient: linear-gradient(135deg, #D94040, #F0A830);
+  --gradient-green: linear-gradient(135deg, #3DAA6D, #F0A830);
+}
+/* ─── RESET ──────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-body);
+  background: var(--black);
+  color: var(--text);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+/* ─── NOISE TEXTURE ──────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+/* ─── UTILITY ────────────────────────────────────── */
+.container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+.section { padding: 96px 0; }
+.section-sm { padding: 64px 0; }
+.eyebrow {
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--red);
+  margin-bottom: 12px;
+}
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 14px 28px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+.btn-primary { background: var(--red); color: var(--white); }
+.btn-primary:hover { background: var(--red2); transform: translateY(-1px); }
+.btn-gold { background: var(--gold); color: var(--black); }
+.btn-gold:hover { background: var(--gold2); transform: translateY(-1px); }
+.btn-outline {
+  background: transparent;
+  color: var(--white);
+  border: 1.5px solid var(--border);
+}
+.btn-outline:hover { border-color: var(--red); color: var(--red); }
+/* ─── NAV ────────────────────────────────────────── */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(12,8,6,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 68px;
+}
+.logo {
+  font-family: var(--font-head);
+  font-size: 22px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: var(--white);
+}
+.logo span { color: var(--red); }
+.logo small {
+  display: block;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-top: -4px;
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+}
+.nav-links a {
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: color 0.15s;
+}
+.nav-links a:hover { color: var(--white); }
+.nav-cta { display: flex; align-items: center; gap: 16px; }
+.ig-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-head);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  transition: color 0.15s;
+}
+.ig-link:hover { color: var(--gold); }
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+.hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--white);
+  border-radius: 2px;
+  transition: all 0.3s;
+}
+.hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+/* ─── MOBILE MENU ───────────────────────────────── */
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 0; right: -100%;
+  width: 300px; height: 100vh;
+  background: var(--dark);
+  border-left: 1px solid var(--border);
+  z-index: 99;
+  padding: 88px 24px 32px;
+  transition: right 0.3s ease;
+  overflow-y: auto;
+}
+.mobile-menu.open { right: 0; }
+.mobile-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 98;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.mobile-overlay.open { display: block; opacity: 1; }
+.mobile-menu-section { margin-bottom: 32px; }
+.mobile-menu-section h4 {
+  font-family: var(--font-head);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.mobile-menu-section a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 0;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  transition: color 0.15s;
+}
+.mobile-menu-section a:hover { color: var(--red); }
+.mobile-menu-cta {
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+.mobile-menu-cta .btn { width: 100%; justify-content: center; }
+/* ─── HERO ───────────────────────────────────────── */
+.hero {
+  position: relative;
+  padding: 120px 0 100px;
+  overflow: hidden;
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 60% 30%, rgba(217,64,64,0.12) 0%, transparent 60%),
+              radial-gradient(ellipse at 30% 70%, rgba(240,168,48,0.08) 0%, transparent 50%);
+  pointer-events: none;
+}
+.hero-content {
+  position: relative;
+  z-index: 1;
+  max-width: 680px;
+}
+.hero-tagline {
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hero-tagline::before {
+  content: '';
+  width: 32px;
+  height: 2px;
+  background: var(--gold);
+}
+.hero h1 {
+  font-family: var(--font-head);
+  font-size: clamp(48px, 7vw, 80px);
+  font-weight: 900;
+  line-height: 0.95;
+  color: var(--white);
+  letter-spacing: -0.02em;
+  margin-bottom: 24px;
+}
+.hero h1 em {
+  font-style: normal;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-desc {
+  font-size: 18px;
+  line-height: 1.7;
+  color: var(--text);
+  margin-bottom: 36px;
+  max-width: 520px;
+}
+.hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
+.hero-stats {
+  display: flex;
+  gap: 40px;
+  margin-top: 56px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+.hero-stat-num {
+  font-family: var(--font-head);
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--white);
+}
+.hero-stat-num span { color: var(--red); }
+.hero-stat-label {
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 4px;
+}
+/* ─── FLOATING MACRO CARD (hero decoration) ──────── */
+.hero-float {
+  position: absolute;
+  right: 5%;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.macro-float-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 24px;
+  width: 260px;
+  backdrop-filter: blur(8px);
+  animation: float 6s ease-in-out infinite;
+}
+.macro-float-card:nth-child(2) { animation-delay: -2s; }
+.macro-float-card:nth-child(3) { animation-delay: -4s; }
+.macro-float-card h4 {
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.macro-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+}
+.macro-label {
+  font-size: 12px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.macro-val {
+  font-family: var(--font-head);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gold);
+}
+.macro-bar {
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  margin-top: 4px;
+  overflow: hidden;
+}
+.macro-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: var(--gradient);
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+/* ─── SECTION HEADINGS ───────────────────────────── */
+.section-head {
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto 56px;
+}
+.section-head h2 {
+  font-family: var(--font-head);
+  font-size: clamp(32px, 5vw, 48px);
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 16px;
+}
+.section-head p {
+  font-size: 16px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+/* ─── FEATURED MEALS ─────────────────────────────── */
+.meals-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.meal-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+.meal-card:hover {
+  border-color: var(--red);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(217,64,64,0.15);
+}
+.meal-img {
+  height: 200px;
+  background: var(--surface2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.meal-img-icon {
+  opacity: 0.3;
+}
+.meal-cuisine-tag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  font-family: var(--font-head);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  background: var(--red);
+  color: var(--white);
+  padding: 4px 10px;
+  border-radius: 3px;
+}
+.meal-body { padding: 20px; }
+.meal-name {
+  font-family: var(--font-head);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--white);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.meal-desc {
+  font-size: 14px;
+  color: var(--muted);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.meal-macros {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+.meal-macro {
+  text-align: center;
+  padding: 8px 4px;
+  background: var(--dark);
+  border-radius: var(--radius);
+}
+.meal-macro-val {
+  font-family: var(--font-head);
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--gold);
+  display: block;
+}
+.meal-macro-label {
+  font-size: 10px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+/* ─── WHY JADE'S SPICE ───────────────────────────── */
+.why-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+.why-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px 24px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+.why-card:hover {
+  border-color: var(--gold);
+  transform: translateY(-4px);
+}
+.why-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(217,64,64,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+}
+.why-card:nth-child(2) .why-icon { background: rgba(240,168,48,0.1); }
+.why-card:nth-child(3) .why-icon { background: rgba(61,170,109,0.1); }
+.why-card:nth-child(4) .why-icon { background: rgba(217,64,64,0.1); }
+.why-card h3 {
+  font-family: var(--font-head);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--white);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin-bottom: 10px;
+}
+.why-card p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+/* ─── HOW IT WORKS ───────────────────────────────── */
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  position: relative;
+}
+.steps-grid::before {
+  content: '';
+  position: absolute;
+  top: 40px;
+  left: 15%;
+  right: 15%;
+  height: 2px;
+  background: var(--border);
+}
+.step-card { text-align: center; position: relative; }
+.step-num {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 2px solid var(--red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-head);
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--red);
+  margin: 0 auto 24px;
+  position: relative;
+  z-index: 1;
+}
+.step-card h3 {
+  font-family: var(--font-head);
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--white);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.step-card p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 280px;
+  margin: 0 auto;
+}
+/* ─── ABOUT ──────────────────────────────────────── */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  align-items: center;
+}
+.about-img {
+  width: 100%;
+  aspect-ratio: 4/5;
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+.about-img::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, rgba(217,64,64,0.05), rgba(240,168,48,0.05));
+  pointer-events: none;
+}
+.about-content .eyebrow { color: var(--gold); }
+.about-content h2 {
+  font-family: var(--font-head);
+  font-size: clamp(32px, 4vw, 44px);
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1;
+  margin-bottom: 20px;
+}
+.about-content h2 em {
+  font-style: normal;
+  color: var(--red);
+}
+.about-content p {
+  font-size: 16px;
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+.about-values {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 28px;
+}
+.about-value {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--white);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.about-value svg { flex-shrink: 0; }
+/* ─── TESTIMONIALS ───────────────────────────────── */
+.testimonials-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.testimonial-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 32px 24px;
+  position: relative;
+}
+.testimonial-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 24px;
+  right: 24px;
+  height: 2px;
+  background: var(--gradient);
+  border-radius: 0 0 2px 2px;
+}
+.testimonial-stars {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 16px;
+}
+.testimonial-text {
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--text);
+  margin-bottom: 20px;
+  font-style: italic;
+}
+.testimonial-author {
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--white);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.testimonial-handle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+/* ─── MENU PREVIEW ───────────────────────────────── */
+.menu-preview {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 48px;
+}
+.menu-categories {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+.menu-cat-btn {
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 10px 24px;
+  border-radius: var(--radius);
+  background: var(--dark);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.menu-cat-btn.active,
+.menu-cat-btn:hover {
+  background: var(--red);
+  border-color: var(--red);
+  color: var(--white);
+}
+.menu-items {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+.menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: var(--dark);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  transition: border-color 0.2s;
+}
+.menu-item:hover { border-color: var(--gold); }
+.menu-item-info h4 {
+  font-family: var(--font-head);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--white);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+.menu-item-info span {
+  font-size: 12px;
+  color: var(--muted);
+}
+.menu-item-macros {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+.menu-item-macro {
+  text-align: center;
+}
+.menu-item-macro strong {
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--gold);
+  display: block;
+}
+.menu-item-macro small {
+  font-size: 9px;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+/* ─── CTA BANNER ─────────────────────────────────── */
+.cta-banner {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 64px 48px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.cta-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(217,64,64,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-banner h2 {
+  font-family: var(--font-head);
+  font-size: clamp(32px, 5vw, 52px);
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1;
+  margin-bottom: 16px;
+  position: relative;
+}
+.cta-banner p {
+  font-size: 18px;
+  color: var(--muted);
+  margin-bottom: 32px;
+  position: relative;
+}
+.cta-banner .btn { position: relative; }
+/* ─── FOOTER ─────────────────────────────────────── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 64px 0 32px;
+  position: relative;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+.footer-brand .logo { margin-bottom: 12px; }
+.footer-brand p {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 20px;
+}
+.footer-social {
+  display: flex;
+  gap: 12px;
+}
+.footer-social a {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+.footer-social a:hover {
+  border-color: var(--red);
+  background: rgba(217,64,64,0.1);
+}
+.footer-col h4 {
+  font-family: var(--font-head);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--white);
+  margin-bottom: 20px;
+}
+.footer-col a {
+  display: block;
+  font-size: 14px;
+  color: var(--muted);
+  padding: 6px 0;
+  transition: color 0.15s;
+}
+.footer-col a:hover { color: var(--red); }
+.footer-contact-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: 14px;
+  color: var(--muted);
+}
+.footer-bottom {
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: var(--muted);
+}
+/* ─── SCROLL REVEALS ─────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+/* ─── RESPONSIVE ─────────────────────────────────── */
+@media (max-width: 1024px) {
+  .hero-float { display: none; }
+  .meals-grid { grid-template-columns: repeat(2, 1fr); }
+  .why-grid { grid-template-columns: repeat(2, 1fr); }
+  .footer-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .nav-cta .ig-link { display: none; }
+  .hamburger { display: flex; }
+  .mobile-menu { display: block; }
+  .hero { padding: 80px 0 60px; min-height: auto; }
+  .hero h1 { font-size: 42px; }
+  .hero-stats { gap: 24px; flex-wrap: wrap; }
+  .meals-grid { grid-template-columns: 1fr; }
+  .why-grid { grid-template-columns: 1fr; }
+  .steps-grid { grid-template-columns: 1fr; gap: 40px; }
+  .steps-grid::before { display: none; }
+  .about-grid { grid-template-columns: 1fr; gap: 40px; }
+  .testimonials-grid { grid-template-columns: 1fr; }
+  .menu-items { grid-template-columns: 1fr; }
+  .menu-preview { padding: 24px; }
+  .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+  .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+  .cta-banner { padding: 40px 24px; }
+  .about-values { grid-template-columns: 1fr; }
+  .section { padding: 64px 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ NAV ═══════════════════════════════════════ -->
+<nav>
+  <div class="container nav-inner">
+    <a href="jades-spice.html" class="logo">JADE'S <span>SPICE</span><small>Beautiful moments on your lips</small></a>
+    <ul class="nav-links">
+      <li><a href="#meals">Menu</a></li>
+      <li><a href="#why">Why Us</a></li>
+      <li><a href="#how">How It Works</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#reviews">Reviews</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="https://www.instagram.com/jades_spice/" target="_blank" rel="noopener" class="ig-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        @jades_spice
+      </a>
+      <a href="#order" class="btn btn-primary">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        Order Now
+      </a>
+    </div>
+    <button class="hamburger" id="hamburger"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- ═══ MOBILE MENU ══════════════════════════════ -->
+<div class="mobile-overlay" id="mobileOverlay"></div>
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mobile-menu-section">
+    <h4>Navigate</h4>
+    <a href="#meals">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+      Weekly Menu
+    </a>
+    <a href="#why">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Why Jade's Spice
+    </a>
+    <a href="#how">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      How It Works
+    </a>
+    <a href="#about">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+      About Jade
+    </a>
+    <a href="#reviews">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Reviews
+    </a>
+  </div>
+  <div class="mobile-menu-section">
+    <h4>Connect</h4>
+    <a href="https://www.instagram.com/jades_spice/" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      @jades_spice on Instagram
+    </a>
+  </div>
+  <div class="mobile-menu-cta">
+    <a href="#order" class="btn btn-primary">Order Now</a>
+  </div>
+</div>
+
+<!-- ═══ HERO ══════════════════════════════════════ -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-tagline">Asian-inspired meal prep</div>
+      <h1>MEAL PREP<br>THAT FEELS<br>LIKE <em>HOME</em></h1>
+      <p class="hero-desc">Custom macro-tracked meals made fresh from scratch with organic ingredients. Chinese-inspired flavors your fitness goals will thank you for. Served in glass, never plastic.</p>
+      <div class="hero-buttons">
+        <a href="#order" class="btn btn-primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          Order This Week
+        </a>
+        <a href="#meals" class="btn btn-outline">View Menu</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-num">100<span>%</span></div>
+          <div class="hero-stat-label">From Scratch</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">0<span>g</span></div>
+          <div class="hero-stat-label">Plastic Used</div>
+        </div>
+        <div>
+          <div class="hero-stat-num">55<span>g+</span></div>
+          <div class="hero-stat-label">Avg Protein</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Floating macro cards (desktop decoration) -->
+  <div class="hero-float">
+    <div class="macro-float-card">
+      <h4>Szechuan Spicy Chicken</h4>
+      <div class="macro-row"><span class="macro-label">Protein</span><span class="macro-val">55g</span></div>
+      <div class="macro-bar"><div class="macro-bar-fill" style="width:78%"></div></div>
+      <div class="macro-row" style="margin-top:8px"><span class="macro-label">Calories</span><span class="macro-val">445</span></div>
+      <div class="macro-bar"><div class="macro-bar-fill" style="width:55%"></div></div>
+    </div>
+    <div class="macro-float-card">
+      <h4>Hong Shao Rou</h4>
+      <div class="macro-row"><span class="macro-label">Protein</span><span class="macro-val">48g</span></div>
+      <div class="macro-bar"><div class="macro-bar-fill" style="width:68%"></div></div>
+      <div class="macro-row" style="margin-top:8px"><span class="macro-label">Calories</span><span class="macro-val">520</span></div>
+      <div class="macro-bar"><div class="macro-bar-fill" style="width:65%"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FEATURED MEALS ═══════════════════════════ -->
+<section class="section" id="meals">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">This Week's Favorites</div>
+      <h2>MEALS THAT HIT<br>DIFFERENT</h2>
+      <p>Every dish is made fresh from scratch with organic ingredients, custom macros for your goals, and flavors that remind you of home.</p>
+    </div>
+    <div class="meals-grid">
+      <div class="meal-card reveal reveal-delay-1">
+        <div class="meal-img">
+          <svg class="meal-img-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+          <span class="meal-cuisine-tag">Chinese</span>
+        </div>
+        <div class="meal-body">
+          <div class="meal-name">Szechuan Spicy Chicken</div>
+          <div class="meal-desc">Tender chicken breast in a fiery Szechuan sauce with stir-fried vegetables and turmeric rice.</div>
+          <div class="meal-macros">
+            <div class="meal-macro"><span class="meal-macro-val">55g</span><span class="meal-macro-label">Protein</span></div>
+            <div class="meal-macro"><span class="meal-macro-val">445</span><span class="meal-macro-label">Cal</span></div>
+            <div class="meal-macro"><span class="meal-macro-val">33g</span><span class="meal-macro-label">Carbs</span></div>
+            <div class="meal-macro"><span class="meal-macro-val">12g</span><span class="meal-macro-label">Fat</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="meal-card reveal reveal-delay-2">
+        <div class="meal-img">
+          <svg class="meal-img-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          <span class="meal-cuisine-tag">Chinese</span>
+        </div>
+        <div class="meal-body">
+          <div class="meal-name">Hong Shao Rou</div>
+          <div class="meal-desc">Traditional red braised pork belly, slow-cooked to perfection with star anise, ginger, and soy.</div>
+          <div class="meal-macros">
+            <div class="meal-macro"><span class="meal-macro-val">48g</span><span class="meal-macro-label">Protein</span></div>
+            <div class="meal-macro"><span class="meal-macro-val">520</span><span class="meal-macro-label">Cal</span></div>
+            <div class="meal-macro"><span class="meal-macro-val">28g</span><span class="meal-macro-label">Carbs</span></div>
+            <div class="meal-macro"><span class="meal-macro-val">22g</span><span class="meal-macro-label">Fat</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="meal-card reveal reveal-delay-3">
+        <div class="meal-img">
+          <svg class="meal-img-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1"><path d="M12 22c-4.97 0-9-2.69-9-6v-4c0-3.31 4.03-6 9-6s9 2.69 9 6v4c0 3.31-4.03 6-9 6z"/><path d="M12 14c4.97 0 9-2.69 9-6"/><path d="M3 8c0 3.31 4.03 6 9 6"/></svg>
+          <span class="meal-cuisine-tag">Fusion</span>
+        </div>
+        <div class="meal-body">
+          <div class="meal-name">Teriyaki Chicken Bowl</div>
+          <div class="meal-desc">Lean chicken breast with house teriyaki glaze, garlic asparagus, and fluffy jasmine rice.</div>
+          <div class="meal-macros">
+            <div class="meal-macro"><span class="meal-macro-val">52g</span><span class="meal-macro-label">Protein</span></div>
+            <div class="meal-macro"><span class="meal-macro-val">480</span><span class="meal-macro-label">Cal</span></div>
+            <div class="meal-macro"><span class="meal-macro-val">40g</span><span class="meal-macro-label">Carbs</span></div>
+            <div class="meal-macro"><span class="meal-macro-val">14g</span><span class="meal-macro-label">Fat</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="meal-card reveal reveal-delay-1">
+        <div class="meal-img">
+          <svg class="meal-img-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          <span class="meal-cuisine-tag">Chinese</span>
+        </div>
+        <div class="meal-body">
+          <div class="meal-name">Mapo Tofu Power Bowl</div>
+          <div class="meal-desc">Spicy Sichuan-style tofu with 93% lean ground beef, chili oil, and steamed vegetables.</div>
+          <div class="meal-macros">
+            <div class="meal-macro"><span class="meal-macro-val">42g</span><span class="meal-macro-label">Protein</span></div>
+            <div class="meal-macro"><span class="meal-macro-val">410</span><span class="meal-macro-label">Cal</span></div>
+            <div class="meal-macro"><span class="meal-macro-val">25g</span><span class="meal-macro-label">Carbs</span></div>
+            <div class="meal-macro"><span class="meal-macro-val">18g</span><span class="meal-macro-label">Fat</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="meal-card reveal reveal-delay-2">
+        <div class="meal-img">
+          <svg class="meal-img-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          <span class="meal-cuisine-tag">Fusion</span>
+        </div>
+        <div class="meal-body">
+          <div class="meal-name">Chili Oil Dumplings</div>
+          <div class="meal-desc">Handmade dumplings in house chili oil with fresh ginger, scallions, and crispy garlic.</div>
+          <div class="meal-macros">
+            <div class="meal-macro"><span class="meal-macro-val">38g</span><span class="meal-macro-label">Protein</span></div>
+            <div class="meal-macro"><span class="meal-macro-val">390</span><span class="meal-macro-label">Cal</span></div>
+            <div class="meal-macro"><span class="meal-macro-val">35g</span><span class="meal-macro-label">Carbs</span></div>
+            <div class="meal-macro"><span class="meal-macro-val">15g</span><span class="meal-macro-label">Fat</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="meal-card reveal reveal-delay-3">
+        <div class="meal-img">
+          <svg class="meal-img-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          <span class="meal-cuisine-tag">Healthy</span>
+        </div>
+        <div class="meal-body">
+          <div class="meal-name">Wild Salmon & Greens</div>
+          <div class="meal-desc">Wild-caught Alaska sockeye salmon with organic broccoli, squash, and lemon herb sauce.</div>
+          <div class="meal-macros">
+            <div class="meal-macro"><span class="meal-macro-val">50g</span><span class="meal-macro-label">Protein</span></div>
+            <div class="meal-macro"><span class="meal-macro-val">420</span><span class="meal-macro-label">Cal</span></div>
+            <div class="meal-macro"><span class="meal-macro-val">18g</span><span class="meal-macro-label">Carbs</span></div>
+            <div class="meal-macro"><span class="meal-macro-val">16g</span><span class="meal-macro-label">Fat</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ WHY JADE'S SPICE ═════════════════════════ -->
+<section class="section" id="why" style="background: var(--dark);">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow" style="color: var(--gold);">Why Jade's Spice</div>
+      <h2>NOT YOUR AVERAGE<br>MEAL PREP</h2>
+      <p>Like having a trainer and a loving mother in the kitchen — someone who actually cares what goes into your body.</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-card reveal reveal-delay-1">
+        <div class="why-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>Custom Macros</h3>
+        <p>Every meal is tracked with protein, carbs, fat, and calories tailored to your specific fitness goals. Not generic — built for you.</p>
+      </div>
+      <div class="why-card reveal reveal-delay-2">
+        <div class="why-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <h3>Glass Only</h3>
+        <p>Zero plastic containers, ever. Your food comes in glass because nobody should eat microwaved plastic. Health first, always.</p>
+      </div>
+      <div class="why-card reveal reveal-delay-3">
+        <div class="why-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M12 22c-4.97 0-9-2.69-9-6v-4c0-3.31 4.03-6 9-6s9 2.69 9 6v4c0 3.31-4.03 6-9 6z"/><path d="M3 6c0 3.31 4.03 6 9 6s9-2.69 9-6"/></svg>
+        </div>
+        <h3>From Scratch</h3>
+        <p>No shortcuts, no pre-made sauces, no frozen anything. Every ingredient is fresh, organic, and hand-selected from trusted sources.</p>
+      </div>
+      <div class="why-card reveal reveal-delay-4">
+        <div class="why-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        </div>
+        <h3>Made With Love</h3>
+        <p>This isn't a factory — it's a passion project. Authentic Chinese recipes passed down through generations, cooked with genuine care.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ HOW IT WORKS ══════════════════════════════ -->
+<section class="section" id="how">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow">How It Works</div>
+      <h2>THREE STEPS TO<br>EATING AMAZING</h2>
+    </div>
+    <div class="steps-grid">
+      <div class="step-card reveal reveal-delay-1">
+        <div class="step-num">1</div>
+        <h3>Tell Us Your Goals</h3>
+        <p>DM us on Instagram or message us here. Share your fitness goals, dietary preferences, and how many meals you need.</p>
+      </div>
+      <div class="step-card reveal reveal-delay-2">
+        <div class="step-num">2</div>
+        <h3>We Cook Fresh</h3>
+        <p>Jade personally prepares your meals from scratch with organic ingredients, custom-portioned to your exact macros.</p>
+      </div>
+      <div class="step-card reveal reveal-delay-3">
+        <div class="step-num">3</div>
+        <h3>Pickup or Delivery</h3>
+        <p>Grab your glass containers packed with flavor. Heat, eat, and crush your fitness goals all week long.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ MENU PREVIEW ═════════════════════════════ -->
+<section class="section" id="menu" style="background: var(--dark);">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow" style="color: var(--gold);">Full Menu</div>
+      <h2>WHAT'S COOKING<br>THIS WEEK</h2>
+      <p>The menu rotates weekly so you never get bored. Every dish is a banger.</p>
+    </div>
+    <div class="menu-preview reveal">
+      <div class="menu-categories">
+        <button class="menu-cat-btn active" data-cat="all">All</button>
+        <button class="menu-cat-btn" data-cat="chinese">Chinese</button>
+        <button class="menu-cat-btn" data-cat="fusion">Fusion</button>
+        <button class="menu-cat-btn" data-cat="healthy">Healthy</button>
+      </div>
+      <div class="menu-items" id="menuItems">
+        <div class="menu-item" data-cat="chinese">
+          <div class="menu-item-info">
+            <h4>Szechuan Spicy Chicken</h4>
+            <span>With turmeric rice & vegetables</span>
+          </div>
+          <div class="menu-item-macros">
+            <div class="menu-item-macro"><strong>55g</strong><small>Protein</small></div>
+            <div class="menu-item-macro"><strong>445</strong><small>Cal</small></div>
+          </div>
+        </div>
+        <div class="menu-item" data-cat="chinese">
+          <div class="menu-item-info">
+            <h4>Hong Shao Rou</h4>
+            <span>Red braised pork belly</span>
+          </div>
+          <div class="menu-item-macros">
+            <div class="menu-item-macro"><strong>48g</strong><small>Protein</small></div>
+            <div class="menu-item-macro"><strong>520</strong><small>Cal</small></div>
+          </div>
+        </div>
+        <div class="menu-item" data-cat="chinese">
+          <div class="menu-item-info">
+            <h4>Mapo Tofu Power Bowl</h4>
+            <span>With 93% lean ground beef</span>
+          </div>
+          <div class="menu-item-macros">
+            <div class="menu-item-macro"><strong>42g</strong><small>Protein</small></div>
+            <div class="menu-item-macro"><strong>410</strong><small>Cal</small></div>
+          </div>
+        </div>
+        <div class="menu-item" data-cat="fusion">
+          <div class="menu-item-info">
+            <h4>Teriyaki Chicken Bowl</h4>
+            <span>With garlic asparagus</span>
+          </div>
+          <div class="menu-item-macros">
+            <div class="menu-item-macro"><strong>52g</strong><small>Protein</small></div>
+            <div class="menu-item-macro"><strong>480</strong><small>Cal</small></div>
+          </div>
+        </div>
+        <div class="menu-item" data-cat="fusion">
+          <div class="menu-item-info">
+            <h4>Chili Oil Dumplings</h4>
+            <span>Handmade with fresh ginger</span>
+          </div>
+          <div class="menu-item-macros">
+            <div class="menu-item-macro"><strong>38g</strong><small>Protein</small></div>
+            <div class="menu-item-macro"><strong>390</strong><small>Cal</small></div>
+          </div>
+        </div>
+        <div class="menu-item" data-cat="healthy">
+          <div class="menu-item-info">
+            <h4>Wild Salmon & Greens</h4>
+            <span>Alaska sockeye with organic broccoli</span>
+          </div>
+          <div class="menu-item-macros">
+            <div class="menu-item-macro"><strong>50g</strong><small>Protein</small></div>
+            <div class="menu-item-macro"><strong>420</strong><small>Cal</small></div>
+          </div>
+        </div>
+        <div class="menu-item" data-cat="chinese">
+          <div class="menu-item-info">
+            <h4>Tomato Beef Stew</h4>
+            <span>Angus beef chuck, slow-braised</span>
+          </div>
+          <div class="menu-item-macros">
+            <div class="menu-item-macro"><strong>46g</strong><small>Protein</small></div>
+            <div class="menu-item-macro"><strong>490</strong><small>Cal</small></div>
+          </div>
+        </div>
+        <div class="menu-item" data-cat="healthy">
+          <div class="menu-item-info">
+            <h4>Asian Bell Pepper Chicken</h4>
+            <span>Low carb, high fiber</span>
+          </div>
+          <div class="menu-item-macros">
+            <div class="menu-item-macro"><strong>50g</strong><small>Protein</small></div>
+            <div class="menu-item-macro"><strong>380</strong><small>Cal</small></div>
+          </div>
+        </div>
+        <div class="menu-item" data-cat="fusion">
+          <div class="menu-item-info">
+            <h4>Shengjian Bao</h4>
+            <span>Pan-fried pork buns, crispy bottom</span>
+          </div>
+          <div class="menu-item-macros">
+            <div class="menu-item-macro"><strong>35g</strong><small>Protein</small></div>
+            <div class="menu-item-macro"><strong>450</strong><small>Cal</small></div>
+          </div>
+        </div>
+        <div class="menu-item" data-cat="healthy">
+          <div class="menu-item-info">
+            <h4>Turmeric Onion Chicken</h4>
+            <span>Anti-inflammatory, lean & clean</span>
+          </div>
+          <div class="menu-item-macros">
+            <div class="menu-item-macro"><strong>54g</strong><small>Protein</small></div>
+            <div class="menu-item-macro"><strong>400</strong><small>Cal</small></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ ABOUT ════════════════════════════════════ -->
+<section class="section" id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-img reveal">
+        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="0.8" opacity="0.4">
+          <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
+        </svg>
+      </div>
+      <div class="about-content reveal reveal-delay-1">
+        <div class="eyebrow">Meet The Chef</div>
+        <h2>HI, I'M <em>JADE</em></h2>
+        <p>I grew up watching my family cook incredible Chinese food from scratch — recipes passed down through generations. When I started my fitness journey, I realized that most meal prep services were bland, boring, and full of shortcuts.</p>
+        <p>So I started cooking for friends. Then friends of friends. Then strangers who became friends. Every meal I make comes from the same place: a genuine love for food and a deep care for what you put in your body.</p>
+        <p>I'm not a corporation. I'm the person who shops for your organic broccoli at 6am, hand-folds your dumplings, and tracks your macros because I want you to hit your goals as badly as you do.</p>
+        <div class="about-values">
+          <div class="about-value">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Organic Ingredients
+          </div>
+          <div class="about-value">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Glass Containers
+          </div>
+          <div class="about-value">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Custom Macros
+          </div>
+          <div class="about-value">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            Made With Love
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TESTIMONIALS ═════════════════════════════ -->
+<section class="section" id="reviews" style="background: var(--dark);">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow" style="color: var(--gold);">Reviews</div>
+      <h2>WHAT PEOPLE<br>ARE SAYING</h2>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card reveal reveal-delay-1">
+        <div class="testimonial-stars">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="testimonial-text">"Honestly the best meal prep I've ever had. The flavors are restaurant-quality but with wholesome, simple ingredients. Jade genuinely cares about what she's putting in your food."</p>
+        <div class="testimonial-author">Happy Customer</div>
+        <div class="testimonial-handle">via Instagram</div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-2">
+        <div class="testimonial-stars">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="testimonial-text">"I've tried so many meal prep companies and none of them come close. The Szechuan chicken and dumplings are on another level. My gym gains have never been better."</p>
+        <div class="testimonial-author">Fitness Enthusiast</div>
+        <div class="testimonial-handle">via Instagram</div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-3">
+        <div class="testimonial-stars">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="var(--gold)" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="testimonial-text">"First order and I'm already hooked. The glass containers, the macro tracking, the actual flavor — everything about this is a cut above. Highly recommend."</p>
+        <div class="testimonial-author">New Customer</div>
+        <div class="testimonial-handle">via Instagram</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ CTA / ORDER ══════════════════════════════ -->
+<section class="section" id="order">
+  <div class="container">
+    <div class="cta-banner reveal">
+      <h2>READY TO EAT<br>LIKE YOU MEAN IT?</h2>
+      <p>DM @jades_spice on Instagram to place your order. Tell us your goals, and we'll build your perfect meal plan.</p>
+      <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+        <a href="https://www.instagram.com/jades_spice/" target="_blank" rel="noopener" class="btn btn-primary">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          DM Us on Instagram
+        </a>
+        <a href="#meals" class="btn btn-outline">See The Menu</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ════════════════════════════════════ -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">JADE'S <span>SPICE</span><small>Beautiful moments on your lips</small></div>
+        <p>Asian-inspired meal prep made fresh from scratch with organic ingredients. Custom macros for your fitness goals. Glass containers only.</p>
+        <div class="footer-social">
+          <a href="https://www.instagram.com/jades_spice/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--white)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Menu</h4>
+        <a href="#meals">This Week's Meals</a>
+        <a href="#menu">Full Menu</a>
+        <a href="#how">How It Works</a>
+        <a href="#order">Order Now</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="#about">About Jade</a>
+        <a href="#reviews">Reviews</a>
+        <a href="#why">Why Us</a>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <div class="footer-contact-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          <a href="https://www.instagram.com/jades_spice/" target="_blank" rel="noopener">@jades_spice</a>
+        </div>
+        <div class="footer-contact-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          Made with love
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Jade's Spice. All rights reserved.</span>
+      <span>Freshly made from scratch with organic ingredients</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══ JAVASCRIPT ════════════════════════════════ -->
+<script>
+/* ─── HAMBURGER ─────────────────────────────────── */
+(function() {
+  var hamburger = document.getElementById('hamburger');
+  var menu = document.getElementById('mobileMenu');
+  var overlay = document.getElementById('mobileOverlay');
+  function toggleMenu() {
+    hamburger.classList.toggle('open');
+    menu.classList.toggle('open');
+    overlay.classList.toggle('open');
+    document.body.style.overflow = menu.classList.contains('open') ? 'hidden' : '';
+  }
+  hamburger.addEventListener('click', toggleMenu);
+  overlay.addEventListener('click', toggleMenu);
+  menu.querySelectorAll('a').forEach(function(a) {
+    a.addEventListener('click', function() {
+      if (menu.classList.contains('open')) toggleMenu();
+    });
+  });
+})();
+
+/* ─── SCROLL REVEALS ────────────────────────────── */
+(function() {
+  var reveals = document.querySelectorAll('.reveal');
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  reveals.forEach(function(el) { observer.observe(el); });
+})();
+
+/* ─── MENU CATEGORY FILTER ──────────────────────── */
+(function() {
+  var btns = document.querySelectorAll('.menu-cat-btn');
+  var items = document.querySelectorAll('.menu-item');
+  btns.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      btns.forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      var cat = btn.getAttribute('data-cat');
+      items.forEach(function(item) {
+        if (cat === 'all' || item.getAttribute('data-cat') === cat) {
+          item.style.display = '';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    });
+  });
+})();
+
+/* ─── NAV SHADOW ON SCROLL ──────────────────────── */
+(function() {
+  var nav = document.querySelector('nav');
+  window.addEventListener('scroll', function() {
+    if (window.scrollY > 20) {
+      nav.style.boxShadow = '0 4px 24px rgba(0,0,0,0.3)';
+    } else {
+      nav.style.boxShadow = 'none';
+    }
+  });
+})();
+
+/* ─── SMOOTH SCROLL FOR ANCHOR LINKS ────────────── */
+document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+  a.addEventListener('click', function(e) {
+    var target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+</script>
+</body>
+</html>
