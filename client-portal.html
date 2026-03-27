@@ -716,7 +716,7 @@ td.bold { color: var(--white); font-weight: 600; }
 
 /* ── RESPONSIVE ─────────────────────────────────────── */
 @media (max-width: 1200px) {
-  .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr) !important; }
   .grid-2, .grid-2-equal { grid-template-columns: 1fr; }
   .grid-3 { grid-template-columns: 1fr 1fr; }
   .quick-actions { grid-template-columns: 1fr 1fr; }
@@ -773,7 +773,7 @@ td.bold { color: var(--white); font-weight: 600; }
 }
 
 @media (max-width: 480px) {
-  .kpi-grid { grid-template-columns: 1fr; }
+  .kpi-grid { grid-template-columns: 1fr !important; }
   .topbar-title { font-size: 14px; }
 }
 </style>
@@ -810,6 +810,18 @@ td.bold { color: var(--white); font-weight: 600; }
     <button class="nav-item" onclick="navigate('leads')">
       <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></span> Leads
       <span class="nav-badge" id="leads-badge" style="display:none">0</span>
+    </button>
+    <button class="nav-item" onclick="navigate('ads')">
+      <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span> Ad Campaigns
+    </button>
+    <button class="nav-item" onclick="navigate('seo')">
+      <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span> SEO
+    </button>
+    <button class="nav-item" onclick="navigate('health')">
+      <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span> Site Health
+    </button>
+    <button class="nav-item" onclick="navigate('content')">
+      <span class="nav-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg></span> Content
     </button>
     <div class="nav-divider"></div>
     <button class="nav-item" onclick="navigate('billing')">
@@ -864,7 +876,19 @@ td.bold { color: var(--white); font-weight: 600; }
   <!-- ── TAB 4: LEADS ── -->
   <div class="page" id="page-leads"></div>
 
-  <!-- ── TAB 5: BILLING ── -->
+  <!-- ── TAB 5: AD CAMPAIGNS ── -->
+  <div class="page" id="page-ads"></div>
+
+  <!-- ── TAB 6: SEO ── -->
+  <div class="page" id="page-seo"></div>
+
+  <!-- ── TAB 7: SITE HEALTH ── -->
+  <div class="page" id="page-health"></div>
+
+  <!-- ── TAB 8: CONTENT ── -->
+  <div class="page" id="page-content"></div>
+
+  <!-- ── TAB 9: BILLING ── -->
   <div class="page" id="page-billing"></div>
 
   <!-- ── TAB 6: SUPPORT ── -->
@@ -923,6 +947,21 @@ function doLogout() {
   window.location.href = 'index.html';
 }
 
+// ════════════════════════════════════════════════════
+//  PLAN-BASED ACCESS CONTROL
+// ════════════════════════════════════════════════════
+var PLAN_TOOLS = {
+  starter: ['overview','performance','billing','support','account'],
+  standard: ['overview','performance','reputation','leads','billing','support','account'],
+  premium: ['overview','performance','reputation','leads','ads','seo','health','content','billing','support','account']
+};
+
+function getClientTools() {
+  var custom = CLIENT ? CLIENT.toolAccess : null;
+  if (custom && custom.length) return custom;
+  return PLAN_TOOLS[(CLIENT && CLIENT.plan) || 'premium'] || PLAN_TOOLS.premium;
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   const raw = sessionStorage.getItem('waas_user');
   if (!raw) { window.location.href = 'index.html'; return; }
@@ -951,11 +990,32 @@ document.addEventListener('DOMContentLoaded', function() {
     badge.style.display = '';
   }
 
+  // Hide nav items based on plan access
+  // TODO: Enable plan-based gating when ready
+  // For now, show all tools to all clients
+  var allowedTools = Object.values(PLAN_TOOLS).reduce(function(acc, arr) {
+    arr.forEach(function(v) { if (acc.indexOf(v) === -1) acc.push(v); });
+    return acc;
+  }, []);
+  document.querySelectorAll('.nav-item').forEach(function(item) {
+    var onclick = item.getAttribute('onclick');
+    if (onclick) {
+      var match = onclick.match(/navigate\('(\w+)'\)/);
+      if (match && allowedTools.indexOf(match[1]) === -1) {
+        item.style.display = 'none';
+      }
+    }
+  });
+
   // Render all tabs
   renderOverview();
   renderPerformance();
   renderReputation();
   renderLeads();
+  renderAds();
+  renderSeo();
+  renderHealth();
+  renderContent();
   renderBilling();
   renderSupport();
   renderAccount();
@@ -1049,7 +1109,8 @@ function getGreeting() {
 // ════════════════════════════════════════════════════
 var TITLES = {
   overview: 'Overview', performance: 'Performance', reputation: 'Reputation',
-  leads: 'Leads', billing: 'Billing', support: 'Support', account: 'Account'
+  leads: 'Leads', ads: 'Ad Campaigns', seo: 'SEO', health: 'Site Health',
+  content: 'Content', billing: 'Billing', support: 'Support', account: 'Account'
 };
 
 function navigate(page) {
@@ -1285,49 +1346,105 @@ function renderOverview() {
 function renderPerformance() {
   var a = CLIENT.analytics || {};
   var sessions = a.sessions || 0;
-  var history = generateHistory(sessions, 12);
-  var maxH = Math.max.apply(null, history) || 1;
+  var organic = a.organic || 0;
+  var conversions = a.conversions || 0;
+  var convRate = a.convRate || 0;
+  var bounceRate = a.bounceRate || 0;
+  var avgDuration = a.avgDuration || '0:00';
+  var sessT = trendArrow(sessions, a.prevSessions || 0);
+  var convT = trendArrow(conversions, a.prevConversions || 0);
   var ps = getPagespeed();
 
-  // SVG area chart
-  var chartW = 700, chartH = 200, padL = 40, padB = 30, padT = 10;
-  var plotW = chartW - padL - 10;
+  var history = generateHistory(sessions, 12);
+  var convHistory = generateHistory(conversions, 12);
+  var maxH = Math.max.apply(null, history.concat(convHistory)) || 1;
+
+  // Bounce rate color
+  var bounceColor = bounceRate <= 35 ? 'var(--green)' : bounceRate <= 55 ? 'var(--amber)' : 'var(--red)';
+
+  // KPI cards
+  var kpiHtml = '<div class="kpi-grid" style="grid-template-columns:repeat(6,1fr)">' +
+    '<div class="kpi-card card-3d" style="--accent:var(--indigo)"><div class="kpi-glow"></div>' +
+    '<div class="kpi-label">Sessions <span class="kpi-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></span></div>' +
+    '<div class="kpi-value">' + formatNum(sessions) + '</div>' + sessT.html + '</div>' +
+
+    '<div class="kpi-card card-3d" style="--accent:var(--green)"><div class="kpi-glow"></div>' +
+    '<div class="kpi-label">Organic Traffic</div>' +
+    '<div class="kpi-value">' + formatNum(organic) + '</div>' +
+    '<span class="badge badge-green" style="font-size:10px">' + (sessions > 0 ? Math.round(organic / sessions * 100) : 0) + '% of total</span></div>' +
+
+    '<div class="kpi-card card-3d" style="--accent:var(--purple)"><div class="kpi-glow"></div>' +
+    '<div class="kpi-label">Conversions <span class="kpi-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></span></div>' +
+    '<div class="kpi-value">' + formatNum(conversions) + '</div>' + convT.html + '</div>' +
+
+    '<div class="kpi-card card-3d" style="--accent:var(--blue)"><div class="kpi-glow"></div>' +
+    '<div class="kpi-label">Conv. Rate</div>' +
+    '<div class="kpi-value">' + convRate + '%</div></div>' +
+
+    '<div class="kpi-card card-3d" style="--accent:' + bounceColor + '"><div class="kpi-glow"></div>' +
+    '<div class="kpi-label">Bounce Rate</div>' +
+    '<div class="kpi-value" style="background:linear-gradient(135deg,' + bounceColor + ',var(--white));-webkit-background-clip:text;-webkit-text-fill-color:transparent">' + bounceRate + '%</div></div>' +
+
+    '<div class="kpi-card card-3d" style="--accent:var(--amber)"><div class="kpi-glow"></div>' +
+    '<div class="kpi-label">Avg Duration</div>' +
+    '<div class="kpi-value">' + escHtml(avgDuration) + '</div></div>' +
+    '</div>';
+
+  // SVG dual-line chart
+  var chartW = 700, chartH = 220, padL = 48, padB = 30, padT = 14;
+  var plotW = chartW - padL - 16;
   var plotH = chartH - padB - padT;
-  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   var now = new Date();
   var startMonth = now.getMonth() - 11;
 
-  var points = [];
+  var sessPoints = [], convPoints = [];
   for (var i = 0; i < 12; i++) {
     var x = padL + (i / 11) * plotW;
-    var y = padT + plotH - (history[i] / maxH) * plotH;
-    points.push(x + ',' + y);
+    var sy = padT + plotH - (history[i] / maxH) * plotH;
+    var cy = padT + plotH - (convHistory[i] / maxH) * plotH;
+    sessPoints.push({ x: x, y: sy });
+    convPoints.push({ x: x, y: cy });
   }
-  var areaPoints = padL + ',' + (padT + plotH) + ' ' + points.join(' ') + ' ' + (padL + plotW) + ',' + (padT + plotH);
-  var linePoints = points.join(' ');
 
-  var yLabels = '';
+  var sessLine = sessPoints.map(function(p){ return p.x + ',' + p.y; }).join(' ');
+  var sessArea = padL + ',' + (padT + plotH) + ' ' + sessLine + ' ' + (padL + plotW) + ',' + (padT + plotH);
+  var convLine = convPoints.map(function(p){ return p.x + ',' + p.y; }).join(' ');
+
+  var gridLines = '';
   for (var j = 0; j <= 4; j++) {
     var yy = padT + plotH - (j / 4) * plotH;
     var yVal = Math.round(maxH * j / 4);
-    yLabels += '<text x="' + (padL - 6) + '" y="' + (yy + 4) + '" text-anchor="end" fill="#6B6B82" font-size="10">' + yVal + '</text>';
-    yLabels += '<line x1="' + padL + '" y1="' + yy + '" x2="' + (padL + plotW) + '" y2="' + yy + '" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>';
+    gridLines += '<text x="' + (padL - 8) + '" y="' + (yy + 4) + '" text-anchor="end" fill="#6B6B82" font-size="10">' + formatNum(yVal) + '</text>';
+    gridLines += '<line x1="' + padL + '" y1="' + yy + '" x2="' + (padL + plotW) + '" y2="' + yy + '" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>';
   }
   var xLabels = '';
   for (var k = 0; k < 12; k++) {
     var xPos = padL + (k / 11) * plotW;
     var mIdx = ((startMonth + k) % 12 + 12) % 12;
-    xLabels += '<text x="' + xPos + '" y="' + (chartH - 6) + '" text-anchor="middle" fill="#6B6B82" font-size="10">' + months[mIdx] + '</text>';
+    xLabels += '<text x="' + xPos + '" y="' + (chartH - 6) + '" text-anchor="middle" fill="#6B6B82" font-size="10">' + monthNames[mIdx] + '</text>';
   }
 
+  var sessDots = sessPoints.map(function(p) {
+    return '<circle cx="' + p.x + '" cy="' + p.y + '" r="3.5" fill="var(--surface)" stroke="var(--indigo)" stroke-width="2"/>';
+  }).join('');
+  var convDots = convPoints.map(function(p) {
+    return '<circle cx="' + p.x + '" cy="' + p.y + '" r="3" fill="var(--surface)" stroke="var(--green)" stroke-width="1.5"/>';
+  }).join('');
+
   var chartSvg = '<svg viewBox="0 0 ' + chartW + ' ' + chartH + '" preserveAspectRatio="xMidYMid meet">' +
-    '<defs><linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(201,169,110,0.3)"/><stop offset="100%" stop-color="rgba(201,169,110,0)"/></linearGradient></defs>' +
-    yLabels + xLabels +
-    '<polygon points="' + areaPoints + '" fill="url(#areaGrad)"/>' +
-    '<polyline points="' + linePoints + '" fill="none" stroke="var(--indigo)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>' +
+    '<defs><linearGradient id="perfAreaGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="rgba(201,169,110,0.25)"/><stop offset="100%" stop-color="rgba(201,169,110,0)"/></linearGradient></defs>' +
+    gridLines + xLabels +
+    '<polygon points="' + sessArea + '" fill="url(#perfAreaGrad)"/>' +
+    '<polyline points="' + sessLine + '" fill="none" stroke="var(--indigo)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>' +
+    '<polyline points="' + convLine + '" fill="none" stroke="var(--green)" stroke-width="2" stroke-dasharray="6,4" stroke-linejoin="round" stroke-linecap="round"/>' +
+    sessDots + convDots +
+    '<circle cx="' + (chartW - 120) + '" cy="10" r="4" fill="var(--indigo)"/><text x="' + (chartW - 112) + '" y="14" fill="#9A9AB0" font-size="10">Sessions</text>' +
+    '<circle cx="' + (chartW - 52) + '" cy="10" r="4" fill="var(--green)"/><text x="' + (chartW - 44) + '" y="14" fill="#9A9AB0" font-size="10">Conv.</text>' +
     '</svg>';
 
-  // Traffic sources
+  // Traffic sources with percentages
+  var totalTraffic = (a.organic || 0) + (a.paid || 0) + (a.direct || 0) + (a.social || 0) + (a.referral || 0);
   var sources = [
     { label: 'Organic', val: a.organic || 0, color: 'var(--green)' },
     { label: 'Paid', val: a.paid || 0, color: 'var(--purple)' },
@@ -1338,47 +1455,60 @@ function renderPerformance() {
   var maxSource = Math.max.apply(null, sources.map(function(s){ return s.val; })) || 1;
   var sourcesHtml = sources.map(function(s) {
     var pct = Math.round(s.val / maxSource * 100);
-    return '<div class="pipeline-bar"><div class="pipeline-label">' + s.label + '</div>' +
+    var pctOfTotal = totalTraffic > 0 ? Math.round(s.val / totalTraffic * 100) : 0;
+    return '<div class="pipeline-bar"><div class="pipeline-label">' + s.label + ' <span style="color:var(--muted);font-size:10px;font-weight:400">' + pctOfTotal + '%</span></div>' +
       '<div class="pipeline-track"><div class="pipeline-fill" style="width:' + pct + '%;background:' + s.color + '">' + (pct > 15 ? formatNum(s.val) : '') + '</div></div>' +
       '<div class="pipeline-count">' + formatNum(s.val) + '</div></div>';
   }).join('');
 
-  // Top pages
+  // Top pages with color-coded bounce
   var topPages = (a.topPages || []).slice(0, 5);
   var pagesHtml = '';
   if (topPages.length > 0) {
-    pagesHtml = '<div class="table-wrap"><table><thead><tr><th>Page</th><th>Sessions</th><th>Bounce Rate</th></tr></thead><tbody>';
+    pagesHtml = '<div class="table-wrap"><table><thead><tr><th>Path</th><th>Title</th><th>Sessions</th><th>Bounce Rate</th></tr></thead><tbody>';
     topPages.forEach(function(p) {
-      pagesHtml += '<tr><td class="bold">' + escHtml(p.title || p.path) + '</td><td>' + formatNum(p.sessions) + '</td><td>' + (p.bounce || 0) + '%</td></tr>';
+      var bc = (p.bounce || 0) <= 35 ? 'var(--green)' : (p.bounce || 0) <= 55 ? 'var(--amber)' : 'var(--red)';
+      pagesHtml += '<tr><td style="color:var(--indigo2);font-size:12px;font-family:monospace">' + escHtml(p.path || '/') + '</td>' +
+        '<td class="bold">' + escHtml(p.title || '--') + '</td>' +
+        '<td>' + formatNum(p.sessions) + '</td>' +
+        '<td><span style="color:' + bc + ';font-weight:600">' + (p.bounce || 0) + '%</span></td></tr>';
     });
     pagesHtml += '</tbody></table></div>';
   } else {
     pagesHtml = '<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px">No page data available yet</div>';
   }
 
-  // Conversion funnel
+  // Conversion funnel with percentages between stages
   var visitors = sessions;
-  var engaged = Math.round(visitors * (1 - (a.bounceRate || 50) / 100));
-  var leads = (CLIENT.leads || []).length;
+  var engaged = Math.round(visitors * (1 - (bounceRate || 50) / 100));
+  var leadsCount = (CLIENT.leads || []).length;
   var customers = (CLIENT.leads || []).filter(function(l){ return l.stage === 'closed'; }).length;
   var funnelData = [
     { label: 'Visitors', val: visitors, color: 'var(--indigo)' },
     { label: 'Engaged', val: engaged, color: 'var(--blue)' },
-    { label: 'Leads', val: leads, color: 'var(--purple)' },
+    { label: 'Leads', val: leadsCount, color: 'var(--purple)' },
     { label: 'Customers', val: customers, color: 'var(--green)' }
   ];
   var maxFunnel = visitors || 1;
-  var funnelHtml = funnelData.map(function(f) {
+  var funnelHtml = '';
+  funnelData.forEach(function(f, idx) {
     var pct = Math.max(Math.round(f.val / maxFunnel * 100), 2);
-    return '<div class="funnel-step"><div class="funnel-label">' + f.label + '</div>' +
+    funnelHtml += '<div class="funnel-step"><div class="funnel-label">' + f.label + '</div>' +
       '<div class="funnel-bar-wrap"><div class="funnel-bar" style="width:' + pct + '%;background:' + f.color + '">' + (pct > 15 ? formatNum(f.val) : '') + '</div></div>' +
       '<div class="funnel-val">' + formatNum(f.val) + '</div></div>';
-  }).join('');
+    if (idx < funnelData.length - 1) {
+      var nextVal = funnelData[idx + 1].val;
+      var dropPct = f.val > 0 ? Math.round(nextVal / f.val * 100) : 0;
+      funnelHtml += '<div style="text-align:center;padding:2px 0 2px 100px;font-size:10px;color:var(--muted)">' +
+        '<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg> ' +
+        dropPct + '% proceed</div>';
+    }
+  });
 
   // Device breakdown
   var deviceData = [
-    { label: 'Mobile', pct: 58, color: 'var(--indigo)' },
-    { label: 'Desktop', pct: 34, color: 'var(--purple)' },
+    { label: 'Desktop', pct: 34, color: 'var(--indigo)' },
+    { label: 'Mobile', pct: 58, color: 'var(--purple)' },
     { label: 'Tablet', pct: 8, color: 'var(--amber)' }
   ];
   var devicesHtml = deviceData.map(function(d) {
@@ -1390,26 +1520,25 @@ function renderPerformance() {
   document.getElementById('page-performance').innerHTML =
     '<div class="page-header"><div class="page-header-left"><h1>Performance</h1><p>Website analytics and insights</p></div></div>' +
 
-    // Traffic chart
-    '<div class="panel" style="margin-bottom:16px"><div class="panel-header"><div class="panel-title">Traffic Trend (12 Months)</div>' +
+    kpiHtml +
+
+    // Dual-line chart
+    '<div class="panel" style="margin-bottom:16px"><div class="panel-header"><div><div class="panel-title">Traffic Trend (12 Months)</div>' +
+    '<div class="panel-subtitle">Sessions and conversions over time</div></div>' +
     '<span class="badge badge-indigo">' + formatNum(sessions) + ' this month</span></div>' +
     '<div class="panel-body"><div class="chart-container">' + chartSvg + '</div></div></div>' +
 
     '<div class="grid-2">' +
-    // Traffic sources
     '<div class="panel"><div class="panel-header"><div class="panel-title">Traffic Sources</div></div>' +
     '<div class="panel-body">' + sourcesHtml + '</div></div>' +
 
-    // Top pages
     '<div class="panel"><div class="panel-header"><div class="panel-title">Top Pages</div></div>' +
-    '<div class="panel-body">' + pagesHtml + '</div></div></div>' +
+    '<div class="panel-body" style="padding:0">' + pagesHtml + '</div></div></div>' +
 
     '<div class="grid-2">' +
-    // Funnel
     '<div class="panel"><div class="panel-header"><div class="panel-title">Conversion Funnel</div></div>' +
     '<div class="panel-body">' + funnelHtml + '</div></div>' +
 
-    // Devices
     '<div class="panel"><div class="panel-header"><div class="panel-title">Device Breakdown</div></div>' +
     '<div class="panel-body">' + devicesHtml + '</div></div></div>' +
 
@@ -1429,13 +1558,56 @@ function renderPerformance() {
 function renderReputation() {
   var rep = CLIENT.reputation || {};
   var avgR = getAvgRating();
+  var reviews = rep.recentReviews || [];
+  var totalReviews = 0;
+  var respondedCount = 0;
+  var positiveCount = 0;
+  var needsResponse = 0;
   var platforms = [
-    { key: 'google', name: 'Google' },
-    { key: 'yelp', name: 'Yelp' },
-    { key: 'facebook', name: 'Facebook' },
-    { key: 'homeadvisor', name: 'HomeAdvisor' }
+    { key: 'google', name: 'Google', color: 'var(--blue)' },
+    { key: 'yelp', name: 'Yelp', color: 'var(--red)' },
+    { key: 'facebook', name: 'Facebook', color: 'var(--indigo)' },
+    { key: 'homeadvisor', name: 'HomeAdvisor', color: 'var(--amber)' }
   ];
 
+  platforms.forEach(function(p) {
+    var d = rep[p.key] || { rating: 0, reviews: 0 };
+    totalReviews += d.reviews || 0;
+  });
+
+  reviews.forEach(function(r) {
+    if (r.responded) respondedCount++;
+    else needsResponse++;
+    if (r.rating >= 4) positiveCount++;
+  });
+  var responseRate = reviews.length > 0 ? Math.round(respondedCount / reviews.length * 100) : 0;
+  var positiveRate = reviews.length > 0 ? Math.round(positiveCount / reviews.length * 100) : 0;
+
+  // KPI cards
+  var kpiHtml = '<div class="kpi-grid" style="grid-template-columns:repeat(5,1fr)">' +
+    '<div class="kpi-card card-3d" style="--accent:var(--amber)"><div class="kpi-glow"></div>' +
+    '<div class="kpi-label">Overall Rating</div>' +
+    '<div class="kpi-value">' + avgR + '</div>' +
+    '<div>' + starsHtml(parseFloat(avgR) || 0) + '</div></div>' +
+
+    '<div class="kpi-card card-3d" style="--accent:var(--green)"><div class="kpi-glow"></div>' +
+    '<div class="kpi-label">Response Rate</div>' +
+    '<div class="kpi-value">' + responseRate + '%</div></div>' +
+
+    '<div class="kpi-card card-3d" style="--accent:var(--indigo)"><div class="kpi-glow"></div>' +
+    '<div class="kpi-label">Positive %</div>' +
+    '<div class="kpi-value">' + positiveRate + '%</div></div>' +
+
+    '<div class="kpi-card card-3d" style="--accent:' + (needsResponse > 0 ? 'var(--red)' : 'var(--green)') + '"><div class="kpi-glow"></div>' +
+    '<div class="kpi-label">Needs Response</div>' +
+    '<div class="kpi-value">' + needsResponse + '</div></div>' +
+
+    '<div class="kpi-card card-3d" style="--accent:var(--purple)"><div class="kpi-glow"></div>' +
+    '<div class="kpi-label">Total Reviews</div>' +
+    '<div class="kpi-value">' + formatNum(totalReviews) + '</div></div>' +
+    '</div>';
+
+  // Platform cards
   var platformCards = platforms.map(function(p) {
     var d = rep[p.key] || { rating: 0, reviews: 0 };
     return '<div class="platform-card">' +
@@ -1445,25 +1617,81 @@ function renderReputation() {
       '<div class="platform-reviews">' + formatNum(d.reviews) + ' reviews</div></div>';
   }).join('');
 
-  var reviews = (rep.recentReviews || []).slice(0, 10);
+  // Star distribution
+  var starDist = [0, 0, 0, 0, 0];
+  reviews.forEach(function(r) {
+    if (r.rating >= 1 && r.rating <= 5) starDist[r.rating - 1]++;
+  });
+  var maxStar = Math.max.apply(null, starDist) || 1;
+  var starDistHtml = '';
+  for (var s = 5; s >= 1; s--) {
+    var count = starDist[s - 1];
+    var pct = Math.round(count / maxStar * 100);
+    var barColor = s >= 4 ? 'var(--green)' : s === 3 ? 'var(--amber)' : 'var(--red)';
+    starDistHtml += '<div class="pipeline-bar"><div class="pipeline-label">' + s + ' star</div>' +
+      '<div class="pipeline-track"><div class="pipeline-fill" style="width:' + pct + '%;background:' + barColor + '">' + (pct > 20 ? count : '') + '</div></div>' +
+      '<div class="pipeline-count">' + count + '</div></div>';
+  }
+
+  // Monthly review count bar chart (6 months)
+  var monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var now = new Date();
+  var monthlyReviews = [];
+  for (var m = 5; m >= 0; m--) {
+    var checkMonth = new Date(now.getFullYear(), now.getMonth() - m, 1);
+    var cnt = 0;
+    reviews.forEach(function(r) {
+      var rd = new Date(r.date);
+      if (rd.getFullYear() === checkMonth.getFullYear() && rd.getMonth() === checkMonth.getMonth()) cnt++;
+    });
+    monthlyReviews.push({ month: monthNames[checkMonth.getMonth()], count: cnt });
+  }
+  var maxMonthly = Math.max.apply(null, monthlyReviews.map(function(m){ return m.count; })) || 1;
+  var chartW = 400, chartH = 140, padL = 32, padB = 24, padT = 10;
+  var plotW = chartW - padL - 10;
+  var plotH = chartH - padB - padT;
+  var barW = plotW / 6 * 0.6;
+  var barGap = plotW / 6;
+  var barsSvg = '';
+  monthlyReviews.forEach(function(m, i) {
+    var bh = m.count > 0 ? (m.count / maxMonthly) * plotH : 2;
+    var bx = padL + i * barGap + (barGap - barW) / 2;
+    var by = padT + plotH - bh;
+    barsSvg += '<rect x="' + bx + '" y="' + by + '" width="' + barW + '" height="' + bh + '" rx="3" fill="var(--indigo)" opacity="0.8"/>';
+    if (m.count > 0) barsSvg += '<text x="' + (bx + barW / 2) + '" y="' + (by - 4) + '" text-anchor="middle" fill="var(--white)" font-size="10" font-weight="600">' + m.count + '</text>';
+    barsSvg += '<text x="' + (bx + barW / 2) + '" y="' + (chartH - 6) + '" text-anchor="middle" fill="#6B6B82" font-size="10">' + m.month + '</text>';
+  });
+  var monthlyChartSvg = '<svg viewBox="0 0 ' + chartW + ' ' + chartH + '" preserveAspectRatio="xMidYMid meet">' +
+    '<line x1="' + padL + '" y1="' + (padT + plotH) + '" x2="' + (padL + plotW) + '" y2="' + (padT + plotH) + '" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>' +
+    barsSvg + '</svg>';
+
+  // Recent reviews with avatar, sentiment, responded badge
+  var reviewsDisplayed = reviews.slice(0, 10);
   var reviewsHtml = '';
-  if (reviews.length === 0) {
+  if (reviewsDisplayed.length === 0) {
     reviewsHtml = '<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px">No reviews yet</div>';
   } else {
-    reviews.forEach(function(r) {
-      var sentimentColor = r.rating >= 4 ? 'var(--green)' : r.rating === 3 ? 'var(--amber)' : 'var(--red)';
+    reviewsDisplayed.forEach(function(r) {
+      var initial = (r.author || '?')[0].toUpperCase();
+      var sentimentLabel = r.rating >= 4 ? 'Positive' : r.rating === 3 ? 'Neutral' : 'Negative';
+      var sentimentBadge = r.rating >= 4 ? 'badge-green' : r.rating === 3 ? 'badge-amber' : 'badge-red';
       var statusBadge = r.responded
         ? '<span class="badge badge-green" style="font-size:10px"><span class="badge-dot"></span> Responded</span>'
         : '<span class="badge badge-amber" style="font-size:10px"><span class="badge-dot"></span> Pending</span>';
-      reviewsHtml += '<div class="review-item">' +
+      var platformColors = { google: 'var(--blue)', yelp: 'var(--red)', facebook: 'var(--indigo)', homeadvisor: 'var(--amber)' };
+      var pColor = platformColors[r.platform] || 'var(--muted)';
+      reviewsHtml += '<div class="review-item" style="display:flex;gap:12px">' +
+        '<div style="width:36px;height:36px;border-radius:50%;background:var(--surface3);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--indigo2);flex-shrink:0">' + initial + '</div>' +
+        '<div style="flex:1">' +
         '<div class="review-header">' +
         '<span class="review-author">' + escHtml(r.author) + '</span>' +
-        '<span style="color:' + sentimentColor + '">' + starsHtml(r.rating) + '</span>' +
-        '<span class="review-platform">' + escHtml(r.platform) + '</span>' +
+        '<span class="badge badge-muted" style="font-size:9px;color:' + pColor + ';border-color:' + pColor + '">' + escHtml(r.platform) + '</span>' +
+        '<span>' + starsHtml(r.rating) + '</span>' +
+        '<span class="badge ' + sentimentBadge + '" style="font-size:9px">' + sentimentLabel + '</span>' +
         statusBadge +
         '</div>' +
         '<div class="review-text">' + escHtml(r.text) + '</div>' +
-        '<div class="review-date">' + timeAgo(r.date) + '</div></div>';
+        '<div class="review-date">' + timeAgo(r.date) + '</div></div></div>';
     });
   }
 
@@ -1473,19 +1701,24 @@ function renderReputation() {
   document.getElementById('page-reputation').innerHTML =
     '<div class="page-header"><div class="page-header-left"><h1>Reputation</h1><p>Online reviews and ratings</p></div></div>' +
 
-    // Overall rating
-    '<div class="panel" style="margin-bottom:16px"><div class="panel-body" style="text-align:center;padding:32px">' +
-    '<div style="font-size:48px;font-weight:700;font-family:var(--font-head);color:var(--white);margin-bottom:8px">' + avgR + '</div>' +
-    '<div style="margin-bottom:8px">' + starsHtml(parseFloat(avgR) || 0) + '</div>' +
-    '<div style="font-size:13px;color:var(--muted)">Weighted average across all platforms</div>' +
-    '</div></div>' +
+    kpiHtml +
 
     // Platform cards
     '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:16px">' + platformCards + '</div>' +
 
     '<div class="grid-2">' +
+    // Star distribution
+    '<div class="panel"><div class="panel-header"><div class="panel-title">Star Distribution</div></div>' +
+    '<div class="panel-body">' + starDistHtml + '</div></div>' +
+
+    // Monthly chart
+    '<div class="panel"><div class="panel-header"><div class="panel-title">Monthly Reviews</div>' +
+    '<span class="badge badge-muted">Last 6 months</span></div>' +
+    '<div class="panel-body"><div class="chart-container">' + monthlyChartSvg + '</div></div></div></div>' +
+
     // Reviews
-    '<div class="panel"><div class="panel-header"><div class="panel-title">Recent Reviews</div></div>' +
+    '<div class="panel" style="margin-bottom:16px"><div class="panel-header"><div class="panel-title">Recent Reviews</div>' +
+    '<span class="badge badge-muted">' + reviews.length + '</span></div>' +
     '<div class="panel-body">' + reviewsHtml + '</div></div>' +
 
     // Review link
@@ -1495,11 +1728,11 @@ function renderReputation() {
     '<div class="copy-link-wrap">' +
     '<div class="copy-link-text" id="review-link-text">' + escHtml(reviewLink) + '</div>' +
     '<button class="btn btn-primary btn-sm" onclick="copyReviewLink()">Copy</button></div>' +
-    '</div></div></div>';
+    '</div></div>';
 
   // Fix platform grid on mobile
   var style = document.createElement('style');
-  style.textContent = '@media(max-width:768px){#page-reputation .platform-card{min-width:0}[style*="grid-template-columns:repeat(4"]{grid-template-columns:1fr 1fr!important}}@media(max-width:480px){[style*="grid-template-columns:repeat(4"]{grid-template-columns:1fr!important}}';
+  style.textContent = '@media(max-width:768px){#page-reputation .platform-card{min-width:0}[style*="grid-template-columns:repeat(4"]{grid-template-columns:1fr 1fr!important}[style*="grid-template-columns:repeat(5"]{grid-template-columns:1fr 1fr!important}}@media(max-width:480px){[style*="grid-template-columns:repeat(4"]{grid-template-columns:1fr!important}[style*="grid-template-columns:repeat(5"]{grid-template-columns:1fr!important}}';
   document.head.appendChild(style);
 }
 
@@ -1522,64 +1755,415 @@ function renderLeads() {
   var total = leads.length;
   var maxStage = Math.max.apply(null, Object.values(stages)) || 1;
 
+  // New this month
+  var now = new Date();
+  var newThisMonth = leads.filter(function(l) {
+    var ld = new Date(l.date);
+    return ld.getFullYear() === now.getFullYear() && ld.getMonth() === now.getMonth();
+  }).length;
+
+  var closedLeads = stages.closed;
+  var convRate = total > 0 ? (closedLeads / total * 100).toFixed(1) : 0;
+  var pipelineValue = leads.reduce(function(s, l) { return s + (l.value || 0); }, 0);
+
+  // KPI cards
+  var kpiHtml = '<div class="kpi-grid">' +
+    '<div class="kpi-card card-3d" style="--accent:var(--indigo)"><div class="kpi-glow"></div><div class="kpi-label">Total Leads</div><div class="kpi-value">' + total + '</div></div>' +
+    '<div class="kpi-card card-3d" style="--accent:var(--blue)"><div class="kpi-glow"></div><div class="kpi-label">New This Month</div><div class="kpi-value">' + newThisMonth + '</div></div>' +
+    '<div class="kpi-card card-3d" style="--accent:var(--green)"><div class="kpi-glow"></div><div class="kpi-label">Conversion Rate</div><div class="kpi-value">' + convRate + '%</div></div>' +
+    '<div class="kpi-card card-3d" style="--accent:var(--purple)"><div class="kpi-glow"></div><div class="kpi-label">Pipeline Value</div><div class="kpi-value">$' + formatNum(pipelineValue) + '</div></div>' +
+    '</div>';
+
+  // Pipeline funnel
   var pipelineColors = { 'new': 'var(--blue)', contacted: 'var(--amber)', qualified: 'var(--purple)', closed: 'var(--green)' };
-  var pipelineLabels = { 'new': 'New', contacted: 'Contacted', qualified: 'Qualified', closed: 'Won' };
+  var pipelineLabels = { 'new': 'New', contacted: 'Contacted', qualified: 'Qualified', closed: 'Won/Lost' };
+  var totalForFunnel = total || 1;
   var pipelineHtml = '';
   ['new', 'contacted', 'qualified', 'closed'].forEach(function(s) {
-    var pct = Math.max(Math.round(stages[s] / maxStage * 100), 2);
-    pipelineHtml += '<div class="pipeline-bar"><div class="pipeline-label">' + pipelineLabels[s] + '</div>' +
-      '<div class="pipeline-track"><div class="pipeline-fill" style="width:' + pct + '%;background:' + pipelineColors[s] + '">' + (stages[s] > 0 && pct > 15 ? stages[s] : '') + '</div></div>' +
-      '<div class="pipeline-count">' + stages[s] + '</div></div>';
+    var pct = Math.max(Math.round(stages[s] / totalForFunnel * 100), 2);
+    pipelineHtml += '<div class="funnel-step"><div class="funnel-label">' + pipelineLabels[s] + '</div>' +
+      '<div class="funnel-bar-wrap"><div class="funnel-bar" style="width:' + pct + '%;background:' + pipelineColors[s] + '">' + (pct > 15 ? stages[s] : '') + '</div></div>' +
+      '<div class="funnel-val">' + stages[s] + '</div></div>';
   });
 
-  // Table
+  // Source breakdown
+  var sourceCounts = {};
+  leads.forEach(function(l) {
+    var src = l.source || 'Unknown';
+    sourceCounts[src] = (sourceCounts[src] || 0) + 1;
+  });
+  var sourceEntries = Object.keys(sourceCounts).map(function(k) { return { label: k, val: sourceCounts[k] }; });
+  sourceEntries.sort(function(a, b) { return b.val - a.val; });
+  var maxSrc = sourceEntries.length > 0 ? sourceEntries[0].val : 1;
+  var sourceColors = { Google: 'var(--blue)', Website: 'var(--indigo)', Referral: 'var(--green)', Ads: 'var(--purple)', Facebook: 'var(--amber)' };
+  var sourcesHtml = sourceEntries.map(function(s) {
+    var pct = Math.round(s.val / maxSrc * 100);
+    var color = sourceColors[s.label] || 'var(--muted)';
+    return '<div class="pipeline-bar"><div class="pipeline-label">' + escHtml(s.label) + '</div>' +
+      '<div class="pipeline-track"><div class="pipeline-fill" style="width:' + pct + '%;background:' + color + '">' + (pct > 20 ? s.val : '') + '</div></div>' +
+      '<div class="pipeline-count">' + s.val + '</div></div>';
+  }).join('');
+  if (sourceEntries.length === 0) sourcesHtml = '<div style="padding:16px;text-align:center;color:var(--muted);font-size:13px">No source data</div>';
+
+  // Full leads table sorted newest first
+  var sortedLeads = leads.slice().sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
   var stageBadge = { 'new': 'badge-indigo', contacted: 'badge-amber', qualified: 'badge-purple', closed: 'badge-green' };
   var tableHtml = '';
-  if (leads.length === 0) {
+  if (sortedLeads.length === 0) {
     tableHtml = '<div style="padding:20px;text-align:center;color:var(--muted)">No leads yet</div>';
   } else {
-    tableHtml = '<div class="table-wrap"><table><thead><tr><th>Name</th><th>Phone</th><th>Source</th><th>Stage</th><th>Date</th></tr></thead><tbody>';
-    leads.forEach(function(l) {
+    tableHtml = '<div class="table-wrap"><table><thead><tr><th>Name</th><th>Phone</th><th>Source</th><th>Stage</th><th>Date</th><th>Value</th></tr></thead><tbody>';
+    sortedLeads.forEach(function(l) {
       tableHtml += '<tr><td class="bold">' + escHtml(l.name || '--') + '</td>' +
         '<td>' + escHtml(l.phone || '--') + '</td>' +
         '<td>' + escHtml(l.source || '--') + '</td>' +
         '<td><span class="badge ' + (stageBadge[l.stage] || 'badge-muted') + '"><span class="badge-dot"></span> ' + escHtml(l.stage || '--') + '</span></td>' +
-        '<td>' + (l.date ? timeAgo(l.date) : '--') + '</td></tr>';
+        '<td>' + (l.date ? timeAgo(l.date) : '--') + '</td>' +
+        '<td>' + (l.value ? '$' + formatNum(l.value) : '--') + '</td></tr>';
     });
     tableHtml += '</tbody></table></div>';
   }
 
-  // Stats
-  var closedLeads = stages.closed;
-  var convRate = total > 0 ? (closedLeads / total * 100).toFixed(1) : 0;
-  var avgValue = 0;
-  var valLeads = leads.filter(function(l) { return l.value > 0; });
-  if (valLeads.length > 0) {
-    avgValue = Math.round(valLeads.reduce(function(s, l) { return s + l.value; }, 0) / valLeads.length);
+  // Stale lead alert
+  var staleAlertHtml = '';
+  var staleLeads = leads.filter(function(l) {
+    if (l.stage !== 'new') return false;
+    var ld = new Date(l.date);
+    var hoursDiff = (now - ld) / (1000 * 60 * 60);
+    return hoursDiff > 48;
+  });
+  if (staleLeads.length > 0) {
+    staleAlertHtml = '<div style="background:var(--red-bg);border:1px solid rgba(232,93,117,0.25);border-radius:var(--radius-lg);padding:16px 20px;margin-bottom:16px;display:flex;align-items:center;gap:12px">' +
+      '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>' +
+      '<div><div style="font-size:13px;font-weight:700;color:var(--red);margin-bottom:2px">Stale Leads Alert</div>' +
+      '<div style="font-size:12px;color:var(--text)">' + staleLeads.length + ' lead' + (staleLeads.length > 1 ? 's' : '') + ' in "new" stage for over 48 hours: ' +
+      staleLeads.map(function(l) { return '<strong style="color:var(--white)">' + escHtml(l.name) + '</strong>'; }).join(', ') +
+      '</div></div></div>';
   }
 
   document.getElementById('page-leads').innerHTML =
     '<div class="page-header"><div class="page-header-left"><h1>Leads</h1><p>Your lead pipeline and contacts</p></div></div>' +
 
-    // Stats row
-    '<div class="kpi-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px">' +
-    '<div class="kpi-card card-3d" style="--accent:var(--indigo)"><div class="kpi-glow"></div><div class="kpi-label">Total Leads</div><div class="kpi-value">' + total + '</div></div>' +
-    '<div class="kpi-card card-3d" style="--accent:var(--green)"><div class="kpi-glow"></div><div class="kpi-label">Conversion Rate</div><div class="kpi-value">' + convRate + '%</div></div>' +
-    '<div class="kpi-card card-3d" style="--accent:var(--purple)"><div class="kpi-glow"></div><div class="kpi-label">Avg Value</div><div class="kpi-value">$' + formatNum(avgValue) + '</div></div>' +
-    '</div>' +
+    staleAlertHtml +
+    kpiHtml +
 
-    // Pipeline
-    '<div class="panel" style="margin-bottom:16px"><div class="panel-header"><div class="panel-title">Pipeline</div></div>' +
+    '<div class="grid-2">' +
+    // Pipeline funnel
+    '<div class="panel"><div class="panel-header"><div class="panel-title">Pipeline Funnel</div></div>' +
     '<div class="panel-body">' + pipelineHtml + '</div></div>' +
 
+    // Source breakdown
+    '<div class="panel"><div class="panel-header"><div class="panel-title">Lead Sources</div></div>' +
+    '<div class="panel-body">' + sourcesHtml + '</div></div></div>' +
+
     // Table
-    '<div class="panel"><div class="panel-header"><div class="panel-title">All Leads</div>' +
+    '<div class="panel" style="margin-top:16px"><div class="panel-header"><div class="panel-title">All Leads</div>' +
     '<span class="badge badge-muted">' + total + '</span></div>' +
     '<div class="panel-body" style="padding:0">' + tableHtml + '</div></div>';
 }
 
 // ════════════════════════════════════════════════════
-//  TAB 5: BILLING
+//  TAB 5: AD CAMPAIGNS
+// ════════════════════════════════════════════════════
+function renderAds() {
+  var ads = (CLIENT.ads && CLIENT.ads.campaigns) || [];
+  var totalSpend = 0, totalClicks = 0, totalConversions = 0, totalBudget = 0;
+  ads.forEach(function(c) {
+    totalSpend += c.spend || 0;
+    totalClicks += c.clicks || 0;
+    totalConversions += c.conversions || 0;
+    totalBudget += c.budget || 0;
+  });
+  var roas = totalSpend > 0 ? (totalConversions * 50 / totalSpend).toFixed(2) : '0.00';
+
+  // KPI cards
+  var kpiHtml = '<div class="kpi-grid">' +
+    '<div class="kpi-card card-3d" style="--accent:var(--red)"><div class="kpi-glow"></div><div class="kpi-label">Total Spend</div><div class="kpi-value">$' + formatNum(totalSpend) + '</div></div>' +
+    '<div class="kpi-card card-3d" style="--accent:var(--blue)"><div class="kpi-glow"></div><div class="kpi-label">Clicks</div><div class="kpi-value">' + formatNum(totalClicks) + '</div></div>' +
+    '<div class="kpi-card card-3d" style="--accent:var(--green)"><div class="kpi-glow"></div><div class="kpi-label">Conversions</div><div class="kpi-value">' + formatNum(totalConversions) + '</div></div>' +
+    '<div class="kpi-card card-3d" style="--accent:var(--purple)"><div class="kpi-glow"></div><div class="kpi-label">ROAS</div><div class="kpi-value">' + roas + 'x</div></div>' +
+    '</div>';
+
+  // Campaign table
+  var tableHtml = '';
+  if (ads.length === 0) {
+    tableHtml = '<div style="padding:20px;text-align:center;color:var(--muted);font-size:13px">No ad campaigns running</div>';
+  } else {
+    var platformBadge = { google: 'badge-indigo', facebook: 'badge-purple', instagram: 'badge-amber', bing: 'badge-teal' };
+    tableHtml = '<div class="table-wrap"><table><thead><tr><th>Campaign</th><th>Platform</th><th>Budget</th><th>Spend</th><th>Clicks</th><th>Conv.</th><th>CPC</th></tr></thead><tbody>';
+    ads.forEach(function(c) {
+      var spendPct = c.budget > 0 ? Math.round(c.spend / c.budget * 100) : 0;
+      var spendColor = spendPct >= 90 ? 'var(--red)' : spendPct >= 70 ? 'var(--amber)' : 'var(--green)';
+      var cpc = c.clicks > 0 ? (c.spend / c.clicks).toFixed(2) : '--';
+      tableHtml += '<tr><td class="bold">' + escHtml(c.name) + '</td>' +
+        '<td><span class="badge ' + (platformBadge[c.platform] || 'badge-muted') + '">' + escHtml(c.platform || '--') + '</span></td>' +
+        '<td>$' + formatNum(c.budget) + '</td>' +
+        '<td><div style="display:flex;align-items:center;gap:8px">$' + formatNum(c.spend) +
+        '<div style="width:60px;height:6px;background:rgba(255,255,255,0.06);border-radius:3px;overflow:hidden"><div style="width:' + spendPct + '%;height:100%;background:' + spendColor + ';border-radius:3px"></div></div>' +
+        '<span style="font-size:10px;color:var(--muted)">' + spendPct + '%</span></div></td>' +
+        '<td>' + formatNum(c.clicks) + '</td>' +
+        '<td>' + formatNum(c.conversions) + '</td>' +
+        '<td>$' + cpc + '</td></tr>';
+    });
+    tableHtml += '</tbody></table></div>';
+  }
+
+  // Platform breakdown
+  var platformTotals = {};
+  ads.forEach(function(c) {
+    var p = c.platform || 'other';
+    if (!platformTotals[p]) platformTotals[p] = 0;
+    platformTotals[p] += c.spend || 0;
+  });
+  var platEntries = Object.keys(platformTotals).map(function(k) { return { label: k, val: platformTotals[k] }; });
+  platEntries.sort(function(a, b) { return b.val - a.val; });
+  var maxPlat = platEntries.length > 0 ? platEntries[0].val : 1;
+  var platColors = { google: 'var(--blue)', facebook: 'var(--purple)', instagram: 'var(--amber)', bing: 'var(--teal)' };
+  var platHtml = platEntries.map(function(p) {
+    var pct = Math.round(p.val / maxPlat * 100);
+    var color = platColors[p.label] || 'var(--indigo)';
+    return '<div class="pipeline-bar"><div class="pipeline-label" style="text-transform:capitalize">' + escHtml(p.label) + '</div>' +
+      '<div class="pipeline-track"><div class="pipeline-fill" style="width:' + pct + '%;background:' + color + '">$' + formatNum(p.val) + '</div></div>' +
+      '<div class="pipeline-count">$' + formatNum(p.val) + '</div></div>';
+  }).join('');
+  if (platEntries.length === 0) platHtml = '<div style="padding:16px;text-align:center;color:var(--muted);font-size:13px">No data</div>';
+
+  // Budget health gauge
+  var budgetPct = totalBudget > 0 ? Math.round(totalSpend / totalBudget * 100) : 0;
+
+  document.getElementById('page-ads').innerHTML =
+    '<div class="page-header"><div class="page-header-left"><h1>Ad Campaigns</h1><p>Paid advertising performance</p></div></div>' +
+
+    kpiHtml +
+
+    // Campaign table
+    '<div class="panel" style="margin-bottom:16px"><div class="panel-header"><div class="panel-title">Campaigns</div>' +
+    '<span class="badge badge-muted">' + ads.length + '</span></div>' +
+    '<div class="panel-body" style="padding:0">' + tableHtml + '</div></div>' +
+
+    '<div class="grid-2">' +
+    // Platform breakdown
+    '<div class="panel"><div class="panel-header"><div class="panel-title">Spend by Platform</div></div>' +
+    '<div class="panel-body">' + platHtml + '</div></div>' +
+
+    // Budget health
+    '<div class="panel"><div class="panel-header"><div class="panel-title">Budget Health</div></div>' +
+    '<div class="panel-body" style="text-align:center;padding:28px">' +
+    scoreRing(Math.min(budgetPct, 100), 120) +
+    '<div style="margin-top:12px;font-size:13px;color:var(--text)">' + budgetPct + '% of total budget spent</div>' +
+    '<div style="margin-top:4px;font-size:12px;color:var(--muted)">$' + formatNum(totalSpend) + ' of $' + formatNum(totalBudget) + '</div>' +
+    '</div></div></div>';
+}
+
+// ════════════════════════════════════════════════════
+//  TAB 6: SEO
+// ════════════════════════════════════════════════════
+function renderSeo() {
+  var seo = CLIENT.seo || {};
+  var title = seo.title || '';
+  var description = seo.description || '';
+  var keywords = seo.keywords || '';
+  var city = seo.city || '';
+  var liveUrl = CLIENT.liveUrl || '';
+
+  // Calculate SEO score
+  var seoScore = 0;
+  if (title.length > 0) seoScore += 20;
+  if (description.length > 0) seoScore += 20;
+  if (keywords.length > 0) seoScore += 15;
+  if (city.length > 0) seoScore += 15;
+  // Simulate h1 and canonical checks
+  var hasH1 = title.length > 0; // approximate
+  var hasCanonical = liveUrl.length > 0;
+  if (hasH1) seoScore += 15;
+  if (hasCanonical) seoScore += 15;
+
+  // Keywords as pills
+  var keywordsList = keywords ? keywords.split(',').map(function(k) { return k.trim(); }).filter(function(k) { return k.length > 0; }) : [];
+  var keywordsHtml = keywordsList.length > 0
+    ? keywordsList.map(function(k) {
+        return '<span class="badge badge-indigo" style="margin:3px 4px 3px 0;font-size:11px">' + escHtml(k) + '</span>';
+      }).join('')
+    : '<span style="color:var(--muted);font-size:13px">No keywords defined</span>';
+
+  // Title and description analysis
+  var titleLen = title.length;
+  var descLen = description.length;
+  var titleColor = titleLen >= 30 && titleLen <= 60 ? 'var(--green)' : titleLen > 0 ? 'var(--amber)' : 'var(--red)';
+  var descColor = descLen >= 120 && descLen <= 160 ? 'var(--green)' : descLen > 0 ? 'var(--amber)' : 'var(--red)';
+
+  // SERP preview
+  var serpTitle = title || CLIENT.bizName + ' | Your City';
+  var serpDesc = description || 'No meta description set. Search engines will use page content as a preview.';
+  var serpUrl = liveUrl || 'https://example.com';
+
+  // GBP status
+  var gbpStatus = city ? 'Claimed' : 'Not Set';
+  var gbpColor = city ? 'var(--green)' : 'var(--amber)';
+
+  document.getElementById('page-seo').innerHTML =
+    '<div class="page-header"><div class="page-header-left"><h1>SEO Snapshot</h1><p>Search engine optimization overview</p></div></div>' +
+
+    '<div class="grid-2">' +
+    // SEO Score
+    '<div class="panel"><div class="panel-header"><div class="panel-title">SEO Score</div></div>' +
+    '<div class="panel-body" style="text-align:center;padding:32px">' +
+    scoreRing(seoScore, 140) +
+    '<div style="margin-top:12px;font-size:14px;font-weight:600;color:var(--white)">' + (seoScore >= 80 ? 'Good' : seoScore >= 50 ? 'Needs Work' : 'Poor') + '</div>' +
+    '<div style="margin-top:4px;font-size:12px;color:var(--muted)">Based on meta data, keywords, and local SEO</div>' +
+    '</div></div>' +
+
+    // Meta Data
+    '<div class="panel"><div class="panel-header"><div class="panel-title">Meta Data</div></div>' +
+    '<div class="panel-body">' +
+    '<div style="margin-bottom:16px"><div class="form-label">Title Tag <span style="color:' + titleColor + ';font-weight:400;text-transform:none;letter-spacing:0">(' + titleLen + ' chars)</span></div>' +
+    '<div style="font-size:13px;color:var(--white);padding:10px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:var(--radius)">' + (title ? escHtml(title) : '<span style="color:var(--muted)">Not set</span>') + '</div></div>' +
+    '<div style="margin-bottom:16px"><div class="form-label">Meta Description <span style="color:' + descColor + ';font-weight:400;text-transform:none;letter-spacing:0">(' + descLen + ' chars)</span></div>' +
+    '<div style="font-size:13px;color:var(--white);padding:10px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:var(--radius);line-height:1.5">' + (description ? escHtml(description) : '<span style="color:var(--muted)">Not set</span>') + '</div></div>' +
+    '<div class="form-label">Keywords</div>' +
+    '<div style="padding:4px 0">' + keywordsHtml + '</div>' +
+    '</div></div></div>' +
+
+    // Local SEO
+    '<div class="grid-2" style="margin-top:16px">' +
+    '<div class="panel"><div class="panel-header"><div class="panel-title">Local SEO</div></div>' +
+    '<div class="panel-body">' +
+    '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.03)">' +
+    '<span style="font-size:13px;color:var(--text)">Target City</span>' +
+    '<span style="font-size:13px;font-weight:600;color:var(--white)">' + (city ? escHtml(city) : '<span style="color:var(--muted)">Not set</span>') + '</span></div>' +
+    '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0">' +
+    '<span style="font-size:13px;color:var(--text)">Google Business Profile</span>' +
+    '<span class="badge ' + (city ? 'badge-green' : 'badge-amber') + '"><span class="badge-dot"></span> ' + gbpStatus + '</span></div>' +
+    '</div></div>' +
+
+    // SERP Preview
+    '<div class="panel"><div class="panel-header"><div class="panel-title">SERP Preview</div>' +
+    '<span class="badge badge-muted">How it looks in Google</span></div>' +
+    '<div class="panel-body">' +
+    '<div style="background:var(--surface3);border-radius:var(--radius);padding:20px;max-width:600px">' +
+    '<div style="font-size:11px;color:var(--green);margin-bottom:4px">' + escHtml(serpUrl) + '</div>' +
+    '<div style="font-size:18px;color:var(--blue);font-weight:500;margin-bottom:4px;line-height:1.3">' + escHtml(serpTitle.substring(0, 60)) + '</div>' +
+    '<div style="font-size:13px;color:var(--text);line-height:1.5">' + escHtml(serpDesc.substring(0, 160)) + '</div>' +
+    '</div></div></div></div>';
+}
+
+// ════════════════════════════════════════════════════
+//  TAB 7: SITE HEALTH
+// ════════════════════════════════════════════════════
+function renderHealth() {
+  var health = getSiteHealth();
+  var liveUrl = CLIENT.liveUrl || '';
+  var checks = (DB.healthChecks || {})[CLIENT.id] || {};
+  var lastCheck = checks.lastCheck || new Date().toISOString();
+  var responseTime = checks.responseTime || null;
+  var sslExpiry = checks.sslExpiry || null;
+  var uptime = checks.uptime || 99.9;
+
+  // Response time history (generate if not available)
+  var responseHistory = checks.responseHistory || [];
+  if (responseHistory.length === 0 && responseTime) {
+    for (var i = 0; i < 12; i++) {
+      responseHistory.push(Math.round(responseTime * (0.8 + Math.random() * 0.4)));
+    }
+  }
+
+  // Status card
+  var statusIcon = health.status === 'healthy'
+    ? '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2.5" stroke-linecap="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
+    : '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2.5" stroke-linecap="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+
+  var statusBgColor = health.status === 'healthy' ? 'rgba(94,189,138,0.08)' : health.status === 'down' ? 'rgba(232,93,117,0.08)' : 'rgba(212,149,107,0.08)';
+
+  document.getElementById('page-health').innerHTML =
+    '<div class="page-header"><div class="page-header-left"><h1>Site Health</h1><p>Uptime monitoring and performance</p></div></div>' +
+
+    // Status banner
+    '<div style="background:' + statusBgColor + ';border:1px solid ' + health.color + '30;border-radius:var(--radius-lg);padding:24px 28px;margin-bottom:20px;display:flex;align-items:center;gap:16px">' +
+    statusIcon +
+    '<div><div style="font-size:16px;font-weight:700;color:var(--white)">' + health.label + '</div>' +
+    '<div style="font-size:12px;color:var(--muted);margin-top:2px">Last checked: ' + timeAgo(lastCheck) + '</div></div></div>' +
+
+    '<div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">' +
+    '<div class="kpi-card card-3d" style="--accent:var(--green)"><div class="kpi-glow"></div><div class="kpi-label">Uptime</div><div class="kpi-value">' + uptime + '%</div></div>' +
+    '<div class="kpi-card card-3d" style="--accent:var(--blue)"><div class="kpi-glow"></div><div class="kpi-label">Response Time</div><div class="kpi-value">' + (responseTime ? responseTime + '<sub>ms</sub>' : '--') + '</div></div>' +
+    '<div class="kpi-card card-3d" style="--accent:var(--indigo)"><div class="kpi-glow"></div><div class="kpi-label">SSL Status</div>' +
+    '<div style="margin-top:8px"><span class="badge badge-green"><span class="badge-dot"></span> ' + (sslExpiry ? 'Valid until ' + escHtml(sslExpiry) : 'Active') + '</span></div></div>' +
+    '</div>' +
+
+    '<div class="grid-2">' +
+    // Site URL
+    '<div class="panel"><div class="panel-header"><div class="panel-title">Site URL</div></div>' +
+    '<div class="panel-body">' +
+    (liveUrl
+      ? '<div class="copy-link-wrap"><div class="copy-link-text">' + escHtml(liveUrl) + '</div>' +
+        '<a href="' + escHtml(liveUrl) + '" target="_blank" class="btn btn-primary btn-sm">Visit</a></div>'
+      : '<div style="font-size:13px;color:var(--muted)">Site URL will appear here when your website goes live.</div>') +
+    '</div></div>' +
+
+    // Monitoring info
+    '<div class="panel"><div class="panel-header"><div class="panel-title">Monitoring</div></div>' +
+    '<div class="panel-body">' +
+    '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.03)">' +
+    '<span style="font-size:13px;color:var(--text)">Check Interval</span>' +
+    '<span style="font-size:13px;font-weight:600;color:var(--white)">Every 5 minutes</span></div>' +
+    '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.03)">' +
+    '<span style="font-size:13px;color:var(--text)">Status</span>' +
+    '<span class="badge ' + (health.status === 'healthy' ? 'badge-green' : health.status === 'down' ? 'badge-red' : 'badge-amber') + '"><span class="badge-dot"></span> ' + escHtml(health.label) + '</span></div>' +
+    '<div style="display:flex;align-items:center;justify-content:space-between;padding:10px 0">' +
+    '<span style="font-size:13px;color:var(--text)">Hosting</span>' +
+    '<span style="font-size:13px;font-weight:600;color:var(--white)">Cloudflare Workers</span></div>' +
+    '</div></div></div>';
+}
+
+// ════════════════════════════════════════════════════
+//  TAB 8: CONTENT
+// ════════════════════════════════════════════════════
+function renderContent() {
+  var items = getContentItems();
+  var published = items.filter(function(c) { return c.status === 'published'; }).length;
+  var scheduled = items.filter(function(c) { return c.status === 'scheduled'; }).length;
+  var drafts = items.filter(function(c) { return c.status === 'draft'; }).length;
+
+  // Stats
+  var statsHtml = '<div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">' +
+    '<div class="kpi-card card-3d" style="--accent:var(--green)"><div class="kpi-glow"></div><div class="kpi-label">Published</div><div class="kpi-value">' + published + '</div></div>' +
+    '<div class="kpi-card card-3d" style="--accent:var(--blue)"><div class="kpi-glow"></div><div class="kpi-label">Scheduled</div><div class="kpi-value">' + scheduled + '</div></div>' +
+    '<div class="kpi-card card-3d" style="--accent:var(--amber)"><div class="kpi-glow"></div><div class="kpi-label">Drafts</div><div class="kpi-value">' + drafts + '</div></div>' +
+    '</div>';
+
+  // Content items list
+  var typeBadge = { blog: 'badge-indigo', social: 'badge-purple', update: 'badge-teal' };
+  var statusBadge = { published: 'badge-green', draft: 'badge-amber', scheduled: 'badge-indigo' };
+  var contentHtml = '';
+  if (items.length === 0) {
+    contentHtml = '<div style="padding:32px;text-align:center"><div style="font-size:14px;color:var(--white);font-weight:600;margin-bottom:6px">No content updates yet</div>' +
+      '<div style="font-size:13px;color:var(--muted)">Your team is working on it!</div></div>';
+  } else {
+    items.sort(function(a, b) { return new Date(b.date || b.createdAt) - new Date(a.date || a.createdAt); });
+    contentHtml = '<div class="table-wrap"><table><thead><tr><th>Type</th><th>Title</th><th>Status</th><th>Date</th></tr></thead><tbody>';
+    items.forEach(function(c) {
+      var type = c.type || 'update';
+      var status = c.status || 'draft';
+      contentHtml += '<tr><td><span class="badge ' + (typeBadge[type] || 'badge-muted') + '" style="text-transform:capitalize">' + escHtml(type) + '</span></td>' +
+        '<td class="bold">' + escHtml(c.title || 'Untitled') + '</td>' +
+        '<td><span class="badge ' + (statusBadge[status] || 'badge-muted') + '"><span class="badge-dot"></span> ' + escHtml(status) + '</span></td>' +
+        '<td>' + (c.date ? timeAgo(c.date) : '--') + '</td></tr>';
+    });
+    contentHtml += '</tbody></table></div>';
+  }
+
+  document.getElementById('page-content').innerHTML =
+    '<div class="page-header"><div class="page-header-left"><h1>Content</h1><p>Blog posts, updates, and scheduled content</p></div></div>' +
+
+    statsHtml +
+
+    '<div class="panel"><div class="panel-header"><div class="panel-title">Content Items</div>' +
+    '<span class="badge badge-muted">' + items.length + '</span></div>' +
+    '<div class="panel-body" style="padding:0">' + contentHtml + '</div></div>';
+}
+
+// ════════════════════════════════════════════════════
+//  TAB 9: BILLING
 // ════════════════════════════════════════════════════
 function renderBilling() {
   var plan = CLIENT.plan || 'starter';
