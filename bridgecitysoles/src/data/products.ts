@@ -1,9 +1,41 @@
 import { Product } from '@/types/product';
 
-// Placeholder image URLs using solid color blocks sized for sneakers
-// In production, these would be Supabase Storage URLs
-const img = (color: string, label: string) =>
-  `https://placehold.co/600x400/${color}/ffffff?text=${encodeURIComponent(label)}`;
+// Unsplash image URLs — free for commercial use
+const u = (id: string) => `https://images.unsplash.com/${id}?w=600&h=600&fit=crop&auto=format&q=80`;
+
+// Mapped by product type
+const IMGS = {
+  aj1Chicago: u('photo-1597045566677-8cf032ed6634'),
+  aj1ChicagoAlt: u('photo-1593081891731-fda0877988da'),
+  aj4Military: u('photo-1622760808027-095ea611f657'),
+  aj4MilitaryAlt: u('photo-1622760807301-4d2351a5a942'),
+  aj11Cherry: u('photo-1597843994436-120c8d91cae2'),
+  dunkPanda: u('photo-1623684225794-a8f1f5037f5c'),
+  dunkPandaAlt: u('photo-1615290642882-6b9501729a27'),
+  af1White: u('photo-1603631540004-d7b2616b2323'),
+  af1WhiteAlt: u('photo-1603631540329-f5849b7ca16a'),
+  travScott: u('photo-1681883750582-1d8c190b1b08'),
+  travScottAlt: u('photo-1615451210353-cbcf249f392a'),
+  yeezyZebra: u('photo-1532561685579-890e8f61456a'),
+  yeezySlide: u('photo-1626771652942-93d834f3d1fd'),
+  nb550: u('photo-1662569147750-ef722928ce08'),
+  nb550Alt: u('photo-1610630879511-3f6a23c19a02'),
+  nb2002r: u('photo-1662569137392-9730049d14ef'),
+  samba: u('photo-1608551279748-73f47931de2c'),
+  sambaAlt: u('photo-1651013691313-81b822df0044'),
+  owPresto: u('photo-1558121556-2a39fc528338'),
+  supremeHoodie: u('photo-1711387718409-a05f62a3dc39'),
+  bapeHoodie: u('photo-1632682582909-2b3a2581eef7'),
+  aj3Cement: u('photo-1622760806530-3cb6301c087d'),
+  aj3CementAlt: u('photo-1622760807800-66cf1466fc08'),
+  aj1Mocha: u('photo-1619203697301-2a547d2a054d'),
+  aj1MochaAlt: u('photo-1619203696829-705720cf8f63'),
+  am1Obsidian: u('photo-1603631539713-5b4d35c1ba67'),
+  tnfScarf: u('photo-1635131546618-f4d7b5d75b28'),
+  am90Infrared: u('photo-1603631540071-832424f35a71'),
+  am90InfraredAlt: u('photo-1603631540719-a3b2b462bf49'),
+  aj5Grape: u('photo-1616258372736-f5e5d5337d6e'),
+};
 
 export const products: Product[] = [
   // ── JORDAN ──
@@ -22,10 +54,8 @@ export const products: Product[] = [
     isNewDrop: true,
     isActive: true,
     images: [
-      { id: 'img1a', url: img('CC0000', 'AJ1+Chicago'), alt: 'Air Jordan 1 Chicago - Side View', isPrimary: true },
-      { id: 'img1b', url: img('990000', 'AJ1+Chicago+Back'), alt: 'Air Jordan 1 Chicago - Back View', isPrimary: false },
-      { id: 'img1c', url: img('AA0000', 'AJ1+Chicago+Top'), alt: 'Air Jordan 1 Chicago - Top View', isPrimary: false },
-      { id: 'img1d', url: img('BB0000', 'AJ1+Chicago+Sole'), alt: 'Air Jordan 1 Chicago - Sole', isPrimary: false },
+      { id: 'img1a', url: IMGS.aj1Chicago, alt: 'Air Jordan 1 Chicago - Side View', isPrimary: true },
+      { id: 'img1b', url: IMGS.aj1ChicagoAlt, alt: 'Air Jordan 1 Chicago - Back View', isPrimary: false },
     ],
     inventory: [
       { id: 'inv1a', productId: 'p1', conditionId: 'cn1', size: '8', price: 450, quantity: 1, isActive: true },
@@ -53,8 +83,8 @@ export const products: Product[] = [
     isNewDrop: false,
     isActive: true,
     images: [
-      { id: 'img2a', url: img('333333', 'AJ4+Military'), alt: 'Air Jordan 4 Military Black', isPrimary: true },
-      { id: 'img2b', url: img('444444', 'AJ4+Military+Side'), alt: 'Air Jordan 4 Military Black - Side', isPrimary: false },
+      { id: 'img2a', url: IMGS.aj4Military, alt: 'Air Jordan 4 Military Black', isPrimary: true },
+      { id: 'img2b', url: IMGS.aj4MilitaryAlt, alt: 'Air Jordan 4 Military Black - Side', isPrimary: false },
     ],
     inventory: [
       { id: 'inv2a', productId: 'p2', conditionId: 'cn1', size: '8.5', price: 280, quantity: 1, isActive: true },
@@ -80,7 +110,7 @@ export const products: Product[] = [
     isNewDrop: true,
     isActive: true,
     images: [
-      { id: 'img3a', url: img('CC2222', 'AJ11+Cherry'), alt: 'Air Jordan 11 Cherry', isPrimary: true },
+      { id: 'img3a', url: IMGS.aj11Cherry, alt: 'Air Jordan 11 Cherry', isPrimary: true },
     ],
     inventory: [
       { id: 'inv3a', productId: 'p3', conditionId: 'cn1', size: '8', price: 310, quantity: 1, isActive: true },
@@ -107,8 +137,8 @@ export const products: Product[] = [
     isNewDrop: false,
     isActive: true,
     images: [
-      { id: 'img4a', url: img('222222', 'Dunk+Low+Panda'), alt: 'Nike Dunk Low Panda', isPrimary: true },
-      { id: 'img4b', url: img('333333', 'Dunk+Low+Panda+Back'), alt: 'Nike Dunk Low Panda - Back', isPrimary: false },
+      { id: 'img4a', url: IMGS.dunkPanda, alt: 'Nike Dunk Low Panda', isPrimary: true },
+      { id: 'img4b', url: IMGS.dunkPandaAlt, alt: 'Nike Dunk Low Panda - Back', isPrimary: false },
     ],
     inventory: [
       { id: 'inv4a', productId: 'p4', conditionId: 'cn1', size: '7', price: 150, quantity: 2, isActive: true },
@@ -134,7 +164,7 @@ export const products: Product[] = [
     isNewDrop: false,
     isActive: true,
     images: [
-      { id: 'img5a', url: img('EEEEEE', 'AF1+White'), alt: 'Nike Air Force 1 Low White', isPrimary: true },
+      { id: 'img5a', url: IMGS.af1White, alt: 'Nike Air Force 1 Low White', isPrimary: true },
     ],
     inventory: [
       { id: 'inv5a', productId: 'p5', conditionId: 'cn1', size: '8', price: 120, quantity: 3, isActive: true },
@@ -159,8 +189,8 @@ export const products: Product[] = [
     isNewDrop: false,
     isActive: true,
     images: [
-      { id: 'img6a', url: img('8B6914', 'Travis+SB+Dunk'), alt: 'Nike SB Dunk Low Travis Scott', isPrimary: true },
-      { id: 'img6b', url: img('7A5C10', 'Travis+SB+Dunk+Side'), alt: 'Nike SB Dunk Low Travis Scott - Side', isPrimary: false },
+      { id: 'img6a', url: IMGS.travScott, alt: 'Nike SB Dunk Low Travis Scott', isPrimary: true },
+      { id: 'img6b', url: IMGS.travScottAlt, alt: 'Nike SB Dunk Low Travis Scott - Side', isPrimary: false },
     ],
     inventory: [
       { id: 'inv6a', productId: 'p6', conditionId: 'cn1', size: '9', price: 1200, quantity: 1, isActive: true },
@@ -186,7 +216,7 @@ export const products: Product[] = [
     isNewDrop: false,
     isActive: true,
     images: [
-      { id: 'img7a', url: img('DDDDDD', 'Yeezy+350+Zebra'), alt: 'Yeezy 350 V2 Zebra', isPrimary: true },
+      { id: 'img7a', url: IMGS.yeezyZebra, alt: 'Yeezy 350 V2 Zebra', isPrimary: true },
     ],
     inventory: [
       { id: 'inv7a', productId: 'p7', conditionId: 'cn1', size: '8', price: 320, quantity: 1, isActive: true },
@@ -210,7 +240,7 @@ export const products: Product[] = [
     isNewDrop: false,
     isActive: true,
     images: [
-      { id: 'img8a', url: img('1A1A1A', 'Yeezy+Slide+Onyx'), alt: 'Yeezy Slide Onyx', isPrimary: true },
+      { id: 'img8a', url: IMGS.yeezySlide, alt: 'Yeezy Slide Onyx', isPrimary: true },
     ],
     inventory: [
       { id: 'inv8a', productId: 'p8', conditionId: 'cn1', size: '7', price: 130, quantity: 2, isActive: true },
@@ -236,7 +266,7 @@ export const products: Product[] = [
     isNewDrop: true,
     isActive: true,
     images: [
-      { id: 'img9a', url: img('22AA55', 'NB+550+Green'), alt: 'New Balance 550 White Green', isPrimary: true },
+      { id: 'img9a', url: IMGS.nb550, alt: 'New Balance 550 White Green', isPrimary: true },
     ],
     inventory: [
       { id: 'inv9a', productId: 'p9', conditionId: 'cn1', size: '8', price: 150, quantity: 1, isActive: true },
@@ -260,7 +290,7 @@ export const products: Product[] = [
     isNewDrop: false,
     isActive: true,
     images: [
-      { id: 'img10a', url: img('999999', 'NB+2002R'), alt: 'New Balance 2002R Rain Cloud', isPrimary: true },
+      { id: 'img10a', url: IMGS.nb2002r, alt: 'New Balance 2002R Rain Cloud', isPrimary: true },
     ],
     inventory: [
       { id: 'inv10a', productId: 'p10', conditionId: 'cn1', size: '8.5', price: 220, quantity: 1, isActive: true },
@@ -285,7 +315,7 @@ export const products: Product[] = [
     isNewDrop: false,
     isActive: true,
     images: [
-      { id: 'img11a', url: img('FFFFFF', 'Samba+OG'), alt: 'Adidas Samba OG White Black', isPrimary: true },
+      { id: 'img11a', url: IMGS.samba, alt: 'Adidas Samba OG White Black', isPrimary: true },
     ],
     inventory: [
       { id: 'inv11a', productId: 'p11', conditionId: 'cn1', size: '7', price: 130, quantity: 2, isActive: true },
@@ -313,7 +343,7 @@ export const products: Product[] = [
     isNewDrop: false,
     isActive: true,
     images: [
-      { id: 'img12a', url: img('F5F5F5', 'OW+Presto'), alt: 'Off-White Nike Air Presto White', isPrimary: true },
+      { id: 'img12a', url: IMGS.owPresto, alt: 'Off-White Nike Air Presto White', isPrimary: true },
     ],
     inventory: [
       { id: 'inv12a', productId: 'p12', conditionId: 'cn1', size: '9', price: 850, quantity: 1, isActive: true },
@@ -337,7 +367,7 @@ export const products: Product[] = [
     isNewDrop: true,
     isActive: true,
     images: [
-      { id: 'img13a', url: img('1A1A1A', 'Supreme+Bogo'), alt: 'Supreme Box Logo Hoodie Black', isPrimary: true },
+      { id: 'img13a', url: IMGS.supremeHoodie, alt: 'Supreme Box Logo Hoodie Black', isPrimary: true },
     ],
     inventory: [
       { id: 'inv13a', productId: 'p13', conditionId: 'cn1', size: 'M', price: 450, quantity: 1, isActive: true },
@@ -358,7 +388,7 @@ export const products: Product[] = [
     isNewDrop: false,
     isActive: true,
     images: [
-      { id: 'img14a', url: img('2D5A27', 'BAPE+Shark'), alt: 'BAPE Shark Hoodie Green', isPrimary: true },
+      { id: 'img14a', url: IMGS.bapeHoodie, alt: 'BAPE Shark Hoodie Green', isPrimary: true },
     ],
     inventory: [
       { id: 'inv14a', productId: 'p14', conditionId: 'cn1', size: 'M', price: 550, quantity: 1, isActive: true },
@@ -383,8 +413,8 @@ export const products: Product[] = [
     isNewDrop: false,
     isActive: true,
     images: [
-      { id: 'img15a', url: img('CCCCCC', 'AJ3+Cement'), alt: 'Air Jordan 3 White Cement', isPrimary: true },
-      { id: 'img15b', url: img('BBBBBB', 'AJ3+Cement+Side'), alt: 'Air Jordan 3 White Cement - Side', isPrimary: false },
+      { id: 'img15a', url: IMGS.aj3Cement, alt: 'Air Jordan 3 White Cement', isPrimary: true },
+      { id: 'img15b', url: IMGS.aj3CementAlt, alt: 'Air Jordan 3 White Cement - Side', isPrimary: false },
     ],
     inventory: [
       { id: 'inv15a', productId: 'p15', conditionId: 'cn1', size: '8', price: 260, quantity: 1, isActive: true },
@@ -409,7 +439,7 @@ export const products: Product[] = [
     isNewDrop: false,
     isActive: true,
     images: [
-      { id: 'img16a', url: img('6B4423', 'AJ1+Low+Mocha'), alt: 'Air Jordan 1 Low Mocha', isPrimary: true },
+      { id: 'img16a', url: IMGS.aj1Mocha, alt: 'Air Jordan 1 Low Mocha', isPrimary: true },
     ],
     inventory: [
       { id: 'inv16a', productId: 'p16', conditionId: 'cn1', size: '8', price: 180, quantity: 1, isActive: true },
@@ -436,7 +466,7 @@ export const products: Product[] = [
     isNewDrop: true,
     isActive: true,
     images: [
-      { id: 'img17a', url: img('1B2A4A', 'AM1+Obsidian'), alt: 'Nike Air Max 1 Obsidian', isPrimary: true },
+      { id: 'img17a', url: IMGS.am1Obsidian, alt: 'Nike Air Max 1 Obsidian', isPrimary: true },
     ],
     inventory: [
       { id: 'inv17a', productId: 'p17', conditionId: 'cn1', size: '8', price: 175, quantity: 1, isActive: true },
@@ -460,7 +490,7 @@ export const products: Product[] = [
     isNewDrop: false,
     isActive: true,
     images: [
-      { id: 'img18a', url: img('111111', 'Supreme+TNF+Scarf'), alt: 'Supreme TNF Nuptse Scarf', isPrimary: true },
+      { id: 'img18a', url: IMGS.tnfScarf, alt: 'Supreme TNF Nuptse Scarf', isPrimary: true },
     ],
     inventory: [
       { id: 'inv18a', productId: 'p18', conditionId: 'cn1', size: 'OS', price: 120, quantity: 2, isActive: true },
@@ -483,7 +513,7 @@ export const products: Product[] = [
     isNewDrop: false,
     isActive: true,
     images: [
-      { id: 'img19a', url: img('FF4444', 'AM90+Infrared'), alt: 'Nike Air Max 90 Infrared', isPrimary: true },
+      { id: 'img19a', url: IMGS.am90Infrared, alt: 'Nike Air Max 90 Infrared', isPrimary: true },
     ],
     inventory: [
       { id: 'inv19a', productId: 'p19', conditionId: 'cn1', size: '8', price: 165, quantity: 1, isActive: true },
@@ -508,7 +538,7 @@ export const products: Product[] = [
     isNewDrop: true,
     isActive: true,
     images: [
-      { id: 'img20a', url: img('6B21A8', 'AJ5+Grape'), alt: 'Air Jordan 5 Grape', isPrimary: true },
+      { id: 'img20a', url: IMGS.aj5Grape, alt: 'Air Jordan 5 Grape', isPrimary: true },
     ],
     inventory: [
       { id: 'inv20a', productId: 'p20', conditionId: 'cn1', size: '8', price: 250, quantity: 1, isActive: true },

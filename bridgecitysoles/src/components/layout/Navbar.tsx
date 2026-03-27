@@ -37,8 +37,8 @@ export function Navbar() {
     <header className={cn(
       'sticky top-0 z-30 transition-all duration-300',
       scrolled
-        ? 'bg-bcs-black/95 backdrop-blur-md border-b border-bcs-rust/15 shadow-lg shadow-bcs-rust/5'
-        : 'bg-bcs-black/80 backdrop-blur-sm border-b border-bcs-border/50'
+        ? 'bg-white/95 backdrop-blur-md border-b border-bcs-border shadow-sm'
+        : 'bg-white/80 backdrop-blur-sm border-b border-bcs-border/50'
     )}>
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Logo */}

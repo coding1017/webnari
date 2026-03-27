@@ -155,19 +155,19 @@ export function ProductDetail({ slug }: { slug: string }) {
 
           <div className="grid grid-cols-2 gap-3">
             <div className="flex items-center gap-2 px-3 py-2.5 bg-bcs-surface rounded-lg">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#4A7C59" strokeWidth="2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3D9A5F" strokeWidth="2">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
               </svg>
               <span className="text-xs text-bcs-text">100% Authentic</span>
             </div>
             <div className="flex items-center gap-2 px-3 py-2.5 bg-bcs-surface rounded-lg">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4622A" strokeWidth="2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B3FA0" strokeWidth="2">
                 <path d="M20 6L9 17l-5-5" />
               </svg>
               <span className="text-xs text-bcs-text">Verified by BCS</span>
             </div>
             <div className="flex items-center gap-2 px-3 py-2.5 bg-bcs-surface rounded-lg">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4622A" strokeWidth="2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B3FA0" strokeWidth="2">
                 <rect x="1" y="3" width="15" height="13" rx="2" />
                 <path d="M16 8h4a2 2 0 012 2v6a2 2 0 01-2 2h-4" />
                 <circle cx="5.5" cy="18.5" r="2.5" />
@@ -176,7 +176,7 @@ export function ProductDetail({ slug }: { slug: string }) {
               <span className="text-xs text-bcs-text">Fast Shipping</span>
             </div>
             <div className="flex items-center gap-2 px-3 py-2.5 bg-bcs-surface rounded-lg">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D4622A" strokeWidth="2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B3FA0" strokeWidth="2">
                 <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
                 <path d="M9 22V12h6v10" />
               </svg>

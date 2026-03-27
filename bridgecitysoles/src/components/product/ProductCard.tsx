@@ -70,7 +70,7 @@ export function ProductCard({ product, index = 0 }: { product: ProductWithDetail
           {/* Auth badge */}
           <div className="absolute top-3 right-3">
             <div className="w-6 h-6 rounded-full bg-bcs-forest/20 flex items-center justify-center" title="Authenticated">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4A7C59" strokeWidth="3">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3D9A5F" strokeWidth="3">
                 <path d="M20 6L9 17l-5-5" />
               </svg>
             </div>

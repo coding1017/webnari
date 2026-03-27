@@ -19,7 +19,7 @@ export function Footer() {
               Portland&apos;s premier destination for authentic sneakers and streetwear. Every product is 100% authenticated.
             </p>
             <div className="flex items-center gap-1 text-xs text-bcs-muted">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4A7C59" strokeWidth="2">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3D9A5F" strokeWidth="2">
                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
               </svg>
               <span>Authenticity Guaranteed</span>
@@ -104,7 +104,7 @@ export function Footer() {
             &copy; {new Date().getFullYear()} Bridge City Soles. All rights reserved.
           </p>
           <p className="text-xs text-bcs-muted flex items-center gap-1">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#4A7C59" strokeWidth="2">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3D9A5F" strokeWidth="2">
               <path d="M20 6L9 17l-5-5" />
             </svg>
             All products are 100% authentic guaranteed

@@ -35,82 +35,21 @@ function AnimatedCounter({ target, suffix = '' }: { target: number; suffix?: str
   return <span ref={ref}>{count.toLocaleString()}{suffix}</span>;
 }
 
-// Sneaker silhouette SVG
-function SneakerSVG() {
-  return (
-    <svg viewBox="0 0 400 200" fill="none" className="w-full h-full">
-      {/* Sole */}
-      <path
-        d="M40 160 Q40 145 60 140 L120 130 Q150 125 180 128 L280 135 Q340 140 360 150 Q370 158 360 165 L50 170 Q40 170 40 160Z"
-        fill="#2A2D30"
-        stroke="#D4622A"
-        strokeWidth="1.5"
-        opacity="0.8"
-      />
-      {/* Midsole */}
-      <path
-        d="M55 145 Q55 135 75 130 L130 118 Q160 112 190 115 L290 122 Q345 128 355 138 Q358 142 355 148 L60 152 Q55 152 55 145Z"
-        fill="#353839"
-        stroke="#D4622A"
-        strokeWidth="1"
-        opacity="0.6"
-      />
-      {/* Upper */}
-      <path
-        d="M70 130 Q65 85 90 65 Q110 50 140 48 L200 45 Q240 44 260 55 Q280 65 290 80 L310 115 Q315 125 305 128 L130 120 Q100 118 80 122 Z"
-        fill="#1A1C1E"
-        stroke="#D4622A"
-        strokeWidth="1.5"
-      />
-      {/* Swoosh */}
-      <path
-        d="M100 105 Q140 75 200 70 Q260 65 310 90"
-        fill="none"
-        stroke="#D4622A"
-        strokeWidth="3"
-        strokeLinecap="round"
-        opacity="0.9"
-      />
-      {/* Tongue */}
-      <path
-        d="M150 48 Q155 25 175 18 Q195 12 210 18 Q225 28 220 48"
-        fill="#222527"
-        stroke="#D4622A"
-        strokeWidth="1"
-        opacity="0.7"
-      />
-      {/* Lace holes */}
-      <circle cx="165" cy="55" r="3" fill="#D4622A" opacity="0.5" />
-      <circle cx="185" cy="52" r="3" fill="#D4622A" opacity="0.5" />
-      <circle cx="205" cy="52" r="3" fill="#D4622A" opacity="0.5" />
-      {/* Heel tab */}
-      <path
-        d="M85 72 Q80 60 88 52 Q96 46 105 52 Q110 60 105 72"
-        fill="#D4622A"
-        opacity="0.3"
-      />
-      {/* Accent dots */}
-      <circle cx="250" cy="85" r="2" fill="#4A7C59" opacity="0.6" />
-      <circle cx="270" cy="80" r="2" fill="#4A7C59" opacity="0.6" />
-    </svg>
-  );
-}
+// Hero sneaker image — real photo instead of SVG
+// 3D floating sneaker — vibrant purple/pink levitating shoe
+const HERO_SNEAKER_URL = 'https://images.unsplash.com/photo-1539185441755-769473a23570?w=800&h=800&fit=crop&auto=format&q=90';
 
 export function HeroSection() {
   return (
-    <section className="relative overflow-hidden grain-overlay">
-      {/* Background gradients */}
-      <div className="absolute inset-0 bg-gradient-to-br from-bcs-black via-bcs-dark to-bcs-black" />
+    <section className="relative overflow-hidden" style={{ background: 'linear-gradient(135deg, #FAF7F2 0%, #F0EAF8 50%, #F3EDE4 100%)' }}>
+      {/* Soft purple & gold glow accents */}
       <div className="absolute inset-0" style={{
-        backgroundImage: 'radial-gradient(ellipse at 70% 40%, rgba(212, 98, 42, 0.08) 0%, transparent 55%), radial-gradient(ellipse at 20% 80%, rgba(74, 124, 89, 0.06) 0%, transparent 50%)'
+        backgroundImage: 'radial-gradient(ellipse at 65% 30%, rgba(107, 63, 160, 0.08) 0%, transparent 50%), radial-gradient(ellipse at 25% 75%, rgba(201, 152, 46, 0.06) 0%, transparent 50%)'
       }} />
 
-      {/* Diagonal lines pattern */}
-      <div className="absolute inset-0 diagonal-lines" />
-
-      {/* Grid pattern — subtle */}
-      <div className="absolute inset-0 opacity-[0.02]" style={{
-        backgroundImage: 'linear-gradient(rgba(237,232,227,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(237,232,227,0.5) 1px, transparent 1px)',
+      {/* Subtle grid */}
+      <div className="absolute inset-0 opacity-[0.04]" style={{
+        backgroundImage: 'linear-gradient(rgba(107,63,160,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(107,63,160,0.2) 1px, transparent 1px)',
         backgroundSize: '80px 80px'
       }} />
 
@@ -119,7 +58,7 @@ export function HeroSection() {
           {/* Left — Text */}
           <div className="animate-fade-in-up">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-bcs-surface/80 border border-bcs-border text-xs uppercase tracking-widest text-bcs-text mb-6 backdrop-blur-sm">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/70 border border-bcs-border text-xs uppercase tracking-widest text-bcs-text mb-6 backdrop-blur-sm">
               <span className="w-2 h-2 rounded-full bg-bcs-rust animate-pulse" />
               Black Owned &bull; Portland, OR
             </div>
@@ -160,14 +99,14 @@ export function HeroSection() {
               </Link>
               <Link
                 href="/store"
-                className="inline-flex items-center gap-2 px-8 py-3.5 border border-bcs-border text-bcs-white font-bold uppercase tracking-wide rounded-lg hover:bg-bcs-surface hover:border-bcs-rust/30 transition-all duration-300 font-[family-name:var(--font-barlow-condensed)] text-lg"
+                className="inline-flex items-center gap-2 px-8 py-3.5 border border-bcs-border text-bcs-white font-bold uppercase tracking-wide rounded-lg hover:bg-white/50 hover:border-bcs-border2 transition-all duration-300 font-[family-name:var(--font-barlow-condensed)] text-lg"
               >
                 Visit the Store
               </Link>
             </div>
 
             {/* Stats with animated counters */}
-            <div className="flex flex-wrap gap-8 mt-12 pt-8 border-t border-bcs-border/50">
+            <div className="flex flex-wrap gap-8 mt-12 pt-8 border-t border-bcs-border">
               <div>
                 <div className="font-[family-name:var(--font-barlow-condensed)] text-3xl font-bold text-bcs-rust">
                   <AnimatedCounter target={500} suffix="+" />
@@ -195,16 +134,21 @@ export function HeroSection() {
             <div className="absolute w-80 h-80 rounded-full bg-bcs-rust/10 blur-[80px]" />
             <div className="absolute w-60 h-60 rounded-full bg-bcs-forest/8 blur-[60px] translate-x-20 translate-y-10" />
 
-            {/* Floating sneaker */}
-            <div className="relative w-[420px] h-[220px] animate-float">
-              <SneakerSVG />
+            {/* Floating sneaker photo */}
+            <div className="relative animate-float">
+              <img
+                src={HERO_SNEAKER_URL}
+                alt="Featured sneaker"
+                className="w-[450px] h-auto rounded-2xl shadow-2xl shadow-black/30"
+                style={{ transform: 'rotate(-5deg)' }}
+              />
             </div>
 
             {/* Shadow */}
-            <div className="absolute bottom-4 w-48 h-4 bg-bcs-rust/20 rounded-[50%] blur-md animate-float-shadow" />
+            <div className="absolute bottom-4 w-56 h-6 bg-black/15 rounded-[50%] blur-xl animate-float-shadow" />
 
             {/* Floating badges */}
-            <div className="absolute top-8 right-4 bg-bcs-surface/90 backdrop-blur-sm border border-bcs-border rounded-lg px-3 py-2 animate-fade-in" style={{ animationDelay: '0.5s' }}>
+            <div className="absolute top-8 right-4 bg-white/80 backdrop-blur-sm border border-bcs-border rounded-lg px-3 py-2 animate-fade-in" style={{ animationDelay: '0.5s' }}>
               <div className="flex items-center gap-2">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#4A7C59" strokeWidth="2.5">
                   <path d="M20 6L9 17l-5-5" />
@@ -213,7 +157,7 @@ export function HeroSection() {
               </div>
             </div>
 
-            <div className="absolute bottom-16 left-0 bg-bcs-surface/90 backdrop-blur-sm border border-bcs-border rounded-lg px-3 py-2 animate-fade-in" style={{ animationDelay: '0.8s' }}>
+            <div className="absolute bottom-16 left-0 bg-white/80 backdrop-blur-sm border border-bcs-border rounded-lg px-3 py-2 animate-fade-in" style={{ animationDelay: '0.8s' }}>
               <div className="flex items-center gap-2">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D4622A" strokeWidth="2">
                   <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />

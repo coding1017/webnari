@@ -21,7 +21,7 @@ export default function ContactPage() {
 
       {submitted ? (
         <div className="text-center bg-bcs-surface rounded-xl border border-bcs-teal/30 p-12">
-          <svg className="mx-auto mb-4" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#D4622A" strokeWidth="2">
+          <svg className="mx-auto mb-4" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#6B3FA0" strokeWidth="2">
             <path d="M20 6L9 17l-5-5" />
           </svg>
           <h2 className="text-xl font-bold mb-2">Message Sent!</h2>
@@ -84,23 +84,23 @@ export default function ContactPage() {
       {/* Quick contact */}
       <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="text-center bg-bcs-surface rounded-xl border border-bcs-border p-5">
-          <svg className="mx-auto mb-2" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D4622A" strokeWidth="2">
+          <svg className="mx-auto mb-2" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6B3FA0" strokeWidth="2">
             <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 013.12 4.18 2 2 0 015.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
           </svg>
           <p className="text-sm font-medium">Call Us</p>
           <a href="tel:5039498643" className="text-sm text-bcs-teal">(503) 949-8643</a>
         </div>
         <div className="text-center bg-bcs-surface rounded-xl border border-bcs-border p-5">
-          <svg className="mx-auto mb-2" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D4622A" strokeWidth="2">
+          <svg className="mx-auto mb-2" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6B3FA0" strokeWidth="2">
             <rect x="2" y="2" width="20" height="20" rx="5" />
             <circle cx="12" cy="12" r="5" />
-            <circle cx="17.5" cy="6.5" r="1.5" fill="#D4622A" stroke="none" />
+            <circle cx="17.5" cy="6.5" r="1.5" fill="#6B3FA0" stroke="none" />
           </svg>
           <p className="text-sm font-medium">DM Us</p>
           <a href="https://www.instagram.com/bridgecitysolesportland/" target="_blank" rel="noopener noreferrer" className="text-sm text-bcs-teal">@bridgecitysolesportland</a>
         </div>
         <div className="text-center bg-bcs-surface rounded-xl border border-bcs-border p-5">
-          <svg className="mx-auto mb-2" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D4622A" strokeWidth="2">
+          <svg className="mx-auto mb-2" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#6B3FA0" strokeWidth="2">
             <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
             <circle cx="12" cy="10" r="3" />
           </svg>
