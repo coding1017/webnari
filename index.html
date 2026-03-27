@@ -544,7 +544,7 @@ footer{border-top:1px solid var(--border);padding:48px}
           <div style="display:none"><div id="dp-seqScrubFill"></div></div>
           <div id="dp-seqFinal" style="display:none"></div>
           <div id="dp-seqSticky" style="display:none"></div>
-          <div class="showcase-pane-label">Restaurant</div>
+          <div class="showcase-pane-label">Pizza</div>
         </div>
       </div>
     </div>
@@ -1126,20 +1126,20 @@ function initShowcase(){
     window.__deskVoltProgress=p1;
     window.__deskRoofProgress=p1;
 
-    // Pair 2: .50→.90 maps to 15%→90%
+    // Pair 2: .50→.90 maps to 15%→90% (pizza caps at 83%)
     const p2raw=(p-.50)/.40;
     const p2=.15+Math.max(0,Math.min(p2raw,1))*(.90-.15);
     window.__deskGreenProgress=p2;
-    window.__deskPizzaProgress=p2;
+    window.__deskPizzaProgress=Math.min(p2,.83);
 
-    // 3D tilt exit at end (.90→1.0)
+    // 3D tilt exit at end (.90→1.0) — dramatic full tilt out of view
     let exitP=0;
     if(p>=.90)exitP=(p-.90)/.10;
     const exitEase=exitP*exitP*(3-2*exitP);
     if(stickyEl){
       if(exitP>0){
-        stickyEl.style.transform=`perspective(800px) rotateX(${exitEase*25}deg) scale(${1-exitEase*.15}) translateY(${exitEase*-60}px)`;
-        stickyEl.style.opacity=`${1-exitEase*.7}`;
+        stickyEl.style.transform=`perspective(600px) rotateX(${exitEase*75}deg) scale(${1-exitEase*.4}) translateY(${exitEase*-200}px)`;
+        stickyEl.style.opacity=`${1-exitEase}`;
       }else{
         stickyEl.style.transform='none';
         stickyEl.style.opacity='1';
