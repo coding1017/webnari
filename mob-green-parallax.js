@@ -1,0 +1,835 @@
+// Mobile GreenScape Parallax — namespaced IDs (mg-*), timer-driven progress
+(function(){
+  "use strict";
+  var clamp = function(v,lo,hi){return Math.max(lo,Math.min(hi,v));};
+  var map = function(v,a,b,c,d){return c+(d-c)*clamp((v-a)/(b-a),0,1);};
+  var easeOut3 = function(t){return 1-Math.pow(1-t,3);};
+  var easeIn3 = function(t){return t*t*t;};
+
+  // Timer-driven progress (set by initDesktopShowcase in index.html)
+  window.__mobGreenProgress = 0.15;
+
+  var seqEl = document.getElementById('mg-hero');
+  var stickyEl = seqEl;
+  if(seqEl){
+    var bg=document.getElementById('mg-seqBg');
+    var sceneContainer=document.getElementById('mg-sceneContainer');
+    var sceneGlow=document.getElementById('mg-sceneGlow');
+    var sceneEnergize=document.getElementById('mg-sceneEnergize');
+    var sceneHud=document.getElementById('mg-sceneHud');
+    var scenePowered=document.getElementById('mg-scenePowered');
+    var hudStep=document.getElementById('mg-hudStep');
+    var intro=document.getElementById('mg-seqIntro');
+    var phaseEl=document.getElementById('mg-seqPhase');
+    var scrubFill=document.getElementById('mg-seqScrubFill');
+    var finalEl=document.getElementById('mg-seqFinal');
+    var svg=document.getElementById('mg-sceneSvg');
+    var ns='http://www.w3.org/2000/svg';
+
+    function getProgress(){return window.__mobGreenProgress;}
+    var lastPhase='';
+    function setPhase(t){if(t===lastPhase)return;lastPhase=t;phaseEl.style.opacity='0';phaseEl.style.transform='translateX(-50%) translateY(7px)';setTimeout(function(){phaseEl.textContent=t;phaseEl.style.opacity='1';phaseEl.style.transform='translateX(-50%) translateY(0)';},190);}
+    function svgEl(tag,attrs){var e=document.createElementNS(ns,tag);for(var k in attrs){if(attrs.hasOwnProperty(k))e.setAttribute(k,String(attrs[k]));}return e;}
+
+    // ═══ BUILD BACKYARD SVG (Bird's-eye Realistic View) ═══
+    // Yard boundaries: wider, no wasted black space
+    var YT=70, YB=560, YL=20, YR=1030, YW=YR-YL, YH=YB-YT;
+    // Lawn area inset from beds: 30px margins
+    var LT=YT+50, LB=YB-80, LL=YL+50, LR=YR-50;
+
+    // 1. BASE SOIL (neglected brown ground)
+    var gSoil=svgEl('g',{opacity:0});
+    gSoil.appendChild(svgEl('rect',{x:YL,y:YT,width:YW,height:YH,fill:'#8B7355',rx:4}));
+    // Dead/bare patches
+    var patches=[{x:200,y:200,rx:60,ry:25},{x:525,y:300,rx:50,ry:20},{x:450,y:160,rx:40,ry:18},{x:750,y:400,rx:55,ry:22},{x:150,y:380,rx:45,ry:16},{x:850,y:180,rx:35,ry:20}];
+    patches.forEach(function(pt){gSoil.appendChild(svgEl('ellipse',{cx:pt.x,cy:pt.y,rx:pt.rx,ry:pt.ry,fill:'#6B5B3A',opacity:0.7}));});
+    // Dry yellow spots
+    [{x:350,y:250,r:20},{x:700,y:350,r:18},{x:180,y:300,r:15}].forEach(function(d){gSoil.appendChild(svgEl('circle',{cx:d.x,cy:d.y,r:d.r,fill:'#A09060',opacity:0.5}));});
+    svg.appendChild(gSoil);
+
+    // 2. WEEDS & OVERGROWTH
+    var gWeeds=svgEl('g',{opacity:0});
+    var weedPositions=[100,180,260,400,500,650,780,900,150,350,525,800,280,460,700];
+    weedPositions.forEach(function(wx){
+      var wy=YT+40+Math.random()*360;
+      gWeeds.appendChild(svgEl('path',{d:'M'+wx+' '+wy+' Q'+(wx-4)+' '+(wy-18)+' '+(wx+2)+' '+(wy-30)+' M'+wx+' '+wy+' Q'+(wx+6)+' '+(wy-15)+' '+(wx+4)+' '+(wy-28),stroke:'#6A7A3A','stroke-width':1.8,fill:'none','stroke-linecap':'round'}));
+    });
+    svg.appendChild(gWeeds);
+
+    // 3. OLD FENCE (weathered white picket — some boards askew/missing)
+    var gOldFence=svgEl('g',{opacity:0});
+    gOldFence.appendChild(svgEl('line',{x1:YL,y1:YT+8,x2:YR,y2:YT+8,stroke:'#C8C0B0','stroke-width':3}));
+    gOldFence.appendChild(svgEl('line',{x1:YL,y1:YT+28,x2:YR,y2:YT+28,stroke:'#C8C0B0','stroke-width':3}));
+    var picketSpacing=(YR-YL)/22;
+    for(var ofi=0;ofi<22;ofi++){
+      var ofx=YL+8+ofi*picketSpacing;
+      var tilt=(ofi%5===2)?3:(ofi%7===4)?-2:0;
+      var gap=(ofi===7||ofi===14||ofi===19);
+      if(!gap){
+        gOldFence.appendChild(svgEl('line',{x1:ofx+tilt,y1:YT-4,x2:ofx,y2:YT+36,stroke:(ofi%3===0)?'#B0A898':'#D0C8B8','stroke-width':4,'stroke-linecap':'round'}));
+      }
+    }
+    gOldFence.appendChild(svgEl('line',{x1:YL,y1:YT,x2:YL,y2:YB,stroke:'#C8C0B0','stroke-width':4}));
+    gOldFence.appendChild(svgEl('line',{x1:YR,y1:YT,x2:YR,y2:YB,stroke:'#C8C0B0','stroke-width':4}));
+    svg.appendChild(gOldFence);
+
+    // 4. RAKE MARKS (grading/leveling lines)
+    var gRake=svgEl('g',{opacity:0});
+    for(var ri=0;ri<25;ri++){
+      var ry=YT+20+ri*18;
+      gRake.appendChild(svgEl('line',{x1:YL+15,y1:ry,x2:YR-15,y2:ry,stroke:'#9A8565','stroke-width':0.5,opacity:0.4}));
+    }
+    svg.appendChild(gRake);
+
+    // 5. IRRIGATION TRENCHES
+    var gTrenches=svgEl('g',{opacity:0});
+    var trenchMain=svgEl('line',{x1:525,y1:YB,x2:525,y2:YT+30,stroke:'#5A4A32','stroke-width':3});
+    gTrenches.appendChild(trenchMain);
+    var tmLen=YB-(YT+30);
+    trenchMain.style.strokeDasharray=tmLen;trenchMain.style.strokeDashoffset=tmLen;
+    var branchLines=[];
+    var branchLen=(LR-10)-(LL+10);
+    [150,250,350,450].forEach(function(by){
+      var bl=svgEl('line',{x1:LL+10,y1:by,x2:LR-10,y2:by,stroke:'#5A4A32','stroke-width':2});
+      gTrenches.appendChild(bl);
+      bl.style.strokeDasharray=branchLen;bl.style.strokeDashoffset=branchLen;
+      branchLines.push({el:bl,len:branchLen});
+    });
+    svg.appendChild(gTrenches);
+
+    // 6. IRRIGATION PIPES
+    var gPipes=svgEl('g',{opacity:0});
+    gPipes.appendChild(svgEl('line',{x1:525,y1:YB-10,x2:525,y2:YT+40,stroke:'#607890','stroke-width':2.5}));
+    [150,250,350,450].forEach(function(py){
+      gPipes.appendChild(svgEl('line',{x1:LL+20,y1:py,x2:LR-20,y2:py,stroke:'#607890','stroke-width':2}));
+    });
+    var sprinklerData=[];
+    [150,250,350,450].forEach(function(sy){
+      [LL+40,300,525,750,LR-40].forEach(function(sx){
+        var sh=svgEl('circle',{cx:sx,cy:sy,r:4,fill:'#556B7A',stroke:'#405060','stroke-width':0.8,opacity:0});
+        gPipes.appendChild(sh);
+        sprinklerData.push({el:sh,x:sx,y:sy});
+      });
+    });
+    svg.appendChild(gPipes);
+
+    // 7. SOD ROWS (fresh green, laid row by row)
+    var gSod=svgEl('g',{opacity:0});
+    var sodRows=[];
+    var sodColors=['#2D8B46','#35A050','#278B3A','#30964A','#2A8540'];
+    var numSodRows=14;
+    var sodH=(LB-LT)/numSodRows;
+    for(var si2=0;si2<numSodRows;si2++){
+      var sodY=LT+si2*sodH;
+      var sodColor=sodColors[si2%sodColors.length];
+      var sodRect=svgEl('rect',{x:LL,y:sodY,width:LR-LL,height:sodH+1,fill:sodColor,opacity:0});
+      gSod.appendChild(sodRect);
+      sodRows.push(sodRect);
+    }
+    svg.appendChild(gSod);
+
+    // 7b. MOWING STRIPES
+    var gStripes=svgEl('g',{opacity:0});
+    var stripeH2=(LB-LT)/numSodRows;
+    for(var mi=0;mi<numSodRows;mi++){
+      if(mi%2===0){
+        gStripes.appendChild(svgEl('rect',{x:LL,y:LT+mi*stripeH2,width:LR-LL,height:stripeH2,fill:'#228B3A',opacity:0.25}));
+      }
+    }
+    svg.appendChild(gStripes);
+
+    // 8. EDGING BORDER
+    var gEdging=svgEl('g',{opacity:0});
+    var eX=LL-3,eY=LT-3,eW=LR-LL+6,eH=LB-LT+6;
+    var edgePath=svgEl('path',{d:'M'+(eX+6)+' '+eY+' L'+(eX+eW-6)+' '+eY+' Q'+(eX+eW)+' '+eY+' '+(eX+eW)+' '+(eY+6)+' L'+(eX+eW)+' '+(eY+eH-6)+' Q'+(eX+eW)+' '+(eY+eH)+' '+(eX+eW-6)+' '+(eY+eH)+' L'+(eX+6)+' '+(eY+eH)+' Q'+eX+' '+(eY+eH)+' '+eX+' '+(eY+eH-6)+' L'+eX+' '+(eY+6)+' Q'+eX+' '+eY+' '+(eX+6)+' '+eY+' Z',fill:'none',stroke:'#3A2A1A','stroke-width':3});
+    gEdging.appendChild(edgePath);
+    var edgeLen=2*(eW+eH);
+    edgePath.style.strokeDasharray=edgeLen;edgePath.style.strokeDashoffset=edgeLen;
+    svg.appendChild(gEdging);
+
+    // 9. MULCH BEDS (along fence lines)
+    var gMulch=svgEl('g',{opacity:0});
+    gMulch.appendChild(svgEl('rect',{x:YL+8,y:YT+5,width:YW-16,height:42,fill:'#5A3A1A',rx:4}));
+    gMulch.appendChild(svgEl('rect',{x:YL+8,y:YT+50,width:38,height:YH-120,fill:'#5A3A1A',rx:4}));
+    gMulch.appendChild(svgEl('rect',{x:YR-46,y:YT+50,width:38,height:YH-120,fill:'#5A3A1A',rx:4}));
+    svg.appendChild(gMulch);
+
+    // 10a. NEW FENCE — solid white PVC privacy fence
+    var gNewFence=svgEl('g',{opacity:0});
+    var fenceH=42;
+    var postW=6;
+    var panelCount=8;
+    var panelW=(YR-YL-postW*(panelCount+1))/panelCount;
+    for(var pni=0;pni<=panelCount;pni++){
+      var postX=YL+pni*(panelW+postW);
+      gNewFence.appendChild(svgEl('rect',{x:postX,y:YT-8,width:postW,height:fenceH+12,fill:'#E8E4DC',stroke:'#D4D0C8','stroke-width':0.5}));
+      gNewFence.appendChild(svgEl('rect',{x:postX-1,y:YT-10,width:postW+2,height:4,fill:'#F0ECE4',rx:1}));
+      if(pni<panelCount){
+        var panX=postX+postW;
+        gNewFence.appendChild(svgEl('rect',{x:panX,y:YT-4,width:panelW,height:fenceH+4,fill:'#F0ECE4',stroke:'#E0DCD4','stroke-width':0.3}));
+        gNewFence.appendChild(svgEl('line',{x1:panX,y1:YT,x2:panX+panelW,y2:YT,stroke:'#D8D4CC','stroke-width':1}));
+        gNewFence.appendChild(svgEl('line',{x1:panX,y1:YT+fenceH-4,x2:panX+panelW,y2:YT+fenceH-4,stroke:'#D8D4CC','stroke-width':1}));
+        for(var vbi=1;vbi<6;vbi++){
+          var vbx=panX+vbi*(panelW/6);
+          gNewFence.appendChild(svgEl('line',{x1:vbx,y1:YT-2,x2:vbx,y2:YT+fenceH,stroke:'#E4E0D8','stroke-width':0.3}));
+        }
+      }
+    }
+    var sidePanelH=60;
+    var sidePanels=Math.ceil(YH/sidePanelH);
+    gNewFence.appendChild(svgEl('rect',{x:YL-2,y:YT,width:8,height:YH,fill:'#F0ECE4',stroke:'#E0DCD4','stroke-width':0.5}));
+    for(var slp=0;slp<=sidePanels;slp++){
+      var slpy=YT+slp*sidePanelH;
+      gNewFence.appendChild(svgEl('rect',{x:YL-3,y:slpy-2,width:10,height:5,fill:'#E8E4DC'}));
+      gNewFence.appendChild(svgEl('line',{x1:YL-1,y1:slpy+10,x2:YL+5,y2:slpy+10,stroke:'#D8D4CC','stroke-width':0.5}));
+      gNewFence.appendChild(svgEl('line',{x1:YL-1,y1:slpy+sidePanelH-10,x2:YL+5,y2:slpy+sidePanelH-10,stroke:'#D8D4CC','stroke-width':0.5}));
+    }
+    gNewFence.appendChild(svgEl('rect',{x:YR-6,y:YT,width:8,height:YH,fill:'#F0ECE4',stroke:'#E0DCD4','stroke-width':0.5}));
+    for(var srp=0;srp<=sidePanels;srp++){
+      var srpy=YT+srp*sidePanelH;
+      gNewFence.appendChild(svgEl('rect',{x:YR-7,y:srpy-2,width:10,height:5,fill:'#E8E4DC'}));
+      gNewFence.appendChild(svgEl('line',{x1:YR-5,y1:srpy+10,x2:YR+1,y2:srpy+10,stroke:'#D8D4CC','stroke-width':0.5}));
+      gNewFence.appendChild(svgEl('line',{x1:YR-5,y1:srpy+sidePanelH-10,x2:YR+1,y2:srpy+sidePanelH-10,stroke:'#D8D4CC','stroke-width':0.5}));
+    }
+    svg.appendChild(gNewFence);
+
+    // 10. SHRUBS (large, lush — along all fence beds)
+    var gShrubs=svgEl('g',{opacity:0});
+    var shrubData=[
+      {x:YL+60,y:YT+20,rx:40,ry:28},{x:YL+140,y:YT+16,rx:44,ry:30},{x:YL+230,y:YT+18,rx:38,ry:26},
+      {x:475,y:YT+16,rx:42,ry:28},{x:580,y:YT+20,rx:40,ry:27},{x:700,y:YT+14,rx:46,ry:30},
+      {x:YR-100,y:YT+18,rx:38,ry:26},{x:YR-40,y:YT+16,rx:42,ry:28},
+      {x:YL+26,y:YT+90,rx:26,ry:32},{x:YL+28,y:YT+155,rx:24,ry:30},{x:YL+24,y:YT+220,rx:26,ry:34},
+      {x:YL+26,y:YT+285,rx:24,ry:30},{x:YL+28,y:YT+350,rx:22,ry:28},
+      {x:YR-26,y:YT+95,rx:26,ry:32},{x:YR-28,y:YT+160,rx:24,ry:30},{x:YR-24,y:YT+225,rx:26,ry:34},
+      {x:YR-26,y:YT+290,rx:24,ry:30},{x:YR-28,y:YT+345,rx:22,ry:28},{x:YR-26,y:YT+405,rx:24,ry:30}
+    ];
+    shrubData.forEach(function(sd){
+      gShrubs.appendChild(svgEl('ellipse',{cx:sd.x+3,cy:sd.y+sd.ry*0.65,rx:sd.rx*0.85,ry:sd.ry*0.3,fill:'#0A1408',opacity:0.18}));
+      gShrubs.appendChild(svgEl('ellipse',{cx:sd.x,cy:sd.y+2,rx:sd.rx*1.02,ry:sd.ry*1.02,fill:'#125520'}));
+      gShrubs.appendChild(svgEl('ellipse',{cx:sd.x,cy:sd.y,rx:sd.rx,ry:sd.ry,fill:'#1A6B30',stroke:'#15552A','stroke-width':0.5}));
+      gShrubs.appendChild(svgEl('ellipse',{cx:sd.x-sd.rx*0.2,cy:sd.y-sd.ry*0.2,rx:sd.rx*0.6,ry:sd.ry*0.5,fill:'#228B3A',opacity:0.5}));
+      gShrubs.appendChild(svgEl('ellipse',{cx:sd.x-sd.rx*0.1,cy:sd.y-sd.ry*0.3,rx:sd.rx*0.3,ry:sd.ry*0.22,fill:'#30A848',opacity:0.3}));
+    });
+    svg.appendChild(gShrubs);
+
+    // 11. TREES
+    var gTreesNew=svgEl('g',{opacity:0});
+    var treeData=[{x:YL+40,y:YT+50,r:55},{x:YR-40,y:YT+55,r:50},{x:YL+45,y:YB-140,r:52},{x:YR-35,y:YB-130,r:45}];
+    treeData.forEach(function(td){
+      gTreesNew.appendChild(svgEl('ellipse',{cx:td.x+10,cy:td.y+td.r+12,rx:td.r*0.9,ry:td.r*0.35,fill:'#0A0F08',opacity:0.2}));
+      gTreesNew.appendChild(svgEl('rect',{x:td.x-5,y:td.y+td.r*0.3,width:10,height:td.r*0.9,fill:'#5A4030',rx:3}));
+      gTreesNew.appendChild(svgEl('rect',{x:td.x-3,y:td.y+td.r*0.35,width:6,height:td.r*0.8,fill:'#6B5040',rx:2}));
+      gTreesNew.appendChild(svgEl('circle',{cx:td.x+6,cy:td.y+8,r:td.r*0.85,fill:'#145218'}));
+      gTreesNew.appendChild(svgEl('circle',{cx:td.x-5,cy:td.y-3,r:td.r*0.9,fill:'#1A5A22'}));
+      gTreesNew.appendChild(svgEl('circle',{cx:td.x,cy:td.y,r:td.r*0.75,fill:'#1E6828'}));
+      gTreesNew.appendChild(svgEl('circle',{cx:td.x-td.r*0.2,cy:td.y-td.r*0.15,r:td.r*0.5,fill:'#228B3A',opacity:0.4}));
+      gTreesNew.appendChild(svgEl('circle',{cx:td.x-td.r*0.15,cy:td.y-td.r*0.25,r:td.r*0.25,fill:'#30A848',opacity:0.2}));
+    });
+    svg.appendChild(gTreesNew);
+
+    // 11b. HIGH-END LANDSCAPING — staged groups
+    // STAGE A: Brown bed areas
+    var gBedAreas=svgEl('g',{opacity:0});
+    var islandCx=680,islandCy=300,islandR=55;
+    gBedAreas.appendChild(svgEl('circle',{cx:islandCx,cy:islandCy,r:islandR+4,fill:'#3A2A1A'}));
+    gBedAreas.appendChild(svgEl('circle',{cx:islandCx,cy:islandCy,r:islandR,fill:'#5A3A1A'}));
+    gBedAreas.appendChild(svgEl('path',{d:'M140 280 Q165 250 210 260 Q245 270 235 300 Q225 330 185 320 Q148 310 140 280Z',fill:'#5A3A1A',stroke:'#3A2A1A','stroke-width':3.5}));
+    gBedAreas.appendChild(svgEl('path',{d:'M790 180 Q830 170 870 185 Q890 195 880 210 Q870 225 830 220 Q790 210 790 180Z',fill:'#7A6A5A',stroke:'#5A4A3A','stroke-width':1.5}));
+    gBedAreas.appendChild(svgEl('path',{d:'M795 183 Q830 175 868 188 Q885 196 877 208 Q868 220 828 216 Q795 208 795 183Z',fill:'#5A3A1A'}));
+    [{x:830,y:380,rx:18,ry:12},{x:845,y:390,rx:12,ry:8},{x:820,y:392,rx:10,ry:7}].forEach(function(bld){
+      gBedAreas.appendChild(svgEl('ellipse',{cx:bld.x+2,cy:bld.y+bld.ry*0.6,rx:bld.rx*0.9,ry:bld.ry*0.4,fill:'#0A0F08',opacity:0.12}));
+      gBedAreas.appendChild(svgEl('ellipse',{cx:bld.x,cy:bld.y,rx:bld.rx,ry:bld.ry,fill:'#8A8078',stroke:'#706860','stroke-width':0.5}));
+      gBedAreas.appendChild(svgEl('ellipse',{cx:bld.x-bld.rx*0.2,cy:bld.y-bld.ry*0.25,rx:bld.rx*0.5,ry:bld.ry*0.4,fill:'#9A908A',opacity:0.4}));
+    });
+    svg.appendChild(gBedAreas);
+
+    // FOUNTAIN
+    var gFountain=svgEl('g',{opacity:0});
+    var bbx=850,bby=340;
+    gFountain.appendChild(svgEl('ellipse',{cx:bbx+5,cy:bby+56,rx:70,ry:22,fill:'#0A0F08',opacity:0.15}));
+    gFountain.appendChild(svgEl('ellipse',{cx:bbx,cy:bby+38,rx:65,ry:32,fill:'#8A8078',stroke:'#706860','stroke-width':2}));
+    gFountain.appendChild(svgEl('ellipse',{cx:bbx,cy:bby+35,rx:60,ry:28,fill:'#7A7068'}));
+    gFountain.appendChild(svgEl('rect',{x:bbx-14,y:bby+3,width:28,height:34,fill:'#8A8078',rx:5}));
+    gFountain.appendChild(svgEl('rect',{x:bbx-16,y:bby,width:32,height:6,rx:3,fill:'#9A908A'}));
+    gFountain.appendChild(svgEl('ellipse',{cx:bbx,cy:bby-3,rx:40,ry:22,fill:'#8A8078',stroke:'#706860','stroke-width':1.5}));
+    gFountain.appendChild(svgEl('ellipse',{cx:bbx,cy:bby-5,rx:35,ry:18,fill:'#7A7068'}));
+    gFountain.appendChild(svgEl('rect',{x:bbx-8,y:bby-30,width:16,height:28,fill:'#8A8078',rx:4}));
+    gFountain.appendChild(svgEl('rect',{x:bbx-10,y:bby-32,width:20,height:6,rx:3,fill:'#9A908A'}));
+    gFountain.appendChild(svgEl('ellipse',{cx:bbx,cy:bby-35,rx:24,ry:14,fill:'#8A8078',stroke:'#706860','stroke-width':1}));
+    gFountain.appendChild(svgEl('ellipse',{cx:bbx,cy:bby-38,rx:19,ry:10,fill:'#7A7068'}));
+    gFountain.appendChild(svgEl('rect',{x:bbx-4,y:bby-60,width:8,height:24,fill:'#9A908A',rx:3}));
+    gFountain.appendChild(svgEl('circle',{cx:bbx,cy:bby-62,r:8,fill:'#9A908A',stroke:'#8A8078','stroke-width':1}));
+    gFountain.appendChild(svgEl('circle',{cx:bbx,cy:bby-62,r:4,fill:'#A09888'}));
+    svg.appendChild(gFountain);
+
+    // Fountain water
+    var gFountainWater=svgEl('g',{opacity:0});
+    gFountainWater.appendChild(svgEl('ellipse',{cx:bbx,cy:bby-38,rx:15,ry:7,fill:'#60A5FA',opacity:0.55}));
+    gFountainWater.appendChild(svgEl('ellipse',{cx:bbx,cy:bby-5,rx:30,ry:14,fill:'#60A5FA',opacity:0.5}));
+    gFountainWater.appendChild(svgEl('ellipse',{cx:bbx,cy:bby+35,rx:54,ry:24,fill:'#60A5FA',opacity:0.45}));
+    gFountainWater.appendChild(svgEl('ellipse',{cx:bbx-6,cy:bby+24,rx:22,ry:10,fill:'#93C5FD',opacity:0.2}));
+    gFountainWater.appendChild(svgEl('path',{d:'M'+(bbx-8)+' '+(bby-20)+' Q'+(bbx-16)+' '+(bby-12)+' '+(bbx-14)+' '+(bby-6),stroke:'#60A5FA','stroke-width':2,fill:'none',opacity:0.4}));
+    gFountainWater.appendChild(svgEl('path',{d:'M'+(bbx+8)+' '+(bby-20)+' Q'+(bbx+16)+' '+(bby-12)+' '+(bbx+14)+' '+(bby-6),stroke:'#60A5FA','stroke-width':2,fill:'none',opacity:0.4}));
+    gFountainWater.appendChild(svgEl('path',{d:'M'+(bbx-14)+' '+(bby+8)+' Q'+(bbx-24)+' '+(bby+16)+' '+(bbx-22)+' '+(bby+22),stroke:'#60A5FA','stroke-width':2,fill:'none',opacity:0.35}));
+    gFountainWater.appendChild(svgEl('path',{d:'M'+(bbx+14)+' '+(bby+8)+' Q'+(bbx+24)+' '+(bby+16)+' '+(bbx+22)+' '+(bby+22),stroke:'#60A5FA','stroke-width':2,fill:'none',opacity:0.35}));
+    svg.appendChild(gFountainWater);
+
+    // ZEN GARDEN
+    var gZenGarden=svgEl('g',{opacity:0});
+    var zcx=310,zcy=185,zrx=85,zry=60;
+    gZenGarden.appendChild(svgEl('ellipse',{cx:zcx,cy:zcy,rx:zrx+4,ry:zry+4,fill:'#8A7A62'}));
+    gZenGarden.appendChild(svgEl('ellipse',{cx:zcx,cy:zcy,rx:zrx,ry:zry,fill:'#D4C8A8'}));
+    for(var zri=1;zri<=5;zri++){
+      gZenGarden.appendChild(svgEl('ellipse',{cx:zcx+8,cy:zcy+4,rx:zri*11,ry:zri*7,fill:'none',stroke:'#A89870','stroke-width':1.2}));
+    }
+    for(var zli=0;zli<7;zli++){
+      var zly=zcy-zry+10+zli*(zry*2/7);
+      var zlHalf=Math.sqrt(1-Math.pow((zly-zcy)/zry,2))*zrx;
+      if(zlHalf>10){
+        gZenGarden.appendChild(svgEl('line',{x1:zcx-zlHalf+5,y1:zly,x2:zcx+zlHalf-5,y2:zly,stroke:'#A89870','stroke-width':0.8}));
+      }
+    }
+    var srx=zcx+12,sry2=zcy+6;
+    gZenGarden.appendChild(svgEl('ellipse',{cx:srx+2,cy:sry2+12,rx:16,ry:5,fill:'#0A0F08',opacity:0.12}));
+    gZenGarden.appendChild(svgEl('ellipse',{cx:srx,cy:sry2+6,rx:16,ry:8,fill:'#4A4A48',stroke:'#3A3A38','stroke-width':0.8}));
+    gZenGarden.appendChild(svgEl('ellipse',{cx:srx-3,cy:sry2+4,rx:10,ry:5,fill:'#5A5A58',opacity:0.4}));
+    gZenGarden.appendChild(svgEl('ellipse',{cx:srx-1,cy:sry2-4,rx:11,ry:7,fill:'#555552',stroke:'#3A3A38','stroke-width':0.8}));
+    gZenGarden.appendChild(svgEl('ellipse',{cx:srx-3,cy:sry2-6,rx:7,ry:4,fill:'#626260',opacity:0.4}));
+    gZenGarden.appendChild(svgEl('ellipse',{cx:srx,cy:sry2-14,rx:7,ry:6,fill:'#5A5A58',stroke:'#3A3A38','stroke-width':0.8}));
+    gZenGarden.appendChild(svgEl('ellipse',{cx:srx-1,cy:sry2-16,rx:4,ry:3,fill:'#6A6A68',opacity:0.4}));
+    svg.appendChild(gZenGarden);
+
+    // FIREPIT
+    var gFirepit=svgEl('g',{opacity:0});
+    var fpx=330,fpy=400;
+    var fpR=45;
+    gFirepit.appendChild(svgEl('circle',{cx:fpx,cy:fpy,r:fpR+30,fill:'#B0A080',opacity:0.15}));
+    [{a:-Math.PI/2},{a:0},{a:Math.PI/2},{a:Math.PI}].forEach(function(s){
+      var sx=fpx+Math.cos(s.a)*(fpR+22);
+      var sy=fpy+Math.sin(s.a)*((fpR+22)*0.65);
+      var sAngle=s.a*180/Math.PI+90;
+      var backPath='M'+(sx-14)+','+(sy-8)+' Q'+(sx)+','+(sy-18)+' '+(sx+14)+','+(sy-8);
+      gFirepit.appendChild(svgEl('path',{d:backPath,fill:'none',stroke:'#5A4530',transform:'rotate('+sAngle+','+sx+','+sy+')','stroke-width':4,'stroke-linecap':'round'}));
+      gFirepit.appendChild(svgEl('rect',{x:sx-14,y:sy-8,width:28,height:18,rx:5,fill:'#6A5A4A',stroke:'#5A4A3A','stroke-width':1,transform:'rotate('+sAngle+','+sx+','+sy+')'}));
+      gFirepit.appendChild(svgEl('rect',{x:sx-11,y:sy-5,width:22,height:12,rx:4,fill:'#A89478',transform:'rotate('+sAngle+','+sx+','+sy+')'}));
+      gFirepit.appendChild(svgEl('rect',{x:sx-16,y:sy-6,width:5,height:14,rx:2,fill:'#5A4530',transform:'rotate('+sAngle+','+sx+','+sy+')'}));
+      gFirepit.appendChild(svgEl('rect',{x:sx+11,y:sy-6,width:5,height:14,rx:2,fill:'#5A4530',transform:'rotate('+sAngle+','+sx+','+sy+')'}));
+    });
+    gFirepit.appendChild(svgEl('ellipse',{cx:fpx+3,cy:fpy+fpR*0.4+8,rx:fpR+8,ry:12,fill:'#0A0F08',opacity:0.1}));
+    gFirepit.appendChild(svgEl('circle',{cx:fpx,cy:fpy,r:fpR,fill:'#5A5A5A',stroke:'#4A4A4A','stroke-width':2}));
+    gFirepit.appendChild(svgEl('circle',{cx:fpx,cy:fpy,r:fpR-6,fill:'#4A4A4A',stroke:'#3A3A3A','stroke-width':1}));
+    gFirepit.appendChild(svgEl('circle',{cx:fpx,cy:fpy,r:fpR-12,fill:'#1A1A1A'}));
+    for(var gpi=0;gpi<18;gpi++){
+      var gpAngle=gpi*Math.PI*2/18;
+      var gpDist=Math.random()*(fpR-18);
+      var gpx=fpx+Math.cos(gpAngle)*gpDist;
+      var gpy=fpy+Math.sin(gpAngle)*gpDist;
+      gFirepit.appendChild(svgEl('circle',{cx:gpx,cy:gpy,r:1.8,fill:'#3A3A3A',opacity:0.6}));
+    }
+    svg.appendChild(gFirepit);
+
+    // Flames
+    var gFlames=svgEl('g',{opacity:0});
+    [{dx:-18,h:16},{dx:-10,h:22},{dx:-4,h:26},{dx:4,h:24},{dx:10,h:20},{dx:18,h:14},{dx:-14,h:18},{dx:0,h:28},{dx:14,h:16}].forEach(function(fl){
+      gFlames.appendChild(svgEl('ellipse',{cx:fpx+fl.dx,cy:fpy-fl.h/2,rx:5,ry:fl.h/2,fill:'#FBBF24',opacity:0.7}));
+      gFlames.appendChild(svgEl('ellipse',{cx:fpx+fl.dx,cy:fpy-fl.h/2-2,rx:3,ry:fl.h/3,fill:'#FFF',opacity:0.25}));
+    });
+    gFlames.appendChild(svgEl('circle',{cx:fpx,cy:fpy,r:fpR+20,fill:'#F59E0B',opacity:0.05}));
+    svg.appendChild(gFlames);
+
+    // STAGE D: Feature trees/shrubs
+    var gFeaturePlants=[];
+    var gIslandTree=svgEl('g',{opacity:0});
+    gIslandTree.appendChild(svgEl('rect',{x:islandCx-4,y:islandCy-10,width:8,height:22,fill:'#5A4030',rx:3}));
+    gIslandTree.appendChild(svgEl('circle',{cx:islandCx,cy:islandCy-22,r:28,fill:'#1A6B30'}));
+    gIslandTree.appendChild(svgEl('circle',{cx:islandCx-5,cy:islandCy-26,r:18,fill:'#228B3A',opacity:0.5}));
+    svg.appendChild(gIslandTree);
+    gFeaturePlants.push(gIslandTree);
+    [160,180,200,220].forEach(function(gx2){
+      var gy2=280+(gx2-160)*0.35;
+      var gGrass2=svgEl('g',{opacity:0});
+      gGrass2.appendChild(svgEl('ellipse',{cx:gx2,cy:gy2,rx:10,ry:16,fill:'#4A9A5A',opacity:0.8}));
+      gGrass2.appendChild(svgEl('ellipse',{cx:gx2-2,cy:gy2-5,rx:6,ry:10,fill:'#5AAA6A',opacity:0.4}));
+      svg.appendChild(gGrass2);
+      gFeaturePlants.push(gGrass2);
+    });
+    [{x:810,y:195,r:12},{x:835,y:192,r:14},{x:858,y:198,r:11}].forEach(function(rp){
+      var gRaisedPlant=svgEl('g',{opacity:0});
+      gRaisedPlant.appendChild(svgEl('circle',{cx:rp.x,cy:rp.y,r:rp.r,fill:'#1A6B30'}));
+      gRaisedPlant.appendChild(svgEl('circle',{cx:rp.x-2,cy:rp.y-2,r:rp.r*0.6,fill:'#228B3A',opacity:0.5}));
+      svg.appendChild(gRaisedPlant);
+      gFeaturePlants.push(gRaisedPlant);
+    });
+
+    // STAGE E: Island flowers
+    var gIslandFlowers=svgEl('g',{opacity:0});
+    var islandFlowerList=[];
+    var islandFlColors=['#EF4444','#EC4899','#FBBF24','#A855F7','#F472B6','#FB923C','#FF6B8A','#DDA0DD','#FF4500','#FFD700'];
+    var islandFlCenters=['#FFE066','#FFF5CC','#FFFFFF','#FFD700'];
+    for(var ifi=0;ifi<16;ifi++){
+      var ifa=(ifi/16)*Math.PI*2;
+      var ifRad=islandR-8-Math.random()*12;
+      var ifx2=islandCx+Math.cos(ifa)*ifRad;
+      var ify2=islandCy+Math.sin(ifa)*ifRad;
+      var distToCenter=Math.sqrt((ifx2-islandCx)*(ifx2-islandCx)+(ify2-(islandCy-22))*(ify2-(islandCy-22)));
+      if(distToCenter<30) continue;
+      var ifc2=islandFlColors[ifi%islandFlColors.length];
+      var ifSize=5+Math.random()*2.5;
+      var ifg=svgEl('g',{opacity:0});
+      for(var ifp=0;ifp<5;ifp++){
+        var ifpa=ifp*Math.PI*2/5;
+        var ifpx=ifx2+Math.cos(ifpa)*ifSize*0.6;
+        var ifpy=ify2+Math.sin(ifpa)*ifSize*0.6;
+        ifg.appendChild(svgEl('circle',{cx:ifpx,cy:ifpy,r:ifSize*0.5,fill:ifc2,opacity:0.85}));
+      }
+      ifg.appendChild(svgEl('circle',{cx:ifx2,cy:ify2,r:ifSize*0.35,fill:islandFlCenters[ifi%4]}));
+      gIslandFlowers.appendChild(ifg);
+      islandFlowerList.push(ifg);
+    }
+    svg.appendChild(gIslandFlowers);
+
+    // 12. FLOWERS
+    var gFlowers=svgEl('g',{opacity:0});
+    function makeFlower(fx, fy, c, s, petals) {
+      var fGrp=svgEl('g',{opacity:0,transform:'translate('+fx+','+fy+') scale(0)'});
+      var np=petals||5;
+      for(var pi2=0;pi2<np;pi2++){
+        var pa=(pi2/np)*Math.PI*2-Math.PI/2;
+        var px2=Math.cos(pa)*s*0.6;
+        var py2=Math.sin(pa)*s*0.6;
+        fGrp.appendChild(svgEl('ellipse',{cx:px2,cy:py2,rx:s*0.5,ry:s*0.35,fill:c,opacity:0.9,
+          transform:'rotate('+(pi2*(360/np))+','+px2+','+py2+')'}));
+        fGrp.appendChild(svgEl('ellipse',{cx:px2*0.7,cy:py2*0.7,rx:s*0.25,ry:s*0.18,fill:'#FFF',opacity:0.15,
+          transform:'rotate('+(pi2*(360/np))+','+px2*0.7+','+py2*0.7+')'}));
+      }
+      fGrp.appendChild(svgEl('circle',{cx:0,cy:0,r:s*0.28,fill:'#FBBF24'}));
+      fGrp.appendChild(svgEl('circle',{cx:0,cy:0,r:s*0.15,fill:'#D97706'}));
+      for(var sd2=0;sd2<3;sd2++){
+        var sa2=(sd2/3)*Math.PI*2;
+        fGrp.appendChild(svgEl('circle',{cx:Math.cos(sa2)*s*0.18,cy:Math.sin(sa2)*s*0.18,r:1,fill:'#92400E'}));
+      }
+      return fGrp;
+    }
+    var flowerColors=['#EF4444','#EC4899','#F59E0B','#A855F7','#F472B6','#FB923C','#FBBF24','#C084FC','#F87171','#E879F9'];
+    var flowerList=[];
+    for(var bfi=0;bfi<28;bfi++){
+      var bfx=95+bfi*32+Math.random()*8-4;
+      var bfy=88+Math.random()*18;
+      var bfs=6+Math.random()*4;
+      var bfc=flowerColors[bfi%flowerColors.length];
+      var bfPetals=5+Math.floor(Math.random()*2);
+      var bf=makeFlower(bfx,bfy,bfc,bfs,bfPetals);
+      gFlowers.appendChild(bf);flowerList.push(bf);
+    }
+    for(var lfi=0;lfi<12;lfi++){
+      var lfx=YL+12+Math.random()*24;
+      var lfy=YT+60+lfi*30+Math.random()*10;
+      var lfs=5+Math.random()*3.5;
+      var lfc=flowerColors[(lfi+3)%flowerColors.length];
+      var lf=makeFlower(lfx,lfy,lfc,lfs,5);
+      gFlowers.appendChild(lf);flowerList.push(lf);
+    }
+    for(var rfi=0;rfi<12;rfi++){
+      var rfx=YR-36+Math.random()*24;
+      var rfy=YT+60+rfi*30+Math.random()*10;
+      var rfs=5+Math.random()*3.5;
+      var rfc=flowerColors[(rfi+6)%flowerColors.length];
+      var rf=makeFlower(rfx,rfy,rfc,rfs,5);
+      gFlowers.appendChild(rf);flowerList.push(rf);
+    }
+    [{x:YL+50,y:YT+70,n:8},{x:YR-50,y:YT+75,n:7}].forEach(function(cl){
+      for(var ci2=0;ci2<cl.n;ci2++){
+        var cfx=cl.x+Math.cos(ci2*1.1)*22+Math.random()*10;
+        var cfy=cl.y+Math.sin(ci2*1.1)*18+Math.random()*10;
+        var cfs=5+Math.random()*3;
+        var cfc=flowerColors[(ci2+2)%flowerColors.length];
+        var cf=makeFlower(cfx,cfy,cfc,cfs,5);
+        gFlowers.appendChild(cf);flowerList.push(cf);
+      }
+    });
+    for(var gfi=0;gfi<8;gfi++){
+      var gfa=(gfi/8)*Math.PI*2;
+      var gfx=islandCx+Math.cos(gfa)*(islandR+12);
+      var gfy=islandCy+Math.sin(gfa)*(islandR+10);
+      var gfs=5+Math.random()*3;
+      var gfc=flowerColors[(gfi+4)%flowerColors.length];
+      var gf=makeFlower(gfx,gfy,gfc,gfs,6);
+      gFlowers.appendChild(gf);flowerList.push(gf);
+    }
+    var flowers=flowerList;
+    svg.appendChild(gFlowers);
+
+    // 13. PATIO PAVERS
+    var gPatio=svgEl('g',{opacity:0});
+    var paverW=40,paverH=30,paverGap=3;
+    var patioY=YB-70;
+    var paverColors=['#C4A882','#B89A72','#D4B892','#C8A478'];
+    var paverList=[];
+    for(var pr=0;pr<2;pr++){
+      for(var pc=0;pc<28;pc++){
+        var pvx=YL+20+pc*(paverW+paverGap)+((pr%2)*20);
+        var pvy=patioY+pr*(paverH+paverGap);
+        if(pvx+paverW<YR-10){
+          var pv=svgEl('rect',{x:pvx,y:pvy,width:paverW,height:paverH,rx:2,fill:paverColors[(pr+pc)%4],stroke:'#A88A62','stroke-width':0.5,opacity:0});
+          gPatio.appendChild(pv);
+          paverList.push(pv);
+        }
+      }
+    }
+    svg.appendChild(gPatio);
+
+    // 14. STEPPING STONES
+    var gStones=svgEl('g',{opacity:0});
+    var stoneList=[];
+    var stonePositions=[];
+    for(var sti=0;sti<6;sti++){
+      stonePositions.push({x:505+Math.sin(sti*0.5)*15, y:patioY-20-sti*40});
+    }
+    var lastSp=stonePositions[5];
+    stonePositions.push({x:lastSp.x-25, y:lastSp.y-35});
+    stonePositions.push({x:lastSp.x-60, y:lastSp.y-65});
+    stonePositions.push({x:lastSp.x-95, y:lastSp.y-85});
+    stonePositions.forEach(function(sp){
+      var stx=sp.x;
+      var sty=sp.y;
+      var st=svgEl('ellipse',{cx:stx,cy:sty,rx:16,ry:10,fill:'#C4A882',stroke:'#A88A62','stroke-width':0.5,opacity:0});
+      gStones.appendChild(st);
+      stoneList.push(st);
+    });
+    svg.appendChild(gStones);
+
+    // 14b. FLOWERS ALONG STEPPING STONES
+    var gPathFlowers=svgEl('g',{opacity:0});
+    var pathFlowerList=[];
+    var pfColors=['#FF6B8A','#FFB347','#DDA0DD','#FF69B4','#E066FF','#FF4500','#FF1493','#FFD700','#DA70D6','#FF7F50','#9370DB','#F08080'];
+    var pfCenterColors=['#FFE066','#FFF5CC','#FFFFFF','#FFD700'];
+    var stonePosArr=[];
+    stoneList.forEach(function(s){
+      stonePosArr.push({x:parseFloat(s.getAttribute('cx')),y:parseFloat(s.getAttribute('cy'))});
+    });
+    stonePosArr.forEach(function(sp,i){
+      var dx=0, dy=-1;
+      if(i<stonePosArr.length-1){
+        dx=stonePosArr[i+1].x-sp.x;
+        dy=stonePosArr[i+1].y-sp.y;
+      } else if(i>0){
+        dx=sp.x-stonePosArr[i-1].x;
+        dy=sp.y-stonePosArr[i-1].y;
+      }
+      var len=Math.sqrt(dx*dx+dy*dy)||1;
+      dx/=len; dy/=len;
+      var perpRx=-dy, perpRy=dx;
+      for(var pfi=0;pfi<3;pfi++){
+        var dist=28+pfi*14+Math.random()*6;
+        var rfx2=sp.x+perpRx*dist;
+        var rfy2=sp.y+perpRy*dist-3+Math.random()*6;
+        var rfr=5+Math.random()*3;
+        var rfCol=pfColors[(i*3+pfi)%pfColors.length];
+        for(var pp=0;pp<5;pp++){
+          var pa=pp*Math.PI*2/5;
+          var ppx=rfx2+Math.cos(pa)*rfr*0.6;
+          var ppy=rfy2+Math.sin(pa)*rfr*0.6;
+          var petal=svgEl('circle',{cx:ppx,cy:ppy,r:rfr*0.5,fill:rfCol,opacity:0.85});
+          gPathFlowers.appendChild(petal);
+          pathFlowerList.push(petal);
+        }
+        gPathFlowers.appendChild(svgEl('circle',{cx:rfx2,cy:rfy2,r:rfr*0.35,fill:pfCenterColors[pfi%4]}));
+        pathFlowerList.push(gPathFlowers.lastChild);
+      }
+      for(var pfi2=0;pfi2<3;pfi2++){
+        var dist2=28+pfi2*14+Math.random()*6;
+        var lfx2=sp.x-perpRx*dist2;
+        var lfy2=sp.y-perpRy*dist2-3+Math.random()*6;
+        var lfr=5+Math.random()*3;
+        var lfCol=pfColors[(i*3+pfi2+6)%pfColors.length];
+        for(var pp2=0;pp2<5;pp2++){
+          var pa2=pp2*Math.PI*2/5;
+          var ppx2=lfx2+Math.cos(pa2)*lfr*0.6;
+          var ppy2=lfy2+Math.sin(pa2)*lfr*0.6;
+          var petal2=svgEl('circle',{cx:ppx2,cy:ppy2,r:lfr*0.5,fill:lfCol,opacity:0.85});
+          gPathFlowers.appendChild(petal2);
+          pathFlowerList.push(petal2);
+        }
+        gPathFlowers.appendChild(svgEl('circle',{cx:lfx2,cy:lfy2,r:lfr*0.35,fill:pfCenterColors[pfi2%4]}));
+        pathFlowerList.push(gPathFlowers.lastChild);
+      }
+    });
+    svg.appendChild(gPathFlowers);
+
+    // 16. LANDSCAPE LIGHTS
+    var gLights=svgEl('g',{opacity:0});
+    var lightPositions=[];
+    [150,350,700,900].forEach(function(lx){
+      var light=svgEl('circle',{cx:lx,cy:LT-8,r:3,fill:'#F59E0B',opacity:0});
+      gLights.appendChild(light);
+      lightPositions.push(light);
+    });
+    svg.appendChild(gLights);
+
+    // 18. SPRINKLER WATER ARCS
+    var gWater=svgEl('g',{opacity:0});
+    var waterArcs=[];
+    sprinklerData.forEach(function(sp,si2){
+      if(si2%3===0){
+        var arc=svgEl('circle',{cx:sp.x,cy:sp.y,r:0,fill:'none',stroke:'#60A5FA','stroke-width':1.5,opacity:0.4,'stroke-dasharray':'4 3'});
+        gWater.appendChild(arc);
+        waterArcs.push({el:arc,x:sp.x,y:sp.y});
+      }
+    });
+    svg.appendChild(gWater);
+
+    // Power lights
+    var powerLights=[];
+    for(var pli=1;pli<=6;pli++){var plEl=document.getElementById('mg-pl'+pli);if(plEl)powerLights.push(plEl);}
+
+    // ═══ SCROLL ANIMATION ═══
+    function update(){
+      var p=getProgress();
+      scrubFill.style.width=(p*100)+'%';
+      intro.style.opacity=map(p,0,0.05,1,0);
+      intro.style.pointerEvents=p>0.03?'none':'auto';
+
+      // Background — keep black (no color changes)
+      bg.style.opacity=String(p<0.88?map(p,0.04,0.10,1,0):map(p,0.92,0.96,0,1));
+
+      var fadeOut=p<0.90?1:map(p,0.90,0.96,1,0);
+      sceneContainer.style.opacity=String(map(p,0.05,0.10,0,1)*fadeOut);
+
+      // SVG sizing — fill viewport
+      var vh=seqEl.clientHeight||seqEl.offsetHeight||600;
+      var vw=seqEl.clientWidth||seqEl.offsetWidth||800;
+      var svgAspect=1050/600;
+      var svgW=vw;
+      var svgH=svgW/svgAspect;
+      if(svgH>vh*0.95){svgH=vh*0.95;svgW=svgH*svgAspect;}
+      svg.setAttribute('width',svgW);
+      svg.setAttribute('height',svgH);
+
+      // Step counter
+      var step=0;
+
+      // ═══ 1. INITIAL SURVEY (5-10%) ═══
+      var surveyP=map(p,0.05,0.10,0,1);
+      gSoil.setAttribute('opacity',String(surveyP));
+      gWeeds.setAttribute('opacity',String(map(p,0.06,0.10,0,1)));
+      gOldFence.setAttribute('opacity',String(map(p,0.07,0.10,0,1)));
+      if(p>=0.10) step=1;
+
+      // ═══ 2. DEBRIS REMOVAL (10-16%) ═══
+      var weedFade=map(p,0.10,0.16,1,0);
+      if(p>=0.10) gWeeds.setAttribute('opacity',String(weedFade));
+      if(p>=0.12) gOldFence.setAttribute('opacity',String(map(p,0.12,0.16,1,0)));
+      if(p>=0.16) step=2;
+
+      // ═══ 3. GRADING & LEVELING (16-22%) ═══
+      var gradeP=easeOut3(clamp((p-0.16)/0.06,0,1));
+      gRake.setAttribute('opacity',String(gradeP*0.6));
+      patches.forEach(function(pt,pi){
+        var ptFade=map(p,0.16+pi*0.005,0.22,0.7,0);
+        var els=gSoil.querySelectorAll('ellipse');
+        if(els[pi]) els[pi].setAttribute('opacity',String(ptFade));
+      });
+      if(p>=0.22) step=3;
+
+      // ═══ 4. TRENCHING (22-28%) ═══
+      var trenchP=easeOut3(clamp((p-0.22)/0.06,0,1));
+      gTrenches.setAttribute('opacity','1');
+      trenchMain.style.strokeDashoffset=String(tmLen*(1-trenchP));
+      branchLines.forEach(function(bl,bi){
+        var blP=easeOut3(clamp((trenchP-bi*0.15)/0.4,0,1));
+        bl.el.style.strokeDashoffset=String(bl.len*(1-blP));
+      });
+      if(p>=0.28) step=4;
+
+      // ═══ 5. IRRIGATION INSTALL (28-34%) ═══
+      var pipeP=easeOut3(clamp((p-0.28)/0.06,0,1));
+      gPipes.setAttribute('opacity',String(pipeP));
+      sprinklerData.forEach(function(sp,si3){
+        var spP=easeOut3(clamp((pipeP-si3*0.03)/0.3,0,1));
+        sp.el.setAttribute('opacity',String(spP));
+      });
+      if(p>=0.30){
+        var fillP=map(p,0.30,0.34,1,0.2);
+        trenchMain.setAttribute('opacity',String(fillP));
+        branchLines.forEach(function(bl){bl.el.setAttribute('opacity',String(fillP));});
+      }
+      if(p>=0.34) step=5;
+
+      // ═══ 6. LAYING SOD (34-44%) ═══
+      gSod.setAttribute('opacity','1');
+      sodRows.forEach(function(sr,si4){
+        var sodStart=0.34+si4*0.006;
+        var sodP=easeOut3(clamp((p-sodStart)/0.03,0,1));
+        sr.setAttribute('opacity',String(sodP));
+      });
+      if(p>=0.36) gRake.setAttribute('opacity',String(map(p,0.36,0.42,0.6,0)));
+      if(p>=0.44) step=6;
+
+      // ═══ 7. EDGING & BORDERS + NEW FENCE (44-50%) ═══
+      var edgeP=easeOut3(clamp((p-0.44)/0.06,0,1));
+      gEdging.setAttribute('opacity','1');
+      edgePath.style.strokeDashoffset=String(edgeLen*(1-edgeP));
+      var newFP=easeOut3(clamp((p-0.46)/0.04,0,1));
+      gNewFence.setAttribute('opacity',String(newFP));
+      if(p>=0.50) step=7;
+
+      // ═══ 8. MULCH & BEDS (50-56%) ═══
+      var mulchP=easeOut3(clamp((p-0.50)/0.06,0,1));
+      gMulch.setAttribute('opacity',String(mulchP));
+      if(p>=0.56) step=8;
+
+      // ═══ 9. SHRUB PLANTING (56-62%) ═══
+      var shrubP=easeOut3(clamp((p-0.56)/0.06,0,1));
+      gShrubs.setAttribute('opacity',String(shrubP));
+      gShrubs.setAttribute('transform','translate(0,'+(1-shrubP)*15+') scale(1,'+clamp(shrubP,0.3,1)+')');
+      if(p>=0.62) step=9;
+
+      // ═══ 10. TREE PLANTING (62-66%) ═══
+      var treeP2=easeOut3(clamp((p-0.62)/0.04,0,1));
+      gTreesNew.setAttribute('opacity',String(treeP2));
+      if(p>=0.66) step=10;
+
+      // ═══ 11. FLOWER BEDS (66-72%) ═══
+      gFlowers.setAttribute('opacity','1');
+      flowers.forEach(function(f,fi){
+        var flP=easeOut3(clamp((p-0.66-fi*0.0015)/0.025,0,1));
+        f.setAttribute('opacity',String(flP));
+        var fx=f.getAttribute('transform').match(/translate\(([^,]+),([^)]+)\)/);
+        if(fx){
+          f.setAttribute('transform','translate('+fx[1]+','+fx[2]+') scale('+flP+')');
+        }
+      });
+      if(p>=0.72) step=11;
+
+      // ═══ 12. HARDSCAPING (72-78%) ═══
+      gPatio.setAttribute('opacity','1');
+      paverList.forEach(function(pv,pvi){
+        var pvP=easeOut3(clamp((p-0.72-pvi*0.002)/0.015,0,1));
+        pv.setAttribute('opacity',String(pvP));
+      });
+      gStones.setAttribute('opacity','1');
+      stoneList.forEach(function(st,sti2){
+        var stP=easeOut3(clamp((p-0.73-sti2*0.008)/0.02,0,1));
+        st.setAttribute('opacity',String(stP));
+      });
+      var pfP=easeOut3(clamp((p-0.75)/0.03,0,1));
+      gPathFlowers.setAttribute('opacity',String(pfP));
+      var bedP=easeOut3(clamp((p-0.73)/0.04,0,1));
+      gBedAreas.setAttribute('opacity',String(bedP));
+      if(p>=0.78) step=12;
+
+      // ═══ 13. FOUNTAIN + FEATURE PLANTS (78-82%) ═══
+      var fountP=easeOut3(clamp((p-0.78)/0.02,0,1));
+      gFountain.setAttribute('opacity',String(fountP));
+      var waterFP=easeOut3(clamp((p-0.80)/0.02,0,1));
+      gFountainWater.setAttribute('opacity',String(waterFP));
+      var firepitP=easeOut3(clamp((p-0.79)/0.02,0,1));
+      gFirepit.setAttribute('opacity',String(firepitP));
+      var flameP=easeOut3(clamp((p-0.81)/0.02,0,1));
+      gFlames.setAttribute('opacity',String(flameP));
+      var zenP=easeOut3(clamp((p-0.78)/0.03,0,1));
+      gZenGarden.setAttribute('opacity',String(zenP));
+      gFeaturePlants.forEach(function(fp,fpi){
+        var fpP=easeOut3(clamp((p-0.79-fpi*0.004)/0.015,0,1));
+        fp.setAttribute('opacity',String(fpP));
+      });
+      gIslandFlowers.setAttribute('opacity','1');
+      islandFlowerList.forEach(function(isf,isi){
+        var isfP=easeOut3(clamp((p-0.81-isi*0.002)/0.02,0,1));
+        isf.setAttribute('opacity',String(isfP));
+      });
+      if(p>=0.82) step=13;
+
+      // ═══ 14. ═══
+      if(p>=0.85) step=14;
+
+      // ═══ 15. LANDSCAPE LIGHTING (85-88%) ═══
+      gLights.setAttribute('opacity','1');
+      lightPositions.forEach(function(lp2,li){
+        var lpP=easeOut3(clamp((p-0.85-li*0.003)/0.015,0,1));
+        lp2.setAttribute('opacity',String(lpP));
+        if(lpP>0.5) lp2.setAttribute('r','4');
+      });
+      if(p>=0.88) step=15;
+
+      // ═══ 16. FINAL MOW (88-90%) ═══
+      var stripeP=easeOut3(clamp((p-0.88)/0.02,0,1));
+      gStripes.setAttribute('opacity',String(stripeP));
+
+      // ═══ 17. SPRINKLERS ON (90-92%) ═══
+      gWater.setAttribute('opacity','1');
+      waterArcs.forEach(function(wa,wi){
+        var waP=easeOut3(clamp((p-0.90-wi*0.004)/0.02,0,1));
+        wa.el.setAttribute('r',String(waP*25));
+        wa.el.setAttribute('opacity',String(0.4*waP));
+      });
+
+      // HUD
+      if(hudStep) hudStep.textContent=String(step);
+      var hudIn=map(p,0.06,0.12,0,1);
+      var hudOut=p<0.90?1:map(p,0.90,0.94,1,0);
+      sceneHud.style.opacity=String(clamp(hudIn*hudOut,0,1));
+
+      // ═══ FINALE — GREEN GLOW (92-100%) ═══
+      var glowVal=map(p,0.92,0.97,0,1);
+      sceneGlow.style.opacity=String(glowVal);
+      if(p>=0.92){
+        var glowSpread=easeOut3(clamp((p-0.92)/0.06,0,1));
+        sceneGlow.style.background='radial-gradient(ellipse '+(50+glowSpread*50)+'% '+(50+glowSpread*50)+'% at 50% 50%, rgba(74,222,128,'+(0.15+glowSpread*0.85)+'), rgba(74,222,128,'+(glowSpread*0.4)+') 50%, transparent 80%)';
+      }
+
+      // GREENSCAPE text
+      var pi3=easeOut3(clamp((p-0.92)/0.03,0,1));
+      var poHold=p<0.995?1:map(p,0.995,1.0,1,0);
+      scenePowered.style.opacity=String(pi3*poHold);
+      scenePowered.style.transform='translate(-50%,-50%) scale('+map(p,0.92,0.97,0.85,1.15)+')';
+
+      // Power lights
+      powerLights.forEach(function(pl,li){
+        var ls=0.91+li*0.004,le=ls+0.03;
+        var lp3=clamp((p-ls)/(le-ls),0,1);
+        var w=easeOut3(lp3)*poHold;
+        pl.style.background='rgba(74,222,128,'+(w*0.9)+')';
+        pl.style.boxShadow=w>0.1?'0 0 '+Math.round(w*150)+'px '+Math.round(w*80)+'px rgba(74,222,128,'+(w*0.7)+'), 0 0 '+Math.round(w*250)+'px '+Math.round(w*120)+'px rgba(74,222,128,'+(w*0.3)+')':'none';
+      });
+
+      // Scene fades behind the glow
+      if(p>0.93){
+        var sceneFade=map(p,0.93,0.97,1,0.2);
+        sceneContainer.style.opacity=String(sceneFade);
+      }
+
+      // Hero CTA
+      var fP=map(p,0.995,1.0,0,1);
+      var fOp=easeOut3(fP);
+      finalEl.style.opacity=String(fOp);
+      finalEl.style.transform='translateY('+map(fP,0,1,20,0)+'px)';
+      finalEl.classList.toggle('active',p>0.995);
+
+      // Phase labels
+      if(p<0.04) setPhase('');
+      else if(p<0.10) setPhase('INITIAL SURVEY');
+      else if(p<0.16) setPhase('DEBRIS REMOVAL');
+      else if(p<0.22) setPhase('GRADING & LEVELING');
+      else if(p<0.28) setPhase('TRENCHING');
+      else if(p<0.34) setPhase('IRRIGATION INSTALL');
+      else if(p<0.44) setPhase('LAYING SOD');
+      else if(p<0.50) setPhase('FENCING & EDGING');
+      else if(p<0.56) setPhase('MULCH & BEDS');
+      else if(p<0.62) setPhase('SHRUB PLANTING');
+      else if(p<0.66) setPhase('TREE PLANTING');
+      else if(p<0.72) setPhase('FLOWER BEDS');
+      else if(p<0.78) setPhase('HARDSCAPING');
+      else if(p<0.82) setPhase('DECORATING');
+      else if(p<0.85) setPhase('FINISHING TOUCHES');
+      else if(p<0.88) setPhase('LANDSCAPE LIGHTING');
+      else if(p<0.90) setPhase('FINAL MOW & EDGE');
+      else if(p<0.92) setPhase('SPRINKLERS ON');
+      else if(p<0.995) setPhase('GREENSCAPE');
+      else setPhase('');
+    }
+
+    (function loop(){requestAnimationFrame(loop);try{update();}catch(e){}})();
+  }
+})();

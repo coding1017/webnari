@@ -598,6 +598,44 @@ footer{border-top:1px solid var(--border);padding:48px}
       </div>
     </div>
   </div>
+  <!-- Pair 2: GreenScape (top) + Pizza (bottom), scroll-locked -->
+  <div class="mob-parallax-pair" id="mob-pair-wrap-2">
+    <div class="mob-parallax-sticky">
+      <div class="mob-pane" id="mg-hero">
+        <div id="mg-seqBg" style="position:absolute;inset:0;background:#000"></div>
+        <div id="mg-sceneGlow" style="position:absolute;inset:0;opacity:0"></div>
+        <div id="mg-sceneContainer" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+          <svg id="mg-sceneSvg" viewBox="0 0 1050 600" preserveAspectRatio="xMidYMid meet" style="max-height:100%"></svg>
+        </div>
+        <div id="mg-sceneEnergize" style="position:absolute;inset:0;pointer-events:none;opacity:0"></div>
+        <div id="mg-sceneHud" style="display:none"></div><div id="mg-hudStep" style="display:none"></div>
+        <div id="mg-scenePowered" style="display:none"></div>
+        <div id="mg-pl1" style="display:none"></div><div id="mg-pl2" style="display:none"></div>
+        <div id="mg-pl3" style="display:none"></div><div id="mg-pl4" style="display:none"></div>
+        <div id="mg-pl5" style="display:none"></div><div id="mg-pl6" style="display:none"></div>
+        <div id="mg-seqIntro" style="display:none"></div><div id="mg-seqPhase" style="display:none"></div>
+        <div style="display:none"><div id="mg-seqScrubFill"></div></div>
+        <div id="mg-seqFinal" style="display:none"></div>
+        <div id="mg-seqSticky" style="display:none"></div>
+      </div>
+      <div class="mob-pane" id="mp-hero">
+        <div id="mp-seqBg" style="position:absolute;inset:0;background:#000"></div>
+        <div id="mp-sceneGlow" style="position:absolute;inset:0;opacity:0"></div>
+        <div id="mp-sceneContainer" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+          <svg id="mp-sceneSvg" viewBox="0 0 1050 600" preserveAspectRatio="xMidYMid meet" style="max-height:100%"></svg>
+        </div>
+        <div id="mp-sceneEnergize" style="position:absolute;inset:0;pointer-events:none;opacity:0"></div>
+        <div id="mp-scenePowered" style="display:none"></div>
+        <div id="mp-pl1" style="display:none"></div><div id="mp-pl2" style="display:none"></div>
+        <div id="mp-pl3" style="display:none"></div><div id="mp-pl4" style="display:none"></div>
+        <div id="mp-pl5" style="display:none"></div><div id="mp-pl6" style="display:none"></div>
+        <div id="mp-seqIntro" style="display:none"></div><div id="mp-seqPhase" style="display:none"></div>
+        <div style="display:none"><div id="mp-seqScrubFill"></div></div>
+        <div id="mp-seqFinal" style="display:none"></div>
+        <div id="mp-seqSticky" style="display:none"></div>
+      </div>
+    </div>
+  </div>
 </div>
 </div>
 
@@ -1151,27 +1189,44 @@ function initShowcase(){
 function initMobileShowcase(){
   if(window.innerWidth>768)return;
 
-  // Load both parallax scripts
-  const s1=document.createElement('script');s1.src='mob-volt-parallax.js';document.body.appendChild(s1);
-  const s2=document.createElement('script');s2.src='mob-roof-parallax.js';document.body.appendChild(s2);
+  // Load all 4 parallax scripts
+  ['mob-volt-parallax.js','mob-roof-parallax.js','mob-green-parallax.js','mob-pizza-parallax.js'].forEach(src=>{
+    const s=document.createElement('script');s.src=src;document.body.appendChild(s);
+  });
 
   window.__mobVoltProgress=0.15;
   window.__mobRoofProgress=0.15;
+  window.__mobGreenProgress=0.15;
+  window.__mobPizzaProgress=0.15;
 
-  // Both parallaxes share one scroll-locked wrapper — synced progress
-  const wrap=document.getElementById('mob-pair-wrap');
-  if(!wrap)return;
+  // Pair 1: VoltPro + RoofPro
+  const wrap1=document.getElementById('mob-pair-wrap');
+  // Pair 2: GreenScape + Pizza
+  const wrap2=document.getElementById('mob-pair-wrap-2');
 
   let ticking=false;
   function update(){
     ticking=false;
-    const rect=wrap.getBoundingClientRect();
-    const total=wrap.offsetHeight-window.innerHeight;
-    const scrolled=Math.max(0,-rect.top);
-    const p=Math.max(0,Math.min(1,scrolled/total));
-    const progress=.15+p*.75; // 15%→90%
-    window.__mobVoltProgress=progress;
-    window.__mobRoofProgress=progress;
+    // Pair 1
+    if(wrap1){
+      const rect=wrap1.getBoundingClientRect();
+      const total=wrap1.offsetHeight-window.innerHeight;
+      const scrolled=Math.max(0,-rect.top);
+      const p=Math.max(0,Math.min(1,scrolled/total));
+      const prog=.15+p*.75;
+      window.__mobVoltProgress=prog;
+      window.__mobRoofProgress=prog;
+    }
+    // Pair 2
+    if(wrap2){
+      const rect=wrap2.getBoundingClientRect();
+      const total=wrap2.offsetHeight-window.innerHeight;
+      const scrolled=Math.max(0,-rect.top);
+      const p=Math.max(0,Math.min(1,scrolled/total));
+      const prog=.15+p*.75;
+      window.__mobGreenProgress=prog;
+      window.__mobPizzaProgress=Math.min(prog,.83);
+    }
   }
   window.addEventListener('scroll',()=>{if(!ticking){requestAnimationFrame(update);ticking=true}},{passive:true});
 }
