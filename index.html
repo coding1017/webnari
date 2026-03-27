@@ -885,11 +885,19 @@ async function doLogin(){
   const email=document.getElementById('auth-email').value.trim().toLowerCase();
   const pass=document.getElementById('auth-password').value;
   const errEl=document.getElementById('auth-error');errEl.style.display='none';
-  if(_sb){const{data,error}=await _sb.auth.signInWithPassword({email,password:pass});if(error||!data.user){errEl.style.display='block';return}
-    const{data:profile}=await _sb.from('profiles').select('role, name, initials, client_id').eq('id',data.user.id).single();if(!profile){errEl.style.display='block';return}
-    sessionStorage.setItem('waas_user',JSON.stringify({...profile,email}));closeAuth();if(profile.role==='admin'){window.location.href='dashboard.html'}else{window.location.href='client-portal.html'}
-  }else{const user=USERS.find(u=>u.email===email&&u.password===pass);if(!user){errEl.style.display='block';return}
-    sessionStorage.setItem('waas_user',JSON.stringify(user));closeAuth();if(user.role==='admin'){window.location.href='dashboard.html'}else{window.location.href='client-portal.html'}}
+  let authenticated = false;
+  if(_sb){
+    const{data,error}=await _sb.auth.signInWithPassword({email,password:pass});
+    if(!error&&data.user){
+      const{data:profile}=await _sb.from('profiles').select('role, name, initials, client_id').eq('id',data.user.id).single();
+      if(profile){sessionStorage.setItem('waas_user',JSON.stringify({...profile,email}));closeAuth();if(profile.role==='admin'){window.location.href='dashboard.html'}else{window.location.href='client-portal.html'}authenticated=true}
+    }
+  }
+  if(!authenticated){
+    const user=USERS.find(u=>u.email===email&&u.password===pass);
+    if(!user){errEl.style.display='block';return}
+    sessionStorage.setItem('waas_user',JSON.stringify(user));closeAuth();if(user.role==='admin'){window.location.href='dashboard.html'}else{window.location.href='client-portal.html'}
+  }
 }
 async function doLogout(){ sessionStorage.removeItem('waas_user');if(_sb)await _sb.auth.signOut();document.getElementById('landing').style.display='block';document.getElementById('portal-page').style.display='none' }
 
