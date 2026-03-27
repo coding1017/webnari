@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="apple-touch-icon" href="apple-touch-icon.png"><title>Kitchen Glossary | Jade's Spice</title>
+<meta name="description" content="Kitchen glossary term definition from Jade's Spice.">
+<link rel="canonical" href="https://webnari.io/jades-spice-term.html">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://webnari.io/jades-spice-term.html">
+<meta property="og:title" content="Kitchen Glossary | Jade's Spice">
+<meta property="og:description" content="Kitchen glossary term definition from Jade's Spice.">
+<meta property="og:site_name" content="Jade's Spice">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Kitchen Glossary | Jade's Spice">
+<meta name="twitter:description" content="Kitchen glossary term definition from Jade's Spice.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ─── TOKENS ──────────────────────────────────────────────────────────────── */
+:root {
+  --black: #0C0806; --dark: #14100C; --surface: #1C1612;
+  --surface2: #261E18; --border: #342A22;
+  --red: #D94040; --red2: #E86565;
+  --gold: #F0A830; --gold2: #F5C563;
+  --green: #3DAA6D; --green2: #5BC88A;
+  --white: #FFF8F0; --muted: #8A7A6E; --text: #D4C4B4;
+  --gradient: linear-gradient(135deg, #D94040, #F0A830);
+  --gradient-green: linear-gradient(135deg, #3DAA6D, #F0A830);
+  --font-head: 'Barlow Condensed', sans-serif;
+  --font-body: 'Barlow', sans-serif;
+  --radius: 4px; --radius-lg: 8px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-body); background: var(--black); color: var(--text); overflow-x: hidden; line-height: 1.6; }
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+.container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+
+/* ─── BUTTONS ────────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 28px; font-family: var(--font-head); font-size: 15px; font-weight: 700;
+  letter-spacing: 0.05em; text-transform: uppercase; border-radius: var(--radius);
+  transition: all 0.2s; border: none; cursor: pointer;
+}
+.btn-primary { background: var(--red); color: var(--white); }
+.btn-primary:hover { background: var(--red2); transform: translateY(-1px); }
+.btn-gold { background: var(--gold); color: var(--black); }
+.btn-gold:hover { background: var(--gold2); transform: translateY(-1px); }
+.btn-outline {
+  background: transparent; color: var(--white);
+  border: 1.5px solid var(--border);
+}
+.btn-outline:hover { border-color: var(--red); color: var(--red); }
+.btn-sm { padding: 10px 20px; font-size: 12px; }
+
+/* ─── NAV ────────────────────────────────────────────────────────────────── */
+.site-nav {
+  position: sticky; top: 0; z-index: 100; height: 68px;
+  background: rgba(12,8,6,0.92); backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+  max-width: 1120px; margin: 0 auto; height: 100%;
+  display: flex; align-items: center; justify-content: space-between; padding: 0 24px;
+}
+.nav-logo {
+  font-family: var(--font-head); font-weight: 900; font-size: 22px;
+  color: var(--white); letter-spacing: -0.02em;
+}
+.nav-logo span { color: var(--red); }
+.nav-logo small {
+  display: block; font-size: 9px; font-weight: 600;
+  letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--gold); margin-top: -4px;
+}
+.nav-links {
+  display: flex; align-items: center; gap: 32px; list-style: none;
+}
+.nav-link {
+  font-family: var(--font-head); font-size: 13px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted); transition: color 0.15s;
+}
+.nav-link:hover { color: var(--white); }
+.nav-link.active { color: var(--red); }
+.nav-cta { display: flex; align-items: center; gap: 16px; }
+.ig-link {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--font-head); font-size: 12px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted); transition: color 0.15s;
+}
+.ig-link:hover { color: var(--gold); }
+
+.hamburger {
+  display: none; flex-direction: column; gap: 5px;
+  background: none; border: none; cursor: pointer; padding: 4px; z-index: 101;
+}
+.hamburger span { display: block; width: 24px; height: 2px; background: var(--white); transition: all 0.3s; }
+.hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+.mobile-menu {
+  display: none; position: fixed; top: 0; right: -100%;
+  width: 300px; height: 100vh; background: var(--dark);
+  border-left: 1px solid var(--border); z-index: 99;
+  padding: 88px 24px 32px; transition: right 0.3s ease; overflow-y: auto;
+}
+.mobile-menu.open { right: 0; }
+.mobile-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6); z-index: 98;
+  opacity: 0; transition: opacity 0.3s;
+}
+.mobile-overlay.open { display: block; opacity: 1; }
+.mob-section { margin-bottom: 32px; }
+.mob-section-label {
+  font-family: var(--font-head); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);
+  margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+}
+.mob-section a {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 0; font-family: var(--font-body); font-size: 15px; font-weight: 500;
+  color: var(--text); transition: color 0.15s;
+}
+.mob-section a:hover { color: var(--red); }
+.mob-cta {
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border);
+}
+.mob-cta .btn { width: 100%; justify-content: center; }
+
+/* ─── BREADCRUMB ─────────────────────────────────────────────────────────── */
+.breadcrumb {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  font-family: var(--font-head); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted);
+  margin-bottom: 32px;
+}
+.breadcrumb a { color: var(--muted); transition: color 0.15s; }
+.breadcrumb a:hover { color: var(--red); }
+.breadcrumb-sep { color: var(--border); }
+.breadcrumb-current { color: var(--white); }
+
+/* ─── TERM PAGE LAYOUT ───────────────────────────────────────────────────── */
+.term-page { padding: 110px 0 96px; position: relative; }
+.term-layout {
+  display: grid; grid-template-columns: 1fr 260px; gap: 64px; align-items: flex-start;
+}
+.term-main { max-width: 720px; }
+
+/* ─── CATEGORY TAG ───────────────────────────────────────────────────────── */
+.term-cat-tag {
+  display: inline-flex; padding: 5px 14px; border-radius: 20px;
+  font-family: var(--font-head); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 20px;
+}
+.tag-ingredients { background: rgba(61,170,109,0.1); color: var(--green); border: 1px solid rgba(61,170,109,0.25); }
+.tag-techniques { background: rgba(240,168,48,0.1); color: var(--gold); border: 1px solid rgba(240,168,48,0.25); }
+.tag-equipment { background: rgba(217,64,64,0.1); color: var(--red2); border: 1px solid rgba(217,64,64,0.25); }
+.tag-nutrition { background: rgba(91,200,138,0.1); color: var(--green2); border: 1px solid rgba(91,200,138,0.25); }
+
+/* ─── TERM NAME ──────────────────────────────────────────────────────────── */
+.term-name {
+  font-family: var(--font-head); font-weight: 900;
+  font-size: clamp(48px, 7vw, 64px); line-height: 1;
+  color: var(--white); margin-bottom: 12px;
+}
+
+/* ─── PRONUNCIATION ──────────────────────────────────────────────────────── */
+.term-pronunciation {
+  font-family: var(--font-body); font-size: 16px; font-style: italic;
+  color: var(--muted); margin-bottom: 28px;
+  display: flex; align-items: center; gap: 8px;
+}
+.term-pronunciation svg { width: 16px; height: 16px; color: var(--gold); flex-shrink: 0; }
+
+/* ─── DEFINITION ─────────────────────────────────────────────────────────── */
+.term-definition {
+  font-size: 18px; line-height: 1.75; color: var(--text); margin-bottom: 40px;
+  padding-bottom: 32px; border-bottom: 1px solid var(--border);
+}
+
+/* ─── EXTENDED INFO ──────────────────────────────────────────────────────── */
+.term-extended {
+  margin-bottom: 40px; padding-bottom: 32px; border-bottom: 1px solid var(--border);
+}
+.term-extended-heading {
+  font-family: var(--font-head); font-weight: 800; font-size: 18px;
+  color: var(--white); margin-bottom: 16px; letter-spacing: 0.02em;
+}
+.term-extended-text {
+  font-size: 16px; line-height: 1.75; color: var(--text); margin-bottom: 16px;
+}
+.term-used-in {
+  font-size: 15px; line-height: 1.65; color: var(--muted); font-style: italic;
+  padding-left: 16px; border-left: 3px solid var(--border);
+}
+
+/* ─── RELATED TERMS ──────────────────────────────────────────────────────── */
+.related-section { margin-bottom: 40px; padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+.related-heading {
+  font-family: var(--font-head); font-weight: 800; font-size: 16px;
+  color: var(--white); margin-bottom: 20px; letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.related-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.related-card {
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 18px; transition: all 0.3s; display: block; position: relative; overflow: hidden;
+}
+.related-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+}
+.related-card.cat-ingredients::before { background: var(--green); }
+.related-card.cat-techniques::before { background: var(--gold); }
+.related-card.cat-equipment::before { background: var(--red); }
+.related-card.cat-nutrition::before { background: var(--green2); }
+.related-card:hover { transform: translateY(-3px); border-color: var(--red); }
+.related-card-name {
+  font-family: var(--font-head); font-weight: 800; font-size: 15px;
+  color: var(--white); margin-bottom: 6px;
+}
+.related-card-def {
+  font-size: 13px; color: var(--muted); line-height: 1.5;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+
+/* ─── ARTICLE LINKS ──────────────────────────────────────────────────────── */
+.article-section { margin-bottom: 40px; padding-bottom: 32px; border-bottom: 1px solid var(--border); }
+.article-link {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px 18px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); transition: all 0.25s; margin-bottom: 10px;
+}
+.article-link:hover { border-color: var(--red); transform: translateX(4px); }
+.article-link svg { width: 20px; height: 20px; color: var(--red); flex-shrink: 0; }
+.article-link-title {
+  font-family: var(--font-head); font-size: 14px; font-weight: 700; color: var(--white);
+}
+.article-link-meta {
+  font-size: 12px; color: var(--muted); margin-top: 2px;
+}
+
+/* ─── BROWSE ALL ─────────────────────────────────────────────────────────── */
+.browse-all {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  margin-bottom: 48px;
+}
+.browse-all a {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-head); font-size: 13px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--gold);
+  transition: color 0.2s, gap 0.2s;
+}
+.browse-all a:hover { color: var(--white); gap: 12px; }
+.browse-all a svg { width: 16px; height: 16px; }
+
+/* ─── PREV / NEXT NAV ────────────────────────────────────────────────────── */
+.term-nav {
+  display: flex; justify-content: space-between; gap: 20px;
+  padding-top: 16px;
+}
+.term-nav-link {
+  display: flex; align-items: center; gap: 10px;
+  padding: 14px 20px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); transition: all 0.25s; flex: 1;
+  max-width: 50%;
+}
+.term-nav-link:hover { border-color: var(--red); transform: translateY(-2px); }
+.term-nav-link.next { margin-left: auto; text-align: right; flex-direction: row-reverse; }
+.term-nav-link svg { width: 18px; height: 18px; color: var(--muted); flex-shrink: 0; }
+.term-nav-label {
+  font-family: var(--font-head); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px;
+}
+.term-nav-name {
+  font-family: var(--font-head); font-size: 15px; font-weight: 800; color: var(--white);
+}
+
+/* ─── SIDEBAR ────────────────────────────────────────────────────────────── */
+.term-sidebar {
+  position: sticky; top: 100px;
+}
+.sidebar-heading {
+  font-family: var(--font-head); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);
+  margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid var(--border);
+}
+.sidebar-link {
+  display: block; padding: 8px 12px; font-size: 14px; font-weight: 500;
+  color: var(--text); border-radius: var(--radius); transition: all 0.15s; margin-bottom: 2px;
+}
+.sidebar-link:hover { color: var(--white); background: rgba(217,64,64,0.08); }
+.sidebar-link.active { color: var(--red); background: rgba(217,64,64,0.06); }
+
+/* ─── 404 STATE ──────────────────────────────────────────────────────────── */
+.term-404 {
+  text-align: center; padding: 140px 40px 96px; position: relative;
+}
+.term-404-icon { width: 64px; height: 64px; color: var(--border); margin: 0 auto 24px; }
+.term-404-title {
+  font-family: var(--font-head); font-weight: 900; font-size: 36px;
+  color: var(--white); margin-bottom: 12px;
+}
+.term-404-text { font-size: 16px; color: var(--muted); margin-bottom: 32px; }
+
+/* ─── FOOTER ─────────────────────────────────────────────────────────────── */
+.site-footer { padding: 64px 0 32px; border-top: 1px solid var(--border); position: relative; }
+.footer-grid {
+  display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 48px;
+  margin-bottom: 48px;
+}
+.footer-brand-logo {
+  font-family: var(--font-head); font-weight: 900; font-size: 20px;
+  color: var(--white); margin-bottom: 12px; letter-spacing: -0.02em;
+}
+.footer-brand-logo span { color: var(--red); }
+.footer-brand-logo small {
+  display: block; font-size: 9px; font-weight: 600;
+  letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--gold); margin-top: -4px;
+}
+.footer-tagline { font-size: 14px; color: var(--muted); margin-bottom: 20px; line-height: 1.6; }
+.footer-social { display: flex; gap: 12px; }
+.footer-social a {
+  width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; background: var(--surface); border: 1px solid var(--border);
+  color: var(--muted); transition: all 0.2s;
+}
+.footer-social a:hover { border-color: var(--red); background: rgba(217,64,64,0.1); }
+.footer-social a svg { width: 16px; height: 16px; }
+.footer-heading {
+  font-family: var(--font-head); font-size: 13px; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--white);
+  margin-bottom: 20px;
+}
+.footer-links a { display: block; padding: 6px 0; font-size: 14px; color: var(--muted); transition: color 0.15s; }
+.footer-links a:hover { color: var(--red); }
+.footer-contact-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 0; font-size: 14px; color: var(--muted);
+}
+.footer-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 24px; border-top: 1px solid var(--border);
+  font-size: 13px; color: var(--muted);
+}
+
+/* ─── SCROLL REVEAL ──────────────────────────────────────────────────────── */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .nav-links { display: none; }
+  .nav-cta { display: none; }
+  .hamburger { display: flex; }
+  .mobile-menu { display: block; }
+  .term-layout { grid-template-columns: 1fr; }
+  .term-sidebar { position: static; margin-top: 48px; }
+  .footer-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .container { padding: 0 20px; }
+  .nav-inner { padding: 0 20px; }
+  .term-page { padding: 100px 0 64px; }
+  .term-name { font-size: clamp(36px, 10vw, 52px); }
+  .related-grid { grid-template-columns: 1fr; }
+  .term-nav { flex-direction: column; }
+  .term-nav-link { max-width: 100%; }
+  .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+  .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+}
+</style>
+</head>
+
+<body>
+<!-- ─── NAV ──────────────────────────────────────────────────────────────── -->
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a href="jades-spice.html" class="nav-logo">JADE'S <span>SPICE</span><small>Beautiful moments on your lips</small></a>
+    <div class="nav-links">
+      <a href="jades-spice.html" class="nav-link">Home</a>
+      <a href="jades-spice.html#menu" class="nav-link">Menu</a>
+      <a href="jades-spice.html#about" class="nav-link">About</a>
+      <a href="jades-spice-blog.html" class="nav-link">Blog</a>
+      <a href="jades-spice-glossary.html" class="nav-link active">Glossary</a>
+      <a href="jades-spice-macros.html" class="nav-link">Macro Calculator</a>
+    </div>
+    <div class="nav-cta">
+      <a href="https://www.instagram.com/jades_spice/" target="_blank" rel="noopener" class="ig-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        @jades_spice
+      </a>
+      <a href="jades-spice.html#order" class="btn btn-primary btn-sm">Order Now</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-overlay" id="mobileOverlay"></div>
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mob-section">
+    <div class="mob-section-label">Menu</div>
+    <a href="jades-spice.html">Home</a>
+    <a href="jades-spice.html#menu">Full Menu</a>
+    <a href="jades-spice.html#about">About Jade</a>
+    <a href="jades-spice-blog.html">Blog</a>
+    <a href="jades-spice-glossary.html">Glossary</a>
+    <a href="jades-spice-macros.html">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+      Macro Calculator
+    </a>
+  </div>
+  <div class="mob-section">
+    <div class="mob-section-label">Follow</div>
+    <a href="https://www.instagram.com/jades_spice/" target="_blank" rel="noopener">Instagram @jades_spice</a>
+  </div>
+  <div class="mob-cta">
+    <a href="jades-spice.html#order" class="btn btn-primary">Order Now</a>
+  </div>
+</div>
+
+<!-- ─── TERM CONTENT (rendered by JS) ────────────────────────────────────── -->
+<div id="termContent"></div>
+
+<!-- ─── FOOTER ───────────────────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-logo">JADE'S <span>SPICE</span><small>Beautiful moments on your lips</small></div>
+        <div class="footer-tagline">Asian-inspired meal prep made fresh from scratch with organic ingredients. Custom macros for your fitness goals. Glass containers only.</div>
+        <div class="footer-social">
+          <a href="https://www.instagram.com/jades_spice/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-heading">Menu</div>
+        <div class="footer-links">
+          <a href="jades-spice.html#meals">This Week's Meals</a>
+          <a href="jades-spice.html#menu">Full Menu</a>
+          <a href="jades-spice.html#how">How It Works</a>
+          <a href="jades-spice.html#order">Order Now</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-heading">Company</div>
+        <div class="footer-links">
+          <a href="jades-spice.html#about">About Jade</a>
+          <a href="jades-spice.html#reviews">Reviews</a>
+          <a href="jades-spice-blog.html">Blog</a>
+          <a href="jades-spice-glossary.html">Glossary</a>
+          <a href="jades-spice-macros.html">Macro Calculator</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-heading">Connect</div>
+        <div class="footer-contact-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          <a href="https://www.instagram.com/jades_spice/" target="_blank" rel="noopener">@jades_spice</a>
+        </div>
+        <div class="footer-contact-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          Made with love
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Jade's Spice. All rights reserved.</span>
+      <span>Freshly made from scratch with organic ingredients</span>
+    </div>
+  </div>
+</footer>
+
+<script src="jades-spice-blog-data.js"></script>
+<script>
+(function() {
+  'use strict';
+
+  /* ─── CATEGORY COLOR MAP ────────────────────────────────────────────────── */
+  var CAT_COLORS = {
+    ingredients: { label: 'Ingredients', color: 'var(--green)' },
+    techniques: { label: 'Techniques', color: 'var(--gold)' },
+    equipment: { label: 'Equipment', color: 'var(--red2)' },
+    nutrition: { label: 'Nutrition', color: 'var(--green2)' }
+  };
+
+  /* ─── GET EXTENDED INFO ─────────────────────────────────────────────────── */
+  function getExtendedInfo(term) {
+    var cat = term.category;
+    var name = term.term.toLowerCase();
+    var pronunciation = null;
+    var extendedText = '';
+    var usedIn = '';
+
+    if (cat === 'ingredients') {
+      extendedText = 'In Asian-inspired meal prep, ' + name + ' is a key ingredient valued for the flavor, texture, or nutritional profile it brings to a dish. Understanding how to source, store, and prepare ' + name + ' allows a meal prep cook to maximize both taste and nutritional value in every container.';
+      usedIn = 'Found across a range of meal prep dishes where this ingredient contributes essential flavor and nutritional balance.';
+    } else if (cat === 'techniques') {
+      extendedText = 'In the world of meal prep and home cooking, ' + name + ' is a technique that elevates dishes from simple to restaurant-quality. Mastering ' + name + ' allows a cook to build layers of flavor, achieve ideal textures, and prepare meals that taste freshly made even days after cooking.';
+      usedIn = 'Applied in various stages of meal prep where this technique provides the best results for flavor development and food preservation.';
+    } else if (cat === 'equipment') {
+      extendedText = 'For meal prep cooks, the right equipment makes the difference between a frustrating session and an efficient one. A ' + name + ' is part of the essential kitchen toolkit because it enables precision and consistency in tasks that would be difficult or time-consuming without it.';
+      usedIn = 'Used regularly in meal prep workflows, particularly during preparation, cooking, and portioning stages.';
+    } else {
+      extendedText = 'In fitness-focused meal prep, understanding ' + name + ' is essential because it directly affects how well a meal supports your health and fitness goals. Getting this element right ensures meals that fuel performance, support recovery, and keep you on track with your macros.';
+      usedIn = 'A fundamental concept in nutrition-focused meal prep, relevant to every dish that is designed around specific macro and calorie targets.';
+    }
+
+    return {
+      pronunciation: pronunciation,
+      extendedText: extendedText,
+      usedIn: usedIn
+    };
+  }
+
+  /* ─── FIND RELATED BLOG POSTS ───────────────────────────────────────────── */
+  function findRelatedPosts(term) {
+    if (!window.JadesSpiceBlog || !JadesSpiceBlog.getPosts) return [];
+    var posts = JadesSpiceBlog.getPosts();
+    var matches = [];
+    var termLower = term.term.toLowerCase();
+    var slugParts = term.slug.replace(/-/g, ' ').toLowerCase();
+
+    for (var i = 0; i < posts.length; i++) {
+      var post = posts[i];
+      var score = 0;
+
+      /* Check tags */
+      if (post.tags) {
+        for (var t = 0; t < post.tags.length; t++) {
+          var tag = post.tags[t].toLowerCase().replace(/-/g, ' ');
+          if (tag === slugParts || tag === termLower || tag.indexOf(termLower) !== -1 || termLower.indexOf(tag) !== -1) {
+            score += 3;
+          }
+        }
+      }
+
+      /* Check title and content for term mention */
+      if (post.title && post.title.toLowerCase().indexOf(termLower) !== -1) score += 2;
+      if (post.content && post.content.toLowerCase().indexOf(termLower) !== -1) score += 1;
+
+      /* Check category match */
+      if (post.category === term.category) score += 0.5;
+
+      if (score > 0) {
+        matches.push({ post: post, score: score });
+      }
+    }
+
+    matches.sort(function(a, b) { return b.score - a.score; });
+    var result = [];
+    for (var j = 0; j < Math.min(2, matches.length); j++) {
+      result.push(matches[j].post);
+    }
+    return result;
+  }
+
+  /* ─── CAPITALIZE ────────────────────────────────────────────────────────── */
+  function capitalize(str) {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+
+  /* ─── TRUNCATE ──────────────────────────────────────────────────────────── */
+  function truncate(str, len) {
+    if (str.length <= len) return str;
+    return str.substring(0, len).replace(/\s+\S*$/, '') + '...';
+  }
+
+  /* ─── READ URL PARAM ────────────────────────────────────────────────────── */
+  function getParam(name) {
+    var params = new URLSearchParams(window.location.search);
+    return params.get(name);
+  }
+
+  /* ─── SVG ICONS ─────────────────────────────────────────────────────────── */
+  var ICONS = {
+    arrowLeft: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>',
+    arrowRight: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>',
+    book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>',
+    fileText: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><line x1="10" y1="9" x2="8" y2="9"/></svg>',
+    grid: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>',
+    search404: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>',
+    volume: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 9H5a1 1 0 00-1 1v4a1 1 0 001 1h4l5 5V4L9 9z"/></svg>'
+  };
+
+  /* ─── RENDER TERM PAGE ──────────────────────────────────────────────────── */
+  function renderTermPage() {
+    var slug = getParam('term');
+    var container = document.getElementById('termContent');
+
+    if (!slug || !window.JadesSpiceBlog || !JadesSpiceBlog.getTermBySlug) {
+      render404(container);
+      return;
+    }
+
+    var term = JadesSpiceBlog.getTermBySlug(slug);
+    if (!term) {
+      render404(container);
+      return;
+    }
+
+    /* SEO meta tags */
+    document.title = term.term + ' \u2014 Kitchen Glossary | Jade\'s Spice';
+    var metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.content = term.term + ': ' + term.definition;
+    var canonical = document.querySelector('link[rel="canonical"]');
+    if (canonical) canonical.href = 'https://webnari.io/jades-spice-term.html?term=' + slug;
+    var ogTitle = document.querySelector('meta[property="og:title"]');
+    if (ogTitle) ogTitle.content = term.term + ' \u2014 Kitchen Glossary | Jade\'s Spice';
+    var ogDesc = document.querySelector('meta[property="og:description"]');
+    if (ogDesc) ogDesc.content = term.term + ': ' + truncate(term.definition, 150);
+    var ogUrl = document.querySelector('meta[property="og:url"]');
+    if (ogUrl) ogUrl.content = 'https://webnari.io/jades-spice-term.html?term=' + slug;
+    var twTitle = document.querySelector('meta[name="twitter:title"]');
+    if (twTitle) twTitle.content = term.term + ' \u2014 Kitchen Glossary | Jade\'s Spice';
+    var twDesc = document.querySelector('meta[name="twitter:description"]');
+    if (twDesc) twDesc.content = term.term + ': ' + truncate(term.definition, 150);
+
+    /* Get data */
+    var info = getExtendedInfo(term);
+    var allTerms = JadesSpiceBlog.getGlossaryTerms().slice().sort(function(a, b) {
+      return a.term.toLowerCase().localeCompare(b.term.toLowerCase());
+    });
+
+    /* Find related terms from same category */
+    var relatedTerms = [];
+    for (var i = 0; i < allTerms.length; i++) {
+      if (allTerms[i].category === term.category && allTerms[i].slug !== term.slug) {
+        relatedTerms.push(allTerms[i]);
+      }
+    }
+    relatedTerms = relatedTerms.slice(0, 4);
+
+    /* Find prev/next terms alphabetically */
+    var currentIdx = -1;
+    for (var j = 0; j < allTerms.length; j++) {
+      if (allTerms[j].slug === term.slug) { currentIdx = j; break; }
+    }
+    var prevTerm = currentIdx > 0 ? allTerms[currentIdx - 1] : null;
+    var nextTerm = currentIdx < allTerms.length - 1 ? allTerms[currentIdx + 1] : null;
+
+    /* Find related blog posts */
+    var relatedPosts = findRelatedPosts(term);
+
+    /* Sidebar: terms from same category */
+    var sidebarTerms = [];
+    for (var k = 0; k < allTerms.length; k++) {
+      if (allTerms[k].category === term.category && sidebarTerms.length < 6) {
+        sidebarTerms.push(allTerms[k]);
+      }
+    }
+
+    /* Build HTML */
+    var html = '';
+
+    html += '<section class="term-page">';
+    html += '<div class="container">';
+
+    /* Breadcrumb */
+    html += '<nav class="breadcrumb reveal">';
+    html += '<a href="jades-spice.html">Home</a>';
+    html += '<span class="breadcrumb-sep">/</span>';
+    html += '<a href="jades-spice-glossary.html">Glossary</a>';
+    html += '<span class="breadcrumb-sep">/</span>';
+    html += '<span class="breadcrumb-current">' + term.term + '</span>';
+    html += '</nav>';
+
+    html += '<div class="term-layout">';
+
+    /* ── MAIN CONTENT ─────────────────────────────────────────────────────── */
+    html += '<div class="term-main">';
+
+    /* Category tag */
+    html += '<div class="reveal reveal-delay-1"><span class="term-cat-tag tag-' + term.category + '">' + capitalize(term.category) + '</span></div>';
+
+    /* Term name */
+    html += '<h1 class="term-name reveal reveal-delay-1">' + term.term + '</h1>';
+
+    /* Pronunciation */
+    if (info.pronunciation) {
+      html += '<div class="term-pronunciation reveal reveal-delay-2">' + ICONS.volume + ' ' + info.pronunciation + '</div>';
+    }
+
+    /* Definition */
+    html += '<div class="term-definition reveal reveal-delay-2">' + term.definition + '</div>';
+
+    /* Extended info */
+    html += '<div class="term-extended reveal reveal-delay-3">';
+    html += '<div class="term-extended-heading">In Context</div>';
+    html += '<p class="term-extended-text">' + info.extendedText + '</p>';
+    if (info.usedIn) {
+      html += '<p class="term-used-in">' + info.usedIn + '</p>';
+    }
+    html += '</div>';
+
+    /* Related terms */
+    if (relatedTerms.length > 0) {
+      html += '<div class="related-section reveal">';
+      html += '<div class="related-heading">Related Terms</div>';
+      html += '<div class="related-grid">';
+      for (var r = 0; r < relatedTerms.length; r++) {
+        var rt = relatedTerms[r];
+        html += '<a href="jades-spice-term.html?term=' + rt.slug + '" class="related-card cat-' + rt.category + '">';
+        html += '<div class="related-card-name">' + rt.term + '</div>';
+        html += '<div class="related-card-def">' + truncate(rt.definition, 80) + '</div>';
+        html += '</a>';
+      }
+      html += '</div>';
+      html += '</div>';
+    }
+
+    /* Related blog posts */
+    if (relatedPosts.length > 0) {
+      html += '<div class="article-section reveal">';
+      html += '<div class="related-heading">Related Articles</div>';
+      for (var p = 0; p < relatedPosts.length; p++) {
+        var post = relatedPosts[p];
+        html += '<a href="jades-spice-post.html?slug=' + post.slug + '" class="article-link">';
+        html += ICONS.fileText;
+        html += '<div>';
+        html += '<div class="article-link-title">' + post.title + '</div>';
+        html += '<div class="article-link-meta">' + (post.readTime || '') + (post.readTime && post.category ? ' &middot; ' : '') + (post.category ? capitalize(post.category) : '') + '</div>';
+        html += '</div>';
+        html += '</a>';
+      }
+      html += '</div>';
+    }
+
+    /* Browse all */
+    html += '<div class="browse-all reveal">';
+    html += '<a href="jades-spice-glossary.html">';
+    html += ICONS.grid;
+    html += ' Browse All Terms';
+    html += '</a>';
+    html += '</div>';
+
+    /* Prev / Next nav */
+    html += '<div class="term-nav reveal">';
+    if (prevTerm) {
+      html += '<a href="jades-spice-term.html?term=' + prevTerm.slug + '" class="term-nav-link prev">';
+      html += ICONS.arrowLeft;
+      html += '<div>';
+      html += '<div class="term-nav-label">Previous</div>';
+      html += '<div class="term-nav-name">' + prevTerm.term + '</div>';
+      html += '</div>';
+      html += '</a>';
+    } else {
+      html += '<div></div>';
+    }
+    if (nextTerm) {
+      html += '<a href="jades-spice-term.html?term=' + nextTerm.slug + '" class="term-nav-link next">';
+      html += ICONS.arrowRight;
+      html += '<div>';
+      html += '<div class="term-nav-label">Next</div>';
+      html += '<div class="term-nav-name">' + nextTerm.term + '</div>';
+      html += '</div>';
+      html += '</a>';
+    }
+    html += '</div>';
+
+    html += '</div>'; /* end term-main */
+
+    /* ── SIDEBAR ──────────────────────────────────────────────────────────── */
+    html += '<aside class="term-sidebar reveal reveal-delay-4">';
+    html += '<div class="sidebar-heading">More ' + capitalize(term.category) + '</div>';
+    for (var s = 0; s < sidebarTerms.length; s++) {
+      var st = sidebarTerms[s];
+      var activeClass = st.slug === term.slug ? ' active' : '';
+      html += '<a href="jades-spice-term.html?term=' + st.slug + '" class="sidebar-link' + activeClass + '">' + st.term + '</a>';
+    }
+    html += '</aside>';
+
+    html += '</div>'; /* end term-layout */
+    html += '</div>'; /* end container */
+    html += '</section>';
+
+    container.innerHTML = html;
+  }
+
+  /* ─── RENDER 404 STATE ──────────────────────────────────────────────────── */
+  function render404(container) {
+    document.title = 'Term Not Found \u2014 Kitchen Glossary | Jade\'s Spice';
+
+    var html = '<div class="term-404">';
+    html += '<div class="term-404-icon">' + ICONS.search404 + '</div>';
+    html += '<h2 class="term-404-title">Term Not Found</h2>';
+    html += '<p class="term-404-text">The term you\'re looking for doesn\'t exist in our glossary.</p>';
+    html += '<a href="jades-spice-glossary.html" class="btn btn-primary">';
+    html += ICONS.grid + ' Browse All Terms';
+    html += '</a>';
+    html += '</div>';
+
+    container.innerHTML = html;
+  }
+
+  /* ─── HAMBURGER ──────────────────────────────────────────────────────────── */
+  var hamburger = document.getElementById('hamburger');
+  var mobileMenu = document.getElementById('mobileMenu');
+  var mobileOverlay = document.getElementById('mobileOverlay');
+
+  function toggleMenu() {
+    hamburger.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+    mobileOverlay.classList.toggle('open');
+    document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+  }
+
+  hamburger.addEventListener('click', toggleMenu);
+  mobileOverlay.addEventListener('click', toggleMenu);
+
+  /* Close mobile menu on link click */
+  var mobLinks = mobileMenu.querySelectorAll('a');
+  for (var ml = 0; ml < mobLinks.length; ml++) {
+    mobLinks[ml].addEventListener('click', function() {
+      if (mobileMenu.classList.contains('open')) toggleMenu();
+    });
+  }
+
+  /* ─── SCROLL REVEAL ──────────────────────────────────────────────────────── */
+  function initReveal() {
+    var revealEls = document.querySelectorAll('.reveal');
+    var observer = new IntersectionObserver(function(entries) {
+      for (var i = 0; i < entries.length; i++) {
+        if (entries[i].isIntersecting) {
+          entries[i].target.classList.add('visible');
+          observer.unobserve(entries[i].target);
+        }
+      }
+    }, { threshold: 0.1 });
+
+    for (var ri = 0; ri < revealEls.length; ri++) {
+      observer.observe(revealEls[ri]);
+    }
+  }
+
+  /* ─── INIT ──────────────────────────────────────────────────────────────── */
+  renderTermPage();
+  initReveal();
+
+})();
+</script>
+</body>
+</html>

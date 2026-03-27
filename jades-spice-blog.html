@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="apple-touch-icon" href="apple-touch-icon.png"><title>The Kitchen Journal | Jade's Spice</title>
+<meta name="description" content="Nutrition tips, recipes, culture, and wellness from Jade's Spice. Asian-inspired meal prep made fresh from scratch.">
+<link rel="canonical" href="https://webnari.io/jades-spice-blog.html">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://webnari.io/jades-spice-blog.html">
+<meta property="og:title" content="The Kitchen Journal | Jade's Spice">
+<meta property="og:description" content="Nutrition tips, recipes, culture, and wellness from Jade's Spice.">
+<meta property="og:site_name" content="Jade's Spice">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Kitchen Journal | Jade's Spice">
+<meta name="twitter:description" content="Nutrition tips, recipes, culture, and wellness from Jade's Spice.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ─── TOKENS ──────────────────────────────────────────────────────────────── */
+:root {
+  --black: #0C0806; --dark: #14100C; --surface: #1C1612;
+  --surface2: #261E18; --border: #342A22;
+  --red: #D94040; --red2: #E86565;
+  --gold: #F0A830; --gold2: #F5C563;
+  --green: #3DAA6D; --green2: #5BC88A;
+  --white: #FFF8F0; --muted: #8A7A6E; --text: #D4C4B4;
+  --gradient: linear-gradient(135deg, #D94040, #F0A830);
+  --gradient-green: linear-gradient(135deg, #3DAA6D, #F0A830);
+  --font-head: 'Barlow Condensed', sans-serif;
+  --font-body: 'Barlow', sans-serif;
+  --radius: 4px; --radius-lg: 8px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-body); background: var(--black); color: var(--text); overflow-x: hidden; line-height: 1.6; }
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+.container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+.eyebrow {
+  display: flex; align-items: center; gap: 12px;
+  font-family: var(--font-head); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--red); margin-bottom: 20px;
+}
+.eyebrow::before { content: ''; width: 32px; height: 2px; background: var(--gradient); flex-shrink: 0; }
+.section-heading {
+  font-family: var(--font-head); font-weight: 900; font-size: clamp(36px, 5vw, 56px);
+  line-height: 1.05; color: var(--white); margin-bottom: 20px;
+}
+.section-heading .accent {
+  background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.section { padding: 96px 0; }
+
+/* ─── BUTTONS ────────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 28px; font-family: var(--font-head); font-size: 14px; font-weight: 800;
+  letter-spacing: 0.08em; text-transform: uppercase; border-radius: var(--radius);
+  transition: all 0.25s; border: none; cursor: pointer;
+}
+.btn-primary { background: var(--red); color: var(--white); }
+.btn-primary:hover { background: var(--red2); transform: translateY(-2px); }
+.btn-gold { background: var(--gold); color: var(--black); }
+.btn-gold:hover { background: var(--gold2); transform: translateY(-2px); }
+.btn-outline {
+  background: transparent; color: var(--white);
+  border: 1px solid var(--border);
+}
+.btn-outline:hover { border-color: var(--red); color: var(--red2); }
+
+/* ─── NAV ────────────────────────────────────────────────────────────────── */
+.site-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000; height: 68px;
+  background: rgba(12,8,6,0.92); backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner { max-width: 1120px; margin: 0 auto; height: 100%; display: flex; align-items: center; padding: 0 24px; }
+.nav-logo {
+  font-family: var(--font-head); font-weight: 900; font-size: 22px;
+  color: var(--white); letter-spacing: -0.02em;
+}
+.nav-logo .logo-accent { color: var(--red); }
+.nav-logo small {
+  display: block; font-size: 9px; font-weight: 600;
+  letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--gold); margin-top: -4px;
+}
+.nav-links { display: flex; align-items: center; gap: 4px; margin-left: auto; }
+.nav-link {
+  display: flex; align-items: center; padding: 8px 16px; font-size: 14px; font-weight: 500;
+  color: var(--text); transition: color 0.15s; border-radius: var(--radius);
+  font-family: var(--font-head); font-size: 13px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+.nav-link:hover { color: var(--white); background: rgba(217,64,64,0.06); }
+.nav-link.active { color: var(--red); }
+.nav-dropdown { position: relative; }
+.nav-dropdown-menu {
+  position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+  padding: 6px 0; min-width: 120px; opacity: 0; pointer-events: none;
+  transition: opacity 0.15s, transform 0.15s; transform: translateX(-50%) translateY(4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3); z-index: 1001;
+}
+.nav-dropdown:hover .nav-dropdown-menu { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+.nav-dropdown-menu a {
+  display: block; padding: 8px 16px; font-size: 13px; font-weight: 500;
+  color: var(--text); transition: all 0.15s; white-space: nowrap;
+}
+.nav-dropdown-menu a:hover { color: var(--white); background: rgba(217,64,64,0.08); }
+
+.nav-cta { display: flex; align-items: center; gap: 16px; margin-left: auto; }
+.ig-link {
+  display: flex; align-items: center; gap: 6px;
+  font-family: var(--font-head); font-size: 12px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted); transition: color 0.15s;
+}
+.ig-link:hover { color: var(--gold); }
+
+.hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; z-index: 1001; margin-left: 16px; }
+.hamburger span { display: block; width: 24px; height: 2px; background: var(--white); transition: all 0.3s; }
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ─── MOBILE MENU ───────────────────────────────────────────────────────── */
+.mobile-menu {
+  display: none;
+  position: fixed; top: 0; right: -100%;
+  width: 300px; height: 100vh;
+  background: var(--dark);
+  border-left: 1px solid var(--border);
+  z-index: 999; padding: 88px 24px 32px;
+  transition: right 0.3s ease;
+  overflow-y: auto;
+}
+.mobile-menu.open { right: 0; }
+.mobile-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6);
+  z-index: 998; opacity: 0;
+  transition: opacity 0.3s;
+}
+.mobile-overlay.open { display: block; opacity: 1; }
+.mob-section { margin-bottom: 28px; }
+.mob-section-label {
+  font-family: var(--font-head); font-size: 10px; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);
+  margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+}
+.mob-section a {
+  display: block; padding: 12px 0; font-size: 16px; color: var(--text);
+  border-bottom: 1px solid rgba(52,42,34,0.3); transition: color 0.15s;
+}
+.mob-section a:hover { color: var(--red2); }
+.mob-cta {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 14px 24px; background: var(--red); color: var(--white);
+  font-family: var(--font-head); font-size: 14px; font-weight: 800;
+  letter-spacing: 0.08em; text-transform: uppercase; border-radius: var(--radius); margin-top: 16px;
+}
+
+/* ─── BLOG HERO ─────────────────────────────────────────────────────────── */
+.blog-hero {
+  padding: 140px 0 64px; text-align: center; position: relative; overflow: hidden;
+}
+.blog-hero-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 20% 50%, rgba(217,64,64,0.1) 0%, transparent 70%),
+    radial-gradient(ellipse 50% 60% at 80% 30%, rgba(240,168,48,0.08) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 60% 80%, rgba(61,170,109,0.06) 0%, transparent 70%),
+    var(--black);
+}
+.blog-hero-content { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; }
+.blog-hero .hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font-head); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--red);
+  margin-bottom: 24px; padding: 8px 20px;
+  background: rgba(217,64,64,0.06); border: 1px solid rgba(217,64,64,0.15);
+  border-radius: 24px;
+}
+.blog-hero .hero-eyebrow svg { width: 14px; height: 14px; }
+.blog-hero-title {
+  font-family: var(--font-head); font-weight: 900;
+  font-size: clamp(48px, 8vw, 72px); line-height: 0.95;
+  color: var(--white); margin-bottom: 20px;
+}
+.blog-hero-title .accent {
+  background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.blog-hero-sub { font-size: 17px; color: var(--text); max-width: 480px; margin: 0 auto; line-height: 1.6; }
+
+/* ─── CATEGORY FILTER PILLS ─────────────────────────────────────────────── */
+.filter-pills {
+  display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+  padding: 0 0 48px;
+}
+.filter-pill {
+  padding: 8px 20px; font-family: var(--font-head); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.1em; text-transform: uppercase; color: var(--text);
+  background: transparent; border: 1px solid var(--border); border-radius: 24px;
+  cursor: pointer; transition: all 0.2s;
+}
+.filter-pill:hover { border-color: var(--red); color: var(--white); }
+.filter-pill.active { background: var(--gradient); border-color: transparent; color: var(--white); }
+
+/* ─── POST GRID ─────────────────────────────────────────────────────────── */
+.post-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px;
+  padding-bottom: 96px;
+}
+.post-card {
+  display: block; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden; transition: all 0.3s;
+  text-decoration: none; color: inherit;
+}
+.post-card:hover {
+  border-color: var(--red); transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(217,64,64,0.15);
+}
+.post-card-img {
+  aspect-ratio: 16/10; overflow: hidden; background: var(--surface2);
+}
+.post-card-img img {
+  width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s;
+}
+.post-card:hover .post-card-img img { transform: scale(1.05); }
+.post-card-body { padding: 24px; }
+.post-tag {
+  display: inline-block; padding: 4px 12px;
+  font-family: var(--font-head); font-size: 10px; font-weight: 800;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  border-radius: 6px; margin-bottom: 12px;
+}
+.tag-nutrition { background: rgba(61,170,109,0.1); color: var(--green); border: 1px solid rgba(61,170,109,0.25); }
+.tag-recipes { background: rgba(217,64,64,0.1); color: var(--red); border: 1px solid rgba(217,64,64,0.25); }
+.tag-culture { background: rgba(240,168,48,0.1); color: var(--gold); border: 1px solid rgba(240,168,48,0.25); }
+.tag-wellness { background: rgba(91,200,138,0.1); color: var(--green2); border: 1px solid rgba(91,200,138,0.25); }
+
+.post-card-title {
+  font-family: var(--font-head); font-weight: 800; font-size: 22px;
+  color: var(--white); line-height: 1.15; margin-bottom: 10px;
+}
+.post-card-excerpt {
+  font-size: 14px; color: var(--text); line-height: 1.6;
+  margin-bottom: 16px;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.post-card-meta {
+  display: flex; align-items: center; gap: 16px;
+  font-family: var(--font-head); font-size: 12px; font-weight: 600;
+  letter-spacing: 0.06em; color: var(--muted);
+}
+.post-card-meta span { display: flex; align-items: center; gap: 6px; }
+.post-card-meta svg { width: 14px; height: 14px; }
+
+.post-card-read {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-head); font-size: 12px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--red);
+  margin-top: 16px; transition: gap 0.2s;
+}
+.post-card:hover .post-card-read { gap: 10px; }
+.post-card-read svg { width: 14px; height: 14px; }
+
+.empty-blog {
+  text-align: center; padding: 80px 20px; color: var(--muted); grid-column: 1 / -1;
+}
+.empty-blog svg { width: 48px; height: 48px; margin-bottom: 16px; color: var(--border); }
+.empty-blog p { font-size: 15px; }
+
+/* ─── FOOTER ─────────────────────────────────────────────────────────────── */
+.site-footer { padding: 64px 0 32px; border-top: 1px solid var(--border); }
+.footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
+.footer-brand .logo {
+  font-family: var(--font-head); font-weight: 900; font-size: 22px;
+  color: var(--white); letter-spacing: -0.02em; margin-bottom: 12px;
+}
+.footer-brand .logo span { color: var(--red); }
+.footer-brand .logo small {
+  display: block; font-size: 9px; font-weight: 600;
+  letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--gold); margin-top: -4px;
+}
+.footer-brand p { font-size: 14px; color: var(--muted); line-height: 1.6; margin-bottom: 20px; }
+.footer-social { display: flex; gap: 12px; }
+.footer-social a {
+  width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
+  border-radius: 50%; background: var(--surface); border: 1px solid var(--border);
+  color: var(--muted); transition: all 0.2s;
+}
+.footer-social a:hover { border-color: var(--red); background: rgba(217,64,64,0.1); }
+.footer-social a svg { width: 16px; height: 16px; }
+.footer-col h4 {
+  font-family: var(--font-head); font-size: 13px; font-weight: 700;
+  letter-spacing: 0.15em; text-transform: uppercase; color: var(--white); margin-bottom: 20px;
+}
+.footer-col a { display: block; padding: 6px 0; font-size: 14px; color: var(--muted); transition: color 0.15s; }
+.footer-col a:hover { color: var(--red); }
+.footer-contact-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 6px 0; font-size: 14px; color: var(--muted);
+}
+.footer-bottom {
+  display: flex; justify-content: space-between; align-items: center;
+  padding-top: 24px; border-top: 1px solid var(--border);
+  font-size: 13px; color: var(--muted);
+}
+
+/* ─── SCROLL REVEAL ──────────────────────────────────────────────────────── */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .nav-links { display: none; }
+  .nav-cta .ig-link { display: none; }
+  .hamburger { display: flex; }
+  .mobile-menu { display: block; }
+  .footer-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .container { padding: 0 20px; }
+  .nav-inner { padding: 0 20px; }
+  .blog-hero { padding: 120px 20px 48px; }
+  .post-grid { grid-template-columns: 1fr; gap: 24px; }
+  .filter-pills { gap: 6px; }
+  .filter-pill { padding: 6px 14px; font-size: 11px; }
+  .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+  .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+}
+</style>
+</head>
+
+<body>
+<!-- ─── NAV ──────────────────────────────────────────────────────────────── -->
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a href="jades-spice.html" class="nav-logo">JADE'S <span class="logo-accent">SPICE</span><small>Beautiful moments on your lips</small></a>
+    <div class="nav-links">
+      <a href="jades-spice.html#meals" class="nav-link">Menu</a>
+      <a href="jades-spice.html#why" class="nav-link">Why Us</a>
+      <a href="jades-spice.html#how" class="nav-link">How It Works</a>
+      <a href="jades-spice.html#about" class="nav-link">About</a>
+      <a href="jades-spice.html#reviews" class="nav-link">Reviews</a>
+      <div class="nav-dropdown">
+        <a href="jades-spice-blog.html" class="nav-link active">Blog</a>
+        <div class="nav-dropdown-menu">
+          <a href="jades-spice-blog.html">All Posts</a>
+          <a href="jades-spice-glossary.html">Glossary</a>
+          <a href="jades-spice-macros.html">Macro Calculator</a>
+        </div>
+      </div>
+    </div>
+    <div class="nav-cta">
+      <a href="https://www.instagram.com/jades_spice/" target="_blank" rel="noopener" class="ig-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        @jades_spice
+      </a>
+      <a href="jades-spice.html#order" class="btn btn-primary">Order Now</a>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- ─── MOBILE MENU ─────────────────────────────────────────────────────── -->
+<div class="mobile-overlay" id="mobileOverlay"></div>
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mob-section">
+    <div class="mob-section-label">Navigate</div>
+    <a href="jades-spice.html#meals">Menu</a>
+    <a href="jades-spice.html#why">Why Us</a>
+    <a href="jades-spice.html#how">How It Works</a>
+    <a href="jades-spice.html#about">About</a>
+    <a href="jades-spice.html#reviews">Reviews</a>
+    <a href="jades-spice-blog.html">Blog</a>
+    <a href="jades-spice-glossary.html">Glossary</a>
+    <a href="jades-spice-macros.html">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+      Macro Calculator
+    </a>
+  </div>
+  <div class="mob-section">
+    <div class="mob-section-label">Follow</div>
+    <a href="https://www.instagram.com/jades_spice/" target="_blank" rel="noopener">Instagram @jades_spice</a>
+  </div>
+  <a href="jades-spice.html#order" class="mob-cta">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+    Order Now
+  </a>
+</div>
+
+<!-- ─── BLOG HERO ────────────────────────────────────────────────────────── -->
+<section class="blog-hero">
+  <div class="blog-hero-bg"></div>
+  <div class="blog-hero-content container">
+    <div class="hero-eyebrow reveal">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      The Kitchen Journal
+    </div>
+    <h1 class="blog-hero-title reveal reveal-delay-1">Nutrition, Recipes &amp; <span class="accent">Wellness</span></h1>
+    <p class="blog-hero-sub reveal reveal-delay-2">Tips from the kitchen. Nutrition science, authentic recipes, food culture, and wellness guides from Jade.</p>
+  </div>
+</section>
+
+<!-- ─── FILTER + GRID ────────────────────────────────────────────────────── -->
+<section>
+  <div class="container">
+    <div class="filter-pills reveal" id="filterPills"></div>
+    <div class="post-grid" id="postGrid"></div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ───────────────────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">JADE'S <span>SPICE</span><small>Beautiful moments on your lips</small></div>
+        <p>Asian-inspired meal prep made fresh from scratch with organic ingredients. Custom macros for your fitness goals. Glass containers only.</p>
+        <div class="footer-social">
+          <a href="https://www.instagram.com/jades_spice/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Menu</h4>
+        <a href="jades-spice.html#meals">This Week's Meals</a>
+        <a href="jades-spice.html#menu">Full Menu</a>
+        <a href="jades-spice.html#how">How It Works</a>
+        <a href="jades-spice.html#order">Order Now</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="jades-spice.html#about">About Jade</a>
+        <a href="jades-spice.html#reviews">Reviews</a>
+        <a href="jades-spice-blog.html">Blog</a>
+        <a href="jades-spice-glossary.html">Glossary</a>
+        <a href="jades-spice-macros.html">Macro Calculator</a>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <div class="footer-contact-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          <a href="https://www.instagram.com/jades_spice/" target="_blank" rel="noopener">@jades_spice</a>
+        </div>
+        <div class="footer-contact-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          Made with love
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Jade's Spice. All rights reserved.</span>
+      <span>Freshly made from scratch with organic ingredients</span>
+    </div>
+  </div>
+</footer>
+
+<script src="jades-spice-blog-data.js"></script>
+<script>
+/* ─── BLOG RENDERING ──────────────────────────────────────────────────────── */
+var CATEGORIES = [
+  { key: 'all', label: 'All' },
+  { key: 'nutrition', label: 'Nutrition' },
+  { key: 'recipes', label: 'Recipes' },
+  { key: 'culture', label: 'Culture' },
+  { key: 'wellness', label: 'Wellness' }
+];
+
+var activeFilter = 'all';
+
+function formatDate(dateStr) {
+  var d = new Date(dateStr);
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+}
+
+function renderFilterPills() {
+  var container = document.getElementById('filterPills');
+  var html = '';
+  for (var i = 0; i < CATEGORIES.length; i++) {
+    var cat = CATEGORIES[i];
+    html += '<button class="filter-pill' + (cat.key === activeFilter ? ' active' : '') +
+      '" data-cat="' + cat.key + '">' + cat.label + '</button>';
+  }
+  container.innerHTML = html;
+
+  var pills = container.querySelectorAll('.filter-pill');
+  for (var j = 0; j < pills.length; j++) {
+    pills[j].addEventListener('click', function() {
+      activeFilter = this.getAttribute('data-cat');
+      renderFilterPills();
+      renderPosts();
+    });
+  }
+}
+
+function renderPosts() {
+  var grid = document.getElementById('postGrid');
+  var posts = JadesSpiceBlog.getPosts();
+
+  if (activeFilter !== 'all') {
+    var filtered = [];
+    for (var i = 0; i < posts.length; i++) {
+      if (posts[i].category === activeFilter) filtered.push(posts[i]);
+    }
+    posts = filtered;
+  }
+
+  if (posts.length === 0) {
+    grid.innerHTML = '<div class="empty-blog">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>' +
+      '<p>No posts in this category yet.</p></div>';
+    return;
+  }
+
+  var html = '';
+  for (var i = 0; i < posts.length; i++) {
+    var post = posts[i];
+    var tagSlug = post.category.toLowerCase().replace(/\s+/g, '-');
+    var tagLabel = post.category.charAt(0).toUpperCase() + post.category.slice(1);
+
+    html += '<a href="jades-spice-post.html?slug=' + post.slug + '" class="post-card reveal">' +
+      '<div class="post-card-img">' +
+        (post.heroImage ? '<img src="' + post.heroImage + '" alt="' + post.title + '" loading="lazy">' :
+          '<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--surface2),var(--surface));display:flex;align-items:center;justify-content:center;color:var(--muted);font-family:var(--font-head);font-size:13px;letter-spacing:0.1em;text-transform:uppercase;">Coming Soon</div>') +
+      '</div>' +
+      '<div class="post-card-body">' +
+        '<span class="post-tag tag-' + tagSlug + '">' + tagLabel + '</span>' +
+        '<h3 class="post-card-title">' + post.title + '</h3>' +
+        '<p class="post-card-excerpt">' + post.excerpt + '</p>' +
+        '<div class="post-card-meta">' +
+          '<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' + formatDate(post.date) + '</span>' +
+          '<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' + post.readTime + '</span>' +
+        '</div>' +
+        '<div class="post-card-read">Read More <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>' +
+      '</div>' +
+    '</a>';
+  }
+  grid.innerHTML = html;
+
+  /* Re-observe new cards for scroll reveal */
+  var reveals = grid.querySelectorAll('.reveal');
+  for (var j = 0; j < reveals.length; j++) {
+    observer.observe(reveals[j]);
+  }
+}
+
+/* ─── INIT ────────────────────────────────────────────────────────────────── */
+var observer;
+
+document.addEventListener('DOMContentLoaded', function() {
+  /* Hamburger */
+  var hamburger = document.getElementById('hamburger');
+  var mobileMenu = document.getElementById('mobileMenu');
+  var overlay = document.getElementById('mobileOverlay');
+
+  function toggleMenu() {
+    hamburger.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+    overlay.classList.toggle('open');
+    document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+  }
+  hamburger.addEventListener('click', toggleMenu);
+  overlay.addEventListener('click', toggleMenu);
+
+  /* Close mobile menu on link click */
+  var mobLinks = mobileMenu.querySelectorAll('a');
+  mobLinks.forEach(function(link) {
+    link.addEventListener('click', function() {
+      if (mobileMenu.classList.contains('open')) toggleMenu();
+    });
+  });
+
+  /* Scroll reveal */
+  var reveals = document.querySelectorAll('.reveal');
+  observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  reveals.forEach(function(el) { observer.observe(el); });
+
+  /* Render blog */
+  renderFilterPills();
+  renderPosts();
+});
+</script>
+</body>
+</html>

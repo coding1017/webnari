@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/x-icon" href="favicon.ico">
+<link rel="apple-touch-icon" href="apple-touch-icon.png"><title>Blog Post | Jade's Spice</title>
+<meta name="description" content="Read the latest from Jade's Spice. Meal prep tips, nutrition insights, Chinese-inspired recipes, and behind-the-scenes stories.">
+<link rel="canonical" href="https://webnari.io/jades-spice-post.html">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://webnari.io/jades-spice-post.html">
+<meta property="og:title" content="Blog Post | Jade's Spice">
+<meta property="og:description" content="Meal prep tips and stories from Jade.">
+<meta property="og:site_name" content="Jade's Spice">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+/* ─── TOKENS ──────────────────────────────────────────────────────────────── */
+:root {
+  --black: #0C0806; --dark: #14100C; --surface: #1C1612;
+  --surface2: #261E18; --border: #342A22;
+  --red: #D94040; --red2: #E86565;
+  --gold: #F0A830; --gold2: #F5C563;
+  --green: #3DAA6D; --green2: #5BC88A;
+  --white: #FFF8F0; --muted: #8A7A6E; --text: #D4C4B4;
+  --gradient: linear-gradient(135deg, #D94040, #F0A830);
+  --gradient-green: linear-gradient(135deg, #3DAA6D, #F0A830);
+  --font-head: 'Barlow Condensed', sans-serif;
+  --font-body: 'Barlow', sans-serif;
+  --radius: 4px; --radius-lg: 8px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font-body); background: var(--black); color: var(--text); overflow-x: hidden; line-height: 1.6; }
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+.container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+.eyebrow {
+  display: flex; align-items: center; gap: 12px;
+  font-family: var(--font-head); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--red); margin-bottom: 20px;
+}
+.eyebrow::before { content: ''; width: 32px; height: 2px; background: var(--gradient); flex-shrink: 0; }
+
+/* ─── BUTTONS ────────────────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 14px 28px; font-family: var(--font-head); font-size: 14px; font-weight: 800;
+  letter-spacing: 0.08em; text-transform: uppercase; border-radius: var(--radius);
+  transition: all 0.25s; border: none; cursor: pointer;
+}
+.btn-primary {
+  background: var(--red); color: var(--white);
+  box-shadow: 0 0 24px rgba(217,64,64,0.2);
+}
+.btn-primary:hover { background: var(--red2); box-shadow: 0 0 40px rgba(217,64,64,0.35); transform: translateY(-2px); }
+.btn-gold { background: var(--gold); color: var(--black); }
+.btn-gold:hover { background: var(--gold2); transform: translateY(-2px); }
+.btn-outline {
+  background: transparent; color: var(--white);
+  border: 1px solid var(--border);
+}
+.btn-outline:hover { border-color: var(--red); color: var(--red); }
+
+/* ─── NAV ────────────────────────────────────────────────────────────────── */
+.site-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000; height: 68px;
+  background: rgba(12,8,6,0.92); backdrop-filter: blur(14px) saturate(160%);
+  -webkit-backdrop-filter: blur(14px) saturate(160%);
+  border-bottom: 1px solid var(--border);
+}
+.nav-inner { max-width: 1120px; margin: 0 auto; height: 100%; display: flex; align-items: center; padding: 0 24px; }
+.nav-logo {
+  font-family: var(--font-head); font-weight: 900; font-size: 22px;
+  color: var(--white); letter-spacing: -0.02em;
+}
+.nav-logo .logo-accent { color: var(--red); }
+.nav-logo small {
+  display: block; font-size: 9px; font-weight: 600;
+  letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--gold); margin-top: -4px;
+}
+.nav-links { display: flex; align-items: center; gap: 4px; margin-left: auto; }
+.nav-link {
+  display: flex; align-items: center; padding: 8px 16px; font-size: 14px; font-weight: 500;
+  color: var(--text); transition: color 0.15s; border-radius: var(--radius);
+}
+.nav-link:hover { color: var(--white); background: rgba(217,64,64,0.06); }
+.nav-link.active { color: var(--red); }
+.nav-dropdown { position: relative; }
+.nav-dropdown-menu {
+  position: absolute; top: 100%; left: 50%; transform: translateX(-50%);
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 6px 0; min-width: 120px; opacity: 0; pointer-events: none;
+  transition: opacity 0.15s, transform 0.15s; transform: translateX(-50%) translateY(4px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3); z-index: 1001;
+}
+.nav-dropdown:hover .nav-dropdown-menu { opacity: 1; pointer-events: auto; transform: translateX(-50%) translateY(0); }
+.nav-dropdown-menu a {
+  display: block; padding: 8px 16px; font-size: 13px; font-weight: 500;
+  color: var(--text); transition: all 0.15s; white-space: nowrap;
+}
+.nav-dropdown-menu a:hover { color: var(--white); background: rgba(217,64,64,0.08); }
+.nav-ig {
+  display: flex; align-items: center; gap: 6px; margin-left: auto;
+  font-family: var(--font-head); font-size: 12px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted); transition: color 0.15s;
+}
+.nav-ig:hover { color: var(--gold); }
+.nav-cta-btn {
+  margin-left: 16px;
+}
+
+.hamburger { display: none; flex-direction: column; gap: 5px; background: none; border: none; cursor: pointer; padding: 4px; z-index: 1001; margin-left: auto; }
+.hamburger span { display: block; width: 24px; height: 2px; background: var(--white); transition: all 0.3s; }
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+.mobile-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.6); z-index: 98;
+  opacity: 0; transition: opacity 0.3s;
+}
+.mobile-overlay.open { display: block; opacity: 1; }
+
+.mobile-menu {
+  position: fixed; top: 0; right: -100%; width: 300px; height: 100vh;
+  background: var(--dark); border-left: 1px solid var(--border);
+  z-index: 99; padding: 88px 24px 32px;
+  transition: right 0.3s ease; overflow-y: auto;
+}
+.mobile-menu.open { right: 0; }
+.mob-section { margin-bottom: 28px; }
+.mob-section-label {
+  font-family: var(--font-head); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);
+  margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid var(--border);
+}
+.mob-section a {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 0; font-size: 15px; font-weight: 500;
+  color: var(--text); transition: color 0.15s;
+}
+.mob-section a:hover { color: var(--red); }
+.mob-cta {
+  margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);
+}
+.mob-cta .btn { width: 100%; justify-content: center; }
+
+/* ─── BREADCRUMB ─────────────────────────────────────────────────────────── */
+.breadcrumb {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  font-family: var(--font-head); font-size: 12px; font-weight: 600;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+  margin-bottom: 32px;
+}
+.breadcrumb a { color: var(--muted); transition: color 0.15s; }
+.breadcrumb a:hover { color: var(--red); }
+.breadcrumb svg { width: 12px; height: 12px; flex-shrink: 0; }
+.breadcrumb .current { color: var(--text); }
+
+/* ─── POST ARTICLE ──────────────────────────────────────────────────────── */
+.post-article {
+  max-width: 760px; margin: 0 auto; padding: 120px 24px 64px;
+  position: relative; z-index: 1;
+}
+.back-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-head); font-size: 13px; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted);
+  margin-bottom: 32px; transition: color 0.2s;
+}
+.back-link:hover { color: var(--red); }
+.back-link svg { width: 16px; height: 16px; }
+
+.post-tag {
+  display: inline-block; padding: 4px 12px;
+  font-family: var(--font-head); font-size: 10px; font-weight: 800;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  border-radius: var(--radius); margin-bottom: 16px;
+}
+.tag-nutrition { background: rgba(61,170,109,0.1); color: var(--green); border: 1px solid rgba(61,170,109,0.25); }
+.tag-recipes { background: rgba(217,64,64,0.1); color: var(--red); border: 1px solid rgba(217,64,64,0.25); }
+.tag-fitness { background: rgba(240,168,48,0.1); color: var(--gold); border: 1px solid rgba(240,168,48,0.25); }
+.tag-meal-prep { background: rgba(61,170,109,0.1); color: var(--green2); border: 1px solid rgba(61,170,109,0.25); }
+.tag-behind-the-scenes { background: rgba(217,64,64,0.1); color: var(--red2); border: 1px solid rgba(217,64,64,0.25); }
+.tag-culture { background: rgba(240,168,48,0.1); color: var(--gold2); border: 1px solid rgba(240,168,48,0.25); }
+.tag-tips { background: rgba(61,170,109,0.1); color: var(--green); border: 1px solid rgba(61,170,109,0.25); }
+.tag-chinese { background: rgba(217,64,64,0.1); color: var(--red); border: 1px solid rgba(217,64,64,0.25); }
+.tag-healthy { background: rgba(61,170,109,0.1); color: var(--green); border: 1px solid rgba(61,170,109,0.25); }
+.tag-fusion { background: rgba(240,168,48,0.1); color: var(--gold); border: 1px solid rgba(240,168,48,0.25); }
+
+.post-title {
+  font-family: var(--font-head); font-weight: 900;
+  font-size: clamp(32px, 6vw, 52px); line-height: 1.05;
+  color: var(--white); margin-bottom: 16px;
+}
+.post-meta {
+  display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+  font-family: var(--font-head); font-size: 13px; font-weight: 600;
+  letter-spacing: 0.06em; color: var(--muted); margin-bottom: 32px;
+}
+.post-meta span { display: flex; align-items: center; gap: 6px; }
+.post-meta svg { width: 14px; height: 14px; }
+.post-meta .author-name { color: var(--red); }
+
+.post-hero-img {
+  width: 100%; max-height: 500px; object-fit: cover;
+  border-radius: var(--radius-lg); margin-bottom: 40px;
+  border: 1px solid var(--border);
+}
+
+/* ─── POST CONTENT ──────────────────────────────────────────────────────── */
+.post-content p { margin-bottom: 20px; font-size: 17px; line-height: 1.8; color: var(--text); }
+.post-content h2 { font-family: var(--font-head); font-weight: 800; font-size: 24px; color: var(--white); margin: 40px 0 16px; }
+.post-content h3 { font-family: var(--font-head); font-weight: 700; font-size: 20px; color: var(--white); margin: 32px 0 12px; }
+.post-content strong { color: var(--white); }
+.post-content a { color: var(--red); text-decoration: underline; }
+.post-content ul, .post-content ol { margin: 0 0 20px 24px; color: var(--text); }
+.post-content ul { list-style: disc; }
+.post-content ol { list-style: decimal; }
+.post-content li { margin-bottom: 8px; font-size: 16px; line-height: 1.7; }
+.post-content blockquote {
+  margin: 32px 0; padding: 20px 24px; border-left: 3px solid var(--red);
+  background: rgba(217,64,64,0.04); border-radius: 0 var(--radius) var(--radius) 0;
+  font-style: italic; color: var(--text);
+}
+.post-content img {
+  width: 100%; border-radius: var(--radius); margin: 24px 0;
+  border: 1px solid var(--border);
+}
+
+/* ─── GLOSSARY TERMS ────────────────────────────────────────────────────── */
+.glossary-term {
+  color: var(--gold); border-bottom: 1px dotted var(--gold); cursor: help;
+  position: relative;
+}
+.glossary-term:hover::after {
+  content: attr(title);
+  position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+  background: var(--surface2); color: var(--text); padding: 8px 12px;
+  border-radius: var(--radius); border: 1px solid var(--border);
+  font-size: 13px; line-height: 1.5; width: 260px; z-index: 100;
+  pointer-events: none; white-space: normal;
+}
+
+/* ─── GLOSSARY SECTION ──────────────────────────────────────────────────── */
+.glossary-section {
+  margin-top: 48px; padding: 32px; background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius-lg);
+}
+.glossary-section-title {
+  font-family: var(--font-head); font-weight: 900; font-size: 20px;
+  color: var(--white); letter-spacing: 0.04em; margin-bottom: 20px;
+  display: flex; align-items: center; gap: 10px;
+}
+.glossary-section-title svg { width: 20px; height: 20px; color: var(--gold); }
+.glossary-list { display: flex; flex-direction: column; gap: 16px; }
+.glossary-item-term {
+  font-family: var(--font-head); font-weight: 700; font-size: 15px;
+  color: var(--gold); margin-bottom: 4px;
+}
+.glossary-item-def { font-size: 14px; color: var(--text); line-height: 1.6; }
+
+/* ─── DIVIDER ───────────────────────────────────────────────────────────── */
+.post-divider {
+  height: 1px; background: var(--border); margin: 48px 0;
+}
+
+/* ─── RELATED POSTS ─────────────────────────────────────────────────────── */
+.related-section { margin-top: 16px; }
+.related-title {
+  font-family: var(--font-head); font-weight: 900; font-size: 24px;
+  color: var(--white); margin-bottom: 24px;
+}
+.related-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px;
+}
+.related-card {
+  display: block; background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-lg); overflow: hidden; transition: all 0.3s;
+  text-decoration: none; color: inherit;
+}
+.related-card:hover {
+  border-color: var(--red); transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(217,64,64,0.15);
+}
+.related-card-img { aspect-ratio: 16/10; overflow: hidden; background: var(--surface2); }
+.related-card-img img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.4s; }
+.related-card:hover .related-card-img img { transform: scale(1.05); }
+.related-card-body { padding: 20px; }
+.related-card-title {
+  font-family: var(--font-head); font-weight: 800; font-size: 18px;
+  color: var(--white); line-height: 1.15; margin-bottom: 8px;
+}
+.related-card-meta {
+  font-family: var(--font-head); font-size: 12px; font-weight: 600;
+  color: var(--muted); letter-spacing: 0.06em;
+}
+
+/* ─── ORDER CTA ────────────────────────────────────────────────────────── */
+.order-cta {
+  text-align: center; margin: 48px 0 0; padding: 48px 32px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg);
+}
+.order-cta-title {
+  font-family: var(--font-head); font-weight: 900; font-size: 28px;
+  color: var(--white); margin-bottom: 12px;
+}
+.order-cta-sub { font-size: 15px; color: var(--text); margin-bottom: 24px; }
+
+/* ─── 404 STATE ─────────────────────────────────────────────────────────── */
+.not-found {
+  text-align: center; padding: 180px 20px 120px;
+  position: relative; z-index: 1;
+}
+.not-found svg { width: 64px; height: 64px; color: var(--border); margin-bottom: 24px; }
+.not-found-title {
+  font-family: var(--font-head); font-weight: 900; font-size: 36px;
+  color: var(--white); margin-bottom: 12px;
+}
+.not-found p { font-size: 16px; color: var(--muted); margin-bottom: 24px; }
+
+/* ─── FOOTER ─────────────────────────────────────────────────────────────── */
+.site-footer { padding: 64px 0 32px; border-top: 1px solid var(--border); }
+.footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 48px; }
+.footer-brand-name {
+  font-family: var(--font-head); font-weight: 900; font-size: 20px;
+  color: var(--white); margin-bottom: 4px; letter-spacing: -0.02em;
+}
+.footer-brand-name .accent { color: var(--red); }
+.footer-brand-tagline {
+  font-size: 9px; font-family: var(--font-head); font-weight: 600;
+  letter-spacing: 0.25em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 12px;
+}
+.footer-desc { font-size: 14px; color: var(--muted); margin-bottom: 20px; line-height: 1.6; }
+.footer-social { display: flex; gap: 12px; }
+.footer-social a { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); color: var(--muted); transition: all 0.2s; }
+.footer-social a:hover { border-color: var(--red); color: var(--red); }
+.footer-social a svg { width: 16px; height: 16px; }
+.footer-heading { font-family: var(--font-head); font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
+.footer-links a { display: block; padding: 5px 0; font-size: 14px; color: var(--text); transition: color 0.15s; }
+.footer-links a:hover { color: var(--red); }
+.footer-contact-item { display: flex; align-items: center; gap: 8px; padding: 5px 0; font-size: 14px; color: var(--text); }
+.footer-contact-item a { transition: color 0.15s; }
+.footer-contact-item a:hover { color: var(--red); }
+.footer-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 48px; padding-top: 24px; border-top: 1px solid var(--border); font-size: 13px; color: var(--muted); }
+
+/* ─── SCROLL REVEAL ──────────────────────────────────────────────────────── */
+.reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1); }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .nav-links { display: none; }
+  .nav-ig { display: none; }
+  .nav-cta-btn { display: none; }
+  .hamburger { display: flex; }
+  .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+}
+@media (max-width: 768px) {
+  .container { padding: 0 20px; }
+  .nav-inner { padding: 0 20px; }
+  .post-article { padding: 100px 20px 48px; }
+  .post-title { font-size: clamp(28px, 6vw, 42px); }
+  .post-meta { gap: 10px; font-size: 12px; }
+  .glossary-section { padding: 24px 20px; }
+  .related-grid { grid-template-columns: 1fr; }
+  .order-cta { padding: 32px 20px; }
+  .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+  .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+}
+</style>
+</head>
+
+<body>
+<!-- ─── NAV ──────────────────────────────────────────────────────────────── -->
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a href="jades-spice.html" class="nav-logo">JADE'S <span class="logo-accent">SPICE</span><small>Beautiful moments on your lips</small></a>
+    <div class="nav-links">
+      <a href="jades-spice.html#meals" class="nav-link">Menu</a>
+      <a href="jades-spice.html#why" class="nav-link">Why Us</a>
+      <a href="jades-spice.html#how" class="nav-link">How It Works</a>
+      <a href="jades-spice.html#about" class="nav-link">About</a>
+      <a href="jades-spice.html#reviews" class="nav-link">Reviews</a>
+      <div class="nav-dropdown">
+        <a href="jades-spice-blog.html" class="nav-link active">Blog</a>
+        <div class="nav-dropdown-menu">
+          <a href="jades-spice-blog.html">All Posts</a>
+          <a href="jades-spice-glossary.html">Glossary</a>
+          <a href="jades-spice-macros.html">Macro Calculator</a>
+        </div>
+      </div>
+    </div>
+    <a href="https://www.instagram.com/jades_spice/" target="_blank" rel="noopener" class="nav-ig">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      @jades_spice
+    </a>
+    <a href="jades-spice.html#order" class="btn btn-primary nav-cta-btn" style="padding:10px 20px;font-size:12px;margin-left:16px;">Order Now</a>
+    <button class="hamburger" id="hamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- ─── MOBILE MENU ─────────────────────────────────────────────────────── -->
+<div class="mobile-overlay" id="mobileOverlay"></div>
+<div class="mobile-menu" id="mobileMenu">
+  <div class="mob-section">
+    <div class="mob-section-label">Navigate</div>
+    <a href="jades-spice.html#meals">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+      Weekly Menu
+    </a>
+    <a href="jades-spice.html#why">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Why Jade's Spice
+    </a>
+    <a href="jades-spice.html#how">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+      How It Works
+    </a>
+    <a href="jades-spice.html#about">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+      About Jade
+    </a>
+    <a href="jades-spice.html#reviews">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      Reviews
+    </a>
+    <a href="jades-spice-blog.html">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+      Blog
+    </a>
+    <a href="jades-spice-glossary.html">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg>
+      Glossary
+    </a>
+    <a href="jades-spice-macros.html">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
+      Macro Calculator
+    </a>
+  </div>
+  <div class="mob-section">
+    <div class="mob-section-label">Connect</div>
+    <a href="https://www.instagram.com/jades_spice/" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+      @jades_spice on Instagram
+    </a>
+  </div>
+  <div class="mob-cta">
+    <a href="jades-spice.html#order" class="btn btn-primary">Order Now</a>
+  </div>
+</div>
+
+<!-- ─── POST CONTENT (dynamic) ───────────────────────────────────────────── -->
+<div id="postContainer"></div>
+
+<!-- ─── FOOTER ───────────────────────────────────────────────────────────── -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-name">JADE'S <span class="accent">SPICE</span></div>
+        <div class="footer-brand-tagline">Beautiful moments on your lips</div>
+        <div class="footer-desc">Asian-inspired meal prep made fresh from scratch with organic ingredients. Custom macros for your fitness goals. Glass containers only.</div>
+        <div class="footer-social">
+          <a href="https://www.instagram.com/jades_spice/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="5"/><circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none"/></svg>
+          </a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-heading">Menu</div>
+        <div class="footer-links">
+          <a href="jades-spice.html#meals">This Week's Meals</a>
+          <a href="jades-spice.html#menu">Full Menu</a>
+          <a href="jades-spice.html#how">How It Works</a>
+          <a href="jades-spice.html#order">Order Now</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-heading">Company</div>
+        <div class="footer-links">
+          <a href="jades-spice.html#about">About Jade</a>
+          <a href="jades-spice.html#reviews">Reviews</a>
+          <a href="jades-spice.html#why">Why Us</a>
+          <a href="jades-spice-blog.html">Blog</a>
+          <a href="jades-spice-glossary.html">Glossary</a>
+          <a href="jades-spice-macros.html">Macro Calculator</a>
+        </div>
+      </div>
+      <div>
+        <div class="footer-heading">Connect</div>
+        <div class="footer-links">
+          <div class="footer-contact-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            <a href="https://www.instagram.com/jades_spice/" target="_blank" rel="noopener">@jades_spice</a>
+          </div>
+          <div class="footer-contact-item">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            Made with love
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 Jade's Spice. All rights reserved.</span>
+      <span>Freshly made from scratch with organic ingredients</span>
+    </div>
+  </div>
+</footer>
+
+<script src="jades-spice-blog-data.js"></script>
+<script>
+/* ─── HELPERS ─────────────────────────────────────────────────────────────── */
+function formatDate(dateStr) {
+  var d = new Date(dateStr);
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+}
+
+function getSlugFromURL() {
+  var params = new URLSearchParams(window.location.search);
+  return params.get('slug');
+}
+
+/* ─── RENDER POST ─────────────────────────────────────────────────────────── */
+function renderPost() {
+  var container = document.getElementById('postContainer');
+  var slug = getSlugFromURL();
+
+  if (!slug) {
+    renderNotFound(container);
+    return;
+  }
+
+  var post = JadesSpiceBlog.getPostBySlug(slug);
+  if (!post) {
+    renderNotFound(container);
+    return;
+  }
+
+  // Update page title and meta
+  document.title = post.title + ' | Jade\'s Spice';
+  var metaDesc = document.querySelector('meta[name="description"]');
+  if (metaDesc) metaDesc.setAttribute('content', post.excerpt);
+  var ogTitle = document.querySelector('meta[property="og:title"]');
+  if (ogTitle) ogTitle.setAttribute('content', post.title + ' | Jade\'s Spice');
+  var ogDesc = document.querySelector('meta[property="og:description"]');
+  if (ogDesc) ogDesc.setAttribute('content', post.excerpt);
+
+  // Update canonical URL
+  var canonical = document.querySelector('link[rel="canonical"]');
+  if (canonical) canonical.setAttribute('href', 'https://webnari.io/jades-spice-post.html?slug=' + slug);
+  var ogUrl = document.querySelector('meta[property="og:url"]');
+  if (ogUrl) ogUrl.setAttribute('content', 'https://webnari.io/jades-spice-post.html?slug=' + slug);
+
+  // Process content with glossary terms
+  var processedContent = post.content;
+  var linkedTerms = [];
+  if (typeof JadesSpiceBlog.linkGlossaryTerms === 'function') {
+    var result = JadesSpiceBlog.linkGlossaryTerms(processedContent);
+    if (result && typeof result === 'object') {
+      processedContent = result.html || result;
+      linkedTerms = result.terms || [];
+    } else {
+      processedContent = result || post.content;
+    }
+  }
+
+  var tagSlug = post.category.toLowerCase().replace(/\s+/g, '-');
+  var tagLabel = post.category.charAt(0).toUpperCase() + post.category.slice(1);
+  if (tagSlug === 'behind-the-scenes') tagLabel = 'Behind the Scenes';
+  if (tagSlug === 'meal-prep') tagLabel = 'Meal Prep';
+
+  var html = '<article class="post-article">' +
+    '<nav class="breadcrumb reveal">' +
+      '<a href="jades-spice.html">Home</a>' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>' +
+      '<a href="jades-spice-blog.html">Blog</a>' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg>' +
+      '<span class="current" id="breadcrumbTitle">' + post.title + '</span>' +
+    '</nav>' +
+    '<div class="reveal reveal-delay-1">' +
+      '<span class="post-tag tag-' + tagSlug + '">' + tagLabel + '</span>' +
+    '</div>' +
+    '<h1 class="post-title reveal reveal-delay-1">' + post.title + '</h1>' +
+    '<div class="post-meta reveal reveal-delay-2">' +
+      '<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' + formatDate(post.date) + '</span>' +
+      '<span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>' + post.readTime + '</span>' +
+      '<span>by <span class="author-name">' + (post.author || 'Jade') + '</span></span>' +
+    '</div>';
+
+  // Hero image
+  if (post.heroImage) {
+    html += '<img src="' + post.heroImage + '" alt="' + post.title + '" class="post-hero-img reveal reveal-delay-2">';
+  }
+
+  // Content
+  html += '<div class="post-content reveal reveal-delay-3">' + processedContent + '</div>';
+
+  // Glossary section (if terms were linked)
+  if (linkedTerms && linkedTerms.length > 0) {
+    html += '<div class="glossary-section reveal">' +
+      '<div class="glossary-section-title">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>' +
+        'Glossary' +
+      '</div>' +
+      '<div class="glossary-list">';
+    for (var g = 0; g < linkedTerms.length; g++) {
+      html += '<div>' +
+        '<div class="glossary-item-term">' + linkedTerms[g].term + '</div>' +
+        '<div class="glossary-item-def">' + linkedTerms[g].definition + '</div>' +
+      '</div>';
+    }
+    html += '</div></div>';
+  }
+
+  html += '<div class="post-divider"></div>';
+
+  // Related posts
+  var related = JadesSpiceBlog.getRelatedPosts ? JadesSpiceBlog.getRelatedPosts(slug, 3) : [];
+  if (!related || related.length === 0) {
+    // Fallback: get posts from same category
+    var allPosts = JadesSpiceBlog.getPosts();
+    related = [];
+    for (var r = 0; r < allPosts.length; r++) {
+      if (allPosts[r].slug !== slug && allPosts[r].category === post.category && related.length < 3) {
+        related.push(allPosts[r]);
+      }
+    }
+  }
+
+  if (related.length > 0) {
+    html += '<div class="related-section reveal">' +
+      '<h2 class="related-title">More from the Blog</h2>' +
+      '<div class="related-grid">';
+    for (var k = 0; k < related.length; k++) {
+      var rel = related[k];
+      html += '<a href="jades-spice-post.html?slug=' + rel.slug + '" class="related-card">' +
+        '<div class="related-card-img">' +
+          (rel.heroImage ? '<img src="' + rel.heroImage + '" alt="' + rel.title + '" loading="lazy">' :
+            '<div style="width:100%;height:100%;background:linear-gradient(135deg,var(--surface2),var(--surface));display:flex;align-items:center;justify-content:center;color:var(--muted);font-family:var(--font-head);font-size:12px;letter-spacing:0.1em;text-transform:uppercase;">Coming Soon</div>') +
+        '</div>' +
+        '<div class="related-card-body">' +
+          '<h3 class="related-card-title">' + rel.title + '</h3>' +
+          '<div class="related-card-meta">' + formatDate(rel.date) + ' &middot; ' + rel.readTime + '</div>' +
+        '</div>' +
+      '</a>';
+    }
+    html += '</div></div>';
+  }
+
+  // Order CTA
+  html += '<div class="order-cta reveal">' +
+    '<div class="order-cta-title">Ready to Eat Better?</div>' +
+    '<p class="order-cta-sub">Fresh, macro-tracked meals made from scratch with organic ingredients. DM Jade on Instagram to order.</p>' +
+    '<a href="https://www.instagram.com/jades_spice/" target="_blank" rel="noopener" class="btn btn-primary">' +
+      '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>' +
+      'Order on Instagram' +
+    '</a>' +
+  '</div>';
+
+  html += '</article>';
+  container.innerHTML = html;
+
+  // Observe reveals
+  var reveals = container.querySelectorAll('.reveal');
+  for (var v = 0; v < reveals.length; v++) {
+    observer.observe(reveals[v]);
+  }
+}
+
+function renderNotFound(container) {
+  container.innerHTML = '<div class="not-found">' +
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>' +
+    '<h2 class="not-found-title">Post Not Found</h2>' +
+    '<p>This post doesn\'t exist or may have been removed.</p>' +
+    '<a href="jades-spice-blog.html" class="btn btn-outline">' +
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:16px;height:16px;"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>' +
+      'Back to Blog' +
+    '</a>' +
+  '</div>';
+}
+
+/* ─── INIT ────────────────────────────────────────────────────────────────── */
+var observer;
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Hamburger
+  var hamburger = document.getElementById('hamburger');
+  var mobileMenu = document.getElementById('mobileMenu');
+  var overlay = document.getElementById('mobileOverlay');
+  function toggleMenu() {
+    hamburger.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+    overlay.classList.toggle('open');
+    document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+  }
+  hamburger.addEventListener('click', toggleMenu);
+  overlay.addEventListener('click', toggleMenu);
+
+  // Close mobile menu on link click
+  var mobLinks = mobileMenu.querySelectorAll('a');
+  mobLinks.forEach(function(link) {
+    link.addEventListener('click', function() {
+      hamburger.classList.remove('open');
+      mobileMenu.classList.remove('open');
+      overlay.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  });
+
+  // Scroll reveal
+  var reveals = document.querySelectorAll('.reveal');
+  observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  reveals.forEach(function(el) { observer.observe(el); });
+
+  // Render the post
+  renderPost();
+});
+</script>
+</body>
+</html>
