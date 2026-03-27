@@ -1402,12 +1402,13 @@ function initSectionTransitions(){
     els.forEach(({el,type,exitType})=>{
       const rect=el.getBoundingClientRect();
 
-      // ENTRY: p=0 when top at viewport bottom, p=1 when top at 30% from top (triggers higher)
-      const entryP=Math.max(0,Math.min(1,(vh-rect.top)/(vh*.7)));
+      // ENTRY: starts as soon as section peeks in (top enters bottom of viewport)
+      // Completes when section top reaches 60% from bottom (40% from top)
+      const entryP=Math.max(0,Math.min(1,(vh-rect.top)/(vh*.4)));
       const entryEase=entryP<1?entryP*entryP*(3-2*entryP):1;
 
-      // EXIT: how far the section bottom has passed the viewport top
-      const exitP=exitType?Math.max(0,Math.min(1,-rect.bottom/(vh*.5)+1)):0;
+      // EXIT: starts when section top passes 30% above viewport top, completes when bottom exits
+      const exitP=exitType?Math.max(0,Math.min(1,-rect.top/(vh*.4))):0;
       const exitEase=exitP*exitP*(3-2*exitP);
 
       if(entryP<=0){
@@ -1428,8 +1429,8 @@ function initSectionTransitions(){
     const inv=1-t;
     switch(type){
       case 'barrel':
-        el.style.transform=`perspective(1200px) rotateZ(${inv*-18}deg) rotateX(${inv*12}deg) scale(${.75+t*.25})`;
-        el.style.opacity=String(.2+t*.8);
+        el.style.transform=`perspective(1000px) rotateZ(${inv*-25}deg) rotateX(${inv*18}deg) scale(${.65+t*.35})`;
+        el.style.opacity=String(.1+t*.9);
         break;
       case 'flip':
         el.style.transform=`perspective(800px) rotateX(${inv*-50}deg) translateY(${inv*-50}px)`;
@@ -1450,8 +1451,8 @@ function initSectionTransitions(){
   function applyExitTransform(el,exitType,t){
     switch(exitType){
       case 'barrel-out':
-        el.style.transform=`perspective(1200px) rotateZ(${t*18}deg) rotateX(${t*-15}deg) scale(${1-t*.3})`;
-        el.style.opacity=String(1-t*.8);
+        el.style.transform=`perspective(1000px) rotateZ(${t*25}deg) rotateX(${t*-20}deg) scale(${1-t*.4}) translateY(${t*-80}px)`;
+        el.style.opacity=String(1-t);
         break;
     }
   }
