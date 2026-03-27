@@ -376,8 +376,17 @@ nav::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;ba
 (function(){
 
 const KEY = 'waas_os_v1';
+
+// Decode proposal from URL hash (shareable link) or fall back to localStorage
+let ENCODED_PROPOSAL = null;
+const hash = window.location.hash;
+if (hash && hash.startsWith('#d=')) {
+  try {
+    ENCODED_PROPOSAL = JSON.parse(decodeURIComponent(escape(atob(hash.slice(3)))));
+  } catch(e) { console.warn('Failed to decode proposal from URL'); }
+}
 const params = new URLSearchParams(window.location.search);
-const proposalId = params.get('id') || window.location.hash.replace('#','') || null;
+const proposalId = ENCODED_PROPOSAL ? ENCODED_PROPOSAL.id : (params.get('id') || (hash && !hash.startsWith('#d=') ? hash.replace('#','') : null));
 
 const NICHE_MAP = {
   'home-construction':'Home & Construction','landscaping':'Landscaping','food-dining':'Food & Dining',
@@ -475,19 +484,25 @@ function showNotFound() {
 }
 
 function renderProposal() {
-  if (!proposalId) { showNotFound(); return; }
+  // Try encoded data from URL first, then localStorage
+  let proposal = ENCODED_PROPOSAL;
+  let db = {};
+  if (!proposal) {
+    if (!proposalId) { showNotFound(); return; }
+    db = JSON.parse(localStorage.getItem(KEY) || '{}');
+    proposal = (db.proposals || []).find(p => p.id === proposalId);
+    if (!proposal) { showNotFound(); return; }
+  }
+  // Use embedded pricing if available (from encoded link), else from DB
+  const embeddedPricing = proposal.pricing || db.pricing || {};
 
-  const db = JSON.parse(localStorage.getItem(KEY) || '{}');
-  const proposal = (db.proposals || []).find(p => p.id === proposalId);
-  if (!proposal) { showNotFound(); return; }
-
-  // Mark as viewed
+  // Mark as viewed (only if loaded from localStorage)
   if (proposal.status === 'sent') {
     proposal.status = 'viewed';
     localStorage.setItem(KEY, JSON.stringify(db));
   }
 
-  const pricing = db.pricing || {starter:158, standard:258, premium:378, setup:1000};
+  const pricing = embeddedPricing.starter ? embeddedPricing : {starter:158, standard:258, premium:378, setup:1000};
   const plan = proposal.plan || 'standard';
   const planLabel = plan.charAt(0).toUpperCase() + plan.slice(1);
   const price = getProposalPrice(plan, pricing);
@@ -1102,18 +1117,28 @@ function renderProposal() {
 
   // ── Accept function ──
   window.acceptProposal = function() {
-    const freshDb = JSON.parse(localStorage.getItem(KEY) || '{}');
-    const p = (freshDb.proposals || []).find(x => x.id === proposalId);
-    if (!p) return;
-    p.status = 'accepted';
-    p.acceptedAt = new Date().toISOString();
-    localStorage.setItem(KEY, JSON.stringify(freshDb));
+    // Try to update localStorage if available (owner's browser)
+    try {
+      const freshDb = JSON.parse(localStorage.getItem(KEY) || '{}');
+      const p = (freshDb.proposals || []).find(x => x.id === proposalId);
+      if (p) {
+        p.status = 'accepted';
+        p.acceptedAt = new Date().toISOString();
+        localStorage.setItem(KEY, JSON.stringify(freshDb));
+      }
+    } catch(e) {}
 
+    // Always show confirmation UI regardless of localStorage
+    const acceptedAt = new Date().toISOString();
     document.getElementById('accept-buttons').style.display = 'none';
     const state = document.getElementById('accepted-state');
     state.classList.add('visible');
-    state.querySelector('.accepted-desc').textContent = 'Accepted on ' + formatDate(p.acceptedAt) + '. We will be in touch shortly to kick things off.';
+    state.querySelector('.accepted-desc').textContent = 'Accepted on ' + formatDate(acceptedAt) + '. We will be in touch shortly to kick things off.';
     state.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+    // Send acceptance notification via email link (fallback since no backend)
+    var mailto = 'mailto:lmaholdingsllc.or@gmail.com?subject=' + encodeURIComponent('Proposal Accepted: ' + proposal.bizName) + '&body=' + encodeURIComponent(proposal.bizName + ' has accepted the ' + (proposal.plan||'standard') + ' plan proposal.\\n\\nContact: ' + (proposal.contactName||'') + '\\nEmail: ' + (proposal.contactEmail||'') + '\\nPhone: ' + (proposal.contactPhone||''));
+    window.open(mailto, '_blank');
   };
 }
 

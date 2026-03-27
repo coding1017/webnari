@@ -6013,6 +6013,30 @@ function deleteProposal(id) {
   save(); renderProposals(); toast('Proposal deleted', 'success');
 }
 
+function encodeProposal(id) {
+  const p = DB.proposals.find(x => x.id === id); if(!p) return null;
+  const data = {
+    id:p.id, bizName:p.bizName, contactName:p.contactName, contactEmail:p.contactEmail,
+    contactPhone:p.contactPhone, niche:p.niche, plan:p.plan, status:p.status,
+    notes:p.notes, createdAt:p.createdAt, sentDate:p.sentDate,
+    pricing: {starter:DB.pricing?.starter||158, standard:DB.pricing?.standard||258, premium:DB.pricing?.premium||378, setup:DB.pricing?.setup||1000}
+  };
+  return btoa(unescape(encodeURIComponent(JSON.stringify(data))));
+}
+
+function copyProposalLink(id) {
+  const encoded = encodeProposal(id);
+  if(!encoded) { toast('Proposal not found','error'); return; }
+  const url = location.origin + '/proposal#d=' + encoded;
+  navigator.clipboard.writeText(url).then(() => toast('Share link copied!','success'));
+}
+
+function openProposalPage(id) {
+  const encoded = encodeProposal(id);
+  if(!encoded) { toast('Proposal not found','error'); return; }
+  window.open('/proposal.html#d=' + encoded, '_blank');
+}
+
 function viewProposal(id) {
   const p = DB.proposals.find(x => x.id === id); if (!p) return;
   const plan = p.plan ? p.plan.charAt(0).toUpperCase() + p.plan.slice(1) : 'Standard';
@@ -6122,8 +6146,8 @@ function viewProposal(id) {
       <div style="font-size:13px;color:var(--muted);margin-bottom:12px;">Ready to get started?</div>
       <div style="display:flex;gap:10px;justify-content:center;">
         <button class="btn btn-primary" onclick="window.print()">Print / Save as PDF</button>
-        <button class="btn btn-ghost" onclick="navigator.clipboard.writeText(location.origin+'/proposal?id=${p.id}').then(()=>toast('Share link copied!','success'))">Copy Share Link</button>
-        <a class="btn btn-ghost" href="proposal.html?id=${p.id}" target="_blank" style="text-decoration:none;">Open Shareable Page</a>
+        <button class="btn btn-ghost" onclick="copyProposalLink('${p.id}')">Copy Share Link</button>
+        <button class="btn btn-ghost" onclick="openProposalPage('${p.id}')">Open Shareable Page</button>
       </div>
     </div>
   </div>`);
