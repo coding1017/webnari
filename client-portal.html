@@ -514,7 +514,7 @@ td.bold { color: var(--white); font-weight: 600; }
 .activity-time { font-size: 11px; color: var(--muted); margin-top: 2px; }
 
 /* ── QUICK ACTIONS ──────────────────────────────────── */
-.quick-actions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+.quick-actions { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 16px; }
 .quick-action {
   background: linear-gradient(145deg, var(--surface2) 0%, var(--surface) 100%);
   border: 1px solid var(--border);
@@ -812,6 +812,45 @@ td.bold { color: var(--white); font-weight: 600; }
 @media (max-width: 480px) {
   .kpi-grid { grid-template-columns: 1fr !important; }
   .topbar-title { font-size: 14px; }
+}
+
+/* ── REPORT MODAL ── */
+.report-overlay{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;padding:20px}
+.report-overlay.open{display:flex}
+.report-frame{background:#fff;border-radius:16px;max-width:800px;width:100%;max-height:90vh;overflow-y:auto;box-shadow:0 40px 100px rgba(0,0,0,.6);position:relative}
+.report-close{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:8px;border:none;background:rgba(0,0,0,.06);cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:2;font-size:18px;color:#333;transition:background .2s}
+.report-close:hover{background:rgba(0,0,0,.12)}
+.report-content{padding:48px 40px;color:#1a1a1a;font-family:'Instrument Sans',sans-serif}
+.report-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;padding-bottom:20px;border-bottom:2px solid #C9A96E}
+.report-logo{font-family:'Space Grotesk',sans-serif;font-size:18px;font-weight:700;color:#C9A96E}
+.report-title{text-align:center;margin-bottom:32px}
+.report-title h1{font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;color:#1a1a1a;margin-bottom:4px}
+.report-title p{font-size:14px;color:#666}
+.report-section{margin-bottom:28px}
+.report-section-title{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;color:#1a1a1a;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #e5e5e5;display:flex;align-items:center;gap:8px}
+.report-section-title::before{content:'';width:4px;height:16px;background:#C9A96E;border-radius:2px}
+.report-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.report-stat{background:#f8f7f4;border:1px solid #e5e5e5;border-radius:10px;padding:16px;text-align:center}
+.report-stat-label{font-size:10px;font-weight:700;letter-spacing:.08em;color:#999;margin-bottom:4px}
+.report-stat-value{font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;color:#1a1a1a}
+.report-stat-delta{font-size:11px;margin-top:2px}
+.report-stat-delta.up{color:#22c55e}
+.report-stat-delta.down{color:#ef4444}
+.report-table{width:100%;border-collapse:collapse;font-size:13px;margin-top:8px}
+.report-table th{text-align:left;font-size:10px;font-weight:700;letter-spacing:.06em;color:#999;padding:8px 12px;border-bottom:1px solid #e5e5e5}
+.report-table td{padding:8px 12px;border-bottom:1px solid #f0f0f0;color:#333}
+.report-bar{height:8px;background:#f0f0f0;border-radius:4px;overflow:hidden;margin-top:4px}
+.report-bar-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,#C9A96E,#D4B07A)}
+.report-footer{text-align:center;margin-top:32px;padding-top:20px;border-top:2px solid #C9A96E;font-size:12px;color:#999}
+.report-footer strong{color:#C9A96E}
+.report-actions{display:flex;gap:10px;justify-content:center;margin-top:24px;padding:0 40px 24px}
+
+@media print {
+  body > *:not(.report-overlay) { display: none !important; }
+  .report-overlay { position: static !important; background: none !important; backdrop-filter: none !important; display: block !important; padding: 0 !important; }
+  .report-frame { max-width: none; max-height: none; box-shadow: none; border-radius: 0; }
+  .report-close, .report-actions { display: none !important; }
+  .report-content { padding: 24px; }
 }
 </style>
 </head>
@@ -1151,6 +1190,140 @@ document.addEventListener('click', function(e){
     document.getElementById('notif-panel').classList.remove('open');
   }
 });
+
+// ════════════════════════════════════════════════════
+//  MONTHLY REPORT GENERATOR
+// ════════════════════════════════════════════════════
+function openReport(){
+  var c = CLIENT;
+  var a = c.analytics||{};
+  var rep = c.reputation||{};
+  var leads = c.leads||[];
+  var ads = c.ads&&c.ads.campaigns||[];
+  var now = new Date();
+  var monthName = now.toLocaleDateString('en',{month:'long', year:'numeric'});
+  var prevMonth = new Date(now.getFullYear(), now.getMonth()-1, 1).toLocaleDateString('en',{month:'long', year:'numeric'});
+
+  // Trend helpers
+  var sessDelta = a.prevSessions ? Math.round(((a.sessions-a.prevSessions)/a.prevSessions)*100) : 0;
+  var convDelta = a.prevConversions ? Math.round(((a.conversions-a.prevConversions)/a.prevConversions)*100) : 0;
+  var deltaHtml = function(d){ return d>0 ? '<span class="report-stat-delta up">+'+d+'%</span>' : d<0 ? '<span class="report-stat-delta down">'+d+'%</span>' : ''; };
+
+  // Review stats
+  var totalReviews=0, weightedSum=0;
+  ['google','yelp','facebook','homeadvisor'].forEach(function(p){
+    var pd=rep[p]; if(pd&&pd.reviews){totalReviews+=pd.reviews; weightedSum+=pd.rating*pd.reviews;}
+  });
+  var avgRating = totalReviews ? (weightedSum/totalReviews).toFixed(1) : '--';
+  var unresponded = (rep.recentReviews||[]).filter(function(r){return !r.responded}).length;
+
+  // Leads
+  var newLeads = leads.filter(function(l){ return l.stage==='new'||l.stage==='contacted'||l.stage==='qualified'; }).length;
+  var wonLeads = leads.filter(function(l){ return l.stage==='closed'||l.stage==='won'; }).length;
+  var totalValue = leads.reduce(function(s,l){return s+(l.value||0)},0);
+
+  // Ads
+  var totalSpend = ads.reduce(function(s,c){return s+(c.spend||0)},0);
+  var totalClicks = ads.reduce(function(s,c){return s+(c.clicks||0)},0);
+  var totalConvAds = ads.reduce(function(s,c){return s+(c.conversions||0)},0);
+
+  // Source breakdown
+  var srcTotal = (a.organic||0)+(a.paid||0)+(a.direct||0)+(a.social||0)+(a.referral||0)||1;
+  var srcData = [
+    {label:'Organic',val:a.organic||0,pct:Math.round(((a.organic||0)/srcTotal)*100)},
+    {label:'Paid',val:a.paid||0,pct:Math.round(((a.paid||0)/srcTotal)*100)},
+    {label:'Direct',val:a.direct||0,pct:Math.round(((a.direct||0)/srcTotal)*100)},
+    {label:'Social',val:a.social||0,pct:Math.round(((a.social||0)/srcTotal)*100)},
+    {label:'Referral',val:a.referral||0,pct:Math.round(((a.referral||0)/srcTotal)*100)}
+  ];
+
+  var html = ''
+    +'<div class="report-header">'
+    +'  <div class="report-logo">Webnari</div>'
+    +'  <div style="font-size:12px;color:#999;">Monthly Performance Report</div>'
+    +'</div>'
+
+    +'<div class="report-title">'
+    +'  <h1>'+escHtml(c.bizName)+'</h1>'
+    +'  <p>Performance Report — '+monthName+'</p>'
+    +'</div>'
+
+    // Traffic
+    +'<div class="report-section">'
+    +'  <div class="report-section-title">Website Traffic</div>'
+    +'  <div class="report-grid">'
+    +'    <div class="report-stat"><div class="report-stat-label">SESSIONS</div><div class="report-stat-value">'+(a.sessions||0).toLocaleString()+'</div>'+deltaHtml(sessDelta)+'</div>'
+    +'    <div class="report-stat"><div class="report-stat-label">CONVERSIONS</div><div class="report-stat-value">'+(a.conversions||0)+'</div>'+deltaHtml(convDelta)+'</div>'
+    +'    <div class="report-stat"><div class="report-stat-label">BOUNCE RATE</div><div class="report-stat-value">'+(a.bounceRate||'--')+'%</div></div>'
+    +'    <div class="report-stat"><div class="report-stat-label">AVG DURATION</div><div class="report-stat-value">'+(a.avgDuration||'--')+'</div></div>'
+    +'  </div>'
+    +'  <div style="margin-top:12px;">'
+    +    srcData.map(function(s){ return '<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px;"><span style="font-size:12px;color:#666;width:60px;">'+s.label+'</span><div class="report-bar" style="flex:1"><div class="report-bar-fill" style="width:'+s.pct+'%"></div></div><span style="font-size:12px;font-weight:600;color:#333;width:50px;text-align:right;">'+s.val.toLocaleString()+'</span></div>'; }).join('')
+    +'  </div>'
+    +'</div>'
+
+    // Reviews
+    +'<div class="report-section">'
+    +'  <div class="report-section-title">Online Reputation</div>'
+    +'  <div class="report-grid">'
+    +'    <div class="report-stat"><div class="report-stat-label">AVG RATING</div><div class="report-stat-value" style="color:#C9A96E;">'+avgRating+'</div></div>'
+    +'    <div class="report-stat"><div class="report-stat-label">TOTAL REVIEWS</div><div class="report-stat-value">'+totalReviews+'</div></div>'
+    +'    <div class="report-stat"><div class="report-stat-label">NEEDS RESPONSE</div><div class="report-stat-value" style="color:'+(unresponded?'#ef4444':'#22c55e')+';">'+unresponded+'</div></div>'
+    +'    <div class="report-stat"><div class="report-stat-label">PLATFORMS</div><div class="report-stat-value">'+(['google','yelp','facebook','homeadvisor'].filter(function(p){return rep[p]&&rep[p].reviews>0}).length)+'</div></div>'
+    +'  </div>'
+    +'</div>'
+
+    // Leads
+    +'<div class="report-section">'
+    +'  <div class="report-section-title">Leads</div>'
+    +'  <div class="report-grid">'
+    +'    <div class="report-stat"><div class="report-stat-label">TOTAL LEADS</div><div class="report-stat-value">'+leads.length+'</div></div>'
+    +'    <div class="report-stat"><div class="report-stat-label">ACTIVE</div><div class="report-stat-value" style="color:#C9A96E;">'+newLeads+'</div></div>'
+    +'    <div class="report-stat"><div class="report-stat-label">WON</div><div class="report-stat-value" style="color:#22c55e;">'+wonLeads+'</div></div>'
+    +'    <div class="report-stat"><div class="report-stat-label">PIPELINE VALUE</div><div class="report-stat-value">$'+totalValue.toLocaleString()+'</div></div>'
+    +'  </div>'
+    +'</div>'
+
+    // Ads (if any)
+    +(ads.length ? '<div class="report-section">'
+    +'  <div class="report-section-title">Ad Campaigns</div>'
+    +'  <div class="report-grid">'
+    +'    <div class="report-stat"><div class="report-stat-label">SPEND</div><div class="report-stat-value">$'+totalSpend.toLocaleString()+'</div></div>'
+    +'    <div class="report-stat"><div class="report-stat-label">CLICKS</div><div class="report-stat-value">'+totalClicks.toLocaleString()+'</div></div>'
+    +'    <div class="report-stat"><div class="report-stat-label">CONVERSIONS</div><div class="report-stat-value">'+totalConvAds+'</div></div>'
+    +'    <div class="report-stat"><div class="report-stat-label">CPA</div><div class="report-stat-value">'+(totalConvAds?'$'+Math.round(totalSpend/totalConvAds):'--')+'</div></div>'
+    +'  </div>'
+    +'  <table class="report-table"><thead><tr><th>Campaign</th><th>Platform</th><th>Spend</th><th>Clicks</th><th>Conv.</th></tr></thead><tbody>'
+    +    ads.map(function(cam){ return '<tr><td style="font-weight:600;">'+escHtml(cam.name)+'</td><td>'+cam.platform+'</td><td>$'+cam.spend+'</td><td>'+cam.clicks+'</td><td>'+cam.conversions+'</td></tr>'; }).join('')
+    +'  </tbody></table>'
+    +'</div>' : '')
+
+    // Plan info
+    +'<div class="report-section">'
+    +'  <div class="report-section-title">Your Plan</div>'
+    +'  <div style="display:flex;align-items:center;gap:20px;padding:16px;background:#f8f7f4;border-radius:10px;border:1px solid #e5e5e5;">'
+    +'    <div><div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:#999;">PLAN</div><div style="font-size:20px;font-weight:700;color:#1a1a1a;">'+(c.plan||'').charAt(0).toUpperCase()+(c.plan||'').slice(1)+'</div></div>'
+    +'    <div style="width:1px;height:40px;background:#e5e5e5;"></div>'
+    +'    <div><div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:#999;">MONTHLY</div><div style="font-size:20px;font-weight:700;color:#C9A96E;">$'+(c.monthlyRate||0)+'</div></div>'
+    +'    <div style="width:1px;height:40px;background:#e5e5e5;"></div>'
+    +'    <div><div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:#999;">STATUS</div><div style="font-size:20px;font-weight:700;color:#22c55e;">'+(c.paymentStatus==='active'?'Active':'Past Due')+'</div></div>'
+    +'    <div style="width:1px;height:40px;background:#e5e5e5;"></div>'
+    +'    <div><div style="font-size:11px;font-weight:700;letter-spacing:.06em;color:#999;">NEXT BILLING</div><div style="font-size:20px;font-weight:700;color:#1a1a1a;">'+(c.billingDate||'--')+'</div></div>'
+    +'  </div>'
+    +'</div>'
+
+    +'<div class="report-footer">'
+    +'  Generated by <strong>Webnari</strong> on '+now.toLocaleDateString('en',{month:'long',day:'numeric',year:'numeric'})
+    +'  <br>webnari.io'
+    +'</div>';
+
+  document.getElementById('report-content').innerHTML = html;
+  document.getElementById('report-overlay').classList.add('open');
+}
+
+function closeReport(){
+  document.getElementById('report-overlay').classList.remove('open');
+}
 
 // ════════════════════════════════════════════════════
 //  PLAN-BASED ACCESS CONTROL
@@ -1528,6 +1701,9 @@ function renderOverview() {
     '<div class="quick-action" onclick="navigate(\'support\')">' +
     '<div class="quick-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>' +
     '<div class="quick-action-label">Contact Support</div></div>' +
+    '<div class="quick-action" onclick="openReport()">' +
+    '<div class="quick-action-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>' +
+    '<div class="quick-action-label">Download Report</div></div>' +
     '</div>' +
 
     // Bottom grid: Activity + Plan
@@ -2720,5 +2896,16 @@ function initCursor() {
   draw();
 }
 </script>
+<!-- ═══ REPORT OVERLAY ═══ -->
+<div class="report-overlay" id="report-overlay" onclick="if(event.target===this)closeReport()">
+  <div class="report-frame">
+    <button class="report-close" onclick="closeReport()">&times;</button>
+    <div class="report-content" id="report-content"></div>
+    <div class="report-actions">
+      <button class="btn btn-primary" onclick="window.print()">Download PDF</button>
+      <button class="btn btn-ghost" onclick="closeReport()">Close</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
