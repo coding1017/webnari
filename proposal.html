@@ -10,21 +10,21 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#08080E;--surface:#12121C;--surface2:#1A1A28;--surface3:#222234;
-  --border:#262636;--border2:#333348;
+  --bg:#F5F3EE;--surface:#0E0E18;--surface2:#161622;--surface3:#1E1E2C;
+  --border:#D4CFC4;--border2:#C0BAA8;--border-dark:#2A2A3A;
   --gold:#C9A96E;--gold2:#E8D5A8;--gold-dark:#B8944F;
-  --gold-bg:rgba(201,169,110,.08);--gold-border:rgba(201,169,110,.22);--gold-glow:rgba(201,169,110,.4);
-  --white:#F2EDE6;--muted:#6B6B82;--text:#9A9AB0;
-  --green:#5EBD8A;--green-bg:rgba(94,189,138,.08);--red:#E85D75;
+  --gold-bg:rgba(201,169,110,.1);--gold-border:rgba(201,169,110,.3);--gold-glow:rgba(201,169,110,.5);
+  --white:#F2EDE6;--muted:#7A7A8A;--text:#4A4A5A;--heading:#1A1A24;
+  --panel-text:#B8B8CC;--panel-muted:#6B6B80;
+  --green:#2D8B5F;--green-bg:rgba(45,139,95,.1);--red:#C0392B;
   --radius:12px;--radius-lg:16px;
   --font-head:'Space Grotesk',sans-serif;--font-body:'Instrument Sans',sans-serif;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
-body::before{content:'';position:fixed;inset:0;z-index:9999;pointer-events:none;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  opacity:0.03;mix-blend-mode:overlay}
+.section-divider{height:3px;background:linear-gradient(90deg,transparent 5%,var(--gold) 30%,var(--gold2) 50%,var(--gold) 70%,transparent 95%);margin:0;opacity:.6}
+.proposal-section{color:var(--text)}
 button{font-family:var(--font-body);cursor:pointer}
 input,select,textarea{font-family:var(--font-body)}
 a{color:inherit;text-decoration:none}
@@ -32,26 +32,24 @@ h1,h2,h3{font-family:var(--font-head);letter-spacing:-.02em}
 
 /* NAV */
 .proposal-nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:60px;
-  background:rgba(8,8,14,.85);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
-.proposal-nav::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.6}
-.nav-logo{font-family:var(--font-head);font-size:20px;font-weight:700;letter-spacing:-.02em;
-  background:linear-gradient(135deg,var(--gold2),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.nav-center{font-family:var(--font-body);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);opacity:.7}
+  background:rgba(245,243,238,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.proposal-nav::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.5}
+.nav-logo{font-family:var(--font-head);font-size:20px;font-weight:700;letter-spacing:-.02em;color:var(--heading)}
+.nav-center{font-family:var(--font-body);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-dark)}
 .nav-phone{display:inline-flex;align-items:center;gap:8px;font-size:14px;color:var(--text);text-decoration:none;font-weight:500;transition:color .2s}
-.nav-phone:hover{color:var(--gold)}
+.nav-phone:hover{color:var(--gold-dark)}
 .nav-phone svg{width:16px;height:16px;stroke:var(--gold);stroke-width:2;fill:none}
 
 /* HERO */
-.proposal-header{padding:140px 40px 80px;text-align:center;position:relative;overflow:hidden}
+.proposal-header{padding:140px 40px 80px;text-align:center;position:relative;overflow:hidden;background:var(--bg)}
 .proposal-header::before{content:'';position:absolute;top:-100px;left:50%;transform:translateX(-50%);width:900px;height:700px;
-  background:radial-gradient(ellipse,rgba(201,169,110,.12) 0%,rgba(201,169,110,.04) 35%,transparent 65%);pointer-events:none}
-.header-eyebrow{font-size:12px;font-weight:700;letter-spacing:.2em;color:var(--gold);text-transform:uppercase;margin-bottom:24px}
-.header-biz{font-family:var(--font-head);font-size:52px;font-weight:700;color:var(--white);letter-spacing:-.03em;line-height:1.1;margin-bottom:16px;
-  text-shadow:0 2px 30px rgba(201,169,110,.15)}
+  background:radial-gradient(ellipse,rgba(201,169,110,.1) 0%,rgba(201,169,110,.03) 35%,transparent 65%);pointer-events:none}
+.header-eyebrow{font-size:12px;font-weight:700;letter-spacing:.2em;color:var(--gold-dark);text-transform:uppercase;margin-bottom:24px}
+.header-biz{font-family:var(--font-head);font-size:52px;font-weight:700;color:var(--heading);letter-spacing:-.03em;line-height:1.1;margin-bottom:16px}
 .header-meta{font-size:15px;color:var(--muted);line-height:1.6}
-.header-meta span{color:var(--text);font-weight:500}
+.header-meta span{color:var(--heading);font-weight:500}
 .header-contact{margin-top:12px;font-size:15px;color:var(--text)}
-.header-contact strong{color:var(--white)}
+.header-contact strong{color:var(--heading)}
 .header-divider{width:64px;height:2px;margin:36px auto 0;border-radius:2px;position:relative;overflow:hidden;background:var(--border)}
 .header-divider::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,var(--gold),var(--gold2),var(--gold));
   animation:shimmer 3s ease-in-out infinite}
@@ -59,8 +57,9 @@ h1,h2,h3{font-family:var(--font-head);letter-spacing:-.02em}
 
 /* SECTION */
 .proposal-section{padding:80px 40px;max-width:1000px;margin:0 auto}
-.section-eyebrow{font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--gold);text-transform:uppercase;text-align:center;margin-bottom:12px}
-.section-title{font-family:var(--font-head);font-size:32px;font-weight:700;color:var(--white);letter-spacing:-.02em;text-align:center;margin-bottom:16px}
+.dark-panel{background:var(--surface);border-radius:var(--radius-lg);padding:48px;margin:0 auto;max-width:960px;border:1px solid var(--border-dark);box-shadow:0 12px 48px rgba(0,0,0,.15),0 0 0 1px rgba(201,169,110,.06)}
+.section-eyebrow{font-size:11px;font-weight:700;letter-spacing:.16em;color:var(--gold-dark);text-transform:uppercase;text-align:center;margin-bottom:12px}
+.section-title{font-family:var(--font-head);font-size:32px;font-weight:700;color:var(--heading);letter-spacing:-.02em;text-align:center;margin-bottom:16px}
 .section-desc{font-size:15px;color:var(--muted);text-align:center;max-width:520px;margin:0 auto 48px;line-height:1.7}
 .section-divider{border:none;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);margin:0 auto;max-width:1000px}
 
@@ -500,6 +499,7 @@ function renderProposal() {
 
   // WHY WEBNARI
   html += `
+  <div class="section-divider"></div>
   <section class="proposal-section">
     <div class="section-eyebrow reveal">Why Webnari</div>
     <div class="section-title reveal">Built different. Built better.</div>
@@ -565,6 +565,7 @@ function renderProposal() {
 
   // YOUR PLAN
   html += `
+  <div class="section-divider"></div>
   <section class="proposal-section">
     <div class="section-eyebrow reveal">Your Plan</div>
     <div class="section-title reveal">Everything you need to grow</div>
@@ -592,6 +593,7 @@ function renderProposal() {
 
   // PLAN COMPARISON
   html += `
+  <div class="section-divider"></div>
   <section class="proposal-section">
     <div class="section-eyebrow reveal">Compare Plans</div>
     <div class="section-title reveal">Find your perfect fit</div>
@@ -614,6 +616,7 @@ function renderProposal() {
 
   // WHAT'S INCLUDED
   html += `
+  <div class="section-divider"></div>
   <section class="proposal-section">
     <div class="section-eyebrow reveal">Deliverables</div>
     <div class="section-title reveal">What you will receive</div>
@@ -655,6 +658,7 @@ function renderProposal() {
 
   // TIMELINE
   html += `
+  <div class="section-divider"></div>
   <section class="proposal-section">
     <div class="section-eyebrow reveal">Timeline</div>
     <div class="section-title reveal">From kickoff to launch</div>
@@ -698,6 +702,7 @@ function renderProposal() {
 
   // SOCIAL PROOF
   html += `
+  <div class="section-divider"></div>
   <section class="proposal-section">
     <div class="section-eyebrow reveal">Client Results</div>
     <div class="section-title reveal">Trusted by growing businesses</div>
@@ -734,7 +739,8 @@ function renderProposal() {
   if (proposal.notes) {
     html += `
     <hr class="section-divider">
-    <section class="proposal-section">
+    <div class="section-divider"></div>
+  <section class="proposal-section">
       <div class="section-eyebrow reveal">Notes</div>
       <div class="section-title reveal">Special Requirements</div>
       <div class="notes-box reveal">
