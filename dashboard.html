@@ -2630,7 +2630,10 @@ td.bold { color: var(--white); font-weight: 600; }
             </div>
           </div>
 
-          <div style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.06em;margin-bottom:12px;">BACKUP & RESTORE</div>
+          <div style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.06em;margin-bottom:12px;">AUTOMATED BACKUPS</div>
+          <div id="s-backup-status" class="panel" style="padding:16px;margin-bottom:16px;"></div>
+
+          <div style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:.06em;margin-bottom:12px;">MANUAL EXPORT & IMPORT</div>
           <div style="display:flex;flex-direction:column;gap:8px;">
             <button class="btn btn-ghost" style="justify-content:flex-start;width:100%;padding:14px 16px;" onclick="exportData()">
               <svg style="width:16px;height:16px;margin-right:8px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
@@ -3141,7 +3144,12 @@ td.bold { color: var(--white); font-weight: 600; }
         </div>
         <div class="form-group">
           <label class="form-label">Live URL</label>
-          <input class="form-input" id="m-url" type="url" placeholder="https://clientdomain.com">
+          <input class="form-input" id="m-url" type="url" placeholder="https://webnari.io/template">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Custom Domain</label>
+          <input class="form-input" id="m-domain" type="text" placeholder="clientbusiness.com">
+          <div style="font-size:10px;color:var(--muted);margin-top:4px;">Client's own domain — point CNAME to webnari.io</div>
         </div>
         <div class="form-group full">
           <label class="form-label">Notes</label>
@@ -3475,11 +3483,128 @@ async function syncFromSupabase() {
 
 async function save() {
   localStorage.setItem(KEY, JSON.stringify(DB));
+  // Auto-backup: save a timestamped copy
+  autoBackup();
   if (!_sb) return;
   const { data: { user } } = await _sb.auth.getUser();
   if (!user) return;
   await _sb.from('agency_db').upsert({ admin_id: user.id, data: DB }, { onConflict: 'admin_id' });
 }
+
+// ════════════════════════════════════════════════════
+//  AUTOMATED BACKUP SYSTEM
+// ════════════════════════════════════════════════════
+const BACKUP_KEY = 'waas_os_backup';
+const BACKUP_META_KEY = 'waas_os_backup_meta';
+
+function autoBackup() {
+  const now = new Date();
+  const meta = JSON.parse(localStorage.getItem(BACKUP_META_KEY) || '{}');
+  // Save rolling backup every 5 minutes max
+  if (meta.lastAuto && (now - new Date(meta.lastAuto)) < 5 * 60 * 1000) return;
+  localStorage.setItem(BACKUP_KEY, JSON.stringify(DB));
+  meta.lastAuto = now.toISOString();
+  meta.autoSize = new Blob([JSON.stringify(DB)]).size;
+  // Track daily backup status
+  const today = now.toISOString().slice(0, 10);
+  if (meta.lastDailyDate !== today) {
+    meta.lastDailyDate = today;
+    meta.dailyCount = (meta.dailyCount || 0) + 1;
+  }
+  localStorage.setItem(BACKUP_META_KEY, JSON.stringify(meta));
+}
+
+function getBackupMeta() {
+  return JSON.parse(localStorage.getItem(BACKUP_META_KEY) || '{}');
+}
+
+function manualBackup() {
+  localStorage.setItem(BACKUP_KEY, JSON.stringify(DB));
+  const meta = getBackupMeta();
+  meta.lastManual = new Date().toISOString();
+  meta.manualSize = new Blob([JSON.stringify(DB)]).size;
+  localStorage.setItem(BACKUP_META_KEY, JSON.stringify(meta));
+  toast('Backup saved!', 'success');
+}
+
+function downloadBackup() {
+  const data = JSON.stringify(DB, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'webnari-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+  a.click();
+  const meta = getBackupMeta();
+  meta.lastDownload = new Date().toISOString();
+  localStorage.setItem(BACKUP_META_KEY, JSON.stringify(meta));
+  toast('Backup downloaded!', 'success');
+}
+
+function restoreFromBackup() {
+  const backup = localStorage.getItem(BACKUP_KEY);
+  if (!backup) { toast('No backup found', 'error'); return; }
+  if (!confirm('Restore from last auto-backup? This will overwrite current data.')) return;
+  try {
+    DB = JSON.parse(backup);
+    localStorage.setItem(KEY, JSON.stringify(DB));
+    navigate('overview');
+    syncSidebar();
+    updateBadge();
+    toast('Restored from backup!', 'success');
+  } catch (e) { toast('Backup data corrupted', 'error'); }
+}
+
+async function cloudBackup() {
+  try {
+    const res = await fetch(TOOLS_API + '/api/backup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ data: DB, timestamp: new Date().toISOString() })
+    });
+    if (res.ok) {
+      const meta = getBackupMeta();
+      meta.lastCloud = new Date().toISOString();
+      localStorage.setItem(BACKUP_META_KEY, JSON.stringify(meta));
+      toast('Cloud backup saved!', 'success');
+    } else {
+      toast('Cloud backup endpoint not configured yet', 'error');
+    }
+  } catch (e) {
+    toast('Cloud backup not available — use local backups', 'error');
+  }
+}
+
+async function cloudRestore() {
+  try {
+    const res = await fetch(TOOLS_API + '/api/backup');
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.data) {
+        if (!confirm('Restore from cloud backup? This will overwrite current data.')) return;
+        DB = data.data;
+        localStorage.setItem(KEY, JSON.stringify(DB));
+        navigate('overview'); syncSidebar(); updateBadge();
+        toast('Restored from cloud!', 'success');
+      }
+    } else {
+      toast('No cloud backup found', 'error');
+    }
+  } catch (e) {
+    toast('Cloud restore not available', 'error');
+  }
+}
+
+// Auto-backup on page load
+autoBackup();
+
+// Schedule daily auto-download reminder
+setInterval(function() {
+  const meta = getBackupMeta();
+  const today = new Date().toISOString().slice(0, 10);
+  if (!meta.lastDownload || meta.lastDownload.slice(0, 10) !== today) {
+    // Could trigger a notification or auto-download
+  }
+}, 60 * 60 * 1000); // Check hourly
 
 let DB = loadDB();
 migrateTemplates();
@@ -7006,7 +7131,7 @@ function editClient(id) {
   gv('m-phone',c.phone); gv('m-template',c.template); gv('m-status',c.status);
   gv('m-plan',c.plan); gv('m-rate',c.monthlyRate); gv('m-setup',c.setupFee);
   gv('m-billing-date',c.billingDate); gv('m-payment',c.paymentStatus);
-  gv('m-url',c.liveUrl); gv('m-notes',c.notes);
+  gv('m-url',c.liveUrl); gv('m-domain',c.customDomain||''); gv('m-notes',c.notes);
   openModal('modal-client');
 }
 
@@ -7018,7 +7143,7 @@ function saveClient() {
     template:rv('m-template'), status:rv('m-status'), plan:rv('m-plan'),
     monthlyRate:parseFloat(rv('m-rate'))||0, setupFee:parseFloat(rv('m-setup'))||0,
     billingDate:rv('m-billing-date'), paymentStatus:rv('m-payment'),
-    liveUrl:rv('m-url'), notes:rv('m-notes'), updatedAt:today()
+    liveUrl:rv('m-url'), customDomain:rv('m-domain'), notes:rv('m-notes'), updatedAt:today()
   };
   if (editId) {
     const i = DB.clients.findIndex(x => x.id===editId);
@@ -7217,7 +7342,7 @@ function removeTeamMember(idx) {
 
 function renderDataTab() {
   // Storage usage
-  const data = localStorage.getItem('waas_os')||'';
+  const data = localStorage.getItem(KEY)||'';
   const bytes = new Blob([data]).size;
   const kb = (bytes/1024).toFixed(1);
   const pct = Math.min(Math.round((bytes/(5*1024*1024))*100),100);
@@ -7227,6 +7352,42 @@ function renderDataTab() {
   if(sizeEl) sizeEl.textContent = bytes>1024*1024?`${(bytes/(1024*1024)).toFixed(1)} MB`:`${kb} KB`;
   if(barEl) { barEl.style.width=pct+'%'; barEl.style.background=pct>80?'var(--red)':pct>50?'var(--amber)':'var(--indigo)'; }
   if(itemsEl) itemsEl.textContent = `${DB.clients?.length||0} clients · ${DB.templates?.length||0} templates`;
+
+  // Backup status
+  const backupEl = document.getElementById('s-backup-status');
+  if(backupEl) {
+    const meta = getBackupMeta();
+    const autoTime = meta.lastAuto ? timeAgo(new Date(meta.lastAuto)) : 'Never';
+    const downloadTime = meta.lastDownload ? timeAgo(new Date(meta.lastDownload)) : 'Never';
+    const cloudTime = meta.lastCloud ? timeAgo(new Date(meta.lastCloud)) : 'Not configured';
+    const backupSize = meta.autoSize ? (meta.autoSize > 1024*1024 ? (meta.autoSize/(1024*1024)).toFixed(1)+' MB' : (meta.autoSize/1024).toFixed(1)+' KB') : '--';
+    backupEl.innerHTML = `
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px;">
+        <div style="padding:14px;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border);">
+          <div style="font-size:10px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:4px;">AUTO-BACKUP</div>
+          <div style="font-size:14px;font-weight:700;color:var(--green);">${autoTime}</div>
+          <div style="font-size:10px;color:var(--muted);margin-top:2px;">${backupSize}</div>
+        </div>
+        <div style="padding:14px;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border);">
+          <div style="font-size:10px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:4px;">LAST DOWNLOAD</div>
+          <div style="font-size:14px;font-weight:700;color:${downloadTime==='Never'?'var(--amber)':'var(--green)'};">${downloadTime}</div>
+        </div>
+        <div style="padding:14px;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border);">
+          <div style="font-size:10px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:4px;">CLOUD BACKUP</div>
+          <div style="font-size:14px;font-weight:700;color:${cloudTime.includes('Not')?'var(--muted)':'var(--green)'};">${cloudTime}</div>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+        <button class="btn btn-ghost" style="justify-content:center;font-size:12px;" onclick="manualBackup()">Save Backup Now</button>
+        <button class="btn btn-ghost" style="justify-content:center;font-size:12px;" onclick="downloadBackup()">Download Backup</button>
+        <button class="btn btn-ghost" style="justify-content:center;font-size:12px;" onclick="restoreFromBackup()">Restore Backup</button>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+        <button class="btn btn-ghost" style="justify-content:center;font-size:12px;border-color:var(--indigo-border);color:var(--indigo2);" onclick="cloudBackup()">Upload to Cloud</button>
+        <button class="btn btn-ghost" style="justify-content:center;font-size:12px;border-color:var(--indigo-border);color:var(--indigo2);" onclick="cloudRestore()">Restore from Cloud</button>
+      </div>`;
+  }
+
   // Activity log
   const logEl = document.getElementById('s-activity-log');
   if(logEl) {
@@ -7234,7 +7395,7 @@ function renderDataTab() {
     logEl.innerHTML = logs.length ? logs.map(a => `
       <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px;">
         <span style="color:var(--text);">${a.text}</span>
-        <span style="color:var(--muted);flex-shrink:0;margin-left:12px;">${a.date||''}</span>
+        <span style="color:var(--muted);flex-shrink:0;margin-left:12px;">${a.date||a.time||''}</span>
       </div>`).join('') : `<div style="color:var(--muted);font-size:12px;text-align:center;padding:20px;">No activity recorded yet</div>`;
   }
 }
