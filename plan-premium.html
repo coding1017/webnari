@@ -27,19 +27,23 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-he
 .plan-nav{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 40px;height:64px;
   background:rgba(8,8,14,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
 .plan-nav-logo{font-family:var(--font-head);font-size:20px;font-weight:700;color:var(--white);text-decoration:none}
-.plan-nav-back{font-size:14px;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:6px;transition:color .2s}
-.plan-nav-back:hover{color:var(--accent)}
-.plan-nav-back svg{width:16px;height:16px;stroke:currentColor;stroke-width:2;fill:none}
-.plan-switcher{display:flex;align-items:center;gap:4px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:3px}
-.plan-sw-btn{padding:8px 20px;border:none;border-radius:8px;font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--muted);background:transparent;cursor:pointer;transition:all .25s;text-decoration:none;display:inline-block;text-align:center}
-.plan-sw-btn:hover{color:var(--text)}
-.plan-sw-btn.active{background:var(--accent);color:var(--bg)}
+.plan-back-btn{display:inline-flex;align-items:center;gap:8px;padding:10px 24px;background:var(--surface2);border:1px solid var(--border);
+  border-radius:10px;color:var(--accent);font-family:var(--font-body);font-size:14px;font-weight:600;text-decoration:none;transition:all .3s}
+.plan-back-btn:hover{background:var(--surface3);border-color:var(--accent);transform:translateY(-1px);box-shadow:0 4px 20px rgba(201,169,110,.15)}
+.plan-back-btn svg{width:16px;height:16px;stroke:currentColor;stroke-width:2;fill:none}
+.plan-switcher-bar{display:flex;justify-content:center;padding:24px 40px 0;background:var(--bg)}
+.plan-switcher{display:flex;align-items:center;gap:6px;background:var(--surface2);border:1px solid var(--border);border-radius:14px;padding:5px}
+.plan-sw-btn{padding:12px 32px;border:none;border-radius:10px;font-family:var(--font-head);font-size:15px;font-weight:600;color:var(--muted);
+  background:transparent;cursor:pointer;transition:all .3s;text-decoration:none;display:inline-block;text-align:center;letter-spacing:-.01em}
+.plan-sw-btn:hover{color:var(--text);background:rgba(255,255,255,.03)}
+.plan-sw-btn.active{background:var(--accent);color:var(--bg);box-shadow:0 2px 16px rgba(201,169,110,.3)}
 
 .plan-hero{padding:100px 40px 80px;text-align:center;background:var(--bg);position:relative;overflow:hidden}
 .plan-hero::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:700px;height:700px;
   background:radial-gradient(circle,rgba(212,149,107,.06) 0%,rgba(201,169,110,.04) 40%,transparent 70%);pointer-events:none}
-.plan-eyebrow{font-family:var(--font-body);font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--warm);margin-bottom:16px}
-.plan-name{font-family:var(--font-head);font-size:56px;font-weight:700;color:var(--white);letter-spacing:-.03em;line-height:1.1}
+.plan-eyebrow{font-family:var(--font-body);font-size:13px;font-weight:700;letter-spacing:.12em;color:var(--warm);margin-bottom:20px;text-transform:uppercase}
+.plan-name{font-family:var(--font-head);font-size:64px;font-weight:700;color:var(--white);letter-spacing:-.03em;line-height:1.1;
+  text-shadow:0 0 60px rgba(201,169,110,.15)}
 .plan-tagline{font-size:18px;color:var(--text);margin-top:16px;max-width:540px;margin-left:auto;margin-right:auto}
 .plan-price-row{display:flex;align-items:baseline;justify-content:center;gap:12px;margin-top:32px}
 .plan-price{font-family:var(--font-head);font-size:64px;font-weight:700;color:var(--white);letter-spacing:-.03em}
@@ -85,11 +89,13 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-he
 .plan-compare a:hover{color:var(--accent)}
 
 @media(max-width:768px){
-  .plan-nav{padding:0 20px}
-  .plan-switcher{gap:2px;padding:2px}
-  .plan-sw-btn{padding:6px 12px;font-size:11px}
+  .plan-nav{padding:0 16px}
+  .plan-back-btn{padding:8px 16px;font-size:12px}
+  .plan-switcher-bar{padding:16px 20px 0}
+  .plan-switcher{gap:3px;padding:3px}
+  .plan-sw-btn{padding:10px 16px;font-size:12px}
   .plan-hero{padding:80px 20px 60px}
-  .plan-name{font-size:40px}
+  .plan-name{font-size:48px}
   .plan-price{font-size:48px}
   .plan-features{padding:40px 20px 80px}
   .plan-cta-section{padding:60px 20px}
@@ -100,12 +106,19 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-he
 
 <nav class="plan-nav">
   <a href="index.html" class="plan-nav-logo">Webnari</a>
+  <a href="index.html#pricing" class="plan-back-btn">
+    <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    All Plans
+  </a>
+</nav>
+
+<div class="plan-switcher-bar">
   <div class="plan-switcher">
     <a href="plan-starter.html" class="plan-sw-btn">Starter</a>
     <a href="plan-standard.html" class="plan-sw-btn">Standard</a>
     <a href="plan-premium.html" class="plan-sw-btn active">Premium</a>
   </div>
-</nav>
+</div>
 
 <section class="plan-hero">
   <div class="plan-eyebrow">PREMIUM PLAN</div>
@@ -209,7 +222,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--text);line-he
 <section class="plan-cta-section">
   <div class="plan-cta-title">Ready for the full package?</div>
   <div class="plan-cta-sub">Everything managed. Nothing left on the table.</div>
-  <a href="index.html" class="plan-cta-btn" onclick="event.preventDefault();window.location.href='index.html';setTimeout(()=>typeof openAuth==='function'&&openAuth(),500)">Start your project</a>
+  <a href="start.html" class="plan-cta-btn">Start your project</a>
 </section>
 
 <div class="plan-compare">
