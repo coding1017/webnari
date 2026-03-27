@@ -1208,11 +1208,9 @@ function initMobileShowcase(){
   // Pair 2: GreenScape + Pizza
   const wrap2=document.getElementById('mob-pair-wrap-2');
 
-  // Apply transforms to the wrapper (not sticky — sticky doesn't support 3D transforms well)
-  const tiltTarget1=wrap1;
-  const tiltTarget2=wrap2;
-  if(tiltTarget1)tiltTarget1.style.perspective='600px';
-  if(tiltTarget2)tiltTarget2.style.perspective='600px';
+  // Get the sticky containers for mobile-friendly transitions
+  const sticky1=wrap1?wrap1.querySelector('.mob-parallax-sticky'):null;
+  const sticky2=wrap2?wrap2.querySelector('.mob-parallax-sticky'):null;
 
   let ticking=false;
   function update(){
@@ -1227,18 +1225,12 @@ function initMobileShowcase(){
       const prog=.15+p*.75;
       window.__mobVoltProgress=prog;
       window.__mobRoofProgress=prog;
-      // 3D tilt exit at end of pair 1 (last 15% of scroll)
-      if(tiltTarget1){
-        const exitP=Math.max(0,(p-.85)/.15);
-        const exitEase=exitP*exitP*(3-2*exitP);
-        if(exitP>0){
-          tiltTarget1.style.transform=`rotateX(${exitEase*45}deg) scale(${1-exitEase*.25}) translateY(${exitEase*-60}px)`;
-          tiltTarget1.style.opacity=`${1-exitEase*.9}`;
-          tiltTarget1.style.transformOrigin='center bottom';
-        }else{
-          tiltTarget1.style.transform='none';
-          tiltTarget1.style.opacity='1';
-        }
+      // Exit: scale down + fade + slide up (mobile-safe, no 3D)
+      if(sticky1){
+        const exitP=Math.max(0,(p-.82)/.18);
+        const e=exitP*exitP;
+        sticky1.style.transform=exitP>0?`scale(${1-e*.35}) translateY(${-e*120}px)`:'none';
+        sticky1.style.opacity=exitP>0?`${1-e}`:'1';
       }
     }
     // Pair 2
@@ -1250,18 +1242,12 @@ function initMobileShowcase(){
       const prog=.15+p*.75;
       window.__mobGreenProgress=prog;
       window.__mobPizzaProgress=prog;
-      // 3D tilt exit at end of pair 2
-      if(tiltTarget2){
-        const exitP=Math.max(0,(p-.85)/.15);
-        const exitEase=exitP*exitP*(3-2*exitP);
-        if(exitP>0){
-          tiltTarget2.style.transform=`rotateX(${exitEase*55}deg) scale(${1-exitEase*.3}) translateY(${exitEase*-80}px)`;
-          tiltTarget2.style.opacity=`${1-exitEase}`;
-          tiltTarget2.style.transformOrigin='center bottom';
-        }else{
-          tiltTarget2.style.transform='none';
-          tiltTarget2.style.opacity='1';
-        }
+      // Exit: scale down + fade + slide up
+      if(sticky2){
+        const exitP=Math.max(0,(p-.82)/.18);
+        const e=exitP*exitP;
+        sticky2.style.transform=exitP>0?`scale(${1-e*.35}) translateY(${-e*120}px)`:'none';
+        sticky2.style.opacity=exitP>0?`${1-e}`:'1';
       }
     }
   }
