@@ -1,0 +1,1247 @@
+// Desktop Pizza Parallax — namespaced IDs (dp-*), timer-driven progress
+(function(){
+  "use strict";
+  var clamp = function(v,a,b){return v<a?a:v>b?b:v};
+  var lerp = function(a,b,t){return a+(b-a)*t};
+  var ease3 = function(t){return 1-Math.pow(1-t,3)};
+  var easeIn3 = function(t){return t*t*t};
+
+  // Timer-driven progress (set by parent page)
+  window.__deskPizzaProgress = 0.15;
+
+  var seqEl = document.getElementById('dp-hero');
+  var stickyEl = seqEl;
+  if(seqEl){
+    var bg = document.getElementById('dp-seqBg');
+    var sceneGlow = document.getElementById('dp-sceneGlow');
+    var sceneEnergize = document.getElementById('dp-sceneEnergize');
+    var scenePowered = document.getElementById('dp-scenePowered');
+    var intro = document.getElementById('dp-seqIntro');
+    var phaseEl = document.getElementById('dp-seqPhase');
+    var scrubFill = document.getElementById('dp-seqScrubFill');
+    var finalEl = document.getElementById('dp-seqFinal')||{style:{},classList:{add:function(){},remove:function(){}}};
+    var svg = document.getElementById('dp-sceneSvg');
+    var ns = 'http://www.w3.org/2000/svg';
+
+    function getProgress(){return window.__deskPizzaProgress;}
+
+    var lastPhase = '';
+    function setPhase(t){if(t===lastPhase)return;lastPhase=t;phaseEl.style.opacity='0';phaseEl.style.transform='translateY(7px)';setTimeout(function(){phaseEl.textContent=t;phaseEl.style.opacity='1';phaseEl.style.transform='translateY(0)'},190)}
+
+    function svgEl(tag,attrs){var e=document.createElementNS(ns,tag);for(var k in attrs){if(attrs.hasOwnProperty(k))e.setAttribute(k,String(attrs[k]))}return e}
+
+    // ═══ DEFS ═══
+    var defs = svgEl('defs',{});
+
+    // Marble slab gradient
+    var gMarble = svgEl('linearGradient',{id:'dp-marbleGrad',x1:'0',y1:'0',x2:'0.3',y2:'1'});
+    gMarble.appendChild(svgEl('stop',{offset:'0%','stop-color':'#E8E0D8'}));
+    gMarble.appendChild(svgEl('stop',{offset:'40%','stop-color':'#D8D0C8'}));
+    gMarble.appendChild(svgEl('stop',{offset:'70%','stop-color':'#E0D8D0'}));
+    gMarble.appendChild(svgEl('stop',{offset:'100%','stop-color':'#D0C8C0'}));
+    defs.appendChild(gMarble);
+
+    // Dough gradient (radial)
+    var gDough = svgEl('radialGradient',{id:'dp-doughGrad',cx:'45%',cy:'40%',r:'55%'});
+    gDough.appendChild(svgEl('stop',{offset:'0%','stop-color':'#F5E6C8'}));
+    gDough.appendChild(svgEl('stop',{offset:'100%','stop-color':'#E8D5A8'}));
+    defs.appendChild(gDough);
+
+    // Crust rim gradient
+    var gRim = svgEl('radialGradient',{id:'dp-rimGrad',cx:'50%',cy:'50%',r:'50%'});
+    gRim.appendChild(svgEl('stop',{offset:'75%','stop-color':'#E8D5A8'}));
+    gRim.appendChild(svgEl('stop',{offset:'100%','stop-color':'#DCC090'}));
+    defs.appendChild(gRim);
+
+    // Sauce gradient
+    var gSauce = svgEl('radialGradient',{id:'dp-sauceGrad',cx:'45%',cy:'42%',r:'55%'});
+    gSauce.appendChild(svgEl('stop',{offset:'0%','stop-color':'#A01010'}));
+    gSauce.appendChild(svgEl('stop',{offset:'100%','stop-color':'#C02020'}));
+    defs.appendChild(gSauce);
+
+    // Mozzarella gradient
+    var gMozz = svgEl('radialGradient',{id:'dp-mozzGrad',cx:'40%',cy:'35%',r:'60%'});
+    gMozz.appendChild(svgEl('stop',{offset:'0%','stop-color':'#FEFEFE'}));
+    gMozz.appendChild(svgEl('stop',{offset:'100%','stop-color':'#F0E8D0'}));
+    defs.appendChild(gMozz);
+
+    // Pepperoni gradient
+    var gPep = svgEl('radialGradient',{id:'dp-pepGrad',cx:'45%',cy:'40%',r:'55%'});
+    gPep.appendChild(svgEl('stop',{offset:'0%','stop-color':'#8B0000'}));
+    gPep.appendChild(svgEl('stop',{offset:'65%','stop-color':'#A52A2A'}));
+    gPep.appendChild(svgEl('stop',{offset:'100%','stop-color':'#6B0000'}));
+    defs.appendChild(gPep);
+
+    // Wood gradient (peel)
+    var gWood = svgEl('linearGradient',{id:'dp-woodGrad',x1:'0',y1:'0',x2:'0.1',y2:'1'});
+    gWood.appendChild(svgEl('stop',{offset:'0%','stop-color':'#D4A860'}));
+    gWood.appendChild(svgEl('stop',{offset:'50%','stop-color':'#C09840'}));
+    gWood.appendChild(svgEl('stop',{offset:'100%','stop-color':'#B08830'}));
+    defs.appendChild(gWood);
+
+    // Rolling pin wood
+    var gPin = svgEl('linearGradient',{id:'dp-pinGrad',x1:'0',y1:'0',x2:'0',y2:'1'});
+    gPin.appendChild(svgEl('stop',{offset:'0%','stop-color':'#B8844A'}));
+    gPin.appendChild(svgEl('stop',{offset:'50%','stop-color':'#A0522D'}));
+    gPin.appendChild(svgEl('stop',{offset:'100%','stop-color':'#8B4513'}));
+    defs.appendChild(gPin);
+
+    // Oven interior
+    var gOvenInt = svgEl('radialGradient',{id:'dp-ovenInterior',cx:'50%',cy:'60%',r:'60%'});
+    gOvenInt.appendChild(svgEl('stop',{offset:'0%','stop-color':'#1A0800'}));
+    gOvenInt.appendChild(svgEl('stop',{offset:'100%','stop-color':'#000000'}));
+    defs.appendChild(gOvenInt);
+
+    // Pan gradient
+    var gPan = svgEl('linearGradient',{id:'dp-panGrad',x1:'0',y1:'0',x2:'1',y2:'1'});
+    gPan.appendChild(svgEl('stop',{offset:'0%','stop-color':'#A8A8A8'}));
+    gPan.appendChild(svgEl('stop',{offset:'50%','stop-color':'#C8C8C8'}));
+    gPan.appendChild(svgEl('stop',{offset:'100%','stop-color':'#A0A0A0'}));
+    defs.appendChild(gPan);
+
+    // Cooked crust gradient
+    var gCooked = svgEl('radialGradient',{id:'dp-cookedGrad',cx:'50%',cy:'50%',r:'50%'});
+    gCooked.appendChild(svgEl('stop',{offset:'70%','stop-color':'#C0A040'}));
+    gCooked.appendChild(svgEl('stop',{offset:'100%','stop-color':'#B8860B'}));
+    defs.appendChild(gCooked);
+
+    // Steel gradient (cutter)
+    var gSteel = svgEl('linearGradient',{id:'dp-steelGrad',x1:'0',y1:'0',x2:'1',y2:'1'});
+    gSteel.appendChild(svgEl('stop',{offset:'0%','stop-color':'#D0D0D0'}));
+    gSteel.appendChild(svgEl('stop',{offset:'50%','stop-color':'#A0A0A0'}));
+    gSteel.appendChild(svgEl('stop',{offset:'100%','stop-color':'#C0C0C0'}));
+    defs.appendChild(gSteel);
+
+    // Flame gradient
+    var gFlame = svgEl('linearGradient',{id:'dp-flameGrad',x1:'0',y1:'1',x2:'0',y2:'0'});
+    gFlame.appendChild(svgEl('stop',{offset:'0%','stop-color':'#FF2200'}));
+    gFlame.appendChild(svgEl('stop',{offset:'50%','stop-color':'#FF6600'}));
+    gFlame.appendChild(svgEl('stop',{offset:'100%','stop-color':'#FFD700'}));
+    defs.appendChild(gFlame);
+
+    // Glow filter
+    var fGlow = svgEl('filter',{id:'dp-glow',x:'-50%',y:'-50%',width:'200%',height:'200%'});
+    fGlow.appendChild(svgEl('feGaussianBlur',{in:'SourceGraphic',stdDeviation:'3',result:'blur'}));
+    var feMergeG = svgEl('feMerge',{});
+    feMergeG.appendChild(svgEl('feMergeNode',{in:'blur'}));
+    feMergeG.appendChild(svgEl('feMergeNode',{in:'SourceGraphic'}));
+    fGlow.appendChild(feMergeG);
+    defs.appendChild(fGlow);
+
+    svg.appendChild(defs);
+
+    // ═══ SCENE LAYOUT ═══
+    var cx = 525, cy = 300;
+    var isMobile = window.innerWidth<768;
+    var slabW = isMobile?900:620, slabH = isMobile?380:400;
+    var slabX = cx-slabW/2, slabY = cy-slabH/2+20;
+
+    // Pizza dimensions
+    var pizzaR = isMobile?250:170;
+    var sauceR = pizzaR-30;
+
+    // ─── 1. MARBLE SLAB ───
+    var gSlab = svgEl('g',{opacity:0});
+    gSlab.appendChild(svgEl('rect',{x:slabX+5,y:slabY+5,width:slabW,height:slabH,rx:10,fill:'#000',opacity:0.18}));
+    gSlab.appendChild(svgEl('rect',{x:slabX,y:slabY,width:slabW,height:slabH,rx:10,fill:'url(#dp-marbleGrad)',stroke:'#C0B8B0','stroke-width':1.5}));
+    // Marble veins
+    var veins=[
+      'M'+(slabX+80)+' '+(slabY+60)+' Q'+(slabX+200)+' '+(slabY+120)+' '+(slabX+350)+' '+(slabY+90),
+      'M'+(slabX+150)+' '+(slabY+200)+' Q'+(slabX+320)+' '+(slabY+260)+' '+(slabX+500)+' '+(slabY+220),
+      'M'+(slabX+40)+' '+(slabY+310)+' Q'+(slabX+180)+' '+(slabY+350)+' '+(slabX+400)+' '+(slabY+330)
+    ];
+    for(var vi=0;vi<veins.length;vi++){
+      gSlab.appendChild(svgEl('path',{d:veins[vi],fill:'none',stroke:'#C8C0B8','stroke-width':0.8,opacity:0.2}));
+    }
+    // Flour dust on surface
+    var flourCount = isMobile?12:8;
+    for(var fi=0;fi<flourCount;fi++){
+      gSlab.appendChild(svgEl('circle',{cx:slabX+40+Math.random()*(slabW-80),cy:slabY+30+Math.random()*(slabH-60),r:1+Math.random()*2.5,fill:'#F8F4F0',opacity:0.3+Math.random()*0.2}));
+    }
+    gSlab.appendChild(svgEl('rect',{x:slabX+2,y:slabY+2,width:slabW-4,height:3,rx:1,fill:'#FFF',opacity:0.08}));
+    svg.appendChild(gSlab);
+
+    // ─── 2. DOUGH BALL ───
+    var gDoughBall = svgEl('g',{opacity:0});
+    var ballR = isMobile?80:60;
+    // Shadow
+    gDoughBall.appendChild(svgEl('ellipse',{cx:cx,cy:cy+ballR*0.7,rx:ballR*0.9,ry:ballR*0.25,fill:'#000',opacity:0.12}));
+    // Main ball
+    gDoughBall.appendChild(svgEl('circle',{cx:cx,cy:cy,r:ballR,fill:'url(#dp-doughGrad)',stroke:'#D4C090','stroke-width':1}));
+    // Surface fold lines
+    var folds=[
+      'M'+(cx-ballR*0.3)+' '+(cy-ballR*0.1)+' Q'+cx+' '+(cy-ballR*0.35)+' '+(cx+ballR*0.4)+' '+(cy-ballR*0.05),
+      'M'+(cx-ballR*0.15)+' '+(cy+ballR*0.1)+' Q'+(cx+ballR*0.1)+' '+(cy+ballR*0.35)+' '+(cx+ballR*0.3)+' '+(cy+ballR*0.15),
+      'M'+(cx+ballR*0.05)+' '+(cy-ballR*0.4)+' Q'+(cx+ballR*0.25)+' '+(cy-ballR*0.1)+' '+(cx+ballR*0.1)+' '+(cy+ballR*0.2)
+    ];
+    for(var fdi=0;fdi<folds.length;fdi++){
+      gDoughBall.appendChild(svgEl('path',{d:folds[fdi],fill:'none',stroke:'#D4C090','stroke-width':1,opacity:0.35}));
+    }
+    // Highlight
+    gDoughBall.appendChild(svgEl('ellipse',{cx:cx-ballR*0.25,cy:cy-ballR*0.3,rx:ballR*0.3,ry:ballR*0.2,fill:'#FFF',opacity:0.12}));
+    // Flour dusting around ball
+    var ballFlourCount = isMobile?18:12;
+    for(var bfi=0;bfi<ballFlourCount;bfi++){
+      var bfa = bfi*Math.PI*2/ballFlourCount;
+      var bfd = ballR+5+Math.random()*20;
+      gDoughBall.appendChild(svgEl('circle',{cx:cx+Math.cos(bfa)*bfd,cy:cy+Math.sin(bfa)*bfd*0.6,r:0.8+Math.random()*1.5,fill:'#FFF',opacity:0.2+Math.random()*0.2}));
+    }
+    svg.appendChild(gDoughBall);
+
+    // ─── 3. ROLLING PIN ───
+    var gPin_g = svgEl('g',{opacity:0});
+    var pinW = isMobile?320:220, pinH = 28, pinHandleW = 50;
+    var pinX = cx-pinW/2, pinY = cy-80;
+    // Left handle
+    gPin_g.appendChild(svgEl('rect',{x:pinX-pinHandleW,y:pinY-pinH/2+4,width:pinHandleW,height:pinH-8,rx:6,fill:'#6B3A1A',stroke:'#5A2A10','stroke-width':1}));
+    // Main cylinder
+    gPin_g.appendChild(svgEl('rect',{x:pinX,y:pinY-pinH/2,width:pinW,height:pinH,rx:pinH/2,fill:'url(#dp-pinGrad)',stroke:'#7A4A2A','stroke-width':1}));
+    // Highlight strip
+    gPin_g.appendChild(svgEl('rect',{x:pinX+20,y:pinY-pinH/2+3,width:pinW-40,height:5,rx:2,fill:'#D4A870',opacity:0.3}));
+    // Right handle
+    gPin_g.appendChild(svgEl('rect',{x:pinX+pinW,y:pinY-pinH/2+4,width:pinHandleW,height:pinH-8,rx:6,fill:'#6B3A1A',stroke:'#5A2A10','stroke-width':1}));
+    // Metal rod
+    gPin_g.appendChild(svgEl('line',{x1:pinX-pinHandleW,y1:pinY,x2:pinX+pinW+pinHandleW,y2:pinY,stroke:'#999','stroke-width':2,opacity:0.3}));
+    svg.appendChild(gPin_g);
+
+    // ─── 4. FLAT DOUGH DISC ───
+    var gDisc = svgEl('g',{opacity:0});
+    // Shadow
+    gDisc.appendChild(svgEl('ellipse',{cx:cx,cy:cy+pizzaR*0.15,rx:pizzaR+8,ry:pizzaR*0.25+8,fill:'#000',opacity:0.1}));
+    // Main disc
+    gDisc.appendChild(svgEl('circle',{cx:cx,cy:cy,r:pizzaR,fill:'url(#dp-doughGrad)',stroke:'#D4C090','stroke-width':1}));
+    // Raised rim
+    gDisc.appendChild(svgEl('circle',{cx:cx,cy:cy,r:pizzaR,fill:'none',stroke:'#DCC090','stroke-width':isMobile?8:6,opacity:0.3}));
+    // Air bubbles
+    var bubbleCount = isMobile?8:5;
+    for(var bi=0;bi<bubbleCount;bi++){
+      var ba = Math.random()*Math.PI*2;
+      var bd = 30+Math.random()*(pizzaR-60);
+      gDisc.appendChild(svgEl('circle',{cx:cx+Math.cos(ba)*bd,cy:cy+Math.sin(ba)*bd,r:2+Math.random()*3,fill:'#F5E6C8',opacity:0.35}));
+    }
+    // Flour beneath
+    for(var dfi=0;dfi<15;dfi++){
+      var dfa = Math.random()*Math.PI*2;
+      var dfd = pizzaR+3+Math.random()*15;
+      gDisc.appendChild(svgEl('circle',{cx:cx+Math.cos(dfa)*dfd,cy:cy+Math.sin(dfa)*dfd,r:0.8+Math.random()*1.5,fill:'#FFF',opacity:0.2}));
+    }
+    svg.appendChild(gDisc);
+
+    // ─── 5. SAUCE LAYER ───
+    var gSauce_g = svgEl('g',{opacity:0});
+    var sauceCircle = svgEl('circle',{cx:cx,cy:cy,r:sauceR,fill:'url(#dp-sauceGrad)',opacity:0.95});
+    gSauce_g.appendChild(sauceCircle);
+    // Sauce texture dots
+    var sauceDotsArr = [];
+    var sauceDotCount = isMobile?12:8;
+    for(var sdi=0;sdi<sauceDotCount;sdi++){
+      var sda = Math.random()*Math.PI*2;
+      var sdd = 15+Math.random()*(sauceR-30);
+      var sdot = svgEl('circle',{cx:cx+Math.cos(sda)*sdd,cy:cy+Math.sin(sda)*sdd,r:1.5+Math.random()*2,fill:'#801010',opacity:0.3});
+      gSauce_g.appendChild(sdot);
+      sauceDotsArr.push(sdot);
+    }
+    svg.appendChild(gSauce_g);
+
+    // ─── 5b. LADLE ───
+    var gLadle = svgEl('g',{opacity:0});
+    var ladleX = cx+pizzaR+60, ladleY = cy-100;
+    // Handle
+    gLadle.appendChild(svgEl('line',{x1:ladleX,y1:ladleY-80,x2:ladleX,y2:ladleY+10,stroke:'#999','stroke-width':5,'stroke-linecap':'round'}));
+    gLadle.appendChild(svgEl('line',{x1:ladleX+1,y1:ladleY-80,x2:ladleX+1,y2:ladleY+10,stroke:'#CCC','stroke-width':2,'stroke-linecap':'round',opacity:0.4}));
+    // Bowl
+    gLadle.appendChild(svgEl('path',{d:'M'+(ladleX-20)+' '+(ladleY+10)+' Q'+(ladleX-25)+' '+(ladleY+40)+' '+ladleX+' '+(ladleY+45)+' Q'+(ladleX+25)+' '+(ladleY+40)+' '+(ladleX+20)+' '+(ladleY+10),fill:'#888',stroke:'#777','stroke-width':1}));
+    // Sauce in bowl
+    gLadle.appendChild(svgEl('path',{d:'M'+(ladleX-17)+' '+(ladleY+14)+' Q'+(ladleX-20)+' '+(ladleY+36)+' '+ladleX+' '+(ladleY+40)+' Q'+(ladleX+20)+' '+(ladleY+36)+' '+(ladleX+17)+' '+(ladleY+14),fill:'#B22222'}));
+    svg.appendChild(gLadle);
+
+    // ─── 6. MOZZARELLA PIECES ───
+    var gMozz_g = svgEl('g',{opacity:0});
+    var mozzPieces = [];
+    var mozzPosArr = [];
+    var mozzGridStep = isMobile?34:28;
+    for(var mgx=-sauceR;mgx<=sauceR;mgx+=mozzGridStep){
+      for(var mgy=-sauceR;mgy<=sauceR;mgy+=mozzGridStep){
+        var mgDist = Math.sqrt(mgx*mgx+mgy*mgy);
+        if(mgDist<sauceR-2){
+          mozzPosArr.push({x:cx+mgx+(Math.random()-0.5)*12, y:cy+mgy+(Math.random()-0.5)*12});
+        }
+      }
+    }
+    var mozzCount = mozzPosArr.length;
+    for(var mzi=0;mzi<mozzCount;mzi++){
+      var mzx = mozzPosArr[mzi].x;
+      var mzy = mozzPosArr[mzi].y;
+      var mzg = svgEl('g',{opacity:0});
+
+      // Shadow
+      mzg.appendChild(svgEl('ellipse',{cx:mzx+1,cy:mzy+1,rx:8+Math.random()*4,ry:6+Math.random()*3,fill:'#000',opacity:0.06}));
+
+      // Irregular torn blob
+      var mzR = 8+Math.random()*7;
+      var mzPts = 6+Math.floor(Math.random()*3);
+      var mzPath = '';
+      var mzPoints = [];
+      for(var mp=0;mp<mzPts;mp++){
+        var mpA = mp*Math.PI*2/mzPts;
+        var mpR = mzR*(0.7+Math.random()*0.6);
+        mzPoints.push({x:mzx+Math.cos(mpA)*mpR,y:mzy+Math.sin(mpA)*mpR});
+      }
+      mzPath = 'M'+mzPoints[0].x+' '+mzPoints[0].y;
+      for(var mp2=0;mp2<mzPts;mp2++){
+        var p0 = mzPoints[(mp2-1+mzPts)%mzPts],p1 = mzPoints[mp2],p2 = mzPoints[(mp2+1)%mzPts],p3 = mzPoints[(mp2+2)%mzPts];
+        var c1x = p1.x+(p2.x-p0.x)/5,c1y = p1.y+(p2.y-p0.y)/5;
+        var c2x = p2.x-(p3.x-p1.x)/5,c2y = p2.y-(p3.y-p1.y)/5;
+        mzPath += ' C'+c1x+' '+c1y+' '+c2x+' '+c2y+' '+p2.x+' '+p2.y;
+      }
+      mzPath += ' Z';
+      mzg.appendChild(svgEl('path',{d:mzPath,fill:'url(#dp-mozzGrad)',stroke:'#E8E0D0','stroke-width':0.5}));
+
+      // Wet shine highlight
+      mzg.appendChild(svgEl('ellipse',{cx:mzx-mzR*0.2,cy:mzy-mzR*0.2,rx:mzR*0.3,ry:mzR*0.2,fill:'#FFF',opacity:0.25}));
+      // Milk seep dot
+      mzg.appendChild(svgEl('circle',{cx:mzx+mzR*0.4,cy:mzy+mzR*0.3,r:1,fill:'#FFF',opacity:0.4}));
+
+      gMozz_g.appendChild(mzg);
+      mozzPieces.push(mzg);
+    }
+    svg.appendChild(gMozz_g);
+
+    // ─── 8. PEPPERONI ───
+    var gPep_g = svgEl('g',{opacity:0});
+    var pepSlices = [];
+    var pepPosArr = [];
+    var pepGridStep = isMobile?38:32;
+    for(var pgx=-sauceR+15;pgx<sauceR-15;pgx+=pepGridStep){
+      for(var pgy=-sauceR+15;pgy<sauceR-15;pgy+=pepGridStep){
+        var pgDist = Math.sqrt(pgx*pgx+pgy*pgy);
+        if(pgDist<sauceR-12){
+          pepPosArr.push({x:cx+pgx+(Math.random()-0.5)*10, y:cy+pgy+(Math.random()-0.5)*10});
+        }
+      }
+    }
+    var pepCount = pepPosArr.length;
+    for(var ppi=0;ppi<pepCount;ppi++){
+      var ppx = pepPosArr[ppi].x;
+      var ppy = pepPosArr[ppi].y;
+      var ppR = 10+Math.random()*4;
+      var ppg = svgEl('g',{opacity:0});
+
+      // Shadow
+      ppg.appendChild(svgEl('circle',{cx:ppx+1,cy:ppy+1,r:ppR+1,fill:'#000',opacity:0.08}));
+      // Main slice
+      ppg.appendChild(svgEl('circle',{cx:ppx,cy:ppy,r:ppR,fill:'url(#dp-pepGrad)',stroke:'#5A0000','stroke-width':0.8}));
+      // Fat specks
+      var fatCount = 4+Math.floor(Math.random()*3);
+      for(var fsi=0;fsi<fatCount;fsi++){
+        var fsa = fsi*Math.PI*2/fatCount+ppi*0.3;
+        var fsr = 3+Math.random()*(ppR-5);
+        ppg.appendChild(svgEl('circle',{cx:ppx+Math.cos(fsa)*fsr,cy:ppy+Math.sin(fsa)*fsr,r:0.8+Math.random()*1,fill:'#F8E0E0',opacity:0.4}));
+      }
+      // Oil sheen
+      ppg.appendChild(svgEl('ellipse',{cx:ppx-ppR*0.2,cy:ppy-ppR*0.25,rx:ppR*0.35,ry:ppR*0.2,fill:'#FF6600',opacity:0.12}));
+
+      gPep_g.appendChild(ppg);
+      pepSlices.push(ppg);
+    }
+    svg.appendChild(gPep_g);
+
+    // ─── 9. BASIL LEAVES ───
+    var gBasil = svgEl('g',{opacity:0});
+    var basilLeaves = [];
+    var basilCount = isMobile?30:20;
+    for(var bli=0;bli<basilCount;bli++){
+      var bla, bld;
+      if(bli<3){
+        bla = Math.random()*Math.PI*2;
+        bld = Math.random()*sauceR*0.2;
+      } else if(bli<7){
+        bla = Math.PI*0.3+Math.random()*Math.PI*0.4;
+        bld = sauceR*0.6+Math.random()*sauceR*0.3;
+      } else {
+        bla = bli*Math.PI*2/basilCount+0.5+Math.random()*0.5;
+        bld = sauceR*0.15+Math.random()*sauceR*0.7;
+      }
+      var blx = cx+Math.cos(bla)*bld;
+      var bly = cy+Math.sin(bla)*bld;
+      var blRot = -15+Math.random()*30;
+      var blg = svgEl('g',{opacity:0,transform:'rotate('+blRot+','+blx+','+bly+')'});
+
+      var leafW = 20+Math.random()*8, leafH = 30+Math.random()*10;
+      blg.appendChild(svgEl('path',{
+        d:'M'+blx+' '+(bly-leafH/2)+' Q'+(blx+leafW/2)+' '+(bly-leafH*0.2)+' '+blx+' '+(bly+leafH/2)+' Q'+(blx-leafW/2)+' '+(bly-leafH*0.2)+' '+blx+' '+(bly-leafH/2),
+        fill:'#228B22',stroke:'#1B5E20','stroke-width':0.5
+      }));
+      blg.appendChild(svgEl('line',{x1:blx,y1:bly-leafH/2+3,x2:blx,y2:bly+leafH/2-3,stroke:'#2E7D32','stroke-width':0.8,opacity:0.6}));
+      blg.appendChild(svgEl('line',{x1:blx,y1:bly-leafH*0.15,x2:blx+leafW*0.3,y2:bly-leafH*0.3,stroke:'#2E7D32','stroke-width':0.4,opacity:0.4}));
+      blg.appendChild(svgEl('line',{x1:blx,y1:bly+leafH*0.05,x2:blx-leafW*0.3,y2:bly-leafH*0.1,stroke:'#2E7D32','stroke-width':0.4,opacity:0.4}));
+
+      gBasil.appendChild(blg);
+      basilLeaves.push(blg);
+    }
+    svg.appendChild(gBasil);
+
+    // ─── 9b. OREGANO FLAKES ───
+    var oreganoFlakes = [];
+    var oreganoCount = isMobile?180:120;
+    for(var oi=0;oi<oreganoCount;oi++){
+      var oa = Math.random()*Math.PI*2;
+      var od = Math.random()*sauceR;
+      var oflake = svgEl('circle',{cx:cx+Math.cos(oa)*od,cy:cy+Math.sin(oa)*od,r:0.5+Math.random()*1,fill:'#2E4A1E',opacity:0});
+      gBasil.appendChild(oflake);
+      oreganoFlakes.push(oflake);
+    }
+
+    // ─── 10. PIZZA PEEL ───
+    var gPeel = svgEl('g',{opacity:0});
+    var peelW = isMobile?580:400, peelH = isMobile?500:380;
+    var peelHandleLen = isMobile?260:200, peelHandleThk = 34;
+    var peelX = cx-peelW/2-20, peelY = cy-peelH/2+10;
+    // Paddle
+    gPeel.appendChild(svgEl('rect',{x:peelX,y:peelY,width:peelW,height:peelH,rx:20,fill:'url(#dp-woodGrad)',stroke:'#A08030','stroke-width':1.5}));
+    // Wood grain
+    for(var gi=0;gi<8;gi++){
+      var gy = peelY+20+gi*(peelH-40)/8;
+      gPeel.appendChild(svgEl('line',{x1:peelX+10,y1:gy+Math.sin(gi)*4,x2:peelX+peelW-10,y2:gy+Math.cos(gi)*3,stroke:'#B08830','stroke-width':0.6,opacity:0.2}));
+    }
+    // Handle on RIGHT side
+    var handleX = peelX+peelW;
+    var handleY = cy-peelHandleThk/2;
+    gPeel.appendChild(svgEl('rect',{x:handleX,y:handleY,width:peelHandleLen,height:peelHandleThk,rx:8,fill:'#B08830',stroke:'#907020','stroke-width':1}));
+    // Metal rivets
+    gPeel.appendChild(svgEl('circle',{cx:handleX+18,cy:cy,r:3,fill:'#999'}));
+    gPeel.appendChild(svgEl('circle',{cx:handleX+peelHandleLen-18,cy:cy,r:3,fill:'#999'}));
+    svg.insertBefore(gPeel, gDisc);
+
+    // ─── 11. INSIDE-OVEN SCENE ───
+    var vbW = 1050, vbH = 600;
+    var gOvenScene = svgEl('g',{opacity:0});
+
+    var ovenBgRect = svgEl('rect',{x:0,y:0,width:vbW,height:vbH,fill:'#0A0400',rx:0});
+    gOvenScene.appendChild(ovenBgRect);
+
+    var ceilPath = 'M0 '+(vbH*0.15)+' Q'+(vbW*0.5)+' '+(-vbH*0.15)+' '+vbW+' '+(vbH*0.15)+' L'+vbW+' 0 L0 0 Z';
+    gOvenScene.appendChild(svgEl('path',{d:ceilPath,fill:'#3A1808'}));
+
+    var ovenBrickColors = ['#8B4513','#A0522D','#6B3410','#7A4020','#9B5A30','#884818'];
+    for(var obi=0;obi<30;obi++){
+      var obx = 20+Math.random()*(vbW-40);
+      var oby = Math.random()*vbH*0.15;
+      gOvenScene.appendChild(svgEl('rect',{
+        x:obx,y:oby,width:28+Math.random()*12,height:12+Math.random()*5,rx:2,
+        fill:ovenBrickColors[obi%6],
+        stroke:'#2A0E04','stroke-width':0.8,opacity:0.5+Math.random()*0.3
+      }));
+    }
+
+    var ovenFloorY = vbH*0.72;
+    gOvenScene.appendChild(svgEl('rect',{x:0,y:ovenFloorY,width:vbW,height:vbH-ovenFloorY,fill:'#2A1808'}));
+    for(var fbi=0;fbi<20;fbi++){
+      var fbx = fbi*(vbW/10)+(Math.random()-0.5)*10;
+      var fby = ovenFloorY+5+Math.random()*(vbH-ovenFloorY-20);
+      gOvenScene.appendChild(svgEl('rect',{
+        x:fbx,y:fby,width:vbW/10-3,height:18,rx:1,
+        fill:'#3A2010',stroke:'#1A0A04','stroke-width':0.5,opacity:0.6
+      }));
+    }
+
+    // Flames along ceiling
+    var ovenFlames = [];
+    var ovenFlameCount = 8;
+    for(var ofi=0;ofi<ovenFlameCount;ofi++){
+      var ofx = 60+ofi*((vbW-120)/(ovenFlameCount-1));
+      var ofH = 40+Math.random()*30;
+      var ofBase = vbH*0.12;
+      var ofPath = 'M'+(ofx-8)+' '+ofBase+
+        ' Q'+(ofx-10)+' '+(ofBase+ofH*0.5)+' '+(ofx-2)+' '+(ofBase+ofH*0.8)+
+        ' Q'+ofx+' '+(ofBase+ofH)+' '+(ofx+2)+' '+(ofBase+ofH*0.75)+
+        ' Q'+(ofx+10)+' '+(ofBase+ofH*0.4)+' '+(ofx+8)+' '+ofBase+' Z';
+      var oflame = svgEl('path',{d:ofPath,fill:'url(#dp-flameGrad)',opacity:0.85});
+      gOvenScene.appendChild(oflame);
+      ovenFlames.push(oflame);
+    }
+
+    gOvenScene.appendChild(svgEl('rect',{x:0,y:0,width:vbW,height:vbH*0.2,fill:'#FF4400',opacity:0.06}));
+
+    // Embers
+    var ovenEmbers = [];
+    for(var oei=0;oei<12;oei++){
+      var oex = 40+Math.random()*(vbW-80);
+      var oey = ovenFloorY+2+Math.random()*6;
+      var oemb = svgEl('circle',{cx:oex,cy:oey,r:1+Math.random()*2,fill:Math.random()>0.5?'#FF4400':'#FF8800',opacity:0.3+Math.random()*0.3});
+      gOvenScene.appendChild(oemb);
+      ovenEmbers.push(oemb);
+    }
+
+    // Pizza on oven floor
+    var ovenPizzaR = Math.min(vbW,vbH)*0.22;
+    var ovenPizzaCx = vbW*0.5;
+    var ovenPizzaCy = ovenFloorY-ovenPizzaR*0.15;
+    var ovenPizzaSauceR = ovenPizzaR-12;
+
+    // Raw pizza in oven
+    var gOvenPizzaRaw = svgEl('g',{opacity:1});
+    gOvenPizzaRaw.appendChild(svgEl('ellipse',{cx:ovenPizzaCx,cy:ovenPizzaCy,rx:ovenPizzaR,ry:ovenPizzaR*0.55,fill:'#E8D5A8',stroke:'#C8A868','stroke-width':1.5}));
+    gOvenPizzaRaw.appendChild(svgEl('ellipse',{cx:ovenPizzaCx,cy:ovenPizzaCy,rx:ovenPizzaR,ry:ovenPizzaR*0.55,fill:'none',stroke:'#D4B878','stroke-width':8,opacity:0.4}));
+    gOvenPizzaRaw.appendChild(svgEl('ellipse',{cx:ovenPizzaCx,cy:ovenPizzaCy,rx:ovenPizzaSauceR,ry:ovenPizzaSauceR*0.55,fill:'#B02020',opacity:0.9}));
+    for(var omci=0;omci<60;omci++){
+      var omcAngle = Math.random()*Math.PI*2;
+      var omcDist = Math.random()*ovenPizzaSauceR*0.95;
+      var omcx = ovenPizzaCx+Math.cos(omcAngle)*omcDist;
+      var omcy = ovenPizzaCy+Math.sin(omcAngle)*omcDist*0.55;
+      gOvenPizzaRaw.appendChild(svgEl('ellipse',{cx:omcx,cy:omcy,rx:12+Math.random()*10,ry:7+Math.random()*5,fill:'#FFF5E0',opacity:0.75}));
+    }
+    for(var oppi=0;oppi<12;oppi++){
+      var oppAngle = Math.random()*Math.PI*2;
+      var oppDist = Math.random()*ovenPizzaSauceR*0.85;
+      gOvenPizzaRaw.appendChild(svgEl('ellipse',{cx:ovenPizzaCx+Math.cos(oppAngle)*oppDist,cy:ovenPizzaCy+Math.sin(oppAngle)*oppDist*0.55,rx:5+Math.random()*2,ry:3+Math.random()*1.5,fill:'#8B0000',opacity:0.85}));
+    }
+    for(var obli=0;obli<10;obli++){
+      var oblAngle = Math.random()*Math.PI*2;
+      var oblDist = Math.random()*ovenPizzaSauceR*0.8;
+      gOvenPizzaRaw.appendChild(svgEl('ellipse',{cx:ovenPizzaCx+Math.cos(oblAngle)*oblDist,cy:ovenPizzaCy+Math.sin(oblAngle)*oblDist*0.55,rx:5+Math.random()*2,ry:3+Math.random(),fill:'#228B22',opacity:0.7}));
+    }
+    gOvenScene.appendChild(gOvenPizzaRaw);
+
+    // Cooked pizza in oven
+    var gOvenPizzaCooked = svgEl('g',{opacity:0});
+    gOvenPizzaCooked.appendChild(svgEl('ellipse',{cx:ovenPizzaCx,cy:ovenPizzaCy,rx:ovenPizzaR,ry:ovenPizzaR*0.55,fill:'#C8A040',stroke:'#8B6914','stroke-width':1.5}));
+    gOvenPizzaCooked.appendChild(svgEl('ellipse',{cx:ovenPizzaCx,cy:ovenPizzaCy,rx:ovenPizzaR,ry:ovenPizzaR*0.55,fill:'none',stroke:'#B8860B','stroke-width':8,opacity:0.5}));
+    gOvenPizzaCooked.appendChild(svgEl('ellipse',{cx:ovenPizzaCx,cy:ovenPizzaCy,rx:ovenPizzaSauceR,ry:ovenPizzaSauceR*0.55,fill:'#901010',opacity:0.85}));
+    for(var lci=0;lci<6;lci++){
+      var lca = lci*Math.PI*2/6+Math.random()*0.5;
+      var lcd = ovenPizzaR-6;
+      gOvenPizzaCooked.appendChild(svgEl('ellipse',{
+        cx:ovenPizzaCx+Math.cos(lca)*lcd,cy:ovenPizzaCy+Math.sin(lca)*lcd*0.55,
+        rx:3+Math.random()*3,ry:2+Math.random()*2,fill:'#3A1A00',opacity:0.45
+      }));
+    }
+    for(var cmci=0;cmci<60;cmci++){
+      var cmcAngle = Math.random()*Math.PI*2;
+      var cmcDist = Math.random()*ovenPizzaSauceR*0.95;
+      var cmcx = ovenPizzaCx+Math.cos(cmcAngle)*cmcDist;
+      var cmcy = ovenPizzaCy+Math.sin(cmcAngle)*cmcDist*0.55;
+      gOvenPizzaCooked.appendChild(svgEl('ellipse',{cx:cmcx,cy:cmcy,rx:12+Math.random()*10,ry:7+Math.random()*5,fill:'#FFF8DC',opacity:0.7}));
+      if(Math.random()>0.4) gOvenPizzaCooked.appendChild(svgEl('ellipse',{cx:cmcx+2,cy:cmcy,rx:2,ry:1,fill:'#8B6914',opacity:0.3}));
+    }
+    for(var cppi=0;cppi<12;cppi++){
+      var cppAngle = Math.random()*Math.PI*2;
+      var cppDist = Math.random()*ovenPizzaSauceR*0.85;
+      gOvenPizzaCooked.appendChild(svgEl('ellipse',{cx:ovenPizzaCx+Math.cos(cppAngle)*cppDist,cy:ovenPizzaCy+Math.sin(cppAngle)*cppDist*0.55,rx:5+Math.random()*2,ry:3+Math.random()*1.5,fill:'#7A0000',opacity:0.85}));
+    }
+    for(var cbli=0;cbli<10;cbli++){
+      var cblAngle = Math.random()*Math.PI*2;
+      var cblDist = Math.random()*ovenPizzaSauceR*0.8;
+      gOvenPizzaCooked.appendChild(svgEl('ellipse',{cx:ovenPizzaCx+Math.cos(cblAngle)*cblDist,cy:ovenPizzaCy+Math.sin(cblAngle)*cblDist*0.55,rx:5+Math.random()*2,ry:3+Math.random(),fill:'#1A6B1A',opacity:0.65}));
+    }
+    gOvenScene.appendChild(gOvenPizzaCooked);
+
+    // Ambient warm glow overlay
+    var ovenGlowRect = svgEl('rect',{x:0,y:0,width:vbW,height:vbH,fill:'#FF4400',opacity:0,rx:0});
+    gOvenScene.appendChild(ovenGlowRect);
+
+    svg.appendChild(gOvenScene);
+
+    // Floor flames
+    var ovenFloorFlames = [];
+    var pizzaLeftEdge = ovenPizzaCx-ovenPizzaR-20;
+    var pizzaRightEdge = ovenPizzaCx+ovenPizzaR+20;
+    var floorFlamePositions = [];
+    for(var ffi=0;ffi<5;ffi++) floorFlamePositions.push(40+ffi*((pizzaLeftEdge-40)/4));
+    for(var ffi2=0;ffi2<5;ffi2++) floorFlamePositions.push(pizzaRightEdge+ffi2*((vbW-40-pizzaRightEdge)/4));
+    var floorFlameCount = floorFlamePositions.length;
+    for(var offi=0;offi<floorFlameCount;offi++){
+      var offx = floorFlamePositions[offi];
+      var offH = 20+Math.random()*18;
+      var offBase = ovenFloorY;
+      var offPath = 'M'+(offx-6)+' '+offBase+
+        ' Q'+(offx-8)+' '+(offBase-offH*0.4)+' '+(offx-1)+' '+(offBase-offH*0.8)+
+        ' Q'+offx+' '+(offBase-offH)+' '+(offx+1)+' '+(offBase-offH*0.75)+
+        ' Q'+(offx+8)+' '+(offBase-offH*0.35)+' '+(offx+6)+' '+offBase+' Z';
+      var offl = svgEl('path',{d:offPath,fill:'url(#dp-flameGrad)',opacity:0.7});
+      gOvenScene.insertBefore(offl, gOvenPizzaRaw);
+      ovenFloorFlames.push(offl);
+    }
+
+    // ─── 12. COOKED PIZZA ───
+    var gCooked_g = svgEl('g',{opacity:0});
+    gCooked_g.appendChild(svgEl('circle',{cx:cx,cy:cy,r:pizzaR,fill:'url(#dp-cookedGrad)',stroke:'#8B6914','stroke-width':1.5}));
+    gCooked_g.appendChild(svgEl('circle',{cx:cx,cy:cy,r:pizzaR,fill:'none',stroke:'#B8860B','stroke-width':isMobile?16:12,opacity:0.5}));
+    gCooked_g.appendChild(svgEl('circle',{cx:cx,cy:cy,r:sauceR,fill:'#901010',opacity:0.85}));
+
+    var charCount = isMobile?10:6;
+    for(var chi=0;chi<charCount;chi++){
+      var cha = chi*Math.PI*2/charCount+Math.random()*0.5;
+      var chd = pizzaR-8;
+      gCooked_g.appendChild(svgEl('ellipse',{
+        cx:cx+Math.cos(cha)*chd,cy:cy+Math.sin(cha)*chd,
+        rx:3+Math.random()*4,ry:2+Math.random()*3,
+        fill:'#3A1A00',opacity:0.5+Math.random()*0.2,
+        transform:'rotate('+(Math.random()*60)+','+(cx+Math.cos(cha)*chd)+','+(cy+Math.sin(cha)*chd)+')'
+      }));
+    }
+
+    for(var mli=0;mli<mozzPosArr.length;mli++){
+      var mlx = mozzPosArr[mli].x+(Math.random()-0.5)*6;
+      var mly = mozzPosArr[mli].y+(Math.random()-0.5)*6;
+      var mlR = 16+Math.random()*12;
+      gCooked_g.appendChild(svgEl('circle',{cx:mlx,cy:mly,r:mlR,fill:'#FFF8DC',opacity:0.7}));
+      if(Math.random()>0.4){
+        gCooked_g.appendChild(svgEl('circle',{cx:mlx+3,cy:mly-2,r:1.5+Math.random(),fill:'#8B6914',opacity:0.35}));
+      }
+    }
+
+    for(var cpi=0;cpi<pepPosArr.length;cpi++){
+      var cpx = pepPosArr[cpi].x+(Math.random()-0.5)*4;
+      var cpy = pepPosArr[cpi].y+(Math.random()-0.5)*4;
+      var cpR = 9+Math.random()*3;
+      gCooked_g.appendChild(svgEl('circle',{cx:cpx,cy:cpy,r:cpR,fill:'#7A0000',stroke:'#4A0000','stroke-width':0.8}));
+      gCooked_g.appendChild(svgEl('circle',{cx:cpx,cy:cpy,r:cpR*0.6,fill:'#5A0000',opacity:0.3}));
+      gCooked_g.appendChild(svgEl('circle',{cx:cpx+cpR*0.3,cy:cpy+cpR*0.2,r:2,fill:'#FF6600',opacity:0.2}));
+    }
+
+    // Wilted basil
+    for(var wbi=0;wbi<basilCount;wbi++){
+      var wba = wbi*Math.PI*2/basilCount+0.5+Math.random()*0.5;
+      var wbd = sauceR*0.3+Math.random()*sauceR*0.5;
+      var wbx = cx+Math.cos(wba)*wbd;
+      var wby = cy+Math.sin(wba)*wbd;
+      gCooked_g.appendChild(svgEl('path',{
+        d:'M'+wbx+' '+(wby-8)+' Q'+(wbx+5)+' '+(wby)+' '+wbx+' '+(wby+8)+' Q'+(wbx-5)+' '+(wby)+' '+wbx+' '+(wby-8),
+        fill:'#1A6B1A',stroke:'#145214','stroke-width':0.3,opacity:0.7
+      }));
+    }
+
+    // ─── 13. PIZZA PAN ───
+    var gPanEl = svgEl('g',{opacity:0});
+    var panR = pizzaR+20;
+    gPanEl.appendChild(svgEl('ellipse',{cx:cx+4,cy:cy+panR*0.15+4,rx:panR+6,ry:panR*0.18,fill:'#000',opacity:0.15}));
+    gPanEl.appendChild(svgEl('circle',{cx:cx,cy:cy,r:panR,fill:'url(#dp-panGrad)',stroke:'#808080','stroke-width':2}));
+    gPanEl.appendChild(svgEl('circle',{cx:cx,cy:cy,r:panR,fill:'none',stroke:'#909090','stroke-width':3,opacity:0.4}));
+    for(var pbi=0;pbi<4;pbi++){
+      var pba = pbi*Math.PI/4+0.3;
+      gPanEl.appendChild(svgEl('line',{
+        x1:cx+Math.cos(pba)*30,y1:cy+Math.sin(pba)*30,
+        x2:cx+Math.cos(pba)*(panR-5),y2:cy+Math.sin(pba)*(panR-5),
+        stroke:'#B8B8B8','stroke-width':0.5,opacity:0.12
+      }));
+    }
+    svg.appendChild(gPanEl);
+    svg.appendChild(gCooked_g);
+
+    // Slice hole
+    var sliceHoleAngle1 = -Math.PI/2;
+    var sliceHoleAngle2 = -Math.PI/6;
+    var sliceHolePath = 'M'+cx+' '+cy+
+      ' L'+(cx+Math.cos(sliceHoleAngle1)*(pizzaR+5))+' '+(cy+Math.sin(sliceHoleAngle1)*(pizzaR+5))+
+      ' A'+(pizzaR+5)+' '+(pizzaR+5)+' 0 0 1 '+(cx+Math.cos(sliceHoleAngle2)*(pizzaR+5))+' '+(cy+Math.sin(sliceHoleAngle2)*(pizzaR+5))+
+      ' Z';
+    var gSliceHole = svgEl('path',{d:sliceHolePath,fill:'url(#dp-panGrad)',opacity:0});
+    svg.appendChild(gSliceHole);
+
+    // ─── 14. PIZZA CUTTER ───
+    var gCutter = svgEl('g',{opacity:0});
+    var cutterX = cx, cutterY = cy-pizzaR-50;
+    gCutter.appendChild(svgEl('circle',{cx:cutterX,cy:cutterY,r:18,fill:'url(#dp-steelGrad)',stroke:'#888','stroke-width':1}));
+    gCutter.appendChild(svgEl('circle',{cx:cutterX,cy:cutterY,r:3,fill:'#555'}));
+    gCutter.appendChild(svgEl('rect',{x:cutterX-8,y:cutterY-50,width:16,height:38,rx:6,fill:'#333',stroke:'#222','stroke-width':1}));
+    gCutter.appendChild(svgEl('rect',{x:cutterX-6,y:cutterY-48,width:12,height:34,rx:4,fill:'#444'}));
+    svg.appendChild(gCutter);
+
+    // ─── 15. CUT LINES ───
+    var gCutLines = svgEl('g',{opacity:0});
+    var cutAngles = [Math.PI/2, Math.PI/2+Math.PI/3, Math.PI/2+Math.PI*2/3];
+    var cutLineEls = [];
+    var cutLen = sauceR*2;
+    for(var ci=0;ci<cutAngles.length;ci++){
+      var ca = cutAngles[ci];
+      var x1 = cx+Math.cos(ca)*sauceR, y1 = cy+Math.sin(ca)*sauceR;
+      var x2 = cx-Math.cos(ca)*sauceR, y2 = cy-Math.sin(ca)*sauceR;
+      var px = Math.cos(ca+Math.PI/2)*1.5, py = Math.sin(ca+Math.PI/2)*1.5;
+      var cutGrp = svgEl('g',{opacity:0});
+      var shadow = svgEl('line',{x1:x1,y1:y1,x2:x2,y2:y2,stroke:'#0A0500','stroke-width':4,opacity:0.5,
+        'stroke-linecap':'round','stroke-dasharray':String(cutLen),'stroke-dashoffset':String(cutLen)});
+      cutGrp.appendChild(shadow);
+      var edgeL = svgEl('line',{x1:x1-px,y1:y1-py,x2:x2-px,y2:y2-py,stroke:'#8B6914','stroke-width':1.2,opacity:0.4,
+        'stroke-linecap':'round','stroke-dasharray':String(cutLen),'stroke-dashoffset':String(cutLen)});
+      cutGrp.appendChild(edgeL);
+      var edgeR = svgEl('line',{x1:x1+px,y1:y1+py,x2:x2+px,y2:y2+py,stroke:'#8B6914','stroke-width':1.2,opacity:0.4,
+        'stroke-linecap':'round','stroke-dasharray':String(cutLen),'stroke-dashoffset':String(cutLen)});
+      cutGrp.appendChild(edgeR);
+      var center = svgEl('line',{x1:x1,y1:y1,x2:x2,y2:y2,stroke:'#1A0A00','stroke-width':2,opacity:0.7,
+        'stroke-linecap':'round','stroke-dasharray':String(cutLen),'stroke-dashoffset':String(cutLen)});
+      cutGrp.appendChild(center);
+      gCutLines.appendChild(cutGrp);
+      cutLineEls.push(cutGrp);
+    }
+    svg.appendChild(gCutLines);
+
+    // ─── 16. SEPARATED SLICE + CHEESE PULL ───
+    var gSlice = svgEl('g',{opacity:0});
+    var sliceAngle1 = -Math.PI/2;
+    var sliceAngle2 = -Math.PI/6;
+    var slicePath = 'M'+cx+' '+cy+
+      ' L'+(cx+Math.cos(sliceAngle1)*pizzaR)+' '+(cy+Math.sin(sliceAngle1)*pizzaR)+
+      ' A'+pizzaR+' '+pizzaR+' 0 0 1 '+(cx+Math.cos(sliceAngle2)*pizzaR)+' '+(cy+Math.sin(sliceAngle2)*pizzaR)+
+      ' Z';
+
+    gSlice.appendChild(svgEl('path',{d:slicePath,fill:'url(#dp-cookedGrad)',stroke:'#8B6914','stroke-width':1.5}));
+    var rimPath = 'M'+(cx+Math.cos(sliceAngle1)*pizzaR)+' '+(cy+Math.sin(sliceAngle1)*pizzaR)+
+      ' A'+pizzaR+' '+pizzaR+' 0 0 1 '+(cx+Math.cos(sliceAngle2)*pizzaR)+' '+(cy+Math.sin(sliceAngle2)*pizzaR);
+    gSlice.appendChild(svgEl('path',{d:rimPath,fill:'none',stroke:'#B8860B','stroke-width':isMobile?14:10,opacity:0.5,'stroke-linecap':'round'}));
+    for(var slci=0;slci<3;slci++){
+      var slca = sliceAngle1+(sliceAngle2-sliceAngle1)*(0.2+slci*0.3);
+      var slcd = pizzaR-6;
+      gSlice.appendChild(svgEl('ellipse',{
+        cx:cx+Math.cos(slca)*slcd,cy:cy+Math.sin(slca)*slcd,
+        rx:2+Math.random()*3,ry:1.5+Math.random()*2,
+        fill:'#3A1A00',opacity:0.45
+      }));
+    }
+
+    var sliceSaucePath = 'M'+cx+' '+cy+
+      ' L'+(cx+Math.cos(sliceAngle1)*sauceR)+' '+(cy+Math.sin(sliceAngle1)*sauceR)+
+      ' A'+sauceR+' '+sauceR+' 0 0 1 '+(cx+Math.cos(sliceAngle2)*sauceR)+' '+(cy+Math.sin(sliceAngle2)*sauceR)+
+      ' Z';
+    gSlice.appendChild(svgEl('path',{d:sliceSaucePath,fill:'#901010',opacity:0.85}));
+
+    for(var smi=0;smi<28;smi++){
+      var smAFrac = 0.05+smi*0.033;
+      if(smAFrac>0.95) smAFrac = 0.95;
+      var smAngle = sliceAngle1+(sliceAngle2-sliceAngle1)*(0.08+(smi%7)*0.13+Math.random()*0.02);
+      var smDist = sauceR*(0.12+Math.floor(smi/7)*0.22+Math.random()*0.08);
+      var smx = cx+Math.cos(smAngle)*smDist;
+      var smy = cy+Math.sin(smAngle)*smDist;
+      var smR = 10+Math.random()*8;
+      gSlice.appendChild(svgEl('circle',{cx:smx,cy:smy,r:smR,fill:'#FFF8DC',opacity:0.7}));
+      if(Math.random()>0.5){
+        gSlice.appendChild(svgEl('circle',{cx:smx+2,cy:smy-1,r:1.5+Math.random(),fill:'#8B6914',opacity:0.35}));
+      }
+    }
+
+    var slicePepData = [
+      {aFrac:0.3, dist:0.3, r:10}, {aFrac:0.7, dist:0.45, r:9},
+      {aFrac:0.5, dist:0.65, r:10}, {aFrac:0.35, dist:0.8, r:8}
+    ];
+    for(var spi=0;spi<slicePepData.length;spi++){
+      var spD = slicePepData[spi];
+      var spAngle = sliceAngle1+(sliceAngle2-sliceAngle1)*spD.aFrac;
+      var spDist = sauceR*spD.dist;
+      var spx = cx+Math.cos(spAngle)*spDist;
+      var spy = cy+Math.sin(spAngle)*spDist;
+      gSlice.appendChild(svgEl('circle',{cx:spx,cy:spy,r:spD.r,fill:'#7A0000',stroke:'#4A0000','stroke-width':0.8}));
+      gSlice.appendChild(svgEl('circle',{cx:spx,cy:spy,r:spD.r*0.6,fill:'#5A0000',opacity:0.3}));
+      gSlice.appendChild(svgEl('circle',{cx:spx+spD.r*0.3,cy:spy+spD.r*0.2,r:1.5,fill:'#FF6600',opacity:0.2}));
+    }
+
+    var sliceBasilData = [{aFrac:0.4, dist:0.5}, {aFrac:0.65, dist:0.3}];
+    for(var sbi=0;sbi<sliceBasilData.length;sbi++){
+      var sbD = sliceBasilData[sbi];
+      var sbAngle = sliceAngle1+(sliceAngle2-sliceAngle1)*sbD.aFrac;
+      var sbDist = sauceR*sbD.dist;
+      var sbx = cx+Math.cos(sbAngle)*sbDist;
+      var sby = cy+Math.sin(sbAngle)*sbDist;
+      gSlice.appendChild(svgEl('path',{
+        d:'M'+sbx+' '+(sby-7)+' Q'+(sbx+5)+' '+sby+' '+sbx+' '+(sby+7)+' Q'+(sbx-5)+' '+sby+' '+sbx+' '+(sby-7),
+        fill:'#1A6B1A',stroke:'#145214','stroke-width':0.3,opacity:0.7
+      }));
+    }
+
+    for(var soi=0;soi<8;soi++){
+      var soAngle = sliceAngle1+(sliceAngle2-sliceAngle1)*Math.random();
+      var soDist = 15+Math.random()*(sauceR-25);
+      gSlice.appendChild(svgEl('circle',{
+        cx:cx+Math.cos(soAngle)*soDist,cy:cy+Math.sin(soAngle)*soDist,
+        r:0.5+Math.random()*0.8,fill:'#2E4A1E',opacity:0.5
+      }));
+    }
+
+    // Steam wisps
+    for(var swi=0;swi<3;swi++){
+      var swx = cx+(-10+swi*10);
+      var swy = cy-pizzaR*0.7;
+      gSlice.appendChild(svgEl('path',{
+        d:'M'+swx+' '+swy+' Q'+(swx+5)+' '+(swy-15)+' '+(swx-3)+' '+(swy-30)+' Q'+(swx+8)+' '+(swy-40)+' '+swx+' '+(swy-50),
+        fill:'none',stroke:'#FFF','stroke-width':1.5,opacity:0.12
+      }));
+    }
+    svg.appendChild(gSlice);
+
+
+    // ═══ ANIMATION UPDATE ═══
+    function setCutDash(grp,val){var ch=grp.childNodes;for(var i=0;i<ch.length;i++){ch[i].setAttribute('stroke-dashoffset',String(val));}}
+
+    function update(){
+      var p = getProgress();
+      scrubFill.style.width = (p*100)+'%';
+
+      // Intro fade (0-5%)
+      var introP = clamp(p/0.05,0,1);
+      intro.style.opacity = 1-ease3(introP);
+      intro.style.transform = 'scale('+(1+introP*0.05)+')';
+
+      // ════════ MASTER RESET ════════
+      gSlab.setAttribute('opacity','0');gSlab.setAttribute('transform','');
+      gDoughBall.setAttribute('opacity','0');gDoughBall.setAttribute('transform','');
+      gPin_g.setAttribute('opacity','0');gPin_g.setAttribute('transform','');
+      gDisc.setAttribute('opacity','0');gDisc.setAttribute('transform','');
+      gSauce_g.setAttribute('opacity','0');gSauce_g.setAttribute('transform','');
+      sauceCircle.setAttribute('r',String(15));
+      gLadle.setAttribute('opacity','0');gLadle.setAttribute('transform','');
+      gMozz_g.setAttribute('opacity','0');
+      for(var rmi=0;rmi<mozzPieces.length;rmi++){mozzPieces[rmi].setAttribute('opacity','0');mozzPieces[rmi].setAttribute('transform','');}
+      gPep_g.setAttribute('opacity','0');
+      for(var rpi=0;rpi<pepSlices.length;rpi++){pepSlices[rpi].setAttribute('opacity','0');pepSlices[rpi].setAttribute('transform','');}
+      gBasil.setAttribute('opacity','0');
+      for(var rbi=0;rbi<basilLeaves.length;rbi++){basilLeaves[rbi].setAttribute('opacity','0');}
+      for(var rfi=0;rfi<oreganoFlakes.length;rfi++){oreganoFlakes[rfi].setAttribute('opacity','0');}
+      gPeel.setAttribute('opacity','0');gPeel.setAttribute('transform','');
+      gOvenScene.setAttribute('opacity','0');
+      gOvenPizzaRaw.setAttribute('opacity','1');
+      gOvenPizzaCooked.setAttribute('opacity','0');
+      ovenGlowRect.setAttribute('opacity','0');
+      gCooked_g.setAttribute('opacity','0');gCooked_g.setAttribute('transform','');
+      gPanEl.setAttribute('opacity','0');gPanEl.setAttribute('transform','');
+      gCutter.setAttribute('opacity','0');gCutter.setAttribute('transform','');
+      gSliceHole.setAttribute('opacity','0');
+      gCutLines.setAttribute('opacity','0');
+      for(var rci=0;rci<cutLineEls.length;rci++){cutLineEls[rci].setAttribute('opacity','0');setCutDash(cutLineEls[rci],cutLen);}
+      gSlice.setAttribute('opacity','0');gSlice.setAttribute('transform','');
+      scenePowered.style.opacity='0';
+      scenePowered.style.transform='';
+      sceneGlow.style.opacity='0';
+      sceneEnergize.style.clipPath='inset(0 100% 0 0)';
+      var pls2=[document.getElementById('dp-pl1'),document.getElementById('dp-pl2'),document.getElementById('dp-pl3'),document.getElementById('dp-pl4'),document.getElementById('dp-pl5'),document.getElementById('dp-pl6')];
+      for(var li2=0;li2<pls2.length;li2++) pls2[li2].style.opacity='0';
+      finalEl.style.opacity='0';
+      finalEl.classList.remove('show');
+
+      // ── Helper: show raw disc with all toppings ──
+      function showDiscFull(){
+        gDisc.setAttribute('opacity','1');
+      }
+      function showSauceFull(){
+        gSauce_g.setAttribute('opacity','1');
+        sauceCircle.setAttribute('r',String(sauceR));
+      }
+      function showAllMozz(){
+        gMozz_g.setAttribute('opacity','1');
+        for(var i=0;i<mozzPieces.length;i++){mozzPieces[i].setAttribute('opacity','1');mozzPieces[i].setAttribute('transform','');}
+      }
+      function showAllPep(){
+        gPep_g.setAttribute('opacity','1');
+        for(var i=0;i<pepSlices.length;i++){pepSlices[i].setAttribute('opacity','1');pepSlices[i].setAttribute('transform','');}
+      }
+      function showAllBasil(){
+        gBasil.setAttribute('opacity','1');
+        for(var i=0;i<basilLeaves.length;i++){basilLeaves[i].setAttribute('opacity','1');}
+        for(var j=0;j<oreganoFlakes.length;j++){oreganoFlakes[j].setAttribute('opacity','0.6');}
+      }
+
+      // ── 1. MARBLE SLAB (5-9%, visible through ~82%) ──
+      if(p>=0.05&&p<0.57){
+        var slabP=clamp((p-0.05)/0.04,0,1);
+        gSlab.setAttribute('opacity',String(ease3(slabP)));
+        gSlab.setAttribute('transform','scale('+(0.92+ease3(slabP)*0.08)+')');
+        if(p<0.09) setPhase('THE MARBLE SLAB');
+      }
+
+      // ── 2. DOUGH BALL (9-16%) ──
+      if(p>=0.09&&p<0.16){
+        var ballP=clamp((p-0.09)/0.07,0,1);
+        gDoughBall.setAttribute('opacity',String(ease3(ballP)));
+        gDoughBall.setAttribute('transform','translate(0,'+(1-ease3(ballP))*30+')');
+        setPhase('FRESH DOUGH BALL');
+      }
+
+      // ── 3. ROLLING & STRETCHING (16-26%) ──
+      if(p>=0.16&&p<0.26){
+        var stretchP=clamp((p-0.16)/0.10,0,1);
+
+        if(stretchP<0.15){
+          setPhase('ROLLING THE DOUGH');
+          var descP=ease3(stretchP/0.15);
+          gDoughBall.setAttribute('opacity','1');
+          gPin_g.setAttribute('opacity',String(descP));
+          gPin_g.setAttribute('transform','translate(0,'+((1-descP)*-120)+')');
+        }
+        else if(stretchP<0.50){
+          setPhase('ROLLING THE DOUGH');
+          var rollPhase=(stretchP-0.15)/0.35;
+          gDoughBall.setAttribute('opacity','1');
+          gPin_g.setAttribute('opacity','1');
+          var rollOsc=Math.sin(rollPhase*Math.PI*6);
+          var rollRange=isMobile?50:35;
+          gPin_g.setAttribute('transform','translate(0,'+(rollOsc*rollRange)+')');
+          var squashAmt=ease3(rollPhase);
+          var bsx=1+squashAmt*0.8, bsy=1-squashAmt*0.4;
+          gDoughBall.setAttribute('transform','translate('+cx*(1-bsx)+','+cy*(1-bsy)+') scale('+bsx+','+bsy+')');
+        }
+        else if(stretchP<0.80){
+          setPhase('STRETCHING THE DOUGH');
+          var morphP=ease3((stretchP-0.50)/0.30);
+          gDoughBall.setAttribute('opacity',String(1-morphP));
+          var bsx2=1.8+morphP*0.2, bsy2=0.6-morphP*0.1;
+          gDoughBall.setAttribute('transform','translate('+cx*(1-bsx2)+','+cy*(1-bsy2)+') scale('+bsx2+','+bsy2+')');
+          var pinFade=ease3(clamp((stretchP-0.50)/0.12,0,1));
+          gPin_g.setAttribute('opacity',String(1-pinFade));
+          gPin_g.setAttribute('transform','translate(0,'+(pinFade*-80)+')');
+          var ds=0.15+morphP*0.85;
+          gDisc.setAttribute('opacity',String(morphP));
+          gDisc.setAttribute('transform','translate('+cx*(1-ds)+','+cy*(1-ds)+') scale('+ds+')');
+        }
+        else {
+          setPhase('STRETCHING THE DOUGH');
+          var settleP=ease3((stretchP-0.80)/0.20);
+          gDisc.setAttribute('opacity','1');
+          var ds2=1+0.02*(1-settleP);
+          gDisc.setAttribute('transform','translate('+cx*(1-ds2)+','+cy*(1-ds2)+') scale('+ds2+')');
+        }
+      }
+
+      // ── 4. SAUCE SPREAD (26-34%) ──
+      if(p>=0.26&&p<0.34){
+        var sauceP=clamp((p-0.26)/0.08,0,1);
+        showDiscFull();
+        setPhase('SAN MARZANO SAUCE');
+
+        if(sauceP<0.20){
+          var ladleInP=ease3(sauceP/0.20);
+          gLadle.setAttribute('opacity',String(ladleInP));
+          var ladleTargetX=cx-ladleX;
+          var ladleTargetY=cy-20-ladleY;
+          gLadle.setAttribute('transform','translate('+(ladleTargetX*ladleInP+80*(1-ladleInP))+','+(ladleTargetY*ladleInP-80*(1-ladleInP))+') rotate('+(-20+ladleInP*20)+','+ladleX+','+ladleY+')');
+        }
+        else if(sauceP<0.30){
+          var dropP=ease3((sauceP-0.20)/0.10);
+          var ladleTargetX2=cx-ladleX;
+          var ladleTargetY2=cy-20-ladleY;
+          gLadle.setAttribute('opacity','1');
+          gLadle.setAttribute('transform','translate('+ladleTargetX2+','+ladleTargetY2+')');
+          gSauce_g.setAttribute('opacity','1');
+          sauceCircle.setAttribute('r',String(15+dropP*15));
+        }
+        else if(sauceP<0.80){
+          var spreadP=(sauceP-0.30)/0.50;
+          var spreadEased=ease3(spreadP);
+          gLadle.setAttribute('opacity','1');
+          var spiralRadius=spreadEased*sauceR*0.7;
+          var spiralAngle=spreadP*Math.PI*6;
+          var ladleSX=cx+Math.cos(spiralAngle)*spiralRadius-ladleX;
+          var ladleSY=cy+Math.sin(spiralAngle)*spiralRadius-20-ladleY;
+          gLadle.setAttribute('transform','translate('+ladleSX+','+ladleSY+') rotate('+(spiralAngle*180/Math.PI)+','+ladleX+','+(ladleY+20)+')');
+          gSauce_g.setAttribute('opacity','1');
+          var currentR2=30+spreadEased*(sauceR-30);
+          sauceCircle.setAttribute('r',String(Math.min(currentR2,sauceR)));
+          for(var sdti=0;sdti<sauceDotsArr.length;sdti++){
+            var sdtP2=ease3(clamp((spreadP-sdti*0.02)/0.25,0,1));
+            sauceDotsArr[sdti].setAttribute('opacity',String(sdtP2*0.3));
+          }
+        }
+        else {
+          var exitP2=ease3((sauceP-0.80)/0.20);
+          gLadle.setAttribute('opacity',String(1-exitP2*0.8));
+          var exitOffX=sauceR*0.7+exitP2*400;
+          var exitOffY=-exitP2*60;
+          gLadle.setAttribute('transform','translate('+(cx+exitOffX-ladleX)+','+(cy+exitOffY-ladleY)+') rotate('+(exitP2*30)+','+ladleX+','+ladleY+')');
+          showSauceFull();
+        }
+      }
+
+      // ── 5. MOZZARELLA (34-41%) ──
+      if(p>=0.34&&p<0.41){
+        var mozzP=clamp((p-0.34)/0.07,0,1);
+        showDiscFull();showSauceFull();
+        setPhase('FRESH MOZZARELLA');
+
+        gMozz_g.setAttribute('opacity','1');
+        for(var mzi2=0;mzi2<mozzPieces.length;mzi2++){
+          var mzProg=ease3(clamp((mozzP-mzi2*0.005)/0.15,0,1));
+          mozzPieces[mzi2].setAttribute('opacity',String(mzProg));
+          mozzPieces[mzi2].setAttribute('transform','translate(0,'+(1-mzProg)*-15+')');
+        }
+      }
+
+      // ── 6. PEPPERONI (41-47%) ──
+      if(p>=0.41&&p<0.47){
+        var pepP=clamp((p-0.41)/0.06,0,1);
+        showDiscFull();showSauceFull();showAllMozz();
+        setPhase('CLASSIC PEPPERONI');
+
+        gPep_g.setAttribute('opacity','1');
+        for(var ppi2=0;ppi2<pepSlices.length;ppi2++){
+          var ppProg=ease3(clamp((pepP-ppi2*0.008)/0.15,0,1));
+          pepSlices[ppi2].setAttribute('opacity',String(ppProg));
+          pepSlices[ppi2].setAttribute('transform','translate(0,'+(1-ppProg)*-12+')');
+        }
+      }
+
+      // ── 7. BASIL & OREGANO (47-52%) ──
+      if(p>=0.47&&p<0.52){
+        var basilP=clamp((p-0.47)/0.05,0,1);
+        showDiscFull();showSauceFull();showAllMozz();showAllPep();
+        setPhase('BASIL & OREGANO');
+
+        gBasil.setAttribute('opacity','1');
+        for(var bli2=0;bli2<basilLeaves.length;bli2++){
+          var blProg=ease3(clamp((basilP-bli2*0.04)/0.3,0,1));
+          basilLeaves[bli2].setAttribute('opacity',String(blProg));
+        }
+        var oregP=clamp((basilP-0.4)/0.6,0,1);
+        for(var oi2=0;oi2<oreganoFlakes.length;oi2++){
+          var ofP=ease3(clamp((oregP-oi2*0.008)/0.2,0,1));
+          oreganoFlakes[oi2].setAttribute('opacity',String(ofP*0.6));
+        }
+      }
+
+      // ── 8. PEEL TRANSFER (52-57%) ──
+      if(p>=0.52&&p<0.57){
+        var peelP=clamp((p-0.52)/0.05,0,1);
+        showDiscFull();showSauceFull();showAllMozz();showAllPep();showAllBasil();
+        setPhase('PEEL TRANSFER');
+
+        if(peelP<0.4){
+          var peelInP=ease3(peelP/0.4);
+          gPeel.setAttribute('opacity',String(peelInP));
+          gPeel.setAttribute('transform','translate('+(1-peelInP)*300+',0)');
+        }
+        else if(peelP<0.8){
+          gPeel.setAttribute('opacity','1');
+          gPeel.setAttribute('transform','');
+          var settleP3=ease3((peelP-0.4)/0.4);
+          if(p>=0.05) gSlab.setAttribute('opacity',String(1-settleP3*0.6));
+        }
+        else {
+          gPeel.setAttribute('opacity','1');
+          var liftP3=ease3((peelP-0.8)/0.2);
+          gPeel.setAttribute('transform','translate(0,'+(liftP3*-20)+')');
+          gDisc.setAttribute('transform','translate(0,'+(liftP3*-20)+')');
+          gSauce_g.setAttribute('transform','translate(0,'+(liftP3*-20)+')');
+          gMozz_g.setAttribute('transform','translate(0,'+(liftP3*-20)+')');
+          gPep_g.setAttribute('transform','translate(0,'+(liftP3*-20)+')');
+          gBasil.setAttribute('transform','translate(0,'+(liftP3*-20)+')');
+          gSlab.setAttribute('opacity',String(Math.max(0,0.4-liftP3*0.4)));
+        }
+      }
+
+      // ── 9. INTO THE OVEN (57-65%) ──
+      if(p>=0.57&&p<0.65){
+        var ovenP=clamp((p-0.57)/0.08,0,1);
+        setPhase('INTO THE OVEN');
+
+        if(ovenP<0.25){
+          var fadeOutP=ease3(ovenP/0.25);
+          showDiscFull();showSauceFull();showAllMozz();showAllPep();showAllBasil();
+          gPeel.setAttribute('opacity',String(1-fadeOutP));
+          gDisc.setAttribute('opacity',String(1-fadeOutP));
+          gSauce_g.setAttribute('opacity',String(1-fadeOutP));
+          gMozz_g.setAttribute('opacity',String(1-fadeOutP));
+          gPep_g.setAttribute('opacity',String(1-fadeOutP));
+          gBasil.setAttribute('opacity',String(1-fadeOutP));
+          gSlab.setAttribute('opacity',String(Math.max(0,0.4*(1-fadeOutP))));
+        }
+        else {
+          var sceneInP=ease3((ovenP-0.25)/0.75);
+          gOvenScene.setAttribute('opacity',String(sceneInP));
+          gOvenPizzaRaw.setAttribute('opacity','1');
+          gOvenPizzaCooked.setAttribute('opacity','0');
+        }
+      }
+
+      // ── 10. FIRE & CHAR (65-73%) ──
+      if(p>=0.65&&p<0.73){
+        var bakeP=clamp((p-0.65)/0.08,0,1);
+        setPhase('FIRE & CHAR');
+
+        gOvenScene.setAttribute('opacity','1');
+
+        var cookSwap=ease3(clamp(bakeP/0.7,0,1));
+        gOvenPizzaRaw.setAttribute('opacity',String(1-cookSwap));
+        gOvenPizzaCooked.setAttribute('opacity',String(cookSwap));
+
+        for(var fii=0;fii<ovenFlames.length;fii++){
+          var flickerPhase=bakeP*Math.PI*6+fii*1.2;
+          var flickerScale=1+Math.sin(flickerPhase)*0.15;
+          ovenFlames[fii].setAttribute('opacity',String(0.7+Math.sin(flickerPhase*1.3)*0.15+bakeP*0.15));
+          ovenFlames[fii].setAttribute('transform','scale(1,'+flickerScale+')');
+        }
+
+        for(var ffii=0;ffii<ovenFloorFlames.length;ffii++){
+          var ffPhase=bakeP*Math.PI*5+ffii*1.5;
+          ovenFloorFlames[ffii].setAttribute('opacity',String(0.5+Math.sin(ffPhase)*0.2+bakeP*0.2));
+          ovenFloorFlames[ffii].setAttribute('transform','scale(1,'+(1+Math.sin(ffPhase*0.8)*0.12)+')');
+        }
+
+        for(var eii=0;eii<ovenEmbers.length;eii++){
+          ovenEmbers[eii].setAttribute('opacity',String(0.3+bakeP*0.5));
+        }
+
+        var glowPulse=0.04+Math.sin(bakeP*Math.PI*4)*0.04;
+        ovenGlowRect.setAttribute('opacity',String(glowPulse));
+      }
+
+      // ── 11. OUT OF THE OVEN (73-81%) ──
+      if(p>=0.73&&p<0.81){
+        var outP=clamp((p-0.73)/0.08,0,1);
+        setPhase('OUT OF THE OVEN');
+
+        if(outP<0.45){
+          var sceneFadeP=ease3(outP/0.45);
+          var peelInP2=ease3(clamp((outP-0.15)/0.3,0,1));
+          gOvenScene.setAttribute('opacity',String(1-sceneFadeP));
+          gOvenPizzaCooked.setAttribute('opacity','1');
+          gOvenPizzaRaw.setAttribute('opacity','0');
+          gPeel.setAttribute('opacity',String(peelInP2));
+          gPeel.setAttribute('transform','translate('+((1-peelInP2)*-350)+',0)');
+          gCooked_g.setAttribute('opacity',String(peelInP2));
+          gCooked_g.setAttribute('transform','translate('+((1-peelInP2)*-350)+',0)');
+        }
+        else if(outP<0.7){
+          var slideP2=ease3((outP-0.45)/0.25);
+          gPeel.setAttribute('opacity','1');
+          gPeel.setAttribute('transform','');
+          gCooked_g.setAttribute('opacity','1');
+          gCooked_g.setAttribute('transform','');
+          gPanEl.setAttribute('opacity',String(slideP2));
+        }
+        else {
+          var depositP=ease3((outP-0.7)/0.3);
+          gPanEl.setAttribute('opacity','1');
+          gCooked_g.setAttribute('opacity','1');
+          gCooked_g.setAttribute('transform','');
+          gPeel.setAttribute('opacity',String(1-depositP));
+          gPeel.setAttribute('transform','translate('+(depositP*350)+',0)');
+        }
+      }
+
+      // ── 12. THE SLICE (81-87%) ──
+      if(p>=0.81&&p<0.87){
+        var sliceP2=clamp((p-0.81)/0.06,0,1);
+        gCooked_g.setAttribute('opacity','1');
+        gPanEl.setAttribute('opacity','1');
+        setPhase('THE SLICE');
+
+        if(sliceP2<0.15){
+          gCutter.setAttribute('opacity',String(ease3(sliceP2/0.15)));
+          gCutter.setAttribute('transform','translate(0,'+(1-ease3(sliceP2/0.15))*-40+')');
+        }
+        else if(sliceP2<0.65){
+          gCutter.setAttribute('opacity','1');
+          var cutPhase=(sliceP2-0.15)/0.5;
+          if(cutPhase<0.33){
+            var c1P=ease3(cutPhase/0.33);
+            var c1y1=cy-pizzaR;
+            var c1y2=cy+pizzaR;
+            gCutter.setAttribute('transform','translate(0,'+(c1y1+(c1y2-c1y1)*c1P-cutterY)+')');
+          } else if(cutPhase<0.66){
+            var c2P=ease3((cutPhase-0.33)/0.33);
+            var c2Angle=cutAngles[1];
+            var c2sx=cx+Math.cos(c2Angle)*pizzaR;
+            var c2sy=cy+Math.sin(c2Angle)*pizzaR;
+            var c2ex=cx-Math.cos(c2Angle)*pizzaR;
+            var c2ey=cy-Math.sin(c2Angle)*pizzaR;
+            gCutter.setAttribute('transform','translate('+(c2sx+(c2ex-c2sx)*c2P-cutterX)+','+(c2sy+(c2ey-c2sy)*c2P-cutterY)+')');
+          } else {
+            var c3P=ease3((cutPhase-0.66)/0.34);
+            var c3Angle=cutAngles[2];
+            var c3sx=cx+Math.cos(c3Angle)*pizzaR;
+            var c3sy=cy+Math.sin(c3Angle)*pizzaR;
+            var c3ex=cx-Math.cos(c3Angle)*pizzaR;
+            var c3ey=cy-Math.sin(c3Angle)*pizzaR;
+            gCutter.setAttribute('transform','translate('+(c3sx+(c3ex-c3sx)*c3P-cutterX)+','+(c3sy+(c3ey-c3sy)*c3P-cutterY)+')');
+          }
+          gCutLines.setAttribute('opacity','1');
+          if(cutPhase<0.33){
+            cutLineEls[0].setAttribute('opacity','1');
+            setCutDash(cutLineEls[0],cutLen*(1-c1P));
+          } else if(cutPhase<0.66){
+            cutLineEls[0].setAttribute('opacity','1');
+            setCutDash(cutLineEls[0],0);
+            cutLineEls[1].setAttribute('opacity','1');
+            setCutDash(cutLineEls[1],cutLen*(1-c2P));
+          } else {
+            cutLineEls[0].setAttribute('opacity','1');
+            setCutDash(cutLineEls[0],0);
+            cutLineEls[1].setAttribute('opacity','1');
+            setCutDash(cutLineEls[1],0);
+            cutLineEls[2].setAttribute('opacity','1');
+            setCutDash(cutLineEls[2],cutLen*(1-c3P));
+          }
+        }
+        else {
+          gCutter.setAttribute('opacity',String(1-ease3((sliceP2-0.65)/0.15)));
+          gCutLines.setAttribute('opacity','1');
+          cutLineEls[0].setAttribute('opacity','1');
+          setCutDash(cutLineEls[0],0);
+          cutLineEls[1].setAttribute('opacity','1');
+          setCutDash(cutLineEls[1],0);
+          var line3FadeP=ease3(clamp((sliceP2-0.65)/0.1,0,1));
+          cutLineEls[2].setAttribute('opacity',String(line3FadeP));
+          setCutDash(cutLineEls[2],0);
+          var sepP=ease3((sliceP2-0.65)/0.35);
+          gSlice.setAttribute('opacity',String(sepP));
+          var sliceTx=sepP*60, sliceTy=sepP*-50, sliceRot=sepP*-15;
+          gSlice.setAttribute('transform','translate('+sliceTx+','+sliceTy+') rotate('+sliceRot+','+cx+','+cy+')');
+          gSliceHole.setAttribute('opacity',String(sepP));
+        }
+      }
+
+      // ── 13. BRAND GLOW FINALE (87-95%) ──
+      if(p>=0.87&&p<0.95){
+        var finaleP=clamp((p-0.87)/0.08,0,1);
+        sceneGlow.style.opacity=String(ease3(finaleP));
+        sceneEnergize.style.clipPath='inset(0 '+(100-ease3(finaleP)*100)+'% 0 0)';
+
+        var pls=[document.getElementById('dp-pl1'),document.getElementById('dp-pl2'),document.getElementById('dp-pl3'),document.getElementById('dp-pl4'),document.getElementById('dp-pl5'),document.getElementById('dp-pl6')];
+        for(var pli=0;pli<pls.length;pli++){
+          var lightP=clamp((finaleP-pli*0.05)/0.25,0,1);
+          pls[pli].style.opacity=String(ease3(lightP));
+        }
+
+        var brandP=clamp((finaleP-0.1)/0.4,0,1);
+        scenePowered.style.opacity=String(ease3(brandP));
+        scenePowered.style.transform='scale('+(0.85+ease3(brandP)*0.2)+')';
+
+        // Fade out pizza scene
+        if(finaleP>0.1){
+          var sceneFade=1-ease3((finaleP-0.1)/0.4);
+          gCooked_g.setAttribute('opacity',String(Math.max(0,sceneFade)));
+          gPanEl.setAttribute('opacity',String(Math.max(0,sceneFade)));
+          gCutLines.setAttribute('opacity',String(Math.max(0,sceneFade)));
+          gSlice.setAttribute('opacity',String(Math.max(0,sceneFade)));
+          gSliceHole.setAttribute('opacity',String(Math.max(0,sceneFade)));
+        } else {
+          gCooked_g.setAttribute('opacity','1');
+          gPanEl.setAttribute('opacity','1');
+          gCutLines.setAttribute('opacity','1');
+          gSlice.setAttribute('opacity','1');
+          gSlice.setAttribute('transform','translate(60,-50) rotate(-15,'+cx+','+cy+')');
+          gSliceHole.setAttribute('opacity','1');
+        }
+
+        setPhase('PIZZA BUILD');
+      }
+
+      // ── HERO CTA (95-100%) ──
+      if(p>=0.95){
+        var heroP=ease3(clamp((p-0.95)/0.05,0,1));
+        finalEl.classList.add('show');
+        finalEl.style.opacity=String(heroP);
+        scenePowered.style.opacity=String(1-heroP);
+        sceneGlow.style.opacity=String(0.8*(1-heroP));
+        gCooked_g.setAttribute('opacity','0');
+        gPanEl.setAttribute('opacity','0');
+        gCutLines.setAttribute('opacity','0');
+        gSlice.setAttribute('opacity','0');
+        gSlab.setAttribute('opacity','0');
+      }
+
+      // Phase label visibility
+      if(p<0.05||p>0.95){
+        phaseEl.style.opacity='0';
+      }
+    }
+
+    (function loop(){requestAnimationFrame(loop);try{update();}catch(e){}})();
+  }
+})();
