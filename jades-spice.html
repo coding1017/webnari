@@ -418,13 +418,22 @@ nav {
   box-shadow: 0 12px 40px rgba(217,64,64,0.15);
 }
 .meal-img {
-  height: 200px;
+  height: 220px;
   background: var(--surface2);
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
   overflow: hidden;
+}
+.meal-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.meal-card:hover .meal-img img {
+  transform: scale(1.06);
 }
 .meal-img-icon {
   opacity: 0.3;
@@ -596,6 +605,12 @@ nav {
   position: relative;
   overflow: hidden;
 }
+.about-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+}
 .about-img::after {
   content: '';
   position: absolute;
@@ -640,6 +655,96 @@ nav {
   letter-spacing: 0.05em;
 }
 .about-value svg { flex-shrink: 0; }
+/* ─── IN THE KITCHEN (VIDEO SECTION) ────────────── */
+.kitchen-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+.kitchen-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: block;
+}
+.kitchen-card:hover {
+  border-color: var(--gold);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(240,168,48,0.15);
+}
+.kitchen-thumb {
+  height: 280px;
+  position: relative;
+  overflow: hidden;
+}
+.kitchen-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+.kitchen-card:hover .kitchen-thumb img {
+  transform: scale(1.06);
+}
+.kitchen-play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(12,8,6,0.35);
+  transition: background 0.3s;
+}
+.kitchen-card:hover .kitchen-play {
+  background: rgba(12,8,6,0.55);
+}
+.kitchen-play-btn {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(217,64,64,0.4);
+  transition: transform 0.3s;
+}
+.kitchen-card:hover .kitchen-play-btn {
+  transform: scale(1.1);
+}
+.kitchen-label {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  font-family: var(--font-head);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  background: rgba(12,8,6,0.85);
+  color: var(--gold);
+  padding: 5px 12px;
+  border-radius: 3px;
+  backdrop-filter: blur(4px);
+}
+.kitchen-body { padding: 20px; }
+.kitchen-title {
+  font-family: var(--font-head);
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--white);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin-bottom: 6px;
+}
+.kitchen-desc {
+  font-size: 14px;
+  color: var(--muted);
+  line-height: 1.5;
+}
 /* ─── TESTIMONIALS ───────────────────────────────── */
 .testimonials-grid {
   display: grid;
@@ -894,6 +999,7 @@ footer {
 @media (max-width: 1024px) {
   .hero-float { display: none; }
   .meals-grid { grid-template-columns: repeat(2, 1fr); }
+  .kitchen-grid { grid-template-columns: repeat(2, 1fr); }
   .why-grid { grid-template-columns: repeat(2, 1fr); }
   .footer-grid { grid-template-columns: repeat(2, 1fr); }
 }
@@ -911,6 +1017,8 @@ footer {
   .steps-grid::before { display: none; }
   .about-grid { grid-template-columns: 1fr; gap: 40px; }
   .testimonials-grid { grid-template-columns: 1fr; }
+  .kitchen-grid { grid-template-columns: 1fr; }
+  .kitchen-thumb { height: 240px; }
   .menu-items { grid-template-columns: 1fr; }
   .menu-preview { padding: 24px; }
   .footer-grid { grid-template-columns: 1fr; gap: 32px; }
@@ -971,6 +1079,10 @@ footer {
     <a href="#about">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
       About Jade
+    </a>
+    <a href="#kitchen">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+      Watch Jade Cook
     </a>
     <a href="#reviews">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
@@ -1061,7 +1173,7 @@ footer {
     <div class="meals-grid">
       <div class="meal-card reveal reveal-delay-1">
         <div class="meal-img">
-          <svg class="meal-img-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1"><path d="M18 8h1a4 4 0 010 8h-1M2 8h16v9a4 4 0 01-4 4H6a4 4 0 01-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+          <img src="images/jades-spice/szechuan-chicken.jpg" alt="Szechuan Spicy Chicken with zucchini and peppers" loading="lazy">
           <span class="meal-cuisine-tag">Chinese</span>
         </div>
         <div class="meal-body">
@@ -1077,7 +1189,7 @@ footer {
       </div>
       <div class="meal-card reveal reveal-delay-2">
         <div class="meal-img">
-          <svg class="meal-img-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          <img src="images/jades-spice/braised-meat.jpg" alt="Hong Shao Rou red braised meat with dried chilis" loading="lazy">
           <span class="meal-cuisine-tag">Chinese</span>
         </div>
         <div class="meal-body">
@@ -1093,7 +1205,7 @@ footer {
       </div>
       <div class="meal-card reveal reveal-delay-3">
         <div class="meal-img">
-          <svg class="meal-img-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1"><path d="M12 22c-4.97 0-9-2.69-9-6v-4c0-3.31 4.03-6 9-6s9 2.69 9 6v4c0 3.31-4.03 6-9 6z"/><path d="M12 14c4.97 0 9-2.69 9-6"/><path d="M3 8c0 3.31 4.03 6 9 6"/></svg>
+          <img src="images/jades-spice/chicken-sweetpotato.jpg" alt="Teriyaki Chicken Bowl with sweet potatoes and scallions" loading="lazy">
           <span class="meal-cuisine-tag">Fusion</span>
         </div>
         <div class="meal-body">
@@ -1109,7 +1221,7 @@ footer {
       </div>
       <div class="meal-card reveal reveal-delay-1">
         <div class="meal-img">
-          <svg class="meal-img-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          <img src="images/jades-spice/beef-stew.jpg" alt="Hearty beef stew with potatoes and carrots" loading="lazy">
           <span class="meal-cuisine-tag">Chinese</span>
         </div>
         <div class="meal-body">
@@ -1125,7 +1237,7 @@ footer {
       </div>
       <div class="meal-card reveal reveal-delay-2">
         <div class="meal-img">
-          <svg class="meal-img-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="1"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          <img src="images/jades-spice/dumplings.jpg" alt="Handmade dumplings with house chili oil" loading="lazy">
           <span class="meal-cuisine-tag">Fusion</span>
         </div>
         <div class="meal-body">
@@ -1141,7 +1253,7 @@ footer {
       </div>
       <div class="meal-card reveal reveal-delay-3">
         <div class="meal-img">
-          <svg class="meal-img-icon" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="var(--green)" stroke-width="1"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          <img src="images/jades-spice/meal-prep-spread.jpg" alt="Wild salmon with brussels sprouts and greens meal prep" loading="lazy">
           <span class="meal-cuisine-tag">Healthy</span>
         </div>
         <div class="meal-body">
@@ -1353,9 +1465,7 @@ footer {
   <div class="container">
     <div class="about-grid">
       <div class="about-img reveal">
-        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="0.8" opacity="0.4">
-          <path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/>
-        </svg>
+        <img src="images/jades-spice/jade-kitchen.jpg" alt="Jade in her kitchen preparing fresh meals">
       </div>
       <div class="about-content reveal reveal-delay-1">
         <div class="eyebrow">Meet The Chef</div>
@@ -1382,6 +1492,64 @@ footer {
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ IN THE KITCHEN ═══════════════════════════ -->
+<section class="section" id="kitchen" style="background: var(--dark);">
+  <div class="container">
+    <div class="section-head reveal">
+      <div class="eyebrow" style="color: var(--gold);">Watch Jade Cook</div>
+      <h2>IN THE<br>KITCHEN</h2>
+      <p>See exactly how your meals are made — from scratch, with love, in Jade's home kitchen. No shortcuts, no secrets.</p>
+    </div>
+    <div class="kitchen-grid">
+      <a class="kitchen-card reveal reveal-delay-1" href="https://www.instagram.com/jades_spice/" target="_blank" rel="noopener">
+        <div class="kitchen-thumb">
+          <img src="images/jades-spice/turmeric-prep-menu.jpg" alt="Turmeric chicken meal prep with full menu" loading="lazy">
+          <div class="kitchen-play">
+            <div class="kitchen-play-btn">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--white)" stroke="none"><polygon points="8 5 20 12 8 19"/></svg>
+            </div>
+          </div>
+          <span class="kitchen-label">Meal Prep Day</span>
+        </div>
+        <div class="kitchen-body">
+          <div class="kitchen-title">Weekly Meal Prep</div>
+          <div class="kitchen-desc">Watch the full process — turmeric rice, salmon, chicken, and fresh veggies prepped for the week.</div>
+        </div>
+      </a>
+      <a class="kitchen-card reveal reveal-delay-2" href="https://www.instagram.com/jades_spice/" target="_blank" rel="noopener">
+        <div class="kitchen-thumb">
+          <img src="images/jades-spice/big-prep-spread.jpg" alt="Large batch meal prep with 8 glass containers" loading="lazy">
+          <div class="kitchen-play">
+            <div class="kitchen-play-btn">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--white)" stroke="none"><polygon points="8 5 20 12 8 19"/></svg>
+            </div>
+          </div>
+          <span class="kitchen-label">Batch Cooking</span>
+        </div>
+        <div class="kitchen-body">
+          <div class="kitchen-title">Bulk Prep Session</div>
+          <div class="kitchen-desc">Salmon, shredded chicken, rice, broccoli, and asparagus — everything portioned in glass containers.</div>
+        </div>
+      </a>
+      <a class="kitchen-card reveal reveal-delay-3" href="https://www.instagram.com/jades_spice/" target="_blank" rel="noopener">
+        <div class="kitchen-thumb">
+          <img src="images/jades-spice/beef-stew-closeup.jpg" alt="Slow-cooked beef stew with carrots" loading="lazy">
+          <div class="kitchen-play">
+            <div class="kitchen-play-btn">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--white)" stroke="none"><polygon points="8 5 20 12 8 19"/></svg>
+            </div>
+          </div>
+          <span class="kitchen-label">From Scratch</span>
+        </div>
+        <div class="kitchen-body">
+          <div class="kitchen-title">Slow-Cooked Beef Stew</div>
+          <div class="kitchen-desc">Traditional Chinese-style beef stew cooked low and slow with potatoes, carrots, and star anise.</div>
+        </div>
+      </a>
     </div>
   </div>
 </section>
