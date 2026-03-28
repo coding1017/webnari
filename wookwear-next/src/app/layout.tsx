@@ -1,10 +1,5 @@
 import type { Metadata } from "next";
 import { Barlow, Barlow_Condensed } from "next/font/google";
-import { CartProvider } from "@/components/cart/CartProvider";
-import { Navbar } from "@/components/layout/Navbar";
-import { Footer } from "@/components/layout/Footer";
-import { CartDrawer } from "@/components/cart/CartDrawer";
-import { Toast } from "@/components/ui/Toast";
 import "./globals.css";
 
 const barlow = Barlow({
@@ -47,15 +42,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${barlow.variable} ${barlowCondensed.variable}`}>
-      <body>
-        <CartProvider>
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
-          <CartDrawer />
-          <Toast />
-        </CartProvider>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

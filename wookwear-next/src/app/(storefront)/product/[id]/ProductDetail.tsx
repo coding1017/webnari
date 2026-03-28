@@ -1,47 +1,34 @@
 "use client";
 
 import { useState } from "react";
-import { useParams } from "next/navigation";
 import Link from "next/link";
-import { products, getProductById } from "@/data/products";
+import Image from "next/image";
+import { Product, Variant } from "@/types/product";
 import { useCart } from "@/hooks/useCart";
 import { formatPrice, cn } from "@/lib/utils";
 import { BadgePill } from "@/components/product/BadgePill";
 import { ReviewStars } from "@/components/product/ReviewStars";
 import { ProductCard } from "@/components/product/ProductCard";
+import { WishlistButton } from "@/components/wishlist/WishlistButton";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
-import { Variant } from "@/types/product";
 
-export default function ProductDetailPage() {
-  const { id } = useParams<{ id: string }>();
-  const product = getProductById(id);
+export function ProductDetail({
+  product,
+  relatedProducts,
+}: {
+  product: Product;
+  relatedProducts: Product[];
+}) {
   const { addItem } = useCart();
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(
-    product?.variants?.[0] || null
+    product.variants?.[0] || null
   );
   const [activeImgIndex, setActiveImgIndex] = useState(0);
-
-  if (!product) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="font-head font-black text-4xl text-ww-white mb-4">Product Not Found</h1>
-          <Link href="/shop" className="text-ww-pink hover:text-ww-pink2 font-head font-bold tracking-[0.1em] uppercase text-sm">
-            Back to Shop
-          </Link>
-        </div>
-      </div>
-    );
-  }
 
   const currentImages = selectedVariant ? selectedVariant.imgs : product.imgs;
   const currentPrice = selectedVariant ? selectedVariant.price : product.price;
   const currentInStock = selectedVariant ? selectedVariant.inStock : product.inStock;
   const currentId = selectedVariant ? selectedVariant.id : product.id;
-
-  const relatedProducts = products
-    .filter((p) => p.category === product.category && p.id !== product.id && p.inStock)
-    .slice(0, 4);
 
   function handleVariantChange(variant: Variant) {
     setSelectedVariant(variant);
@@ -64,10 +51,13 @@ export default function ProductDetailPage() {
           <div>
             <div className="relative aspect-square rounded-[20px] overflow-hidden bg-ww-surface border border-ww-border mb-4">
               <BadgePill badge={product.badge} variantCount={product.variants?.length} />
-              <img
+              <Image
                 src={currentImages[activeImgIndex] || product.img}
                 alt={product.name}
-                className="w-full h-full object-cover"
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover"
+                priority
               />
             </div>
             {currentImages.length > 1 && (
@@ -77,11 +67,11 @@ export default function ProductDetailPage() {
                     key={i}
                     onClick={() => setActiveImgIndex(i)}
                     className={cn(
-                      "w-20 h-20 rounded-[12px] overflow-hidden border-2 transition-all",
+                      "relative w-20 h-20 rounded-[12px] overflow-hidden border-2 transition-all",
                       i === activeImgIndex ? "border-ww-purple" : "border-ww-border hover:border-ww-purple/50"
                     )}
                   >
-                    <img src={img} alt={`${product.name} ${i + 1}`} className="w-full h-full object-cover" />
+                    <Image src={img} alt={`${product.name} ${i + 1}`} fill sizes="80px" className="object-cover" />
                   </button>
                 ))}
               </div>
@@ -90,9 +80,12 @@ export default function ProductDetailPage() {
 
           {/* Details */}
           <div>
-            <h1 className="font-head font-black text-[clamp(28px,4vw,42px)] leading-[1.1] text-ww-white mb-3">
-              {product.name}
-            </h1>
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <h1 className="font-head font-black text-[clamp(28px,4vw,42px)] leading-[1.1] text-ww-white">
+                {product.name}
+              </h1>
+              <WishlistButton productId={product.id} size="lg" />
+            </div>
 
             {product.rating > 0 && (
               <div className="flex items-center gap-2 mb-4">

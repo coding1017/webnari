@@ -1,8 +1,8 @@
 "use client";
 
 import { createContext, useState, useCallback, useEffect, ReactNode } from "react";
-import { CartItem, Product, Variant } from "@/types/product";
-import { products } from "@/data/products";
+import { CartItem } from "@/types/product";
+import { createBrowserClient } from "@supabase/ssr";
 
 interface CartContextType {
   items: CartItem[];
@@ -31,16 +31,34 @@ function getStoredCart(): CartItem[] {
   }
 }
 
-function findItemPrice(id: string): { name: string; price: number } | null {
-  for (const product of products) {
-    if (product.id === id) return { name: product.name, price: product.price };
-    if (product.variants) {
-      for (const variant of product.variants) {
-        if (variant.id === id) return { name: variant.name, price: variant.price };
-      }
+// Cache for product/variant lookups from Supabase
+const itemCache = new Map<string, { name: string; price: number; inStock: boolean }>();
+
+function getSupabase() {
+  return createBrowserClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+}
+
+async function loadItemCache() {
+  if (itemCache.size > 0) return;
+  const supabase = getSupabase();
+  const { data: products } = await supabase
+    .from("products")
+    .select("id, name, price, in_stock, variants(id, name, price, in_stock)");
+  if (!products) return;
+  for (const p of products as any[]) {
+    itemCache.set(p.id, { name: p.name, price: p.price / 100, inStock: p.in_stock });
+    for (const v of p.variants || []) {
+      itemCache.set(v.id, { name: v.name, price: v.price / 100, inStock: v.in_stock });
     }
   }
-  return null;
+}
+
+function findItemPrice(id: string): { name: string; price: number } | null {
+  const item = itemCache.get(id);
+  return item ? { name: item.name, price: item.price } : null;
 }
 
 export function CartProvider({ children }: { children: ReactNode }) {
@@ -52,6 +70,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     setItems(getStoredCart());
     setMounted(true);
+    loadItemCache();
   }, []);
 
   useEffect(() => {
@@ -68,6 +87,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, 0);
 
   const addItem = useCallback((id: string) => {
+    // Stock check
+    const cached = itemCache.get(id);
+    if (cached && !cached.inStock) {
+      setToastMessage("This item is sold out");
+      return;
+    }
+
     setItems((prev) => {
       const existing = prev.find((item) => item.id === id);
       if (existing) {

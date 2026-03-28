@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { getFeaturedProducts } from "@/data/products";
+import { db } from "@/lib/db";
 import { FeaturedGrid } from "@/components/product/FeaturedGrid";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
+import { NewsletterForm } from "@/components/newsletter/NewsletterForm";
 
 const testimonials = [
   { quote: "Best bags, been running mine for years!!! Absolute fire quality and the designs are always next level.", name: "@hesh4hash", initial: "H" },
@@ -32,8 +33,10 @@ const igImages = [
   { src: "/images/denim-crossbody-1.jpg", alt: "Sashiko Denim Crossbody" },
 ];
 
-export default function HomePage() {
-  const featured = getFeaturedProducts(4);
+export const revalidate = 60;
+
+export default async function HomePage() {
+  const featured = await db.getFeaturedProducts(4);
 
   return (
     <>
@@ -205,6 +208,31 @@ export default function HomePage() {
               </ScrollReveal>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Newsletter */}
+      <section className="py-20 max-md:py-14">
+        <div className="max-w-[1200px] mx-auto px-10 max-md:px-5">
+          <ScrollReveal>
+            <div className="bg-ww-dark border border-ww-border rounded-[24px] p-12 text-center max-md:p-8 relative overflow-hidden">
+              <div className="absolute inset-0 bg-[image:var(--checker)] opacity-10 pointer-events-none" />
+              <div className="relative z-[1]">
+                <div className="flex items-center justify-center gap-3 font-head text-[11px] font-bold tracking-[0.2em] uppercase text-ww-pink mb-4">
+                  <span className="w-6 h-0.5 bg-[image:var(--gradient)]" />
+                  Never Miss a Drop
+                  <span className="w-6 h-0.5 bg-[image:var(--gradient)]" />
+                </div>
+                <h2 className="font-head font-black text-[clamp(24px,3.5vw,36px)] leading-[1.1] text-ww-white mb-3">
+                  Join the <span className="gradient-text">Wook Wear</span> Fam
+                </h2>
+                <p className="text-ww-muted text-sm max-w-md mx-auto mb-8">
+                  Be the first to know about new drops, restocks, and exclusive behind-the-scenes content from Meesh.
+                </p>
+                <NewsletterForm variant="hero" />
+              </div>
+            </div>
+          </ScrollReveal>
         </div>
       </section>
 

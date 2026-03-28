@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { NewsletterForm } from "@/components/newsletter/NewsletterForm";
 
 export function Footer() {
   return (
@@ -81,7 +82,20 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="flex justify-between items-center mt-12 pt-6 border-t border-ww-border text-[13px] text-ww-muted max-md:flex-col max-md:gap-2 max-md:text-center">
+        {/* Newsletter */}
+        <div className="mt-12 pt-8 border-t border-ww-border">
+          <div className="flex items-start justify-between gap-8 max-md:flex-col">
+            <div className="max-w-sm">
+              <h3 className="font-head font-bold text-base text-ww-white mb-1">Stay in the loop</h3>
+              <p className="text-sm text-ww-muted">Get notified about new drops, restocks, and behind-the-scenes content.</p>
+            </div>
+            <div className="flex-1 max-w-md">
+              <NewsletterForm variant="inline" />
+            </div>
+          </div>
+        </div>
+
+        <div className="flex justify-between items-center mt-8 pt-6 border-t border-ww-border text-[13px] text-ww-muted max-md:flex-col max-md:gap-2 max-md:text-center">
           <span>Handmade in the PNW with love</span>
           <span>&copy; 2026 Wook Wear. All rights reserved.</span>
         </div>

@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { Product } from "@/types/product";
 import { formatPrice } from "@/lib/utils";
 import { useCart } from "@/hooks/useCart";
 import { BadgePill } from "./BadgePill";
+import { WishlistButton } from "@/components/wishlist/WishlistButton";
 import { ReviewStars } from "./ReviewStars";
 
 interface ProductCardProps {
@@ -20,12 +22,16 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
       <Link href={`/product/${product.id}`} className="block">
         <div className="aspect-square overflow-hidden relative">
           <BadgePill badge={product.badge} variantCount={product.variants?.length} />
+          <div className="absolute top-2.5 right-2.5 z-10 opacity-0 group-hover:opacity-100 max-md:opacity-100 transition-opacity">
+            <WishlistButton productId={product.id} />
+          </div>
           {product.img ? (
-            <img
+            <Image
               src={product.img}
               alt={product.name}
-              className="w-full h-full object-cover transition-transform duration-400 group-hover:scale-105"
-              loading="lazy"
+              fill
+              sizes="(max-width: 768px) 50vw, 280px"
+              className="object-cover transition-transform duration-400 group-hover:scale-105"
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-[linear-gradient(135deg,#FF2D9B,#A855F7)]">

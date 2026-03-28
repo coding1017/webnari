@@ -2,13 +2,12 @@
 
 import { useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import { products } from "@/data/products";
+import { Product, Category, CATEGORIES, CATEGORY_LABELS } from "@/types/product";
 import { ProductCard } from "@/components/product/ProductCard";
-import { Category, CATEGORIES, CATEGORY_LABELS } from "@/types/product";
 import { cn } from "@/lib/utils";
 import { Suspense } from "react";
 
-function ShopContent() {
+function ShopGrid({ products }: { products: Product[] }) {
   const searchParams = useSearchParams();
   const initialCat = searchParams.get("cat") as Category | null;
   const [activeCategory, setActiveCategory] = useState<Category | "all">(initialCat || "all");
@@ -32,7 +31,7 @@ function ShopContent() {
     }
 
     return result;
-  }, [activeCategory, sortBy]);
+  }, [activeCategory, sortBy, products]);
 
   return (
     <div className="min-h-screen pt-[120px] pb-24 max-md:pt-[100px] max-md:pb-16">
@@ -104,10 +103,10 @@ function ShopContent() {
   );
 }
 
-export default function ShopPage() {
+export function ShopContent({ products }: { products: Product[] }) {
   return (
     <Suspense>
-      <ShopContent />
+      <ShopGrid products={products} />
     </Suspense>
   );
 }
