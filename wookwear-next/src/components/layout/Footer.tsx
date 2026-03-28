@@ -59,7 +59,9 @@ export function Footer() {
                 { href: "/about", label: "About Meesh" },
                 { href: "/contact", label: "Contact" },
                 { href: "/blog", label: "Blog" },
-                { href: "/contact#faq", label: "FAQ" },
+                { href: "/shipping", label: "Shipping & Returns" },
+                { href: "/privacy", label: "Privacy Policy" },
+                { href: "/terms", label: "Terms of Service" },
               ].map((link) => (
                 <Link key={link.href} href={link.href} className="py-[5px] text-sm text-ww-text hover:text-ww-pink2 transition-colors">
                   {link.label}

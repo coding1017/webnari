@@ -12,11 +12,22 @@ function ShopGrid({ products }: { products: Product[] }) {
   const initialCat = searchParams.get("cat") as Category | null;
   const [activeCategory, setActiveCategory] = useState<Category | "all">(initialCat || "all");
   const [sortBy, setSortBy] = useState<"default" | "price-asc" | "price-desc" | "rating">("default");
+  const [search, setSearch] = useState("");
 
   const filtered = useMemo(() => {
     let result = activeCategory === "all"
       ? [...products]
       : products.filter((p) => p.category === activeCategory);
+
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      result = result.filter(
+        (p) =>
+          p.name.toLowerCase().includes(q) ||
+          p.desc?.toLowerCase().includes(q) ||
+          p.category.toLowerCase().includes(q)
+      );
+    }
 
     switch (sortBy) {
       case "price-asc":
@@ -46,8 +57,32 @@ function ShopGrid({ products }: { products: Product[] }) {
           </h1>
         </div>
 
+        {/* Search */}
+        <div className="relative mt-8 mb-6">
+          <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-4.5 h-4.5 text-ww-muted pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+          </svg>
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search products..."
+            className="w-full max-w-md pl-11 pr-4 py-2.5 bg-ww-surface border border-ww-border rounded-[12px] text-sm text-ww-white placeholder:text-ww-muted/50 focus:outline-none focus:border-ww-purple transition-colors"
+          />
+          {search && (
+            <button
+              onClick={() => setSearch("")}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-ww-muted hover:text-ww-white transition-colors"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
+        </div>
+
         {/* Filters */}
-        <div className="flex flex-wrap items-center gap-3 mt-8 mb-10">
+        <div className="flex flex-wrap items-center gap-3 mb-10">
           <button
             onClick={() => setActiveCategory("all")}
             className={cn(

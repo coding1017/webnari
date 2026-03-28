@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Product, Variant } from "@/types/product";
@@ -11,6 +11,9 @@ import { ReviewStars } from "@/components/product/ReviewStars";
 import { ProductCard } from "@/components/product/ProductCard";
 import { WishlistButton } from "@/components/wishlist/WishlistButton";
 import { ScrollReveal } from "@/components/ui/ScrollReveal";
+import { ReviewForm } from "@/components/product/ReviewForm";
+import { ShareButtons } from "@/components/product/ShareButtons";
+import { RecentlyViewed, trackRecentlyViewed } from "@/components/product/RecentlyViewed";
 
 export function ProductDetail({
   product,
@@ -24,6 +27,11 @@ export function ProductDetail({
     product.variants?.[0] || null
   );
   const [activeImgIndex, setActiveImgIndex] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+
+  useEffect(() => {
+    trackRecentlyViewed(product.id);
+  }, [product.id]);
 
   const currentImages = selectedVariant ? selectedVariant.imgs : product.imgs;
   const currentPrice = selectedVariant ? selectedVariant.price : product.price;
@@ -49,7 +57,10 @@ export function ProductDetail({
         <div className="grid grid-cols-2 gap-16 max-lg:grid-cols-1 max-lg:gap-10">
           {/* Gallery */}
           <div>
-            <div className="relative aspect-square rounded-[20px] overflow-hidden bg-ww-surface border border-ww-border mb-4">
+            <button
+              onClick={() => setLightboxOpen(true)}
+              className="relative aspect-square rounded-[20px] overflow-hidden bg-ww-surface border border-ww-border mb-4 w-full cursor-zoom-in group/zoom"
+            >
               <BadgePill badge={product.badge} variantCount={product.variants?.length} />
               <Image
                 src={currentImages[activeImgIndex] || product.img}
@@ -59,7 +70,12 @@ export function ProductDetail({
                 className="object-cover"
                 priority
               />
-            </div>
+              <div className="absolute bottom-3 right-3 w-8 h-8 rounded-full bg-ww-black/50 backdrop-blur-sm flex items-center justify-center opacity-0 group-hover/zoom:opacity-100 transition-opacity">
+                <svg className="w-4 h-4 text-ww-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6" />
+                </svg>
+              </div>
+            </button>
             {currentImages.length > 1 && (
               <div className="flex gap-3">
                 {currentImages.map((img, i) => (
@@ -152,6 +168,11 @@ export function ProductDetail({
                 Handmade, one of a kind
               </div>
             </div>
+
+            <ShareButtons
+              name={product.name}
+              url={typeof window !== "undefined" ? window.location.href : `/product/${product.id}`}
+            />
           </div>
         </div>
 
@@ -184,6 +205,20 @@ export function ProductDetail({
                 </ScrollReveal>
               ))}
             </div>
+            <ReviewForm productId={product.id} />
+          </section>
+        )}
+
+        {/* No reviews yet — still show the form */}
+        {product.reviews.length === 0 && (
+          <section className="mt-20">
+            <ScrollReveal>
+              <h2 className="font-head font-black text-2xl text-ww-white mb-4">
+                Reviews
+              </h2>
+              <p className="text-sm text-ww-muted mb-4">Be the first to review this product.</p>
+            </ScrollReveal>
+            <ReviewForm productId={product.id} />
           </section>
         )}
 
@@ -202,7 +237,89 @@ export function ProductDetail({
             </div>
           </section>
         )}
+
+        {/* Recently Viewed */}
+        <RecentlyViewed excludeId={product.id} />
       </div>
+
+      {/* Lightbox */}
+      {lightboxOpen && (
+        <div
+          className="fixed inset-0 z-[3000] bg-ww-black/95 flex items-center justify-center p-4"
+          onClick={() => setLightboxOpen(false)}
+        >
+          <button
+            onClick={() => setLightboxOpen(false)}
+            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-ww-surface/50 flex items-center justify-center text-ww-muted hover:text-ww-white transition-colors z-10"
+            aria-label="Close lightbox"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          {currentImages.length > 1 && (
+            <>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveImgIndex((prev) => (prev - 1 + currentImages.length) % currentImages.length);
+                }}
+                className="absolute left-4 w-10 h-10 rounded-full bg-ww-surface/50 flex items-center justify-center text-ww-muted hover:text-ww-white transition-colors z-10"
+                aria-label="Previous image"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                </svg>
+              </button>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setActiveImgIndex((prev) => (prev + 1) % currentImages.length);
+                }}
+                className="absolute right-4 w-10 h-10 rounded-full bg-ww-surface/50 flex items-center justify-center text-ww-muted hover:text-ww-white transition-colors z-10"
+                aria-label="Next image"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                </svg>
+              </button>
+            </>
+          )}
+
+          <div
+            className="relative max-w-[85vh] max-h-[85vh] w-full aspect-square"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Image
+              src={currentImages[activeImgIndex] || product.img}
+              alt={product.name}
+              fill
+              sizes="85vh"
+              className="object-contain"
+              quality={90}
+            />
+          </div>
+
+          {currentImages.length > 1 && (
+            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+              {currentImages.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setActiveImgIndex(i);
+                  }}
+                  className={cn(
+                    "w-2 h-2 rounded-full transition-all",
+                    i === activeImgIndex ? "bg-ww-white w-6" : "bg-ww-muted/50 hover:bg-ww-muted"
+                  )}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

@@ -41,5 +41,38 @@ export default async function ProductDetailPage({
     .filter((p) => p.category === product.category && p.id !== product.id && p.inStock)
     .slice(0, 4);
 
-  return <ProductDetail product={product} relatedProducts={related} />;
+  // JSON-LD structured data
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.desc,
+    image: product.img,
+    brand: { "@type": "Brand", name: "Wook Wear" },
+    offers: {
+      "@type": "Offer",
+      price: product.price.toFixed(2),
+      priceCurrency: "USD",
+      availability: product.inStock
+        ? "https://schema.org/InStock"
+        : "https://schema.org/OutOfStock",
+    },
+    ...(product.rating > 0 && {
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: product.rating.toFixed(1),
+        reviewCount: product.reviewCount,
+      },
+    }),
+  };
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <ProductDetail product={product} relatedProducts={related} />
+    </>
+  );
 }
