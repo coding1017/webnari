@@ -223,7 +223,7 @@ body{font-family:var(--font-body);background:var(--black);color:var(--text);over
 
   // ─── 3. RICE BASE — full width, thick layer ───
   var gRiceLayer=svgEl('g',{opacity:0});
-  var riceH=55;
+  var riceH=80;
   var riceY=foodBottom-riceH;
   var riceRect=svgEl('rect',{x:foodX,y:riceY,width:0,height:riceH,rx:3,fill:'url(#riceGrad)'});
   gRiceLayer.appendChild(riceRect);
@@ -237,53 +237,58 @@ body{font-family:var(--font-body);background:var(--black);color:var(--text);over
   }
   svg.appendChild(gRiceLayer);
 
-  // ─── 4. VEGGIE LAYER — full width, bok choy + broccoli mixed ───
+  // ─── 4. VEGGIE LAYER — full width, two rows of bok choy + broccoli ───
   var gVeggies=svgEl('g',{opacity:0});
   var vegPieces=[];
   var vegCount=isMobile?16:12;
-  var vegY=riceY-4; // sits on top of rice
-  for(var vi=0;vi<vegCount;vi++){
-    var vx=foodX+8+vi*(foodW-16)/(vegCount-1);
-    var vy=vegY-Math.random()*6;
-    var vG=svgEl('g',{opacity:0});
-    if(vi%3===0){
-      // Broccoli floret
-      vG.appendChild(svgEl('rect',{x:vx-2,y:vy+2,width:3,height:10,rx:1.5,fill:'#6B8F3A'}));
-      vG.appendChild(svgEl('circle',{cx:vx,cy:vy-2,r:7,fill:'url(#brocGrad)'}));
-      vG.appendChild(svgEl('circle',{cx:vx-5,cy:vy+1,r:5,fill:'#43A047'}));
-      vG.appendChild(svgEl('circle',{cx:vx+5,cy:vy+1,r:5,fill:'#388E3C'}));
-      vG.appendChild(svgEl('circle',{cx:vx-2,cy:vy-5,r:2,fill:'#66BB6A',opacity:0.6}));
-    } else {
-      // Bok choy
-      vG.appendChild(svgEl('path',{d:'M'+vx+' '+vy+' Q'+(vx-3)+' '+(vy+10)+' '+(vx+1)+' '+(vy+18),fill:'none',stroke:'#E0ECC8','stroke-width':3.5,'stroke-linecap':'round'}));
-      var lD='M'+vx+' '+vy+' Q'+(vx-10)+' '+(vy-6)+' '+(vx-5)+' '+(vy-13)+' Q'+vx+' '+(vy-17)+' '+(vx+6)+' '+(vy-11)+' Q'+(vx+11)+' '+(vy-5)+' '+vx+' '+vy;
-      vG.appendChild(svgEl('path',{d:lD,fill:vi%2===0?'#3DAA6D':'#2E8B57',stroke:'#1B6B3A','stroke-width':0.5}));
+  var vegY=riceY-2; // sits on top of rice
+  // Two rows of veggies for thickness
+  for(var row=0;row<2;row++){
+    for(var vi=0;vi<vegCount;vi++){
+      var vx=foodX+10+vi*(foodW-20)/(vegCount-1)+(row*12);
+      var vy=vegY-row*22-Math.random()*8;
+      var vG=svgEl('g',{opacity:0});
+      if(vi%3===0){
+        // Broccoli floret — bigger
+        vG.appendChild(svgEl('rect',{x:vx-2,y:vy+3,width:4,height:14,rx:2,fill:'#6B8F3A'}));
+        vG.appendChild(svgEl('circle',{cx:vx,cy:vy-3,r:10,fill:'url(#brocGrad)'}));
+        vG.appendChild(svgEl('circle',{cx:vx-7,cy:vy+1,r:7,fill:'#43A047'}));
+        vG.appendChild(svgEl('circle',{cx:vx+7,cy:vy+1,r:7,fill:'#388E3C'}));
+        vG.appendChild(svgEl('circle',{cx:vx-3,cy:vy-6,r:3,fill:'#66BB6A',opacity:0.6}));
+      } else {
+        // Bok choy — bigger leaves
+        vG.appendChild(svgEl('path',{d:'M'+vx+' '+vy+' Q'+(vx-4)+' '+(vy+14)+' '+(vx+1)+' '+(vy+24),fill:'none',stroke:'#E0ECC8','stroke-width':4.5,'stroke-linecap':'round'}));
+        var lD='M'+vx+' '+vy+' Q'+(vx-14)+' '+(vy-8)+' '+(vx-7)+' '+(vy-18)+' Q'+vx+' '+(vy-23)+' '+(vx+8)+' '+(vy-15)+' Q'+(vx+15)+' '+(vy-6)+' '+vx+' '+vy;
+        vG.appendChild(svgEl('path',{d:lD,fill:vi%2===0?'#3DAA6D':'#2E8B57',stroke:'#1B6B3A','stroke-width':0.5}));
+      }
+      gVeggies.appendChild(vG);
+      vegPieces.push(vG);
     }
-    gVeggies.appendChild(vG);
-    vegPieces.push(vG);
   }
   svg.appendChild(gVeggies);
 
-  // ─── 5. PROTEIN LAYER — full width, seared chicken slices ───
+  // ─── 5. PROTEIN LAYER — full width, two rows of seared chicken ───
   var gChick=svgEl('g',{opacity:0});
   var chickPieces=[];
   var chickCount=isMobile?12:9;
-  var chickY=vegY-22; // sits on top of veggies
-  for(var ci=0;ci<chickCount;ci++){
-    var cxp=foodX+12+ci*(foodW-24)/(chickCount-1);
-    var cyp=chickY-Math.random()*6;
-    var cG=svgEl('g',{opacity:0});
-    var cw=30+Math.random()*10;
-    var ch=14+Math.random()*5;
-    // Chicken piece
-    cG.appendChild(svgEl('rect',{x:cxp-cw/2,y:cyp-ch/2,width:cw,height:ch,rx:4,fill:'url(#chickenGrad)',stroke:'#B07020','stroke-width':0.8}));
-    // Grill marks
-    cG.appendChild(svgEl('line',{x1:cxp-cw/2+3,y1:cyp-1,x2:cxp+cw/2-3,y2:cyp-1,stroke:'#8B5A20','stroke-width':1.5,'stroke-linecap':'round',opacity:0.5}));
-    cG.appendChild(svgEl('line',{x1:cxp-cw/2+3,y1:cyp+4,x2:cxp+cw/2-3,y2:cyp+4,stroke:'#8B5A20','stroke-width':1.5,'stroke-linecap':'round',opacity:0.4}));
-    // Highlight
-    cG.appendChild(svgEl('rect',{x:cxp-cw/2+2,y:cyp-ch/2+1,width:cw*0.4,height:2.5,rx:1.2,fill:'#F0C080',opacity:0.4}));
-    gChick.appendChild(cG);
-    chickPieces.push(cG);
+  var chickY=vegY-48; // sits on top of veggies (2 rows of veggies = ~44px)
+  for(var crow=0;crow<2;crow++){
+    for(var ci=0;ci<chickCount;ci++){
+      var cxp=foodX+14+ci*(foodW-28)/(chickCount-1)+(crow*8);
+      var cyp=chickY-crow*20-Math.random()*6;
+      var cG=svgEl('g',{opacity:0});
+      var cw=34+Math.random()*12;
+      var ch=16+Math.random()*6;
+      // Chicken piece
+      cG.appendChild(svgEl('rect',{x:cxp-cw/2,y:cyp-ch/2,width:cw,height:ch,rx:4,fill:'url(#chickenGrad)',stroke:'#B07020','stroke-width':0.8}));
+      // Grill marks
+      cG.appendChild(svgEl('line',{x1:cxp-cw/2+3,y1:cyp-2,x2:cxp+cw/2-3,y2:cyp-2,stroke:'#8B5A20','stroke-width':1.8,'stroke-linecap':'round',opacity:0.5}));
+      cG.appendChild(svgEl('line',{x1:cxp-cw/2+3,y1:cyp+4,x2:cxp+cw/2-3,y2:cyp+4,stroke:'#8B5A20','stroke-width':1.5,'stroke-linecap':'round',opacity:0.4}));
+      // Highlight
+      cG.appendChild(svgEl('rect',{x:cxp-cw/2+2,y:cyp-ch/2+1,width:cw*0.4,height:3,rx:1.5,fill:'#F0C080',opacity:0.4}));
+      gChick.appendChild(cG);
+      chickPieces.push(cG);
+    }
   }
   svg.appendChild(gChick);
 
@@ -291,10 +296,11 @@ body{font-family:var(--font-body);background:var(--black);color:var(--text);over
   var gSauceLayer=svgEl('g',{opacity:0});
   var saucePaths=[];
   var sauceCount=7;
+  var foodTopY=chickY-46; // top of all food
   for(var si=0;si<sauceCount;si++){
     var sx1=foodX+15+si*(foodW-30)/(sauceCount-1);
     var sx2=sx1+15*(Math.random()-0.5);
-    var sy1=chickY-10;
+    var sy1=foodTopY;
     var sy2=riceY+riceH*0.4;
     var sPath=svgEl('line',{x1:sx1,y1:sy1,x2:sx1,y2:sy1,stroke:'url(#sauceGrad)','stroke-width':2.5,'stroke-linecap':'round',opacity:0.85});
     gSauceLayer.appendChild(sPath);
@@ -303,7 +309,7 @@ body{font-family:var(--font-body);background:var(--black);color:var(--text);over
   var saucePools=[];
   for(var sp=0;sp<10;sp++){
     var spx=foodX+15+sp*(foodW-30)/9;
-    var spy=chickY+Math.random()*8;
+    var spy=foodTopY+10+Math.random()*12;
     var pool=svgEl('ellipse',{cx:spx,cy:spy,rx:5+Math.random()*4,ry:1.5+Math.random()*1,fill:'#7B2000',opacity:0});
     gSauceLayer.appendChild(pool);
     saucePools.push(pool);
@@ -315,7 +321,7 @@ body{font-family:var(--font-body);background:var(--black);color:var(--text);over
   var sesameSeeds=[];
   for(var sei=0;sei<45;sei++){
     var sex=foodX+10+Math.random()*(foodW-20);
-    var sey=chickY-12+Math.random()*40;
+    var sey=foodTopY-5+Math.random()*50;
     var seAngle=Math.random()*90-45;
     var isBlack=Math.random()>0.6;
     var seed=svgEl('ellipse',{cx:sex,cy:sey,rx:2.5,ry:1.2,fill:isBlack?'#1A1A0A':'#F5E8C8',stroke:isBlack?'#0A0A00':'#D4C090','stroke-width':0.3,opacity:0,transform:'rotate('+seAngle+' '+sex+' '+sey+')'});
@@ -330,7 +336,7 @@ body{font-family:var(--font-body);background:var(--black);color:var(--text);over
   // Scallion rings
   for(var sci=0;sci<25;sci++){
     var scx=foodX+12+Math.random()*(foodW-24);
-    var scy=chickY-8+Math.random()*30;
+    var scy=foodTopY-2+Math.random()*40;
     var scG=svgEl('g',{opacity:0});
     scG.appendChild(svgEl('circle',{cx:scx,cy:scy,r:3.5,fill:'#4CAF50',stroke:'#2E7D32','stroke-width':0.5}));
     scG.appendChild(svgEl('circle',{cx:scx,cy:scy,r:1.8,fill:'#8BC34A',opacity:0.7}));
@@ -340,7 +346,7 @@ body{font-family:var(--font-body);background:var(--black);color:var(--text);over
   // Chili flakes
   for(var chi=0;chi<18;chi++){
     var chx=foodX+15+Math.random()*(foodW-30);
-    var chy=chickY-6+Math.random()*25;
+    var chy=foodTopY+Math.random()*30;
     var chAngle=Math.random()*180;
     var flake=svgEl('ellipse',{cx:chx,cy:chy,rx:2,ry:0.8,fill:chi%3===0?'#D94040':'#E86565',opacity:0,transform:'rotate('+chAngle+' '+chx+' '+chy+')'});
     gGarnish.appendChild(flake);
@@ -353,7 +359,7 @@ body{font-family:var(--font-body);background:var(--black);color:var(--text);over
   var steamPaths=[];
   for(var sti=0;sti<7;sti++){
     var stx=foodX+30+sti*(foodW-60)/6;
-    var sty=contY+8;
+    var sty=foodTopY-5;
     var steamP=svgEl('path',{
       d:'M'+stx+' '+sty+' Q'+(stx-10)+' '+(sty-25)+' '+(stx+5)+' '+(sty-50)+' Q'+(stx+14)+' '+(sty-70)+' '+(stx-3)+' '+(sty-90),
       fill:'none',stroke:'#FFF8F0','stroke-width':2.5,'stroke-linecap':'round',opacity:0
@@ -378,55 +384,47 @@ body{font-family:var(--font-body);background:var(--black);color:var(--text);over
   gLidLayer.appendChild(svgEl('rect',{x:contX+contW-5,y:contY-4,width:8,height:12,rx:3,fill:'#90B898',stroke:'#78A888','stroke-width':1}));
   svg.appendChild(gLidLayer);
 
-  // ─── 11. MACRO CARD with donut chart ───
+  // ─── 11. MACRO CARD with donut chart — below container ───
   var gMacro=svgEl('g',{opacity:0});
-  var macroX=isMobile?cx-90:contX+contW+35;
-  var macroY=isMobile?contY+contH+20:contY-10;
-  var macroW=160, macroH=175;
+  var macroW=260, macroH=80;
+  var macroX=cx-macroW/2;
+  var macroY=contY+contH+18;
   // Card bg
   gMacro.appendChild(svgEl('rect',{x:macroX,y:macroY,width:macroW,height:macroH,rx:10,fill:'#1C1612',stroke:'#F0A830','stroke-width':1.5}));
-  // Title
-  var mt=svgEl('text',{x:macroX+macroW/2,y:macroY+20,'text-anchor':'middle','font-family':'Barlow Condensed, sans-serif','font-size':'13','font-weight':'700','letter-spacing':'0.12em',fill:'#F0A830'});
-  mt.textContent='MACROS';
-  gMacro.appendChild(mt);
-  gMacro.appendChild(svgEl('line',{x1:macroX+12,y1:macroY+27,x2:macroX+macroW-12,y2:macroY+27,stroke:'#342A22','stroke-width':1}));
 
-  // Donut chart — centered in card
-  var donutCx=macroX+macroW/2, donutCy=macroY+70, donutR=28, donutW2=8;
-  // Protein 42g=42%, Carbs 38g=39%, Fat 18g=19% (approx by grams of 98 total)
+  // Donut chart — left side of card
+  var donutCx=macroX+48, donutCy=macroY+macroH/2, donutR=24, donutW2=7;
   var segments=[{pct:0.43,color:'#D94040'},{pct:0.39,color:'#3DAA6D'},{pct:0.18,color:'#F5C563'}];
   var startAngle=-Math.PI/2;
   for(var di=0;di<segments.length;di++){
     var seg=segments[di];
     var endAngle=startAngle+seg.pct*Math.PI*2;
-    var x1=donutCx+Math.cos(startAngle)*donutR;
-    var y1=donutCy+Math.sin(startAngle)*donutR;
-    var x2=donutCx+Math.cos(endAngle)*donutR;
-    var y2=donutCy+Math.sin(endAngle)*donutR;
+    var x1d=donutCx+Math.cos(startAngle)*donutR;
+    var y1d=donutCy+Math.sin(startAngle)*donutR;
+    var x2d=donutCx+Math.cos(endAngle)*donutR;
+    var y2d=donutCy+Math.sin(endAngle)*donutR;
     var largeArc=seg.pct>0.5?1:0;
-    var arcD='M'+x1+' '+y1+' A'+donutR+' '+donutR+' 0 '+largeArc+' 1 '+x2+' '+y2;
+    var arcD='M'+x1d+' '+y1d+' A'+donutR+' '+donutR+' 0 '+largeArc+' 1 '+x2d+' '+y2d;
     gMacro.appendChild(svgEl('path',{d:arcD,fill:'none',stroke:seg.color,'stroke-width':donutW2,'stroke-linecap':'round'}));
     startAngle=endAngle;
   }
-  // Center text
-  var calText=svgEl('text',{x:donutCx,y:donutCy+2,'text-anchor':'middle','font-family':'Barlow Condensed, sans-serif','font-size':'14','font-weight':'700',fill:'#F0A830'});
+  // Center cal text
+  var calText=svgEl('text',{x:donutCx,y:donutCy+2,'text-anchor':'middle','font-family':'Barlow Condensed, sans-serif','font-size':'13','font-weight':'700',fill:'#F0A830'});
   calText.textContent='485';
   gMacro.appendChild(calText);
   var calLabel=svgEl('text',{x:donutCx,y:donutCy+12,'text-anchor':'middle','font-family':'Barlow, sans-serif','font-size':'7','font-weight':'500',fill:'#8A7A6E'});
   calLabel.textContent='KCAL';
   gMacro.appendChild(calLabel);
 
-  // Legend rows below donut
+  // Legend — right side, 3 rows stacked vertically
+  var legendX=macroX+95;
   var macros=[{label:'Protein',val:'42g',color:'#D94040'},{label:'Carbs',val:'38g',color:'#3DAA6D'},{label:'Fat',val:'18g',color:'#F5C563'}];
   for(var mi=0;mi<macros.length;mi++){
-    var my2=macroY+108+mi*20;
-    // Color dot
-    gMacro.appendChild(svgEl('circle',{cx:macroX+18,cy:my2-3,r:4,fill:macros[mi].color}));
-    // Label
-    var mLab=svgEl('text',{x:macroX+28,y:my2,'font-family':'Barlow, sans-serif','font-size':'11','font-weight':'500',fill:'#D4C4B4'});
+    var my2=macroY+22+mi*20;
+    gMacro.appendChild(svgEl('circle',{cx:legendX,cy:my2-3,r:4,fill:macros[mi].color}));
+    var mLab=svgEl('text',{x:legendX+10,y:my2,'font-family':'Barlow, sans-serif','font-size':'11','font-weight':'500',fill:'#D4C4B4'});
     mLab.textContent=macros[mi].label;
     gMacro.appendChild(mLab);
-    // Value
     var mVal=svgEl('text',{x:macroX+macroW-14,y:my2,'text-anchor':'end','font-family':'Barlow Condensed, sans-serif','font-size':'13','font-weight':'700',fill:macros[mi].color});
     mVal.textContent=macros[mi].val;
     gMacro.appendChild(mVal);
@@ -562,10 +560,10 @@ body{font-family:var(--font-body);background:var(--black);color:var(--text);over
     var macroP=clamp((p-0.84)/0.06,0,1);
     gMacro.setAttribute('opacity',ease3(macroP));
     if(macroP>0){
-      gMacro.setAttribute('transform','translate('+(1-ease3(macroP))*25+',0)');
+      gMacro.setAttribute('transform','translate(0,'+(1-ease3(macroP))*20+')');
       if(p>=0.84&&p<0.90) setPhase('YOUR MACROS');
     } else {
-      gMacro.setAttribute('transform','translate(25,0)');
+      gMacro.setAttribute('transform','translate(0,20)');
     }
 
     // ════════ MASTER RESET ════════
