@@ -42,14 +42,15 @@ body {
   padding: 0;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
-  background-color: #EDE7DB;
+  background-color: #E8E0D4;
   background-image:
-    radial-gradient(ellipse 700px 500px at 5% 15%, rgba(74,124,201,0.12) 0%, transparent 70%),
-    radial-gradient(ellipse 600px 400px at 90% 50%, rgba(184,137,42,0.10) 0%, transparent 70%),
-    radial-gradient(ellipse 500px 400px at 40% 85%, rgba(74,124,201,0.08) 0%, transparent 70%),
-    radial-gradient(ellipse 400px 300px at 70% 10%, rgba(212,166,58,0.08) 0%, transparent 70%),
-    repeating-linear-gradient(135deg, transparent, transparent 60px, rgba(74,124,201,0.03) 60px, rgba(74,124,201,0.03) 61px),
-    repeating-linear-gradient(45deg, transparent, transparent 60px, rgba(184,137,42,0.03) 60px, rgba(184,137,42,0.03) 61px);
+    radial-gradient(ellipse 800px 600px at 0% 10%, rgba(74,124,201,0.18) 0%, transparent 65%),
+    radial-gradient(ellipse 700px 500px at 95% 40%, rgba(184,137,42,0.15) 0%, transparent 65%),
+    radial-gradient(ellipse 600px 500px at 30% 80%, rgba(74,124,201,0.14) 0%, transparent 65%),
+    radial-gradient(ellipse 500px 400px at 75% 5%, rgba(212,166,58,0.12) 0%, transparent 65%),
+    radial-gradient(ellipse 400px 350px at 50% 50%, rgba(77,168,218,0.08) 0%, transparent 60%),
+    repeating-linear-gradient(135deg, transparent, transparent 50px, rgba(74,124,201,0.04) 50px, rgba(74,124,201,0.04) 51px),
+    repeating-linear-gradient(45deg, transparent, transparent 50px, rgba(184,137,42,0.04) 50px, rgba(184,137,42,0.04) 51px);
   background-attachment: fixed;
 }
 ::selection { background: var(--gold-dim); color: var(--white); }
@@ -60,13 +61,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 2px solid rgba(184,137,42,0.2);
-  background: rgba(243,237,228,0.92);
+  border-bottom: 3px solid var(--gold);
+  background: linear-gradient(135deg, rgba(184,137,42,0.20) 0%, rgba(160,140,80,0.15) 30%, rgba(130,155,170,0.12) 50%, rgba(77,168,218,0.15) 70%, rgba(77,168,218,0.20) 100%);
   position: sticky;
   top: 0;
   z-index: 100;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 .header-left {
   display: flex;
@@ -82,29 +83,34 @@ body {
   width: 32px;
   height: 32px;
   border-radius: 8px;
-  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  background: #F0EBE2;
+  border: 2px solid var(--gold);
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.header-logo-mark svg { width: 16px; height: 16px; color: #fff; }
+.header-logo-mark svg { width: 16px; height: 16px; }
 .header-logo-text {
   font-family: var(--font-head);
-  font-weight: 700;
-  font-size: 16px;
-  color: var(--white);
+  font-weight: 900;
+  font-size: 18px;
+  color: var(--gold);
   letter-spacing: -0.01em;
 }
 .header-divider {
-  width: 1px;
+  width: 3px;
   height: 24px;
-  background: var(--border);
+  background: linear-gradient(180deg, #B8892A, #4A7CC9);
+  border-radius: 2px;
 }
 .header-client {
   font-family: var(--font-head);
-  font-weight: 600;
-  font-size: 15px;
-  color: var(--gold);
+  font-weight: 900;
+  font-size: 17px;
+  background: linear-gradient(90deg, #4A7CC9, #3B8DD4, #B8892A);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 .header-right {
   display: flex;
@@ -113,23 +119,24 @@ body {
 }
 .header-meta {
   font-size: 13px;
-  color: var(--muted);
+  color: #1A1518;
+  font-weight: 600;
 }
 .header-stat {
   display: flex;
   align-items: center;
   gap: 6px;
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: linear-gradient(135deg, rgba(184,137,42,0.25), rgba(77,168,218,0.20));
+  border: 2px solid var(--gold);
   border-radius: 8px;
   padding: 6px 14px;
   font-size: 13px;
-  font-weight: 500;
-  color: var(--text);
+  font-weight: 700;
+  color: #1A1518;
 }
 .header-stat strong {
-  color: var(--white);
-  font-weight: 700;
+  color: var(--gold);
+  font-weight: 800;
 }
 
 /* ── MAIN CONTENT ────────────────────────────── */
@@ -507,16 +514,121 @@ body {
 }
 .powered-text a:hover { text-decoration: underline; }
 
+/* ── PARENT-CHILD GROUP ──────────────────────── */
+.cards-with-groups {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.card-groups-row {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 40px;
+  margin-top: 20px;
+}
+.card-group-vertical {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.card-child-wrap {
+  position: relative;
+  padding-left: 32px;
+  padding-top: 24px;
+}
+.card-child-wrap::before {
+  content: '';
+  position: absolute;
+  left: 12px;
+  top: 4px;
+  width: 4px;
+  height: calc(50% - 4px);
+  background: linear-gradient(180deg, #B8892A, #4A7CC9);
+  border-radius: 3px;
+}
+.card-child-wrap::after {
+  content: '';
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  width: 20px;
+  height: 4px;
+  background: linear-gradient(90deg, #4A7CC9, #B8892A);
+  border-radius: 3px;
+}
+.card-child-wrap .card {
+  position: relative;
+}
+.card-child-wrap .card::before {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: 50%;
+  width: 4px;
+  height: 4px;
+  background: #B8892A;
+  border-radius: 50%;
+}
+
 /* ── MOBILE ───────────────────────────────────── */
 @media (max-width: 768px) {
-  .header { padding: 16px 20px; flex-direction: column; gap: 12px; }
-  .main { padding: 24px 20px 60px; }
-  .page-title { font-size: 24px; }
-  .cards { grid-template-columns: 1fr; }
-  .stats-bar { grid-template-columns: repeat(2, 1fr); }
-  .nav-preview { padding: 16px 20px; }
+  .header { padding: 16px 20px; flex-direction: column; gap: 8px; }
   .header-right { display: none; }
+  .main { padding: 20px 16px 60px; }
+  .page-title { font-size: 32px; }
+
+  /* Website bar */
   .website-bar-row { flex-direction: column; gap: 10px; }
+  .website-bar-link { font-size: 22px; }
+
+  /* Stats */
+  .stats-bar { grid-template-columns: repeat(2, 1fr); }
+
+  /* Legend */
+  .legend { flex-direction: column; gap: 8px; }
+
+  /* Nav preview */
+  .nav-preview { padding: 16px 16px; }
+  .nav-bar { gap: 4px; }
+  .nav-item { font-size: 11px; padding: 6px 10px; }
+  .nav-divider { display: none; }
+
+  /* Cards grid — 1 column on mobile */
+  .cards { grid-template-columns: 1fr; }
+  .cards-with-groups { grid-template-columns: 1fr; }
+
+  /* Parent-child groups — stack vertically */
+  .card-groups-row {
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* Owner access cards — stack vertically */
+  .cards-owner { gap: 12px; }
+  .card-owner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 16px 18px;
+  }
+  .card-owner .card-name {
+    min-width: unset;
+    font-size: 16px;
+  }
+  .card-owner .card-url {
+    word-break: break-all;
+    font-size: 11px;
+  }
+  .card-owner .card-desc {
+    font-size: 12px;
+  }
+  .card-owner .badge {
+    align-self: flex-start;
+  }
+
+  /* Section labels */
+  .section-label { flex-wrap: wrap; }
 }
 
 /* ── PRINT ───────────────────────────────────── */
@@ -581,6 +693,10 @@ body {
     page-break-inside: avoid !important;
   }
   a { text-decoration: none !important; }
+  .card-child::before, .card-child::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
 }
 </style>
 </head>
@@ -591,7 +707,7 @@ body {
   <div class="header-left">
     <div class="header-logo">
       <div class="header-logo-mark">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#B8892A"/><path d="M2 12l10 5 10-5" stroke="#4A7CC9"/><path d="M2 17l10 5 10-5" stroke="#B8892A"/></svg>
       </div>
       <span class="header-logo-text">Webnari</span>
     </div>
@@ -688,31 +804,12 @@ body {
       Main Pages
       <span class="section-count">7 pages</span>
     </div>
-    <div class="cards">
+    <div class="cards-with-groups">
+      <!-- Standalone cards -->
       <div class="card grad-bg">
         <div class="card-top"><span class="card-name">Home</span><span class="badge badge-nav">In Nav</span></div>
         <div class="card-url">jadesspice.com/</div>
         <div class="card-desc">Hero, featured meals, why us, how it works, about, testimonials, CTA</div>
-      </div>
-      <div class="card grad-gb">
-        <div class="card-top"><span class="card-name">Blog</span><span class="badge badge-nav">In Nav</span></div>
-        <div class="card-url">jadesspice.com/blog/</div>
-        <div class="card-desc">24 articles on nutrition, recipes, Chinese cooking, and wellness</div>
-      </div>
-      <div class="card grad-bg">
-        <div class="card-top"><span class="card-name">Blog Post</span><span class="badge badge-none">--</span></div>
-        <div class="card-url">jadesspice.com/blog/post/?slug=[slug]</div>
-        <div class="card-desc">Individual article page with full content, tags, and related posts</div>
-      </div>
-      <div class="card grad-gb">
-        <div class="card-top"><span class="card-name">Kitchen Glossary</span><span class="badge badge-nav">In Nav</span></div>
-        <div class="card-url">jadesspice.com/glossary/</div>
-        <div class="card-desc">179 searchable cooking terms across 6 categories</div>
-      </div>
-      <div class="card grad-bg">
-        <div class="card-top"><span class="card-name">Glossary Term</span><span class="badge badge-none">--</span></div>
-        <div class="card-url">jadesspice.com/glossary/term/?term=[slug]</div>
-        <div class="card-desc">Individual term page — SEO-indexed with definition and category</div>
       </div>
       <div class="card grad-gb">
         <div class="card-top"><span class="card-name">Macro Calculator</span><span class="badge badge-tool">Tool</span></div>
@@ -723,6 +820,41 @@ body {
         <div class="card-top"><span class="card-name">Content Manager</span><span class="badge badge-admin">Admin</span></div>
         <div class="card-url">jadesspice.com/admin/</div>
         <div class="card-desc">Password-protected CMS — edit meals, photos, text, reviews, SEO</div>
+      </div>
+
+      <!-- Parent-Child Groups side by side -->
+      <div class="card-groups-row">
+        <!-- Blog → Blog Post (left) -->
+        <div class="card-group-vertical">
+          <div class="card grad-gb">
+            <div class="card-top"><span class="card-name">Blog</span><span class="badge badge-nav">In Nav</span></div>
+            <div class="card-url">jadesspice.com/blog/</div>
+            <div class="card-desc">24 articles on nutrition, recipes, Chinese cooking, and wellness</div>
+          </div>
+          <div class="card-child-wrap">
+            <div class="card grad-bg">
+              <div class="card-top"><span class="card-name">Blog Post</span><span class="badge badge-none">Subpage</span></div>
+              <div class="card-url">jadesspice.com/blog/post/?slug=[slug]</div>
+              <div class="card-desc">Individual article page with full content, tags, and related posts</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kitchen Glossary → Glossary Term (right) -->
+        <div class="card-group-vertical">
+          <div class="card grad-gb">
+            <div class="card-top"><span class="card-name">Kitchen Glossary</span><span class="badge badge-nav">In Nav</span></div>
+            <div class="card-url">jadesspice.com/glossary/</div>
+            <div class="card-desc">179 searchable cooking terms across 6 categories</div>
+          </div>
+          <div class="card-child-wrap">
+            <div class="card grad-bg">
+              <div class="card-top"><span class="card-name">Glossary Term</span><span class="badge badge-none">Subpage</span></div>
+              <div class="card-url">jadesspice.com/glossary/term/?term=[slug]</div>
+              <div class="card-desc">Individual term page — SEO-indexed with definition and category</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
