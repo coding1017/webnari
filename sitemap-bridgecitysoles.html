@@ -439,10 +439,10 @@ body {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-bottom: 36px;
+  margin-bottom: 12px;
   flex-wrap: wrap;
 }
-.stat-card { flex: 1; min-width: 100px; }
+.stat-card { flex: 1; min-width: 80px; }
 .stat-operator {
   font-family: var(--font-head);
   font-size: 28px;
@@ -457,7 +457,7 @@ body {
   background: linear-gradient(135deg, rgba(184,137,42,0.26) 0%, rgba(160,140,80,0.20) 30%, rgba(130,155,170,0.16) 50%, rgba(77,168,218,0.20) 70%, rgba(77,168,218,0.26) 100%);
   border: 3px solid var(--gold);
   border-radius: 14px;
-  padding: 20px 20px;
+  padding: 20px 16px;
   text-align: center;
   transition: all 0.25s ease;
 }
@@ -465,7 +465,6 @@ body {
   transform: translateY(-2px);
   box-shadow: 0 8px 32px rgba(184,137,42,0.25), 0 0 0 2px var(--gold);
 }
-.stat-card:first-child { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(184,137,42,0.06); }
 .stat-num {
   font-family: var(--font-head);
   font-size: 28px;
@@ -473,6 +472,47 @@ body {
   color: var(--white);
   line-height: 1;
   margin-bottom: 4px;
+}
+/* Total bar below the equation */
+.stat-total-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 16px 28px;
+  border: 3px solid var(--gold);
+  border-radius: 14px;
+  background: linear-gradient(135deg, rgba(184,137,42,0.26) 0%, rgba(160,140,80,0.20) 30%, rgba(130,155,170,0.16) 50%, rgba(77,168,218,0.20) 70%, rgba(77,168,218,0.26) 100%);
+  margin-bottom: 36px;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 16px rgba(184,137,42,0.12), 0 0 0 1px rgba(184,137,42,0.15);
+}
+.stat-total-bar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(184,137,42,0.25), 0 0 0 2px var(--gold);
+}
+.stat-total-equals {
+  font-family: var(--font-head);
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--gold);
+}
+.stat-total-num {
+  font-family: var(--font-head);
+  font-size: 36px;
+  font-weight: 900;
+  background: linear-gradient(90deg, #4A7CC9 0%, #3B8DD4 30%, #D4A63A 60%, #B8892A 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.stat-total-label {
+  font-family: var(--font-head);
+  font-size: 16px;
+  font-weight: 800;
+  color: #1A1518;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 .stat-card:first-child .stat-num { color: var(--gold); }
 .stat-card:first-child { border-color: var(--gold); border-width: 3px; box-shadow: 0 0 0 3px rgba(184,137,42,0.06); }
@@ -653,9 +693,12 @@ body {
   .website-bar-link { font-size: 22px; }
 
   /* Stats */
-  .stats-bar { flex-wrap: wrap; }
-  .stat-card { min-width: 40%; flex: 1 1 40%; }
-  .stat-operator { display: none; }
+  .stats-bar { flex-wrap: wrap; gap: 6px; }
+  .stat-card { min-width: 28%; flex: 1 1 28%; padding: 14px 10px; }
+  .stat-operator { font-size: 18px; width: 16px; }
+  .stat-total-bar { padding: 12px 20px; }
+  .stat-total-num { font-size: 28px; }
+  .stat-total-label { font-size: 13px; }
 
   /* Legend */
   .legend { flex-direction: column; gap: 8px; }
@@ -814,32 +857,42 @@ body {
     </div>
   </div>
 
-  <!-- Stats — 165 = 21 + 29 + 16 + 99 -->
+  <!-- Stats — 12 + 4 + 5 + 29 + 16 + 99 = 165 -->
   <div class="stats-bar">
     <div class="stat-card grad-gb">
-      <div class="stat-num" style="color:var(--gold);">165</div>
-      <div class="stat-label">Total Pages</div>
+      <div class="stat-num" style="color:var(--gold);">12</div>
+      <div class="stat-label">Main Pages</div>
     </div>
-    <div class="stat-operator">=</div>
+    <div class="stat-operator">+</div>
     <div class="stat-card grad-bg">
-      <div class="stat-num" style="color:#4A7CC9;">21</div>
-      <div class="stat-label">Site Pages</div>
+      <div class="stat-num" style="color:#4A7CC9;">4</div>
+      <div class="stat-label">E-Commerce</div>
     </div>
     <div class="stat-operator">+</div>
     <div class="stat-card grad-gb">
-      <div class="stat-num" style="color:var(--gold);">29</div>
+      <div class="stat-num" style="color:var(--gold);">5</div>
+      <div class="stat-label">Admin</div>
+    </div>
+    <div class="stat-operator">+</div>
+    <div class="stat-card grad-bg">
+      <div class="stat-num" style="color:#4A7CC9;">29</div>
       <div class="stat-label">Products</div>
     </div>
     <div class="stat-operator">+</div>
-    <div class="stat-card grad-bg">
-      <div class="stat-num" style="color:#4A7CC9;">16</div>
+    <div class="stat-card grad-gb">
+      <div class="stat-num" style="color:var(--gold);">16</div>
       <div class="stat-label">Blog Posts</div>
     </div>
     <div class="stat-operator">+</div>
-    <div class="stat-card grad-gb">
-      <div class="stat-num" style="color:var(--gold);">99</div>
+    <div class="stat-card grad-bg">
+      <div class="stat-num" style="color:#4A7CC9;">99</div>
       <div class="stat-label">Glossary Terms</div>
     </div>
+  </div>
+  <div class="stat-total-bar">
+    <span class="stat-total-equals">=</span>
+    <span class="stat-total-num">165</span>
+    <span class="stat-total-label">Total Pages</span>
   </div>
 
   <!-- Legend -->
