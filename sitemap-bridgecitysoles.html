@@ -309,11 +309,13 @@ body {
 .section-count {
   font-size: 11px;
   font-weight: 700;
-  background: var(--surface2);
+  background: linear-gradient(135deg, rgba(184,137,42,0.26) 0%, rgba(160,140,80,0.20) 30%, rgba(130,155,170,0.16) 50%, rgba(77,168,218,0.20) 70%, rgba(77,168,218,0.26) 100%);
   color: #1A1518;
-  padding: 2px 8px;
-  border-radius: 10px;
+  padding: 4px 12px;
+  border-radius: 20px;
   margin-left: auto;
+  border: 2px solid var(--gold);
+  box-shadow: 0 2px 8px rgba(184,137,42,0.12);
 }
 
 /* -- CARDS GRID -- */
@@ -598,16 +600,28 @@ body {
   color: #1A1518;
   letter-spacing: 0.04em;
   transition: all 0.25s ease;
-  box-shadow: 0 4px 16px rgba(184,137,42,0.12);
+  box-shadow: 0 4px 16px rgba(184,137,42,0.12), 0 0 0 1px rgba(184,137,42,0.15);
   margin-top: 4px;
 }
 .expand-pill:hover {
   transform: translateY(-2px);
+  background: linear-gradient(135deg, rgba(184,137,42,0.36) 0%, rgba(160,140,80,0.30) 30%, rgba(130,155,170,0.24) 50%, rgba(77,168,218,0.30) 70%, rgba(77,168,218,0.36) 100%);
   box-shadow: 0 8px 32px rgba(184,137,42,0.25), 0 0 0 2px var(--gold);
 }
 .expand-pill .dot { font-size: 20px; letter-spacing: 3px; line-height: 1; }
+.expand-pill .expand-label { }
 .cards-expandable.expanded .expand-pill { display: none; }
-@media print { .expand-pill { display: none !important; } .cards-expandable .card-hidden { display: none !important; } }
+@media print {
+  .expand-pill { border: 3px solid var(--gold) !important; box-shadow: none !important; }
+  .expand-pill .expand-label { display: none !important; }
+  .cards-expandable .card-hidden { display: none !important; }
+}
+
+/* -- FOOTER GAP (space between sub-pages and footer-only cards) -- */
+.footer-gap {
+  grid-column: 1 / -1;
+  height: 20px;
+}
 
 /* -- MOBILE -- */
 @media (max-width: 768px) {
@@ -897,6 +911,7 @@ body {
       </div>
 
       <!-- Footer-only pages -->
+      <div class="footer-gap"></div>
       <div class="card grad-bg">
         <div class="card-top"><span class="card-name">Store</span><span class="badge badge-footer">Footer</span></div>
         <div class="card-url">bridge-city-soles.pages.dev/store</div>
@@ -1048,7 +1063,7 @@ body {
       </div>
       <!-- Expand pill -->
       <div class="expand-pill" onclick="document.getElementById('product-cards').classList.add('expanded')">
-        <span class="dot">...</span> <span>Show all 29 products</span>
+        <span class="dot">...</span> <span class="expand-label">Show all 29 products</span>
       </div>
       <!-- Hidden -->
       <div class="card grad-gb card-hidden">
@@ -1174,7 +1189,7 @@ body {
       </div>
       <!-- Expand pill -->
       <div class="expand-pill" onclick="document.getElementById('blog-cards').classList.add('expanded')">
-        <span class="dot">...</span> <span>Show all 16 articles</span>
+        <span class="dot">...</span> <span class="expand-label">Show all 16 articles</span>
       </div>
       <!-- Hidden -->
       <div class="card grad-bg card-hidden">
