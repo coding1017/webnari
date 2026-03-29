@@ -578,6 +578,37 @@ body {
   border-radius: 50%;
 }
 
+/* -- EXPAND PILL -- */
+.cards-expandable .card-hidden { display: none; }
+.cards-expandable.expanded .card-hidden { display: flex; }
+.expand-pill {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px 28px;
+  border: 3px solid var(--gold);
+  border-radius: 40px;
+  background: linear-gradient(135deg, rgba(184,137,42,0.26) 0%, rgba(160,140,80,0.20) 30%, rgba(130,155,170,0.16) 50%, rgba(77,168,218,0.20) 70%, rgba(77,168,218,0.26) 100%);
+  cursor: pointer;
+  font-family: var(--font-head);
+  font-size: 14px;
+  font-weight: 700;
+  color: #1A1518;
+  letter-spacing: 0.04em;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 16px rgba(184,137,42,0.12);
+  margin-top: 4px;
+}
+.expand-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(184,137,42,0.25), 0 0 0 2px var(--gold);
+}
+.expand-pill .dot { font-size: 20px; letter-spacing: 3px; line-height: 1; }
+.cards-expandable.expanded .expand-pill { display: none; }
+@media print { .expand-pill { display: none !important; } .cards-expandable .card-hidden { display: none !important; } }
+
 /* -- MOBILE -- */
 @media (max-width: 768px) {
   .header { padding: 16px 20px; flex-direction: column; gap: 8px; }
@@ -714,7 +745,7 @@ body {
   <div class="header-left">
     <div class="header-logo">
       <div class="header-logo-mark">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#4A7CC9" fill="#4A7CC9"/><path d="M2 12l10 5 10-5" stroke="#4A7CC9"/><path d="M2 17l10 5 10-5" stroke="#B8892A"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#B8892A" fill="#FFFFFF"/><path d="M2 12l10 5 10-5" stroke="#4A7CC9"/><path d="M2 17l10 5 10-5" stroke="#B8892A"/></svg>
       </div>
       <a href="https://webnari.io" target="_blank" class="header-logo-text">Webnari</a>
     </div>
@@ -978,7 +1009,7 @@ body {
       Product Catalog
       <span class="section-count">29 products</span>
     </div>
-    <div class="cards">
+    <div class="cards cards-expandable" id="product-cards">
       <div class="card grad-bg">
         <div class="card-top"><span class="card-name">Air Jordan 1 Retro High OG Chicago</span><span class="badge badge-new">Product</span></div>
         <div class="card-url">/product/air-jordan-1-retro-high-og-chicago</div>
@@ -1015,85 +1046,186 @@ body {
         <div class="card-top"><span class="card-name">New Balance 550 White Green</span><span class="badge badge-new">Product</span></div>
         <div class="card-url">/product/new-balance-550-white-green</div>
       </div>
-      <div class="card grad-gb">
+      <!-- Expand pill -->
+      <div class="expand-pill" onclick="document.getElementById('product-cards').classList.add('expanded')">
+        <span class="dot">...</span> <span>Show all 29 products</span>
+      </div>
+      <!-- Hidden -->
+      <div class="card grad-gb card-hidden">
         <div class="card-top"><span class="card-name">New Balance 2002R Rain Cloud</span><span class="badge badge-new">Product</span></div>
         <div class="card-url">/product/new-balance-2002r-rain-cloud</div>
       </div>
-      <div class="card grad-bg">
+      <div class="card grad-bg card-hidden">
         <div class="card-top"><span class="card-name">Adidas Samba OG White Black</span><span class="badge badge-new">Product</span></div>
         <div class="card-url">/product/adidas-samba-og-white-black</div>
       </div>
-      <div class="card grad-gb">
+      <div class="card grad-gb card-hidden">
         <div class="card-top"><span class="card-name">Off-White Nike Air Presto White</span><span class="badge badge-new">Product</span></div>
         <div class="card-url">/product/off-white-nike-air-presto-white</div>
       </div>
-      <div class="card grad-bg">
+      <div class="card grad-bg card-hidden">
         <div class="card-top"><span class="card-name">Supreme Box Logo Hoodie Black</span><span class="badge badge-new">Product</span></div>
         <div class="card-url">/product/supreme-box-logo-hoodie-black</div>
       </div>
-      <div class="card grad-gb">
+      <div class="card grad-gb card-hidden">
         <div class="card-top"><span class="card-name">BAPE 1st Camo Shark Zip Hoodie</span><span class="badge badge-new">Product</span></div>
         <div class="card-url">/product/bape-1st-camo-shark-full-zip-hoodie</div>
       </div>
-      <div class="card grad-bg">
+      <div class="card grad-bg card-hidden">
         <div class="card-top"><span class="card-name">Air Jordan 3 White Cement Reimagined</span><span class="badge badge-new">Product</span></div>
         <div class="card-url">/product/air-jordan-3-retro-white-cement-reimagined</div>
       </div>
-      <div class="card grad-gb">
+      <div class="card grad-gb card-hidden">
         <div class="card-top"><span class="card-name">Air Jordan 1 Low Mocha</span><span class="badge badge-new">Product</span></div>
         <div class="card-url">/product/air-jordan-1-low-mocha</div>
       </div>
-      <div class="card grad-bg">
+      <div class="card grad-bg card-hidden">
         <div class="card-top"><span class="card-name">Nike Air Max 1 Obsidian</span><span class="badge badge-new">Product</span></div>
         <div class="card-url">/product/nike-air-max-1-obsidian</div>
       </div>
-      <div class="card grad-gb">
+      <div class="card grad-gb card-hidden">
         <div class="card-top"><span class="card-name">Supreme TNF Nuptse Scarf</span><span class="badge badge-new">Product</span></div>
         <div class="card-url">/product/supreme-tnf-nuptse-scarf</div>
       </div>
-      <div class="card grad-bg">
+      <div class="card grad-bg card-hidden">
         <div class="card-top"><span class="card-name">Nike Air Max 90 Infrared</span><span class="badge badge-new">Product</span></div>
         <div class="card-url">/product/nike-air-max-90-infrared</div>
       </div>
-      <div class="card grad-gb">
+      <div class="card grad-gb card-hidden">
         <div class="card-top"><span class="card-name">Air Jordan 5 Retro Grape</span><span class="badge badge-new">Product</span></div>
         <div class="card-url">/product/air-jordan-5-retro-grape</div>
       </div>
-      <div class="card grad-bg">
+      <div class="card grad-bg card-hidden">
         <div class="card-top"><span class="card-name">LV x Nike Air Force 1 Metallic Gold</span><span class="badge badge-new">Product</span></div>
         <div class="card-url">/product/louis-vuitton-nike-air-force-1-metallic-gold</div>
       </div>
-      <div class="card grad-gb">
+      <div class="card grad-gb card-hidden">
         <div class="card-top"><span class="card-name">Nike SB Dunk Low Pro Costco</span><span class="badge badge-new">Product</span></div>
         <div class="card-url">/product/nike-sb-dunk-low-pro-costco</div>
       </div>
-      <div class="card grad-bg">
+      <div class="card grad-bg card-hidden">
         <div class="card-top"><span class="card-name">Nike SB Dunk Low Powerpuff Bubbles</span><span class="badge badge-new">Product</span></div>
         <div class="card-url">/product/nike-sb-dunk-low-powerpuff-girls-bubbles</div>
       </div>
-      <div class="card grad-gb">
+      <div class="card grad-gb card-hidden">
         <div class="card-top"><span class="card-name">Jordan 5 Retro Awake NY Black</span><span class="badge badge-new">Product</span></div>
         <div class="card-url">/product/jordan-5-retro-awake-ny-black</div>
       </div>
-      <div class="card grad-bg">
+      <div class="card grad-bg card-hidden">
         <div class="card-top"><span class="card-name">Nike SB Dunk Low Concepts Orange Lobster</span><span class="badge badge-new">Product</span></div>
         <div class="card-url">/product/nike-sb-dunk-low-concepts-orange-lobster</div>
       </div>
-      <div class="card grad-gb">
+      <div class="card grad-gb card-hidden">
         <div class="card-top"><span class="card-name">Jordan 1 Low Travis Scott Black Phantom</span><span class="badge badge-new">Product</span></div>
         <div class="card-url">/product/jordan-1-retro-low-og-sp-travis-scott-black-phantom</div>
       </div>
-      <div class="card grad-bg">
+      <div class="card grad-bg card-hidden">
         <div class="card-top"><span class="card-name">Jordan 11 Retro Gamma Blue</span><span class="badge badge-new">Product</span></div>
         <div class="card-url">/product/jordan-11-retro-gamma-blue</div>
       </div>
-      <div class="card grad-gb">
+      <div class="card grad-gb card-hidden">
         <div class="card-top"><span class="card-name">Nike Mind 001 Light Smoke Grey</span><span class="badge badge-new">Product</span></div>
         <div class="card-url">/product/nike-mind-001-light-smoke-grey</div>
       </div>
-      <div class="card grad-bg">
+      <div class="card grad-bg card-hidden">
         <div class="card-top"><span class="card-name">BAPE Camo Tee Green</span><span class="badge badge-new">Product</span></div>
         <div class="card-url">/product/bape-camo-tee-green</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section: Blog Posts -->
+  <div class="section">
+    <div class="section-label">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      Blog Posts
+      <span class="section-count">16 articles</span>
+    </div>
+    <div class="cards cards-expandable" id="blog-cards">
+      <div class="card grad-bg">
+        <div class="card-top"><span class="card-name">How to Spot Fake Jordans</span><span class="badge badge-new">SEO</span></div>
+        <div class="card-url">/blog/how-to-spot-fake-jordans</div>
+        <div class="card-desc">Authentication guide for identifying counterfeit Jordans</div>
+      </div>
+      <div class="card grad-gb">
+        <div class="card-top"><span class="card-name">History of the Nike Dunk</span><span class="badge badge-new">SEO</span></div>
+        <div class="card-url">/blog/history-of-the-nike-dunk</div>
+        <div class="card-desc">From basketball court to streetwear icon</div>
+      </div>
+      <div class="card grad-bg">
+        <div class="card-top"><span class="card-name">Most Anticipated Releases 2026</span><span class="badge badge-new">SEO</span></div>
+        <div class="card-url">/blog/most-anticipated-sneaker-releases-2026</div>
+        <div class="card-desc">Upcoming sneaker drops to watch this year</div>
+      </div>
+      <div class="card grad-gb">
+        <div class="card-top"><span class="card-name">How to Clean Sneakers</span><span class="badge badge-new">SEO</span></div>
+        <div class="card-url">/blog/how-to-clean-sneakers</div>
+        <div class="card-desc">Step-by-step cleaning guide for different materials</div>
+      </div>
+      <div class="card grad-bg">
+        <div class="card-top"><span class="card-name">Portland Sneaker Culture</span><span class="badge badge-new">SEO</span></div>
+        <div class="card-url">/blog/portland-sneaker-culture</div>
+        <div class="card-desc">The local sneaker scene and community</div>
+      </div>
+      <div class="card grad-gb">
+        <div class="card-top"><span class="card-name">Sneaker Investing 101</span><span class="badge badge-new">SEO</span></div>
+        <div class="card-url">/blog/sneaker-investing-101</div>
+        <div class="card-desc">How to buy sneakers as an investment</div>
+      </div>
+      <!-- Expand pill -->
+      <div class="expand-pill" onclick="document.getElementById('blog-cards').classList.add('expanded')">
+        <span class="dot">...</span> <span>Show all 16 articles</span>
+      </div>
+      <!-- Hidden -->
+      <div class="card grad-bg card-hidden">
+        <div class="card-top"><span class="card-name">Rise of New Balance</span><span class="badge badge-new">SEO</span></div>
+        <div class="card-url">/blog/rise-of-new-balance</div>
+        <div class="card-desc">New Balance's resurgence in sneaker culture</div>
+      </div>
+      <div class="card grad-gb card-hidden">
+        <div class="card-top"><span class="card-name">How to Store Your Collection</span><span class="badge badge-new">SEO</span></div>
+        <div class="card-url">/blog/how-to-store-sneaker-collection</div>
+        <div class="card-desc">Best practices for sneaker storage and preservation</div>
+      </div>
+      <div class="card grad-bg card-hidden">
+        <div class="card-top"><span class="card-name">Sneaker Condition Grades Guide</span><span class="badge badge-new">SEO</span></div>
+        <div class="card-url">/blog/ultimate-guide-sneaker-condition-grades</div>
+        <div class="card-desc">Understanding DS, VNDS, and condition ratings</div>
+      </div>
+      <div class="card grad-gb card-hidden">
+        <div class="card-top"><span class="card-name">Collabs That Changed the Game</span><span class="badge badge-new">SEO</span></div>
+        <div class="card-url">/blog/sneaker-collabs-that-changed-the-game</div>
+        <div class="card-desc">The most impactful sneaker collaborations in history</div>
+      </div>
+      <div class="card grad-bg card-hidden">
+        <div class="card-top"><span class="card-name">How to Win Sneaker Raffles</span><span class="badge badge-new">SEO</span></div>
+        <div class="card-url">/blog/how-to-win-sneaker-raffles</div>
+        <div class="card-desc">Tips and strategies for winning limited releases</div>
+      </div>
+      <div class="card grad-gb card-hidden">
+        <div class="card-top"><span class="card-name">Understanding Sneaker Materials</span><span class="badge badge-new">SEO</span></div>
+        <div class="card-url">/blog/understanding-sneaker-materials</div>
+        <div class="card-desc">Leather, suede, Flyknit, Primeknit, and more</div>
+      </div>
+      <div class="card grad-bg card-hidden">
+        <div class="card-top"><span class="card-name">Reseller's Playbook</span><span class="badge badge-new">SEO</span></div>
+        <div class="card-url">/blog/resellers-playbook-how-sneaker-reselling-works</div>
+        <div class="card-desc">How sneaker reselling works from start to finish</div>
+      </div>
+      <div class="card grad-gb card-hidden">
+        <div class="card-top"><span class="card-name">Sneaker Sizing Guide</span><span class="badge badge-new">SEO</span></div>
+        <div class="card-url">/blog/sneaker-sizing-guide-perfect-fit</div>
+        <div class="card-desc">Finding the perfect fit across different brands</div>
+      </div>
+      <div class="card grad-bg card-hidden">
+        <div class="card-top"><span class="card-name">Building Your Sneaker Rotation</span><span class="badge badge-new">SEO</span></div>
+        <div class="card-url">/blog/building-your-sneaker-rotation</div>
+        <div class="card-desc">How to build a versatile sneaker collection</div>
+      </div>
+      <div class="card grad-gb card-hidden">
+        <div class="card-top"><span class="card-name">History of Nike SB</span><span class="badge badge-new">SEO</span></div>
+        <div class="card-url">/blog/history-of-nike-sb</div>
+        <div class="card-desc">Nike SB's evolution from skate to streetwear</div>
       </div>
     </div>
   </div>
@@ -1237,7 +1369,7 @@ body {
   <div class="powered">
     <div class="powered-text">
       <div class="header-logo-mark" style="width:28px;height:28px;">
-        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" style="width:14px;height:14px;"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#4A7CC9" fill="#4A7CC9"/><path d="M2 12l10 5 10-5" stroke="#4A7CC9"/><path d="M2 17l10 5 10-5" stroke="#B8892A"/></svg>
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" style="width:14px;height:14px;"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#B8892A" fill="#FFFFFF"/><path d="M2 12l10 5 10-5" stroke="#4A7CC9"/><path d="M2 17l10 5 10-5" stroke="#B8892A"/></svg>
       </div>
       Built and managed by <a href="https://webnari.io" target="_blank" style="color:var(--gold);font-weight:900;">Webnari</a>
     </div>
