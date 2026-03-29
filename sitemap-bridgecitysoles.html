@@ -436,10 +436,22 @@ body {
 
 /* -- STATS BAR -- */
 .stats-bar {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  display: flex;
+  align-items: center;
   gap: 10px;
   margin-bottom: 36px;
+  flex-wrap: wrap;
+}
+.stat-card { flex: 1; min-width: 100px; }
+.stat-operator {
+  font-family: var(--font-head);
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--gold);
+  flex-shrink: 0;
+  line-height: 1;
+  text-align: center;
+  width: 24px;
 }
 .stat-card {
   background: linear-gradient(135deg, rgba(184,137,42,0.26) 0%, rgba(160,140,80,0.20) 30%, rgba(130,155,170,0.16) 50%, rgba(77,168,218,0.20) 70%, rgba(77,168,218,0.26) 100%);
@@ -641,7 +653,9 @@ body {
   .website-bar-link { font-size: 22px; }
 
   /* Stats */
-  .stats-bar { grid-template-columns: repeat(2, 1fr); }
+  .stats-bar { flex-wrap: wrap; }
+  .stat-card { min-width: 40%; flex: 1 1 40%; }
+  .stat-operator { display: none; }
 
   /* Legend */
   .legend { flex-direction: column; gap: 8px; }
@@ -800,24 +814,28 @@ body {
     </div>
   </div>
 
-  <!-- Stats — all numbers add up: 21 + 29 + 16 + 99 = 165 -->
+  <!-- Stats — 165 = 21 + 29 + 16 + 99 -->
   <div class="stats-bar">
     <div class="stat-card grad-gb">
       <div class="stat-num" style="color:var(--gold);">165</div>
       <div class="stat-label">Total Pages</div>
     </div>
+    <div class="stat-operator">=</div>
     <div class="stat-card grad-bg">
       <div class="stat-num" style="color:#4A7CC9;">21</div>
       <div class="stat-label">Site Pages</div>
     </div>
+    <div class="stat-operator">+</div>
     <div class="stat-card grad-gb">
       <div class="stat-num" style="color:var(--gold);">29</div>
       <div class="stat-label">Products</div>
     </div>
+    <div class="stat-operator">+</div>
     <div class="stat-card grad-bg">
       <div class="stat-num" style="color:#4A7CC9;">16</div>
       <div class="stat-label">Blog Posts</div>
     </div>
+    <div class="stat-operator">+</div>
     <div class="stat-card grad-gb">
       <div class="stat-num" style="color:var(--gold);">99</div>
       <div class="stat-label">Glossary Terms</div>
