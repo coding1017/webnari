@@ -3446,9 +3446,12 @@ const SEED = {
 };
 
 // ── Supabase client ──────────────────────────────────────
-const _sb = (typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL !== 'YOUR_SUPABASE_URL')
-  ? supabase.createClient(SUPABASE_URL, SUPABASE_ANON)
-  : null;
+let _sb = null;
+try {
+  if (typeof SUPABASE_URL !== 'undefined' && SUPABASE_URL !== 'YOUR_SUPABASE_URL') {
+    _sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+  }
+} catch(e) { console.warn('Supabase init skipped:', e.message); }
 
 function loadDB() {
   try { const r = localStorage.getItem(KEY); return r ? JSON.parse(r) : JSON.parse(JSON.stringify(SEED)); }
@@ -3597,6 +3600,10 @@ async function cloudRestore() {
   }
 }
 
+let DB = loadDB();
+migrateTemplates();
+localStorage.setItem(KEY, JSON.stringify(DB));
+
 // Auto-backup on page load
 autoBackup();
 
@@ -3608,10 +3615,6 @@ setInterval(function() {
     // Could trigger a notification or auto-download
   }
 }, 60 * 60 * 1000); // Check hourly
-
-let DB = loadDB();
-migrateTemplates();
-localStorage.setItem(KEY, JSON.stringify(DB));
 
 // ════════════════════════════════════════════════════
 //  NAVIGATION
