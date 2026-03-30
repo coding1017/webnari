@@ -2,6 +2,7 @@ import Link from 'next/link';
 
 export function Footer() {
   return (
+    <>
     <footer className="bg-bcs-dark border-t border-bcs-border mt-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
@@ -112,5 +113,43 @@ export function Footer() {
         </div>
       </div>
     </footer>
+
+    {/* Built and managed by Webnari */}
+    <div style={{
+      textAlign: 'center',
+      padding: '14px 0 12px',
+      borderTop: '1px solid rgba(128,128,128,0.12)',
+      background: '#FDF8F0',
+    }}>
+      <div style={{
+        fontSize: '16px',
+        color: '#1A1518',
+        fontWeight: 600,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '10px',
+        fontFamily: '-apple-system, BlinkMacSystemFont, sans-serif',
+      }}>
+        <div style={{
+          width: '28px',
+          height: '28px',
+          borderRadius: '8px',
+          background: 'radial-gradient(circle at center, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.15) 40%, #B8892A 70%, #D4A63A 100%)',
+          boxShadow: '0 0 12px rgba(255,255,255,0.5), 0 0 24px rgba(255,255,255,0.2)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          flexShrink: 0,
+        }}>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" strokeWidth="2.5" strokeLinecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#B8892A" fill="#FFFFFF"/><path d="M2 12l10 5 10-5" stroke="#4A7CC9"/><path d="M2 17l10 5 10-5" stroke="#B8892A"/></svg>
+        </div>
+        Built and managed by{' '}
+        <a href="https://webnari.io" target="_blank" rel="noopener noreferrer" style={{ color: '#B8892A', fontWeight: 900, textDecoration: 'none' }}>
+          Webnari
+        </a>
+      </div>
+    </div>
+    </>
   );
 }
