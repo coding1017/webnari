@@ -65,7 +65,7 @@
 
   /* Layout */
   --max-w: 1280px;
-  --nav-h: 72px;
+  --nav-h: 80px;
 }
 
 html { scroll-behavior: smooth; }
@@ -172,28 +172,28 @@ h3 { font-size: clamp(1.3rem, 2.5vw, 1.6rem); }
 .loader-overlay.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
 .loader-logo {
-  font-family: var(--font-head);
-  font-size: 3.5rem;
-  font-weight: 800;
-  background: var(--gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.loader-logo img {
+  height: 100px;
+  width: auto;
+  max-width: 320px;
 }
 
 .loader-bar {
-  width: 160px;
+  width: 200px;
   height: 3px;
-  background: var(--border-light);
+  background: #E8E0D8;
   border-radius: 4px;
-  margin-top: 24px;
+  margin-top: 32px;
   overflow: hidden;
 }
 .loader-bar-fill {
   height: 100%;
   width: 0%;
-  background: var(--gradient);
+  background: linear-gradient(90deg, #1A0A12, #D4A853, #FACC15);
   border-radius: 4px;
   transition: width 0.3s;
 }
@@ -229,10 +229,14 @@ h3 { font-size: clamp(1.3rem, 2.5vw, 1.6rem); }
 .nav-logo {
   display: flex;
   align-items: center;
+  margin: 0;
+  padding: 0;
 }
 .nav-logo img {
-  height: 44px;
+  height: 56px;
   width: auto;
+  max-width: 220px;
+  object-fit: contain;
 }
 
 .nav-links {
@@ -698,27 +702,10 @@ h3 { font-size: clamp(1.3rem, 2.5vw, 1.6rem); }
   position: relative;
 }
 
-/* Connecting line — sits behind circles */
-.process-line-bg {
-  position: absolute;
-  top: 39px;
-  left: calc(12.5% + 44px);
-  right: calc(12.5% + 44px);
-  height: 3px;
-  background: var(--border-light);
-  border-radius: 2px;
-  z-index: 0;
-}
+/* Connecting line — hidden, scroll animation handles progression */
+.process-line-bg,
 .process-line-fill {
-  position: absolute;
-  top: 39px;
-  left: calc(12.5% + 44px);
-  width: 0%;
-  height: 3px;
-  background: linear-gradient(90deg, #E8567F, #D4A853);
-  border-radius: 2px;
-  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  z-index: 0;
+  display: none;
 }
 
 .process-step {
@@ -752,18 +739,18 @@ h3 { font-size: clamp(1.3rem, 2.5vw, 1.6rem); }
   z-index: 3;
 }
 .process-step.active .process-num {
-  background: var(--rose);
+  background: linear-gradient(135deg, #E8567F, #D4A853);
   color: #fff;
   -webkit-text-fill-color: #fff;
-  border-color: var(--rose);
+  border-color: #E8567F;
   box-shadow: 0 8px 32px rgba(232,86,127,0.35);
   transform: scale(1.12);
 }
 .process-step.done .process-num {
-  background: var(--gold);
+  background: linear-gradient(135deg, #D4A853, #E8C97A);
   color: #fff;
   -webkit-text-fill-color: #fff;
-  border-color: var(--gold);
+  border-color: #D4A853;
   box-shadow: 0 4px 16px rgba(212,168,83,0.25);
 }
 
@@ -782,26 +769,8 @@ h3 { font-size: clamp(1.3rem, 2.5vw, 1.6rem); }
   margin: 0 auto;
 }
 
-/* Progress indicator */
-.process-progress {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 40px;
-}
-.process-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--border-light);
-  transition: all 0.4s;
-}
-.process-dot.active {
-  background: var(--gradient);
-  width: 24px;
-  border-radius: 4px;
-  background: var(--rose);
-}
+/* Progress indicator — hidden */
+.process-progress { display: none; }
 
 @media (max-width: 768px) {
   .process-scroll { height: 250vh; }
@@ -1554,7 +1523,7 @@ h3 { font-size: clamp(1.3rem, 2.5vw, 1.6rem); }
         <img src="https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=400&h=520&fit=crop&crop=center" alt="Custom printed t-shirt with design" loading="eager">
       </div>
       <div class="hero-img-card hero-img-3">
-        <img src="https://images.unsplash.com/photo-1611791484670-ce19b801d192?w=440&h=400&fit=crop&crop=center" alt="3D printed custom design" loading="eager">
+        <img src="images/lbld/mascot.jpg" alt="Latinas Be Like Design mascot" loading="eager">
       </div>
     </div>
   </div>
@@ -1698,8 +1667,9 @@ h3 { font-size: clamp(1.3rem, 2.5vw, 1.6rem); }
 <section class="about-section" id="about">
   <div class="container">
     <div class="about-inner">
-      <div class="about-image reveal">
+      <div class="about-image reveal" style="position:relative;">
         <img src="images/lbld/founders.jpg" alt="Margarita and daughter - founders of Latinas Be Like Design" loading="lazy">
+        <img src="images/lbld/mascot.jpg" alt="LBLD mascot" style="position:absolute;bottom:-24px;right:-24px;width:120px;height:120px;border-radius:50%;border:4px solid var(--gold);box-shadow:0 8px 24px rgba(0,0,0,0.15);object-fit:cover;" loading="lazy">
       </div>
       <div class="reveal">
         <div class="section-label" data-i18n="about.title">Meet the Creators</div>
@@ -1775,7 +1745,7 @@ h3 { font-size: clamp(1.3rem, 2.5vw, 1.6rem); }
   <div class="container">
     <div class="footer-grid">
       <div>
-        <div class="footer-brand-logo"><img src="images/lbld/logo-white.png" alt="Latinas Be Like Design" style="height:48px;width:auto;"></div>
+        <div class="footer-brand-logo"><img src="images/lbld/logo-white.png" alt="Latinas Be Like Design" style="height:64px;width:auto;max-width:260px;"></div>
         <p class="footer-tagline" data-i18n="footer.tagline">Handcrafted with love by a Latina mother-daughter team.</p>
         <div class="footer-social">
           <a href="https://www.instagram.com/latinasbelikedesign/" target="_blank" rel="noopener" aria-label="Instagram">
