@@ -583,18 +583,39 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
   r.forEach(function(x){x.addEventListener('blur',function(){ck(x);});});
   f.addEventListener('submit',function(e){var v=true;r.forEach(function(x){if(!ck(x))v=false;});if(!v)e.preventDefault();});
 
-  /* MARQUEE GLEAM — word then dot, sequential, no lag */
-  var mqAll=document.querySelectorAll('.mq-track > *');
+  /* MARQUEE GLEAM — word+dot together, only visible items, restart from left */
+  var mqWords=document.querySelectorAll('.mq-item');
+  var mqDots=document.querySelectorAll('.mq-dot');
   var mqI=0;
+  function isOnScreen(el){
+    var r=el.getBoundingClientRect();
+    return r.right>0 && r.left<window.innerWidth;
+  }
+  function findNextVisible(start){
+    for(var i=0;i<mqWords.length;i++){
+      var idx=(start+i)%mqWords.length;
+      if(isOnScreen(mqWords[idx])) return idx;
+    }
+    return start;
+  }
   function gleamNext(){
-    var el=mqAll[mqI];
-    var isWord=el.classList.contains('mq-item');
-    var dur=isWord?'1s':'.35s';
-    el.style.animation='gleam '+dur+' ease-in-out forwards';
-    el.addEventListener('animationend',function h(){
-      el.removeEventListener('animationend',h);
-      el.style.animation='none';
-      mqI=(mqI+1)%mqAll.length;
+    /* if current word scrolled off screen, jump to leftmost visible */
+    if(!isOnScreen(mqWords[mqI])) mqI=findNextVisible(0);
+    var word=mqWords[mqI];
+    var dot=mqDots[mqI];
+    word.style.animation='gleam 1s ease-in-out forwards';
+    if(dot) dot.style.animation='gleam 1s ease-in-out forwards';
+    word.addEventListener('animationend',function h(){
+      word.removeEventListener('animationend',h);
+      word.style.animation='none';
+      if(dot) dot.style.animation='none';
+      var next=mqI+1;
+      /* if next word is off-screen right, restart from leftmost visible */
+      if(next>=mqWords.length || !isOnScreen(mqWords[next%mqWords.length])){
+        mqI=findNextVisible(0);
+      } else {
+        mqI=next;
+      }
       gleamNext();
     });
   }
