@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Radiant Clean | South Florida's #1 Premium Cleaning Company</title>
-<meta name="description" content="Radiant Clean — South Florida's #1 premium cleaning company. Residential, commercial, and industrial cleaning.">
+<title>Radiant Clean | Portland's #1 Premium Cleaning Company</title>
+<meta name="description" content="Radiant Clean — Portland's #1 premium cleaning company. Residential, commercial, and industrial cleaning.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -42,16 +42,49 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 .mmenu .mcta{display:block;text-align:center;background:var(--black);color:var(--white);padding:18px;border-radius:8px;margin-top:28px;font-weight:700;font-size:16px;text-transform:uppercase;border-bottom:none}
 
 /* ===== HERO ===== */
-.hero{padding:200px 0 80px;text-align:center;background:var(--white);position:relative}
-.hero-tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);background:var(--blue-light);padding:8px 20px;border-radius:100px;margin-bottom:36px}
-.hero h1{font-size:clamp(36px,5.5vw,68px);font-weight:800;color:var(--black);text-transform:uppercase;line-height:1.08;letter-spacing:-.02em;max-width:900px;margin:0 auto 20px}
-.hero-sub{font-size:clamp(20px,2.5vw,30px);font-weight:500;color:var(--mid);margin-bottom:44px}
-.hero-btn{display:inline-flex;align-items:center;gap:10px;font-size:16px;font-weight:700;color:var(--white);background:var(--black);padding:18px 40px;border-radius:10px;transition:background .25s,transform .25s}
-.hero-btn:hover{background:var(--blue);transform:translateY(-2px)}
+.hero{padding:180px 0 100px;background:var(--black);position:relative;overflow:hidden;min-height:100vh;display:flex;align-items:center}
+.hero::before{content:'';position:absolute;top:-20%;right:-10%;width:70%;height:140%;background:radial-gradient(ellipse at 60% 50%,rgba(19,58,211,0.15) 0%,transparent 65%);pointer-events:none}
+.hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;position:relative;z-index:1}
+.hero-text{}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);border:1px solid rgba(19,58,211,.25);padding:8px 20px;border-radius:100px;margin-bottom:36px}
+.hero-tag .pulse{width:8px;height:8px;border-radius:50%;background:var(--blue);animation:hpulse 2s ease infinite}
+@keyframes hpulse{0%,100%{box-shadow:0 0 0 0 rgba(19,58,211,.4)}50%{box-shadow:0 0 0 8px rgba(19,58,211,0)}}
+.hero h1{font-size:clamp(40px,5.5vw,72px);font-weight:800;color:var(--white);text-transform:uppercase;line-height:1.06;letter-spacing:-.02em;margin-bottom:24px}
+.hero h1 .bl{color:var(--blue)}
+.hero-sub{font-size:18px;font-weight:400;color:rgba(255,255,255,.5);margin-bottom:40px;max-width:420px;line-height:1.7}
+.hero-btns{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.hero-btn{display:inline-flex;align-items:center;gap:10px;font-size:15px;font-weight:700;color:var(--white);background:var(--blue);padding:18px 36px;border-radius:10px;transition:background .25s,transform .25s;text-transform:uppercase;letter-spacing:.04em}
+.hero-btn:hover{background:#0F2BA8;transform:translateY(-2px)}
 .hero-btn svg{width:18px;height:18px}
-.hero-stats{display:flex;justify-content:center;gap:56px;margin-top:80px;padding-top:48px;border-top:1px solid var(--gray)}
-.hs-n{font-size:32px;font-weight:800;color:var(--black)}
-.hs-l{font-size:13px;color:var(--mid);margin-top:2px}
+.hero-btn-ghost{font-size:15px;font-weight:600;color:rgba(255,255,255,.5);transition:color .2s}
+.hero-btn-ghost:hover{color:var(--white)}
+.hero-visual{position:relative;display:flex;align-items:center;justify-content:center;min-height:480px}
+.hero-sphere{
+  width:clamp(350px,38vw,560px);height:clamp(350px,38vw,560px);
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 30% 25%,rgba(255,255,255,.4) 0%,transparent 40%),
+    radial-gradient(circle at 35% 30%,#60A5FA 0%,#7C3AED 25%,#D946EF 50%,#F472B6 70%,#818CF8 100%);
+  box-shadow:0 0 120px rgba(124,58,237,.3),0 0 240px rgba(99,102,241,.15);
+  animation:hero-float 6s ease-in-out infinite;
+}
+@keyframes hero-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+.hero-ring{
+  position:absolute;
+  width:clamp(420px,46vw,680px);height:clamp(420px,46vw,680px);
+  border-radius:50%;border:1px solid rgba(255,255,255,.06);
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  pointer-events:none;
+}
+.hero-ring::after{
+  content:'';position:absolute;
+  width:clamp(520px,54vw,800px);height:clamp(520px,54vw,800px);
+  border-radius:50%;border:1px solid rgba(255,255,255,.03);
+  top:50%;left:50%;transform:translate(-50%,-50%);
+}
+.hero-stats{display:flex;gap:48px;margin-top:64px;padding-top:40px;border-top:1px solid rgba(255,255,255,.08)}
+.hs-n{font-size:28px;font-weight:800;color:var(--white)}
+.hs-l{font-size:13px;color:rgba(255,255,255,.4);margin-top:2px}
 
 /* ===== 3D SPHERE ===== */
 .sphere{border-radius:50%;flex-shrink:0;position:relative}
@@ -214,6 +247,8 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
   .split-text p{margin-left:auto;margin-right:auto}
   .split-visual{min-height:300px;margin:0 !important;justify-content:center !important}
   .split-crop-left .split-visual,.split-crop-right .split-visual{margin:0 !important}
+  .hero-grid{grid-template-columns:1fr}
+  .hero-visual{min-height:350px;margin-top:32px}
   .cards-grid,.results-grid{grid-template-columns:1fr 1fr}
   .rev-grid{grid-template-columns:1fr}
   .contact-grid{grid-template-columns:1fr;gap:48px}
@@ -223,7 +258,12 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
   .nav-links,.nav-phone{display:none}
   .burger{display:flex}
   .wrap,.nav,.mmenu{padding-left:24px;padding-right:24px}
-  .hero{padding:150px 0 60px}
+  .hero{padding:120px 0 60px;min-height:auto}
+  .hero-visual{min-height:280px}
+  .hero-sphere{width:280px!important;height:280px!important}
+  .hero-ring{width:340px!important;height:340px!important}
+  .hero-ring::after{width:420px!important;height:420px!important}
+  .hero-stats{gap:24px;flex-wrap:wrap}
   .split{padding:100px 0}
   .sec,.cards-sec{padding:80px 0}
   .cards-grid,.results-grid{grid-template-columns:1fr}
@@ -254,7 +294,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
       <a href="#faq">FAQ</a>
     </div>
     <div class="nav-right">
-      <a href="tel:3055550600" class="nav-phone">(305) 555-0600</a>
+      <a href="tel:5035550600" class="nav-phone">(503) 555-0600</a>
       <a href="#contact" class="nav-cta">Contact</a>
       <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
     </div>
@@ -262,22 +302,32 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 </nav>
 <div class="mmenu" id="mmenu">
   <a href="#services">Services</a><a href="#about">About</a><a href="#reviews">Reviews</a><a href="#faq">FAQ</a><a href="#contact">Contact</a>
-  <a href="tel:3055550600">(305) 555-0600</a>
+  <a href="tel:5035550600">(503) 555-0600</a>
   <a href="#contact" class="mcta">Get a Quote</a>
 </div>
 
 <!-- HERO -->
 <section class="hero">
   <div class="wrap">
-    <div class="hero-tag rv">#1 Rated in South Florida</div>
-    <h1 class="rv d1">THE #1 PREMIUM CLEANING COMPANY IN SOUTH FLORIDA</h1>
-    <p class="hero-sub rv d2">stop searching start sparkling.</p>
-    <a href="#contact" class="hero-btn rv d3">get started <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
-    <div class="hero-stats rv d4">
-      <div><div class="hs-n">2,400+</div><div class="hs-l">Spaces cleaned</div></div>
-      <div><div class="hs-n">98%</div><div class="hs-l">Client retention</div></div>
-      <div><div class="hs-n">4.9</div><div class="hs-l">Average rating</div></div>
-      <div><div class="hs-n">24/7</div><div class="hs-l">Available</div></div>
+    <div class="hero-grid">
+      <div class="hero-text">
+        <div class="hero-tag rv"><span class="pulse"></span> Portland's #1 Rated</div>
+        <h1 class="rv d1">STOP SEARCHING START <span class="bl">SPARKLING.</span></h1>
+        <p class="hero-sub rv d2">Portland's premier cleaning company. Residential, commercial, and industrial — spotless results, every single time.</p>
+        <div class="hero-btns rv d3">
+          <a href="#contact" class="hero-btn">get started <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+          <a href="tel:5035550600" class="hero-btn-ghost">(503) 555-0600</a>
+        </div>
+        <div class="hero-stats rv d4">
+          <div><div class="hs-n">2,400+</div><div class="hs-l">Spaces cleaned</div></div>
+          <div><div class="hs-n">98%</div><div class="hs-l">Retention</div></div>
+          <div><div class="hs-n">4.9</div><div class="hs-l">Rating</div></div>
+        </div>
+      </div>
+      <div class="hero-visual rv d2">
+        <div class="hero-ring"></div>
+        <div class="hero-sphere"></div>
+      </div>
     </div>
   </div>
 </section>
@@ -330,7 +380,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
     <div class="split-grid">
       <div class="split-text rv">
         <h2>THINK BIGGER</h2>
-        <p>Big spaces are only as good as the team cleaning them. It's why we invest in people that deliver, not just show up. That's why we're all in-house, working together to deliver world-class cleaning across South Florida.</p>
+        <p>Big spaces are only as good as the team cleaning them. It's why we invest in people that deliver, not just show up. That's why we're all in-house, working together to deliver world-class cleaning across Portland, Oregon.</p>
         <a href="#contact" class="split-link">Start today <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
       </div>
       <div class="split-visual rv d1"><div class="sphere sphere-d"></div></div>
@@ -393,7 +443,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
   <div class="wrap">
     <div class="logos-label">In Good Company</div>
     <div class="logos-row">
-      <span>Brickell City Centre</span><span>Coral Gables Estates</span><span>Miami Beach Hotels</span><span>Doral Corporate</span><span>South Beach Living</span>
+      <span>Pearl District Lofts</span><span>Lake Oswego Estates</span><span>NW 23rd Boutiques</span><span>Alberta Arts District</span><span>Hawthorne Living</span>
     </div>
   </div>
 </div>
@@ -403,7 +453,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
   <div class="wrap">
     <div class="sec-hd rv"><div class="sec-label">The Numbers</div><div class="sec-title">The proof is in the polish.</div></div>
     <div class="results-grid">
-      <div class="rcard rv d1"><div class="rcard-n">2,400<span>+</span></div><div class="rcard-t">Spaces Transformed</div><p class="rcard-d">Homes, offices, and commercial properties across South Florida.</p></div>
+      <div class="rcard rv d1"><div class="rcard-n">2,400<span>+</span></div><div class="rcard-t">Spaces Transformed</div><p class="rcard-d">Homes, offices, and commercial properties across Portland, Oregon.</p></div>
       <div class="rcard rv d2"><div class="rcard-n">12<span>yr</span></div><div class="rcard-t">Years in Business</div><p class="rcard-d">Over a decade of expertise and perfected processes.</p></div>
       <div class="rcard rv d3"><div class="rcard-n">98<span>%</span></div><div class="rcard-t">Client Satisfaction</div><p class="rcard-d">Consistent quality. Transparent pricing. Zero shortcuts.</p></div>
     </div>
@@ -418,17 +468,17 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
       <div class="rev rv d1">
         <div class="rev-stars"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
         <p class="rev-txt">Radiant transformed our office. The attention to detail is unmatched — every surface, every corner, every time.</p>
-        <div class="rev-name">Maria Gonzalez</div><div class="rev-role">Property Manager, Brickell</div>
+        <div class="rev-name">Maria Gonzalez</div><div class="rev-role">Property Manager, Pearl District</div>
       </div>
       <div class="rev rv d2">
         <div class="rev-stars"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
         <p class="rev-txt">Post-construction team had our restaurant spotless in under 24 hours. Couldn't believe it.</p>
-        <div class="rev-name">James Chen</div><div class="rev-role">Restaurant Owner, Coral Gables</div>
+        <div class="rev-name">James Chen</div><div class="rev-role">Restaurant Owner, Hawthorne</div>
       </div>
       <div class="rev rv d3">
         <div class="rev-stars"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
         <p class="rev-txt">Two years of bi-weekly maintenance — not a single complaint. Reliable, thorough, quality-driven.</p>
-        <div class="rev-name">Sofia Ramirez</div><div class="rev-role">Homeowner, Kendall</div>
+        <div class="rev-name">Sofia Ramirez</div><div class="rev-role">Homeowner, Lake Oswego</div>
       </div>
     </div>
   </div>
@@ -439,7 +489,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
   <div class="wrap">
     <div class="sec-hd rv"><div class="sec-label">FAQ</div><div class="sec-title">Frequently asked.</div></div>
     <div class="faq-list">
-      <div class="faq-i rv"><button class="faq-q">What areas do you serve?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><div class="faq-a-in">All of South Florida — Miami, Coral Gables, Doral, Hialeah, Kendall, Miami Beach, Brickell, Westchester, South Miami, Homestead, Miami Gardens, and North Miami.</div></div></div>
+      <div class="faq-i rv"><button class="faq-q">What areas do you serve?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><div class="faq-a-in">All of Greater Portland — Pearl District, Alberta Arts, Hawthorne, Division, Sellwood, Lake Oswego, Beaverton, Tigard, West Linn, NW 23rd, St. Johns, and Hillsboro.</div></div></div>
       <div class="faq-i rv"><button class="faq-q">How do you price services?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><div class="faq-a-in">Based on square footage, service type, and frequency. Free, transparent quotes with no hidden fees.</div></div></div>
       <div class="faq-i rv"><button class="faq-q">Are your cleaners insured?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><div class="faq-a-in">Fully insured, bonded, and background-checked. Every team member.</div></div></div>
       <div class="faq-i rv"><button class="faq-q">Do you bring supplies?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><div class="faq-a-in">Yes — professional-grade, eco-friendly, non-toxic. Safe for children, pets, and the environment.</div></div></div>
@@ -464,16 +514,16 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
     <div class="contact-grid">
       <div class="rv">
         <h3 style="font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px">Contact</h3>
-        <div class="ci-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>(305) 555-0600</div>
+        <div class="ci-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>(503) 555-0600</div>
         <div class="ci-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>hello@radiantclean.com</div>
-        <div class="ci-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Serving all of South Florida</div>
+        <div class="ci-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Serving all of Greater Portland</div>
         <div class="ci-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Available 24/7</div>
       </div>
       <div class="rv d1">
         <form id="qf" action="https://formsubmit.co/hello@radiantclean.com" method="POST">
           <input type="hidden" name="_subject" value="New Quote — Radiant Clean">
           <input type="hidden" name="_captcha" value="false">
-          <div class="frow"><div class="fg"><label class="fl">Name</label><input type="text" name="name" class="fi" placeholder="John Smith" required><div class="ferr">Required</div></div><div class="fg"><label class="fl">Phone</label><input type="tel" name="phone" class="fi" placeholder="(305) 555-0000" required><div class="ferr">Required</div></div></div>
+          <div class="frow"><div class="fg"><label class="fl">Name</label><input type="text" name="name" class="fi" placeholder="John Smith" required><div class="ferr">Required</div></div><div class="fg"><label class="fl">Phone</label><input type="tel" name="phone" class="fi" placeholder="(503) 555-0000" required><div class="ferr">Required</div></div></div>
           <div class="fg"><label class="fl">Email</label><input type="email" name="email" class="fi" placeholder="john@example.com" required><div class="ferr">Valid email</div></div>
           <div class="fg"><label class="fl">Service</label><select name="service" class="fsel" required><option value="" disabled selected>Select a service</option><option>Residential</option><option>Commercial</option><option>Deep Cleaning</option><option>Post-Construction</option><option>Move In/Out</option><option>Maintenance</option></select><div class="ferr">Required</div></div>
           <div class="fg"><label class="fl">Message</label><textarea name="message" class="fta" placeholder="Tell us about your space..."></textarea></div>
@@ -488,11 +538,11 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 <footer class="footer">
   <div class="wrap">
     <div class="ft-top">
-      <div class="ft-brand"><div class="ft-logo">Radiant Clean.</div><p class="ft-desc">Premium cleaning across South Florida. Spaces that speak for themselves.</p><p class="ft-lic">License #CLN2025-0200</p></div>
+      <div class="ft-brand"><div class="ft-logo">Radiant Clean.</div><p class="ft-desc">Premium cleaning across Greater Portland. Spaces that speak for themselves.</p><p class="ft-lic">License #CLN2025-0200</p></div>
       <div class="ft-cols">
         <div><div class="ft-ct">Services</div><div class="ft-col"><a href="#services">Residential</a><a href="#services">Commercial</a><a href="#services">Deep Cleaning</a><a href="#services">Post-Construction</a><a href="#services">Move In/Out</a><a href="#services">Maintenance</a></div></div>
         <div><div class="ft-ct">Company</div><div class="ft-col"><a href="#about">About</a><a href="#reviews">Reviews</a><a href="#faq">FAQ</a><a href="#contact">Contact</a></div></div>
-        <div><div class="ft-ct">Contact</div><div class="ft-col"><div class="ft-ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>(305) 555-0600</div><div class="ft-ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>hello@radiantclean.com</div><div class="ft-ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>24/7</div></div></div>
+        <div><div class="ft-ct">Contact</div><div class="ft-col"><div class="ft-ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>(503) 555-0600</div><div class="ft-ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>hello@radiantclean.com</div><div class="ft-ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>24/7</div></div></div>
       </div>
     </div>
     <div class="ft-bot">
