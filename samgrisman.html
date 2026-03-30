@@ -281,43 +281,47 @@ nav {
   font-weight: 900;
   text-transform: uppercase;
   line-height: 1.05;
-  will-change: opacity, transform;
-  transition: none;
-  overflow: hidden;
+  will-change: transform;
 }
+.hero-line .l {
+  display: inline-block;
+  color: transparent;
+  -webkit-text-stroke: 2px var(--cream);
+  transition: color 0.4s ease, -webkit-text-stroke 0.4s ease, text-shadow 0.4s ease;
+}
+.hero-line .l.filled {
+  color: var(--cream);
+  -webkit-text-stroke: 0;
+  text-shadow: 0 0 20px rgba(212,148,42,0.2);
+}
+.hero-line .l-space { display: inline-block; width: 0.3em; }
 .hero-line-1 {
-  font-size: clamp(28px, 5vw, 52px);
-  letter-spacing: 0.12em;
-  color: var(--muted);
+  font-size: clamp(18px, 3.5vw, 40px);
+  letter-spacing: 0.2em;
   margin-bottom: 8px;
 }
+.hero-line-1 .l { -webkit-text-stroke-width: 1px; }
+.hero-line-1 .l.filled { text-shadow: none; }
 .hero-line-2 {
   font-size: clamp(60px, 12vw, 160px);
   letter-spacing: -0.02em;
-  color: transparent;
-  -webkit-text-stroke: 2px var(--cream);
-}
-.hero-line-2 .text-fill {
-  -webkit-text-stroke: 0;
-  color: var(--cream);
-  transition: color 0.3s;
 }
 .hero-line-3 {
   font-size: clamp(60px, 12vw, 160px);
   letter-spacing: -0.02em;
-  color: transparent;
-  -webkit-text-stroke: 2px var(--cream);
-}
-.hero-line-3 .text-fill {
-  -webkit-text-stroke: 0;
-  color: var(--cream);
 }
 .hero-line-4 {
   font-size: clamp(16px, 2.5vw, 28px);
   letter-spacing: 0.18em;
-  color: var(--amber);
+  color: transparent;
+  -webkit-text-stroke: 1px var(--amber);
   margin-top: 20px;
   font-weight: 700;
+  transition: color 0.4s ease, -webkit-text-stroke 0.4s ease;
+}
+.hero-line-4.filled {
+  color: var(--amber);
+  -webkit-text-stroke: 0;
 }
 /* — Hero background image — */
 .hero-bg-img {
@@ -956,7 +960,8 @@ footer {
   .audio-volume { display: none; }
   .audio-time { min-width: 50px; font-size: 10px; }
   .cursor-dot, .cursor-ring { display: none !important; }
-  .hero-line-2, .hero-line-3 { -webkit-text-stroke-width: 1.5px; }
+  .hero-line .l { -webkit-text-stroke-width: 1.5px; }
+  .hero-line-1 .l { -webkit-text-stroke-width: 0.8px; }
   .section-head { -webkit-text-stroke-width: 1px; }
 }
 @media (max-width: 480px) {
@@ -1047,9 +1052,9 @@ footer {
     </div>
     <div class="hero-glow" id="heroGlow"></div>
     <div class="hero-text-wrap" id="heroTextWrap">
-      <div class="hero-line hero-line-1" id="heroLine1">Acoustic Collective</div>
-      <div class="hero-line hero-line-2" id="heroLine2"><span class="text-fill">SAM</span> GRISMAN</div>
-      <div class="hero-line hero-line-3" id="heroLine3">PROJECT</div>
+      <div class="hero-line hero-line-1" id="heroLine1"><span class="l a">A</span><span class="l b">C</span><span class="l a">O</span><span class="l b">U</span><span class="l a">S</span><span class="l b">T</span><span class="l a">I</span><span class="l b">C</span><span class="l-space"></span><span class="l a">C</span><span class="l b">O</span><span class="l a">L</span><span class="l b">L</span><span class="l a">E</span><span class="l b">C</span><span class="l a">T</span><span class="l b">I</span><span class="l a">V</span><span class="l b">E</span></div>
+      <div class="hero-line hero-line-2" id="heroLine2"><span class="l a">S</span><span class="l b">A</span><span class="l a">M</span><span class="l-space"></span><span class="l b">G</span><span class="l a">R</span><span class="l b">I</span><span class="l a">S</span><span class="l b">M</span><span class="l a">A</span><span class="l b">N</span></div>
+      <div class="hero-line hero-line-3" id="heroLine3"><span class="l a">P</span><span class="l b">R</span><span class="l a">O</span><span class="l b">J</span><span class="l a">E</span><span class="l b">C</span><span class="l a">T</span></div>
       <div class="hero-line hero-line-4" id="heroLine4">The legacy continues</div>
     </div>
     <div class="hero-cta-wrap" id="heroCta">
@@ -1096,7 +1101,7 @@ footer {
     <div class="eyebrow reveal">Latest Release</div>
     <h2 class="section-head reveal reveal-delay-1"><span class="fill">Now</span> Streaming</h2>
     <div class="reveal reveal-delay-2" style="border-radius:var(--radius-lg);overflow:hidden;">
-      <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/3EJUkAEMKIGBPMZiRoCQ3c?utm_source=generator&theme=0" width="100%" height="380" frameBorder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+      <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/6zkQCtFCqgSUUVgyotaKSg?utm_source=generator&theme=0" width="100%" height="380" frameBorder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
     </div>
   </div>
 </section>
@@ -1412,25 +1417,25 @@ footer {
   });
 })();
 
-/* ═══ IMMERSIVE HERO — EDITORIAL TEXT SCROLL + SOUND ═══ */
+/* ═══ IMMERSIVE HERO — ALTERNATING LETTER FILL ON SCROLL ═══ */
 (function() {
   var heroEl = document.getElementById('scrollHero');
   var sticky = heroEl.querySelector('.scroll-hero-sticky');
-  var line1  = document.getElementById('heroLine1');
-  var line2  = document.getElementById('heroLine2');
-  var line3  = document.getElementById('heroLine3');
-  var line4  = document.getElementById('heroLine4');
   var bgImg  = document.getElementById('heroBgImg');
   var glow   = document.getElementById('heroGlow');
   var ctaEl  = document.getElementById('heroCta');
   var scrubFill = document.getElementById('heroScrubFill');
   var textWrap = document.getElementById('heroTextWrap');
+  var line4  = document.getElementById('heroLine4');
+
+  // Collect letter spans by group
+  var groupA = document.querySelectorAll('.hero-line .l.a');
+  var groupB = document.querySelectorAll('.hero-line .l.b');
 
   function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
   function map(v, a, b, c, d) { return c + (d - c) * clamp((v - a) / (b - a), 0, 1); }
   function easeOut3(t) { return 1 - Math.pow(1 - t, 3); }
 
-  // ── Get scroll progress ──
   function getProgress() {
     var rect = heroEl.getBoundingClientRect();
     var scrolled = -rect.top;
@@ -1438,54 +1443,66 @@ footer {
     return clamp(scrolled / total, 0, 1);
   }
 
-  // ── Animation loop ──
+  var aFilled = false, bFilled = false, l4Filled = false;
+
   function loop() {
     var p = getProgress();
 
     // Scrub bar
     scrubFill.style.width = (p * 100) + '%';
 
-    // Line 1 — "Acoustic Collective"
-    line1.style.opacity = p < 0.05 ? easeOut3(map(p, 0, 0.05, 0, 1)) : map(p, 0.3, 0.45, 1, 0);
-    line1.style.transform = 'translateY(' + ((1 - easeOut3(map(p, 0, 0.08, 0, 1))) * 40) + 'px)';
+    // Group A letters fill first (0.05 → 0.25)
+    var fillA = p > 0.05;
+    if (fillA !== aFilled) {
+      aFilled = fillA;
+      groupA.forEach(function(el) {
+        if (fillA) el.classList.add('filled');
+        else el.classList.remove('filled');
+      });
+    }
 
-    // Line 2 — "SAM GRISMAN" — outlined → fills in
-    line2.style.opacity = p > 0.7 ? map(p, 0.7, 0.85, 1, 0) : map(p, 0.02, 0.1, 0, 1);
-    line2.style.transform = 'translateY(' + ((1 - easeOut3(map(p, 0.02, 0.12, 0, 1))) * 60) + 'px)';
-    var fill2 = easeOut3(map(p, 0.1, 0.35, 0, 1));
-    line2.style.color = 'rgba(245,237,224,' + fill2 + ')';
-    line2.style.webkitTextStroke = (2 - fill2 * 2) + 'px var(--cream)';
-    if (fill2 > 0.1) line2.style.textShadow = '0 0 ' + (fill2 * 30) + 'px rgba(212,148,42,' + (fill2 * 0.25) + ')';
+    // Group B letters fill second (0.20 → 0.40)
+    var fillB = p > 0.20;
+    if (fillB !== bFilled) {
+      bFilled = fillB;
+      groupB.forEach(function(el) {
+        if (fillB) el.classList.add('filled');
+        else el.classList.remove('filled');
+      });
+    }
 
-    // Line 3 — "PROJECT" — outlined → fills in
-    line3.style.opacity = p > 0.7 ? map(p, 0.7, 0.85, 1, 0) : map(p, 0.05, 0.12, 0, 1);
-    line3.style.transform = 'translateY(' + ((1 - easeOut3(map(p, 0.05, 0.15, 0, 1))) * 80) + 'px)';
-    var fill3 = easeOut3(map(p, 0.15, 0.4, 0, 1));
-    line3.style.color = 'rgba(245,237,224,' + fill3 + ')';
-    line3.style.webkitTextStroke = (2 - fill3 * 2) + 'px var(--cream)';
-    if (fill3 > 0.1) line3.style.textShadow = '0 0 ' + (fill3 * 30) + 'px rgba(212,148,42,' + (fill3 * 0.2) + ')';
+    // Line 4 — "The legacy continues" fills in after both groups
+    var fillL4 = p > 0.35;
+    if (fillL4 !== l4Filled) {
+      l4Filled = fillL4;
+      if (fillL4) line4.classList.add('filled');
+      else line4.classList.remove('filled');
+    }
 
-    // Line 4 — "The legacy continues"
-    line4.style.opacity = easeOut3(map(p, 0.35, 0.5, 0, 1)) * map(p, 0.65, 0.8, 1, 0);
-    line4.style.transform = 'translateY(' + ((1 - easeOut3(map(p, 0.35, 0.5, 0, 1))) * 20) + 'px)';
-
-    // Background image — parallax
-    bgImg.style.opacity = p > 0.7 ? map(p, 0.7, 0.85, 0.5, 0) : easeOut3(map(p, 0.2, 0.45, 0, 0.5));
+    // Background image — fades in as letters fill, parallax shift
+    bgImg.style.opacity = p > 0.7 ? map(p, 0.7, 0.85, 0.45, 0) : easeOut3(map(p, 0.15, 0.35, 0, 0.45));
     var bgImgEl = bgImg.querySelector('img');
     if (bgImgEl) bgImgEl.style.transform = 'scale(' + (1.1 - p * 0.1) + ') translateY(' + (p * -30) + 'px)';
 
     // Glow
-    glow.style.opacity = map(p, 0.15, 0.35, 0, 0.6);
+    glow.style.opacity = map(p, 0.1, 0.3, 0, 0.5);
 
-    // Text scale
-    textWrap.style.transform = 'scale(' + (1 - p * 0.05) + ')';
+    // Text fades out near end
+    if (p > 0.65) {
+      textWrap.style.opacity = map(p, 0.65, 0.82, 1, 0);
+    } else {
+      textWrap.style.opacity = 1;
+    }
 
-    // Hero CTA
-    if (p > 0.85) {
-      var ctaP = easeOut3(map(p, 0.85, 0.98, 0, 1));
+    // Subtle text scale
+    textWrap.style.transform = 'scale(' + (1 - p * 0.03) + ')';
+
+    // Hero CTA — appears at end
+    if (p > 0.82) {
+      var ctaP = easeOut3(map(p, 0.82, 0.96, 0, 1));
       ctaEl.style.opacity = ctaP;
       ctaEl.style.transform = 'translateY(' + ((1 - ctaP) * 30) + 'px)';
-      if (p > 0.95) ctaEl.classList.add('active');
+      if (p > 0.93) ctaEl.classList.add('active');
     } else {
       ctaEl.style.opacity = 0;
       ctaEl.classList.remove('active');
