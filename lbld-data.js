@@ -45,11 +45,15 @@
       'nav.lang': 'ES',
 
       // Hero
+      'hero.badge': 'Latina-Owned & Handcrafted',
       'hero.title1': 'Handmade.',
       'hero.title2': 'Made With Love.',
       'hero.subtitle': 'Custom apparel, specialty drinkware, and 3D designs \u2014 crafted just for you by a Latina mother-daughter team.',
       'hero.cta.custom': 'Start Your Custom Order',
       'hero.cta.browse': 'Browse Collection',
+      'hero.stat.customers': 'Happy Customers',
+      'hero.stat.designs': 'Custom Designs',
+      'hero.stat.rating': 'Star Rating',
 
       // Marquee
       'marquee.shirts': 'Custom Shirts',
@@ -145,6 +149,9 @@
       'footer.contact': 'Contact',
       'footer.rights': 'All rights reserved.',
       'footer.webnari': 'Built and managed by',
+
+      // Techniques
+      'techniques.label': 'Signature Techniques',
 
       // Techniques page
       'tech.title': 'Our Signature Techniques',
@@ -261,11 +268,18 @@
       'nav.lang': 'EN',
 
       // Hero
+      'hero.badge': 'Latina y Artesanal',
       'hero.title1': 'Hecho a Mano.',
       'hero.title2': 'Hecho Con Amor.',
       'hero.subtitle': 'Ropa personalizada, vasos especiales y dise\u00f1os 3D \u2014 creados solo para ti por un equipo madre e hija Latina.',
       'hero.cta.custom': 'Comienza Tu Pedido',
       'hero.cta.browse': 'Ver Colecci\u00f3n',
+      'hero.stat.customers': 'Clientes Felices',
+      'hero.stat.designs': 'Dise\u00f1os Personalizados',
+      'hero.stat.rating': 'Calificaci\u00f3n',
+
+      // Techniques
+      'techniques.label': 'T\u00e9cnicas Especiales',
 
       // Marquee
       'marquee.shirts': 'Camisas Personalizadas',
