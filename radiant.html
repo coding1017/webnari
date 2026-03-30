@@ -149,7 +149,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 
 /* ===== MARQUEE ===== */
 .marquee{padding:36px 0;overflow:hidden;border-top:1px solid var(--gray);border-bottom:1px solid var(--gray);position:relative}
-.mq-track{display:flex;width:max-content;animation:mq 40s linear infinite}
+.mq-track{display:flex;width:max-content;animation:mq 28s linear infinite}
 .mq-item{
   font-size:clamp(32px,4.5vw,52px);font-weight:800;text-transform:uppercase;letter-spacing:.02em;
   white-space:nowrap;padding:0 20px;
@@ -583,24 +583,22 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
   r.forEach(function(x){x.addEventListener('blur',function(){ck(x);});});
   f.addEventListener('submit',function(e){var v=true;r.forEach(function(x){if(!ck(x))v=false;});if(!v)e.preventDefault();});
 
-  /* MARQUEE GLEAM — word+dot pairs, one at a time, no gap */
-  var mqWords=document.querySelectorAll('.mq-item');
-  var mqDots=document.querySelectorAll('.mq-dot');
-  var mqIdx=0;
+  /* MARQUEE GLEAM — word then dot, sequential, no lag */
+  var mqAll=document.querySelectorAll('.mq-track > *');
+  var mqI=0;
   function gleamNext(){
-    var word=mqWords[mqIdx];
-    var dot=mqDots[mqIdx];
-    word.style.animation='gleam 1.1s ease-in-out forwards';
-    if(dot) dot.style.animation='gleam 1.1s ease-in-out forwards';
-    word.addEventListener('animationend',function handler(){
-      word.removeEventListener('animationend',handler);
-      word.style.animation='none';
-      if(dot) dot.style.animation='none';
-      mqIdx=(mqIdx+1)%mqWords.length;
+    var el=mqAll[mqI];
+    var isWord=el.classList.contains('mq-item');
+    var dur=isWord?'1s':'.35s';
+    el.style.animation='gleam '+dur+' ease-in-out forwards';
+    el.addEventListener('animationend',function h(){
+      el.removeEventListener('animationend',h);
+      el.style.animation='none';
+      mqI=(mqI+1)%mqAll.length;
       gleamNext();
     });
   }
-  setTimeout(gleamNext,800);
+  setTimeout(gleamNext,600);
 })();
 </script>
 </body>
