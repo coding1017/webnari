@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Move-In / Move-Out Cleaning | PristineClean</title>
+<meta name="description" content="PristineClean move-in and move-out cleaning services in South Florida. Complete property turnover cleaning for tenants, landlords, and property managers. Call (305) 555-0400.">
+<link rel="canonical" href="https://webnari.io/move-cleaning.html">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://webnari.io/move-cleaning.html">
+<meta property="og:title" content="Move-In / Move-Out Cleaning | PristineClean">
+<meta property="og:description" content="Complete property turnover cleaning for tenants, landlords, and property managers in South Florida. Call (305) 555-0400.">
+<meta property="og:image" content="https://webnari.io/og-pristineclean.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:site_name" content="PristineClean">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Move-In / Move-Out Cleaning | PristineClean">
+<meta name="twitter:image" content="https://webnari.io/og-pristineclean.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Mono:wght@700&display=swap" rel="stylesheet">
+
+<style>
+/* ─── TOKENS ─────────────────────────────────────────────────────────────── */
+:root {
+  --bg:       #FAFBFD;
+  --bg2:      #F1F3F8;
+  --dark:     #06080C;
+  --dark2:    #0C1018;
+  --surface:  #FFFFFF;
+  --border:   #E2E6EF;
+  --border2:  #D0D6E2;
+  --blue:     #2563EB;
+  --blue2:    #3B82F6;
+  --blue3:    #60A5FA;
+  --indigo:   #4F46E5;
+  --violet:   #7C3AED;
+  --slate:    #64748B;
+  --slate2:   #94A3B8;
+  --text:     #334155;
+  --text2:    #475569;
+  --heading:  #0F172A;
+  --white:    #FFFFFF;
+  --font:     'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono:     'Space Mono', monospace;
+  --radius:   12px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --ease:     cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ─── RESET ──────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+body {
+  font-family: var(--font); background: var(--bg); color: var(--text);
+  overflow-x: hidden; line-height: 1.6; font-size: 16px;
+}
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+ul { list-style: none; }
+button { font-family: inherit; }
+
+/* ─── NOISE OVERLAY ──────────────────────────────────────────────────────── */
+body::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.018'/%3E%3C/svg%3E");
+}
+
+/* ─── UTILITY ────────────────────────────────────────────────────────────── */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+.pill-label {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 6px 16px; border-radius: 100px;
+  background: rgba(37,99,235,0.06); border: 1px solid rgba(37,99,235,0.12);
+  font-size: 12px; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--blue);
+}
+.pill-label svg { flex-shrink: 0; }
+.section-title {
+  font-size: clamp(36px, 5vw, 56px); font-weight: 800; color: var(--heading);
+  letter-spacing: -0.03em; line-height: 1.1; margin-top: 16px;
+}
+.section-desc {
+  font-size: 17px; color: var(--text2); line-height: 1.7; max-width: 520px; margin-top: 16px;
+}
+.gradient-text {
+  background: linear-gradient(135deg, var(--blue) 0%, var(--violet) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+
+/* ─── REVEAL ─────────────────────────────────────────────────────────────── */
+.reveal {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.08s; }
+.reveal-delay-2 { transition-delay: 0.16s; }
+.reveal-delay-3 { transition-delay: 0.24s; }
+.reveal-delay-4 { transition-delay: 0.32s; }
+.reveal-delay-5 { transition-delay: 0.40s; }
+
+/* ─── NAV ────────────────────────────────────────────────────────────────── */
+.site-nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: rgba(250,251,253,0.72); backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s, background 0.3s;
+}
+.site-nav.scrolled { border-bottom-color: var(--border); }
+.nav-inner {
+  max-width: 1200px; margin: 0 auto; padding: 0 24px;
+  height: 64px; display: flex; align-items: center;
+}
+.nav-logo {
+  font-weight: 800; font-size: 18px; letter-spacing: -0.02em;
+  color: var(--heading); display: flex; align-items: center; gap: 8px;
+}
+.nav-logo-mark {
+  width: 32px; height: 32px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--blue), var(--violet));
+  display: flex; align-items: center; justify-content: center;
+}
+.nav-logo-mark svg { color: white; }
+.nav-links {
+  display: flex; align-items: center; gap: 4px; margin-left: 48px; flex: 1;
+}
+.nav-item { position: relative; }
+.nav-item > a, .nav-link-a {
+  display: flex; align-items: center; gap: 4px; padding: 8px 14px;
+  font-size: 14px; font-weight: 500; color: var(--text2); border-radius: 8px;
+  cursor: pointer; transition: all 0.15s; border: none; background: none;
+}
+.nav-item > a:hover, .nav-link-a:hover {
+  background: rgba(37,99,235,0.06); color: var(--heading);
+}
+.nav-chevron {
+  width: 14px; height: 14px; transition: transform 0.2s; color: var(--slate2);
+}
+.nav-item:hover .nav-chevron { transform: rotate(180deg); }
+.nav-dropdown {
+  position: absolute; top: calc(100% + 8px); left: -8px; min-width: 260px;
+  background: var(--white); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 6px;
+  box-shadow: 0 12px 40px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.04);
+  opacity: 0; visibility: hidden; transform: translateY(4px);
+  transition: all 0.2s var(--ease); z-index: 100;
+}
+.nav-item:hover .nav-dropdown { opacity: 1; visibility: visible; transform: translateY(0); }
+.nav-dropdown a {
+  display: flex; align-items: center; gap: 12px; padding: 10px 12px;
+  font-size: 14px; font-weight: 500; color: var(--text2); border-radius: 8px;
+  transition: all 0.12s;
+}
+.nav-dropdown a:hover { background: var(--bg2); color: var(--heading); }
+.nav-dropdown a svg { flex-shrink: 0; color: var(--blue); }
+.nav-dd-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  background: rgba(37,99,235,0.06);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.nav-dd-icon svg { color: var(--blue); }
+.nav-right {
+  display: flex; align-items: center; gap: 12px; margin-left: auto;
+}
+.nav-badge {
+  display: flex; align-items: center; gap: 6px; padding: 6px 12px;
+  border-radius: 100px; background: rgba(37,99,235,0.06);
+  font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--blue);
+}
+.pulse-dot {
+  width: 6px; height: 6px; background: #22C55E; border-radius: 50%;
+  animation: pulse-ring 2s ease-out infinite;
+}
+@keyframes pulse-ring {
+  0%   { box-shadow: 0 0 0 0 rgba(34,197,94,0.5); }
+  70%  { box-shadow: 0 0 0 6px rgba(34,197,94,0); }
+  100% { box-shadow: 0 0 0 0 rgba(34,197,94,0); }
+}
+.btn-nav {
+  display: inline-flex; align-items: center; gap: 8px; padding: 9px 20px;
+  background: var(--heading); color: var(--white); border-radius: 100px;
+  font-size: 13px; font-weight: 600; border: none; cursor: pointer;
+  transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+}
+.btn-nav:hover { background: var(--blue); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(37,99,235,0.3); }
+.btn-nav svg { flex-shrink: 0; }
+
+/* Hamburger */
+.hamburger {
+  display: none; flex-direction: column; gap: 5px; background: none;
+  border: none; cursor: pointer; padding: 4px; margin-left: auto;
+}
+.hamburger span {
+  display: block; width: 22px; height: 2px; background: var(--heading);
+  border-radius: 2px; transition: all 0.25s;
+}
+.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburger.open span:nth-child(2) { opacity: 0; }
+.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* Mobile menu */
+.mobile-menu {
+  display: none; position: fixed; top: 64px; left: 0; right: 0; bottom: 0;
+  background: var(--white); overflow-y: auto; z-index: 999;
+  padding: 16px 24px 48px; border-top: 1px solid var(--border);
+}
+.mobile-menu.open { display: block; }
+.mob-section { margin-bottom: 24px; }
+.mob-label {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--slate2); margin-bottom: 8px; padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.mob-section a {
+  display: block; padding: 12px 0; font-size: 16px; font-weight: 500;
+  color: var(--text); border-bottom: 1px solid var(--border); transition: color 0.15s;
+}
+.mob-section a:last-child { border-bottom: none; }
+.mob-section a:hover { color: var(--blue); }
+.mob-cta {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  padding: 14px; background: var(--heading); color: var(--white); border-radius: 100px;
+  font-size: 15px; font-weight: 700; margin-top: 16px;
+}
+
+/* ─── SUBPAGE HERO ──────────────────────────────────────────────────────── */
+.sub-hero {
+  padding: 140px 0 80px; position: relative; overflow: hidden;
+  background: var(--dark);
+}
+.sub-hero::before {
+  content: ''; position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 40%, rgba(37,99,235,0.15) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 50% at 80% 30%, rgba(124,58,237,0.10) 0%, transparent 60%);
+  pointer-events: none;
+}
+.hero-grid-bg {
+  position: absolute; inset: 0; pointer-events: none; opacity: 0.04;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.5) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.5) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 70%);
+}
+.sub-hero-content {
+  position: relative; z-index: 2; max-width: 680px;
+}
+.breadcrumb {
+  display: flex; align-items: center; gap: 8px; margin-bottom: 24px;
+  font-size: 13px; font-weight: 500; color: rgba(255,255,255,0.4);
+}
+.breadcrumb a { transition: color 0.15s; }
+.breadcrumb a:hover { color: var(--blue3); }
+.breadcrumb svg { flex-shrink: 0; opacity: 0.4; }
+.sub-hero-h1 {
+  font-size: clamp(40px, 6vw, 64px); font-weight: 800; line-height: 1.05;
+  letter-spacing: -0.04em; color: var(--white);
+}
+.sub-hero-h1 .gradient-text {
+  background: linear-gradient(135deg, #60A5FA 0%, #A78BFA 50%, #C084FC 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.sub-hero-desc {
+  margin-top: 20px; font-size: 18px; line-height: 1.7;
+  color: rgba(255,255,255,0.55); max-width: 520px;
+}
+.sub-hero-actions {
+  display: flex; gap: 12px; margin-top: 36px; flex-wrap: wrap;
+}
+.btn-hero-primary {
+  display: inline-flex; align-items: center; gap: 10px; padding: 14px 28px;
+  background: var(--white); color: var(--heading); border-radius: 100px;
+  font-size: 15px; font-weight: 700; border: none; cursor: pointer;
+  transition: all 0.25s var(--ease);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1), 0 0 0 1px rgba(255,255,255,0.1);
+}
+.btn-hero-primary:hover {
+  transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+.btn-hero-primary svg { flex-shrink: 0; }
+.btn-hero-secondary {
+  display: inline-flex; align-items: center; gap: 10px; padding: 14px 28px;
+  background: rgba(255,255,255,0.06); color: var(--white); border-radius: 100px;
+  border: 1px solid rgba(255,255,255,0.12);
+  font-size: 15px; font-weight: 600; cursor: pointer;
+  transition: all 0.25s var(--ease);
+}
+.btn-hero-secondary:hover {
+  background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2);
+  transform: translateY(-2px);
+}
+.btn-hero-secondary svg { flex-shrink: 0; }
+
+/* ─── SERVICE DETAILS (features grid) ───────────────────────────────────── */
+.details-section { padding: 120px 0; }
+.details-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 56px;
+}
+.detail-card {
+  padding: 28px 24px; border-radius: var(--radius-lg);
+  background: var(--white); border: 1px solid var(--border);
+  transition: all 0.3s var(--ease);
+}
+.detail-card:hover {
+  border-color: rgba(37,99,235,0.2); transform: translateY(-3px);
+  box-shadow: 0 12px 36px rgba(37,99,235,0.06), 0 2px 8px rgba(0,0,0,0.03);
+}
+.detail-icon {
+  width: 44px; height: 44px; border-radius: 12px;
+  background: rgba(37,99,235,0.06); border: 1px solid rgba(37,99,235,0.1);
+  display: flex; align-items: center; justify-content: center; margin-bottom: 16px;
+}
+.detail-icon svg { color: var(--blue); }
+.detail-title {
+  font-size: 15px; font-weight: 700; color: var(--heading);
+  letter-spacing: -0.01em; margin-bottom: 6px;
+}
+.detail-desc {
+  font-size: 13px; color: var(--text2); line-height: 1.6;
+}
+
+/* ─── WHAT'S INCLUDED (4 cards, dark) ───────────────────────────────────── */
+.included-section {
+  padding: 120px 0;
+  background: var(--dark); color: rgba(255,255,255,0.6); position: relative; overflow: hidden;
+}
+.included-section::before {
+  content: ''; position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(37,99,235,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 20% 80%, rgba(124,58,237,0.06) 0%, transparent 60%);
+  pointer-events: none;
+}
+.included-section .section-title { color: var(--white); }
+.included-section .section-desc { color: rgba(255,255,255,0.5); }
+.included-section .pill-label {
+  background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.1);
+  color: var(--blue3);
+}
+.included-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 56px;
+  position: relative; z-index: 1;
+}
+.included-card {
+  padding: 32px 24px; border-radius: var(--radius-lg);
+  background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+  backdrop-filter: blur(8px); transition: all 0.3s var(--ease);
+}
+.included-card:hover {
+  background: rgba(255,255,255,0.06); border-color: rgba(255,255,255,0.12);
+  transform: translateY(-2px);
+}
+.included-icon {
+  width: 48px; height: 48px; border-radius: 12px;
+  background: rgba(37,99,235,0.1); border: 1px solid rgba(37,99,235,0.15);
+  display: flex; align-items: center; justify-content: center; margin-bottom: 20px;
+}
+.included-icon svg { color: var(--blue3); }
+.included-title {
+  font-size: 18px; font-weight: 700; color: var(--white); margin-bottom: 10px;
+  letter-spacing: -0.01em;
+}
+.included-desc { font-size: 14px; line-height: 1.7; color: rgba(255,255,255,0.45); }
+.included-list {
+  list-style: none; margin-top: 14px; display: flex; flex-direction: column; gap: 8px;
+}
+.included-list li {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 13px; color: rgba(255,255,255,0.5); line-height: 1.5;
+}
+.included-list li svg { flex-shrink: 0; color: var(--blue3); margin-top: 2px; }
+
+/* ─── OUR PROCESS ───────────────────────────────────────────────────────── */
+.process-section { padding: 120px 0; }
+.process-steps {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 56px;
+  position: relative;
+}
+.process-steps::before {
+  content: ''; position: absolute; top: 42px; left: 16.6%; right: 16.6%;
+  height: 2px; background: linear-gradient(90deg, var(--border), var(--blue), var(--violet), var(--border));
+  border-radius: 2px; z-index: 0;
+}
+.step-card {
+  text-align: center; position: relative; z-index: 1;
+}
+.step-number {
+  width: 52px; height: 52px; border-radius: 50%; margin: 0 auto 20px;
+  background: var(--white); border: 2px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-size: 18px; font-weight: 700; color: var(--blue);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+.step-card:hover .step-number {
+  background: var(--blue); color: var(--white); border-color: var(--blue);
+  box-shadow: 0 4px 16px rgba(37,99,235,0.3);
+}
+.step-title {
+  font-size: 18px; font-weight: 700; color: var(--heading);
+  letter-spacing: -0.01em; margin-bottom: 8px;
+}
+.step-desc { font-size: 14px; color: var(--text2); line-height: 1.7; max-width: 280px; margin: 0 auto; }
+
+/* ─── FAQ ─────────────────────────────────────────────────────────────────── */
+.faq-section { padding: 120px 0; background: var(--bg2); border-top: 1px solid var(--border); }
+.faq-grid {
+  display: grid; grid-template-columns: 0.4fr 0.6fr; gap: 64px; margin-top: 56px;
+  align-items: start;
+}
+.faq-sticky { position: sticky; top: 100px; }
+.faq-list { display: flex; flex-direction: column; gap: 8px; }
+.faq-item {
+  border: 1px solid var(--border); border-radius: var(--radius);
+  overflow: hidden; transition: border-color 0.2s; background: var(--white);
+}
+.faq-item[open] { border-color: rgba(37,99,235,0.25); box-shadow: 0 4px 12px rgba(37,99,235,0.06); }
+.faq-item summary {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 20px; cursor: pointer;
+  font-size: 15px; font-weight: 600; color: var(--heading);
+  list-style: none; transition: background 0.15s;
+}
+.faq-item summary:hover { background: var(--bg2); }
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-chevron { transition: transform 0.25s; flex-shrink: 0; color: var(--slate2); }
+.faq-item[open] .faq-chevron { transform: rotate(180deg); color: var(--blue); }
+.faq-answer { padding: 0 20px 18px; font-size: 14px; color: var(--text2); line-height: 1.7; }
+
+/* ─── CTA BANNER ─────────────────────────────────────────────────────────── */
+.cta-banner {
+  padding: 100px 0; background: var(--dark); text-align: center; position: relative; overflow: hidden;
+}
+.cta-banner::before {
+  content: ''; position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 60% 60% at 50% 50%, rgba(37,99,235,0.12) 0%, transparent 60%);
+  pointer-events: none;
+}
+.cta-inner { position: relative; z-index: 1; }
+.cta-title {
+  font-size: clamp(32px, 5vw, 52px); font-weight: 800; color: var(--white);
+  letter-spacing: -0.03em; line-height: 1.15;
+}
+.cta-title .gradient-text {
+  background: linear-gradient(135deg, #60A5FA 0%, #A78BFA 50%, #C084FC 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+}
+.cta-desc {
+  font-size: 17px; color: rgba(255,255,255,0.5); margin: 16px auto 0; max-width: 480px;
+}
+.cta-actions {
+  display: flex; gap: 12px; justify-content: center; margin-top: 36px; flex-wrap: wrap;
+}
+
+/* ─── FOOTER ─────────────────────────────────────────────────────────────── */
+.site-footer {
+  background: var(--dark); border-top: 1px solid rgba(255,255,255,0.06);
+  padding-top: 64px; color: rgba(255,255,255,0.4);
+}
+.footer-top {
+  max-width: 1200px; margin: 0 auto; padding: 0 24px 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.footer-brand { display: flex; align-items: center; gap: 10px; }
+.footer-brand-mark {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--blue), var(--violet));
+  display: flex; align-items: center; justify-content: center;
+}
+.footer-brand-mark svg { color: white; }
+.footer-brand-name {
+  font-size: 18px; font-weight: 800; color: var(--white); letter-spacing: -0.02em;
+}
+.footer-license {
+  font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
+  text-transform: uppercase; color: rgba(255,255,255,0.3);
+  padding: 6px 14px; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px;
+}
+.footer-mid {
+  max-width: 1200px; margin: 0 auto; padding: 40px 24px;
+  display: grid; grid-template-columns: 1.5fr 1fr 1fr 1.2fr; gap: 40px;
+}
+.footer-col-desc {
+  font-size: 14px; color: rgba(255,255,255,0.35); line-height: 1.6; max-width: 260px;
+}
+.footer-col h4 {
+  font-size: 12px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+  color: rgba(255,255,255,0.5); margin-bottom: 16px;
+}
+.footer-col a {
+  display: block; font-size: 14px; color: rgba(255,255,255,0.4); padding: 5px 0;
+  transition: color 0.15s;
+}
+.footer-col a:hover { color: var(--blue3); }
+.footer-contact-item {
+  display: flex; align-items: flex-start; gap: 10px; padding: 5px 0;
+  font-size: 14px; color: rgba(255,255,255,0.4);
+}
+.footer-contact-item svg { flex-shrink: 0; color: var(--blue3); margin-top: 3px; }
+.footer-bottom {
+  max-width: 1200px; margin: 0 auto; padding: 20px 24px;
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 1px solid rgba(255,255,255,0.06); flex-wrap: wrap; gap: 12px;
+}
+.footer-copy { font-size: 13px; color: rgba(255,255,255,0.25); }
+.footer-legal a {
+  font-size: 13px; color: rgba(255,255,255,0.25); margin-left: 20px;
+  transition: color 0.15s;
+}
+.footer-legal a:hover { color: rgba(255,255,255,0.6); }
+
+/* ─── RESPONSIVE ─────────────────────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .nav-links, .nav-badge { display: none; }
+  .hamburger { display: flex; }
+  .details-grid { grid-template-columns: repeat(2, 1fr); }
+  .included-grid { grid-template-columns: repeat(2, 1fr); }
+  .process-steps::before { display: none; }
+  .faq-grid { grid-template-columns: 1fr; }
+  .faq-sticky { position: static; }
+  .footer-mid { grid-template-columns: 1fr 1fr; }
+  .footer-top { flex-direction: column; align-items: flex-start; gap: 16px; }
+}
+@media (max-width: 768px) {
+  .sub-hero { padding: 120px 0 60px; }
+  .sub-hero-h1 { font-size: clamp(32px, 9vw, 48px); }
+  .details-grid, .included-grid { grid-template-columns: 1fr; }
+  .process-steps { grid-template-columns: 1fr; gap: 40px; }
+  .footer-mid { grid-template-columns: 1fr; }
+  .footer-bottom { flex-direction: column; text-align: center; }
+  .details-section, .included-section, .process-section, .faq-section { padding: 80px 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ────────────────────────────────────────────────────────────────── -->
+<nav class="site-nav" id="site-nav">
+  <div class="nav-inner">
+    <a href="pristineclean.html" class="nav-logo">
+      <div class="nav-logo-mark">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L9 12l-7 2 7 2 3 6 3-6 7-2-7-2-3-10z"/></svg>
+      </div>
+      PristineClean
+    </a>
+
+    <ul class="nav-links">
+      <li class="nav-item">
+        <a class="nav-link-a" href="#">
+          Services
+          <svg class="nav-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+        </a>
+        <div class="nav-dropdown">
+          <a href="commercial-cleaning.html">
+            <div class="nav-dd-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 3v18M15 3v18M3 9h18M3 15h18"/></svg></div>
+            Commercial Office
+          </a>
+          <a href="deep-cleaning.html">
+            <div class="nav-dd-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L9 12l-7 2 7 2 3 6 3-6 7-2-7-2-3-10z"/></svg></div>
+            Deep Clean &amp; Sanitize
+          </a>
+          <a href="post-construction.html">
+            <div class="nav-dd-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20h20M4 20V8l8-6 8 6v12"/><path d="M9 20v-6h6v6"/></svg></div>
+            Post-Construction
+          </a>
+          <a href="industrial-cleaning.html">
+            <div class="nav-dd-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20h20"/><path d="M4 20V10l4-6h8l4 6v10"/></svg></div>
+            Industrial &amp; Warehouse
+          </a>
+          <a href="move-cleaning.html">
+            <div class="nav-dd-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="6" width="15" height="12" rx="1"/><path d="M16 10h4l3 4v4h-7V10z"/><circle cx="7" cy="20" r="2"/><circle cx="19" cy="20" r="2"/></svg></div>
+            Move-In / Move-Out
+          </a>
+          <a href="maintenance-plans.html">
+            <div class="nav-dd-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+            Maintenance Plans
+          </a>
+        </div>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link-a" href="#">
+          Company
+          <svg class="nav-chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6l4 4 4-4"/></svg>
+        </a>
+        <div class="nav-dropdown">
+          <a href="pristineclean.html#why"><div class="nav-dd-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg></div>About</a>
+          <a href="pristineclean.html#reviews"><div class="nav-dd-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>Reviews</a>
+          <a href="pristineclean.html#areas"><div class="nav-dd-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>Service Areas</a>
+          <a href="pristineclean.html#faq"><div class="nav-dd-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></div>FAQ</a>
+          <a href="pristineclean.html#contact"><div class="nav-dd-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.01 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.13.88.36 1.74.7 2.56"/></svg></div>Contact</a>
+        </div>
+      </li>
+      <li><a href="pristineclean.html#areas" class="nav-link-a">Areas</a></li>
+      <li><a href="pristineclean.html#booking" class="nav-link-a">Book</a></li>
+    </ul>
+
+    <div class="nav-right">
+      <div class="nav-badge"><span class="pulse-dot"></span> 24/7 Available</div>
+      <a href="tel:3055550400" class="btn-nav">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.01 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.13.88.36 1.74.7 2.56a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.82.34 1.68.57 2.56.7A2 2 0 0122 14.92v2z"/></svg>
+        (305) 555-0400
+      </a>
+    </div>
+
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobile-menu">
+  <div class="mob-section">
+    <div class="mob-label">Services</div>
+    <a href="commercial-cleaning.html">Commercial Office Cleaning</a>
+    <a href="deep-cleaning.html">Deep Cleaning &amp; Sanitization</a>
+    <a href="post-construction.html">Post-Construction Cleanup</a>
+    <a href="industrial-cleaning.html">Industrial &amp; Warehouse</a>
+    <a href="move-cleaning.html">Move-In / Move-Out</a>
+    <a href="maintenance-plans.html">Maintenance Plans</a>
+  </div>
+  <div class="mob-section">
+    <div class="mob-label">Company</div>
+    <a href="pristineclean.html#why">About</a>
+    <a href="pristineclean.html#reviews">Reviews</a>
+    <a href="pristineclean.html#areas">Service Areas</a>
+    <a href="pristineclean.html#faq">FAQ</a>
+    <a href="pristineclean.html#contact">Contact</a>
+  </div>
+  <a href="tel:3055550400" class="mob-cta">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.01 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.13.88.36 1.74.7 2.56a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.82.34 1.68.57 2.56.7A2 2 0 0122 14.92v2z"/></svg>
+    Call (305) 555-0400
+  </a>
+</div>
+
+<!-- ── HERO ──────────────────────────────────────────────────────────────── -->
+<section class="sub-hero">
+  <div class="hero-grid-bg"></div>
+  <div class="container sub-hero-content">
+    <nav class="breadcrumb reveal">
+      <a href="pristineclean.html">Home</a>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+      <a href="pristineclean.html#services">Services</a>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+      <span style="color:rgba(255,255,255,0.7)">Move-In / Move-Out</span>
+    </nav>
+    <h1 class="sub-hero-h1 reveal reveal-delay-1">Move-In / Move-Out<br><span class="gradient-text">Cleaning</span></h1>
+    <p class="sub-hero-desc reveal reveal-delay-2">Complete property turnover cleaning for tenants, landlords, and property managers. We leave every unit spotless so you can hand over the keys with confidence and get deposits back without dispute.</p>
+    <div class="sub-hero-actions reveal reveal-delay-3">
+      <a href="pristineclean.html#booking" class="btn-hero-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        Book a Cleaning
+      </a>
+      <a href="tel:3055550400" class="btn-hero-secondary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.01 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.13.88.36 1.74.7 2.56"/></svg>
+        Call (305) 555-0400
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── SERVICE DETAILS ──────────────────────────────────────────────────── -->
+<section class="details-section" id="details">
+  <div class="container">
+    <div class="pill-label reveal"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="6" width="15" height="12" rx="1"/><path d="M16 10h4l3 4v4h-7V10z"/><circle cx="7" cy="20" r="2"/><circle cx="19" cy="20" r="2"/></svg> Service Features</div>
+    <h2 class="section-title reveal reveal-delay-1">Every corner, every surface.</h2>
+    <p class="section-desc reveal reveal-delay-2">Our move-in/move-out cleaning covers every detail landlords and tenants care about, from kitchen grease to baseboard dust.</p>
+    <div class="details-grid">
+      <div class="detail-card reveal">
+        <div class="detail-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9h18v10a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path d="M3 9l2-4h14l2 4"/><line x1="12" y1="13" x2="12" y2="17"/></svg></div>
+        <div class="detail-title">Full Kitchen Deep Clean</div>
+        <div class="detail-desc">Counters, backsplash, cabinets inside and out, stovetop, oven, hood, and sink scrubbed and degreased.</div>
+      </div>
+      <div class="detail-card reveal reveal-delay-1">
+        <div class="detail-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L9 12l-7 2 7 2 3 6 3-6 7-2-7-2-3-10z"/></svg></div>
+        <div class="detail-title">Bathroom Scrub &amp; Sanitize</div>
+        <div class="detail-desc">Tile, grout, toilet, tub, shower glass, vanity, and mirrors cleaned with hospital-grade disinfectants.</div>
+      </div>
+      <div class="detail-card reveal reveal-delay-2">
+        <div class="detail-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 8h20"/><path d="M8 4v16"/></svg></div>
+        <div class="detail-title">Closet &amp; Cabinet Wipe-Down</div>
+        <div class="detail-desc">All shelves, rods, drawers, and cabinet interiors wiped clean and dust-free.</div>
+      </div>
+      <div class="detail-card reveal reveal-delay-3">
+        <div class="detail-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 21h16"/><path d="M4 21V3h16v18"/><path d="M9 9h1M14 9h1M9 14h1M14 14h1"/></svg></div>
+        <div class="detail-title">Baseboard &amp; Trim Cleaning</div>
+        <div class="detail-desc">Every baseboard, door frame, and trim piece wiped to remove scuffs, dust, and buildup.</div>
+      </div>
+      <div class="detail-card reveal">
+        <div class="detail-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div>
+        <div class="detail-title">Window Sill Cleaning</div>
+        <div class="detail-desc">Interior window sills, tracks, and frames cleared of dirt, debris, and mildew spots.</div>
+      </div>
+      <div class="detail-card reveal reveal-delay-1">
+        <div class="detail-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div>
+        <div class="detail-title">Light Fixture Dusting</div>
+        <div class="detail-desc">Ceiling fans, light covers, and fixtures dusted and wiped for a like-new finish.</div>
+      </div>
+      <div class="detail-card reveal reveal-delay-2">
+        <div class="detail-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h8M8 14h4"/></svg></div>
+        <div class="detail-title">Appliance Interior Cleaning</div>
+        <div class="detail-desc">Refrigerator, oven, microwave, and dishwasher interiors scrubbed and deodorized.</div>
+      </div>
+      <div class="detail-card reveal reveal-delay-3">
+        <div class="detail-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></svg></div>
+        <div class="detail-title">Floor Mopping &amp; Vacuuming</div>
+        <div class="detail-desc">Hard floors mopped and polished, carpets thoroughly vacuumed including edges and corners.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── WHAT'S INCLUDED ──────────────────────────────────────────────────── -->
+<section class="included-section" id="included">
+  <div class="container">
+    <div class="pill-label reveal">Full Scope</div>
+    <h2 class="section-title reveal reveal-delay-1">What's included.</h2>
+    <p class="section-desc reveal reveal-delay-2">Four areas of focus that cover every inch of the property from move-out to move-in ready.</p>
+    <div class="included-grid">
+      <div class="included-card reveal">
+        <div class="included-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9h18v10a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path d="M3 9l2-4h14l2 4"/><line x1="12" y1="13" x2="12" y2="17"/></svg></div>
+        <div class="included-title">Kitchen Reset</div>
+        <div class="included-desc">Every surface restored to move-in condition.</div>
+        <ul class="included-list">
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Oven, stovetop, and range hood degreased</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Refrigerator interior cleaned and deodorized</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Cabinets wiped inside and out</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Sink, faucet, and countertops polished</li>
+        </ul>
+      </div>
+      <div class="included-card reveal reveal-delay-1">
+        <div class="included-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L9 12l-7 2 7 2 3 6 3-6 7-2-7-2-3-10z"/></svg></div>
+        <div class="included-title">Bathroom Deep Clean</div>
+        <div class="included-desc">Hospital-grade sanitization throughout.</div>
+        <ul class="included-list">
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Tile and grout scrubbed and whitened</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Toilet, tub, and shower disinfected</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Mirrors and glass streak-free</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Vanity and medicine cabinet cleaned</li>
+        </ul>
+      </div>
+      <div class="included-card reveal reveal-delay-2">
+        <div class="included-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg></div>
+        <div class="included-title">All Surfaces</div>
+        <div class="included-desc">No surface left untouched.</div>
+        <ul class="included-list">
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Baseboards, door frames, and trim</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Light switches and outlet covers</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Window sills and tracks</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Closet shelves and rods</li>
+        </ul>
+      </div>
+      <div class="included-card reveal reveal-delay-3">
+        <div class="included-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></svg></div>
+        <div class="included-title">Floor to Ceiling</div>
+        <div class="included-desc">Top-down cleaning from fixtures to floors.</div>
+        <ul class="included-list">
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Ceiling fan and light fixture dusting</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Walls spot-cleaned for marks and scuffs</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Hard floors mopped, carpets vacuumed</li>
+          <li><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg> Vent covers and air returns wiped</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── OUR PROCESS ──────────────────────────────────────────────────────── -->
+<section class="process-section" id="process">
+  <div class="container">
+    <div class="pill-label reveal"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg> How It Works</div>
+    <h2 class="section-title reveal reveal-delay-1">Three steps to turnover ready.</h2>
+    <div class="process-steps">
+      <div class="step-card reveal">
+        <div class="step-number">1</div>
+        <div class="step-title">Schedule &amp; Assess</div>
+        <div class="step-desc">Book online or call. We assess the property size, condition, and any special requirements before your move date.</div>
+      </div>
+      <div class="step-card reveal reveal-delay-1">
+        <div class="step-number">2</div>
+        <div class="step-title">Complete Clean</div>
+        <div class="step-desc">Our certified team arrives on time with professional equipment and eco-friendly products. Every room cleaned top to bottom.</div>
+      </div>
+      <div class="step-card reveal reveal-delay-2">
+        <div class="step-number">3</div>
+        <div class="step-title">Walkthrough &amp; Sign-off</div>
+        <div class="step-desc">Walk through the property with our team lead. Not satisfied? We re-clean on the spot at no extra charge.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ────────────────────────────────────────────────────────────────── -->
+<section class="faq-section" id="faq">
+  <div class="container">
+    <div class="faq-grid">
+      <div class="faq-sticky">
+        <div class="pill-label reveal">FAQ</div>
+        <h2 class="section-title reveal reveal-delay-1">Move cleaning questions.</h2>
+        <p class="section-desc reveal reveal-delay-2">Everything you need to know about our move-in and move-out cleaning service.</p>
+      </div>
+      <div class="faq-list">
+        <details class="faq-item reveal">
+          <summary>How far in advance should I book a move-out cleaning? <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>
+          <div class="faq-answer">We recommend booking at least 3-5 days before your move date to guarantee availability. For peak season (summer months and month-end), 1-2 weeks advance notice is ideal. Emergency same-day cleanings are available when scheduling allows.</div>
+        </details>
+        <details class="faq-item reveal reveal-delay-1">
+          <summary>Will this cleaning help me get my security deposit back? <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>
+          <div class="faq-answer">Our move-out cleaning is specifically designed to meet or exceed the cleanliness standards required by landlords and property managers. While deposit returns depend on overall property condition, our clients consistently report full deposit recovery on the cleaning portion. We provide before-and-after photos as documentation.</div>
+        </details>
+        <details class="faq-item reveal">
+          <summary>Does the property need to be empty before you clean? <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>
+          <div class="faq-answer">For the best results, the property should be fully emptied of furniture and personal belongings. We can work around remaining items, but an empty unit allows us to reach every surface, corner, and closet for a thorough deep clean.</div>
+        </details>
+        <details class="faq-item reveal reveal-delay-1">
+          <summary>What's your satisfaction guarantee for move cleanings? <svg class="faq-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>
+          <div class="faq-answer">We offer a walkthrough inspection after every move cleaning. If anything does not meet your standards, we re-clean those areas on the spot at no additional charge. If issues are found after we leave, contact us within 24 hours and we return to address them free of charge.</div>
+        </details>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA BANNER ─────────────────────────────────────────────────────────── -->
+<section class="cta-banner">
+  <div class="container cta-inner">
+    <h2 class="cta-title reveal">Ready for a <span class="gradient-text">spotless turnover?</span></h2>
+    <p class="cta-desc reveal reveal-delay-1">Book your move-in or move-out cleaning today. Every job backed by our 100% satisfaction guarantee.</p>
+    <div class="cta-actions reveal reveal-delay-2">
+      <a href="pristineclean.html#booking" class="btn-hero-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        Book Now
+      </a>
+      <a href="tel:3055550400" class="btn-hero-secondary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.01 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.13.88.36 1.74.7 2.56"/></svg>
+        Call (305) 555-0400
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────────────────────────── -->
+<footer class="site-footer" role="contentinfo">
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="footer-brand-mark"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L9 12l-7 2 7 2 3 6 3-6 7-2-7-2-3-10z"/></svg></div>
+      <span class="footer-brand-name">PristineClean</span>
+    </div>
+    <div class="footer-license">License #CLN2024-0088</div>
+  </div>
+  <div class="footer-mid">
+    <div class="footer-col">
+      <div class="footer-col-desc">Enterprise-grade commercial and industrial cleaning for businesses across South Florida.</div>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <a href="commercial-cleaning.html">Commercial Office</a>
+      <a href="deep-cleaning.html">Deep Cleaning</a>
+      <a href="post-construction.html">Post-Construction</a>
+      <a href="industrial-cleaning.html">Industrial</a>
+      <a href="move-cleaning.html">Move-In / Out</a>
+      <a href="maintenance-plans.html">Maintenance Plans</a>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <a href="pristineclean.html#why">About</a><a href="pristineclean.html#reviews">Reviews</a><a href="pristineclean.html#areas">Service Areas</a><a href="pristineclean.html#faq">FAQ</a><a href="pristineclean.html#contact">Contact</a>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <div class="footer-contact-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.01 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.13.88.36 1.74.7 2.56"/></svg><a href="tel:3055550400">(305) 555-0400</a></div>
+      <div class="footer-contact-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg><span>info@pristineclean.com</span></div>
+      <div class="footer-contact-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg><span>Mon-Sat 7AM-7PM</span></div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">&copy; 2026 PristineClean. All rights reserved.</div>
+    <div class="footer-legal"><a href="#">Privacy Policy</a><a href="#">Terms</a></div>
+  </div>
+</footer>
+
+<script>
+// ── NAV SCROLL ──────────────────────────────────────────────────────────────
+(function(){
+  var nav=document.getElementById('site-nav');
+  if(!nav)return;
+  window.addEventListener('scroll',function(){nav.classList.toggle('scrolled',window.scrollY>20)},{passive:true});
+})();
+
+// ── MOBILE NAV ──────────────────────────────────────────────────────────────
+(function(){
+  var btn=document.getElementById('hamburger'),menu=document.getElementById('mobile-menu');
+  if(!btn||!menu)return;
+  btn.addEventListener('click',function(){btn.classList.toggle('open');menu.classList.toggle('open');document.body.style.overflow=menu.classList.contains('open')?'hidden':'';});
+  menu.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){btn.classList.remove('open');menu.classList.remove('open');document.body.style.overflow='';});});
+})();
+
+// ── SMOOTH SCROLL ───────────────────────────────────────────────────────────
+(function(){
+  document.querySelectorAll('a[href^="#"]').forEach(function(a){
+    a.addEventListener('click',function(e){var t=document.querySelector(this.getAttribute('href'));if(t){e.preventDefault();window.scrollTo({top:t.offsetTop-80,behavior:'smooth'});}});
+  });
+})();
+
+// ── REVEALS ─────────────────────────────────────────────────────────────────
+(function(){
+  var els=document.querySelectorAll('.reveal');
+  if(!('IntersectionObserver' in window)){els.forEach(function(el){el.classList.add('visible');});return;}
+  var io=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target);}});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
+  els.forEach(function(el){io.observe(el);});
+})();
+</script>
+</body>
+</html>

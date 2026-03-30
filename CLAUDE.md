@@ -21,6 +21,7 @@ A **Website-as-a-Service (WaaS)** platform called **Webnari**. The agency landin
 | Roofing | **RoofPro** | `roofpro.html` | standalone | Slate/Red `#E63946` + dark navy | (305) 555-0300 |
 | E-commerce | **Wook Wear** | `wookwear.html` | 3 subpages | Gradient pink/purple/cyan + deep purple-black | — |
 | Meal Prep | **Jade's Spice** | `jades-spice.html` | standalone | Warm red `#D94040` + gold `#F0A830` + dark brown | — |
+| Cleaning | **PristineClean** | `pristineclean.html` | 6 subpages | Royal Blue `#2563EB` + Silver on light `#FAFBFD` / dark `#06080C` | (305) 555-0400 |
 
 ### VoltPro Subpages (electrician)
 `panel-upgrades.html`, `ev-charger.html`, `home-rewiring.html`, `smart-home.html`, `commercial.html`, `emergency-service.html`, `about.html`, `team.html`, `blog.html`, `reviews.html`, `privacy.html`, `contact.html`
@@ -33,6 +34,9 @@ A **Website-as-a-Service (WaaS)** platform called **Webnari**. The agency landin
 
 ### Wook Wear Subpages (e-commerce)
 `wookwear-shop.html`, `wookwear-about.html`, `wookwear-contact.html`
+
+### PristineClean Subpages (cleaning)
+`commercial-cleaning.html`, `deep-cleaning.html`, `post-construction.html`, `industrial-cleaning.html`, `move-cleaning.html`, `maintenance-plans.html`
 
 ## Wook Wear Design Tokens (wookwear.html reference)
 ```css
@@ -59,6 +63,26 @@ A **Website-as-a-Service (WaaS)** platform called **Webnari**. The agency landin
 - **Existing domain:** wookwearshop.com (currently GoDaddy placeholder, can point to Webnari later)
 - **Hero placeholder:** `.hero-placeholder` wrapper on wookwear.html ready for future parallax swap
 - **Parallax concept (future):** Sewing machine stitching a pouch together, thread pulling, button eyes snapping on, psychedelic glow finale
+
+## PristineClean Design Tokens (pristineclean.html reference)
+```css
+--bg: #FAFBFD; --bg2: #F1F3F8; --dark: #06080C; --dark2: #0C1018;
+--surface: #FFFFFF; --border: #E2E6EF; --border2: #D0D6E2;
+--blue: #2563EB; --blue2: #3B82F6; --blue3: #60A5FA;
+--indigo: #4F46E5; --violet: #7C3AED;
+--slate: #64748B; --slate2: #94A3B8;
+--text: #334155; --text2: #475569; --heading: #0F172A; --white: #FFFFFF;
+```
+
+## PristineClean Notes
+- **Brand:** PristineClean — enterprise-grade commercial/industrial cleaning
+- **Design:** Modern agency-style (NOT the standard WaaS dark template). Uses Inter + Space Mono fonts, light/dark alternating sections, glassmorphism, bento grids, pill-shaped buttons, gradient accents (blue→violet)
+- **Nav:** Frosted-glass light nav with gradient logo mark, pill-shaped CTA, green pulse dot for 24/7
+- **Hero:** Dark section with grid background overlay, gradient text, bento stats cards (not standard hero split)
+- **Sections:** Hero → Services (bento grid with featured card) → Why Us (dark, glassmorphic cards) → How It Works (numbered timeline) → Booking (date picker + time slots) → Service Areas → Reviews (dark) → FAQ (sticky sidebar layout) → Contact → CTA Banner → Footer
+- **Booking:** Custom vanilla JS date/time picker with calendar widget, time slot pills, formsubmit.co
+- **License:** #CLN2024-0088
+- **Phone:** (305) 555-0400
 
 ## Jade's Spice Design Tokens (jades-spice.html reference)
 ```css
@@ -124,6 +148,7 @@ A **Website-as-a-Service (WaaS)** platform called **Webnari**. The agency landin
 - AirPro: HVAC License `#CAC1818191`
 - FlowPro: Plumbing License `#CFC1430009`
 - RoofPro: Roofing License `#CCC1560088`
+- PristineClean: Cleaning License `#CLN2024-0088`
 
 ## Service Area (all templates — South Florida)
 Miami, Coral Gables, Doral, Hialeah, Kendall, Miami Beach, Brickell, Westchester, South Miami, Homestead, Miami Gardens, North Miami
