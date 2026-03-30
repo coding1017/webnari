@@ -140,7 +140,7 @@ nav {
   align-items: center;
   flex-shrink: 0;
 }
-.logo img { height: 64px; width: auto; }
+.logo img { height: 66px; width: auto; }
 nav .container { padding-top: 0; padding-bottom: 0; }
 .tour-btn-mobile {
   display: none;
@@ -322,7 +322,7 @@ nav .container { padding-top: 0; padding-bottom: 0; }
 /* — Scroll hero container — */
 .scroll-hero {
   position: relative;
-  height: 300vh;
+  height: 400vh;
 }
 .scroll-hero-sticky {
   position: sticky;
@@ -1013,8 +1013,8 @@ footer {
 }
 @media (max-width: 768px) {
   .nav-inner { gap: 10px; padding: 0; }
-  .logo { flex: 1; min-width: 0; padding: 0; margin: 0; }
-  .logo img { height: auto; width: 100%; max-height: 60px; }
+  .logo { flex: 1; min-width: 0; }
+  .logo img { height: 62px; width: auto; max-width: 100%; }
   .nav-links { display: none; }
   .nav-cta { gap: 12px; flex-shrink: 0; }
   .nav-cta .listen-btn { display: none; }
@@ -1163,7 +1163,7 @@ footer { padding-bottom: 120px; }
 <div class="scroll-hero" id="scrollHero">
   <div class="scroll-hero-sticky">
     <div class="hero-bg-img" id="heroBgImg">
-      <img src="https://static.topshelfmusicmag.com/20230205235544/SGP.TS-1-1.jpg" alt="Sam Grisman Project live">
+      <img src="https://www.gratefulweb.com/wp-content/uploads/2025/07/20241013_sam-grisman-project_brooklyn-bowl_jmh-34.jpg" alt="Sam Grisman Project live">
     </div>
     <div class="hero-glow" id="heroGlow"></div>
     <div class="hero-text-wrap" id="heroTextWrap">
@@ -1549,15 +1549,18 @@ footer { padding-bottom: 120px; }
   var textWrap = document.getElementById('heroTextWrap');
   var line4  = document.getElementById('heroLine4');
 
-  // Collect ALL letter spans in document order for each group
-  var groupA = Array.from(document.querySelectorAll('.hero-line .l.a'));
-  var groupB = Array.from(document.querySelectorAll('.hero-line .l.b'));
-  var totalA = groupA.length;
-  var totalB = groupB.length;
+  // Line 1: "ACOUSTIC COLLECTIVE" letters
+  var line1Letters = Array.from(document.querySelectorAll('.hero-line-1 .l'));
+  // Lines 2-3: "SAM GRISMAN PROJECT" letters (the big ones)
+  var bigLettersA = Array.from(document.querySelectorAll('.hero-line-2 .l.a, .hero-line-3 .l.a'));
+  var bigLettersB = Array.from(document.querySelectorAll('.hero-line-2 .l.b, .hero-line-3 .l.b'));
+  var totalL1 = line1Letters.length;
+  var totalBigA = bigLettersA.length;
+  var totalBigB = bigLettersB.length;
 
-  // Track fill state per letter
-  var aStates = groupA.map(function() { return false; });
-  var bStates = groupB.map(function() { return false; });
+  var l1States = line1Letters.map(function() { return false; });
+  var bigAStates = bigLettersA.map(function() { return false; });
+  var bigBStates = bigLettersB.map(function() { return false; });
   var l4Filled = false;
 
   function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
@@ -1577,36 +1580,45 @@ footer { padding-bottom: 120px; }
     // Scrub bar
     scrubFill.style.width = (p * 100) + '%';
 
-    // Group A sweeps left-to-right (p: 0.05 → 0.30)
-    var aProg = clamp(map(p, 0.05, 0.30, 0, 1), 0, 1);
-    var aCount = Math.round(aProg * totalA);
-    for (var i = 0; i < totalA; i++) {
-      var shouldFill = i < aCount;
-      if (shouldFill !== aStates[i]) {
-        aStates[i] = shouldFill;
-        if (shouldFill) groupA[i].classList.add('filled');
-        else groupA[i].classList.remove('filled');
+    // Phase 1: "ACOUSTIC COLLECTIVE" + "The legacy continues" fill together (p: 0.03 → 0.12)
+    var l1Prog = clamp(map(p, 0.03, 0.12, 0, 1), 0, 1);
+    var l1Count = Math.round(l1Prog * totalL1);
+    for (var i = 0; i < totalL1; i++) {
+      var shouldFill = i < l1Count;
+      if (shouldFill !== l1States[i]) {
+        l1States[i] = shouldFill;
+        if (shouldFill) line1Letters[i].classList.add('filled');
+        else line1Letters[i].classList.remove('filled');
       }
     }
-
-    // Group B sweeps left-to-right (p: 0.20 → 0.45)
-    var bProg = clamp(map(p, 0.20, 0.45, 0, 1), 0, 1);
-    var bCount = Math.round(bProg * totalB);
-    for (var j = 0; j < totalB; j++) {
-      var shouldFillB = j < bCount;
-      if (shouldFillB !== bStates[j]) {
-        bStates[j] = shouldFillB;
-        if (shouldFillB) groupB[j].classList.add('filled');
-        else groupB[j].classList.remove('filled');
-      }
-    }
-
-    // Line 4 — "The legacy continues" fills after both groups
-    var fillL4 = p > 0.45;
+    // Line 4 fills at the same time as line 1
+    var fillL4 = p > 0.04;
     if (fillL4 !== l4Filled) {
       l4Filled = fillL4;
       if (fillL4) line4.classList.add('filled');
       else line4.classList.remove('filled');
+    }
+
+    // Phase 2: "SAM GRISMAN PROJECT" big letters fill slowly (p: 0.10 → 0.50)
+    var bigAProg = clamp(map(p, 0.10, 0.50, 0, 1), 0, 1);
+    var bigACount = Math.round(bigAProg * totalBigA);
+    for (var a = 0; a < totalBigA; a++) {
+      var shouldA = a < bigACount;
+      if (shouldA !== bigAStates[a]) {
+        bigAStates[a] = shouldA;
+        if (shouldA) bigLettersA[a].classList.add('filled');
+        else bigLettersA[a].classList.remove('filled');
+      }
+    }
+    var bigBProg = clamp(map(p, 0.15, 0.55, 0, 1), 0, 1);
+    var bigBCount = Math.round(bigBProg * totalBigB);
+    for (var b = 0; b < totalBigB; b++) {
+      var shouldB = b < bigBCount;
+      if (shouldB !== bigBStates[b]) {
+        bigBStates[b] = shouldB;
+        if (shouldB) bigLettersB[b].classList.add('filled');
+        else bigLettersB[b].classList.remove('filled');
+      }
     }
 
     // Background image — fades in as letters fill, parallax shift
