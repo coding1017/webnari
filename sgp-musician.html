@@ -330,14 +330,14 @@ nav .container { padding-top: 0; padding-bottom: 0; }
 
 /* ═══ MUSICIAN HERO ═══ */
 .musician-hero {
-  padding: 110px 0 80px;
+  padding: 110px 0 0;
   position: relative;
   z-index: 1;
 }
 .musician-hero-grid {
   display: grid;
-  grid-template-columns: 2fr 3fr;
-  gap: 56px;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
   align-items: start;
 }
 .musician-photo-wrap {
@@ -349,7 +349,7 @@ nav .container { padding-top: 0; padding-bottom: 0; }
 }
 .musician-photo-wrap img {
   width: 100%;
-  aspect-ratio: 3/4;
+  aspect-ratio: 1/1;
   object-fit: cover;
   display: block;
 }
@@ -363,6 +363,47 @@ nav .container { padding-top: 0; padding-bottom: 0; }
 }
 .musician-details {
   padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+/* Quick facts grid in hero */
+.musician-facts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 24px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+}
+.fact-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+.fact-label {
+  font-family: var(--font-head);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.fact-value {
+  font-family: var(--font-head);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--cream);
+}
+.musician-summary {
+  font-size: 17px;
+  line-height: 1.75;
+  color: var(--text);
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
 }
 .musician-instrument-tag {
   display: inline-flex;
@@ -441,9 +482,46 @@ nav .container { padding-top: 0; padding-bottom: 0; }
   background: var(--dark);
   border-top: 1px solid var(--border);
 }
-.bio-content {
-  max-width: 760px;
-  margin: 0 auto;
+.bio-header {
+  display: flex;
+  align-items: baseline;
+  gap: 24px;
+  margin-bottom: 48px;
+}
+.bio-header .section-head { margin-bottom: 0; }
+.bio-header-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.bio-layout {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 56px;
+  align-items: start;
+}
+.bio-content { }
+.bio-sidebar {
+  position: sticky;
+  top: 100px;
+}
+.bio-pullquote {
+  font-family: var(--font-head);
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--cream);
+  padding: 32px;
+  background: var(--surface);
+  border-left: 3px solid var(--amber);
+  border-radius: 0 var(--radius-lg) var(--radius-lg) 0;
+  margin-bottom: 32px;
+  font-style: italic;
+}
+.bio-sidebar-links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 .bio-content h3 {
   font-family: var(--font-head);
@@ -459,6 +537,16 @@ nav .container { padding-top: 0; padding-bottom: 0; }
   line-height: 1.8;
   color: var(--text);
   margin-bottom: 20px;
+}
+.bio-content p:first-of-type::first-letter {
+  font-family: var(--font-head);
+  font-size: 52px;
+  font-weight: 900;
+  float: left;
+  line-height: 1;
+  margin-right: 10px;
+  margin-top: 4px;
+  color: var(--amber);
 }
 .bio-content blockquote {
   border-left: 3px solid var(--amber);
@@ -712,9 +800,12 @@ footer {
     grid-template-columns: 1fr;
     gap: 32px;
   }
-  .musician-photo-wrap img { aspect-ratio: 4/3; }
+  .musician-photo-wrap img { aspect-ratio: 16/10; }
   .musician-name { -webkit-text-stroke-width: 1px; }
+  .musician-facts { grid-template-columns: 1fr 1fr; }
   .bio-section { padding: 56px 0 64px; }
+  .bio-layout { grid-template-columns: 1fr; gap: 32px; }
+  .bio-sidebar { position: static; }
   .related-grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
   .footer-grid { grid-template-columns: 1fr; gap: 32px; }
   .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
@@ -1004,6 +1095,30 @@ footer {
       quickBio = '<p class="musician-quick-bio">' + m.shortBio + '</p>';
     }
 
+    // Build quick facts
+    var factsHTML = '<div class="musician-facts reveal reveal-delay-2">';
+    factsHTML += '<div class="fact-card"><div class="fact-label">Instrument</div><div class="fact-value">' + m.instrument + '</div></div>';
+    factsHTML += '<div class="fact-card"><div class="fact-label">Based In</div><div class="fact-value">' + (m.location || 'Nashville, TN') + '</div></div>';
+    if (m.instagram) {
+      factsHTML += '<div class="fact-card"><div class="fact-label">Instagram</div><div class="fact-value" style="color:var(--amber);">' + m.instagram + '</div></div>';
+    }
+    factsHTML += '<div class="fact-card"><div class="fact-label">Project</div><div class="fact-value">SGP Collective</div></div>';
+    factsHTML += '</div>';
+
+    // Build summary from first sentence of bio
+    var summaryHTML = '';
+    if (m.bio) {
+      var tempDiv = document.createElement('div');
+      tempDiv.innerHTML = m.bio;
+      var firstP = tempDiv.querySelector('p');
+      if (firstP) {
+        var firstSentence = firstP.textContent.split(/(?<=\.)\s/)[0];
+        if (firstSentence.length > 20) {
+          summaryHTML = '<div class="musician-summary reveal reveal-delay-3">' + firstSentence + '</div>';
+        }
+      }
+    }
+
     // Build hero
     var heroHTML = '<div class="musician-hero">' +
       '<div class="container">' +
@@ -1021,23 +1136,66 @@ footer {
           '<div class="musician-details">' +
             '<div class="musician-instrument-tag reveal">' + m.instrument + '</div>' +
             '<h1 class="musician-name reveal reveal-delay-1">' + nameHTML + '</h1>' +
-            (m.location ? '<div class="musician-subtitle reveal reveal-delay-2">' + m.location + '</div>' : '') +
             (socialsHTML ? '<div class="musician-social-links reveal reveal-delay-2">' + socialsHTML + '</div>' : '') +
-            quickBio.replace('class="musician-quick-bio"', 'class="musician-quick-bio reveal reveal-delay-3"') +
+            factsHTML +
+            summaryHTML +
           '</div>' +
         '</div>' +
       '</div>' +
     '</div>';
 
-    // Build bio section
+    // Build bio section with sidebar
     var bioHTML = '';
     if (m.bio) {
+      // Extract a pull quote from the bio (second paragraph or a compelling sentence)
+      var bioTemp = document.createElement('div');
+      bioTemp.innerHTML = m.bio;
+      var allP = bioTemp.querySelectorAll('p');
+      var pullQuote = '';
+      if (allP.length > 1) {
+        var secondP = allP[1].textContent;
+        var sentences = secondP.match(/[^.!?]+[.!?]+/g);
+        if (sentences && sentences.length > 0) {
+          pullQuote = sentences[0].trim();
+          if (pullQuote.length > 160) pullQuote = pullQuote.substring(0, 157) + '...';
+        }
+      }
+
+      var sidebarHTML = '';
+      if (pullQuote) {
+        sidebarHTML += '<div class="bio-pullquote reveal">' +
+          '<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="1.5" style="margin-bottom:12px;opacity:0.5"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>' +
+          pullQuote +
+        '</div>';
+      }
+
+      sidebarHTML += '<div class="bio-sidebar-links reveal">' +
+        '<a href="sgp-band.html" class="btn btn-outline" style="justify-content:center;">' +
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>' +
+          ' View Full Collective' +
+        '</a>' +
+        '<a href="sgp-tour.html" class="btn btn-outline" style="justify-content:center;">' +
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>' +
+          ' See Tour Dates' +
+        '</a>' +
+      '</div>';
+
       bioHTML = '<div class="bio-section">' +
         '<div class="container">' +
-          '<div class="bio-content reveal">' +
-            '<div class="eyebrow">Biography</div>' +
-            '<h2 class="section-head" style="margin-bottom:32px;"><span class="fill">The</span> Story</h2>' +
-            m.bio +
+          '<div class="bio-header reveal">' +
+            '<div>' +
+              '<div class="eyebrow">Biography</div>' +
+              '<h2 class="section-head"><span class="fill">The</span> Story</h2>' +
+            '</div>' +
+            '<div class="bio-header-line"></div>' +
+          '</div>' +
+          '<div class="bio-layout">' +
+            '<div class="bio-content reveal">' +
+              m.bio +
+            '</div>' +
+            '<div class="bio-sidebar">' +
+              sidebarHTML +
+            '</div>' +
           '</div>' +
         '</div>' +
       '</div>';
