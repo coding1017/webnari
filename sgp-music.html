@@ -9,10 +9,11 @@
 <meta property="og:url" content="https://webnari.io/sgp-music.html">
 <meta property="og:title" content="Music — Sam Grisman Project">
 <meta property="og:description" content="Stream the Sam Grisman Project. Bluegrass, Dawg music, and the Garcia/Grisman legacy.">
-<meta property="og:image" content="https://webnari.io/og-samgrisman.png">
+<meta property="og:image" content="https://images.squarespace-cdn.com/content/v1/632a45d7b1f4c054f780a64f/525ac8ea-d19d-4292-a7f4-c22c7a82ebaf/SGP+BASIC+TAN+LOGO+SQUARE.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="https://images.squarespace-cdn.com/content/v1/632a45d7b1f4c054f780a64f/525ac8ea-d19d-4292-a7f4-c22c7a82ebaf/SGP+BASIC+TAN+LOGO+SQUARE.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
@@ -132,15 +133,8 @@ nav {
   justify-content: space-between;
   height: 68px;
 }
-.logo {
-  font-family: var(--font-head);
-  font-size: 20px;
-  font-weight: 900;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--cream);
-}
-.logo span { color: var(--amber); }
+.logo { display: flex; align-items: center; flex-shrink: 0; }
+.logo img { height: 42px; width: auto; }
 .nav-links {
   display: flex;
   align-items: center;
@@ -158,6 +152,13 @@ nav {
 }
 .nav-links a:hover { color: var(--cream); }
 .nav-links a.active { color: var(--amber); }
+.nav-links li { position: relative; }
+.nav-dropdown { display: none; position: absolute; top: calc(100% + 12px); left: 50%; transform: translateX(-50%); background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 8px; min-width: 180px; z-index: 200; box-shadow: 0 16px 40px rgba(0,0,0,0.6); }
+.nav-dropdown::before { content: ''; position: absolute; top: -6px; left: 50%; transform: translateX(-50%); width: 10px; height: 10px; background: var(--surface); border-left: 1px solid var(--border); border-top: 1px solid var(--border); rotate: 45deg; }
+.nav-dropdown a { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: var(--radius); font-size: 13px; font-family: var(--font-head); font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text); transition: background 0.15s, color 0.15s; white-space: nowrap; }
+.nav-dropdown a:hover { background: var(--surface2); color: var(--amber); }
+.nav-has-dropdown > a::after { content: ' ▾'; font-size: 10px; opacity: 0.6; }
+.nav-has-dropdown:hover .nav-dropdown { display: block; }
 .nav-cta { display: flex; align-items: center; gap: 16px; }
 .listen-btn {
   display: inline-flex;
@@ -567,6 +568,7 @@ footer {
   transition: width 0.2s, height 0.2s, border-color 0.2s;
   opacity: 0;
 }
+.tour-btn-mobile { display: none; font-family: var(--font-head); font-weight: 700; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; padding: 8px 14px; border-radius: var(--radius); background: var(--amber); color: var(--black); border: none; cursor: pointer; white-space: nowrap; }
 /* ─── RESPONSIVE ─────────────────────────────────── */
 @media (max-width: 1024px) {
   .release-card { grid-template-columns: 220px 1fr; gap: 32px; padding: 28px; }
@@ -575,6 +577,7 @@ footer {
 @media (max-width: 768px) {
   .nav-links { display: none; }
   .nav-cta .listen-btn { display: none; }
+  .tour-btn-mobile { display: inline-flex; }
   .hamburger { display: flex; }
   .mobile-menu { display: block; }
   .section { padding: 64px 0; }
@@ -606,16 +609,23 @@ footer {
 <!-- ═══ NAV ═══════════════════════════════════════ -->
 <nav>
   <div class="container nav-inner">
-    <a href="samgrisman.html" class="logo"><span>SGP</span></a>
+    <a href="samgrisman.html" class="logo"><img src="https://images.squarespace-cdn.com/content/v1/632a45d7b1f4c054f780a64f/c4ebfd84-d23d-455a-a849-ddbaacb89dee/trans+web+logo.png?format=500w" alt="Sam Grisman Project"></a>
     <ul class="nav-links">
       <li><a href="sgp-tour.html">Tour</a></li>
       <li><a href="sgp-music.html" class="active">Music</a></li>
       <li><a href="sgp-about.html">About</a></li>
       <li><a href="sgp-band.html">The Collective</a></li>
       <li><a href="sgp-videos.html">Videos</a></li>
+      <li class="nav-has-dropdown"><a href="#">Learn</a>
+        <div class="nav-dropdown">
+          <a href="sgp-blog.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>Blog</a>
+          <a href="sgp-glossary.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Glossary</a>
+        </div>
+      </li>
       <li><a href="sgp-contact.html">Contact</a></li>
     </ul>
     <div class="nav-cta">
+      <a href="sgp-tour.html" class="tour-btn-mobile">Tour Dates</a>
       <a href="sgp-music.html" class="listen-btn">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
         Listen Now
@@ -654,6 +664,11 @@ footer {
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
       Contact
     </a>
+  </div>
+  <div class="mobile-menu-section">
+    <h4>Learn</h4>
+    <a href="sgp-blog.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>Blog</a>
+    <a href="sgp-glossary.html"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>Glossary</a>
   </div>
   <div class="mobile-menu-cta">
     <a href="sgp-music.html" class="btn btn-primary">
@@ -814,7 +829,7 @@ footer {
   <div class="container">
     <div class="footer-grid">
       <div class="footer-brand">
-        <div class="logo"><span>SGP</span></div>
+        <div class="logo"><img src="https://images.squarespace-cdn.com/content/v1/632a45d7b1f4c054f780a64f/c4ebfd84-d23d-455a-a849-ddbaacb89dee/trans+web+logo.png?format=300w" alt="Sam Grisman Project" style="height:36px;width:auto;"></div>
         <p>The Sam Grisman Project is a rotating acoustic collective based in Nashville, TN. Carrying forward the spirit of Dawg music and the Garcia/Grisman legacy.</p>
         <div class="footer-social">
           <a href="https://www.instagram.com/samgrismanproject/" target="_blank" rel="noopener" aria-label="Instagram">
