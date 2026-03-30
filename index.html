@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Webnari — Websites That Work While You Work</title>
-<meta property="og:title" content="Webnari — Websites That Work While You Work">
+<title>Webnari — Websites That Work While You Sleep</title>
+<meta property="og:title" content="Webnari — Websites That Work While You Sleep">
 <meta property="og:description" content="We design, build, and manage immersive websites with scroll-driven parallax effects, e-commerce, and SEO that ranks. One monthly rate.">
 <meta property="og:image" content="https://webnari.io/images/og-webnari.jpg">
 <meta property="og:url" content="https://webnari.io">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Webnari — Websites That Work While You Work">
+<meta name="twitter:title" content="Webnari — Websites That Work While You Sleep">
 <meta name="twitter:description" content="Scroll-driven parallax, e-commerce, and SEO — built and managed for local businesses.">
 <meta name="twitter:image" content="https://webnari.io/images/og-webnari.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -352,6 +352,21 @@ footer{border-top:1px solid var(--border);padding:48px}
 .portal-contact h3{font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--white);margin-bottom:8px}
 .portal-contact p{font-size:13px;color:var(--text);margin-bottom:16px}
 
+/* ── Our Work (custom sites showcase) ── */
+.our-work-section{background:var(--bg)}
+.our-work-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:48px}
+.our-work-card{position:relative;overflow:hidden;border-radius:14px;border:1px solid var(--border);background:var(--surface);transition:all .4s ease;cursor:pointer;text-decoration:none;display:block}
+.our-work-card:hover{border-color:var(--accent);transform:translateY(-4px);box-shadow:0 12px 40px rgba(201,169,110,.12)}
+.our-work-preview{width:100%;aspect-ratio:16/10;overflow:hidden;background:var(--surface2);position:relative}
+.our-work-preview iframe{width:200%;height:200%;border:none;pointer-events:none;transform:scale(.5);transform-origin:top left;position:absolute;top:0;left:0}
+.our-work-info{padding:16px 20px}
+.our-work-name{font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--white);margin-bottom:4px}
+.our-work-type{font-size:13px;color:var(--muted)}
+.our-work-badge{position:absolute;top:12px;right:12px;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);padding:4px 10px;border-radius:6px;font-size:11px;font-weight:600;color:var(--accent);letter-spacing:.04em}
+@media(max-width:900px){
+  .our-work-grid{grid-template-columns:1fr;max-width:500px;margin-left:auto;margin-right:auto}
+}
+
 /* ── Scroll reveal (multi-directional) ── */
 .reveal-fade{opacity:0;transition:opacity .7s cubic-bezier(.25,.46,.45,.94)}
 .reveal-slide{opacity:0;transform:translateY(30px);transition:all .7s cubic-bezier(.25,.46,.45,.94)}
@@ -419,10 +434,11 @@ footer{border-top:1px solid var(--border);padding:48px}
     <a href="#features">Features</a>
     <a href="#process">Process</a>
     <a href="#pricing">Pricing</a>
+    <a href="#our-work">Our Work</a>
   </div>
   <div class="nav-right">
     <button class="btn-ghost-sm" onclick="openAuth()">Log in</button>
-    <button class="btn-primary-sm" onclick="openAuth()">Get started</button>
+    <a href="start.html" class="btn-primary-sm" style="text-decoration:none;display:inline-block">Get started</a>
   </div>
 </nav>
 
@@ -431,10 +447,10 @@ footer{border-top:1px solid var(--border);padding:48px}
   <canvas id="hero-canvas"></canvas>
   <div class="hero-content">
     <div class="hero-eyebrow">Web agency for local businesses</div>
-    <h1>Websites<br class="mob-br"> that work<br>while you<br class="mob-br"> work.</h1>
+    <h1>Websites<br class="mob-br"> that work<br>while you<br class="mob-br"> sleep.</h1>
     <p class="hero-sub">We design, build, and manage immersive websites with scroll-driven effects, e-commerce, and SEO that ranks. One monthly rate.</p>
     <div class="hero-ctas">
-      <button class="btn-hero btn-hero-primary" onclick="openAuth()">Start your project</button>
+      <a href="start.html" class="btn-hero btn-hero-primary" style="text-decoration:none;display:inline-block">Start your project</a>
       <button class="btn-hero btn-hero-ghost" onclick="(window.innerWidth<=900?document.getElementById('mob-showcase'):document.getElementById('showcase')).scrollIntoView({behavior:'smooth'})">See our work</button>
     </div>
   </div>
@@ -779,7 +795,60 @@ footer{border-top:1px solid var(--border);padding:48px}
   </div>
 </section>
 
-<!-- Zoom tunnel: testimonials → CTA -->
+<!-- Zoom tunnel: testimonials → our work -->
+
+<!-- Our Work (custom sites showcase) -->
+<section class="our-work-section" id="our-work">
+  <div class="reveal-fade">
+    <div class="section-eyebrow">Our portfolio</div>
+    <div class="section-title">Fully custom websites we've built</div>
+    <div class="section-sub">From e-commerce brands to music artists — every site is designed and built from scratch.</div>
+  </div>
+  <div class="our-work-grid">
+    <a class="our-work-card reveal-left" href="wookwearshop.com" target="_blank" rel="noopener">
+      <div class="our-work-preview"><iframe src="https://wookwearshop.com" loading="lazy" tabindex="-1"></iframe></div>
+      <div class="our-work-badge">E-COMMERCE</div>
+      <div class="our-work-info">
+        <div class="our-work-name">Wook Wear</div>
+        <div class="our-work-type">Handmade festival accessories shop</div>
+      </div>
+    </a>
+    <a class="our-work-card reveal-scale" href="samgrisman.html" target="_blank" rel="noopener">
+      <div class="our-work-preview"><iframe src="samgrisman.html" loading="lazy" tabindex="-1"></iframe></div>
+      <div class="our-work-badge">MUSIC</div>
+      <div class="our-work-info">
+        <div class="our-work-name">Sam Grisman Project</div>
+        <div class="our-work-type">Bluegrass artist &amp; touring band</div>
+      </div>
+    </a>
+    <a class="our-work-card reveal-right" href="lbld.html" target="_blank" rel="noopener">
+      <div class="our-work-preview"><iframe src="lbld.html" loading="lazy" tabindex="-1"></iframe></div>
+      <div class="our-work-badge">E-COMMERCE</div>
+      <div class="our-work-info">
+        <div class="our-work-name">Latinas Be Like Design</div>
+        <div class="our-work-type">Custom tumbler &amp; design studio</div>
+      </div>
+    </a>
+    <a class="our-work-card reveal-left" href="jades-spice.html" target="_blank" rel="noopener">
+      <div class="our-work-preview"><iframe src="jades-spice.html" loading="lazy" tabindex="-1"></iframe></div>
+      <div class="our-work-badge">MEAL PREP</div>
+      <div class="our-work-info">
+        <div class="our-work-name">Jade's Spice</div>
+        <div class="our-work-type">Fitness-focused Chinese fusion meal prep</div>
+      </div>
+    </a>
+    <a class="our-work-card reveal-scale" href="sitemap-bridgecitysoles.html" target="_blank" rel="noopener">
+      <div class="our-work-preview" style="display:flex;align-items:center;justify-content:center;background:var(--surface2)">
+        <span style="font-family:var(--font-head);font-size:24px;font-weight:700;color:var(--accent);letter-spacing:-.02em">Bridge City Soles</span>
+      </div>
+      <div class="our-work-badge">SNEAKERS</div>
+      <div class="our-work-info">
+        <div class="our-work-name">Bridge City Soles</div>
+        <div class="our-work-type">Sneaker marketplace &amp; consignment</div>
+      </div>
+    </a>
+  </div>
+</section>
 
 <!-- CTA (tunnel zoom from far) -->
 <section class="cta-banner">
@@ -1013,18 +1082,20 @@ function initOrb(){
     if(Math.sqrt(dx*dx+dy*dy+dz*dz)<.35)edges.push([i,j]);
   }
 
-  // Pulse waves — gold to cyan cycling
+  // Pulse waves — gold → blue → gold cycling with spacing
   const pulses=[];
-  setInterval(()=>{if(pulses.length<5)pulses.push({y:-1.2,speed:.014+Math.random()*.008,hue:pulses.length%2})},1000);
+  let pulseIdx=0;
+  setInterval(()=>{if(pulses.length<4){const h=pulseIdx%3===1?1:0;pulses.push({y:-1.4,speed:.01+Math.random()*.005,hue:h});pulseIdx++}},1800);
 
-  // Satellites — 13 with wide spread, two slow opposing flight patterns
+  // Satellites — 22 with wide spread in all directions
   const sats=[];
-  for(let i=0;i<13;i++){
+  for(let i=0;i<22;i++){
+    const golden=2.399963;
     sats.push({
-      angle:i*(Math.PI*2/13),
-      speed:(i%2?-.002:.0015),        // slow opposing directions
-      incl:.05+i*.07+Math.random()*.1, // spread inclinations evenly
-      dist:1.15+i*.04,                 // wide spread: 1.15 to 1.67
+      angle:i*golden,
+      speed:(i%3===0?-.0025:i%3===1?.002:-.0012),
+      incl:.1+i*.14+Math.random()*.15,
+      dist:1.1+i*.035,
       trail:[],
       hue:i%3===1?1:0
     });
