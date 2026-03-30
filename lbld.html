@@ -699,31 +699,32 @@ h3 { font-size: clamp(1.3rem, 2.5vw, 1.6rem); }
   position: relative;
 }
 
-/* Connecting line */
+/* Connecting line — sits behind circles */
 .process-line-bg {
   position: absolute;
-  top: 40px;
-  left: 12.5%;
-  right: 12.5%;
+  top: 39px;
+  left: calc(12.5% + 44px);
+  right: calc(12.5% + 44px);
   height: 3px;
   background: var(--border-light);
   border-radius: 2px;
+  z-index: 0;
 }
 .process-line-fill {
   position: absolute;
-  top: 40px;
-  left: 12.5%;
+  top: 39px;
+  left: calc(12.5% + 44px);
   width: 0%;
-  max-width: 75%;
   height: 3px;
-  background: var(--gradient);
+  background: linear-gradient(90deg, #E8567F, #D4A853);
   border-radius: 2px;
   transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 0;
 }
 
 .process-step {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   opacity: 0.35;
   transform: translateY(10px);
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -748,20 +749,22 @@ h3 { font-size: clamp(1.3rem, 2.5vw, 1.6rem); }
   font-weight: 700;
   color: var(--muted);
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  z-index: 3;
 }
 .process-step.active .process-num {
-  background: var(--gradient);
+  background: var(--rose);
   color: #fff;
   -webkit-text-fill-color: #fff;
-  border-color: transparent;
-  box-shadow: 0 8px 32px rgba(232,86,127,0.3);
-  transform: scale(1.1);
+  border-color: var(--rose);
+  box-shadow: 0 8px 32px rgba(232,86,127,0.35);
+  transform: scale(1.12);
 }
 .process-step.done .process-num {
   background: var(--gold);
   color: #fff;
   -webkit-text-fill-color: #fff;
-  border-color: transparent;
+  border-color: var(--gold);
   box-shadow: 0 4px 16px rgba(212,168,83,0.25);
 }
 
@@ -833,9 +836,9 @@ h3 { font-size: clamp(1.3rem, 2.5vw, 1.6rem); }
 .product-card {
   flex: 0 0 280px;
   scroll-snap-align: start;
-  background: #fff;
+  background: linear-gradient(165deg, #FDF8F3 0%, #F5E6D0 40%, #F9D4C2 70%, #F2CEDA 100%);
   border-radius: var(--radius);
-  border: 1px solid var(--border-light);
+  border: 1px solid rgba(212,168,83,0.15);
   overflow: hidden;
   transition: all 0.3s;
   text-align: left;
@@ -1055,14 +1058,14 @@ h3 { font-size: clamp(1.3rem, 2.5vw, 1.6rem); }
 }
 
 .review-card {
-  background: #fff;
+  background: linear-gradient(165deg, #FDF8F3 0%, #F5E6D0 35%, #F9D4C2 65%, #F2CEDA 100%);
   border-radius: var(--radius);
   padding: 32px;
-  border: 1px solid var(--border-light);
+  border: 1px solid rgba(212,168,83,0.2);
   text-align: left;
   transition: all 0.3s;
 }
-.review-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.review-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-rose); }
 
 .review-stars {
   display: flex;
@@ -2142,9 +2145,11 @@ h3 { font-size: clamp(1.3rem, 2.5vw, 1.6rem); }
         }
       }
 
-      // Animate connecting line
-      var linePercent = ((activeStep + stepProgress * 0.8) / 3) * 100;
-      line.style.width = Math.min(100, linePercent) + '%';
+      // Animate connecting line (spans between circle edges)
+      var bgLine = document.querySelector('.process-line-bg');
+      var maxW = bgLine ? bgLine.offsetWidth : 600;
+      var lineW = ((activeStep + stepProgress * 0.8) / 3) * maxW;
+      line.style.width = Math.min(maxW, lineW) + 'px';
     }
 
     var ticking = false;
