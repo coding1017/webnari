@@ -385,13 +385,15 @@ nav .container { padding-top: 0; padding-bottom: 0; }
 .hero-line-4 {
   font-size: clamp(16px, 2.5vw, 28px);
   letter-spacing: 0.18em;
-  color: transparent;
-  -webkit-text-stroke: 1px var(--amber);
   margin-top: 20px;
   font-weight: 700;
-  transition: color 0.4s ease, -webkit-text-stroke 0.4s ease;
 }
-.hero-line-4.filled {
+.hero-line-4 .l {
+  color: transparent;
+  -webkit-text-stroke: 1px var(--amber);
+  transition: color 0.25s ease, -webkit-text-stroke 0.25s ease;
+}
+.hero-line-4 .l.filled {
   color: var(--amber);
   -webkit-text-stroke: 0;
 }
@@ -1170,7 +1172,7 @@ footer { padding-bottom: 120px; }
       <div class="hero-line hero-line-1" id="heroLine1"><span class="l a">A</span><span class="l b">C</span><span class="l a">O</span><span class="l b">U</span><span class="l a">S</span><span class="l b">T</span><span class="l a">I</span><span class="l b">C</span><span class="l-space"></span><span class="l a">C</span><span class="l b">O</span><span class="l a">L</span><span class="l b">L</span><span class="l a">E</span><span class="l b">C</span><span class="l a">T</span><span class="l b">I</span><span class="l a">V</span><span class="l b">E</span></div>
       <div class="hero-line hero-line-2" id="heroLine2"><span class="l a">S</span><span class="l b">A</span><span class="l a">M</span><span class="l-space"></span><span class="l b">G</span><span class="l a">R</span><span class="l b">I</span><span class="l a">S</span><span class="l b">M</span><span class="l a">A</span><span class="l b">N</span></div>
       <div class="hero-line hero-line-3" id="heroLine3"><span class="l a">P</span><span class="l b">R</span><span class="l a">O</span><span class="l b">J</span><span class="l a">E</span><span class="l b">C</span><span class="l a">T</span></div>
-      <div class="hero-line hero-line-4" id="heroLine4">The legacy continues</div>
+      <div class="hero-line hero-line-4" id="heroLine4"><span class="l a">T</span><span class="l b">H</span><span class="l a">E</span><span class="l-space"></span><span class="l b">L</span><span class="l a">E</span><span class="l b">G</span><span class="l a">A</span><span class="l b">C</span><span class="l a">Y</span><span class="l-space"></span><span class="l b">C</span><span class="l a">O</span><span class="l b">N</span><span class="l a">T</span><span class="l b">I</span><span class="l a">N</span><span class="l b">U</span><span class="l a">E</span><span class="l b">S</span></div>
     </div>
     <div class="hero-cta-wrap" id="heroCta">
       <div class="hero-cta-inner">
@@ -1547,25 +1549,35 @@ footer { padding-bottom: 120px; }
   var ctaEl  = document.getElementById('heroCta');
   var scrubFill = document.getElementById('heroScrubFill');
   var textWrap = document.getElementById('heroTextWrap');
-  var line4  = document.getElementById('heroLine4');
 
-  // Line 1: "ACOUSTIC COLLECTIVE" letters
-  var line1Letters = Array.from(document.querySelectorAll('.hero-line-1 .l'));
-  // Lines 2-3: "SAM GRISMAN PROJECT" letters (the big ones)
-  var bigLettersA = Array.from(document.querySelectorAll('.hero-line-2 .l.a, .hero-line-3 .l.a'));
-  var bigLettersB = Array.from(document.querySelectorAll('.hero-line-2 .l.b, .hero-line-3 .l.b'));
-  var totalL1 = line1Letters.length;
-  var totalBigA = bigLettersA.length;
-  var totalBigB = bigLettersB.length;
+  // ─── LETTER GROUPS ───
+  // Small amber lines (1 + 4): "ACOUSTIC COLLECTIVE" + "THE LEGACY CONTINUES"
+  var smallA = Array.from(document.querySelectorAll('.hero-line-1 .l.a, .hero-line-4 .l.a'));
+  var smallB = Array.from(document.querySelectorAll('.hero-line-1 .l.b, .hero-line-4 .l.b'));
+  // Big white lines (2 + 3): "SAM GRISMAN" + "PROJECT"
+  var bigA = Array.from(document.querySelectorAll('.hero-line-2 .l.a, .hero-line-3 .l.a'));
+  var bigB = Array.from(document.querySelectorAll('.hero-line-2 .l.b, .hero-line-3 .l.b'));
 
-  var l1States = line1Letters.map(function() { return false; });
-  var bigAStates = bigLettersA.map(function() { return false; });
-  var bigBStates = bigLettersB.map(function() { return false; });
-  var l4Filled = false;
+  var smallAState = smallA.map(function() { return false; });
+  var smallBState = smallB.map(function() { return false; });
+  var bigAState = bigA.map(function() { return false; });
+  var bigBState = bigB.map(function() { return false; });
 
   function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
   function map(v, a, b, c, d) { return c + (d - c) * clamp((v - a) / (b - a), 0, 1); }
   function easeOut3(t) { return 1 - Math.pow(1 - t, 3); }
+
+  function fillGroup(letters, states, progress) {
+    var count = Math.round(progress * letters.length);
+    for (var i = 0; i < letters.length; i++) {
+      var should = i < count;
+      if (should !== states[i]) {
+        states[i] = should;
+        if (should) letters[i].classList.add('filled');
+        else letters[i].classList.remove('filled');
+      }
+    }
+  }
 
   function getProgress() {
     var rect = heroEl.getBoundingClientRect();
@@ -1580,49 +1592,20 @@ footer { padding-bottom: 120px; }
     // Scrub bar
     scrubFill.style.width = (p * 100) + '%';
 
-    // Phase 1: "ACOUSTIC COLLECTIVE" + "The legacy continues" fill together (p: 0.03 → 0.12)
-    var l1Prog = clamp(map(p, 0.03, 0.12, 0, 1), 0, 1);
-    var l1Count = Math.round(l1Prog * totalL1);
-    for (var i = 0; i < totalL1; i++) {
-      var shouldFill = i < l1Count;
-      if (shouldFill !== l1States[i]) {
-        l1States[i] = shouldFill;
-        if (shouldFill) line1Letters[i].classList.add('filled');
-        else line1Letters[i].classList.remove('filled');
-      }
-    }
-    // Line 4 fills at the same time as line 1
-    var fillL4 = p > 0.04;
-    if (fillL4 !== l4Filled) {
-      l4Filled = fillL4;
-      if (fillL4) line4.classList.add('filled');
-      else line4.classList.remove('filled');
-    }
+    // ─── SMALL AMBER LETTERS (lines 1 + 4) — fills faster ───
+    // Group A sweeps left-to-right: p 0.03 → 0.18
+    fillGroup(smallA, smallAState, clamp(map(p, 0.03, 0.18, 0, 1), 0, 1));
+    // Group B sweeps left-to-right: p 0.08 → 0.22
+    fillGroup(smallB, smallBState, clamp(map(p, 0.08, 0.22, 0, 1), 0, 1));
 
-    // Phase 2: "SAM GRISMAN PROJECT" big letters fill slowly (p: 0.10 → 0.50)
-    var bigAProg = clamp(map(p, 0.10, 0.50, 0, 1), 0, 1);
-    var bigACount = Math.round(bigAProg * totalBigA);
-    for (var a = 0; a < totalBigA; a++) {
-      var shouldA = a < bigACount;
-      if (shouldA !== bigAStates[a]) {
-        bigAStates[a] = shouldA;
-        if (shouldA) bigLettersA[a].classList.add('filled');
-        else bigLettersA[a].classList.remove('filled');
-      }
-    }
-    var bigBProg = clamp(map(p, 0.15, 0.55, 0, 1), 0, 1);
-    var bigBCount = Math.round(bigBProg * totalBigB);
-    for (var b = 0; b < totalBigB; b++) {
-      var shouldB = b < bigBCount;
-      if (shouldB !== bigBStates[b]) {
-        bigBStates[b] = shouldB;
-        if (shouldB) bigLettersB[b].classList.add('filled');
-        else bigLettersB[b].classList.remove('filled');
-      }
-    }
+    // ─── BIG WHITE LETTERS (lines 2 + 3) — fills slower ───
+    // Group A sweeps left-to-right: p 0.03 → 0.42
+    fillGroup(bigA, bigAState, clamp(map(p, 0.03, 0.42, 0, 1), 0, 1));
+    // Group B sweeps left-to-right: p 0.08 → 0.48
+    fillGroup(bigB, bigBState, clamp(map(p, 0.08, 0.48, 0, 1), 0, 1));
 
-    // Background image — fades in as letters fill, parallax shift
-    bgImg.style.opacity = p > 0.92 ? map(p, 0.92, 1, 0.45, 0) : easeOut3(map(p, 0.15, 0.35, 0, 0.45));
+    // ─── BACKGROUND IMAGE — fades in, never fades out ───
+    bgImg.style.opacity = easeOut3(map(p, 0.15, 0.35, 0, 0.45));
     var bgImgEl = bgImg.querySelector('img');
     if (bgImgEl) bgImgEl.style.transform = 'scale(' + (1.1 - p * 0.1) + ') translateY(' + (p * -30) + 'px)';
 
