@@ -6,4 +6,4 @@
 // Row Level Security (RLS) policies in schema.sql protect your data.
 
 const SUPABASE_URL  = 'https://pkcpdihrksxyslkqiwbn.supabase.co';   // e.g. https://xyzabc.supabase.co
-const SUPABASE_ANON = 'sb_publishable_jMkwb53vvaYt_7SDJjypVQ_caI0jm9u';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBrY3BkaWhya3N4eXNsa3Fpd2JuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxMTMyMjUsImV4cCI6MjA4OTY4OTIyNX0.fvNda9qRKzPtmyhId8TEZoMVeGB9SkNSDCHtPSYQCRA';
