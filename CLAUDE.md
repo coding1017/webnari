@@ -22,6 +22,7 @@ A **Website-as-a-Service (WaaS)** platform called **Webnari**. The agency landin
 | E-commerce | **Wook Wear** | `wookwear.html` | 3 subpages | Gradient pink/purple/cyan + deep purple-black | — |
 | Meal Prep | **Jade's Spice** | `jades-spice.html` | standalone | Warm red `#D94040` + gold `#F0A830` + dark brown | — |
 | Cleaning | **PristineClean** | `pristineclean.html` | 6 subpages | Royal Blue `#2563EB` + Silver on light `#FAFBFD` / dark `#06080C` | (305) 555-0400 |
+| Cleaning (Alt) | **Blanc Cleaning Co.** | `blanc.html` | standalone | Electric Blue `#3B82F6` + monochrome black `#08080A` / cream `#FAFAF9` | (305) 555-0500 |
 
 ### VoltPro Subpages (electrician)
 `panel-upgrades.html`, `ev-charger.html`, `home-rewiring.html`, `smart-home.html`, `commercial.html`, `emergency-service.html`, `about.html`, `team.html`, `blog.html`, `reviews.html`, `privacy.html`, `contact.html`
@@ -63,6 +64,28 @@ A **Website-as-a-Service (WaaS)** platform called **Webnari**. The agency landin
 - **Existing domain:** wookwearshop.com (currently GoDaddy placeholder, can point to Webnari later)
 - **Hero placeholder:** `.hero-placeholder` wrapper on wookwear.html ready for future parallax swap
 - **Parallax concept (future):** Sewing machine stitching a pouch together, thread pulling, button eyes snapping on, psychedelic glow finale
+
+## Blanc Cleaning Co. Design Tokens (blanc.html reference)
+```css
+--black: #08080A; --dark: #101012; --surface: #18181B;
+--surface2: #1E1E22; --border: #27272A; --border2: #3F3F46;
+--cream: #FAFAF9; --cream2: #E8E8E4; --muted: #71717A;
+--text: #A1A1AA; --heading: #FAFAF9;
+--blue: #3B82F6; --blue2: #60A5FA; --blue3: #93C5FD;
+```
+
+## Blanc Cleaning Co. Notes
+- **Brand:** Blanc Cleaning Co. — premium residential/commercial cleaning, editorial aesthetic
+- **Design:** April Ford-inspired bold monochrome. Does NOT follow standard Webnari design system (custom fonts, nav, layout). Only Webnari badge required.
+- **Fonts:** DM Serif Display (headings, italic accents) + Inter (body) — NOT Barlow
+- **Nav:** Minimal — serif logo left, centered text links (Services, Results, Process, Reviews, Contact), 24/7 badge + outlined "Get a Quote" CTA, hamburger on mobile with full-screen serif overlay
+- **Hero:** Full-height dark, giant serif headline "Stop cleaning. / *Start living.*" (italic blue), asymmetric layout with description left + CTA right, 4-column stats bar at bottom
+- **Sections:** Loader → Hero → Marquee → Services (3-col grid, numbered 01-06) → Results (3 big stats) → Process (4-step timeline) → Transformations (3 case studies) → Service Areas (4-col grid) → Reviews (3 cards) → FAQ (accordion) → Contact (split: info + form) → CTA Banner → Footer
+- **Loader:** Serif "Blanc" + progress bar, sessionStorage-based (shows once per session)
+- **Marquee:** Continuous horizontal scroll of service types with blue dot separators
+- **Phone:** (305) 555-0500
+- **License:** #CLN2025-0112
+- **Form:** formsubmit.co, client-side validation (blur + submit)
 
 ## PristineClean Design Tokens (pristineclean.html reference)
 ```css

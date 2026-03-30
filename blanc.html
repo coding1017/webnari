@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blanc Cleaning Co. | Premium Cleaning Services South Florida</title>
+<meta name="description" content="Blanc Cleaning Co. — South Florida's #1 premium cleaning company.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;500;600;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --white: #FFFFFF;
+  --offwhite: #F5F5F3;
+  --light: #EBEBEB;
+  --midgray: #A0A09A;
+  --gray: #71717A;
+  --darkgray: #52525B;
+  --dark: #1A1A1A;
+  --black: #0C0C0C;
+  --blue: #1B6CF2;
+  --font: 'DM Sans', sans-serif;
+  --heading: 'Oswald', sans-serif;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);background:var(--white);color:var(--darkgray);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;font-family:inherit;border:none;background:none}
+img{max-width:100%;display:block}
+.wrap{max-width:1240px;margin:0 auto;padding:0 48px}
+
+/* ===== NAV ===== */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:9000;
+  height:80px;display:flex;align-items:center;
+  background:rgba(255,255,255,0.97);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  border-bottom:1px solid var(--light);padding:0 48px;
+}
+.nav-in{max-width:1240px;margin:0 auto;width:100%;display:flex;align-items:center;justify-content:space-between}
+.nav-logo{font-family:var(--heading);font-size:26px;color:var(--dark);letter-spacing:0.01em;text-transform:uppercase}
+.nav-links{display:flex;gap:32px}
+.nav-links a{font-size:14px;font-weight:600;color:var(--dark);text-transform:uppercase;letter-spacing:0.04em;transition:color 0.2s}
+.nav-links a:hover{color:var(--blue)}
+.nav-right{display:flex;align-items:center;gap:24px}
+.nav-phone{font-size:15px;font-weight:600;color:var(--dark)}
+.nav-btn{font-size:14px;font-weight:700;color:var(--white);background:var(--dark);padding:12px 28px;border-radius:6px;text-transform:uppercase;letter-spacing:0.04em;transition:background 0.2s}
+.nav-btn:hover{background:var(--blue)}
+.burger{display:none;width:24px;height:16px;flex-direction:column;justify-content:space-between}
+.burger span{display:block;width:100%;height:2px;background:var(--dark);transition:all 0.3s var(--ease);transform-origin:center}
+.burger.on span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.burger.on span:nth-child(2){opacity:0}
+.burger.on span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+.mob{position:fixed;inset:0;top:80px;background:var(--white);z-index:8999;padding:32px 48px;display:none;flex-direction:column;opacity:0;transition:all 0.3s var(--ease)}
+.mob.on{display:flex;opacity:1}
+.mob a{font-family:var(--heading);font-size:28px;color:var(--dark);text-transform:uppercase;padding:14px 0;border-bottom:1px solid var(--light)}
+.mob .mob-cta{display:block;text-align:center;background:var(--dark);color:var(--white);padding:16px;border-radius:6px;margin-top:24px;font-weight:700;border-bottom:none}
+
+/* ===== GRADIENT ORB ===== */
+.orb{
+  position:absolute;
+  width:clamp(300px,40vw,600px);height:clamp(300px,40vw,600px);
+  border-radius:50%;
+  background:conic-gradient(from 180deg,#3B82F6,#8B5CF6,#EC4899,#3B82F6);
+  filter:blur(40px);
+  opacity:0.7;
+  pointer-events:none;
+  z-index:0;
+}
+.orb-sm{
+  width:clamp(200px,25vw,400px);height:clamp(200px,25vw,400px);
+  filter:blur(30px);opacity:0.5;
+}
+
+/* ===== HERO ===== */
+.hero{
+  padding:200px 0 120px;
+  background:var(--white);
+  position:relative;
+  overflow:hidden;
+  min-height:100vh;
+  display:flex;align-items:center;
+}
+.hero .orb{left:-8%;top:10%}
+.hero-in{position:relative;z-index:1;width:100%}
+.hero-split{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center}
+.hero-text{}
+.hero h1{
+  font-family:var(--heading);
+  font-size:clamp(48px,6vw,80px);
+  font-weight:700;color:var(--dark);
+  text-transform:uppercase;line-height:1;
+  letter-spacing:-0.01em;margin-bottom:28px;
+}
+.hero h1 .bl{color:var(--blue)}
+.hero-desc{font-size:17px;color:var(--gray);max-width:440px;line-height:1.7;margin-bottom:36px}
+.hero-cta{
+  display:inline-flex;align-items:center;gap:10px;
+  font-size:15px;font-weight:700;color:var(--white);
+  background:var(--dark);padding:16px 36px;border-radius:8px;
+  text-transform:uppercase;letter-spacing:0.04em;
+  transition:background 0.2s,transform 0.2s;
+}
+.hero-cta:hover{background:var(--blue);transform:translateY(-2px)}
+.hero-cta svg{width:18px;height:18px}
+.hero-visual{position:relative;display:flex;align-items:center;justify-content:center;min-height:400px}
+.hero-visual .orb{position:relative;left:auto;top:auto;filter:blur(0);opacity:1;
+  background:conic-gradient(from 200deg,#3B82F6 0%,#7C3AED 30%,#EC4899 55%,#F472B6 70%,#3B82F6 100%);
+  width:clamp(280px,32vw,480px);height:clamp(280px,32vw,480px);
+}
+.hero-stats{display:flex;gap:48px;margin-top:64px;padding-top:40px;border-top:1px solid var(--light)}
+.hs-num{font-family:var(--heading);font-size:32px;color:var(--dark);line-height:1;text-transform:uppercase}
+.hs-label{font-size:13px;color:var(--gray);margin-top:4px}
+
+/* ===== SPLIT SECTION ===== */
+.split{
+  padding:140px 0;position:relative;overflow:hidden;
+}
+.split-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.split-text h2{
+  font-family:var(--heading);font-size:clamp(36px,5vw,64px);
+  font-weight:700;color:var(--dark);text-transform:uppercase;
+  line-height:1.05;margin-bottom:24px;
+}
+.split-text h2 .bl{color:var(--blue)}
+.split-text p{font-size:16px;color:var(--gray);line-height:1.7;max-width:480px;margin-bottom:28px}
+.split-visual{position:relative;display:flex;align-items:center;justify-content:center;min-height:360px}
+.split-visual .orb{position:relative;left:auto;top:auto;filter:blur(0);opacity:1;
+  background:conic-gradient(from 120deg,#3B82F6 0%,#06B6D4 40%,#3B82F6 70%,#7C3AED 100%);
+  width:clamp(260px,30vw,460px);height:clamp(260px,30vw,460px);
+}
+.split-link{font-size:14px;font-weight:700;color:var(--blue);display:inline-flex;align-items:center;gap:6px;text-transform:uppercase;letter-spacing:0.04em}
+.split-link svg{width:16px;height:16px;transition:transform 0.2s}
+.split-link:hover svg{transform:translateX(4px)}
+
+/* ===== SPECIALISATIONS / SERVICES CARDS ===== */
+.cards-sec{padding:120px 0;background:var(--offwhite)}
+.cards-header{text-align:center;margin-bottom:64px}
+.cards-header h2{font-family:var(--heading);font-size:clamp(32px,4vw,52px);font-weight:700;color:var(--dark);text-transform:uppercase;line-height:1.1;margin-bottom:12px}
+.cards-header p{font-size:16px;color:var(--gray);max-width:500px;margin:0 auto;line-height:1.7}
+.cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.card{
+  background:var(--white);border-radius:16px;padding:36px;
+  border:1px solid transparent;
+  transition:border-color 0.3s,box-shadow 0.3s,transform 0.3s;
+  position:relative;
+}
+.card:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(27,108,242,0.1);border-color:rgba(27,108,242,0.15)}
+.card-icon{width:44px;height:44px;margin-bottom:20px}
+.card-icon svg{width:100%;height:100%;color:var(--dark)}
+.card h3{font-family:var(--heading);font-size:18px;font-weight:700;color:var(--dark);text-transform:uppercase;letter-spacing:0.02em;margin-bottom:8px}
+.card p{font-size:14px;color:var(--gray);line-height:1.6}
+/* Featured card glow */
+.card-glow{border-color:rgba(27,108,242,0.12);box-shadow:0 8px 40px rgba(27,108,242,0.12)}
+
+/* ===== MARQUEE ===== */
+.marquee{padding:32px 0;overflow:hidden;border-top:1px solid var(--light);border-bottom:1px solid var(--light)}
+.mq-track{display:flex;width:max-content;animation:mq 35s linear infinite}
+.mq-item{
+  font-family:var(--heading);font-size:clamp(40px,5vw,72px);
+  font-weight:700;color:var(--light);text-transform:uppercase;
+  white-space:nowrap;padding:0 40px;
+  display:flex;align-items:center;gap:40px;
+}
+.mq-item::after{content:'';width:12px;height:12px;border-radius:50%;background:var(--blue);flex-shrink:0;opacity:0.3}
+@keyframes mq{to{transform:translateX(-50%)}}
+
+/* ===== LOGOS ===== */
+.logos{padding:56px 0}
+.logos-label{text-align:center;font-size:13px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--midgray);margin-bottom:28px}
+.logos-row{display:flex;justify-content:center;align-items:center;gap:48px;flex-wrap:wrap;opacity:0.3}
+.logos-row span{font-family:var(--heading);font-size:16px;font-weight:700;color:var(--dark);text-transform:uppercase;letter-spacing:0.06em}
+
+/* ===== RESULTS ===== */
+.results-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.rcard{padding:48px 32px;background:var(--white);border:1px solid var(--light);border-radius:16px;text-align:center}
+.rcard-num{font-family:var(--heading);font-size:clamp(48px,6vw,72px);color:var(--dark);line-height:1}
+.rcard-num span{color:var(--blue)}
+.rcard-tag{font-size:12px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--gray);margin:8px 0}
+.rcard-text{font-size:14px;color:var(--gray);line-height:1.6}
+
+/* ===== REVIEWS ===== */
+.rev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.rev{padding:36px;background:var(--white);border:1px solid var(--light);border-radius:16px}
+.rev-stars{display:flex;gap:2px;margin-bottom:16px}
+.rev-stars svg{width:16px;height:16px;color:#F59E0B;fill:#F59E0B}
+.rev-text{font-size:15px;color:var(--darkgray);line-height:1.7;font-style:italic;margin-bottom:24px}
+.rev-name{font-size:15px;font-weight:700;color:var(--dark)}
+.rev-role{font-size:13px;color:var(--gray);margin-top:2px}
+
+/* ===== FAQ ===== */
+.faq-list{max-width:720px}
+.faq-i{border-bottom:1px solid var(--light)}
+.faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:24px 0;text-align:left;font-size:17px;font-weight:600;color:var(--dark);transition:color 0.2s}
+.faq-q:hover{color:var(--blue)}
+.faq-q svg{width:20px;height:20px;color:var(--gray);flex-shrink:0;transition:transform 0.3s var(--ease)}
+.faq-i.on .faq-q svg{transform:rotate(45deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.4s var(--ease)}
+.faq-i.on .faq-a{max-height:300px}
+.faq-a-in{padding-bottom:24px;font-size:15px;color:var(--gray);line-height:1.7}
+
+/* ===== CONTACT ===== */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start}
+.ci-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--light);font-size:15px;color:var(--darkgray)}
+.ci-row svg{width:18px;height:18px;color:var(--blue);flex-shrink:0}
+.fg{margin-bottom:16px}
+.fl{display:block;font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:var(--gray);margin-bottom:6px}
+.fi,.fs,.ft{width:100%;padding:12px 16px;background:var(--offwhite);border:1px solid var(--light);border-radius:8px;font-family:var(--font);font-size:15px;color:var(--dark);outline:none;transition:border-color 0.2s}
+.fi:focus,.fs:focus,.ft:focus{border-color:var(--blue)}
+.fi.err,.fs.err{border-color:#EF4444}
+.ferr{font-size:12px;color:#EF4444;margin-top:4px;display:none}
+.fi.err~.ferr,.fs.err~.ferr{display:block}
+.ft{resize:vertical;min-height:100px}
+.fs{appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' fill='%2371717A' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.fbtn{width:100%;padding:14px;font-size:15px;font-weight:700;color:var(--white);background:var(--dark);border:none;border-radius:8px;cursor:pointer;text-transform:uppercase;letter-spacing:0.04em;transition:background 0.2s}
+.fbtn:hover{background:var(--blue)}
+
+/* ===== FOOTER ===== */
+.footer{padding:72px 0 32px;background:var(--black);color:var(--midgray)}
+.ft-top{display:flex;align-items:flex-start;justify-content:space-between;gap:48px;padding-bottom:48px;border-bottom:1px solid rgba(255,255,255,0.08);flex-wrap:wrap}
+.ft-brand{max-width:300px}
+.ft-logo{font-family:var(--heading);font-size:24px;color:var(--white);text-transform:uppercase;margin-bottom:12px}
+.ft-desc{font-size:14px;line-height:1.6;margin-bottom:10px}
+.ft-lic{font-size:12px}
+.ft-cols{display:flex;gap:56px}
+.ft-col-title{font-size:11px;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-bottom:14px}
+.ft-col a{display:block;font-size:14px;color:var(--midgray);padding:4px 0;transition:color 0.2s}
+.ft-col a:hover{color:var(--white)}
+.ft-ci{display:flex;align-items:center;gap:8px;font-size:14px;padding:4px 0}
+.ft-ci svg{width:14px;height:14px;color:var(--blue);flex-shrink:0}
+.ft-bot{display:flex;align-items:center;justify-content:space-between;padding-top:24px;flex-wrap:wrap;gap:16px}
+.ft-copy{font-size:12px}
+.webnari{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--midgray);opacity:0.5;transition:opacity 0.2s}
+.webnari:hover{opacity:1}
+.webnari svg{width:12px;height:12px}
+
+/* ===== SECTION UTILS ===== */
+.sec{padding:120px 0}
+.sec-off{background:var(--offwhite)}
+.sec-label{font-size:13px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--blue);margin-bottom:16px}
+.sec-title{font-family:var(--heading);font-size:clamp(32px,4vw,52px);font-weight:700;color:var(--dark);text-transform:uppercase;line-height:1.1;margin-bottom:16px}
+.sec-sub{font-size:16px;color:var(--gray);max-width:500px;line-height:1.7}
+.sec-header{margin-bottom:64px}
+.sec-center{text-align:center}
+.sec-center .sec-sub{margin:0 auto}
+
+/* REVEALS */
+.rv{opacity:0;transform:translateY(24px);transition:opacity 0.6s var(--ease),transform 0.6s var(--ease)}
+.rv.v{opacity:1;transform:translateY(0)}
+.rv-d1{transition-delay:.06s}.rv-d2{transition-delay:.12s}.rv-d3{transition-delay:.18s}.rv-d4{transition-delay:.24s}.rv-d5{transition-delay:.3s}
+
+/* RESPONSIVE */
+@media(max-width:1024px){
+  .hero-split,.split-grid{grid-template-columns:1fr}
+  .hero-visual{min-height:280px;margin-top:40px}
+  .split-visual{min-height:280px;margin-top:40px;order:-1}
+  .cards-grid,.results-grid{grid-template-columns:1fr 1fr}
+  .rev-grid{grid-template-columns:1fr}
+  .contact-grid{grid-template-columns:1fr;gap:48px}
+}
+@media(max-width:768px){
+  .nav-links,.nav-phone{display:none}
+  .burger{display:flex}
+  .wrap,.nav{padding-left:24px;padding-right:24px}
+  .hero{padding:140px 0 80px;min-height:auto}
+  .sec,.split,.cards-sec{padding:80px 0}
+  .cards-grid,.results-grid{grid-template-columns:1fr}
+  .hero-stats{flex-wrap:wrap;gap:24px}
+  .frow{grid-template-columns:1fr}
+  .ft-top{flex-direction:column}
+  .ft-cols{flex-wrap:wrap;gap:28px}
+  .ft-bot{flex-direction:column;text-align:center}
+  .process-row{grid-template-columns:1fr 1fr}
+}
+@media(max-width:480px){
+  .hero-stats{flex-direction:column;align-items:flex-start}
+  .process-row{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-in">
+    <a href="blanc.html" class="nav-logo">Blanc.</a>
+    <div class="nav-links">
+      <a href="#services">Services</a>
+      <a href="#results">Results</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#faq">FAQ</a>
+    </div>
+    <div class="nav-right">
+      <a href="tel:3055550500" class="nav-phone">(305) 555-0500</a>
+      <a href="#contact" class="nav-btn">Contact</a>
+      <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+<div class="mob" id="mob">
+  <a href="#services">Services</a><a href="#results">Results</a><a href="#reviews">Reviews</a><a href="#faq">FAQ</a><a href="#contact">Contact</a>
+  <a href="tel:3055550500">(305) 555-0500</a>
+  <a href="#contact" class="mob-cta">Get a Quote</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap hero-in">
+    <div class="hero-split">
+      <div class="hero-text">
+        <h1 class="rv">STOP<br>SEARCHING<br>START <span class="bl">SPARKLING.</span></h1>
+        <p class="hero-desc rv rv-d1">South Florida's #1 premium cleaning company. Residential, commercial, and industrial — spotless results, every single time.</p>
+        <a href="#contact" class="hero-cta rv rv-d2">get started <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+      </div>
+      <div class="hero-visual rv rv-d3">
+        <div class="orb"></div>
+      </div>
+    </div>
+    <div class="hero-stats rv rv-d4">
+      <div><div class="hs-num">2,400+</div><div class="hs-label">Spaces cleaned</div></div>
+      <div><div class="hs-num">98%</div><div class="hs-label">Client retention</div></div>
+      <div><div class="hs-num">4.9★</div><div class="hs-label">Average rating</div></div>
+      <div><div class="hs-num">24/7</div><div class="hs-label">Available</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee">
+  <div class="mq-track">
+    <span class="mq-item">Residential</span><span class="mq-item">Commercial</span><span class="mq-item">Industrial</span><span class="mq-item">Post-Construction</span><span class="mq-item">Deep Clean</span><span class="mq-item">Move In/Out</span>
+    <span class="mq-item">Residential</span><span class="mq-item">Commercial</span><span class="mq-item">Industrial</span><span class="mq-item">Post-Construction</span><span class="mq-item">Deep Clean</span><span class="mq-item">Move In/Out</span>
+  </div>
+</div>
+
+<!-- SPLIT: WHY US -->
+<section class="split">
+  <div class="wrap">
+    <div class="split-grid">
+      <div class="split-visual rv"><div class="orb"></div></div>
+      <div class="split-text rv rv-d1">
+        <h2>WE TAKE THE TIME TO GET <span class="bl">TO KNOW</span></h2>
+        <p>We believe in getting to know your space, your standards, and your expectations. We're obsessive about detail and we know investing the time to understand you leads to better results.</p>
+        <a href="#contact" class="split-link">Learn more <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SPLIT: COMPLETE -->
+<section class="split" style="background:var(--offwhite)">
+  <div class="wrap">
+    <div class="split-grid">
+      <div class="split-text rv">
+        <h2>THE <span class="bl">COMPLETE</span> CLEANING STACK.</h2>
+        <p>Full-service cleaning means you're never left with half the job done. We've assembled a team of specialists who deploy all the tools necessary to deliver pristine results across every surface.</p>
+        <a href="#services" class="split-link">View services <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+      </div>
+      <div class="split-visual rv rv-d1">
+        <div class="orb" style="background:conic-gradient(from 280deg,#3B82F6 0%,#06B6D4 35%,#10B981 60%,#3B82F6 100%)"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SPLIT: THINK BIGGER -->
+<section class="split">
+  <div class="wrap">
+    <div class="split-grid">
+      <div class="split-visual rv"><div class="orb" style="background:conic-gradient(from 90deg,#7C3AED,#EC4899,#F97316,#7C3AED)"></div></div>
+      <div class="split-text rv rv-d1">
+        <h2>THINK BIGGER</h2>
+        <p>Big spaces are only as good as the team cleaning them. We invest in people that deliver, not just show up. That's why we're all in-house, working together to provide world-class cleaning.</p>
+        <a href="#contact" class="split-link">Get a quote <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES CARDS -->
+<section class="cards-sec" id="services">
+  <div class="wrap">
+    <div class="cards-header rv">
+      <h2>Everything you need, nothing you don't.</h2>
+      <p>We specialise across residential, commercial, and industrial environments.</p>
+    </div>
+    <div class="cards-grid">
+      <div class="card rv rv-d1">
+        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+        <h3>Residential</h3>
+        <p>Kitchens, bathrooms, living spaces — every corner treated with precision and care.</p>
+      </div>
+      <div class="card card-glow rv rv-d2">
+        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18"/><path d="M5 21V7l8-4v18"/><path d="M19 21V11l-6-4"/></svg></div>
+        <h3>Commercial</h3>
+        <p>Offices, retail, and corporate environments to the highest standard.</p>
+      </div>
+      <div class="card rv rv-d3">
+        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+        <h3>Deep Cleaning</h3>
+        <p>Intensive top-to-bottom for built-up grime and hard-to-reach spots.</p>
+      </div>
+      <div class="card rv rv-d4">
+        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M12 12h.01"/></svg></div>
+        <h3>Post-Construction</h3>
+        <p>Dust, debris, and residue removed. Move-in ready, fast.</p>
+      </div>
+      <div class="card rv rv-d5">
+        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="16" width="7" height="5"/></svg></div>
+        <h3>Move In / Out</h3>
+        <p>Every surface spotless for the next chapter.</p>
+      </div>
+      <div class="card rv">
+        <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h3>Maintenance Plans</h3>
+        <p>Weekly, bi-weekly, or monthly recurring schedules.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LOGOS -->
+<div class="logos">
+  <div class="wrap">
+    <div class="logos-label">In Good Company</div>
+    <div class="logos-row">
+      <span>Brickell City Centre</span><span>Coral Gables Estates</span><span>Miami Beach Hotels</span><span>Doral Corporate</span><span>South Beach Living</span>
+    </div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<section class="sec" id="results">
+  <div class="wrap">
+    <div class="sec-header sec-center rv"><div class="sec-label">The Numbers</div><div class="sec-title">The proof is in the polish.</div></div>
+    <div class="results-grid">
+      <div class="rcard rv rv-d1"><div class="rcard-num">2,400<span>+</span></div><div class="rcard-tag">Spaces Transformed</div><p class="rcard-text">Homes, offices, and commercial properties across South Florida.</p></div>
+      <div class="rcard rv rv-d2"><div class="rcard-num">12<span>yr</span></div><div class="rcard-tag">Years in Business</div><p class="rcard-text">Over a decade of expertise and perfected processes.</p></div>
+      <div class="rcard rv rv-d3"><div class="rcard-num">98<span>%</span></div><div class="rcard-tag">Client Satisfaction</div><p class="rcard-text">Consistent quality. Transparent pricing. Zero shortcuts.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="sec sec-off" id="reviews">
+  <div class="wrap">
+    <div class="sec-header sec-center rv"><div class="sec-label">Testimonials</div><div class="sec-title">What our clients say.</div></div>
+    <div class="rev-grid">
+      <div class="rev rv rv-d1">
+        <div class="rev-stars"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+        <p class="rev-text">Blanc transformed our office. The attention to detail is unmatched — every surface, every corner, every time.</p>
+        <div class="rev-name">Maria Gonzalez</div><div class="rev-role">Property Manager, Brickell</div>
+      </div>
+      <div class="rev rv rv-d2">
+        <div class="rev-stars"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+        <p class="rev-text">Their post-construction team had our restaurant spotless in under 24 hours. Couldn't believe it.</p>
+        <div class="rev-name">James Chen</div><div class="rev-role">Restaurant Owner, Coral Gables</div>
+      </div>
+      <div class="rev rv rv-d3">
+        <div class="rev-stars"><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg><svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+        <p class="rev-text">Two years of bi-weekly maintenance and not a single complaint. Reliable, thorough, and quality-driven.</p>
+        <div class="rev-name">Sofia Ramirez</div><div class="rev-role">Homeowner, Kendall</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="sec" id="faq">
+  <div class="wrap">
+    <div class="sec-header rv"><div class="sec-label">FAQ</div><div class="sec-title">Frequently asked.</div></div>
+    <div class="faq-list">
+      <div class="faq-i rv"><button class="faq-q">What areas do you serve?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><div class="faq-a-in">We serve all of South Florida including Miami, Coral Gables, Doral, Hialeah, Kendall, Miami Beach, Brickell, Westchester, South Miami, Homestead, Miami Gardens, and North Miami.</div></div></div>
+      <div class="faq-i rv"><button class="faq-q">How do you price services?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><div class="faq-a-in">Pricing is based on square footage, service type, and frequency. Free, transparent quotes with no hidden fees.</div></div></div>
+      <div class="faq-i rv"><button class="faq-q">Are your cleaners insured?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><div class="faq-a-in">Every team member is fully insured, bonded, and background-checked.</div></div></div>
+      <div class="faq-i rv"><button class="faq-q">Do you bring supplies?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><div class="faq-a-in">Yes — professional-grade, eco-friendly, non-toxic products safe for children, pets, and the environment.</div></div></div>
+      <div class="faq-i rv"><button class="faq-q">Can I book same-day?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-a"><div class="faq-a-in">24/7 availability. Same-day and emergency requests accommodated. Call for fastest booking.</div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="sec sec-off" id="contact">
+  <div class="wrap">
+    <div class="sec-header rv"><div class="sec-label">Get Started</div><div class="sec-title">Let's make it spotless.</div><div class="sec-sub">Free quote, response within 2 hours.</div></div>
+    <div class="contact-grid">
+      <div class="rv">
+        <h3 style="font-size:16px;font-weight:700;color:var(--dark);margin-bottom:16px">Contact</h3>
+        <div class="ci-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>(305) 555-0500</div>
+        <div class="ci-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>hello@blanccleaning.com</div>
+        <div class="ci-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Serving all of South Florida</div>
+        <div class="ci-row"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Available 24/7</div>
+      </div>
+      <div class="rv rv-d1">
+        <form id="qf" action="https://formsubmit.co/hello@blanccleaning.com" method="POST">
+          <input type="hidden" name="_subject" value="New Quote — Blanc Cleaning Co.">
+          <input type="hidden" name="_captcha" value="false">
+          <div class="frow"><div class="fg"><label class="fl" for="fn">Name</label><input type="text" id="fn" name="name" class="fi" placeholder="John Smith" required><div class="ferr">Required</div></div><div class="fg"><label class="fl" for="fp">Phone</label><input type="tel" id="fp" name="phone" class="fi" placeholder="(305) 555-0000" required><div class="ferr">Required</div></div></div>
+          <div class="fg"><label class="fl" for="fe">Email</label><input type="email" id="fe" name="email" class="fi" placeholder="john@example.com" required><div class="ferr">Valid email</div></div>
+          <div class="fg"><label class="fl" for="fv">Service</label><select id="fv" name="service" class="fs" required><option value="" disabled selected>Select a service</option><option>Residential</option><option>Commercial</option><option>Deep Cleaning</option><option>Post-Construction</option><option>Move In/Out</option><option>Maintenance</option></select><div class="ferr">Required</div></div>
+          <div class="fg"><label class="fl" for="fm">Message</label><textarea id="fm" name="message" class="ft" placeholder="Tell us about your space..."></textarea></div>
+          <button type="submit" class="fbtn">Request Free Quote</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="ft-top">
+      <div class="ft-brand"><div class="ft-logo">Blanc.</div><p class="ft-desc">Premium cleaning across South Florida. Spaces that speak for themselves.</p><p class="ft-lic">License #CLN2025-0112</p></div>
+      <div class="ft-cols">
+        <div><div class="ft-col-title">Services</div><div class="ft-col"><a href="#services">Residential</a><a href="#services">Commercial</a><a href="#services">Deep Cleaning</a><a href="#services">Post-Construction</a><a href="#services">Move In/Out</a><a href="#services">Maintenance</a></div></div>
+        <div><div class="ft-col-title">Company</div><div class="ft-col"><a href="#results">About</a><a href="#reviews">Reviews</a><a href="#faq">FAQ</a><a href="#contact">Contact</a></div></div>
+        <div><div class="ft-col-title">Contact</div><div class="ft-col"><div class="ft-ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>(305) 555-0500</div><div class="ft-ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>hello@blanccleaning.com</div><div class="ft-ci"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>24/7</div></div></div>
+      </div>
+    </div>
+    <div class="ft-bot">
+      <div class="ft-copy">&copy; 2025 Blanc Cleaning Co.</div>
+      <a href="https://webnari.io" target="_blank" class="webnari"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>Built and managed by Webnari</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var burger=document.getElementById('burger'),mob=document.getElementById('mob');
+  burger.addEventListener('click',function(){burger.classList.toggle('on');mob.classList.toggle('on');document.body.style.overflow=mob.classList.contains('on')?'hidden':'';});
+  mob.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){burger.classList.remove('on');mob.classList.remove('on');document.body.style.overflow='';});});
+  document.querySelectorAll('.faq-q').forEach(function(b){b.addEventListener('click',function(){var i=b.parentElement,o=i.classList.contains('on');document.querySelectorAll('.faq-i').forEach(function(e){e.classList.remove('on');});if(!o)i.classList.add('on');});});
+  var obs=new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting){x.target.classList.add('v');obs.unobserve(x.target);}});},{threshold:0.08,rootMargin:'0px 0px -20px 0px'});
+  document.querySelectorAll('.rv').forEach(function(el){obs.observe(el);});
+  var f=document.getElementById('qf'),r=f.querySelectorAll('[required]');
+  function ck(x){var ok=x.type==='email'?/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(x.value):x.tagName==='SELECT'?x.value!=='':x.value.trim()!=='';x.classList.toggle('err',!ok);return ok;}
+  r.forEach(function(x){x.addEventListener('blur',function(){ck(x);});});
+  f.addEventListener('submit',function(e){var v=true;r.forEach(function(x){if(!ck(x))v=false;});if(!v)e.preventDefault();});
+})();
+</script>
+</body>
+</html>
