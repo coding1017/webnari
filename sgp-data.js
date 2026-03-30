@@ -132,6 +132,116 @@
         '<p>Joe has performed and recorded with a remarkably wide range of acoustic artists, establishing himself as a first-call mandolinist for studio sessions and live performances alike. His ability to read a room and serve the music, whether that means delivering a blazing tremolo passage or laying down a subtle rhythmic chop, has earned him the trust of bandleaders and producers across the genre. He is the kind of musician that other musicians love to play with because he elevates everyone around him.</p>' +
         '<p>Beyond performing, Joe is deeply committed to the mandolin community. He teaches, builds mandolins, and contributes to the ongoing development of the instrument\'s repertoire and technique. His association with Northfield Mandolins reflects his interest in the craft of instrument building and his belief that the quality of the tool matters as much as the skill of the player. He is a student of the mandolin in every sense, always learning, always refining, always pushing toward a more perfect expression of the music he hears in his head.</p>' +
         '<p>In the Sam Grisman Project, Joe\'s mandolin playing connects directly to the David Grisman lineage. His clean tone and melodic sophistication echo the clarity and invention that defined Dawg music, while his own musical personality ensures that the sound is never mere imitation. Joe brings authority and grace to the mandolin chair in SGP, honoring the tradition while adding his own chapter to the story.</p>'
+    },
+    {
+      slug: 'logan-ledger',
+      name: 'Logan Ledger',
+      instrument: 'Guitar / Vocals',
+      photo: 'https://images.discovery-prod.axs.com/2023/08/logan-ledger_08-11-23_88_64d657d6c2214.jpg',
+      instagram: '@loganledger',
+      website: 'https://loganledgermusic.com',
+      bio: '<p>Logan Ledger is a San Francisco Bay Area-bred singer-songwriter based in Nashville whose smooth voice and classic tone have drawn comparisons to the great country crooners. His career got a significant boost when legendary producer T-Bone Burnett signed him and brokered a record deal with Rounder Records, resulting in a self-titled full-length debut in 2020 and the follow-up Golden State in 2023.</p>' +
+        '<p>Logan\'s music sets most of its songs in lightless or shadowy spaces, drawing from vintage country, cosmic folk, and cinematic Americana. His albums feature collaborations with world-class musicians including guitarist Marc Ribot, drummer Jay Bellerose, and bassist Dennis Crouch.</p>' +
+        '<p>In the Sam Grisman Project, Logan contributes vocals to fresh takes on Grateful Dead material, including an emotive rendition of "Loser" and a crisp acoustic reinterpretation of "Deal." His voice brings a different dimension to the collective, blending the cosmic country tradition with the Dawg music legacy.</p>'
+    },
+    {
+      slug: 'sam-leslie',
+      name: 'Sam Leslie',
+      instrument: 'Guitar / Mandolin',
+      photo: 'http://static1.squarespace.com/static/5938a339db29d6cb76bf2e83/59d67fbe4c0dbf72c72ba91b/5a15bbcb652dea2e1abeccdd/1511759478789/image1.JPG?format=1500w',
+      instagram: '@samtleslie',
+      website: '',
+      bio: '<p>Sam Leslie is a composer, multi-instrumentalist, and sound engineer born in Evergreen, Colorado. After studying at the Berklee College of Music in Boston, Sam relocated to Nashville, Tennessee, where he has become a sought-after guitar and mandolin player in the acoustic music scene.</p>' +
+        '<p>Sam currently performs with the Grammy-winning group Molly Tuttle & Golden Highway and the Sam Grisman Project. His playing draws from bluegrass, old-time, Western Swing, and jazz, weaving these influences into a style that is both rooted and exploratory. Growing up in a bluegrass family in Colorado gave him a deep foundation in the tradition, while his time at Berklee expanded his harmonic and rhythmic vocabulary.</p>' +
+        '<p>In the Sam Grisman Project, Sam\'s versatility on both guitar and mandolin makes him an invaluable member of the rotating collective. His ability to shift between rhythm and lead, between accompaniment and improvisation, reflects the kind of musical fluency that the SGP collective demands.</p>'
+    },
+    {
+      slug: 'jesse-harper',
+      name: 'Jesse Harper',
+      instrument: 'Guitar / Vocals',
+      photo: 'https://images.squarespace-cdn.com/content/v1/62223702bdbc262dfff81e45/3b4a41cd-babc-4683-a615-8194c5309f9a/IMDB+Artist+_0010_Love+Canon.jpg',
+      instagram: '',
+      website: '',
+      bio: '<p>Jesse Harper is the founding member and lead singer of acoustic supergroups Old School Freight Train and Love Canon. He has played thousands of concerts across North America and Europe, performing with musical heroes including David Grisman, Madeleine Peyroux, kd lang, Jason Mraz, Josh Ritter, and Ricky Skaggs.</p>' +
+        '<p>With Love Canon, Jesse pioneered a unique concept: reimagining 1980s pop hits as bluegrass arrangements. The band\'s inventive approach brought acoustic music to audiences who might never have attended a traditional bluegrass show, while earning respect from purists for the quality of their playing.</p>' +
+        '<p>In the Sam Grisman Project, Jesse brings his powerful stage presence and dynamic flatpicking to the collective. His years of experience leading bands and captivating audiences make him a natural fit for the SGP\'s rotating format, where every musician must be able to step up and drive the music forward.</p>'
+    },
+    {
+      slug: 'jefferson-hamer',
+      name: 'Jefferson Hamer',
+      instrument: 'Guitar / Vocals',
+      photo: 'https://highergroundmusic.com/wp-content/uploads/photo-gallery/rlp-1891.jpg?bwg=1729607457',
+      instagram: '',
+      website: 'https://jeffersonhamer.com',
+      bio: '<p>Jefferson Hamer is a Brooklyn-based guitarist, songwriter, and traditional musician whose work spans folk, bluegrass, and Irish traditional music. He is best known for his collaborations with Anais Mitchell on the Child Ballads project, which received a BBC2 Folk Award, and with Sarah Jarosz as guitarist and harmony singer on her Grammy-nominated album Blue Heron Suite.</p>' +
+        '<p>Jefferson\'s most enduring collaboration is The Murphy Beds, a harmony-rich folk duo with Irish musician Eamon O\'Leary. His solo work includes the self-produced LP Alameda, a collection of original songs that showcases his gifts as both a writer and arranger.</p>' +
+        '<p>In the Sam Grisman Project, Jefferson brings a songwriter\'s ear for melody and arrangement. His ability to play many musical styles, from electric American roots to English folk to traditional Irish music, gives the collective another dimension of versatility and musical depth.</p>'
+    },
+    {
+      slug: 'matt-flinner',
+      name: 'Matt Flinner',
+      instrument: 'Mandolin',
+      photo: 'https://compassrecords.com/wp-content/uploads/2016/09/Matt-Flinner.jpg',
+      instagram: '',
+      website: 'https://www.mattflinner.com',
+      bio: '<p>Matt Flinner is a Grammy-nominated mandolinist who has made a career out of playing bluegrass and American roots music in new ways. Downbeat Magazine has called him "one of the best mandolin players ever," and he has established a reputation as one of the most respected composers and innovators in modern American acoustic music.</p>' +
+        '<p>Matt started out as a banjo prodigy, playing bluegrass festivals before entering his teens. He won the National Banjo Contest at Winfield, Kansas in 1990, then took the mandolin award there the following year. His projects range from bluegrass to jazz to classical to New Acoustic music, all with the common thread of American roots music with a creative edge.</p>' +
+        '<p>In the Sam Grisman Project, Matt\'s decades of experience and genre-spanning vocabulary bring a depth of knowledge that connects directly to the progressive acoustic tradition that David Grisman helped pioneer. His presence in the mandolin chair carries the weight of history while pushing the music into new territory.</p>'
+    },
+    {
+      slug: 'jesse-appelman',
+      name: 'Jesse Appelman',
+      instrument: 'Mandolin',
+      photo: 'https://images.squarespace-cdn.com/content/v1/68fbe45f569c2c3affdb8b54/7823c060-283c-44e3-8a02-ba1c4791a811/_D3A8390.jpg',
+      instagram: '',
+      website: 'https://www.jesseappelman.com',
+      bio: '<p>Jesse Appelman is an Oakland-based mandolinist who has spent his whole life picking bluegrass, Brazilian choro, new acoustic, and beyond. He has toured and appeared with the Sam Grisman Project, Mark Schatz, Laurie Lewis & Kathy Kallick, Keith Little, Scott Nygaard, and Brothers Comatose.</p>' +
+        '<p>Jesse also leads Jesse Appelman\'s West Coast Stringband Project, which unites standout musicians from the California bluegrass scene, crafting a sound defined by strong melodies, rich vocal harmonies, and rock-solid groove. His warm tone and inventive improvisational voice have made him one of the most exciting young mandolinists on the West Coast.</p>' +
+        '<p>In the Sam Grisman Project, Jesse represents the next generation of acoustic musicians carrying the tradition forward. His California roots connect him to the same Mill Valley scene where David Grisman and Jerry Garcia created their legendary recordings.</p>'
+    },
+    {
+      slug: 'nate-leath',
+      name: 'Nate Leath',
+      instrument: 'Fiddle',
+      photo: 'https://www.virginiafolklife.org/wp-content/uploads/sites/4/2017/04/nate-leath-and-the-wildmans_36037199212_o-1024x684.jpg',
+      instagram: '@shredfiddle',
+      website: '',
+      bio: '<p>Nate Leath picked up his first fiddle at age eight after admiring one on his grandmother\'s wall. By age eleven, he had won the adult bluegrass fiddle contest at the renowned Galax Old Time Fiddlers\' Convention, becoming one of the youngest winners of what is widely considered the Super Bowl of fiddlers\' contests.</p>' +
+        '<p>With a degree from Berklee College of Music in performance, Nate has developed into one of the most highly regarded fiddlers in Virginia, known for his creativity, technical skills, and versatility. He has played with genre-busting groups like Old School Freight Train and the David Grisman Quintet. He currently lives in Lexington, VA where he teaches at Washington and Lee University.</p>' +
+        '<p>In the Sam Grisman Project, Nate\'s deep roots in old-time and contest-style playing bring a fiery technical dimension. His connection to the David Grisman Quintet creates a direct musical lineage to the tradition that SGP carries forward.</p>'
+    },
+    {
+      slug: 'phoebe-hunt',
+      name: 'Phoebe Hunt',
+      instrument: 'Fiddle / Vocals',
+      photo: 'https://images.squarespace-cdn.com/content/v1/5710216c62cd94c2e912aad2/1691763663806-M6PNYENNC3SMO0HJGJ69/PhoebeHunt_CreditNicola+Gell_Chair1.png',
+      instagram: '@phoebehuntmusic',
+      website: 'https://phoebehuntmusic.com',
+      bio: '<p>Phoebe Hunt draws from 30 years spent studying the violin and fiddle, interweaving her classical upbringing with Appalachian old-time, Texas Swing, and original songwriting. Born in Texas, she has been a citizen of the world and the road, with journeys from Austin to Brooklyn, India to China to Africa, Los Angeles, Colorado, and Nashville.</p>' +
+        '<p>Her latest recording, Nothing Else Matters, is an album of solo fiddle and voice that marks a bold departure, showcasing the raw intimacy of a single instrument and a single voice. Previous projects have showcased her skill as a bandleader, collaborator, and arranger.</p>' +
+        '<p>In the Sam Grisman Project, Phoebe brings both her fiddle and her voice to the collective. Her ability to sing adds a vocal dimension that enriches the ensemble, while her classical training and old-time roots give her a unique perspective on the acoustic tradition.</p>'
+    },
+    {
+      slug: 'todd-livingston',
+      name: 'Todd Livingston',
+      instrument: 'Dobro',
+      photo: 'https://static.topshelfmusicmag.com/20230206000220/SGP.TS-1-5.jpg',
+      instagram: '@tod_patrick_livingston',
+      website: '',
+      bio: '<p>Todd Livingston is a resonator guitar specialist whose rich slide textures and harmonic depth have made him a sought-after Dobro player in Nashville\'s acoustic music scene. Known for his soulful tone and tasteful approach, Todd adds a layer of melodic warmth to every ensemble he joins.</p>' +
+        '<p>Todd has been identified as "the official Dobro player of awesome" by Gangsta Grass, the genre-bending group that fuses bluegrass with hip-hop. His versatility allows him to move between traditional bluegrass settings and more experimental projects with equal ease.</p>' +
+        '<p>In the Sam Grisman Project, Todd\'s Dobro playing fills a unique sonic space. The resonator guitar connects to the broader acoustic tradition while adding textures that complement the mandolins, fiddles, and guitars of the collective.</p>'
+    },
+    {
+      slug: 'shad-cobb',
+      name: 'Shad Cobb',
+      instrument: 'Fiddle',
+      photo: 'https://static.topshelfmusicmag.com/20230206000232/SGP.TS-1-2.jpg',
+      instagram: '',
+      website: '',
+      bio: '<p>Shad Cobb is a Nashville fiddle legend who grew up in Wisconsin and began playing at age thirteen with his family\'s band. After moving to Nashville in 1995, he quickly established himself as one of the city\'s premier session fiddlers, recording with the Osborne Brothers, Mike Snider, Willie Nelson, Steve Earle, and Shenandoah.</p>' +
+        '<p>His intricate and soulful style is the result of absorbing influences from some of the greatest fiddlers of the last fifty years, and his widely acknowledged virtuosity places him in the highest echelon of the country\'s most accomplished fiddlers. He has also been part of the Helen Highwater String Band alongside David Grier, Missy Raines, and Mike Compton.</p>' +
+        '<p>In the Sam Grisman Project, Shad is the elder statesman of the fiddle section. When he steps to the mic with his fiddle, he brings a lifetime of Nashville session experience and a deep well of traditional knowledge that anchors the collective in the roots of the music.</p>'
     }
   ];
 
