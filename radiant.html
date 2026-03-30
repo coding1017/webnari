@@ -152,7 +152,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 .mq-track{display:flex;width:max-content;animation:mq 40s linear infinite}
 .mq-item{
   font-size:clamp(32px,4.5vw,52px);font-weight:800;text-transform:uppercase;letter-spacing:.02em;
-  white-space:nowrap;padding:0 36px;display:flex;align-items:center;gap:36px;
+  white-space:nowrap;padding:0 20px;
   color:var(--dark);
   background:linear-gradient(90deg,var(--dark) 0%,var(--dark) 40%,rgba(19,58,211,.6) 48%,rgba(255,255,255,.85) 50%,rgba(19,58,211,.6) 52%,var(--dark) 60%,var(--dark) 100%);
   background-size:300% 100%;
@@ -160,7 +160,15 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
   -webkit-background-clip:text;background-clip:text;
   -webkit-text-fill-color:transparent;
 }
-.mq-item::after{content:'';width:10px;height:10px;border-radius:50%;background:var(--blue);flex-shrink:0;opacity:.2}
+.mq-dot{
+  display:inline-block;font-size:clamp(32px,4.5vw,52px);padding:0 20px;
+  color:var(--blue);opacity:.25;
+  background:linear-gradient(90deg,var(--blue) 0%,var(--blue) 40%,rgba(255,255,255,.9) 50%,var(--blue) 60%,var(--blue) 100%);
+  background-size:300% 100%;
+  background-position:100% center;
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
 @keyframes mq{to{transform:translateX(-50%)}}
 @keyframes gleam{0%{background-position:100% center}100%{background-position:0% center}}
 
@@ -444,8 +452,7 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
 <!-- MARQUEE -->
 <div class="marquee">
   <div class="mq-track">
-    <span class="mq-item">Residential</span><span class="mq-item">Commercial</span><span class="mq-item">Industrial</span><span class="mq-item">Deep Clean</span><span class="mq-item">Post-Construction</span><span class="mq-item">Maintenance</span>
-    <span class="mq-item">Residential</span><span class="mq-item">Commercial</span><span class="mq-item">Industrial</span><span class="mq-item">Deep Clean</span><span class="mq-item">Post-Construction</span><span class="mq-item">Maintenance</span>
+    <span class="mq-item">Residential</span><span class="mq-dot">&bull;</span><span class="mq-item">Commercial</span><span class="mq-dot">&bull;</span><span class="mq-item">Industrial</span><span class="mq-dot">&bull;</span><span class="mq-item">Deep Clean</span><span class="mq-dot">&bull;</span><span class="mq-item">Post-Construction</span><span class="mq-dot">&bull;</span><span class="mq-item">Maintenance</span><span class="mq-dot">&bull;</span><span class="mq-item">Residential</span><span class="mq-dot">&bull;</span><span class="mq-item">Commercial</span><span class="mq-dot">&bull;</span><span class="mq-item">Industrial</span><span class="mq-dot">&bull;</span><span class="mq-item">Deep Clean</span><span class="mq-dot">&bull;</span><span class="mq-item">Post-Construction</span><span class="mq-dot">&bull;</span><span class="mq-item">Maintenance</span><span class="mq-dot">&bull;</span>
   </div>
 </div>
 
@@ -576,20 +583,24 @@ button{cursor:pointer;font-family:inherit;border:none;background:none}
   r.forEach(function(x){x.addEventListener('blur',function(){ck(x);});});
   f.addEventListener('submit',function(e){var v=true;r.forEach(function(x){if(!ck(x))v=false;});if(!v)e.preventDefault();});
 
-  /* MARQUEE GLEAM — one word at a time */
-  var mqItems=document.querySelectorAll('.mq-item');
+  /* MARQUEE GLEAM — word+dot pairs, one at a time, no gap */
+  var mqWords=document.querySelectorAll('.mq-item');
+  var mqDots=document.querySelectorAll('.mq-dot');
   var mqIdx=0;
   function gleamNext(){
-    var item=mqItems[mqIdx];
-    item.style.animation='gleam .8s ease-in-out forwards';
-    item.addEventListener('animationend',function handler(){
-      item.removeEventListener('animationend',handler);
-      item.style.animation='none';
-      mqIdx=(mqIdx+1)%mqItems.length;
-      setTimeout(gleamNext,150);
+    var word=mqWords[mqIdx];
+    var dot=mqDots[mqIdx];
+    word.style.animation='gleam 1.1s ease-in-out forwards';
+    if(dot) dot.style.animation='gleam 1.1s ease-in-out forwards';
+    word.addEventListener('animationend',function handler(){
+      word.removeEventListener('animationend',handler);
+      word.style.animation='none';
+      if(dot) dot.style.animation='none';
+      mqIdx=(mqIdx+1)%mqWords.length;
+      gleamNext();
     });
   }
-  setTimeout(gleamNext,1500);
+  setTimeout(gleamNext,800);
 })();
 </script>
 </body>
