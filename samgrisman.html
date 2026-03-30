@@ -287,7 +287,7 @@ nav {
   display: inline-block;
   color: transparent;
   -webkit-text-stroke: 2px var(--cream);
-  transition: color 0.4s ease, -webkit-text-stroke 0.4s ease, text-shadow 0.4s ease;
+  transition: color 0.35s ease, -webkit-text-stroke 0.35s ease, text-shadow 0.35s ease;
 }
 .hero-line .l.filled {
   color: var(--cream);
@@ -300,8 +300,14 @@ nav {
   letter-spacing: 0.2em;
   margin-bottom: 8px;
 }
-.hero-line-1 .l { -webkit-text-stroke-width: 1px; }
-.hero-line-1 .l.filled { text-shadow: none; }
+.hero-line-1 .l {
+  -webkit-text-stroke: 1px var(--amber);
+}
+.hero-line-1 .l.filled {
+  color: var(--amber);
+  -webkit-text-stroke: 0;
+  text-shadow: none;
+}
 .hero-line-2 {
   font-size: clamp(60px, 12vw, 160px);
   letter-spacing: -0.02em;
@@ -970,6 +976,19 @@ footer {
   .member-name { font-size: 14px; }
 }
 /* ─── POWERED BY WEBNARI ─── */
+/* ═══ STICKY BOTTOM PLAYER ═══ */
+.sticky-player {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  background: var(--black);
+  border-top: 1px solid var(--border);
+}
+.sticky-player iframe { display: block; }
+footer { padding-bottom: 80px; }
+/* ─── POWERED BY WEBNARI ─── */
 .webnari-powered { text-align:center; padding:14px 0 12px; border-top:1px solid rgba(128,128,128,0.12); background:#0A0806; position:relative; z-index:1; }
 .webnari-powered-inner { font-size:16px; color:#C8B8A0; font-weight:600; display:flex; align-items:center; justify-content:center; gap:10px; font-family:-apple-system,BlinkMacSystemFont,sans-serif; }
 .webnari-powered-logo { width:28px; height:28px; border-radius:8px; background:radial-gradient(circle at center,rgba(255,255,255,0.45) 0%,rgba(255,255,255,0.15) 40%,#B8892A 70%,#D4A63A 100%); box-shadow:0 0 12px rgba(255,255,255,0.5),0 0 24px rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
@@ -1101,7 +1120,7 @@ footer {
     <div class="eyebrow reveal">Latest Release</div>
     <h2 class="section-head reveal reveal-delay-1"><span class="fill">Now</span> Streaming</h2>
     <div class="reveal reveal-delay-2" style="border-radius:var(--radius-lg);overflow:hidden;">
-      <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/6zkQCtFCqgSUUVgyotaKSg?utm_source=generator&theme=0" width="100%" height="380" frameBorder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+      <iframe style="border-radius:12px" src="https://open.spotify.com/embed/artist/6zkQCtFCqgSUUVgyotaKSg?utm_source=generator&theme=0" width="100%" height="500" frameBorder="0" allowfullscreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
     </div>
   </div>
 </section>
@@ -1333,6 +1352,10 @@ footer {
   </div>
 </div>
 
+<!-- ═══ STICKY BOTTOM MUSIC PLAYER ═══ -->
+<div class="sticky-player" id="stickyPlayer">
+  <iframe src="https://open.spotify.com/embed/track/1n3JqC5Aw9mNPo0n50Z4nK?utm_source=generator&theme=0" width="100%" height="80" frameBorder="0" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy" style="border:none;"></iframe>
+</div>
 
 <!-- ═══ JAVASCRIPT ════════════════════════════════ -->
 <script>
@@ -1428,9 +1451,16 @@ footer {
   var textWrap = document.getElementById('heroTextWrap');
   var line4  = document.getElementById('heroLine4');
 
-  // Collect letter spans by group
-  var groupA = document.querySelectorAll('.hero-line .l.a');
-  var groupB = document.querySelectorAll('.hero-line .l.b');
+  // Collect ALL letter spans in document order for each group
+  var groupA = Array.from(document.querySelectorAll('.hero-line .l.a'));
+  var groupB = Array.from(document.querySelectorAll('.hero-line .l.b'));
+  var totalA = groupA.length;
+  var totalB = groupB.length;
+
+  // Track fill state per letter
+  var aStates = groupA.map(function() { return false; });
+  var bStates = groupB.map(function() { return false; });
+  var l4Filled = false;
 
   function clamp(v, min, max) { return Math.max(min, Math.min(max, v)); }
   function map(v, a, b, c, d) { return c + (d - c) * clamp((v - a) / (b - a), 0, 1); }
@@ -1443,36 +1473,38 @@ footer {
     return clamp(scrolled / total, 0, 1);
   }
 
-  var aFilled = false, bFilled = false, l4Filled = false;
-
   function loop() {
     var p = getProgress();
 
     // Scrub bar
     scrubFill.style.width = (p * 100) + '%';
 
-    // Group A letters fill first (0.05 → 0.25)
-    var fillA = p > 0.05;
-    if (fillA !== aFilled) {
-      aFilled = fillA;
-      groupA.forEach(function(el) {
-        if (fillA) el.classList.add('filled');
-        else el.classList.remove('filled');
-      });
+    // Group A sweeps left-to-right (p: 0.05 → 0.30)
+    var aProg = clamp(map(p, 0.05, 0.30, 0, 1), 0, 1);
+    var aCount = Math.round(aProg * totalA);
+    for (var i = 0; i < totalA; i++) {
+      var shouldFill = i < aCount;
+      if (shouldFill !== aStates[i]) {
+        aStates[i] = shouldFill;
+        if (shouldFill) groupA[i].classList.add('filled');
+        else groupA[i].classList.remove('filled');
+      }
     }
 
-    // Group B letters fill second (0.20 → 0.40)
-    var fillB = p > 0.20;
-    if (fillB !== bFilled) {
-      bFilled = fillB;
-      groupB.forEach(function(el) {
-        if (fillB) el.classList.add('filled');
-        else el.classList.remove('filled');
-      });
+    // Group B sweeps left-to-right (p: 0.20 → 0.45)
+    var bProg = clamp(map(p, 0.20, 0.45, 0, 1), 0, 1);
+    var bCount = Math.round(bProg * totalB);
+    for (var j = 0; j < totalB; j++) {
+      var shouldFillB = j < bCount;
+      if (shouldFillB !== bStates[j]) {
+        bStates[j] = shouldFillB;
+        if (shouldFillB) groupB[j].classList.add('filled');
+        else groupB[j].classList.remove('filled');
+      }
     }
 
-    // Line 4 — "The legacy continues" fills in after both groups
-    var fillL4 = p > 0.35;
+    // Line 4 — "The legacy continues" fills after both groups
+    var fillL4 = p > 0.45;
     if (fillL4 !== l4Filled) {
       l4Filled = fillL4;
       if (fillL4) line4.classList.add('filled');
