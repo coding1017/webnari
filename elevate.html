@@ -332,10 +332,9 @@ input, textarea, select { font-family: var(--font-body); }
 .hero-bg {
   position: absolute; inset: 0;
   background:
-    radial-gradient(ellipse 80% 60% at 50% 40%, rgba(201,169,110,0.06) 0%, transparent 70%),
-    radial-gradient(ellipse 50% 40% at 20% 80%, rgba(100,60,180,0.04) 0%, transparent 60%),
-    radial-gradient(ellipse 50% 40% at 80% 20%, rgba(201,169,110,0.04) 0%, transparent 60%),
-    var(--black);
+    linear-gradient(180deg, rgba(5,5,10,0.3) 0%, rgba(5,5,10,0.5) 40%, rgba(5,5,10,0.85) 75%, var(--black) 100%),
+    radial-gradient(ellipse 80% 60% at 50% 40%, rgba(201,169,110,0.12) 0%, transparent 70%),
+    url('https://images.unsplash.com/photo-1566737236500-c8ac43014a67?w=1920&q=80') center/cover no-repeat;
 }
 .hero-particles {
   position: absolute; inset: 0; overflow: hidden;
@@ -534,12 +533,11 @@ input, textarea, select { font-family: var(--font-body); }
 }
 .about-image-placeholder {
   width: 100%; height: 100%;
-  background:
-    radial-gradient(ellipse at 50% 50%, rgba(201,169,110,0.1) 0%, transparent 70%),
-    var(--surface2);
-  display: flex; align-items: center; justify-content: center;
+  background: var(--surface2);
 }
-.about-image-placeholder svg { width: 80px; height: 80px; stroke: var(--border2); fill: none; stroke-width: 1; opacity: 0.5; }
+.about-image-placeholder img {
+  width: 100%; height: 100%; object-fit: cover;
+}
 .about-text { }
 .about-text .section-tag { justify-content: flex-start; }
 .about-text .section-title { text-align: left; }
@@ -593,12 +591,14 @@ input, textarea, select { font-family: var(--font-body); }
 .event-card:hover { border-color: var(--glass-border2); transform: translateY(-4px); }
 .event-card-image {
   aspect-ratio: 16/9; overflow: hidden;
-  background:
-    linear-gradient(135deg, rgba(201,169,110,0.08), rgba(100,60,180,0.05)),
-    var(--surface2);
-  display: flex; align-items: center; justify-content: center;
+  background: var(--surface2);
+  position: relative;
 }
-.event-card-image svg { width: 48px; height: 48px; stroke: var(--border2); fill: none; stroke-width: 1; opacity: 0.4; }
+.event-card-image img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+.event-card:hover .event-card-image img { transform: scale(1.05); }
 .event-card-badge {
   position: absolute; top: var(--space-md); left: var(--space-md);
   padding: 4px 12px; border-radius: var(--radius-full);
@@ -697,15 +697,16 @@ input, textarea, select { font-family: var(--font-body); }
   position: relative; overflow: hidden; border-radius: var(--radius-lg);
   cursor: pointer; border: 1px solid var(--glass-border);
   aspect-ratio: 1;
-  background:
-    radial-gradient(ellipse at 50% 50%, rgba(201,169,110,0.06) 0%, transparent 70%),
-    var(--surface2);
-  display: flex; align-items: center; justify-content: center;
+  background: var(--surface2);
   transition: all var(--duration-normal) var(--ease-out);
 }
-.gallery-item:hover { border-color: var(--glass-border2); transform: scale(1.02); }
+.gallery-item img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform var(--duration-slow) var(--ease-out);
+}
+.gallery-item:hover img { transform: scale(1.08); }
+.gallery-item:hover { border-color: var(--glass-border2); }
 .gallery-item.large { grid-column: span 2; grid-row: span 2; aspect-ratio: auto; }
-.gallery-item svg { width: 40px; height: 40px; stroke: var(--border2); fill: none; stroke-width: 1; opacity: 0.3; }
 .gallery-overlay {
   position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
   background: rgba(5,5,10,0.6); opacity: 0;
@@ -736,7 +737,9 @@ input, textarea, select { font-family: var(--font-body); }
   display: flex; align-items: center; justify-content: center;
   min-width: 400px; min-height: 300px;
 }
-.lightbox-content svg { width: 60px; height: 60px; stroke: var(--border2); fill: none; stroke-width: 1; opacity: 0.3; }
+.lightbox-content img {
+  max-width: 100%; max-height: 80vh; object-fit: contain;
+}
 .lightbox-nav {
   position: absolute; top: 50%; transform: translateY(-50%);
   width: 48px; height: 48px; display: flex; align-items: center; justify-content: center;
@@ -1146,7 +1149,7 @@ input, textarea, select { font-family: var(--font-body); }
     <div class="about-grid">
       <div class="about-image-wrap reveal">
         <div class="about-image-placeholder">
-          <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          <img src="https://images.unsplash.com/photo-1571266028243-3716f02d2d2e?w=800&q=80" alt="Elevate Nightclub interior - VIP lounge with ambient lighting" loading="lazy">
         </div>
       </div>
       <div class="about-text">
@@ -1296,28 +1299,28 @@ input, textarea, select { font-family: var(--font-body); }
     </div>
     <div class="gallery-grid reveal reveal-delay-3" id="galleryGrid">
       <div class="gallery-item large" data-index="0">
-        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-        <div class="gallery-overlay"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg></div>
+        <img src="https://images.unsplash.com/photo-1545128485-c400e7702796?w=900&q=80" alt="Nightclub dance floor with crowd and neon lights" loading="lazy">
+        <div class="gallery-overlay"><svg viewBox="0 0 24 24" stroke="white" fill="none" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg></div>
       </div>
       <div class="gallery-item" data-index="1">
-        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-        <div class="gallery-overlay"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg></div>
+        <img src="https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=500&q=80" alt="DJ performing live set at nightclub" loading="lazy">
+        <div class="gallery-overlay"><svg viewBox="0 0 24 24" stroke="white" fill="none" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg></div>
       </div>
       <div class="gallery-item" data-index="2">
-        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-        <div class="gallery-overlay"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg></div>
+        <img src="https://images.unsplash.com/photo-1572116469696-31de0f17cc34?w=500&q=80" alt="Premium cocktails and bottle service at VIP table" loading="lazy">
+        <div class="gallery-overlay"><svg viewBox="0 0 24 24" stroke="white" fill="none" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg></div>
       </div>
       <div class="gallery-item" data-index="3">
-        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-        <div class="gallery-overlay"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg></div>
+        <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500&q=80" alt="DJ turntable with colorful club lighting" loading="lazy">
+        <div class="gallery-overlay"><svg viewBox="0 0 24 24" stroke="white" fill="none" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg></div>
       </div>
       <div class="gallery-item" data-index="4">
-        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-        <div class="gallery-overlay"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg></div>
+        <img src="https://images.unsplash.com/photo-1574391884720-bbc3740c59d1?w=500&q=80" alt="Crowd dancing under laser lights at nightclub event" loading="lazy">
+        <div class="gallery-overlay"><svg viewBox="0 0 24 24" stroke="white" fill="none" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg></div>
       </div>
       <div class="gallery-item" data-index="5">
-        <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-        <div class="gallery-overlay"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg></div>
+        <img src="https://images.unsplash.com/photo-1567696911980-2eed69a46042?w=500&q=80" alt="Luxury VIP lounge area with ambient purple lighting" loading="lazy">
+        <div class="gallery-overlay"><svg viewBox="0 0 24 24" stroke="white" fill="none" stroke-width="1.5"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg></div>
       </div>
     </div>
   </div>
@@ -1328,7 +1331,7 @@ input, textarea, select { font-family: var(--font-body); }
   <button class="lightbox-close" id="lightboxClose" aria-label="Close"><svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg></button>
   <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous"><svg viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></svg></button>
   <div class="lightbox-content" id="lightboxContent">
-    <svg viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+    <img id="lightboxImg" src="" alt="Gallery image">
   </div>
   <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next"><svg viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></svg></button>
 </div>
@@ -1595,6 +1598,7 @@ input, textarea, select { font-family: var(--font-body); }
       title: 'Grand Fridays',
       desc: 'Start the weekend right with Portland\'s hottest Friday night party. Top-tier DJs spinning the best hip-hop, R&B, and open format bangers.',
       price: '$20', priceLabel: 'doors',
+      img: 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&q=80',
     },
     {
       id: 2, category: 'latin', badge: 'Latin Night',
@@ -1602,6 +1606,7 @@ input, textarea, select { font-family: var(--font-body); }
       title: 'Hello Kitty Perreo',
       desc: 'Portland\'s biggest reggaeton and Latin night. DJ Denver & Cherry spinning reggaeton, dembow, bachata, and all your Latin favorites.',
       price: '$20', priceLabel: 'presale',
+      img: 'https://images.unsplash.com/photo-1504680177321-2e6a879aac86?w=600&q=80',
     },
     {
       id: 3, category: 'hip-hop', badge: 'Hip-Hop',
@@ -1609,6 +1614,7 @@ input, textarea, select { font-family: var(--font-body); }
       title: 'Frequency Fridays',
       desc: 'High-energy hip-hop and trap takeover. Featuring the best Northwest DJs and surprise guest performers.',
       price: '$15', priceLabel: 'presale',
+      img: 'https://images.unsplash.com/photo-1571266028243-3716f02d2d2e?w=600&q=80',
     },
     {
       id: 4, category: 'special', badge: 'Live Artist',
@@ -1616,6 +1622,7 @@ input, textarea, select { font-family: var(--font-body); }
       title: 'Live Performance Night',
       desc: 'Exclusive live performance by a nationally touring artist. Meet & greet available with Platinum VIP packages. Previous acts: Ohgeesy, Fenix Flexin.',
       price: '$35', priceLabel: 'GA',
+      img: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=600&q=80',
     },
     {
       id: 5, category: 'latin', badge: 'Latin Night',
@@ -1623,6 +1630,7 @@ input, textarea, select { font-family: var(--font-body); }
       title: 'Noche Latina',
       desc: 'An all-night journey through the best of reggaeton, cumbia, salsa, and dembow. Three rooms, three vibes, one incredible night.',
       price: '$20', priceLabel: 'presale',
+      img: 'https://images.unsplash.com/photo-1429962714451-bb934ecdc4ec?w=600&q=80',
     },
     {
       id: 6, category: 'resident', badge: 'Resident DJs',
@@ -1630,6 +1638,7 @@ input, textarea, select { font-family: var(--font-body); }
       title: 'Resident DJ Showcase',
       desc: 'Our resident selectors bring the heat every Friday with curated sets spanning hip-hop, R&B, and open format.',
       price: '$15', priceLabel: 'doors',
+      img: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600&q=80',
     },
   ];
 
@@ -1732,7 +1741,7 @@ input, textarea, select { font-family: var(--font-body); }
     eventsGrid.innerHTML = filtered.map((e, i) => `
       <article class="event-card reveal reveal-delay-${Math.min(i + 1, 6)}" data-category="${e.category}">
         <div class="event-card-image">
-          <svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+          <img src="${e.img}" alt="${e.title} event at Elevate Nightclub" loading="lazy">
         </div>
         <span class="event-card-badge ${e.category}">${e.badge}</span>
         <div class="event-card-body">
@@ -1781,14 +1790,25 @@ input, textarea, select { font-family: var(--font-body); }
      GALLERY LIGHTBOX
      ============================================================ */
   const lightbox = document.getElementById('lightbox');
-  const lightboxContent = document.getElementById('lightboxContent');
+  const lightboxImg = document.getElementById('lightboxImg');
   let currentLightboxIndex = 0;
   const galleryItems = document.querySelectorAll('.gallery-item');
   const totalGallery = galleryItems.length;
 
+  function updateLightboxImage() {
+    const item = galleryItems[currentLightboxIndex];
+    const img = item.querySelector('img');
+    if (img) {
+      // Use higher res version for lightbox
+      lightboxImg.src = img.src.replace('w=500', 'w=1200').replace('w=900', 'w=1200');
+      lightboxImg.alt = img.alt;
+    }
+  }
+
   galleryItems.forEach(item => {
     item.addEventListener('click', () => {
       currentLightboxIndex = parseInt(item.dataset.index);
+      updateLightboxImage();
       lightbox.classList.add('open');
       lightbox.setAttribute('aria-hidden', 'false');
       document.body.style.overflow = 'hidden';
@@ -1800,9 +1820,11 @@ input, textarea, select { font-family: var(--font-body); }
 
   document.getElementById('lightboxPrev').addEventListener('click', () => {
     currentLightboxIndex = (currentLightboxIndex - 1 + totalGallery) % totalGallery;
+    updateLightboxImage();
   });
   document.getElementById('lightboxNext').addEventListener('click', () => {
     currentLightboxIndex = (currentLightboxIndex + 1) % totalGallery;
+    updateLightboxImage();
   });
 
   function closeLightbox() {
