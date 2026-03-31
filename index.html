@@ -1133,26 +1133,26 @@ function initOrb(){
       const alpha=depth*.5+.15;
       // Glow layer
       ctx.beginPath();ctx.moveTo(pa.x,pa.y);ctx.lineTo(pb.x,pb.y);
-      const gr=Math.round(255*w+80*(1-w)),gg2=Math.round(210*w+170*(1-w)),gb=Math.round(120*w+255*(1-w));
-      ctx.strokeStyle=`rgba(${gr},${gg2},${gb},${alpha*.3})`;ctx.lineWidth=3;ctx.stroke();
-      // Main edge — smooth gold↔blue blend
+      const gr=Math.round(255*w+60*(1-w)),gg2=Math.round(185*w+150*(1-w)),gb=Math.round(30*w+255*(1-w));
+      ctx.strokeStyle=`rgba(${gr},${gg2},${gb},${alpha*.4})`;ctx.lineWidth=3.5;ctx.stroke();
+      // Main edge — strong gold↔blue blend
       ctx.beginPath();ctx.moveTo(pa.x,pa.y);ctx.lineTo(pb.x,pb.y);
-      const rr=Math.round(210*w+80*(1-w));
-      const gg=Math.round(175*w+170*(1-w));
-      const bb=Math.round(105*w+255*(1-w));
+      const rr=Math.round(240*w+60*(1-w));
+      const gg=Math.round(180*w+150*(1-w));
+      const bb=Math.round(20*w+255*(1-w));
       ctx.strokeStyle=`rgba(${rr},${gg},${bb},${alpha})`;
       ctx.lineWidth=depth*1.1+.8;
       ctx.stroke();
     });
 
-    // Draw vertex dots — gold↔blue wave
+    // Draw vertex dots — strong gold↔blue wave
     proj.forEach(p=>{
       const alpha=(p.z+1)/2*.7+.2;const sz=p.s*2;
       const w=p.wave;
+      const gr=Math.round(255*w+60*(1-w)),gg2=Math.round(185*w+150*(1-w)),gb=Math.round(30*w+255*(1-w));
       // Soft glow
       ctx.beginPath();ctx.arc(p.x,p.y,sz*3,0,Math.PI*2);
-      const gr=Math.round(255*w+80*(1-w)),gg2=Math.round(210*w+170*(1-w)),gb=Math.round(120*w+255*(1-w));
-      ctx.fillStyle=`rgba(${gr},${gg2},${gb},${alpha*.08})`;ctx.fill();
+      ctx.fillStyle=`rgba(${gr},${gg2},${gb},${alpha*.1})`;ctx.fill();
       // Dot
       ctx.beginPath();ctx.arc(p.x,p.y,sz,0,Math.PI*2);
       ctx.fillStyle=`rgba(${gr},${gg2},${gb},${alpha})`;ctx.fill();
