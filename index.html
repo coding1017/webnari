@@ -434,7 +434,7 @@ footer{border-top:1px solid var(--border);padding:48px}
     <a href="#features">Features</a>
     <a href="#process">Process</a>
     <a href="#pricing">Pricing</a>
-    <a href="#our-work">Our Work</a>
+    <a href="portfolio.html">Our Work</a>
   </div>
   <div class="nav-right">
     <button class="btn-ghost-sm" onclick="openAuth()">Log in</button>
@@ -451,7 +451,7 @@ footer{border-top:1px solid var(--border);padding:48px}
     <p class="hero-sub">We design, build, and manage immersive websites with scroll-driven effects, e-commerce, and SEO that ranks. One monthly rate.</p>
     <div class="hero-ctas">
       <a href="start.html" class="btn-hero btn-hero-primary" style="text-decoration:none;display:inline-block">Start your project</a>
-      <a href="#our-work" class="btn-hero btn-hero-ghost" style="text-decoration:none;display:inline-block">See our work</a>
+      <a href="portfolio.html" class="btn-hero btn-hero-ghost" style="text-decoration:none;display:inline-block">See our work</a>
     </div>
   </div>
   <div class="hero-scroll" id="hero-scroll">
@@ -805,8 +805,8 @@ footer{border-top:1px solid var(--border);padding:48px}
     <div class="section-sub">From e-commerce brands to music artists — every site is designed and built from scratch.</div>
   </div>
   <div class="our-work-grid">
-    <a class="our-work-card reveal-left" href="wookwearshop.com" target="_blank" rel="noopener">
-      <div class="our-work-preview"><iframe src="https://wookwearshop.com" loading="lazy" tabindex="-1"></iframe></div>
+    <a class="our-work-card reveal-left" href="https://wook-wear.webnari.workers.dev" target="_blank" rel="noopener">
+      <div class="our-work-preview"><iframe src="https://wook-wear.webnari.workers.dev" loading="lazy" tabindex="-1"></iframe></div>
       <div class="our-work-badge">E-COMMERCE</div>
       <div class="our-work-info">
         <div class="our-work-name">Wook Wear</div>
@@ -837,10 +837,8 @@ footer{border-top:1px solid var(--border);padding:48px}
         <div class="our-work-type">Fitness-focused Chinese fusion meal prep</div>
       </div>
     </a>
-    <a class="our-work-card reveal-scale" href="sitemap-bridgecitysoles.html" target="_blank" rel="noopener">
-      <div class="our-work-preview" style="display:flex;align-items:center;justify-content:center;background:var(--surface2)">
-        <span style="font-family:var(--font-head);font-size:24px;font-weight:700;color:var(--accent);letter-spacing:-.02em">Bridge City Soles</span>
-      </div>
+    <a class="our-work-card reveal-scale" href="https://bridge-city-soles.pages.dev" target="_blank" rel="noopener">
+      <div class="our-work-preview"><iframe src="https://bridge-city-soles.pages.dev" loading="lazy" tabindex="-1"></iframe></div>
       <div class="our-work-badge">SNEAKERS</div>
       <div class="our-work-info">
         <div class="our-work-name">Bridge City Soles</div>
@@ -1082,14 +1080,8 @@ function initOrb(){
     if(Math.sqrt(dx*dx+dy*dy+dz*dz)<.35)edges.push([i,j]);
   }
 
-  // Pulse waves — continuous gold→blue→gold→blue, no gaps
-  const pulses=[];
-  let pulseIdx=0;
-  function spawnPulse(){
-    if(pulses.length<12){pulses.push({y:-1.4,speed:.025,hue:pulseIdx%2});pulseIdx++}
-    setTimeout(spawnPulse,180);
-  }
-  spawnPulse();
+  // Continuous gold→blue wave — no gaps, full coverage
+  let waveOffset=0;
 
   // Satellites — 33 with wide spread in all directions
   const sats=[];
@@ -1110,13 +1102,10 @@ function initOrb(){
   const cosTilt=Math.cos(TILT),sinTilt=Math.sin(TILT);
   function draw(){
     t+=.003; // slow gentle spin
+    waveOffset+=.008; // smooth wave scroll speed
     ctx.clearRect(0,0,W,H);
     const radius=Math.min(W,H)*.38;
     const cosT=Math.cos(t),sinT=Math.sin(t);
-
-    // Update pulses
-    pulses.forEach(p=>{p.y+=p.speed});
-    while(pulses.length&&pulses[0].y>1.5)pulses.shift();
 
     // Warm glow behind sphere
     const grd=ctx.createRadialGradient(W/2,H/2,radius*.2,W/2,H/2,radius*1.6);
@@ -1131,45 +1120,42 @@ function initOrb(){
       let y2=y1*cosTilt-z1*sinTilt,z2=y1*sinTilt+z1*cosTilt;
       let x3=x1,z3=z2;
       const scale=1/(1-z3*.3);
-      // Check pulse proximity
-      let pulse=0;
-      pulses.forEach(ring=>{const d=Math.abs(y2-ring.y);if(d<.18)pulse=Math.max(pulse,(1-d/.18)*(ring.hue?.5:1))});
-      return{x:W/2+x3*radius*scale,y:H/2+y2*radius*scale,z:z3,s:scale,pulse,pulseHue:pulse>.1&&pulses.find(r=>Math.abs(y2-r.y)<.18)?.hue||0};
+      // Continuous wave: sin gives smooth 0→1→0 for gold, cos for blue — no gaps
+      const wave=Math.sin((y2+waveOffset)*Math.PI*2.5)*.5+.5; // 0=blue, 1=gold
+      return{x:W/2+x3*radius*scale,y:H/2+y2*radius*scale,z:z3,s:scale,wave};
     });
 
     // Draw edges
     edges.forEach(([a,b])=>{
       const pa=proj[a],pb=proj[b];
       const depth=Math.min((pa.z+1)/2,(pb.z+1)/2);
-      const pulse=Math.max(pa.pulse,pb.pulse);
-      const hue=pa.pulseHue||pb.pulseHue;
-      const alpha=depth*.5+.08+pulse*.25;
-      // Pulse glow layer
-      if(pulse>.15){
-        ctx.beginPath();ctx.moveTo(pa.x,pa.y);ctx.lineTo(pb.x,pb.y);
-        const gc=hue?`rgba(80,170,255,${pulse*.4})`:`rgba(255,210,120,${pulse*.4})`;
-        ctx.strokeStyle=gc;ctx.lineWidth=3;ctx.stroke();
-      }
+      const w=(pa.wave+pb.wave)/2; // average wave for edge
+      const alpha=depth*.5+.15;
+      // Glow layer
       ctx.beginPath();ctx.moveTo(pa.x,pa.y);ctx.lineTo(pb.x,pb.y);
-      // Gold base, shifting toward cyan on hue=1 pulses
-      const rr=hue&&pulse>.1?Math.round(210-130*pulse):210;
-      const gg=hue&&pulse>.1?Math.round(175+55*pulse):175;
-      const bb=hue&&pulse>.1?Math.round(105+150*pulse):105;
+      const gr=Math.round(255*w+80*(1-w)),gg2=Math.round(210*w+170*(1-w)),gb=Math.round(120*w+255*(1-w));
+      ctx.strokeStyle=`rgba(${gr},${gg2},${gb},${alpha*.3})`;ctx.lineWidth=3;ctx.stroke();
+      // Main edge — smooth gold↔blue blend
+      ctx.beginPath();ctx.moveTo(pa.x,pa.y);ctx.lineTo(pb.x,pb.y);
+      const rr=Math.round(210*w+80*(1-w));
+      const gg=Math.round(175*w+170*(1-w));
+      const bb=Math.round(105*w+255*(1-w));
       ctx.strokeStyle=`rgba(${rr},${gg},${bb},${alpha})`;
-      ctx.lineWidth=depth*1.1+.5+(pulse>.1?pulse*.5:0);
+      ctx.lineWidth=depth*1.1+.8;
       ctx.stroke();
     });
 
-    // Draw vertex dots
+    // Draw vertex dots — gold↔blue wave
     proj.forEach(p=>{
       const alpha=(p.z+1)/2*.7+.2;const sz=p.s*2;
-      if(p.pulse>.2){
-        ctx.beginPath();ctx.arc(p.x,p.y,sz*3.5,0,Math.PI*2);
-        const gc=p.pulseHue?`rgba(80,170,255,${p.pulse*.12})`:`rgba(255,210,120,${p.pulse*.12})`;
-        ctx.fillStyle=gc;ctx.fill();
-      }
+      const w=p.wave;
+      // Soft glow
+      ctx.beginPath();ctx.arc(p.x,p.y,sz*3,0,Math.PI*2);
+      const gr=Math.round(255*w+80*(1-w)),gg2=Math.round(210*w+170*(1-w)),gb=Math.round(120*w+255*(1-w));
+      ctx.fillStyle=`rgba(${gr},${gg2},${gb},${alpha*.08})`;ctx.fill();
+      // Dot
       ctx.beginPath();ctx.arc(p.x,p.y,sz,0,Math.PI*2);
-      ctx.fillStyle=`rgba(230,195,120,${alpha})`;ctx.fill();
+      ctx.fillStyle=`rgba(${gr},${gg2},${gb},${alpha})`;ctx.fill();
     });
 
     // Draw satellites with trails
