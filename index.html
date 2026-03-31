@@ -1082,20 +1082,20 @@ function initOrb(){
     if(Math.sqrt(dx*dx+dy*dy+dz*dz)<.35)edges.push([i,j]);
   }
 
-  // Pulse waves — gold → blue → gold cycling with spacing
+  // Pulse waves — gold → blue back to back, quick fire
   const pulses=[];
   let pulseIdx=0;
-  setInterval(()=>{if(pulses.length<4){const h=pulseIdx%3===1?1:0;pulses.push({y:-1.4,speed:.01+Math.random()*.005,hue:h});pulseIdx++}},1800);
+  setInterval(()=>{if(pulses.length<8){const h=pulseIdx%2;pulses.push({y:-1.4,speed:.022+Math.random()*.008,hue:h});pulseIdx++}},300);
 
-  // Satellites — 22 with wide spread in all directions
+  // Satellites — 33 with wide spread in all directions
   const sats=[];
-  for(let i=0;i<22;i++){
+  for(let i=0;i<33;i++){
     const golden=2.399963;
     sats.push({
       angle:i*golden,
-      speed:(i%3===0?-.0025:i%3===1?.002:-.0012),
-      incl:.1+i*.14+Math.random()*.15,
-      dist:1.1+i*.035,
+      speed:(i%3===0?-.003:i%3===1?.0025:-.0015),
+      incl:.08+i*.1+Math.random()*.12,
+      dist:1.08+i*.028,
       trail:[],
       hue:i%3===1?1:0
     });
