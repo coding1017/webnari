@@ -31,8 +31,8 @@
   --surface:  #363650;
   --stone:    #C4A882;
   --stone2:   #D8C4A8;
-  --gold:     #2563EB;
-  --gold2:    #3B82F6;
+  --gold:     #D4A853;
+  --gold2:    #E8C77B;
   --teal:     #2A9D8F;
   --teal2:    #3DB5A6;
   --cream:    #FAF7F2;
@@ -210,7 +210,7 @@ button { font-family: inherit; cursor: pointer; }
 .mob-cta-wrap { margin-top: 32px; }
 .mob-cta-btn {
   display: flex; align-items: center; justify-content: center; gap: 10px;
-  width: 100%; padding: 16px; background: var(--gold); color: var(--white);
+  width: 100%; padding: 16px; background: var(--gold); color: var(--charcoal);
   font-family: var(--sans); font-size: 15px; font-weight: 700;
   letter-spacing: 0.06em; text-transform: uppercase;
 }
@@ -228,12 +228,12 @@ button { font-family: inherit; cursor: pointer; }
 }
 .hero::before {
   content: ''; position: absolute; inset: 0;
-  background: url('https://images.unsplash.com/photo-1558618666-fcd25c85f82e?w=1600&q=80') center/cover no-repeat;
-  opacity: 0.4; pointer-events: none;
+  background: url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&q=80') center/cover no-repeat;
+  opacity: 0.6; pointer-events: none;
 }
 .hero::after {
   content: ''; position: absolute; inset: 0;
-  background: linear-gradient(135deg, rgba(26,26,46,0.75) 0%, rgba(26,26,46,0.55) 50%, rgba(26,26,46,0.85) 100%);
+  background: linear-gradient(135deg, rgba(26,26,46,0.5) 0%, rgba(26,26,46,0.35) 50%, rgba(26,26,46,0.6) 100%);
   pointer-events: none;
 }
 .hero-orb {
@@ -287,7 +287,7 @@ button { font-family: inherit; cursor: pointer; }
 .hero-actions.show { opacity: 1; transform: translateY(0); }
 .btn-gold {
   display: inline-flex; align-items: center; gap: 10px;
-  padding: 16px 36px; background: var(--gold); color: var(--white);
+  padding: 16px 36px; background: var(--gold); color: var(--charcoal);
   font-family: var(--sans); font-size: 14px; font-weight: 700;
   letter-spacing: 0.06em; text-transform: uppercase; border: none;
   cursor: pointer; transition: background 0.3s, transform 0.2s;
@@ -457,52 +457,55 @@ button { font-family: inherit; cursor: pointer; }
 .process-scroll { height: 350vh; position: relative; }
 .process-sticky {
   position: sticky; top: 0; height: 100vh; display: flex; align-items: center;
-  background: var(--charcoal); overflow: hidden;
+  background: var(--cream); overflow: hidden;
 }
-.process-sticky::before {
-  content: ''; position: absolute; inset: 0;
-  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  opacity: 0.4; pointer-events: none;
-}
-.process-header { text-align: center; margin-bottom: 48px; position: relative; z-index: 1; }
+.process-header { text-align: center; margin-bottom: 60px; position: relative; z-index: 1; }
 .process-header .section-label { display: flex; justify-content: center; }
-.process-header .section-title { color: var(--cream); }
-.process-header .section-title em { color: var(--gold); }
 .process-content {
-  display: grid; grid-template-columns: auto 1fr; gap: 60px;
-  align-items: center; position: relative; z-index: 1;
+  display: flex; justify-content: center; position: relative; z-index: 1;
 }
-.process-steps-nav { display: flex; flex-direction: column; gap: 0; }
+.process-steps-nav {
+  display: flex; flex-direction: column; gap: 0; position: relative;
+  padding-left: 28px;
+}
+.process-steps-nav::before {
+  content: ''; position: absolute; left: 13px; top: 28px; bottom: 28px;
+  width: 2px; background: var(--cream3);
+}
 .pnav-item {
-  display: flex; align-items: center; gap: 0; padding: 16px 0; position: relative;
+  display: flex; align-items: flex-start; gap: 24px; padding: 20px 0;
+  position: relative; cursor: default;
 }
+.pnav-dot {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  border: 2px solid var(--cream3); background: var(--cream);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; z-index: 2; margin-left: -28px;
+  transition: border-color 0.4s, background 0.4s;
+}
+.pnav-dot-inner {
+  width: 10px; height: 10px; border-radius: 50%;
+  background: var(--cream3); transition: background 0.4s, transform 0.4s;
+}
+.pnav-item.active .pnav-dot { border-color: var(--gold); }
+.pnav-item.active .pnav-dot-inner { background: var(--gold); transform: scale(1.2); }
+.pnav-info { padding-top: 2px; max-width: 400px; }
 .pnav-num {
-  font-family: var(--serif); font-style: italic; font-size: 20px;
-  color: var(--muted); transition: color 0.4s, transform 0.4s;
-  width: 40px; text-align: center;
+  font-family: var(--serif); font-style: italic; font-size: 14px;
+  color: var(--muted); transition: color 0.4s; margin-bottom: 4px;
 }
-.pnav-line {
-  display: block; width: 40px; height: 2px; background: var(--surface);
-  margin-left: 8px; transition: background 0.4s, width 0.4s;
+.pnav-item.active .pnav-num { color: var(--gold); }
+.pnav-title {
+  font-family: var(--serif); font-size: 20px; color: var(--heading);
+  margin-bottom: 6px; transition: color 0.4s; line-height: 1.3;
 }
-.pnav-item.active .pnav-num { color: var(--gold); transform: scale(1.2); }
-.pnav-item.active .pnav-line { background: var(--gold); width: 60px; }
-.process-card-area { position: relative; min-height: 280px; }
-.process-card {
-  position: absolute; inset: 0; padding: 48px;
-  background: rgba(250,247,242,0.04); border: 1px solid rgba(250,247,242,0.08);
-  backdrop-filter: blur(8px);
-  opacity: 0; transform: translateY(30px);
-  transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
-  pointer-events: none; display: flex; flex-direction: column; justify-content: center;
+.pnav-item.active .pnav-title { color: var(--heading); }
+.pnav-desc {
+  font-size: 14px; color: var(--muted); line-height: 1.6;
+  max-height: 0; overflow: hidden; opacity: 0;
+  transition: max-height 0.5s var(--ease), opacity 0.4s;
 }
-.process-card.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
-.pcard-icon { width: 48px; height: 48px; margin-bottom: 24px; color: var(--gold); }
-.pcard-icon svg { width: 48px; height: 48px; }
-.pcard-title {
-  font-family: var(--serif); font-size: 28px; color: var(--cream); margin-bottom: 16px;
-}
-.pcard-desc { font-size: 17px; color: var(--stone2); line-height: 1.8; max-width: 500px; }
+.pnav-item.active .pnav-desc { max-height: 100px; opacity: 1; color: var(--text); }
 
 /* ─── WHY SECTION (dark) ─────────────────────────────────────────────────── */
 .why-section { padding: 120px 0; background: var(--charcoal); position: relative; overflow: hidden; }
@@ -516,13 +519,14 @@ button { font-family: inherit; cursor: pointer; }
   margin-top: 60px; position: relative; z-index: 1;
 }
 .why-card {
-  padding: 36px 28px; border: 1px solid rgba(250,247,242,0.12);
-  background: rgba(45,45,63,0.8); backdrop-filter: blur(8px);
-  transition: border-color 0.3s, transform 0.3s;
+  padding: 36px 28px; border: 1px solid rgba(212,168,83,0.2);
+  background: linear-gradient(145deg, rgba(54,54,80,0.95) 0%, rgba(26,26,46,0.95) 100%);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 1px 0 rgba(250,247,242,0.06);
+  transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
 }
 .why-card:hover { border-color: var(--gold); transform: translateY(-4px); }
 .why-icon {
-  width: 48px; height: 48px; border: 1px solid rgba(37,99,235,0.3);
+  width: 48px; height: 48px; border: 1px solid rgba(212,168,83,0.3);
   display: flex; align-items: center; justify-content: center; margin-bottom: 24px;
 }
 .why-icon svg { width: 22px; height: 22px; color: var(--gold); }
@@ -559,7 +563,7 @@ button { font-family: inherit; cursor: pointer; }
   letter-spacing: 0.1em; text-transform: uppercase; z-index: 5;
 }
 .ba-label-before { left: 20px; background: rgba(0,0,0,0.4); color: var(--cream); }
-.ba-label-after { left: 20px; background: var(--gold); color: var(--white); }
+.ba-label-after { left: 20px; background: var(--gold); color: var(--charcoal); }
 .ba-handle {
   position: absolute; top: 0; bottom: 0; left: 50%; z-index: 10;
   width: 4px; background: var(--gold); transform: translateX(-50%);
@@ -581,12 +585,13 @@ button { font-family: inherit; cursor: pointer; }
   margin-top: 60px;
 }
 .review-card {
-  padding: 36px 28px; border: 1px solid rgba(250,247,242,0.1);
-  background: rgba(45,45,63,0.7);
-  transition: border-color 0.3s, transform 0.3s;
+  padding: 36px 28px; border: 1px solid rgba(212,168,83,0.15);
+  background: linear-gradient(145deg, rgba(54,54,80,0.95) 0%, rgba(36,36,56,0.95) 100%);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25), inset 0 1px 0 rgba(250,247,242,0.05);
+  transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
 }
 .review-card:nth-child(2) { transform: translateY(20px); }
-.review-card:hover { border-color: rgba(37,99,235,0.3); transform: translateY(-4px); }
+.review-card:hover { border-color: rgba(212,168,83,0.3); transform: translateY(-4px); }
 .review-card:nth-child(2):hover { transform: translateY(16px); }
 .review-stars { display: flex; gap: 3px; margin-bottom: 20px; }
 .review-stars svg { width: 16px; height: 16px; color: var(--gold); fill: var(--gold); }
@@ -723,7 +728,7 @@ button { font-family: inherit; cursor: pointer; }
 .form-textarea { resize: vertical; min-height: 120px; }
 .form-submit {
   margin-top: 8px; width: 100%; padding: 16px;
-  background: var(--gold); color: var(--white); border: none;
+  background: var(--gold); color: var(--charcoal); border: none;
   font-family: var(--sans); font-size: 14px; font-weight: 700;
   letter-spacing: 0.06em; text-transform: uppercase;
   cursor: pointer; transition: background 0.3s;
@@ -746,7 +751,7 @@ button { font-family: inherit; cursor: pointer; }
 .cta-banner::before {
   content: ''; position: absolute; top: -50%; left: 50%;
   width: 600px; height: 600px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(37,99,235,0.1) 0%, transparent 60%);
+  background: radial-gradient(circle, rgba(212,168,83,0.1) 0%, transparent 60%);
   transform: translateX(-50%); pointer-events: none;
 }
 .cta-title {
@@ -828,10 +833,7 @@ button { font-family: inherit; cursor: pointer; }
   .explorer-tabs::-webkit-scrollbar { display: none; }
   .panel-benefits { grid-template-columns: 1fr; }
   .process-scroll { height: 300vh; }
-  .process-content { grid-template-columns: 1fr; gap: 32px; }
-  .process-steps-nav { flex-direction: row; justify-content: center; }
-  .pnav-line { display: none; }
-  .process-card { padding: 32px 24px; }
+  .process-steps-nav { padding-left: 20px; }
   .why-grid { grid-template-columns: 1fr; }
   .ba-wrapper { height: 360px; }
   .reviews-grid { grid-template-columns: 1fr; }
@@ -1256,40 +1258,49 @@ button { font-family: inherit; cursor: pointer; }
       <div class="process-header">
         <div class="section-label">Our Process</div>
         <h2 class="section-title">From Vision to <em>Reality</em></h2>
+        <p class="section-desc" style="margin:16px auto 0;">A seamless five-step process designed to deliver exceptional results with zero stress.</p>
       </div>
       <div class="process-content">
         <div class="process-steps-nav">
-          <div class="pnav-item active" data-step="0"><span class="pnav-num">01</span><span class="pnav-line"></span></div>
-          <div class="pnav-item" data-step="1"><span class="pnav-num">02</span><span class="pnav-line"></span></div>
-          <div class="pnav-item" data-step="2"><span class="pnav-num">03</span><span class="pnav-line"></span></div>
-          <div class="pnav-item" data-step="3"><span class="pnav-num">04</span><span class="pnav-line"></span></div>
-          <div class="pnav-item" data-step="4"><span class="pnav-num">05</span><span class="pnav-line"></span></div>
-        </div>
-        <div class="process-card-area">
-          <div class="process-card visible" data-step="0">
-            <div class="pcard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></div>
-            <h3 class="pcard-title">Free Consultation</h3>
-            <p class="pcard-desc">We visit your property, discuss your needs, measure the area, and provide a detailed, no-obligation estimate within 24 hours.</p>
+          <div class="pnav-item active" data-step="0">
+            <div class="pnav-dot"><div class="pnav-dot-inner"></div></div>
+            <div class="pnav-info">
+              <div class="pnav-num">01</div>
+              <div class="pnav-title">Free Consultation</div>
+              <div class="pnav-desc">We visit your property, discuss your needs, and provide a detailed estimate — no obligation.</div>
+            </div>
           </div>
-          <div class="process-card" data-step="1">
-            <div class="pcard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></div>
-            <h3 class="pcard-title">Custom Design</h3>
-            <p class="pcard-desc">Our team designs a fence plan tailored to your property, style preferences, HOA requirements, and budget.</p>
+          <div class="pnav-item" data-step="1">
+            <div class="pnav-dot"><div class="pnav-dot-inner"></div></div>
+            <div class="pnav-info">
+              <div class="pnav-num">02</div>
+              <div class="pnav-title">Custom Design</div>
+              <div class="pnav-desc">Our team designs a fence plan tailored to your property, style preferences, and budget.</div>
+            </div>
           </div>
-          <div class="process-card" data-step="2">
-            <div class="pcard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></div>
-            <h3 class="pcard-title">Permits & Planning</h3>
-            <p class="pcard-desc">We handle all permit applications, HOA submissions, utility locates, and scheduling so you don't have to lift a finger.</p>
+          <div class="pnav-item" data-step="2">
+            <div class="pnav-dot"><div class="pnav-dot-inner"></div></div>
+            <div class="pnav-info">
+              <div class="pnav-num">03</div>
+              <div class="pnav-title">Permits & Planning</div>
+              <div class="pnav-desc">We handle all permits, HOA approvals, and utility locates so you don't have to.</div>
+            </div>
           </div>
-          <div class="process-card" data-step="3">
-            <div class="pcard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/></svg></div>
-            <h3 class="pcard-title">Expert Installation</h3>
-            <p class="pcard-desc">Our skilled crews install your fence with precision craftsmanship, keeping your property clean and respecting your schedule throughout.</p>
+          <div class="pnav-item" data-step="3">
+            <div class="pnav-dot"><div class="pnav-dot-inner"></div></div>
+            <div class="pnav-info">
+              <div class="pnav-num">04</div>
+              <div class="pnav-title">Expert Installation</div>
+              <div class="pnav-desc">Our skilled crews install your fence with precision, keeping your property clean throughout.</div>
+            </div>
           </div>
-          <div class="process-card" data-step="4">
-            <div class="pcard-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>
-            <h3 class="pcard-title">Final Walkthrough</h3>
-            <p class="pcard-desc">We walk every inch of the finished fence together, ensure your complete satisfaction, and review your warranty coverage before we're done.</p>
+          <div class="pnav-item" data-step="4">
+            <div class="pnav-dot"><div class="pnav-dot-inner"></div></div>
+            <div class="pnav-info">
+              <div class="pnav-num">05</div>
+              <div class="pnav-title">Final Walkthrough</div>
+              <div class="pnav-desc">We review every detail together and ensure your complete satisfaction before the job is done.</div>
+            </div>
           </div>
         </div>
       </div>
@@ -1536,8 +1547,8 @@ button { font-family: inherit; cursor: pointer; }
             <rect x="530" y="304" width="5" height="8" fill="#888" rx="1"/>
             <rect x="530" y="338" width="5" height="8" fill="#888" rx="1"/>
             <!-- Gate handle dots -->
-            <circle cx="498" cy="324" r="3" fill="#2563EB"/>
-            <circle cx="502" cy="324" r="3" fill="#2563EB"/>
+            <circle cx="498" cy="324" r="3" fill="#D4A853"/>
+            <circle cx="502" cy="324" r="3" fill="#D4A853"/>
             <!-- Connecting fence sections to gate -->
             <rect x="378" y="296" width="78" height="4" fill="#A0845C" opacity="0.8"/>
             <rect x="378" y="338" width="78" height="4" fill="#A0845C" opacity="0.8"/>
@@ -2075,9 +2086,8 @@ button { font-family: inherit; cursor: pointer; }
 (function() {
   var section = document.querySelector('.process-scroll');
   if (!section) return;
-  var cards = section.querySelectorAll('.process-card');
   var navItems = section.querySelectorAll('.pnav-item');
-  var total = cards.length;
+  var total = navItems.length;
 
   function update() {
     var rect = section.getBoundingClientRect();
@@ -2089,9 +2099,6 @@ button { font-family: inherit; cursor: pointer; }
     var progress = Math.max(0, Math.min(1, scrolled / scrollable));
     var step = Math.min(total - 1, Math.floor(progress * total));
 
-    cards.forEach(function(c, i) {
-      c.classList.toggle('visible', i === step);
-    });
     navItems.forEach(function(n, i) {
       n.classList.toggle('active', i === step);
     });
