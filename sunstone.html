@@ -228,8 +228,13 @@ button { font-family: inherit; cursor: pointer; }
 }
 .hero::before {
   content: ''; position: absolute; inset: 0;
-  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  opacity: 0.5; pointer-events: none;
+  background: url('https://images.unsplash.com/photo-1761347603872-060d6e2debb9?w=1600&q=80') center/cover no-repeat;
+  opacity: 0.25; pointer-events: none;
+}
+.hero::after {
+  content: ''; position: absolute; inset: 0;
+  background: linear-gradient(135deg, rgba(26,26,46,0.92) 0%, rgba(26,26,46,0.7) 50%, rgba(26,26,46,0.85) 100%);
+  pointer-events: none;
 }
 .hero-orb {
   position: absolute; border-radius: 50%; pointer-events: none; z-index: 0;
@@ -322,22 +327,19 @@ button { font-family: inherit; cursor: pointer; }
   max-width: 1200px; margin: 0 auto; padding: 0 24px 48px;
   display: flex; align-items: flex-end; justify-content: space-between; gap: 40px;
 }
-.scroll-arrows { display: flex; gap: 8px; }
-.scroll-arrow {
-  width: 44px; height: 44px; border: 1px solid var(--cream3);
-  background: var(--white); cursor: pointer; display: flex;
-  align-items: center; justify-content: center; transition: all 0.2s;
-}
-.scroll-arrow:hover { border-color: var(--gold); background: var(--cream2); }
-.scroll-arrow svg { color: var(--heading); width: 16px; height: 16px; }
+/* scroll arrows removed — gallery auto-scrolls */
 .gallery-scroll {
-  overflow-x: auto; scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch; scrollbar-width: none;
-  padding: 0 24px 20px; cursor: grab;
+  overflow: hidden; padding: 0 0 20px; position: relative;
 }
-.gallery-scroll::-webkit-scrollbar { display: none; }
-.gallery-scroll:active { cursor: grabbing; }
-.gallery-track { display: flex; gap: 20px; width: max-content; }
+.gallery-track {
+  display: flex; gap: 20px; width: max-content;
+  animation: marqueeScroll 40s linear infinite;
+}
+.gallery-scroll:hover .gallery-track { animation-play-state: paused; }
+@keyframes marqueeScroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
 .gallery-card {
   width: 320px; height: 400px; flex-shrink: 0; scroll-snap-align: start;
   position: relative; overflow: hidden; border: 1px solid var(--cream3);
@@ -351,7 +353,7 @@ button { font-family: inherit; cursor: pointer; }
 .gallery-card:hover .gallery-card-bg { transform: scale(1.05); }
 .gallery-card-overlay {
   position: absolute; inset: 0;
-  background: linear-gradient(180deg, transparent 40%, rgba(26,26,46,0.85) 100%);
+  background: linear-gradient(0deg, rgba(26,26,46,0.9) 0%, rgba(26,26,46,0.4) 40%, transparent 70%);
   z-index: 1;
 }
 .gallery-card-content {
@@ -377,15 +379,15 @@ button { font-family: inherit; cursor: pointer; }
 }
 .gallery-card-arrow svg { color: var(--cream); width: 14px; height: 14px; }
 
-/* Card background gradients (placeholder for real images) */
-.gc-wood    { background: linear-gradient(135deg, #8B6F47 0%, #A0845C 40%, #6B5333 100%); }
-.gc-alum    { background: linear-gradient(135deg, #9CA3AF 0%, #D1D5DB 40%, #6B7280 100%); }
-.gc-vinyl   { background: linear-gradient(135deg, #E8E4DC 0%, #F5F3EE 40%, #CDC8BE 100%); }
-.gc-chain   { background: linear-gradient(135deg, #71717A 0%, #A1A1AA 40%, #52525B 100%); }
-.gc-gate    { background: linear-gradient(135deg, #1A1A2E 0%, #3A3A5E 30%, var(--gold) 90%); }
-.gc-pool    { background: linear-gradient(135deg, #2A9D8F 0%, #3DB5A6 40%, #1A6B60 100%); }
-.gc-pergola { background: linear-gradient(135deg, #92734A 0%, #B8965E 40%, #6B5333 100%); }
-.gc-comm    { background: linear-gradient(135deg, #374151 0%, #4B5563 40%, #1F2937 100%); }
+/* Card backgrounds — stock images with color tint */
+.gc-wood    { background: url('https://images.unsplash.com/photo-1597766084110-eabee06c4610?w=800&q=80') center/cover, linear-gradient(135deg, #8B6F47, #6B5333); }
+.gc-alum    { background: url('https://images.unsplash.com/photo-1526665907895-e32a02a3a039?w=800&q=80') center/cover, linear-gradient(135deg, #9CA3AF, #6B7280); }
+.gc-vinyl   { background: url('https://images.unsplash.com/photo-1710706665973-cea15dded285?w=800&q=80') center/cover, linear-gradient(135deg, #E8E4DC, #CDC8BE); }
+.gc-chain   { background: url('https://images.unsplash.com/photo-1615148304299-0d84ba28e57a?w=800&q=80') center/cover, linear-gradient(135deg, #71717A, #52525B); }
+.gc-gate    { background: url('https://images.unsplash.com/photo-1755253112764-91226d5386d0?w=800&q=80') center/cover, linear-gradient(135deg, #1A1A2E, var(--gold)); }
+.gc-pool    { background: url('https://images.unsplash.com/photo-1559341709-f13b9686dbf7?w=800&q=80') center/cover, linear-gradient(135deg, #2A9D8F, #1A6B60); }
+.gc-pergola { background: url('https://images.unsplash.com/photo-1533299152541-78be0667d773?w=800&q=80') center/cover, linear-gradient(135deg, #92734A, #6B5333); }
+.gc-comm    { background: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800&q=80') center/cover, linear-gradient(135deg, #374151, #1F2937); }
 
 /* ─── FENCE EXPLORER (TABS) ──────────────────────────────────────────────── */
 .explorer-section { padding: 120px 0; background: var(--white); }
@@ -531,12 +533,13 @@ button { font-family: inherit; cursor: pointer; }
   position: absolute; inset: 0; display: flex;
   align-items: center; justify-content: center;
 }
+.ba-svg { position: absolute; inset: 0; width: 100%; height: 100%; }
 .ba-before {
-  background: linear-gradient(135deg, #C5CCD3 0%, #D4DDE5 30%, #E8EDEF 60%, #B8C4CC 100%);
+  background: #D4E8F0;
   z-index: 1;
 }
 .ba-after {
-  background: linear-gradient(135deg, var(--charcoal) 0%, #2D3A4E 30%, var(--teal) 60%, var(--charcoal) 100%);
+  background: #D4E8F0;
   clip-path: inset(0 50% 0 0);
   z-index: 2;
 }
@@ -936,14 +939,7 @@ button { font-family: inherit; cursor: pointer; }
       <h2 class="section-title">Crafted for <em>Every</em> Property</h2>
       <p class="section-desc">Explore our range of premium fencing solutions, each tailored to the unique demands of Florida living.</p>
     </div>
-    <div class="scroll-arrows">
-      <button class="scroll-arrow" id="scrollLeft" aria-label="Scroll left">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
-      </button>
-      <button class="scroll-arrow" id="scrollRight" aria-label="Scroll right">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>
-      </button>
-    </div>
+    <!-- auto-scrolling gallery -->
   </div>
   <div class="gallery-scroll" id="galleryScroll">
     <div class="gallery-track">
@@ -1018,6 +1014,47 @@ button { font-family: inherit; cursor: pointer; }
           <div class="gallery-card-sub">Security & compliance</div>
         </div>
         <div class="gallery-card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17L17 7"/><path d="M7 7h10v10"/></svg></div>
+      </div>
+      <!-- DUPLICATE SET for seamless loop -->
+      <div class="gallery-card" aria-hidden="true">
+        <div class="gallery-card-bg gc-wood"></div>
+        <div class="gallery-card-overlay"></div>
+        <div class="gallery-card-content"><div class="gallery-card-title">Wood Privacy</div><div class="gallery-card-sub">Classic beauty & seclusion</div></div>
+      </div>
+      <div class="gallery-card" aria-hidden="true">
+        <div class="gallery-card-bg gc-alum"></div>
+        <div class="gallery-card-overlay"></div>
+        <div class="gallery-card-content"><div class="gallery-card-title">Aluminum Ornamental</div><div class="gallery-card-sub">Elegance without maintenance</div></div>
+      </div>
+      <div class="gallery-card" aria-hidden="true">
+        <div class="gallery-card-bg gc-vinyl"></div>
+        <div class="gallery-card-overlay"></div>
+        <div class="gallery-card-content"><div class="gallery-card-title">Vinyl</div><div class="gallery-card-sub">Durable Florida-proof fencing</div></div>
+      </div>
+      <div class="gallery-card" aria-hidden="true">
+        <div class="gallery-card-bg gc-chain"></div>
+        <div class="gallery-card-overlay"></div>
+        <div class="gallery-card-content"><div class="gallery-card-title">Chain-Link</div><div class="gallery-card-sub">Reliable & cost-effective</div></div>
+      </div>
+      <div class="gallery-card" aria-hidden="true">
+        <div class="gallery-card-bg gc-gate"></div>
+        <div class="gallery-card-overlay"></div>
+        <div class="gallery-card-content"><div class="gallery-card-title">Custom Gates</div><div class="gallery-card-sub">Grand entrances, designed for you</div></div>
+      </div>
+      <div class="gallery-card" aria-hidden="true">
+        <div class="gallery-card-bg gc-pool"></div>
+        <div class="gallery-card-overlay"></div>
+        <div class="gallery-card-content"><div class="gallery-card-title">Pool Enclosures</div><div class="gallery-card-sub">Safety meets Florida style</div></div>
+      </div>
+      <div class="gallery-card" aria-hidden="true">
+        <div class="gallery-card-bg gc-pergola"></div>
+        <div class="gallery-card-overlay"></div>
+        <div class="gallery-card-content"><div class="gallery-card-title">Pergolas</div><div class="gallery-card-sub">Outdoor living, elevated</div></div>
+      </div>
+      <div class="gallery-card" aria-hidden="true">
+        <div class="gallery-card-bg gc-comm"></div>
+        <div class="gallery-card-overlay"></div>
+        <div class="gallery-card-content"><div class="gallery-card-title">Commercial</div><div class="gallery-card-sub">Security & compliance</div></div>
       </div>
     </div>
   </div>
@@ -1304,11 +1341,121 @@ button { font-family: inherit; cursor: pointer; }
     <div class="ba-wrapper reveal reveal-delay-1" id="baSlider">
       <div class="ba-before">
         <span class="ba-label-tag ba-label-before">Before</span>
-        <span class="ba-placeholder-text">Your property before SunStone</span>
+        <svg class="ba-svg" viewBox="0 0 1200 480" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+          <!-- Sky -->
+          <defs><linearGradient id="sky1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#87CEEB"/><stop offset="100%" stop-color="#D4E8F0"/></linearGradient></defs>
+          <rect width="1200" height="480" fill="url(#sky1)"/>
+          <!-- Sun -->
+          <circle cx="200" cy="80" r="50" fill="#FDE68A" opacity="0.8"/>
+          <!-- Clouds -->
+          <g fill="white" opacity="0.7"><ellipse cx="400" cy="70" rx="60" ry="20"/><ellipse cx="440" cy="60" rx="40" ry="18"/><ellipse cx="800" cy="100" rx="50" ry="16"/><ellipse cx="840" cy="92" rx="35" ry="14"/></g>
+          <!-- Ground -->
+          <rect x="0" y="300" width="1200" height="180" fill="#7CB342"/>
+          <rect x="0" y="300" width="1200" height="12" fill="#8BC34A"/>
+          <!-- House -->
+          <rect x="400" y="160" width="400" height="180" fill="#E8D5B7" stroke="#C4A882" stroke-width="2"/>
+          <!-- Roof -->
+          <polygon points="380,160 600,60 820,160" fill="#8B6F47" stroke="#6B5333" stroke-width="2"/>
+          <!-- Door -->
+          <rect x="565" y="250" width="70" height="90" fill="#6B5333" rx="2"/><circle cx="625" cy="300" r="4" fill="#D4A853"/>
+          <!-- Windows -->
+          <rect x="440" y="200" width="60" height="50" fill="#B8D4E3" stroke="#A0845C" stroke-width="2" rx="2"/>
+          <rect x="700" y="200" width="60" height="50" fill="#B8D4E3" stroke="#A0845C" stroke-width="2" rx="2"/>
+          <!-- Bare yard — no fence, just grass patches -->
+          <ellipse cx="250" cy="380" rx="80" ry="8" fill="#6DAA3A" opacity="0.5"/>
+          <ellipse cx="900" cy="360" rx="60" ry="6" fill="#6DAA3A" opacity="0.5"/>
+          <!-- Scattered weeds -->
+          <g stroke="#5C8A2F" stroke-width="2" fill="none" opacity="0.6"><path d="M150,340 Q155,320 148,310"/><path d="M155,340 Q160,315 165,310"/><path d="M950,350 Q955,330 948,325"/><path d="M955,350 Q960,325 965,320"/></g>
+          <!-- Tree (bare) -->
+          <rect x="100" y="260" width="16" height="80" fill="#8B6F47"/>
+          <circle cx="108" cy="240" r="40" fill="#66BB6A" opacity="0.8"/>
+          <circle cx="130" cy="250" r="30" fill="#4CAF50" opacity="0.7"/>
+          <!-- Driveway -->
+          <rect x="540" y="340" width="120" height="140" fill="#B0A89A" rx="2"/>
+        </svg>
       </div>
       <div class="ba-after" id="baAfter">
         <span class="ba-label-tag ba-label-after">After</span>
-        <span class="ba-placeholder-text">Transformed with SunStone fencing</span>
+        <svg class="ba-svg" viewBox="0 0 1200 480" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+          <!-- Sky -->
+          <defs><linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#87CEEB"/><stop offset="100%" stop-color="#D4E8F0"/></linearGradient></defs>
+          <rect width="1200" height="480" fill="url(#sky2)"/>
+          <!-- Sun -->
+          <circle cx="200" cy="80" r="50" fill="#FDE68A" opacity="0.8"/>
+          <!-- Clouds -->
+          <g fill="white" opacity="0.7"><ellipse cx="400" cy="70" rx="60" ry="20"/><ellipse cx="440" cy="60" rx="40" ry="18"/><ellipse cx="800" cy="100" rx="50" ry="16"/><ellipse cx="840" cy="92" rx="35" ry="14"/></g>
+          <!-- Ground (nicer lawn) -->
+          <rect x="0" y="300" width="1200" height="180" fill="#66BB6A"/>
+          <rect x="0" y="300" width="1200" height="12" fill="#81C784"/>
+          <!-- House (same) -->
+          <rect x="400" y="160" width="400" height="180" fill="#E8D5B7" stroke="#C4A882" stroke-width="2"/>
+          <polygon points="380,160 600,60 820,160" fill="#8B6F47" stroke="#6B5333" stroke-width="2"/>
+          <rect x="565" y="250" width="70" height="90" fill="#6B5333" rx="2"/><circle cx="625" cy="300" r="4" fill="#D4A853"/>
+          <rect x="440" y="200" width="60" height="50" fill="#B8D4E3" stroke="#A0845C" stroke-width="2" rx="2"/>
+          <rect x="700" y="200" width="60" height="50" fill="#B8D4E3" stroke="#A0845C" stroke-width="2" rx="2"/>
+          <!-- FENCE — wood privacy fence across the yard -->
+          <g id="fence">
+            <!-- Fence posts (vertical) -->
+            <rect x="50" y="290" width="8" height="70" fill="#8B6F47" stroke="#6B5333" stroke-width="1"/>
+            <rect x="130" y="290" width="8" height="70" fill="#8B6F47" stroke="#6B5333" stroke-width="1"/>
+            <rect x="210" y="290" width="8" height="70" fill="#8B6F47" stroke="#6B5333" stroke-width="1"/>
+            <rect x="290" y="290" width="8" height="70" fill="#8B6F47" stroke="#6B5333" stroke-width="1"/>
+            <rect x="370" y="290" width="8" height="70" fill="#8B6F47" stroke="#6B5333" stroke-width="1"/>
+            <!-- Post caps -->
+            <rect x="47" y="286" width="14" height="6" fill="#A0845C" rx="1"/>
+            <rect x="127" y="286" width="14" height="6" fill="#A0845C" rx="1"/>
+            <rect x="207" y="286" width="14" height="6" fill="#A0845C" rx="1"/>
+            <rect x="287" y="286" width="14" height="6" fill="#A0845C" rx="1"/>
+            <rect x="367" y="286" width="14" height="6" fill="#A0845C" rx="1"/>
+            <!-- Horizontal rails -->
+            <rect x="50" y="300" width="328" height="5" fill="#A0845C"/>
+            <rect x="50" y="340" width="328" height="5" fill="#A0845C"/>
+            <!-- Pickets (boards between posts) -->
+            <g fill="#C4A882" stroke="#B09A78" stroke-width="0.5">
+              <rect x="60" y="292" width="12" height="66" rx="1"/><rect x="76" y="292" width="12" height="66" rx="1"/><rect x="92" y="292" width="12" height="66" rx="1"/><rect x="108" y="292" width="12" height="66" rx="1"/><rect x="124" y="292" width="12" height="66" rx="1"/>
+              <rect x="140" y="292" width="12" height="66" rx="1"/><rect x="156" y="292" width="12" height="66" rx="1"/><rect x="172" y="292" width="12" height="66" rx="1"/><rect x="188" y="292" width="12" height="66" rx="1"/><rect x="204" y="292" width="12" height="66" rx="1"/>
+              <rect x="220" y="292" width="12" height="66" rx="1"/><rect x="236" y="292" width="12" height="66" rx="1"/><rect x="252" y="292" width="12" height="66" rx="1"/><rect x="268" y="292" width="12" height="66" rx="1"/><rect x="284" y="292" width="12" height="66" rx="1"/>
+              <rect x="300" y="292" width="12" height="66" rx="1"/><rect x="316" y="292" width="12" height="66" rx="1"/><rect x="332" y="292" width="12" height="66" rx="1"/><rect x="348" y="292" width="12" height="66" rx="1"/><rect x="364" y="292" width="12" height="66" rx="1"/>
+            </g>
+            <!-- Right side fence -->
+            <rect x="820" y="290" width="8" height="70" fill="#8B6F47" stroke="#6B5333" stroke-width="1"/>
+            <rect x="900" y="290" width="8" height="70" fill="#8B6F47" stroke="#6B5333" stroke-width="1"/>
+            <rect x="980" y="290" width="8" height="70" fill="#8B6F47" stroke="#6B5333" stroke-width="1"/>
+            <rect x="1060" y="290" width="8" height="70" fill="#8B6F47" stroke="#6B5333" stroke-width="1"/>
+            <rect x="1140" y="290" width="8" height="70" fill="#8B6F47" stroke="#6B5333" stroke-width="1"/>
+            <rect x="817" y="286" width="14" height="6" fill="#A0845C" rx="1"/>
+            <rect x="897" y="286" width="14" height="6" fill="#A0845C" rx="1"/>
+            <rect x="977" y="286" width="14" height="6" fill="#A0845C" rx="1"/>
+            <rect x="1057" y="286" width="14" height="6" fill="#A0845C" rx="1"/>
+            <rect x="1137" y="286" width="14" height="6" fill="#A0845C" rx="1"/>
+            <rect x="820" y="300" width="328" height="5" fill="#A0845C"/>
+            <rect x="820" y="340" width="328" height="5" fill="#A0845C"/>
+            <g fill="#C4A882" stroke="#B09A78" stroke-width="0.5">
+              <rect x="830" y="292" width="12" height="66" rx="1"/><rect x="846" y="292" width="12" height="66" rx="1"/><rect x="862" y="292" width="12" height="66" rx="1"/><rect x="878" y="292" width="12" height="66" rx="1"/><rect x="894" y="292" width="12" height="66" rx="1"/>
+              <rect x="910" y="292" width="12" height="66" rx="1"/><rect x="926" y="292" width="12" height="66" rx="1"/><rect x="942" y="292" width="12" height="66" rx="1"/><rect x="958" y="292" width="12" height="66" rx="1"/><rect x="974" y="292" width="12" height="66" rx="1"/>
+              <rect x="990" y="292" width="12" height="66" rx="1"/><rect x="1006" y="292" width="12" height="66" rx="1"/><rect x="1022" y="292" width="12" height="66" rx="1"/><rect x="1038" y="292" width="12" height="66" rx="1"/><rect x="1054" y="292" width="12" height="66" rx="1"/>
+              <rect x="1070" y="292" width="12" height="66" rx="1"/><rect x="1086" y="292" width="12" height="66" rx="1"/><rect x="1102" y="292" width="12" height="66" rx="1"/><rect x="1118" y="292" width="12" height="66" rx="1"/><rect x="1134" y="292" width="12" height="66" rx="1"/>
+            </g>
+            <!-- Gate in the middle -->
+            <rect x="540" y="290" width="4" height="70" fill="#6B5333"/>
+            <rect x="656" y="290" width="4" height="70" fill="#6B5333"/>
+            <rect x="537" y="286" width="10" height="6" fill="#A0845C" rx="1"/>
+            <rect x="653" y="286" width="10" height="6" fill="#A0845C" rx="1"/>
+            <rect x="544" y="298" width="56" height="56" fill="none" stroke="#C4A882" stroke-width="3" rx="2"/>
+            <rect x="600" y="298" width="56" height="56" fill="none" stroke="#C4A882" stroke-width="3" rx="2"/>
+            <circle cx="598" cy="326" r="3" fill="#D4A853"/><circle cx="602" cy="326" r="3" fill="#D4A853"/>
+          </g>
+          <!-- Nice landscaping -->
+          <circle cx="108" cy="240" r="45" fill="#4CAF50" opacity="0.85"/>
+          <circle cx="135" cy="250" r="32" fill="#66BB6A" opacity="0.8"/>
+          <rect x="100" y="260" width="16" height="80" fill="#8B6F47"/>
+          <!-- Flowers along fence -->
+          <g fill="#E91E63" opacity="0.8"><circle cx="80" cy="355" r="4"/><circle cx="100" cy="352" r="3.5"/><circle cx="120" cy="356" r="4"/><circle cx="160" cy="354" r="3"/><circle cx="200" cy="353" r="4"/><circle cx="240" cy="355" r="3.5"/><circle cx="860" cy="354" r="4"/><circle cx="900" cy="352" r="3.5"/><circle cx="940" cy="355" r="4"/><circle cx="1000" cy="353" r="3"/></g>
+          <g fill="#4CAF50" opacity="0.6"><ellipse cx="80" cy="358" rx="6" ry="3"/><ellipse cx="120" cy="359" rx="5" ry="3"/><ellipse cx="200" cy="356" rx="6" ry="3"/><ellipse cx="860" cy="357" rx="6" ry="3"/><ellipse cx="940" cy="358" rx="5" ry="3"/></g>
+          <!-- Driveway (nicer) -->
+          <rect x="540" y="360" width="120" height="120" fill="#C4B5A0" rx="2"/>
+          <rect x="542" y="362" width="116" height="116" fill="none" stroke="#B0A089" stroke-width="1" rx="2"/>
+        </svg>
       </div>
       <div class="ba-handle" id="baHandle"></div>
       <div class="ba-handle-circle" id="baCircle">
@@ -1756,32 +1903,7 @@ button { font-family: inherit; cursor: pointer; }
   }
 })();
 
-/* ─── GALLERY SCROLL & DRAG ─────────────────────────────────────────────── */
-(function() {
-  var scroll = document.getElementById('galleryScroll');
-  var leftBtn = document.getElementById('scrollLeft');
-  var rightBtn = document.getElementById('scrollRight');
-  leftBtn.addEventListener('click', function() {
-    scroll.scrollBy({ left: -340, behavior: 'smooth' });
-  });
-  rightBtn.addEventListener('click', function() {
-    scroll.scrollBy({ left: 340, behavior: 'smooth' });
-  });
-  // Drag to scroll
-  var isDown = false, startX, scrollLeft;
-  scroll.addEventListener('mousedown', function(e) {
-    isDown = true; startX = e.pageX - scroll.offsetLeft;
-    scrollLeft = scroll.scrollLeft;
-  });
-  scroll.addEventListener('mouseleave', function() { isDown = false; });
-  scroll.addEventListener('mouseup', function() { isDown = false; });
-  scroll.addEventListener('mousemove', function(e) {
-    if (!isDown) return;
-    e.preventDefault();
-    var x = e.pageX - scroll.offsetLeft;
-    scroll.scrollLeft = scrollLeft - (x - startX) * 1.5;
-  });
-})();
+/* Gallery is now CSS marquee animation — no JS needed */
 
 /* ─── FENCE EXPLORER TABS ────────────────────────────────────────────────── */
 (function() {
