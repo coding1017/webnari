@@ -451,7 +451,7 @@ footer{border-top:1px solid var(--border);padding:48px}
     <p class="hero-sub">We design, build, and manage immersive websites with scroll-driven effects, e-commerce, and SEO that ranks. One monthly rate.</p>
     <div class="hero-ctas">
       <a href="start.html" class="btn-hero btn-hero-primary" style="text-decoration:none;display:inline-block">Start your project</a>
-      <button class="btn-hero btn-hero-ghost" onclick="(window.innerWidth<=900?document.getElementById('mob-showcase'):document.getElementById('showcase')).scrollIntoView({behavior:'smooth'})">See our work</button>
+      <a href="#our-work" class="btn-hero btn-hero-ghost" style="text-decoration:none;display:inline-block">See our work</a>
     </div>
   </div>
   <div class="hero-scroll" id="hero-scroll">
@@ -1082,10 +1082,14 @@ function initOrb(){
     if(Math.sqrt(dx*dx+dy*dy+dz*dz)<.35)edges.push([i,j]);
   }
 
-  // Pulse waves — gold → blue back to back, quick fire
+  // Pulse waves — continuous gold→blue→gold→blue, no gaps
   const pulses=[];
   let pulseIdx=0;
-  setInterval(()=>{if(pulses.length<8){const h=pulseIdx%2;pulses.push({y:-1.4,speed:.022+Math.random()*.008,hue:h});pulseIdx++}},300);
+  function spawnPulse(){
+    if(pulses.length<12){pulses.push({y:-1.4,speed:.025,hue:pulseIdx%2});pulseIdx++}
+    setTimeout(spawnPulse,180);
+  }
+  spawnPulse();
 
   // Satellites — 33 with wide spread in all directions
   const sats=[];
