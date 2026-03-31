@@ -1,49 +1,31 @@
 'use client';
 
 import Link from 'next/link';
-import { useRef, useCallback } from 'react';
+// Clean hover lift + gold glow (no 3D tilt)
 import { formatPrice } from '@/lib/utils';
 import { getLowestPrice, getAvailableSizes } from '@/lib/data';
 import { ConditionBadge } from './ConditionBadge';
+import { WishlistButton } from '@/components/wishlist/WishlistButton';
 import type { ProductWithDetails } from '@/types/product';
 
 export function ProductCard({ product, index = 0 }: { product: ProductWithDetails; index?: number }) {
-  const cardRef = useRef<HTMLDivElement>(null);
-
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    const el = cardRef.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-    const rotateX = ((y - centerY) / centerY) * -6;
-    const rotateY = ((x - centerX) / centerX) * 6;
-    el.style.transform = `perspective(800px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.02)`;
-    el.style.boxShadow = `${-rotateY * 2}px ${rotateX * 2}px 30px rgba(212, 98, 42, 0.12)`;
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    const el = cardRef.current;
-    if (!el) return;
-    el.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) scale(1)';
-    el.style.boxShadow = 'none';
-  }, []);
 
   const lowestPrice = getLowestPrice(product);
   const sizes = getAvailableSizes(product);
   const primaryImage = product.images.find(i => i.isPrimary) || product.images[0];
   const bestCondition = product.inventory.find(i => i.isActive && i.quantity > 0);
+  const totalStock = product.inventory.filter(i => i.isActive).reduce((sum, i) => sum + i.quantity, 0);
+  const isSoldOut = totalStock === 0;
 
   return (
-    <Link href={`/product/${product.slug}`} className="block">
+    <Link href={`/product/${product.slug}`} className={`block ${isSoldOut ? 'pointer-events-none' : ''}`}>
       <div
-        ref={cardRef}
-        onMouseMove={handleMouseMove}
-        onMouseLeave={handleMouseLeave}
-        className="bg-bcs-surface rounded-xl overflow-hidden border border-bcs-border hover:border-bcs-border2 transition-all duration-300 will-change-transform"
-        style={{ transitionProperty: 'border-color', animationDelay: `${index * 0.05}s` }}
+        className={`bg-bcs-surface rounded-xl overflow-hidden border-[3px] transition-all duration-300 shadow-[0_2px_12px_rgba(184,137,42,0.1)] ${
+          isSoldOut
+            ? 'border-bcs-border opacity-60 grayscale'
+            : 'border-bcs-gold/50 hover:border-bcs-gold hover:-translate-y-2 hover:shadow-[0_10px_40px_rgba(184,137,42,0.35),0_0_20px_rgba(184,137,42,0.15)]'
+        }`}
+        style={{ animationDelay: `${index * 0.05}s` }}
       >
         {/* Image */}
         <div className="relative aspect-square bg-bcs-surface2 overflow-hidden">
@@ -67,8 +49,24 @@ export function ProductCard({ product, index = 0 }: { product: ProductWithDetail
             )}
           </div>
 
-          {/* Auth badge */}
-          <div className="absolute top-3 right-3">
+          {/* Stock indicator */}
+          {isSoldOut ? (
+            <div className="absolute bottom-3 left-3">
+              <span className="text-[10px] font-bold uppercase tracking-wider bg-red-600 text-white px-2 py-0.5 rounded-full">
+                Sold Out
+              </span>
+            </div>
+          ) : totalStock <= 2 ? (
+            <div className="absolute bottom-3 left-3">
+              <span className="text-[10px] font-bold uppercase tracking-wider bg-orange-500 text-bcs-black px-2 py-0.5 rounded-full">
+                Only {totalStock} left
+              </span>
+            </div>
+          ) : null}
+
+          {/* Wishlist + Auth badges */}
+          <div className="absolute top-3 right-3 flex flex-col gap-1.5 items-center">
+            <WishlistButton productSlug={product.slug} size="sm" />
             <div className="w-6 h-6 rounded-full bg-bcs-forest/20 flex items-center justify-center" title="Authenticated">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#3D9A5F" strokeWidth="3">
                 <path d="M20 6L9 17l-5-5" />

@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: 'About',
-  description: 'Learn about Bridge City Soles — Portland\'s premier sneaker destination, founded by Angel Bibiano.',
+  description: "Learn about Bridge City Soles -- Portland's premier sneaker destination, founded by Angel Bibiano.",
 };
 
 export default function AboutPage() {
@@ -71,8 +71,8 @@ export default function AboutPage() {
             Come Visit <span className="text-bcs-teal">Us</span>
           </h2>
           <p className="text-bcs-text mb-6">
-            3200 SE Hawthorne Blvd, Portland, OR 97214<br />
-            Mon–Sat: 10AM–8PM &bull; Sun: 11AM–6PM
+            Portland, OR &bull; Now Online<br />
+            Shop Online 24/7 &bull; @bridgecitysolesportland
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <Link

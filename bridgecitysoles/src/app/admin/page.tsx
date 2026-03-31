@@ -26,7 +26,7 @@ export default function AdminDashboard() {
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {[
-          { label: 'Products', value: totalProducts, color: '#6B3FA0' },
+          { label: 'Products', value: totalProducts, color: '#B8892A' },
           { label: 'SKUs', value: totalInventory, color: '#3B82F6' },
           { label: 'Total Units', value: totalUnits, color: '#8B5CF6' },
           { label: 'Inventory Value', value: formatPrice(totalValue), color: '#D4A853' },

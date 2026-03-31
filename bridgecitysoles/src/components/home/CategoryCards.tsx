@@ -50,9 +50,12 @@ export function CategoryCards() {
             <Link
               key={cat.slug}
               href={`/shop?category=${cat.slug}`}
-              className="group relative flex flex-col items-center justify-center py-12 px-6 bg-bcs-surface rounded-xl border border-bcs-border hover:border-bcs-rust/30 transition-all duration-400 warm-glow"
+              className="group relative flex flex-col items-center justify-center py-12 px-6 rounded-xl border-[3px] border-bcs-gold/50 hover:border-bcs-gold transition-all duration-300 hover:-translate-y-2 shadow-[0_2px_12px_rgba(184,137,42,0.1)] hover:shadow-[0_10px_40px_rgba(184,137,42,0.35),0_0_20px_rgba(184,137,42,0.15)] overflow-hidden"
+              style={{ background: 'linear-gradient(135deg, rgba(184,137,42,0.35), rgba(212,166,58,0.4), rgba(77,168,218,0.28))' }}
             >
-              <div className="w-16 h-16 rounded-full bg-bcs-rust/10 flex items-center justify-center mb-4 text-bcs-rust group-hover:bg-bcs-rust/20 transition-colors duration-300">
+              {/* Even richer on hover */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: 'linear-gradient(135deg, rgba(184,137,42,0.5), rgba(212,166,58,0.55), rgba(77,168,218,0.4))' }} />
+              <div className="relative w-16 h-16 rounded-full bg-white/60 flex items-center justify-center mb-4 text-bcs-rust group-hover:bg-white/80 transition-colors duration-300">
                 {cat.icon}
               </div>
               <h3 className="font-[family-name:var(--font-barlow-condensed)] text-xl font-bold uppercase tracking-wide mb-1">

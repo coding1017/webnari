@@ -6,6 +6,7 @@ export const conditions: Condition[] = [
   { id: 'cn3', name: 'Excellent', slug: 'excellent', color: '#6B3FA0', description: 'Worn 1-3 times. Minimal signs of wear, original box included.' },
   { id: 'cn4', name: 'Very Good', slug: 'very-good', color: '#C9982E', description: 'Light wear. Minor creasing, clean soles, may or may not include box.' },
   { id: 'cn5', name: 'Good', slug: 'good', color: '#D07030', description: 'Moderate wear. Visible creasing, some sole wear, cleaned and presentable.' },
+
 ];
 
 export const SNEAKER_SIZES = [

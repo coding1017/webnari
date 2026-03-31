@@ -1,12 +1,13 @@
+'use client';
+
 import Link from 'next/link';
 import { brands } from '@/data/brands';
 
 export function BrandsSection() {
-  // Double the brands for seamless loop
   const doubled = [...brands, ...brands];
 
   return (
-    <section className="py-10 border-y border-bcs-border/50 bg-bcs-dark/50 overflow-hidden">
+    <section className="py-10 border-y border-bcs-gold/20 bg-bcs-dark/50 overflow-hidden">
       <div className="relative">
         {/* Fade edges */}
         <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-bcs-dark/50 to-transparent z-10" />
@@ -18,7 +19,15 @@ export function BrandsSection() {
             <Link
               key={`${brand.id}-${i}`}
               href={`/shop?brand=${brand.slug}`}
-              className="mx-8 sm:mx-12 flex-shrink-0 text-bcs-muted hover:text-bcs-rust transition-colors duration-300 font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-3xl font-black uppercase tracking-wider"
+              className="mx-8 sm:mx-12 flex-shrink-0 font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-3xl font-black uppercase tracking-wider transition-all duration-300 hover:scale-110"
+              style={{
+                background: 'linear-gradient(135deg, #B8892A, #4DA8DA)',
+                WebkitBackgroundClip: 'text',
+                backgroundClip: 'text',
+                color: 'transparent',
+                animation: `brand-glow ${2.5 + (i % 3) * 0.5}s ease-in-out infinite`,
+                animationDelay: `${(i * 0.4) % 3}s`,
+              }}
             >
               {brand.name}
             </Link>

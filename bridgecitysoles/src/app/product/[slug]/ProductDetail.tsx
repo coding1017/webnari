@@ -7,6 +7,10 @@ import { SNEAKER_SIZES, CLOTHING_SIZES } from '@/data/conditions';
 import { ImageGallery } from '@/components/product/ImageGallery';
 import { SizeSelector } from '@/components/product/SizeSelector';
 import { PriceDisplay } from '@/components/product/PriceDisplay';
+import { ReviewsSection } from '@/components/product/ReviewsSection';
+import { RelatedProducts } from '@/components/product/RelatedProducts';
+import { ShareButtons } from '@/components/product/ShareButtons';
+import { WishlistButton } from '@/components/wishlist/WishlistButton';
 import { useCart } from '@/components/cart/CartProvider';
 import { formatPrice, cn } from '@/lib/utils';
 
@@ -85,9 +89,12 @@ export function ProductDetail({ slug }: { slug: string }) {
             {product.brand.name}
           </Link>
 
-          <h1 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-3xl font-black uppercase leading-tight">
-            {product.name}
-          </h1>
+          <div className="flex items-start gap-3">
+            <h1 className="font-[family-name:var(--font-barlow-condensed)] text-2xl sm:text-3xl font-black uppercase leading-tight flex-1">
+              {product.name}
+            </h1>
+            <WishlistButton productSlug={product.slug} size="md" />
+          </div>
 
           <div className="flex flex-wrap gap-4 text-sm text-bcs-text">
             {product.styleCode && (
@@ -161,13 +168,13 @@ export function ProductDetail({ slug }: { slug: string }) {
               <span className="text-xs text-bcs-text">100% Authentic</span>
             </div>
             <div className="flex items-center gap-2 px-3 py-2.5 bg-bcs-surface rounded-lg">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B3FA0" strokeWidth="2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B8892A" strokeWidth="2">
                 <path d="M20 6L9 17l-5-5" />
               </svg>
               <span className="text-xs text-bcs-text">Verified by BCS</span>
             </div>
             <div className="flex items-center gap-2 px-3 py-2.5 bg-bcs-surface rounded-lg">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B3FA0" strokeWidth="2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B8892A" strokeWidth="2">
                 <rect x="1" y="3" width="15" height="13" rx="2" />
                 <path d="M16 8h4a2 2 0 012 2v6a2 2 0 01-2 2h-4" />
                 <circle cx="5.5" cy="18.5" r="2.5" />
@@ -176,13 +183,15 @@ export function ProductDetail({ slug }: { slug: string }) {
               <span className="text-xs text-bcs-text">Fast Shipping</span>
             </div>
             <div className="flex items-center gap-2 px-3 py-2.5 bg-bcs-surface rounded-lg">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#6B3FA0" strokeWidth="2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B8892A" strokeWidth="2">
                 <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
                 <path d="M9 22V12h6v10" />
               </svg>
               <span className="text-xs text-bcs-text">In-Store Pickup</span>
             </div>
           </div>
+
+          <ShareButtons productName={product.name} productSlug={product.slug} />
 
           {product.description && (
             <div className="pt-4 border-t border-bcs-border">
@@ -192,6 +201,11 @@ export function ProductDetail({ slug }: { slug: string }) {
           )}
         </div>
       </div>
+      {/* Related Products */}
+      <RelatedProducts currentProduct={product} />
+
+      {/* Reviews */}
+      <ReviewsSection productSlug={product.slug} />
     </div>
   );
 }

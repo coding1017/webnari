@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
 import { Inter, Barlow_Condensed } from "next/font/google";
 import { CartProvider } from "@/components/cart/CartProvider";
+import { WishlistProvider } from "@/components/wishlist/WishlistProvider";
+import { AnnouncementBar } from "@/components/layout/AnnouncementBar";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { CartDrawer } from "@/components/cart/CartDrawer";
 import { Toast } from "@/components/ui/Toast";
+import { BackToTop } from "@/components/ui/BackToTop";
 import "./globals.css";
 
 const inter = Inter({
@@ -59,11 +62,15 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-bcs-black text-bcs-white font-[family-name:var(--font-inter)]">
         <CartProvider>
-          <Navbar />
-          <main className="flex-1">{children}</main>
-          <Footer />
-          <CartDrawer />
-          <Toast />
+          <WishlistProvider>
+            <AnnouncementBar />
+            <Navbar />
+            <main className="flex-1">{children}</main>
+            <Footer />
+            <CartDrawer />
+            <Toast />
+            <BackToTop />
+          </WishlistProvider>
         </CartProvider>
       </body>
     </html>

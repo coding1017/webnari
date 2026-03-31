@@ -3,12 +3,14 @@
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
 import { useCart } from '@/components/cart/CartProvider';
+import { InlineSearch } from './SearchOverlay';
 import { cn } from '@/lib/utils';
 
 const NAV_LINKS = [
   { href: '/shop', label: 'Shop' },
   { href: '/about', label: 'About' },
-  { href: '/store', label: 'Store' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/glossary', label: 'Glossary' },
   { href: '/contact', label: 'Contact' },
 ];
 
@@ -43,9 +45,7 @@ export function Navbar() {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-bcs-rust to-bcs-rust2 flex items-center justify-center text-bcs-black font-bold text-sm shadow-md shadow-bcs-rust/20">
-            B
-          </div>
+          <img src="/images/bcs-logo.jpg" alt="Bridge City Soles" className="w-8 h-8 rounded-lg object-cover shadow-md" />
           <div className="font-[family-name:var(--font-barlow-condensed)] font-bold uppercase tracking-wider">
             <span className="text-bcs-white group-hover:text-bcs-rust transition-colors duration-300">Bridge City</span>{' '}
             <span className="text-bcs-rust">Soles</span>
@@ -68,17 +68,8 @@ export function Navbar() {
 
         {/* Right side */}
         <div className="flex items-center gap-3">
-          {/* Search (desktop) */}
-          <Link
-            href="/shop"
-            className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-lg bg-bcs-surface/80 border border-bcs-border text-bcs-muted text-sm hover:border-bcs-rust/30 hover:text-bcs-text transition-all duration-300"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="11" cy="11" r="8" />
-              <path d="M21 21l-4.35-4.35" />
-            </svg>
-            Search
-          </Link>
+          {/* Search */}
+          <InlineSearch />
 
           {/* Cart */}
           <button

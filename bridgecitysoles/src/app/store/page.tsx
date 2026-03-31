@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Store Location',
-  description: 'Visit Bridge City Soles at 3200 SE Hawthorne Blvd, Portland, OR 97214. Open Mon-Sat 10AM-8PM, Sun 11AM-6PM.',
+  description: "Bridge City Soles PDX - Portland's trusted source for authentic sneakers and streetwear. Now online.",
 };
 
 export default function StorePage() {
@@ -34,15 +34,15 @@ export default function StorePage() {
         <div className="space-y-6">
           <div className="bg-bcs-surface rounded-xl border border-bcs-border p-6">
             <h2 className="font-[family-name:var(--font-barlow-condensed)] text-xl font-bold uppercase mb-4 flex items-center gap-2">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B3FA0" strokeWidth="2">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B8892A" strokeWidth="2">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" />
                 <circle cx="12" cy="10" r="3" />
               </svg>
               Location
             </h2>
-            <p className="text-bcs-text mb-3">3200 SE Hawthorne Blvd<br />Portland, OR 97214</p>
+            <p className="text-bcs-text mb-3">Portland, OR<br />Now Shopping Online</p>
             <a
-              href="https://maps.google.com/?q=3200+SE+Hawthorne+Blvd+Portland+OR+97214"
+              href="https://instagram.com/bridgecitysolesportland"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 text-sm text-bcs-teal hover:text-bcs-teal2 transition-colors"
@@ -56,7 +56,7 @@ export default function StorePage() {
 
           <div className="bg-bcs-surface rounded-xl border border-bcs-border p-6">
             <h2 className="font-[family-name:var(--font-barlow-condensed)] text-xl font-bold uppercase mb-4 flex items-center gap-2">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B3FA0" strokeWidth="2">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B8892A" strokeWidth="2">
                 <circle cx="12" cy="12" r="10" />
                 <path d="M12 6v6l4 2" />
               </svg>
@@ -82,7 +82,7 @@ export default function StorePage() {
 
           <div className="bg-bcs-surface rounded-xl border border-bcs-border p-6">
             <h2 className="font-[family-name:var(--font-barlow-condensed)] text-xl font-bold uppercase mb-4 flex items-center gap-2">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#6B3FA0" strokeWidth="2">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#B8892A" strokeWidth="2">
                 <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 013.12 4.18 2 2 0 015.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" />
               </svg>
               Contact
@@ -99,7 +99,7 @@ export default function StorePage() {
             <div className="grid grid-cols-2 gap-3">
               {['Buy', 'Sell', 'Trade', 'Consign'].map(service => (
                 <div key={service} className="flex items-center gap-2 text-sm text-bcs-text">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B3FA0" strokeWidth="2">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#B8892A" strokeWidth="2">
                     <path d="M20 6L9 17l-5-5" />
                   </svg>
                   {service}
