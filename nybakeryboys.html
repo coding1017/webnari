@@ -713,6 +713,10 @@ h1, h2, h3, h4, h5, h6 {
   background: var(--surface);
 }
 
+/* Desktop: show right-column image, hide inline mobile image */
+.story-img-mobile { display: none; }
+.story-img-desktop { display: block; }
+
 .story-img-placeholder {
   width: 100%;
   height: 100%;
@@ -2054,8 +2058,8 @@ h1, h2, h3, h4, h5, h6 {
 @media (max-width: 1024px) {
   .hero-stats { grid-template-columns: repeat(2, 1fr); }
   .story-grid { grid-template-columns: 1fr; gap: var(--space-2xl); }
-  .story-img { max-height: 400px; order: -1; }
-  .story-highlights { order: 10; }
+  .story-img-mobile { display: block; max-height: 350px; margin-top: var(--space-lg); }
+  .story-img-desktop { display: none; }
   .specialties-grid { grid-template-columns: repeat(2, 1fr); }
   .catering-grid { grid-template-columns: 1fr; }
   .reviews-grid { grid-template-columns: repeat(2, 1fr); }
@@ -2375,7 +2379,7 @@ h1, h2, h3, h4, h5, h6 {
 <section class="story section-pad" id="story">
   <div class="container">
     <div class="story-grid">
-      <div>
+      <div class="story-text-col">
         <div class="story-eyebrow reveal">Our Story</div>
         <h2 class="reveal reveal-delay-1">Four Generations of<br><em>New York</em> Baking</h2>
         <p class="story-text reveal reveal-delay-2">
@@ -2384,6 +2388,16 @@ h1, h2, h3, h4, h5, h6 {
         <p class="story-text reveal reveal-delay-3">
           Today, we bring that same century-old tradition to the Sunshine State. Every bagel is par-boiled the old-fashioned way, every sandwich is stacked with premium Boar's Head meats, and every pastry is baked fresh daily. We're not just serving food — we're sharing a piece of New York history.
         </p>
+        <!-- Image shows here on mobile (between text and pills) -->
+        <div class="story-img story-img-mobile reveal reveal-delay-2">
+          <div class="story-img-placeholder" style="padding:0;">
+            <img src="https://i.pinimg.com/1200x/77/2e/a6/772ea6289d403e951efc422ac34b5100.jpg" alt="Classic NY bagels" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
+          </div>
+          <div class="story-year-badge">
+            <strong>Est. 1905</strong>
+            <small>New York City</small>
+          </div>
+        </div>
         <div class="story-highlights reveal reveal-delay-4">
           <div class="story-highlight">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
@@ -2403,9 +2417,10 @@ h1, h2, h3, h4, h5, h6 {
           </div>
         </div>
       </div>
-      <div class="story-img reveal reveal-delay-2">
+      <!-- Image shows here on desktop (right column) -->
+      <div class="story-img story-img-desktop reveal reveal-delay-2">
         <div class="story-img-placeholder" style="padding:0;">
-          <img src="https://i.pinimg.com/1200x/77/2e/a6/772ea6289d403e951efc422ac34b5100.jpg" alt="Bakery interior with fresh bread and pastries" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
+          <img src="https://i.pinimg.com/1200x/77/2e/a6/772ea6289d403e951efc422ac34b5100.jpg" alt="Classic NY bagels" style="width:100%;height:100%;object-fit:cover;" loading="lazy">
         </div>
         <div class="story-year-badge">
           <strong>Est. 1905</strong>
