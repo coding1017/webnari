@@ -1515,99 +1515,68 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* ========================================
-   HOW IT WORKS (ordering process)
+   HOW IT WORKS (scroll-lock)
    ======================================== */
-.process {
-  background: #FFFFFF;
+.process-scroll { height: 300vh; position: relative; }
+.process-sticky {
+  position: sticky; top: 0; height: 100vh; display: flex; align-items: center;
+  background: #FFFFFF; overflow: hidden;
+  padding: 80px 0 40px;
 }
-
-.process-marquee {
-  overflow: hidden;
-  margin-bottom: var(--space-2xl);
-  padding: var(--space-md) 0;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
+.process-header { text-align: center; margin-bottom: 32px; position: relative; z-index: 1; }
+.process-content {
+  display: flex; justify-content: center; position: relative; z-index: 1;
 }
-
-.process-marquee-track {
-  display: flex;
-  animation: marqueeScroll 25s linear infinite;
-  width: max-content;
+.process-steps-nav {
+  display: flex; flex-direction: column; gap: 0; position: relative;
+  padding-left: 28px;
 }
-
-.process-marquee-track:hover { animation-play-state: paused; }
-
-.process-marquee-item {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: 0 var(--space-xl);
-  white-space: nowrap;
-  font-family: var(--font-heading);
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #002E5D;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+.process-steps-nav::before {
+  content: ''; position: absolute; left: 13px; top: 28px; bottom: 28px;
+  width: 2px; background: var(--border);
 }
-
-.process-marquee-item svg {
-  width: 18px;
-  height: 18px;
+.pnav-item {
+  display: flex; align-items: flex-start; gap: 24px; padding: 14px 0;
+  position: relative; cursor: default;
+}
+.pnav-dot {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  border: 2px solid var(--border); background: #FFFFFF;
+  display: flex; align-items: center; justify-content: center;
+  position: relative; z-index: 2; margin-left: -28px;
+  transition: border-color 0.4s, background 0.4s, box-shadow 0.4s;
+}
+.pnav-dot-inner {
+  width: 12px; height: 12px; border-radius: 50%;
+  background: var(--border); transition: background 0.4s, transform 0.4s;
+}
+.pnav-item.active .pnav-dot {
+  border-color: #C8963E;
+  background: linear-gradient(135deg, #FFECD2, #E8EEFF);
+  box-shadow: 0 0 18px rgba(200, 150, 62, 0.5), 0 0 6px rgba(200, 150, 62, 0.3);
+}
+.pnav-item.active .pnav-dot-inner {
+  background: #C8963E; transform: scale(1.3);
+}
+.pnav-info { padding-top: 2px; max-width: 420px; }
+.pnav-num {
+  font-family: var(--font-heading); font-style: italic; font-size: 15px;
+  color: var(--muted); transition: color 0.4s; margin-bottom: 4px;
+}
+.pnav-item.active .pnav-num {
   color: #C8963E;
-  flex-shrink: 0;
+  text-shadow: 0 0 10px rgba(200, 150, 62, 0.4);
 }
-
-.process-steps {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--space-lg);
+.pnav-title {
+  font-family: var(--font-heading); font-size: 22px; color: #002E5D;
+  margin-bottom: 6px; transition: color 0.4s; line-height: 1.3; font-weight: 700;
 }
-
-.process-step {
-  text-align: center;
-  position: relative;
-  padding: var(--space-xl) var(--space-md);
+.pnav-desc {
+  font-size: 14px; color: var(--muted); line-height: 1.6;
+  max-height: 0; overflow: hidden; opacity: 0;
+  transition: max-height 0.5s var(--ease-out), opacity 0.4s;
 }
-
-.process-step::after {
-  content: '';
-  position: absolute;
-  top: 40px;
-  right: -12px;
-  width: 24px;
-  height: 2px;
-  background: var(--border);
-}
-
-.process-step:last-child::after { display: none; }
-
-.process-step-num {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  background: rgba(0, 46, 93, 0.1);
-  border: 2px solid #002E5D;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto var(--space-lg);
-  font-family: var(--font-heading);
-  font-size: 1.3rem;
-  color: #002E5D;
-  font-weight: 700;
-}
-
-.process-step h4 {
-  font-size: 1.05rem;
-  margin-bottom: var(--space-sm);
-}
-
-.process-step p {
-  font-size: 0.85rem;
-  color: var(--muted);
-  line-height: 1.6;
-}
+.pnav-item.active .pnav-desc { max-height: 100px; opacity: 1; color: var(--text); }
 
 /* ========================================
    NEWSLETTER / CTA BANNER
@@ -2019,8 +1988,7 @@ h1, h2, h3, h4, h5, h6 {
   .catering-grid { grid-template-columns: 1fr; }
   .reviews-grid { grid-template-columns: repeat(2, 1fr); }
   .gallery-grid { grid-template-columns: repeat(3, 1fr); grid-auto-rows: 180px; }
-  .process-steps { grid-template-columns: repeat(2, 1fr); }
-  .process-step::after { display: none; }
+  .process-scroll { height: 250vh; }
   .contact-grid { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: repeat(2, 1fr); }
 }
@@ -2041,7 +2009,7 @@ h1, h2, h3, h4, h5, h6 {
   .reviews-grid { grid-template-columns: 1fr; }
   .gallery-grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 150px; }
   .gallery-item.wide { grid-column: span 2; }
-  .process-steps { grid-template-columns: 1fr; }
+  .process-scroll { height: 220vh; }
   .form-row { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr; gap: var(--space-xl); }
 
@@ -2644,51 +2612,50 @@ h1, h2, h3, h4, h5, h6 {
   </div>
 </section>
 
-<!-- ==================== HOW IT WORKS ==================== -->
-<section class="process section-pad" id="process">
-  <div class="container">
-    <div class="section-header">
-      <div class="eyebrow reveal">How To Order</div>
-      <h2 class="reveal reveal-delay-1">Fresh to Your Door in Minutes</h2>
-      <p class="reveal reveal-delay-2">Order online for pickup or delivery. It's never been easier to get authentic NY bagels.</p>
-    </div>
-    <div class="process-marquee reveal">
-      <div class="process-marquee-track">
-        <div class="process-marquee-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Open 6 AM Daily</div>
-        <div class="process-marquee-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Pickup Available</div>
-        <div class="process-marquee-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg> Delivery</div>
-        <div class="process-marquee-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Catering</div>
-        <div class="process-marquee-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Secure Checkout</div>
-        <div class="process-marquee-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg> Fresh Baked</div>
-        <div class="process-marquee-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Open 6 AM Daily</div>
-        <div class="process-marquee-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Pickup Available</div>
-        <div class="process-marquee-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg> Delivery</div>
-        <div class="process-marquee-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg> Catering</div>
-        <div class="process-marquee-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Secure Checkout</div>
-        <div class="process-marquee-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg> Fresh Baked</div>
+<!-- ==================== HOW IT WORKS (scroll-lock) ==================== -->
+<section class="process-scroll" id="process">
+  <div class="process-sticky">
+    <div class="container">
+      <div class="process-header">
+        <div class="eyebrow">How To Order</div>
+        <h2 style="font-size:clamp(2rem,4vw,3.2rem);color:#002E5D;margin-bottom:var(--space-sm);">Fresh to Your Door <em style="color:#C8963E;font-weight:500;">in Minutes</em></h2>
+        <p style="font-size:1rem;color:var(--text);max-width:500px;margin:8px auto 0;line-height:1.7;">Order online for pickup or delivery. It's never been easier to get authentic NY bagels.</p>
       </div>
-    </div>
-
-    <div class="process-steps">
-      <div class="process-step reveal">
-        <div class="process-step-num">1</div>
-        <h4>Browse Menu</h4>
-        <p>Explore our full menu of bagels, sandwiches, breakfast, and more</p>
-      </div>
-      <div class="process-step reveal reveal-delay-1">
-        <div class="process-step-num">2</div>
-        <h4>Customize</h4>
-        <p>Pick your bagel, spread, toppings, and any extras you want</p>
-      </div>
-      <div class="process-step reveal reveal-delay-2">
-        <div class="process-step-num">3</div>
-        <h4>Place Order</h4>
-        <p>Order online through our website or your favorite delivery app</p>
-      </div>
-      <div class="process-step reveal reveal-delay-3">
-        <div class="process-step-num">4</div>
-        <h4>Enjoy</h4>
-        <p>Pick up fresh and hot, or get it delivered straight to you</p>
+      <div class="process-content">
+        <div class="process-steps-nav">
+          <div class="pnav-item active" data-step="0">
+            <div class="pnav-dot"><div class="pnav-dot-inner"></div></div>
+            <div class="pnav-info">
+              <div class="pnav-num">01</div>
+              <div class="pnav-title">Browse Our Menu</div>
+              <div class="pnav-desc">Explore our full menu of bagels, sandwiches, breakfast combos, and fresh-baked goods.</div>
+            </div>
+          </div>
+          <div class="pnav-item" data-step="1">
+            <div class="pnav-dot"><div class="pnav-dot-inner"></div></div>
+            <div class="pnav-info">
+              <div class="pnav-num">02</div>
+              <div class="pnav-title">Customize Your Order</div>
+              <div class="pnav-desc">Pick your bagel, spread, toppings, and any extras. Make it exactly the way you like it.</div>
+            </div>
+          </div>
+          <div class="pnav-item" data-step="2">
+            <div class="pnav-dot"><div class="pnav-dot-inner"></div></div>
+            <div class="pnav-info">
+              <div class="pnav-num">03</div>
+              <div class="pnav-title">Place Your Order</div>
+              <div class="pnav-desc">Order online through our website, Toast Tab, or your favorite delivery app. Quick and easy.</div>
+            </div>
+          </div>
+          <div class="pnav-item" data-step="3">
+            <div class="pnav-dot"><div class="pnav-dot-inner"></div></div>
+            <div class="pnav-info">
+              <div class="pnav-num">04</div>
+              <div class="pnav-title">Enjoy Fresh &amp; Hot</div>
+              <div class="pnav-desc">Pick up at either location or get it delivered straight to your door. Fresh baked, every time.</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -3312,6 +3279,32 @@ h1, h2, h3, h4, h5, h6 {
       }, 3000);
     }
   };
+
+  /* ---- Process Scroll-Lock ---- */
+  (function() {
+    var section = document.querySelector('.process-scroll');
+    if (!section) return;
+    var navItems = section.querySelectorAll('.pnav-item');
+    var total = navItems.length;
+
+    function update() {
+      var rect = section.getBoundingClientRect();
+      var sectionH = section.offsetHeight;
+      var viewH = window.innerHeight;
+      var scrolled = -rect.top;
+      var scrollable = sectionH - viewH;
+      if (scrollable <= 0) return;
+      var progress = Math.max(0, Math.min(1, scrolled / scrollable));
+      var step = Math.min(total - 1, Math.floor(progress * total));
+
+      navItems.forEach(function(n, i) {
+        n.classList.toggle('active', i === step);
+      });
+    }
+
+    window.addEventListener('scroll', update, { passive: true });
+    update();
+  })();
 
   /* ---- Smooth scroll for anchor links ---- */
   document.querySelectorAll('a[href^="#"]').forEach(a => {
