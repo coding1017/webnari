@@ -145,12 +145,14 @@ h1, h2, h3, h4, h5, h6 {
   position: fixed;
   inset: 0;
   z-index: 9999;
-  background: #002E5D;
+  background:
+    linear-gradient(rgba(0, 46, 93, 0.82) 0%, rgba(0, 46, 93, 0.88) 100%),
+    url('https://images.unsplash.com/photo-1627308595260-6fad84c40413?w=1920&q=80') center/cover no-repeat;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.5s var(--ease-out), visibility 0.5s;
+  transition: opacity 0.6s var(--ease-out), visibility 0.6s;
 }
 
 .loader.hidden {
@@ -161,10 +163,11 @@ h1, h2, h3, h4, h5, h6 {
 
 .loader-brand {
   font-family: var(--font-heading);
-  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
   color: #FFFFFF;
-  font-weight: 700;
-  margin-bottom: var(--space-sm);
+  font-weight: 800;
+  margin-bottom: var(--space-xs);
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
 }
 
 .loader-brand span {
@@ -174,26 +177,26 @@ h1, h2, h3, h4, h5, h6 {
 
 .loader-sub {
   font-family: var(--font-body);
-  font-size: 0.75rem;
+  font-size: 0.8rem;
   letter-spacing: 4px;
   text-transform: uppercase;
-  color: #FFEFBC;
+  color: rgba(255, 255, 255, 0.7);
   margin-bottom: var(--space-xl);
 }
 
 .loader-bar {
-  width: 200px;
-  height: 2px;
-  background: var(--border);
-  border-radius: 2px;
+  width: 240px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 4px;
   overflow: hidden;
 }
 
 .loader-bar-fill {
   height: 100%;
   width: 0%;
-  background: var(--gradient-gold);
-  border-radius: 2px;
+  background: linear-gradient(90deg, #002E5D 0%, #C8963E 50%, #FFC423 100%);
+  border-radius: 4px;
   transition: width 0.3s var(--ease-out);
 }
 
@@ -1341,26 +1344,25 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .review-card {
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-lg);
   padding: var(--space-xl);
   transition: all var(--duration-normal) var(--ease-out);
 }
 
 .review-card:nth-child(odd) {
-  background: linear-gradient(135deg, rgba(255, 236, 210, 0.2) 0%, rgba(200, 210, 255, 0.15) 50%, rgba(255, 255, 255, 0.1) 100%);
+  background: linear-gradient(135deg, #FFECD2 0%, #E8EEFF 50%, #FFFFFF 100%);
   border-top: 3px solid #C8963E;
 }
 
 .review-card:nth-child(even) {
-  background: linear-gradient(135deg, rgba(200, 210, 255, 0.2) 0%, rgba(255, 236, 210, 0.15) 50%, rgba(255, 255, 255, 0.1) 100%);
-  border-top: 3px solid #FFC423;
+  background: linear-gradient(135deg, #E0E8FF 0%, #FFF3D6 50%, #FFFFFF 100%);
+  border-top: 3px solid #002E5D;
 }
 
 .review-card:hover {
-  border-color: rgba(255, 255, 255, 0.35);
-  transform: translateY(-2px);
-  background: rgba(255, 255, 255, 0.18);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
 }
 
 .review-stars {
@@ -1372,12 +1374,12 @@ h1, h2, h3, h4, h5, h6 {
 .review-stars svg {
   width: 16px;
   height: 16px;
-  fill: #FFC423;
+  fill: #C8963E;
 }
 
 .review-text {
   font-size: 0.95rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: #3A3525;
   line-height: 1.7;
   margin-bottom: var(--space-lg);
   font-style: italic;
@@ -1393,7 +1395,7 @@ h1, h2, h3, h4, h5, h6 {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: rgba(255, 196, 35, 0.2);
+  background: #002E5D;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1406,12 +1408,12 @@ h1, h2, h3, h4, h5, h6 {
 .review-author-info strong {
   display: block;
   font-size: 0.9rem;
-  color: #FFFFFF;
+  color: #002E5D;
 }
 
 .review-author-info span {
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: #807860;
 }
 
 .reviews-summary {
@@ -1433,6 +1435,7 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 2rem;
   font-weight: 800;
   color: #FFC423;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.2);
 }
 
 .reviews-summary-label {
@@ -3263,22 +3266,88 @@ h1, h2, h3, h4, h5, h6 {
   updateStatus();
   setInterval(updateStatus, 60000);
 
+  /* ---- Input Sanitization ---- */
+  function sanitize(str) {
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML.trim();
+  }
+  function isValidEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) && email.length <= 254;
+  }
+  function isValidPhone(phone) {
+    return /^[\d\s\-\+\(\)\.]{0,20}$/.test(phone);
+  }
+
+  /* Sanitize all inputs on blur */
+  document.querySelectorAll('input[type="text"], input[type="email"], input[type="tel"], textarea').forEach(function(input) {
+    input.addEventListener('blur', function() {
+      this.value = sanitize(this.value);
+    });
+    input.setAttribute('maxlength', input.type === 'email' ? '254' : input.tagName === 'TEXTAREA' ? '2000' : '200');
+  });
+
   /* ---- Newsletter ---- */
   window.handleNewsletter = function(e) {
     e.preventDefault();
-    const input = e.target.querySelector('input');
-    const btn = e.target.querySelector('button');
-    const email = input.value;
-    if (email) {
-      btn.textContent = 'Subscribed!';
-      btn.style.background = '#5DAA6D';
-      input.value = '';
-      setTimeout(() => {
-        btn.textContent = 'Subscribe';
-        btn.style.background = '';
-      }, 3000);
+    var input = e.target.querySelector('input');
+    var btn = e.target.querySelector('button');
+    var email = sanitize(input.value);
+    if (!isValidEmail(email)) {
+      input.style.borderColor = '#EB2E25';
+      setTimeout(function() { input.style.borderColor = ''; }, 2000);
+      return;
     }
+    btn.textContent = 'Subscribed!';
+    btn.style.background = '#2E8B4A';
+    input.value = '';
+    setTimeout(function() {
+      btn.textContent = 'Subscribe';
+      btn.style.background = '';
+    }, 3000);
   };
+
+  /* ---- Contact Form Validation ---- */
+  var contactForm = document.querySelector('.contact-form');
+  if (contactForm) {
+    contactForm.addEventListener('submit', function(e) {
+      var valid = true;
+      var nameEl = document.getElementById('name');
+      var emailEl = document.getElementById('email');
+      var phoneEl = document.getElementById('phone');
+      var msgEl = document.getElementById('message');
+
+      [nameEl, emailEl, phoneEl, msgEl].forEach(function(el) {
+        if (el) el.value = sanitize(el.value);
+      });
+
+      if (emailEl && !isValidEmail(emailEl.value)) {
+        emailEl.style.borderColor = '#EB2E25';
+        valid = false;
+      }
+      if (phoneEl && phoneEl.value && !isValidPhone(phoneEl.value)) {
+        phoneEl.style.borderColor = '#EB2E25';
+        valid = false;
+      }
+      if (nameEl && nameEl.value.length < 2) {
+        nameEl.style.borderColor = '#EB2E25';
+        valid = false;
+      }
+      if (msgEl && msgEl.value.length < 5) {
+        msgEl.style.borderColor = '#EB2E25';
+        valid = false;
+      }
+
+      if (!valid) {
+        e.preventDefault();
+        setTimeout(function() {
+          [nameEl, emailEl, phoneEl, msgEl].forEach(function(el) {
+            if (el) el.style.borderColor = '';
+          });
+        }, 3000);
+      }
+    });
+  }
 
   /* ---- Process Scroll-Lock ---- */
   (function() {
