@@ -1521,22 +1521,22 @@ function initCursor(){
 function renderPricing(){
   const db=getDB();
   // Hardcoded prices (not from localStorage — prevents stale cached values)
-  const pr={starter:158,standard:258,premium:378,setup:1000,
+  const pr={starter:79,standard:129,premium:189,
     starterName:'Starter',starterDesc:'Everything you need to launch and get found online.',starterFeatures:'1 professionally built website\nUp to 5 pages\nMobile-responsive design\nSearch-ranked page structure\nSSL certificate & hosting\nGoogle Business integration\nMonthly performance snapshot\nEmail support',
     standardName:'Standard',standardDesc:'For businesses ready to grow their reach and convert more leads.',standardFeatures:'1 professionally built website\nUp to 12 pages\nScroll-driven parallax effects\nAdvanced search ranking strategy\nBlog with monthly content\nContact & lead capture forms\nGoogle Analytics dashboard\nSchema markup for local search\nPriority support\nMonthly growth report',
     premiumName:'Premium',premiumDesc:'Full-service digital presence, managed top to bottom.',premiumFeatures:'1 professionally built website\nUnlimited pages\nCustom parallax animations\nFull search ranking management\nWeekly blog content\nE-commerce or booking integration\nConversion-optimized landing pages\nReputation & review management\nDedicated account manager\nBi-weekly strategy reports\nPriority 24-hour support',
   };
   const tiers=[
-    {key:'starter',name:pr.starterName||'Starter',price:pr.starter,desc:pr.starterDesc||'',features:pr.starterFeatures||'',cls:'',tierCls:'',setup:pr.setup},
-    {key:'standard',name:pr.standardName||'Standard',price:pr.standard,desc:pr.standardDesc||'',features:pr.standardFeatures||'',cls:'popular',tierCls:'std',setup:pr.setup},
-    {key:'premium',name:pr.premiumName||'Premium',price:pr.premium,desc:pr.premiumDesc||'',features:pr.premiumFeatures||'',cls:'',tierCls:'prem',setup:pr.setup},
+    {key:'starter',name:pr.starterName||'Starter',price:pr.starter,desc:pr.starterDesc||'',features:pr.starterFeatures||'',cls:'',tierCls:'',setup:750},
+    {key:'standard',name:pr.standardName||'Standard',price:pr.standard,desc:pr.standardDesc||'',features:pr.standardFeatures||'',cls:'popular',tierCls:'std',setup:1000},
+    {key:'premium',name:pr.premiumName||'Premium',price:pr.premium,desc:pr.premiumDesc||'',features:pr.premiumFeatures||'',cls:'',tierCls:'prem',setup:1500},
   ];
   const chk='<svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>';
   document.getElementById('pricing-grid').innerHTML=tiers.map(t=>{
     const feats=(t.features||'').split('\n').filter(Boolean).map(f=>`<li>${chk}${f}</li>`).join('');
     const focused=t.key==='standard'?'focused':'';
     const badge=t.key==='standard'?'<div class="pricing-badge">MOST POPULAR</div>':'';
-    return`<div class="pricing-card ${focused}" data-tier="${t.key}" onclick="focusTier('${t.key}')">${badge}<div class="pricing-tier ${t.tierCls}">${t.name.toUpperCase()} PLAN</div><div class="pricing-name">${t.name}</div><div class="pricing-desc">${t.desc}</div><div class="pricing-price"><span>$</span>${t.price}</div><div class="pricing-period">per month</div><div class="pricing-setup">+ $${t.setup} one-time setup</div><ul class="pricing-features">${feats}</ul><button class="pricing-cta" onclick="event.stopPropagation();location.href='plan-${t.key}.html'">Get started</button></div>`;
+    return`<div class="pricing-card ${focused}" data-tier="${t.key}" onclick="focusTier('${t.key}')">${badge}<div class="pricing-tier ${t.tierCls}">${t.name.toUpperCase()} PLAN</div><div class="pricing-name">${t.name}</div><div class="pricing-desc">${t.desc}</div><div class="pricing-price"><span>$</span>${t.price}</div><div class="pricing-period">per month</div><div class="pricing-setup">+ $${t.setup.toLocaleString()} one-time setup</div><ul class="pricing-features">${feats}</ul><button class="pricing-cta" onclick="event.stopPropagation();location.href='plan-${t.key}.html'">Get started</button></div>`;
   }).join('');
 }
 
