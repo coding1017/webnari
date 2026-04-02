@@ -798,8 +798,11 @@ td.bold { color: var(--white); font-weight: 600; }
 .cat-card:hover .cat-card-drag-handle { opacity: 0.7; }
 .cat-card-drag-handle:hover { opacity: 1 !important; background: rgba(0,0,0,0.08); }
 .cat-card-drag-handle:active { cursor: grabbing; }
-.cat-card.dragging { opacity: 0.4; transform: scale(0.97); }
-.cat-card.drag-over { box-shadow: inset 0 0 0 2px var(--_cat-color, var(--indigo)), 0 8px 30px rgba(0,0,0,0.08); }
+.cat-card.dragging, .template-card.dragging { opacity: 0.4; transform: scale(0.97); }
+.cat-card.drag-over, .template-card.drag-over { box-shadow: inset 0 0 0 2px var(--_cat-color, var(--_tpl-color, var(--indigo))), 0 8px 30px rgba(0,0,0,0.08); }
+.template-card { position: relative; }
+.template-card .tpl-drag-handle { top: 8px; right: 8px; z-index: 5; }
+.template-card:hover .tpl-drag-handle { opacity: 0.7; }
 
 /* ── BREADCRUMB ─────────────────────────────────────── */
 .tpl-breadcrumb {
@@ -3508,6 +3511,7 @@ function migrateTemplates() {
   if (!DB.templates) DB.templates = [];
   if (!DB.deletedTemplates) DB.deletedTemplates = [];
   if (!DB.catOrder) DB.catOrder = [];
+  if (!DB.tplOrder) DB.tplOrder = {};
   const deleted = new Set(DB.deletedTemplates);
   const existing = new Set(DB.templates.map(t => t.id));
   SEED.templates.forEach(seed => {
@@ -4112,7 +4116,10 @@ function renderTemplateCard(t, usage, useMobilePreview) {
     : ['var(--surface2)','var(--muted)','Planned'];
   const hasLiveUrl = t.path && t.path.startsWith('http');
   return `
-  <div class="template-card" onclick="navigate('template-detail','${t.id}')" style="cursor:pointer;--_tpl-color:${t.color};">
+  <div class="template-card" data-tpl-id="${t.id}" onclick="navigate('template-detail','${t.id}')" style="cursor:pointer;--_tpl-color:${t.color};">
+    <div class="cat-card-drag-handle tpl-drag-handle" draggable="true" title="Drag to reorder" onclick="event.stopPropagation()">
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="3.5" cy="2" r="1.2"/><circle cx="8.5" cy="2" r="1.2"/><circle cx="3.5" cy="6" r="1.2"/><circle cx="8.5" cy="6" r="1.2"/><circle cx="3.5" cy="10" r="1.2"/><circle cx="8.5" cy="10" r="1.2"/></svg>
+    </div>
     <div class="template-preview" style="height:160px;">
         ${hasLiveUrl ? `
           <div style="position:absolute;inset:0;overflow:hidden;border-radius:var(--radius-lg) var(--radius-lg) 0 0;">
@@ -4191,6 +4198,53 @@ function initCatDragDrop(container) {
   });
 }
 
+// ── Template card drag & drop reorder ─────────────────
+let _dragTplId = null;
+function initTplDragDrop(container, catId) {
+  const cards = container.querySelectorAll('.template-card[data-tpl-id]');
+  cards.forEach(card => {
+    const handle = card.querySelector('.tpl-drag-handle');
+    if (!handle) return;
+    handle.addEventListener('dragstart', e => {
+      _dragTplId = card.dataset.tplId;
+      card.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', _dragTplId);
+    });
+    handle.addEventListener('dragend', () => {
+      _dragTplId = null;
+      cards.forEach(c => c.classList.remove('dragging', 'drag-over'));
+    });
+    card.addEventListener('dragover', e => {
+      if (!_dragTplId || card.dataset.tplId === _dragTplId) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      cards.forEach(c => c.classList.remove('drag-over'));
+      card.classList.add('drag-over');
+    });
+    card.addEventListener('dragleave', () => { card.classList.remove('drag-over'); });
+    card.addEventListener('drop', e => {
+      e.preventDefault();
+      card.classList.remove('drag-over');
+      const fromId = _dragTplId;
+      const toId = card.dataset.tplId;
+      if (!fromId || fromId === toId) return;
+      const grid = container.querySelector('.templates-grid');
+      const ids = Array.from(grid.querySelectorAll('.template-card[data-tpl-id]')).map(c => c.dataset.tplId);
+      const fromIdx = ids.indexOf(fromId);
+      const toIdx = ids.indexOf(toId);
+      if (fromIdx === -1 || toIdx === -1) return;
+      ids.splice(fromIdx, 1);
+      ids.splice(toIdx, 0, fromId);
+      if (!DB.tplOrder) DB.tplOrder = {};
+      DB.tplOrder[catId] = ids;
+      save();
+      _dragTplId = null;
+      renderTemplates();
+    });
+  });
+}
+
 function renderTemplates() {
   const usage = {};
   DB.clients.forEach(c => { usage[c.template] = (usage[c.template]||0)+1; });
@@ -4227,16 +4281,22 @@ function renderTemplates() {
         c.desc.toLowerCase().includes(tplSearch)
       );
     }
-    // Auto-sort: categories with live sites first, then custom order from DB
+    // Auto-sort: most live sites first, then custom order from DB
     const catOrder = DB.catOrder || [];
     cats.sort((a, b) => {
-      const aLive = (readyCounts[a.id] || 0) > 0 ? 0 : 1;
-      const bLive = (readyCounts[b.id] || 0) > 0 ? 0 : 1;
-      if (aLive !== bLive) return aLive - bLive;
-      const aIdx = catOrder.indexOf(a.id);
-      const bIdx = catOrder.indexOf(b.id);
-      if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
-      return 0;
+      const aReady = readyCounts[a.id] || 0;
+      const bReady = readyCounts[b.id] || 0;
+      // Both have live sites or both don't — check custom order
+      if ((aReady > 0) === (bReady > 0)) {
+        const aIdx = catOrder.indexOf(a.id);
+        const bIdx = catOrder.indexOf(b.id);
+        if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
+        // No custom order — sort by live count descending
+        if (aReady !== bReady) return bReady - aReady;
+        return 0;
+      }
+      // Live sites always above non-live
+      return bReady - aReady;
     });
 
     let html = '<div class="cat-grid">';
@@ -4324,6 +4384,18 @@ function renderTemplates() {
 
   // Filter by search within category
   let filtered = DB.templates.filter(t => t.category === activeCat);
+  // Sort by saved template order for this category
+  const tplOrder = (DB.tplOrder && DB.tplOrder[activeCat]) || [];
+  if (tplOrder.length) {
+    filtered.sort((a, b) => {
+      const aIdx = tplOrder.indexOf(a.id);
+      const bIdx = tplOrder.indexOf(b.id);
+      if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
+      if (aIdx !== -1) return -1;
+      if (bIdx !== -1) return 1;
+      return 0;
+    });
+  }
   if (tplSearch) {
     filtered = filtered.filter(t =>
       t.name.toLowerCase().includes(tplSearch) ||
@@ -4348,6 +4420,8 @@ function renderTemplates() {
       try { iframe.contentWindow.scrollTo(0, iframe.contentDocument.documentElement.scrollHeight * 0.35); } catch(e) {}
     });
   });
+  // ── Drag & drop reorder for template cards ──
+  initTplDragDrop(container, activeCat);
 }
 
 // ── Parallax Library ──────────────────────────────────
