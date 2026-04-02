@@ -787,6 +787,20 @@ td.bold { color: var(--white); font-weight: 600; }
   transform: translateX(3px);
   box-shadow: 0 4px 12px var(--_cat-glow, rgba(184,137,42,0.2));
 }
+/* ── DRAG & DROP CATEGORY REORDER ──────────────────── */
+.cat-card-drag-handle {
+  position: absolute; top: 10px; right: 10px; z-index: 10;
+  width: 24px; height: 24px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: grab; opacity: 0; transition: opacity 0.2s, background 0.15s;
+  background: rgba(0,0,0,0.04); color: var(--muted);
+}
+.cat-card:hover .cat-card-drag-handle { opacity: 0.7; }
+.cat-card-drag-handle:hover { opacity: 1 !important; background: rgba(0,0,0,0.08); }
+.cat-card-drag-handle:active { cursor: grabbing; }
+.cat-card.dragging { opacity: 0.4; transform: scale(0.97); }
+.cat-card.drag-over { box-shadow: inset 0 0 0 2px var(--_cat-color, var(--indigo)), 0 8px 30px rgba(0,0,0,0.08); }
+
 /* ── BREADCRUMB ─────────────────────────────────────── */
 .tpl-breadcrumb {
   display: flex; align-items: center; gap: 6px;
@@ -3291,13 +3305,13 @@ const KEY = 'waas_os_v1';
 // ── Category definitions ──
 const CATEGORIES = [
   { id:'home-construction', label:'Home & Construction', color:'#EAB308', desc:'Trades, contractors & home services',
-    subs:['Electrician','Plumber','HVAC','Pest Control','Locksmith','Roofing','General Contractor','Painter','Handyman'],
+    subs:['Electrician','Plumber','HVAC','Pest Control','Locksmith','Roofing','Fencing','General Contractor','Painter','Handyman'],
     icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></svg>` },
   { id:'landscaping', label:'Landscaping', color:'#10B981', desc:'Lawn care, tree service & outdoor design',
     subs:['Lawn Care','Tree Service','Hardscaping','Irrigation','Garden Design'],
     icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>` },
   { id:'food-dining', label:'Food & Dining', color:'#F97316', desc:'Restaurants, cafes, bakeries & catering',
-    subs:['Sandwiches & Subs','Sushi & Japanese','Pizza & Italian','Fine Dining','Cafe & Bakery','Fast Casual','Catering','Food Truck','Bar & Lounge'],
+    subs:['Sandwiches & Subs','Sushi & Japanese','Pizza & Italian','Fine Dining','Cafe & Bakery','Meal Prep','Bagels & Deli','Fast Casual','Catering','Food Truck','Bar & Lounge'],
     icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>` },
   { id:'retail', label:'Retail & Shopping', color:'#EC4899', desc:'Boutiques, e-commerce & specialty stores',
     subs:['Boutique','Gift Shop','Jewelry','Thrift & Vintage','Specialty Foods'],
@@ -3324,7 +3338,7 @@ const CATEGORIES = [
     subs:['Residential Cleaning','Commercial Cleaning','Deep Cleaning','Move-In/Out','Post-Construction','Industrial'],
     icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 22h18"/><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18"/><path d="M14 6h.01"/><path d="M14 10h.01"/><path d="M14 14h.01"/><path d="M10 6h.01"/><path d="M10 10h.01"/><path d="M10 14h.01"/></svg>` },
   { id:'music', label:'Music & Entertainment', color:'#E11D48', desc:'Artists, bands, tours, venues & event promotion',
-    subs:['Artist/Band','Tour Promotion','Venue','Music Production','DJ','Event Promotion'],
+    subs:['Artist/Band','Tour Promotion','Venue','Nightclub','Music Production','DJ','Event Promotion'],
     icon:`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>` },
 ];
 
@@ -3400,6 +3414,8 @@ const SEED = {
      icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1" fill="currentColor" stroke="none"/></svg>`},
     {id:'roofing',      name:'RoofPro',    niche:'Roofing',      category:'home-construction', color:'#E63946', status:'ready',  path:'https://webnari.io/roofpro',
      icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 21v-6h6v6"/></svg>`},
+    {id:'catchafence',  name:'Catch a Fence', niche:'Fence Installation', category:'home-construction', color:'#C4A882', status:'ready', path:'https://webnari.io/catchafence',
+     icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="3" x2="3" y2="21"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="21" y1="3" x2="21" y2="21"/><line x1="3" y1="8" x2="21" y2="8"/><line x1="3" y1="16" x2="21" y2="16"/></svg>`},
     // Landscaping
     {id:'landscaping',  name:'GreenScape', niche:'Landscaping & Lawn Care', category:'landscaping', color:'#10B981', status:'ready', path:'https://webnari.io/greenscape',
      icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>`},
@@ -3410,6 +3426,12 @@ const SEED = {
      icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/></svg>`},
     {id:'gastrosubs',   name:'GastroSubs', niche:'Premium Deli Subs',  category:'food-dining', color:'#D4A017', status:'ready', path:'https://webnari.io/gastrosubs',
      icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>`},
+    {id:'gastrosubs-v2', name:'GastroSubs v2', niche:'Artisan Deli Subs (Alt)', category:'food-dining', color:'#1B4332', status:'ready', path:'https://webnari.io/gastrosubs-v2',
+     icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>`},
+    {id:'jades-spice',  name:"Jade's Spice", niche:'Asian Meal Prep',  category:'food-dining', color:'#D94040', status:'ready', path:'https://webnari.io/jades-spice',
+     icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/><path d="M12 6v6l4 2"/></svg>`},
+    {id:'nybakeryboys', name:'NY Bakery Boys', niche:'Bagels & Deli', category:'food-dining', color:'#002E5D', status:'ready', path:'https://webnari.io/nybakeryboys',
+     icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>`},
     // Retail
     {id:'boutique',     name:'ShopPro',    niche:'Boutique',     category:'retail', color:'#EC4899', status:'planned', path:'',
      icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>`},
@@ -3433,6 +3455,8 @@ const SEED = {
     // E-Commerce
     {id:'wookwear',      name:'Wook Wear',  niche:'Handmade E-commerce', category:'ecommerce', color:'#FF2D9B', status:'ready', path:'https://webnari.io/wookwear',
      icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2 12 5.5 8 2l-4.38 1.46a2 2 0 0 0-1.34 2.23l2.1 12.42A2 2 0 0 0 6.35 20h11.3a2 2 0 0 0 1.97-1.89l2.1-12.42a2 2 0 0 0-1.34-2.23z"/></svg>`},
+    {id:'lbld',          name:'LBLD',       niche:'Custom Handmade Apparel', category:'ecommerce', color:'#E8567F', status:'ready', path:'https://webnari.io/lbld',
+     icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2 12 5.5 8 2l-4.38 1.46a2 2 0 0 0-1.34 2.23l2.1 12.42A2 2 0 0 0 6.35 20h11.3a2 2 0 0 0 1.97-1.89l2.1-12.42a2 2 0 0 0-1.34-2.23z"/></svg>`},
     {id:'fashion-store', name:'ThreadPro',  niche:'Fashion Store',     category:'ecommerce', color:'#6366F1', status:'planned', path:'',
      icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2 12 5.5 8 2l-4.38 1.46a2 2 0 0 0-1.34 2.23l2.1 12.42A2 2 0 0 0 6.35 20h11.3a2 2 0 0 0 1.97-1.89l2.1-12.42a2 2 0 0 0-1.34-2.23z"/></svg>`},
     {id:'dropship',     name:'DropPro',    niche:'Dropshipping',      category:'ecommerce', color:'#818CF8', status:'planned', path:'',
@@ -3455,6 +3479,8 @@ const SEED = {
     // Music & Entertainment
     {id:'samgrisman', name:'Sam Grisman', niche:'Artist / Band', category:'music', color:'#E11D48', status:'ready', path:'https://webnari.io/samgrisman',
      icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`},
+    {id:'elevate', name:'Elevate', niche:'Nightclub & Venue', category:'music', color:'#C9A96E', status:'ready', path:'https://webnari.io/elevate',
+     icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`},
   ],
   activity: [
     {text:'<strong>PestPro South Florida</strong> went live', time:'2 days ago', type:'green'},
@@ -4113,6 +4139,52 @@ function renderTemplateCard(t, usage, useMobilePreview) {
   </div>`;
 }
 
+// ── Category drag & drop reorder ──────────────────────
+let _dragCatId = null;
+function initCatDragDrop(container) {
+  const cards = container.querySelectorAll('.cat-card[data-cat-id]');
+  cards.forEach(card => {
+    const handle = card.querySelector('.cat-card-drag-handle');
+    if (!handle) return;
+    handle.addEventListener('dragstart', e => {
+      _dragCatId = card.dataset.catId;
+      card.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', _dragCatId);
+    });
+    handle.addEventListener('dragend', () => {
+      _dragCatId = null;
+      cards.forEach(c => c.classList.remove('dragging', 'drag-over'));
+    });
+    card.addEventListener('dragover', e => {
+      if (!_dragCatId || card.dataset.catId === _dragCatId) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      cards.forEach(c => c.classList.remove('drag-over'));
+      card.classList.add('drag-over');
+    });
+    card.addEventListener('dragleave', () => { card.classList.remove('drag-over'); });
+    card.addEventListener('drop', e => {
+      e.preventDefault();
+      card.classList.remove('drag-over');
+      const fromId = _dragCatId;
+      const toId = card.dataset.catId;
+      if (!fromId || fromId === toId) return;
+      // Build new order from current DOM
+      const grid = container.querySelector('.cat-grid');
+      const ids = Array.from(grid.querySelectorAll('.cat-card[data-cat-id]')).map(c => c.dataset.catId);
+      const fromIdx = ids.indexOf(fromId);
+      const toIdx = ids.indexOf(toId);
+      if (fromIdx === -1 || toIdx === -1) return;
+      ids.splice(fromIdx, 1);
+      ids.splice(toIdx, 0, fromId);
+      localStorage.setItem('catOrder', JSON.stringify(ids));
+      _dragCatId = null;
+      renderTemplates();
+    });
+  });
+}
+
 function renderTemplates() {
   const usage = {};
   DB.clients.forEach(c => { usage[c.template] = (usage[c.template]||0)+1; });
@@ -4149,6 +4221,17 @@ function renderTemplates() {
         c.desc.toLowerCase().includes(tplSearch)
       );
     }
+    // Auto-sort: categories with live sites first, then custom order
+    cats.sort((a, b) => {
+      const aLive = (readyCounts[a.id] || 0) > 0 ? 0 : 1;
+      const bLive = (readyCounts[b.id] || 0) > 0 ? 0 : 1;
+      if (aLive !== bLive) return aLive - bLive;
+      const order = JSON.parse(localStorage.getItem('catOrder') || '[]');
+      const aIdx = order.indexOf(a.id);
+      const bIdx = order.indexOf(b.id);
+      if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
+      return 0;
+    });
 
     let html = '<div class="cat-grid">';
     cats.forEach(cat => {
@@ -4180,7 +4263,10 @@ function renderTemplates() {
         particlesHtml += `<div class="cat-card-particle" style="left:${left}%;bottom:10%;width:${size}px;height:${size}px;animation-delay:${delay}s;"></div>`;
       }
       particlesHtml += '</div>';
-      html += `<div class="cat-card" style="${getCatVars(cat)}" data-cat-card data-slide-count="${liveUrls.length}" onclick="activeCat='${cat.id}';tplSearch='';document.getElementById('tpl-search-input').value='';renderTemplates();">
+      html += `<div class="cat-card" style="${getCatVars(cat)}" data-cat-card data-cat-id="${cat.id}" data-slide-count="${liveUrls.length}" onclick="activeCat='${cat.id}';tplSearch='';document.getElementById('tpl-search-input').value='';renderTemplates();">
+        <div class="cat-card-drag-handle" draggable="true" title="Drag to reorder" onclick="event.stopPropagation()">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="3.5" cy="2" r="1.2"/><circle cx="8.5" cy="2" r="1.2"/><circle cx="3.5" cy="6" r="1.2"/><circle cx="8.5" cy="6" r="1.2"/><circle cx="3.5" cy="10" r="1.2"/><circle cx="8.5" cy="10" r="1.2"/></svg>
+        </div>
         <div class="cat-card-showcase">
           ${showcaseHtml}
           <div class="cat-card-mesh"></div>
@@ -4212,6 +4298,8 @@ function renderTemplates() {
         try { iframe.contentWindow.scrollTo(0, iframe.contentDocument.documentElement.scrollHeight * 0.50); } catch(e) {}
       });
     });
+    // ── Drag & drop reorder for category cards ──
+    initCatDragDrop(container);
     return;
   }
 
