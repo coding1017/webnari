@@ -3456,9 +3456,7 @@ const SEED = {
     {id:'salon',        name:'StylePro',   niche:'Salon',        category:'beauty', color:'#D946EF', status:'planned', path:'',
      icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 1v2m0 18v2m-9-11h2m18 0h2m-3.64-6.36l-1.42 1.42M6.06 17.94l-1.42 1.42m0-12.72l1.42 1.42m11.88 11.88l1.42 1.42"/></svg>`},
     // E-Commerce
-    {id:'wookwear',      name:'Wook Wear',  niche:'Handmade E-commerce', category:'ecommerce', color:'#FF2D9B', status:'ready', path:'https://webnari.io/wookwear',
-     icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2 12 5.5 8 2l-4.38 1.46a2 2 0 0 0-1.34 2.23l2.1 12.42A2 2 0 0 0 6.35 20h11.3a2 2 0 0 0 1.97-1.89l2.1-12.42a2 2 0 0 0-1.34-2.23z"/></svg>`},
-    {id:'wookwear-next', name:'Wook Wear (Next.js)', niche:'Handmade E-commerce — Next.js', category:'ecommerce', color:'#A855F7', status:'ready', path:'https://wookwear-next.vercel.app',
+    {id:'wookwear-next', name:'Wook Wear', niche:'Handmade E-commerce — Next.js', category:'ecommerce', color:'#A855F7', status:'ready', path:'https://wookwear-next.vercel.app',
      icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.38 3.46L16 2 12 5.5 8 2l-4.38 1.46a2 2 0 0 0-1.34 2.23l2.1 12.42A2 2 0 0 0 6.35 20h11.3a2 2 0 0 0 1.97-1.89l2.1-12.42a2 2 0 0 0-1.34-2.23z"/></svg>`},
     {id:'bridgecitysoles', name:'Bridge City Soles', niche:'Sneaker Consignment', category:'ecommerce', color:'#1E40AF', status:'ready', path:'https://bridge-city-soles.pages.dev',
      icon:`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 18h1.4c1.3 0 2.5-.6 3.3-1.7L12 8l2.6 3.5c.5.7 1.3 1.1 2.1 1.1H22"/><path d="M6 12L3 18"/><path d="M13 5c0 1.1-.9 2-2 2s-2-.9-2-2 .9-2 2-2 2 .9 2 2z"/></svg>`},
@@ -4285,22 +4283,18 @@ function renderTemplates() {
         c.desc.toLowerCase().includes(tplSearch)
       );
     }
-    // Auto-sort: most live sites first, then custom order from DB
+    // Auto-sort: most live sites first, custom order only as tiebreaker
     const catOrder = DB.catOrder || [];
     cats.sort((a, b) => {
       const aReady = readyCounts[a.id] || 0;
       const bReady = readyCounts[b.id] || 0;
-      // Both have live sites or both don't — check custom order
-      if ((aReady > 0) === (bReady > 0)) {
-        const aIdx = catOrder.indexOf(a.id);
-        const bIdx = catOrder.indexOf(b.id);
-        if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
-        // No custom order — sort by live count descending
-        if (aReady !== bReady) return bReady - aReady;
-        return 0;
-      }
-      // Live sites always above non-live
-      return bReady - aReady;
+      // Primary: sort by live count descending
+      if (aReady !== bReady) return bReady - aReady;
+      // Tiebreaker: custom drag order
+      const aIdx = catOrder.indexOf(a.id);
+      const bIdx = catOrder.indexOf(b.id);
+      if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
+      return 0;
     });
 
     let html = '<div class="cat-grid">';
