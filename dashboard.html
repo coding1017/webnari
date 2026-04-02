@@ -3503,10 +3503,15 @@ function loadDB() {
 }
 
 // Merge seed templates into DB — adds missing ones, updates categories on existing
+// Respects DB.deletedTemplates so removed templates stay removed
 function migrateTemplates() {
   if (!DB.templates) DB.templates = [];
+  if (!DB.deletedTemplates) DB.deletedTemplates = [];
+  if (!DB.catOrder) DB.catOrder = [];
+  const deleted = new Set(DB.deletedTemplates);
   const existing = new Set(DB.templates.map(t => t.id));
   SEED.templates.forEach(seed => {
+    if (deleted.has(seed.id)) return; // skip permanently deleted templates
     if (!existing.has(seed.id)) {
       DB.templates.push(JSON.parse(JSON.stringify(seed)));
     } else {
@@ -4178,7 +4183,8 @@ function initCatDragDrop(container) {
       if (fromIdx === -1 || toIdx === -1) return;
       ids.splice(fromIdx, 1);
       ids.splice(toIdx, 0, fromId);
-      localStorage.setItem('catOrder', JSON.stringify(ids));
+      DB.catOrder = ids;
+      save();
       _dragCatId = null;
       renderTemplates();
     });
@@ -4221,14 +4227,14 @@ function renderTemplates() {
         c.desc.toLowerCase().includes(tplSearch)
       );
     }
-    // Auto-sort: categories with live sites first, then custom order
+    // Auto-sort: categories with live sites first, then custom order from DB
+    const catOrder = DB.catOrder || [];
     cats.sort((a, b) => {
       const aLive = (readyCounts[a.id] || 0) > 0 ? 0 : 1;
       const bLive = (readyCounts[b.id] || 0) > 0 ? 0 : 1;
       if (aLive !== bLive) return aLive - bLive;
-      const order = JSON.parse(localStorage.getItem('catOrder') || '[]');
-      const aIdx = order.indexOf(a.id);
-      const bIdx = order.indexOf(b.id);
+      const aIdx = catOrder.indexOf(a.id);
+      const bIdx = catOrder.indexOf(b.id);
       if (aIdx !== -1 && bIdx !== -1) return aIdx - bIdx;
       return 0;
     });
@@ -7341,6 +7347,8 @@ function deleteTemplate(id) {
   if (DB.clients.some(c => c.template===id)) { toast('Cannot delete — clients are using this template','error'); return; }
   if (!confirm('Remove this template?')) return;
   DB.templates = DB.templates.filter(t => t.id!==id);
+  if (!DB.deletedTemplates) DB.deletedTemplates = [];
+  if (!DB.deletedTemplates.includes(id)) DB.deletedTemplates.push(id);
   save(); renderTemplates(); toast('Template removed','success');
 }
 
