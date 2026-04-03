@@ -536,8 +536,27 @@ h1, h2, h3, h4, h5, h6 {
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-lg);
 }
+
+/* Gradient card system — red/gold/cream tri-color gradients */
+.specialty-card.gradient-card-a {
+  background: linear-gradient(135deg, #FFE0E0 0%, #FFF3D6 50%, #FFFFFF 100%);
+  border-top: 3px solid var(--red);
+}
+.specialty-card.gradient-card-b {
+  background: linear-gradient(135deg, #FFF3D6 0%, #FFE0E0 50%, #FFFFFF 100%);
+  border-top: 3px solid var(--gold);
+}
+.specialty-card.gradient-card-c {
+  background: linear-gradient(135deg, #FFE8E0 0%, #F0E6FF 50%, #FFFFFF 100%);
+  border-top: 3px solid var(--red2);
+}
+.gradient-card-b .specialty-tag { background: var(--gold); color: var(--charcoal); }
+.gradient-card-c .specialty-tag { background: var(--charcoal); }
+.gradient-card-a .specialty-title { color: var(--red); }
+.gradient-card-b .specialty-title { color: #9A7520; }
+.gradient-card-c .specialty-title { color: var(--red2); }
+
 .specialty-card {
-  background: var(--white);
   border-radius: var(--radius-xl);
   overflow: hidden;
   border: 1px solid var(--border);
@@ -559,6 +578,19 @@ h1, h2, h3, h4, h5, h6 {
   object-fit: cover;
   transition: transform 0.6s var(--ease-out);
 }
+.specialty-img::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60%;
+  background: linear-gradient(to top, var(--white) 0%, transparent 100%);
+  pointer-events: none;
+}
+.gradient-card-a .specialty-img::after { background: linear-gradient(to top, #FFE0E0 0%, transparent 100%); }
+.gradient-card-b .specialty-img::after { background: linear-gradient(to top, #FFF3D6 0%, transparent 100%); }
+.gradient-card-c .specialty-img::after { background: linear-gradient(to top, #FFE8E0 0%, transparent 100%); }
 .specialty-card:hover .specialty-img img { transform: scale(1.05); }
 .specialty-tag {
   position: absolute;
@@ -612,11 +644,18 @@ h1, h2, h3, h4, h5, h6 {
   gap: var(--space-xl);
 }
 .loc-card {
-  background: var(--dark);
   border-radius: var(--radius-xl);
   padding: var(--space-xl);
   border: 1px solid var(--border-dark);
   transition: all var(--duration-normal) var(--ease-out);
+}
+.loc-card:nth-child(1) {
+  background: linear-gradient(135deg, #1C1917 0%, #2A1215 50%, #292524 100%);
+  border-top: 3px solid var(--red);
+}
+.loc-card:nth-child(2) {
+  background: linear-gradient(135deg, #1C1917 0%, #261E10 50%, #292524 100%);
+  border-top: 3px solid var(--gold);
 }
 .loc-card:hover {
   border-color: rgba(178, 34, 52, 0.3);
@@ -693,11 +732,22 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: var(--space-2xl);
 }
 .review-card {
-  background: var(--white);
   border-radius: var(--radius-xl);
   padding: var(--space-xl);
   border: 1px solid var(--border);
   transition: all var(--duration-normal) var(--ease-out);
+}
+.review-card:nth-child(1) {
+  background: linear-gradient(135deg, #FFE0E0 0%, #FFF3D6 50%, #FFFFFF 100%);
+  border-top: 3px solid var(--red);
+}
+.review-card:nth-child(2) {
+  background: linear-gradient(135deg, #FFF3D6 0%, #FFE0E0 50%, #FFFFFF 100%);
+  border-top: 3px solid var(--gold);
+}
+.review-card:nth-child(3) {
+  background: linear-gradient(135deg, #FFE8E0 0%, #F0E6FF 50%, #FFFFFF 100%);
+  border-top: 3px solid var(--red2);
 }
 .review-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
 .review-stars {
@@ -1143,7 +1193,7 @@ h1, h2, h3, h4, h5, h6 {
       <p class="reveal reveal-delay-2">From our legendary everything bagels to stacked deli sandwiches, these are the crowd favorites that keep them coming back.</p>
     </div>
     <div class="specialties-grid">
-      <div class="specialty-card reveal">
+      <div class="specialty-card gradient-card-a reveal">
         <div class="specialty-img">
           <span class="specialty-tag">Signature</span>
           <img src="https://i.pinimg.com/1200x/d9/23/6f/d9236f49617a838c49641eac1951794c.jpg" alt="NY-style everything bagel with scallion cream cheese" loading="lazy">
@@ -1157,7 +1207,7 @@ h1, h2, h3, h4, h5, h6 {
           </a>
         </div>
       </div>
-      <div class="specialty-card reveal reveal-delay-1">
+      <div class="specialty-card gradient-card-b reveal reveal-delay-1">
         <div class="specialty-img">
           <span class="specialty-tag">Classic</span>
           <img src="https://i.pinimg.com/736x/66/5a/63/665a638386fb0f8fbec00378852c41a5.jpg" alt="Stacked deli sandwich with premium meats" loading="lazy">
@@ -1171,7 +1221,7 @@ h1, h2, h3, h4, h5, h6 {
           </a>
         </div>
       </div>
-      <div class="specialty-card reveal reveal-delay-2">
+      <div class="specialty-card gradient-card-c reveal reveal-delay-2">
         <div class="specialty-img">
           <span class="specialty-tag">Breakfast</span>
           <img src="https://i.pinimg.com/1200x/f3/07/14/f307147293ca3e053baec004c083755f.jpg" alt="Bagel breakfast spread with toppings" loading="lazy">
