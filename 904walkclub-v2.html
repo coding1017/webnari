@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>904 Walk Club | Community Walking Club in Jacksonville, FL</title>
+<meta name="description" content="904 Walk Club is Jacksonville's community walking club. Free weekly Wednesday walks building health, connection, and positive energy — one step at a time.">
+<meta property="og:title" content="904 Walk Club | Walk. Connect. Thrive.">
+<meta property="og:description" content="Jacksonville-based walking club. Free weekly Wednesday walks for all fitness levels.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://webnari.io/904walkclub-v2.html">
+<link rel="canonical" href="https://webnari.io/904walkclub-v2.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:#0D1520;color:#D0DEE8;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,h4,h5{font-family:'Bebas Neue',sans-serif;font-weight:400;letter-spacing:0.04em}
+
+/* ═══ COLORS ═══ */
+:root{
+  --bg:#0D1520;--bg2:#111D2A;--bg3:#162535;
+  --teal:#006778;--teal2:#0891B2;--teal3:#22D3EE;--teal-glow:rgba(0,103,120,0.35);
+  --gold:#D7A22A;--gold2:#F0C75E;--gold-glow:rgba(215,162,42,0.3);
+  --white:#F0F6FC;--muted:#90A8BE;--text:#D0DEE8;
+  --border:rgba(255,255,255,0.1);--border2:rgba(255,255,255,0.14);
+  --card:rgba(16,28,40,0.8);
+}
+
+/* ═══ NAV ═══ */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:0;transition:all 0.3s;background:transparent}
+.nav.scrolled{background:rgba(13,21,32,0.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1300px;margin:0 auto;padding:0 40px;display:flex;align-items:center;justify-content:space-between;height:72px}
+.nav-logo{display:flex;align-items:center;gap:12px}
+.nav-logo img{width:42px;height:42px;border-radius:50%;object-fit:cover;border:2px solid var(--gold)}
+.nav-logo-text{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--white);letter-spacing:0.06em}
+.nav-logo-text span{color:var(--gold)}
+.nav-links{display:flex;align-items:center;gap:32px}
+.nav-links a:not(.nav-cta){font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;transition:color 0.2s}
+.nav-links a:not(.nav-cta):hover{color:var(--teal3)}
+.nav-links a.nav-cta{padding:10px 24px;background:var(--gold);color:#fff !important;font-weight:800;font-size:12px;border-radius:4px;letter-spacing:0.12em;text-transform:uppercase;transition:all 0.2s;border:none;cursor:pointer}
+.nav-links a.nav-cta:hover{background:var(--gold2);color:#fff !important;box-shadow:0 0 20px var(--gold-glow)}
+.burger{display:none;background:none;border:none;cursor:pointer;width:36px;height:36px;position:relative}
+.burger span{display:block;width:22px;height:2px;background:var(--white);position:absolute;left:7px;transition:all 0.3s}
+.burger span:nth-child(1){top:11px}.burger span:nth-child(2){top:17px}.burger span:nth-child(3){top:23px}
+.mob-menu{display:none;position:fixed;inset:0;z-index:200;background:var(--bg);flex-direction:column;align-items:center;justify-content:center;gap:4px}
+.mob-menu.open{display:flex}
+.mob-menu a{font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--white);padding:8px 0;letter-spacing:0.06em;transition:color 0.2s}
+.mob-menu a:hover{color:var(--teal3)}
+.mob-close{position:absolute;top:20px;right:24px;background:none;border:none;cursor:pointer}
+.mob-close svg{width:32px;height:32px;stroke:var(--white);stroke-width:2}
+
+/* ═══ HERO ═══ */
+.hero{min-height:100vh;position:relative;display:flex;align-items:flex-end;padding:100px 0 80px;overflow:hidden}
+.hero-bg{position:absolute;inset:0;z-index:0}
+.hero-bg img{width:100%;height:100%;object-fit:cover}
+.hero-bg::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,#0D1520 0%,rgba(13,21,32,0.7) 40%,rgba(13,21,32,0.35) 70%,rgba(13,21,32,0.5) 100%)}
+.hero-content{position:relative;z-index:2;max-width:1300px;margin:0 auto;padding:0 40px;width:100%}
+.hero-badge{position:fixed;top:0;left:38%;transform:translateX(-50%);z-index:101;display:inline-flex;align-items:center;gap:8px;padding:8px 20px;background:rgba(215,162,42,0.2);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);border:1px solid rgba(215,162,42,0.35);border-top:none;color:var(--gold);font-size:11px;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;border-radius:0 0 6px 6px}
+.hero-badge svg{width:13px;height:13px;fill:var(--gold)}
+.hero h1{font-size:clamp(60px,10vw,140px);color:var(--white);line-height:0.92;margin-bottom:24px;letter-spacing:0.02em}
+.hero h1 .teal{color:var(--teal3)}
+.hero h1 .gold{color:var(--gold)}
+.hero-sub{font-size:18px;color:var(--text);max-width:520px;line-height:1.7;margin-bottom:36px}
+.hero-actions{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:56px}
+.btn-gold{display:inline-flex;align-items:center;gap:8px;padding:16px 36px;background:var(--gold);color:#0A0F14;font-weight:800;font-size:13px;letter-spacing:0.08em;text-transform:uppercase;border-radius:2px;border:none;cursor:pointer;transition:all 0.2s}
+.btn-gold:hover{background:var(--gold2);box-shadow:0 0 30px var(--gold-glow);transform:translateY(-1px)}
+.btn-gold svg{width:18px;height:18px;stroke:#0A0F14;fill:none}
+.btn-outline{display:inline-flex;align-items:center;gap:6px;padding:10px 22px;background:var(--teal);color:#fff;font-weight:700;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;border-radius:2px;border:2px solid var(--teal);cursor:pointer;transition:all 0.2s}
+.btn-outline:hover{background:var(--teal2);border-color:var(--teal2);color:#fff;box-shadow:0 0 20px rgba(0,103,120,0.3)}
+.btn-outline svg{width:16px;height:16px;stroke:currentColor;fill:none}
+.hero-stats{display:flex;gap:48px}
+.hero-stat{padding-left:20px;border-left:3px solid var(--teal)}
+.hero-stat .num{font-family:'Bebas Neue',sans-serif;font-size:42px;color:var(--white);line-height:1}
+.hero-stat .num span{color:var(--gold)}
+.hero-stat .lbl{font-size:12px;color:var(--muted);font-weight:600;letter-spacing:0.06em;text-transform:uppercase;margin-top:4px}
+
+/* ═══ MARQUEE ═══ */
+.marquee{padding:18px 0;overflow:hidden;white-space:nowrap;background:linear-gradient(135deg,var(--teal) 0%,#0E7490 50%,var(--teal) 100%);border-top:3px solid var(--gold);border-bottom:3px solid var(--gold)}
+.marquee-track{display:inline-flex;animation:marq 45s linear infinite}
+.marquee-item{font-family:'Bebas Neue',sans-serif;font-size:20px;color:rgba(255,255,255,0.9);padding:0 40px;display:flex;align-items:center;gap:32px;letter-spacing:0.14em}
+.marquee-item::after{content:'';width:8px;height:8px;background:var(--gold);border-radius:50%;flex-shrink:0}
+@keyframes marq{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+
+/* ═══ SECTIONS ═══ */
+.sec{padding:120px 40px}
+.sec-inner{max-width:1300px;margin:0 auto}
+.sec-label{font-size:12px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:var(--teal3);margin-bottom:12px}
+.sec-title{font-size:clamp(36px,5vw,72px);color:var(--white);line-height:0.95;margin-bottom:20px}
+.sec-desc{font-size:16px;color:var(--muted);max-width:500px;line-height:1.7}
+
+/* ═══ ABOUT ═══ */
+.about{background:linear-gradient(180deg,#0F1E28 0%,#132830 50%,#0F1E28 100%);position:relative;overflow:hidden}
+.about-hero{text-align:center;margin-bottom:56px}
+.about-hero .sec-title{font-size:clamp(40px,6vw,80px);margin-bottom:12px}
+.about-hero p{font-size:17px;color:var(--text);max-width:600px;margin:0 auto;line-height:1.8}
+.about-photos{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:12px;margin-bottom:56px}
+.about-photo{border-radius:12px;overflow:hidden;aspect-ratio:4/3;position:relative}
+.about-photo img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s}
+.about-photo:hover img{transform:scale(1.05)}
+.about-photo::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(0,103,120,0.3) 0%,transparent 60%);pointer-events:none}
+.about-photo:nth-child(2){aspect-ratio:16/9}
+.about-highlight-bar{padding:32px 40px;background:linear-gradient(135deg,var(--teal),#0E7490);border-radius:16px;text-align:center;margin-bottom:56px;border:2px solid rgba(215,162,42,0.3)}
+.about-highlight-bar p{font-family:'Bebas Neue',sans-serif;font-size:clamp(22px,3vw,32px);color:#fff;letter-spacing:0.06em;line-height:1.3}
+.about-highlight-bar p span{color:var(--gold2)}
+.about-values{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.about-val{text-align:center;padding:32px 20px;background:linear-gradient(135deg,rgba(34,211,238,0.2) 0%,rgba(34,211,238,0.08) 40%,rgba(215,162,42,0.08) 70%,rgba(215,162,42,0.2) 100%);border:1px solid rgba(34,211,238,0.25);border-radius:14px;border-top:3px solid var(--teal3);transition:all 0.3s}
+.about-val:nth-child(even){background:linear-gradient(135deg,rgba(215,162,42,0.22) 0%,rgba(215,162,42,0.08) 40%,rgba(34,211,238,0.08) 70%,rgba(34,211,238,0.2) 100%);border-top-color:var(--gold)}
+.about-val:hover{transform:translateY(-4px);box-shadow:0 12px 40px rgba(0,103,120,0.15)}
+.about-val-icon{width:56px;height:56px;border-radius:50%;background:rgba(0,103,120,0.2);display:flex;align-items:center;justify-content:center;margin:0 auto 16px}
+.about-val:nth-child(even) .about-val-icon{background:rgba(215,162,42,0.15)}
+.about-val-icon svg{width:24px;height:24px;stroke:var(--teal3);fill:none;stroke-width:1.8}
+.about-val:nth-child(even) .about-val-icon svg{stroke:var(--gold2)}
+.about-val h4{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--white);margin-bottom:6px;letter-spacing:0.04em}
+.about-val p{font-size:13px;color:var(--text);line-height:1.6}
+
+/* ═══ WALKS ═══ */
+.walks{background:var(--bg)}
+.walks-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:48px;flex-wrap:wrap;gap:20px}
+.walks-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.walk-card{border:1px solid rgba(34,211,238,0.25);border-radius:8px;padding:32px 28px;transition:all 0.3s;position:relative;overflow:hidden;border-top:3px solid var(--teal3)}
+.walk-card:nth-child(odd){background:linear-gradient(135deg,rgba(34,211,238,0.2) 0%,rgba(34,211,238,0.08) 40%,rgba(215,162,42,0.08) 70%,rgba(215,162,42,0.2) 100%)}
+.walk-card:nth-child(even){background:linear-gradient(135deg,rgba(215,162,42,0.22) 0%,rgba(215,162,42,0.08) 40%,rgba(34,211,238,0.08) 70%,rgba(34,211,238,0.2) 100%);border-top-color:var(--gold)}
+.walk-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--teal),var(--gold));transform:scaleX(0);transition:transform 0.3s;transform-origin:left}
+.walk-card:hover{box-shadow:0 12px 40px rgba(0,103,120,0.2);transform:translateY(-4px)}
+.walk-card:hover::after{transform:scaleX(1)}
+.walk-when{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.walk-day{padding:6px 14px;background:var(--gold);color:#0A0F14;font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:0.1em;border-radius:2px}
+.walk-time{font-size:13px;color:var(--muted);font-weight:600}
+.walk-card h3{font-family:'Plus Jakarta Sans',sans-serif;font-size:18px;font-weight:700;color:var(--white);margin-bottom:12px}
+.walk-meta{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.walk-meta span{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.walk-meta svg{width:15px;height:15px;stroke:var(--teal3);fill:none;flex-shrink:0}
+.walk-rsvp{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;background:transparent;border:1.5px solid var(--border2);color:var(--teal3);font-weight:700;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;border-radius:2px;transition:all 0.2s;cursor:pointer}
+.walk-rsvp:hover{background:var(--teal);border-color:var(--teal);color:var(--white)}
+.walk-rsvp svg{width:14px;height:14px;stroke:currentColor;fill:none}
+.walks-note{text-align:center;margin-top:32px;font-size:13px;color:var(--muted)}
+.walks-note a{color:var(--teal3);font-weight:700}
+
+/* ═══ WAIVER ═══ */
+.waiver{background:var(--bg2);position:relative;padding:120px 40px}
+.waiver::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--teal) 0%,var(--gold) 50%,var(--teal) 100%)}
+.waiver-header{text-align:center;margin-bottom:16px}
+.waiver-header .sec-title{font-size:clamp(40px,6vw,80px)}
+.waiver-header .sec-desc{margin:0 auto 8px;max-width:520px}
+.waiver-steps-bar{display:flex;justify-content:center;gap:32px;margin-bottom:48px;flex-wrap:wrap}
+.waiver-step{display:flex;align-items:center;gap:10px}
+.waiver-step-num{width:32px;height:32px;border-radius:50%;background:rgba(0,103,120,0.2);border:2px solid var(--teal);display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue',sans-serif;font-size:16px;color:var(--teal3)}
+.waiver-step span{font-size:13px;color:var(--muted);font-weight:600}
+.waiver-form-wrap{max-width:720px;margin:0 auto;background:linear-gradient(135deg,rgba(0,103,120,0.25) 0%,rgba(0,103,120,0.1) 40%,rgba(215,162,42,0.1) 70%,rgba(215,162,42,0.2) 100%);border:1px solid rgba(34,211,238,0.2);border-top:3px solid var(--teal3);border-radius:12px;padding:48px}
+.waiver-success{display:none;text-align:center;padding:48px 20px}
+.waiver-success.show{display:block}
+.waiver-success .ico{width:64px;height:64px;border-radius:50%;background:rgba(0,103,120,0.2);border:2px solid var(--teal);display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+.waiver-success .ico svg{width:32px;height:32px;stroke:var(--teal3);fill:none;stroke-width:2.5}
+.waiver-success h3{font-family:'Plus Jakarta Sans',sans-serif;font-size:24px;font-weight:700;color:var(--white);margin-bottom:8px}
+.waiver-success p{color:var(--muted);font-size:16px}
+.wf{display:flex;flex-direction:column;gap:18px}
+.wf-row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.wf-group label{display:block;font-size:12px;font-weight:700;color:var(--white);margin-bottom:5px;letter-spacing:0.04em;text-transform:uppercase}
+.wf-group input{width:100%;padding:12px 14px;background:#fff;border:1.5px solid #D0D8E0;border-radius:6px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:#0F172A;outline:none;transition:all 0.2s}
+.wf-group input:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,103,120,0.15);background:#fff}
+.wf-group input::placeholder{color:#94A3B8}
+.wf-group input.err{border-color:#EF4444;background:#FEF2F2}
+.wf-group input.ok{border-color:var(--teal)}
+.wf-legal{max-height:160px;overflow-y:auto;border:1.5px solid #D0D8E0;border-radius:6px;padding:20px;background:#fff;font-size:12px;line-height:1.75;color:#475569}
+.wf-legal h4{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:700;color:#0F172A;margin:14px 0 4px;text-transform:uppercase;letter-spacing:0.04em}
+.wf-legal h4:first-child{margin-top:0}
+.wf-check{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--text);cursor:pointer}
+.wf-check input{width:18px;height:18px;accent-color:var(--teal);flex-shrink:0;margin-top:2px;cursor:pointer}
+.sig-box{background:#fff;border:1.5px solid #D0D8E0;border-radius:6px;padding:20px}
+.sig-box .sig-lbl{font-size:12px;font-weight:700;color:#0F172A;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.04em}
+.sig-box .sig-hint{font-size:11px;color:#94A3B8;margin-bottom:10px}
+.sig-box canvas{width:100%;height:100px;border:1.5px dashed #CBD5E1;border-radius:4px;background:#FAFBFC;cursor:crosshair;touch-action:none}
+.sig-box .sig-clr{display:block;margin-top:8px;background:none;border:none;font-size:11px;font-weight:700;color:var(--muted);cursor:pointer;margin-left:auto;transition:color 0.2s;text-transform:uppercase;letter-spacing:0.06em}
+.sig-box .sig-clr:hover{color:var(--teal3)}
+.wf-submit{width:100%;padding:16px;background:var(--gold);color:#0A0F14;font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:0.1em;border-radius:4px;border:none;cursor:pointer;transition:all 0.2s}
+.wf-submit:hover{background:var(--gold2);box-shadow:0 0 30px var(--gold-glow)}
+
+/* ═══ COMMUNITY ═══ */
+.community{background:var(--bg);padding:120px 0}
+.community .sec-inner{max-width:1300px;margin:0 auto;padding:0 40px}
+.community-header{text-align:center;margin-bottom:48px}
+.community-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;padding:0 40px;max-width:1300px;margin:0 auto}
+.community-item{aspect-ratio:4/3;border-radius:6px;overflow:hidden;position:relative;transition:all 0.3s}
+.community-item:hover{transform:scale(1.03);z-index:2}
+.community-item img{width:100%;height:100%;object-fit:cover}
+.community-item::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,rgba(10,15,20,0.8) 0%,transparent 50%);pointer-events:none}
+.community-item span{position:absolute;bottom:0;left:0;right:0;padding:10px 14px;color:var(--white);font-size:12px;font-weight:700;z-index:1;letter-spacing:0.02em}
+
+/* ═══ SHOP ═══ */
+.shop{background:var(--bg2)}
+.shop-header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:48px;flex-wrap:wrap;gap:16px}
+.shop-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.shop-card{display:block;border-radius:8px;overflow:hidden;transition:all 0.3s;cursor:pointer;position:relative;border:1px solid rgba(34,211,238,0.25);border-top:3px solid var(--teal3)}
+.shop-card:nth-child(odd){background:linear-gradient(135deg,rgba(34,211,238,0.2) 0%,rgba(34,211,238,0.08) 40%,rgba(215,162,42,0.08) 70%,rgba(215,162,42,0.2) 100%)}
+.shop-card:nth-child(even){background:linear-gradient(135deg,rgba(215,162,42,0.22) 0%,rgba(215,162,42,0.08) 40%,rgba(34,211,238,0.08) 70%,rgba(34,211,238,0.2) 100%);border-top-color:var(--gold)}
+.shop-card::before{content:'';position:absolute;inset:-1px;border-radius:8px;background:linear-gradient(135deg,var(--teal),var(--gold));z-index:-1;opacity:0;transition:opacity 0.3s}
+.shop-card:hover{transform:translateY(-6px);border-color:transparent;box-shadow:0 12px 40px rgba(0,103,120,0.2)}
+.shop-card:hover::before{opacity:1}
+.shop-img{aspect-ratio:1;overflow:hidden;background:var(--bg3)}
+.shop-img img{width:100%;height:100%;object-fit:cover;transition:transform 0.4s}
+.shop-card:hover .shop-img img{transform:scale(1.06)}
+.shop-body{padding:20px 24px}
+.shop-body h3{font-family:'Plus Jakarta Sans',sans-serif;font-size:17px;font-weight:700;color:var(--white);margin-bottom:4px}
+.shop-body .price{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--gold);margin-bottom:14px;letter-spacing:0.04em}
+.shop-link{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:var(--teal3);text-transform:uppercase;letter-spacing:0.08em;transition:gap 0.2s}
+.shop-link:hover{gap:10px}
+.shop-link svg{width:14px;height:14px;stroke:currentColor;fill:none}
+
+/* ═══ CONTACT ═══ */
+.contact{background:var(--bg)}
+.contact-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:60px;align-items:start}
+.contact-items{display:flex;flex-direction:column;gap:20px;margin-top:32px}
+.ci{display:flex;gap:14px}
+.ci-icon{width:44px;height:44px;border-radius:8px;background:rgba(0,103,120,0.15);border:1px solid rgba(0,103,120,0.25);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ci-icon svg{width:18px;height:18px;stroke:var(--teal3);fill:none}
+.ci .ci-l{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:0.06em;text-transform:uppercase}
+.ci .ci-v{font-size:15px;color:var(--white);font-weight:600}
+.ci .ci-v a{color:var(--teal3);transition:color 0.2s}
+.ci .ci-v a:hover{color:var(--teal2)}
+.contact-socials{display:flex;gap:10px;margin-top:28px}
+.contact-socials a{width:44px;height:44px;border-radius:8px;background:rgba(255,255,255,0.04);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.contact-socials a:hover{background:var(--teal);border-color:var(--teal)}
+.contact-socials a svg{width:18px;height:18px;stroke:var(--muted);fill:none}
+.contact-socials a:hover svg{stroke:var(--white)}
+.contact-form{background:linear-gradient(135deg,rgba(215,162,42,0.2) 0%,rgba(215,162,42,0.08) 40%,rgba(0,103,120,0.08) 70%,rgba(0,103,120,0.2) 100%);border:1px solid rgba(34,211,238,0.2);border-top:3px solid var(--gold);border-radius:8px;padding:36px}
+.contact-form form{display:flex;flex-direction:column;gap:14px}
+.contact-form input,.contact-form textarea{width:100%;padding:12px 14px;background:#fff;border:1.5px solid #D0D8E0;border-radius:6px;font-family:'Plus Jakarta Sans',sans-serif;font-size:14px;color:#0F172A;outline:none;transition:all 0.2s}
+.contact-form input:focus,.contact-form textarea:focus{border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,103,120,0.15);background:#fff}
+.contact-form input::placeholder,.contact-form textarea::placeholder{color:#94A3B8}
+.contact-form textarea{resize:vertical;min-height:100px}
+
+/* ═══ CTA ═══ */
+.cta{padding:120px 40px;text-align:center;position:relative;overflow:hidden;background:var(--bg2)}
+.cta::before{content:'WALK';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-family:'Bebas Neue',sans-serif;font-size:clamp(180px,22vw,360px);color:rgba(0,103,120,0.06);pointer-events:none;letter-spacing:0.1em}
+.cta .sec-title{font-size:clamp(48px,7vw,96px);margin-bottom:16px;position:relative}
+.cta p{color:var(--muted);font-size:18px;margin-bottom:40px;position:relative}
+
+/* ═══ FOOTER ═══ */
+.footer{padding:64px 40px 32px;background:var(--bg);border-top:1px solid var(--border)}
+.footer-grid{max-width:1300px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px}
+.footer-brand{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.footer-brand img{width:40px;height:40px;border-radius:50%;border:2px solid var(--gold)}
+.footer-brand-text{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--white);letter-spacing:0.04em}
+.footer-brand-text span{color:var(--gold)}
+.footer-desc{font-size:13px;color:var(--muted);line-height:1.7;max-width:280px}
+.footer h4{font-family:'Plus Jakarta Sans',sans-serif;font-size:12px;font-weight:800;color:var(--white);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:16px}
+.footer-links{display:flex;flex-direction:column;gap:10px}
+.footer-links a,.footer-links span{font-size:13px;color:var(--muted);transition:color 0.2s}
+.footer-links a:hover{color:var(--teal3)}
+.footer-bot{max-width:1300px;margin:48px auto 0;padding-top:24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.footer-bot p{font-size:12px;color:var(--muted)}
+.footer-motto{font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--teal3);letter-spacing:0.08em}
+
+/* ═══ WEBNARI ═══ */
+.webnari{text-align:center;padding:14px 0 12px;border-top:1px solid var(--border);background:var(--bg)}
+.webnari-inner{font-size:14px;color:var(--muted);font-weight:600;display:flex;align-items:center;justify-content:center;gap:8px;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+.webnari-mark{width:24px;height:24px;border-radius:6px;background:radial-gradient(circle at center,rgba(255,255,255,0.45) 0%,rgba(255,255,255,0.15) 40%,#B8892A 70%,#D4A63A 100%);box-shadow:0 0 8px rgba(255,255,255,0.5);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.webnari-mark svg{width:12px;height:12px}
+.webnari-inner a{color:#B8892A;font-weight:900;text-decoration:none}
+.webnari-inner a:hover{text-decoration:underline}
+
+/* ═══ SCROLL REVEAL ═══ */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity 0.7s ease,transform 0.7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-d1{transition-delay:0.1s}.reveal-d2{transition-delay:0.2s}.reveal-d3{transition-delay:0.3s}.reveal-d4{transition-delay:0.4s}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:1024px){
+  .about-values{grid-template-columns:1fr 1fr}
+  .about-photos{grid-template-columns:1fr 1fr 1fr}
+  .contact-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+  .community-strip{grid-template-columns:repeat(3,1fr)}
+}
+@media(max-width:768px){
+  .nav-links{display:none}
+  .burger{display:block}
+  .hero{min-height:90vh;padding-bottom:48px}
+  .hero-content{padding:0 24px}
+  .hero-stats{flex-wrap:wrap;gap:24px}
+  .sec{padding:80px 24px}
+  .waiver{padding:80px 24px}
+  .about-values{grid-template-columns:1fr 1fr}
+  .about-photos{grid-template-columns:1fr}
+  .about-highlight-bar{padding:24px 20px}
+  .walks-grid{grid-template-columns:1fr}
+  .shop-grid{grid-template-columns:1fr 1fr}
+  .wf-row{grid-template-columns:1fr}
+  .waiver-form-wrap{padding:28px 20px}
+  .community-strip{grid-template-columns:1fr 1fr;padding:0 24px}
+  .footer-grid{grid-template-columns:1fr}
+  .cta{padding:80px 24px}
+  .hero-actions{flex-direction:column;align-items:stretch}
+  .waiver-steps-bar{gap:16px}
+}
+@media(max-width:480px){
+  .shop-grid{grid-template-columns:1fr}
+  .community-strip{grid-template-columns:1fr}
+  .hero-stats{flex-direction:column;gap:16px}
+  .about-values{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="mainNav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <img src="images/904walkclub/logo.jpg" alt="904 Walk Club" width="42" height="42">
+      <span class="nav-logo-text"><span>904</span> Walk Club</span>
+    </a>
+    <div class="nav-links">
+      <a href="#about">About</a>
+      <a href="#walks">Walks</a>
+      <a href="#waiver">Waiver</a>
+      <a href="#shop">Shop</a>
+      <a href="#contact">Contact</a>
+      <a href="#waiver" class="nav-cta">Sign Waiver</a>
+    </div>
+    <button class="burger" id="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div class="mob-menu" id="mobMenu">
+  <button class="mob-close" id="mobClose" aria-label="Close"><svg viewBox="0 0 24 24" fill="none" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+  <a href="#about" class="ml">About</a>
+  <a href="#walks" class="ml">Walks</a>
+  <a href="#waiver" class="ml">Waiver</a>
+  <a href="#shop" class="ml">Shop</a>
+  <a href="#contact" class="ml">Contact</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg">
+    <img src="images/904walkclub/group1.jpg" alt="904 Walk Club community walk">
+  </div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z"/></svg>
+      Jacksonville, FL
+    </div>
+    <h1>Walk.<br><span class="teal">Connect.</span><br><span class="gold">Thrive.</span></h1>
+    <p class="hero-sub">Jacksonville's community walking club bringing people together through movement, connection, and positive energy — one step at a time.</p>
+    <div class="hero-actions">
+      <a href="#waiver" class="btn-gold">
+        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        Sign Waiver
+      </a>
+      <a href="#walks" class="btn-outline">
+        <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Join a Walk
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num">110<span>+</span></div><div class="lbl">Walks Hosted</div></div>
+      <div class="hero-stat"><div class="num">3.9K<span>+</span></div><div class="lbl">Members</div></div>
+      <div class="hero-stat"><div class="num">Every</div><div class="lbl">Wednesday</div></div>
+      <div class="hero-stat"><div class="num">100<span>%</span></div><div class="lbl">Free</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee">
+  <div class="marquee-track">
+    <span class="marquee-item">WALK</span><span class="marquee-item">CONNECT</span><span class="marquee-item">THRIVE</span><span class="marquee-item">JACKSONVILLE</span><span class="marquee-item">COMMUNITY</span><span class="marquee-item">CHARITY</span><span class="marquee-item">MOVEMENT</span><span class="marquee-item">EVERY WEDNESDAY</span>
+    <span class="marquee-item">WALK</span><span class="marquee-item">CONNECT</span><span class="marquee-item">THRIVE</span><span class="marquee-item">JACKSONVILLE</span><span class="marquee-item">COMMUNITY</span><span class="marquee-item">CHARITY</span><span class="marquee-item">MOVEMENT</span><span class="marquee-item">EVERY WEDNESDAY</span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="sec about" id="about">
+  <div class="sec-inner">
+    <div class="about-hero reveal">
+      <div class="sec-label" style="text-align:center">Our Mission</div>
+      <div class="sec-title">Building Community,<br>One Step at a Time</div>
+      <p>904 Walk Club is Jacksonville's community walking club — dedicated to building health, connection, and motivation through the simple act of walking together. Every Wednesday, we host free group walks at local landmarks.</p>
+    </div>
+
+    <div class="about-photos reveal">
+      <div class="about-photo"><img src="images/904walkclub/group2.jpg" alt="904 Walk Club at Riverside" loading="lazy"></div>
+      <div class="about-photo"><img src="images/904walkclub/group3.jpg" alt="904 Walk Club community" loading="lazy"></div>
+      <div class="about-photo"><img src="images/904walkclub/nightwalk.jpg" alt="904 Walk Club night walk" loading="lazy"></div>
+    </div>
+
+    <div class="about-highlight-bar reveal">
+      <p>All fitness levels welcome. <span>No pace requirements.</span> No fees. <span>Just show up, walk, and connect.</span></p>
+    </div>
+
+    <div class="about-values">
+      <div class="about-val reveal reveal-d1">
+        <div class="about-val-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+        <h4>Community</h4>
+        <p>Genuine connections through shared movement</p>
+      </div>
+      <div class="about-val reveal reveal-d2">
+        <div class="about-val-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+        <h4>Inclusive</h4>
+        <p>All fitness levels, backgrounds, and ages</p>
+      </div>
+      <div class="about-val reveal reveal-d3">
+        <div class="about-val-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        <h4>Local</h4>
+        <p>Jacksonville landmarks and hidden gems</p>
+      </div>
+      <div class="about-val reveal reveal-d4">
+        <div class="about-val-icon"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div>
+        <h4>Positive</h4>
+        <p>Uplifting energy focused on health and joy</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WALKS -->
+<section class="sec walks" id="walks">
+  <div class="sec-inner">
+    <div class="walks-head">
+      <div class="reveal">
+        <div class="sec-label">Upcoming Walks</div>
+        <div class="sec-title">Join This Week</div>
+        <p class="sec-desc">Meet &amp; Greet at 6:30 PM. Walk starts at 7:00 PM. Every Wednesday.</p>
+      </div>
+    </div>
+    <div class="walks-grid">
+      <div class="walk-card reveal reveal-d1">
+        <div class="walk-when">
+          <span class="walk-day">WED</span>
+          <span class="walk-time">7:00 PM</span>
+        </div>
+        <h3>Friendship Fountain</h3>
+        <div class="walk-meta">
+          <span><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>1015 Museum Cir</span>
+          <span><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>River Walk</span>
+        </div>
+        <a href="https://www.instagram.com/904walkclub/" target="_blank" rel="noopener" class="walk-rsvp">
+          RSVP <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+      <div class="walk-card reveal reveal-d2">
+        <div class="walk-when">
+          <span class="walk-day">WED</span>
+          <span class="walk-time">7:00 PM</span>
+        </div>
+        <h3>Riverside Arts Market</h3>
+        <div class="walk-meta">
+          <span><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>715 Riverside Ave</span>
+          <span><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Riverwalk</span>
+        </div>
+        <a href="https://www.instagram.com/904walkclub/" target="_blank" rel="noopener" class="walk-rsvp">
+          RSVP <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+      <div class="walk-card reveal reveal-d3">
+        <div class="walk-when">
+          <span class="walk-day">WED</span>
+          <span class="walk-time">7:00 PM</span>
+        </div>
+        <h3>RiversEdge Park</h3>
+        <div class="walk-meta">
+          <span><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>2010 Prudential Dr</span>
+          <span><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>Riverwalk</span>
+        </div>
+        <a href="https://www.instagram.com/904walkclub/" target="_blank" rel="noopener" class="walk-rsvp">
+          RSVP <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+    </div>
+    <p class="walks-note">Follow <a href="https://www.instagram.com/904walkclub/" target="_blank" rel="noopener">@904walkclub</a> on Instagram for weekly location updates</p>
+  </div>
+</section>
+
+<!-- WAIVER -->
+<section class="waiver" id="waiver">
+  <div class="sec-inner">
+    <div class="waiver-header reveal">
+      <div class="sec-label">Required</div>
+      <div class="sec-title">Sign Your Waiver</div>
+      <p class="sec-desc" style="margin:0 auto">All participants must complete this waiver before their first walk. Takes about a minute.</p>
+    </div>
+    <div class="waiver-steps-bar reveal">
+      <div class="waiver-step"><div class="waiver-step-num">1</div><span>Your Details</span></div>
+      <div class="waiver-step"><div class="waiver-step-num">2</div><span>Read Terms</span></div>
+      <div class="waiver-step"><div class="waiver-step-num">3</div><span>Sign</span></div>
+      <div class="waiver-step"><div class="waiver-step-num">4</div><span>Submit</span></div>
+    </div>
+    <div class="waiver-form-wrap reveal">
+      <div class="waiver-success" id="waiverSuccess">
+        <div class="ico"><svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+        <h3>Waiver Submitted</h3>
+        <p>Thank you! See you at the next walk.</p>
+      </div>
+      <form id="waiverForm" action="https://formsubmit.co/904walkclub@gmail.com" method="POST" class="wf" novalidate>
+        <input type="hidden" name="_subject" value="New Waiver — 904 Walk Club">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_next" value="https://webnari.io/904walkclub-v2.html?waiver=success#waiver">
+        <input type="text" name="_honey" style="display:none">
+        <input type="hidden" name="_template" value="table">
+        <input type="hidden" name="signature_provided" value="">
+        <div class="wf-row">
+          <div class="wf-group"><label>First Name</label><input type="text" name="first_name" placeholder="First name" required></div>
+          <div class="wf-group"><label>Last Name</label><input type="text" name="last_name" placeholder="Last name" required></div>
+        </div>
+        <div class="wf-row">
+          <div class="wf-group"><label>Email</label><input type="email" name="email" placeholder="you@email.com" required></div>
+          <div class="wf-group"><label>Phone</label><input type="tel" name="phone" placeholder="(904) 555-0000" required></div>
+        </div>
+        <div class="wf-row">
+          <div class="wf-group"><label>Date of Birth</label><input type="date" name="date_of_birth" required></div>
+          <div class="wf-group"><label>Emergency Contact</label><input type="text" name="emergency_contact" placeholder="Name" required></div>
+        </div>
+        <div class="wf-group"><label>Emergency Contact Phone</label><input type="tel" name="emergency_phone" placeholder="(904) 555-0000" required></div>
+
+        <div class="wf-legal">
+          <h4>Assumption of Risk</h4>
+          I understand that participation in 904 Walk Club events involves physical activity including walking on public streets, sidewalks, parks, and trails. I acknowledge inherent risks including uneven terrain, traffic, weather conditions, physical exertion, and interaction with other participants. I voluntarily assume all risks and accept personal responsibility for any injury.
+          <h4>Release of Liability</h4>
+          I hereby release, waive, and discharge 904 Walk Club, its organizers, volunteers, sponsors, and affiliated individuals from any liability, claims, demands, and causes of action arising from any loss, damage, or injury sustained during club activities.
+          <h4>Medical Acknowledgment</h4>
+          I certify that I am physically fit and have no medical condition preventing my participation. I agree to seek my own medical treatment if needed.
+          <h4>Photo &amp; Media Release</h4>
+          I grant 904 Walk Club permission to use photographs, video, or media taken during events for promotional purposes including social media and marketing.
+          <h4>General</h4>
+          This waiver is binding upon me, my heirs, executors, and assigns. I have read this waiver, fully understand its terms, and sign it voluntarily.
+        </div>
+
+        <label class="wf-check">
+          <input type="checkbox" name="waiver_agreed" value="Yes" required>
+          <span>I have read and agree to the waiver terms above</span>
+        </label>
+
+        <div class="sig-box">
+          <div class="sig-lbl">Your Signature</div>
+          <div class="sig-hint">Draw with mouse or finger</div>
+          <canvas id="sigCanvas"></canvas>
+          <button type="button" class="sig-clr" id="sigClear">Clear</button>
+        </div>
+
+        <button type="submit" class="wf-submit">Submit Waiver</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- COMMUNITY -->
+<section class="community" id="gallery">
+  <div class="sec-inner">
+    <div class="community-header reveal">
+      <div class="sec-label" style="text-align:center">Our Community</div>
+      <div class="sec-title" style="text-align:center">Walking Together</div>
+    </div>
+  </div>
+  <div class="community-strip">
+    <div class="community-item"><img src="images/904walkclub/group1.jpg" alt="904 Walk Club group at Friendship Fountain" loading="lazy"><span>Friendship Fountain</span></div>
+    <div class="community-item"><img src="images/904walkclub/group2.jpg" alt="904 Walk Club group at Riverside" loading="lazy"><span>Riverside Arts Market</span></div>
+    <div class="community-item"><img src="images/904walkclub/group3.jpg" alt="904 Walk Club community walk" loading="lazy"><span>RiversEdge Park</span></div>
+    <div class="community-item"><img src="images/904walkclub/group5.jpg" alt="904 Walk Club night walk" loading="lazy"><span>Downtown Jax</span></div>
+    <div class="community-item"><img src="images/904walkclub/nightwalk.jpg" alt="904 Walk Club walking at night" loading="lazy"><span>The Riverwalk</span></div>
+    <div class="community-item"><img src="images/904walkclub/flyer1.jpg" alt="904 Walk Club safety disclaimer" loading="lazy"><span>Safety First</span></div>
+  </div>
+</section>
+
+<!-- SHOP -->
+<section class="sec shop" id="shop">
+  <div class="sec-inner">
+    <div class="shop-header">
+      <div class="reveal">
+        <div class="sec-label">Shop</div>
+        <div class="sec-title">Walk Club Merch</div>
+        <p class="sec-desc">All proceeds support our community events.</p>
+      </div>
+    </div>
+    <div class="shop-grid">
+      <a href="904wc-v2-maroon-beanie.html" class="shop-card reveal reveal-d1">
+        <div class="shop-img"><img src="images/904walkclub/maroon-beanie.jpg" alt="904 Walk Club Maroon Beanie" loading="lazy"></div>
+        <div class="shop-body">
+          <h3>Maroon Beanie</h3>
+          <div class="price">$25</div>
+          <span class="shop-link">View Details <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+        </div>
+      </a>
+      <a href="904wc-v2-white-tshirt.html" class="shop-card reveal reveal-d2">
+        <div class="shop-img"><img src="images/904walkclub/white-tshirt.jpg" alt="904 Walk Club White T-Shirt" loading="lazy"></div>
+        <div class="shop-body">
+          <h3>White T-Shirt</h3>
+          <div class="price">$25</div>
+          <span class="shop-link">View Details <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+        </div>
+      </a>
+      <a href="904wc-v2-orange-earrings.html" class="shop-card reveal reveal-d3">
+        <div class="shop-img"><img src="images/904walkclub/orange-earrings.jpg" alt="904 Walk Club Orange Earrings" loading="lazy"></div>
+        <div class="shop-body">
+          <h3>Orange Earrings</h3>
+          <div class="price">$15</div>
+          <span class="shop-link">View Details <svg viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="sec contact" id="contact">
+  <div class="sec-inner">
+    <div class="contact-grid">
+      <div class="reveal">
+        <div class="sec-label">Get in Touch</div>
+        <div class="sec-title">Let's Connect</div>
+        <p class="sec-desc">Interested in partnering, sponsoring, or joining the movement?</p>
+        <div class="contact-items">
+          <div class="ci">
+            <div class="ci-icon"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-8.97 5.7a1.94 1.94 0 01-2.06 0L2 7"/></svg></div>
+            <div><div class="ci-l">Email</div><div class="ci-v"><a href="mailto:904walkclub@gmail.com">904walkclub@gmail.com</a></div></div>
+          </div>
+          <div class="ci">
+            <div class="ci-icon"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+            <div><div class="ci-l">Location</div><div class="ci-v">Jacksonville, Florida</div></div>
+          </div>
+          <div class="ci">
+            <div class="ci-icon"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+            <div><div class="ci-l">Schedule</div><div class="ci-v">Every Wednesday at 7 PM</div></div>
+          </div>
+        </div>
+        <div class="contact-socials">
+          <a href="https://www.instagram.com/904walkclub/" target="_blank" rel="noopener" aria-label="Instagram"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+          <a href="https://www.facebook.com/904walkclub" target="_blank" rel="noopener" aria-label="Facebook"><svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></a>
+        </div>
+      </div>
+      <div class="contact-form reveal">
+        <form action="https://formsubmit.co/904walkclub@gmail.com" method="POST">
+          <input type="hidden" name="_subject" value="New Contact — 904 Walk Club">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="hidden" name="_next" value="https://webnari.io/904walkclub-v2.html#contact">
+          <input type="text" name="_honey" style="display:none">
+          <input type="text" name="name" placeholder="Your name" required>
+          <input type="email" name="email" placeholder="Your email" required>
+          <textarea name="message" placeholder="Your message" required></textarea>
+          <button type="submit" class="wf-submit">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta">
+  <div class="sec-title reveal">Ready to Walk?</div>
+  <p class="reveal">Sign your waiver and join the next community walk.</p>
+  <a href="#waiver" class="btn-gold reveal">Sign Waiver Now</a>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">
+        <img src="images/904walkclub/logo.jpg" alt="904 Walk Club" width="40" height="40">
+        <div class="footer-brand-text"><span>904</span> Walk Club</div>
+      </div>
+      <p class="footer-desc">Jacksonville's community walking club building health, connection, and positive energy — one step at a time.</p>
+    </div>
+    <div>
+      <h4>Links</h4>
+      <div class="footer-links">
+        <a href="#about">About</a><a href="#walks">Walks</a><a href="#waiver">Waiver</a><a href="#shop">Shop</a><a href="#contact">Contact</a>
+      </div>
+    </div>
+    <div>
+      <h4>Social</h4>
+      <div class="footer-links">
+        <a href="https://www.instagram.com/904walkclub/" target="_blank" rel="noopener">Instagram</a>
+        <a href="https://www.facebook.com/904walkclub" target="_blank" rel="noopener">Facebook</a>
+      </div>
+    </div>
+    <div>
+      <h4>Contact</h4>
+      <div class="footer-links">
+        <a href="mailto:904walkclub@gmail.com">904walkclub@gmail.com</a>
+        <span>Jacksonville, FL</span>
+        <span>Every Wednesday at 7 PM</span>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bot">
+    <p>&copy; 2026 904 Walk Club. All rights reserved.</p>
+    <p class="footer-motto">Walk Well. Walk Often. Walk Together.</p>
+  </div>
+</footer>
+
+<div class="webnari">
+  <div class="webnari-inner">
+    <div class="webnari-mark">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z" stroke="#B8892A" fill="#FFFFFF"/><path d="M2 12l10 5 10-5" stroke="#4A7CC9"/><path d="M2 17l10 5 10-5" stroke="#B8892A"/></svg>
+    </div>
+    Built and managed by <a href="https://webnari.io" target="_blank" rel="noopener">Webnari</a>
+  </div>
+</div>
+
+<script>
+/* NAV SCROLL */
+const nav=document.getElementById('mainNav');
+window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>40)});
+
+/* BURGER */
+const burger=document.getElementById('burger'),mob=document.getElementById('mobMenu'),mobClose=document.getElementById('mobClose');
+burger.addEventListener('click',()=>mob.classList.add('open'));
+mobClose.addEventListener('click',()=>mob.classList.remove('open'));
+mob.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>mob.classList.remove('open')));
+
+/* SCROLL REVEAL */
+const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}})},{threshold:0.15});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+/* SIGNATURE PAD */
+const canvas=document.getElementById('sigCanvas'),ctx=canvas.getContext('2d');
+let drawing=false,hasSig=false;
+function resizeCanvas(){const r=canvas.getBoundingClientRect();canvas.width=r.width*2;canvas.height=r.height*2;ctx.scale(2,2);ctx.strokeStyle='#22D3EE';ctx.lineWidth=2;ctx.lineCap='round';ctx.lineJoin='round'}
+resizeCanvas();
+window.addEventListener('resize',resizeCanvas);
+function getPos(e){const r=canvas.getBoundingClientRect();const t=e.touches?e.touches[0]:e;return{x:t.clientX-r.left,y:t.clientY-r.top}}
+canvas.addEventListener('mousedown',e=>{drawing=true;const p=getPos(e);ctx.beginPath();ctx.moveTo(p.x,p.y)});
+canvas.addEventListener('mousemove',e=>{if(!drawing)return;const p=getPos(e);ctx.lineTo(p.x,p.y);ctx.stroke();hasSig=true});
+canvas.addEventListener('mouseup',()=>drawing=false);
+canvas.addEventListener('mouseleave',()=>drawing=false);
+canvas.addEventListener('touchstart',e=>{e.preventDefault();drawing=true;const p=getPos(e);ctx.beginPath();ctx.moveTo(p.x,p.y)},{passive:false});
+canvas.addEventListener('touchmove',e=>{e.preventDefault();if(!drawing)return;const p=getPos(e);ctx.lineTo(p.x,p.y);ctx.stroke();hasSig=true},{passive:false});
+canvas.addEventListener('touchend',()=>drawing=false);
+document.getElementById('sigClear').addEventListener('click',()=>{ctx.clearRect(0,0,canvas.width,canvas.height);hasSig=false});
+
+/* SANITIZE INPUTS */
+function sanitize(str){
+  const d=document.createElement('div');
+  d.textContent=str;
+  return d.innerHTML.replace(/[<>"'&]/g,c=>({'<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;','&':'&amp;'}[c]||c));
+}
+function sanitizeInput(inp){
+  if(inp.type==='email'){inp.value=inp.value.replace(/[^a-zA-Z0-9@._+\-]/g,'')}
+  else if(inp.type==='tel'){inp.value=inp.value.replace(/[^0-9()\-+\s]/g,'')}
+  else if(inp.type==='date'){/* date picker is safe */}
+  else{inp.value=inp.value.replace(/[<>"'`]/g,'')}
+}
+
+/* FORM VALIDATION */
+const form=document.getElementById('waiverForm');
+form.querySelectorAll('input:not([type="hidden"]):not([type="checkbox"])').forEach(inp=>{
+  inp.addEventListener('blur',()=>{
+    sanitizeInput(inp);
+    if(inp.hasAttribute('required')){inp.classList.toggle('err',!inp.value.trim());inp.classList.toggle('ok',!!inp.value.trim())}
+  });
+  inp.addEventListener('input',()=>{sanitizeInput(inp)});
+});
+form.addEventListener('submit',e=>{
+  let valid=true;
+  form.querySelectorAll('input:not([type="hidden"]):not([type="checkbox"])').forEach(inp=>{sanitizeInput(inp)});
+  form.querySelectorAll('input[required]').forEach(inp=>{if(!inp.value.trim()&&inp.type!=='checkbox'){inp.classList.add('err');valid=false}});
+  if(!form.querySelector('input[name="waiver_agreed"]').checked){valid=false}
+  if(!hasSig){valid=false;canvas.style.borderColor='#EF4444'}else{canvas.style.borderColor=''}
+  if(!valid){e.preventDefault();return}
+  form.querySelector('input[name="signature_provided"]').value='Yes — signed digitally';
+});
+
+/* SANITIZE CONTACT FORM */
+document.querySelectorAll('.contact-form input,.contact-form textarea').forEach(inp=>{
+  inp.addEventListener('blur',()=>{if(inp.type==='email'){inp.value=inp.value.replace(/[^a-zA-Z0-9@._+\-]/g,'')}else if(inp.tagName!=='TEXTAREA'){inp.value=inp.value.replace(/[<>"'`]/g,'')}else{inp.value=inp.value.replace(/[<>`]/g,'')}});
+});
+
+/* WAIVER SUCCESS */
+if(new URLSearchParams(window.location.search).get('waiver')==='success'){
+  document.getElementById('waiverSuccess').classList.add('show');
+  form.style.display='none';
+}
+</script>
+
+</body>
+</html>
