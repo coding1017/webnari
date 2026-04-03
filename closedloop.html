@@ -1,0 +1,2339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Closed Loop Woodworks — Sustainably Crafted Functional Art</title>
+  <meta name="description" content="Handcrafted endgrain cutting boards, serving boards, and functional art made from reclaimed wood in Portland, Oregon. Sustainably crafted by Brian Dunn.">
+  <meta property="og:title" content="Closed Loop Woodworks — Sustainably Crafted Functional Art">
+  <meta property="og:description" content="Turning leftover wood into unique, functional art. Endgrain cutting boards, cribbage boards, and more from Portland, OR.">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      /* Warm, light palette — NO black backgrounds */
+      --cream: #FAF6F1;
+      --cream2: #F3EDE5;
+      --cream3: #EBE3D8;
+      --white: #FFFFFF;
+      --warm-white: #FFFDF9;
+
+      /* Wood-inspired accents */
+      --walnut: #4A3728;
+      --walnut-light: #6B5344;
+      --oak: #C49A6C;
+      --oak-light: #D4B48E;
+      --maple: #E8D5B7;
+      --cherry: #9C4A3A;
+
+      /* Forest / Nature greens */
+      --forest: #2D5A3D;
+      --forest-light: #3D7A52;
+      --sage: #8BAF7C;
+      --sage-light: #B5D1A8;
+
+      /* Amber / Gold warmth */
+      --amber: #C87F32;
+      --amber-light: #E0A050;
+      --honey: #E8B84D;
+
+      /* Text */
+      --heading: #2C1D13;
+      --text: #5A4A3A;
+      --text-light: #7D6E5E;
+      --muted: #A09080;
+
+      /* Borders */
+      --border: #E0D5C8;
+      --border-light: #EDE6DC;
+
+      /* Shadows */
+      --shadow-sm: 0 1px 3px rgba(74, 55, 40, 0.06);
+      --shadow-md: 0 4px 16px rgba(74, 55, 40, 0.08);
+      --shadow-lg: 0 8px 32px rgba(74, 55, 40, 0.1);
+      --shadow-xl: 0 16px 48px rgba(74, 55, 40, 0.12);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ===== TYPOGRAPHY ===== */
+    h1, h2, h3, h4 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      color: var(--heading);
+      line-height: 1.15;
+      letter-spacing: -0.01em;
+    }
+
+    /* ===== LOADER ===== */
+    .loader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: var(--cream);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.6s ease, visibility 0.6s ease;
+    }
+    .loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+    .loader-logo {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.4rem;
+      color: var(--walnut);
+      margin-bottom: 24px;
+      letter-spacing: 0.04em;
+    }
+    .loader-logo span { color: var(--forest); }
+    .loader-bar {
+      width: 200px;
+      height: 3px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .loader-fill {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, var(--forest), var(--amber));
+      border-radius: 3px;
+      transition: width 0.3s ease;
+    }
+
+    /* ===== NAVBAR ===== */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 0 40px;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: rgba(250, 246, 241, 0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-light);
+      transition: all 0.3s ease;
+    }
+    .nav.scrolled {
+      box-shadow: var(--shadow-sm);
+      background: rgba(250, 246, 241, 0.96);
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+    .nav-logo-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--forest);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .nav-logo-icon svg { width: 20px; height: 20px; }
+    .nav-logo-text {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.2rem;
+      color: var(--walnut);
+      letter-spacing: 0.02em;
+    }
+    .nav-logo-text span { color: var(--forest); }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text);
+      font-size: 0.88rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--forest); }
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 24px;
+      background: var(--forest);
+      color: var(--white) !important;
+      border-radius: 100px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      letter-spacing: 0.02em;
+      transition: all 0.3s ease;
+    }
+    .nav-cta:hover { background: var(--forest-light); transform: translateY(-1px); }
+    .nav-cta svg { width: 16px; height: 16px; }
+
+    /* Hamburger */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      background: none;
+      border: none;
+    }
+    .hamburger span {
+      width: 24px;
+      height: 2px;
+      background: var(--walnut);
+      border-radius: 2px;
+      transition: all 0.3s ease;
+    }
+    .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+    /* Mobile Menu */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: var(--cream);
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.4s ease;
+    }
+    .mobile-menu.open { opacity: 1; visibility: visible; }
+    .mobile-menu a {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2rem;
+      color: var(--walnut);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .mobile-menu a:hover { color: var(--forest); }
+
+    /* ===== HERO ===== */
+    .hero {
+      padding: 140px 40px 80px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      background: var(--cream);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 50%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--cream2) 0%, var(--cream3) 50%, var(--maple) 100%);
+      opacity: 0.4;
+      clip-path: polygon(20% 0, 100% 0, 100% 100%, 0% 100%);
+    }
+    .hero-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      position: relative;
+      z-index: 1;
+      width: 100%;
+    }
+    .hero-content { max-width: 560px; }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: var(--sage-light);
+      color: var(--forest);
+      border-radius: 100px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+    .hero-badge svg { width: 14px; height: 14px; }
+    .hero h1 {
+      font-size: clamp(2.8rem, 5vw, 4.2rem);
+      margin-bottom: 24px;
+      color: var(--walnut);
+    }
+    .hero h1 em {
+      font-style: italic;
+      color: var(--forest);
+    }
+    .hero-desc {
+      font-size: 1.1rem;
+      line-height: 1.75;
+      color: var(--text-light);
+      margin-bottom: 40px;
+      max-width: 480px;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 56px;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 32px;
+      background: var(--forest);
+      color: var(--white);
+      border: none;
+      border-radius: 100px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .btn-primary:hover { background: var(--forest-light); transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .btn-primary svg { width: 18px; height: 18px; }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 32px;
+      background: transparent;
+      color: var(--walnut);
+      border: 2px solid var(--border);
+      border-radius: 100px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+    .btn-secondary:hover { border-color: var(--walnut); transform: translateY(-2px); }
+
+    .hero-stats {
+      display: flex;
+      gap: 48px;
+    }
+    .hero-stat { text-align: left; }
+    .hero-stat-num {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2rem;
+      color: var(--forest);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .hero-stat-label {
+      font-size: 0.8rem;
+      color: var(--muted);
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    /* Hero Visual */
+    .hero-visual {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-card {
+      width: 100%;
+      max-width: 480px;
+      aspect-ratio: 4/5;
+      background: var(--cream2);
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      overflow: hidden;
+      position: relative;
+      box-shadow: var(--shadow-xl);
+    }
+    .hero-card-img {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-card-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .hero-card-svg { width: 65%; height: 65%; opacity: 0.15; }
+    .hero-card-label {
+      position: absolute;
+      bottom: 24px;
+      left: 24px;
+      right: 24px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .hero-card-label-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--sage-light);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .hero-card-label-icon svg { width: 24px; height: 24px; color: var(--forest); }
+    .hero-card-label-text h4 {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--walnut);
+      margin-bottom: 2px;
+    }
+    .hero-card-label-text p {
+      font-size: 0.78rem;
+      color: var(--text-light);
+    }
+
+    .hero-float-card {
+      position: absolute;
+      top: 40px;
+      right: -20px;
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: 16px;
+      padding: 16px 20px;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: floatY 5s ease-in-out infinite;
+    }
+    .hero-float-card2 {
+      position: absolute;
+      bottom: 100px;
+      left: -30px;
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: 16px;
+      padding: 16px 20px;
+      box-shadow: var(--shadow-lg);
+      animation: floatY 6s ease-in-out infinite 1s;
+    }
+    @keyframes floatY {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+    .float-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .float-icon svg { width: 20px; height: 20px; }
+    .float-text-sm { font-size: 0.78rem; color: var(--muted); }
+    .float-text-lg { font-size: 1rem; font-weight: 700; color: var(--walnut); }
+
+    /* ===== MARQUEE ===== */
+    .marquee {
+      padding: 20px 0;
+      background: var(--forest);
+      overflow: hidden;
+      position: relative;
+    }
+    .marquee-track {
+      display: flex;
+      gap: 40px;
+      animation: marqueeScroll 30s linear infinite;
+      width: max-content;
+    }
+    @keyframes marqueeScroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .marquee-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      white-space: nowrap;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.85);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .marquee-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--amber);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* ===== SECTIONS SHARED ===== */
+    section { padding: 100px 40px; }
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--forest);
+      margin-bottom: 16px;
+    }
+    .section-label::before {
+      content: '';
+      width: 24px;
+      height: 2px;
+      background: var(--forest);
+      border-radius: 2px;
+    }
+    .section-title {
+      font-size: clamp(2rem, 3.5vw, 3rem);
+      margin-bottom: 16px;
+    }
+    .section-desc {
+      font-size: 1.05rem;
+      color: var(--text-light);
+      max-width: 560px;
+      line-height: 1.7;
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+    .section-header .section-desc { margin: 0 auto; }
+
+    /* ===== ABOUT / STORY ===== */
+    .story {
+      background: var(--white);
+    }
+    .story-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .story-visual {
+      position: relative;
+    }
+    .story-img-main {
+      width: 100%;
+      aspect-ratio: 4/3;
+      background: linear-gradient(135deg, var(--cream2), var(--maple));
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .story-img-main svg { width: 40%; height: 40%; opacity: 0.2; }
+    .story-img-main img { width: 100%; height: 100%; object-fit: cover; }
+    .story-img-accent {
+      position: absolute;
+      bottom: -30px;
+      right: -30px;
+      width: 200px;
+      height: 200px;
+      background: var(--forest);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-lg);
+    }
+    .story-img-accent-inner {
+      text-align: center;
+      color: var(--white);
+    }
+    .story-img-accent-inner .num {
+      font-family: 'DM Serif Display', serif;
+      font-size: 2.5rem;
+      display: block;
+      line-height: 1;
+    }
+    .story-img-accent-inner .label {
+      font-size: 0.78rem;
+      opacity: 0.8;
+      font-weight: 500;
+      margin-top: 4px;
+    }
+    .story-content .section-desc { margin-bottom: 32px; }
+    .story-values {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-bottom: 36px;
+    }
+    .story-value {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .story-value-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--sage-light);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .story-value-icon svg { width: 22px; height: 22px; color: var(--forest); }
+    .story-value h4 {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--walnut);
+      margin-bottom: 2px;
+    }
+    .story-value p { font-size: 0.88rem; color: var(--text-light); }
+
+    /* ===== PRODUCTS ===== */
+    .products { background: var(--cream); }
+    .products-grid {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+    .product-card {
+      background: var(--white);
+      border-radius: 20px;
+      border: 1px solid var(--border-light);
+      overflow: hidden;
+      transition: all 0.4s ease;
+      cursor: pointer;
+    }
+    .product-card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow-xl);
+      border-color: var(--border);
+    }
+    .product-img {
+      width: 100%;
+      aspect-ratio: 1;
+      position: relative;
+      overflow: hidden;
+    }
+    .product-img-bg {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.6s ease;
+    }
+    .product-card:hover .product-img-bg { transform: scale(1.05); }
+    .product-img-bg svg { width: 40%; height: 40%; opacity: 0.15; }
+    .product-img-bg img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .product-badge {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      padding: 5px 12px;
+      background: var(--forest);
+      color: var(--white);
+      border-radius: 100px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .product-info { padding: 24px; }
+    .product-info h3 {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--walnut);
+      margin-bottom: 6px;
+    }
+    .product-info .product-desc {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-bottom: 16px;
+      line-height: 1.5;
+    }
+    .product-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .product-price {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.4rem;
+      color: var(--forest);
+    }
+    .product-price span {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      color: var(--muted);
+      font-weight: 400;
+    }
+    .product-cart-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .product-cart-btn:hover { background: var(--forest); border-color: var(--forest); }
+    .product-cart-btn:hover svg { color: var(--white); }
+    .product-cart-btn svg { width: 20px; height: 20px; color: var(--walnut); transition: color 0.3s; }
+
+    /* ===== PROCESS ===== */
+    .process { background: var(--white); }
+    .process-grid {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 32px;
+      position: relative;
+    }
+    .process-grid::before {
+      content: '';
+      position: absolute;
+      top: 48px;
+      left: 15%;
+      right: 15%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--border), var(--forest), var(--border));
+      z-index: 0;
+    }
+    .process-step {
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+    .process-step-num {
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background: var(--cream);
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      transition: all 0.4s ease;
+    }
+    .process-step:hover .process-step-num {
+      background: var(--forest);
+      border-color: var(--forest);
+    }
+    .process-step-num svg { width: 36px; height: 36px; color: var(--forest); transition: color 0.4s; }
+    .process-step:hover .process-step-num svg { color: var(--white); }
+    .process-step h3 {
+      font-family: 'Inter', sans-serif;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--walnut);
+      margin-bottom: 8px;
+    }
+    .process-step p {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      line-height: 1.5;
+    }
+
+    /* ===== SUSTAINABILITY ===== */
+    .sustainability {
+      background: var(--forest);
+      color: var(--white);
+      position: relative;
+      overflow: hidden;
+    }
+    .sustainability::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .sustainability-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .sustainability .section-label { color: var(--sage-light); }
+    .sustainability .section-label::before { background: var(--sage-light); }
+    .sustainability .section-title { color: var(--white); }
+    .sustainability .section-desc { color: rgba(255, 255, 255, 0.75); }
+    .sustain-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin-top: 56px;
+    }
+    .sustain-stat {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      padding: 40px 32px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    .sustain-stat:hover { background: rgba(255, 255, 255, 0.12); transform: translateY(-4px); }
+    .sustain-stat-icon {
+      width: 56px;
+      height: 56px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+    .sustain-stat-icon svg { width: 28px; height: 28px; color: var(--sage-light); }
+    .sustain-stat h3 {
+      font-size: 2.5rem;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+    .sustain-stat p { font-size: 0.9rem; color: rgba(255, 255, 255, 0.65); }
+
+    /* ===== REVIEWS ===== */
+    .reviews { background: var(--cream); }
+    .reviews-grid {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+    .review-card {
+      background: var(--white);
+      border: 1px solid var(--border-light);
+      border-radius: 20px;
+      padding: 36px;
+      transition: all 0.3s ease;
+    }
+    .review-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-4px); }
+    .review-stars {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 20px;
+    }
+    .review-stars svg { width: 18px; height: 18px; color: var(--amber); }
+    .review-text {
+      font-size: 0.95rem;
+      line-height: 1.7;
+      color: var(--text);
+      margin-bottom: 24px;
+      font-style: italic;
+    }
+    .review-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .review-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--cream2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'DM Serif Display', serif;
+      font-size: 1rem;
+      color: var(--walnut);
+    }
+    .review-author-info h4 {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--walnut);
+    }
+    .review-author-info p { font-size: 0.78rem; color: var(--muted); }
+
+    /* ===== GALLERY ===== */
+    .gallery { background: var(--white); }
+    .gallery-grid {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+    }
+    .gallery-item {
+      aspect-ratio: 1;
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      position: relative;
+      border: 1px solid var(--border-light);
+    }
+    .gallery-item:nth-child(1) {
+      grid-column: span 2;
+      grid-row: span 2;
+    }
+    .gallery-item-bg {
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s ease;
+    }
+    .gallery-item-bg img { width: 100%; height: 100%; object-fit: cover; }
+    .gallery-item:hover .gallery-item-bg { transform: scale(1.08); }
+    .gallery-item::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(44, 29, 19, 0.4) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .gallery-item:hover::after { opacity: 1; }
+
+    /* ===== FAQ ===== */
+    .faq { background: var(--cream); }
+    .faq-inner {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 24px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      text-align: left;
+    }
+    .faq-question h3 {
+      font-family: 'Inter', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--walnut);
+    }
+    .faq-question svg {
+      width: 20px;
+      height: 20px;
+      color: var(--muted);
+      transition: transform 0.3s;
+      flex-shrink: 0;
+      margin-left: 16px;
+    }
+    .faq-item.open .faq-question svg { transform: rotate(45deg); }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.4s ease;
+    }
+    .faq-item.open .faq-answer { max-height: 300px; }
+    .faq-answer p {
+      padding-bottom: 24px;
+      font-size: 0.92rem;
+      color: var(--text-light);
+      line-height: 1.7;
+    }
+
+    /* ===== CONTACT / CTA ===== */
+    .contact {
+      background: var(--white);
+    }
+    .contact-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .contact-info { padding-top: 8px; }
+    .contact-info .section-desc { margin-bottom: 40px; }
+    .contact-detail {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 28px;
+    }
+    .contact-detail-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--sage-light);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .contact-detail-icon svg { width: 22px; height: 22px; color: var(--forest); }
+    .contact-detail h4 {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--walnut);
+      margin-bottom: 2px;
+    }
+    .contact-detail p { font-size: 0.88rem; color: var(--text-light); }
+    .contact-detail a { color: var(--forest); text-decoration: none; }
+    .contact-detail a:hover { text-decoration: underline; }
+    .contact-social {
+      display: flex;
+      gap: 12px;
+      margin-top: 36px;
+    }
+    .contact-social a {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s;
+      color: var(--text-light);
+    }
+    .contact-social a:hover { background: var(--forest); border-color: var(--forest); color: var(--white); }
+    .contact-social a svg { width: 20px; height: 20px; }
+
+    /* Contact Form */
+    .contact-form {
+      background: var(--cream);
+      border-radius: 24px;
+      padding: 40px;
+      border: 1px solid var(--border-light);
+    }
+    .contact-form h3 {
+      font-size: 1.5rem;
+      margin-bottom: 8px;
+    }
+    .contact-form > p {
+      font-size: 0.88rem;
+      color: var(--text-light);
+      margin-bottom: 32px;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--walnut);
+      margin-bottom: 6px;
+    }
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      background: var(--white);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      color: var(--walnut);
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    .form-group input::placeholder,
+    .form-group textarea::placeholder { color: var(--muted); }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: var(--forest); }
+    .form-group textarea { resize: vertical; min-height: 120px; }
+    .form-submit {
+      width: 100%;
+      padding: 16px;
+      background: var(--forest);
+      color: var(--white);
+      border: none;
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .form-submit:hover { background: var(--forest-light); }
+    .form-submit svg { width: 18px; height: 18px; }
+
+    /* ===== CTA BANNER ===== */
+    .cta-banner {
+      background: linear-gradient(135deg, var(--walnut) 0%, var(--forest) 100%);
+      padding: 80px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.04' fill-rule='evenodd'%3E%3Cpath d='M20 20h20v20H20zM0 0h20v20H0z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+    .cta-banner-inner { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; }
+    .cta-banner h2 {
+      font-size: clamp(2rem, 3.5vw, 2.8rem);
+      color: var(--white);
+      margin-bottom: 16px;
+    }
+    .cta-banner p {
+      font-size: 1.05rem;
+      color: rgba(255, 255, 255, 0.75);
+      margin-bottom: 36px;
+    }
+    .cta-banner .btn-primary {
+      background: var(--amber);
+      font-size: 1rem;
+      padding: 18px 40px;
+    }
+    .cta-banner .btn-primary:hover { background: var(--amber-light); }
+
+    /* ===== FOOTER ===== */
+    .footer {
+      background: var(--cream2);
+      padding: 64px 40px 32px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 48px;
+    }
+    .footer-brand .nav-logo { margin-bottom: 16px; }
+    .footer-brand p {
+      font-size: 0.88rem;
+      color: var(--text-light);
+      line-height: 1.6;
+      max-width: 320px;
+      margin-bottom: 20px;
+    }
+    .footer-col h4 {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--walnut);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 20px;
+    }
+    .footer-col ul { list-style: none; }
+    .footer-col li { margin-bottom: 12px; }
+    .footer-col a {
+      text-decoration: none;
+      color: var(--text-light);
+      font-size: 0.88rem;
+      transition: color 0.2s;
+    }
+    .footer-col a:hover { color: var(--forest); }
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .footer-bottom p { font-size: 0.8rem; color: var(--muted); }
+    .footer-bottom a { color: var(--forest); text-decoration: none; }
+    .footer-bottom a:hover { text-decoration: underline; }
+
+    /* Webnari Badge */
+    .webnari-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+    .webnari-badge a { color: var(--forest); font-weight: 600; }
+
+    /* ===== SCROLL REVEAL ===== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    /* Hero elements visible immediately after loader */
+    .hero .reveal { opacity: 1; transform: translateY(0); }
+    .hero .reveal.animate-in {
+      animation: heroFadeIn 0.7s ease forwards;
+    }
+    @keyframes heroFadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.35s; }
+
+    /* ===== CART DRAWER ===== */
+    .cart-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(44, 29, 19, 0.4);
+      z-index: 2000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+    .cart-overlay.open { opacity: 1; visibility: visible; }
+    .cart-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 400px;
+      max-width: 90vw;
+      height: 100%;
+      background: var(--white);
+      z-index: 2001;
+      transform: translateX(100%);
+      transition: transform 0.4s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .cart-drawer.open { transform: translateX(0); }
+    .cart-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .cart-header h3 {
+      font-size: 1.2rem;
+    }
+    .cart-close {
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .cart-close svg { width: 18px; height: 18px; color: var(--text-light); }
+    .cart-items {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+    }
+    .cart-empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+    .cart-empty svg { width: 48px; height: 48px; margin-bottom: 16px; color: var(--border); }
+    .cart-empty p { font-size: 0.95rem; }
+    .cart-item {
+      display: flex;
+      gap: 16px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .cart-item-img {
+      width: 72px;
+      height: 72px;
+      border-radius: 12px;
+      flex-shrink: 0;
+    }
+    .cart-item-info { flex: 1; }
+    .cart-item-info h4 {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--walnut);
+      margin-bottom: 4px;
+    }
+    .cart-item-info .price {
+      font-size: 0.88rem;
+      color: var(--forest);
+      font-weight: 600;
+    }
+    .cart-item-qty {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 8px;
+    }
+    .cart-item-qty button {
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--cream);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      color: var(--walnut);
+    }
+    .cart-item-qty span {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--walnut);
+      min-width: 20px;
+      text-align: center;
+    }
+    .cart-item-remove {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 0.78rem;
+      margin-top: 4px;
+      padding: 0;
+    }
+    .cart-item-remove:hover { color: var(--cherry); }
+    .cart-footer {
+      padding: 24px;
+      border-top: 1px solid var(--border-light);
+    }
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+    .cart-total span { font-weight: 600; color: var(--walnut); }
+    .cart-total .total-price {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.3rem;
+      color: var(--forest);
+    }
+    .cart-checkout {
+      width: 100%;
+      padding: 16px;
+      background: var(--forest);
+      color: var(--white);
+      border: none;
+      border-radius: 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .cart-checkout:hover { background: var(--forest-light); }
+
+    /* Cart count badge */
+    .cart-count {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      width: 20px;
+      height: 20px;
+      background: var(--cherry);
+      color: var(--white);
+      border-radius: 50%;
+      font-size: 0.68rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transform: scale(0.5);
+      transition: all 0.3s;
+    }
+    .cart-count.show { opacity: 1; transform: scale(1); }
+
+    /* Nav cart button */
+    .nav-cart {
+      position: relative;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .nav-cart svg { width: 22px; height: 22px; color: var(--walnut); transition: color 0.2s; }
+    .nav-cart:hover svg { color: var(--forest); }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+      .hero-visual { display: none; }
+      .hero { min-height: auto; padding: 140px 24px 80px; }
+      .story-inner { grid-template-columns: 1fr; gap: 40px; }
+      .story-visual { order: -1; }
+      .products-grid { grid-template-columns: repeat(2, 1fr); }
+      .process-grid { grid-template-columns: repeat(2, 1fr); gap: 40px; }
+      .process-grid::before { display: none; }
+      .sustain-stats { grid-template-columns: repeat(2, 1fr); }
+      .reviews-grid { grid-template-columns: repeat(2, 1fr); }
+      .contact-inner { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: repeat(3, 1fr); }
+      .gallery-item:nth-child(1) { grid-column: span 2; grid-row: span 2; }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      section { padding: 72px 20px; }
+      .nav { padding: 0 20px; height: 64px; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      .mobile-menu { display: flex; }
+      .hero { padding: 120px 20px 60px; }
+      .hero-stats { gap: 32px; flex-wrap: wrap; }
+      .products-grid { grid-template-columns: 1fr; max-width: 420px; }
+      .process-grid { grid-template-columns: 1fr 1fr; }
+      .sustain-stats { grid-template-columns: 1fr; }
+      .reviews-grid { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+      .gallery-item:nth-child(1) { grid-column: span 1; grid-row: span 1; }
+      .form-row { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr; gap: 32px; }
+      .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+      .cta-banner { padding: 60px 20px; }
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 { font-size: 2.2rem; }
+      .hero-actions { flex-direction: column; }
+      .btn-primary, .btn-secondary { width: 100%; justify-content: center; }
+      .process-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOADER -->
+  <div class="loader" id="loader">
+    <div class="loader-logo">Closed <span>Loop</span></div>
+    <div class="loader-bar"><div class="loader-fill" id="loaderFill"></div></div>
+  </div>
+
+  <!-- NAV -->
+  <nav class="nav" id="nav">
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+          <path d="M8 12l3 3 5-5"/>
+        </svg>
+      </div>
+      <span class="nav-logo-text">Closed <span>Loop</span></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#products">Shop</a></li>
+      <li><a href="#story">Our Story</a></li>
+      <li><a href="#process">Process</a></li>
+      <li><a href="#reviews">Reviews</a></li>
+      <li><a href="#contact">Contact</a></li>
+      <li>
+        <button class="nav-cart" id="cartToggle" aria-label="Open cart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 01-8 0"/>
+          </svg>
+          <span class="cart-count" id="cartCount">0</span>
+        </button>
+      </li>
+      <li><a href="#contact" class="nav-cta">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        Get a Quote
+      </a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#products" onclick="closeMobile()">Shop</a>
+    <a href="#story" onclick="closeMobile()">Our Story</a>
+    <a href="#process" onclick="closeMobile()">Process</a>
+    <a href="#reviews" onclick="closeMobile()">Reviews</a>
+    <a href="#contact" onclick="closeMobile()">Contact</a>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <div class="hero-inner">
+      <div class="hero-content">
+        <div class="hero-badge reveal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Portland, Oregon &mdash; Est. 2015
+        </div>
+        <h1 class="reveal reveal-delay-1">Salvaged Wood,<br><em>Crafted with Purpose</em></h1>
+        <p class="hero-desc reveal reveal-delay-2">Turning leftover endgrain, offcuts, and reclaimed lumber from woodworkers across Portland into unique, functional art you'll use every day.</p>
+        <div class="hero-actions reveal reveal-delay-3">
+          <a href="#products" class="btn-primary">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            Shop Collection
+          </a>
+          <a href="#story" class="btn-secondary">Our Story</a>
+        </div>
+        <div class="hero-stats reveal reveal-delay-4">
+          <div class="hero-stat">
+            <div class="hero-stat-num">3,600+</div>
+            <div class="hero-stat-label">Items Sold</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-num">5.0</div>
+            <div class="hero-stat-label">Star Rating</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-num">11</div>
+            <div class="hero-stat-label">Years Crafting</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-visual reveal">
+        <div class="hero-card">
+          <div class="hero-card-img">
+            <img src="https://images.pexels.com/photos/5964663/pexels-photo-5964663.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Handcrafted endgrain cutting board" loading="eager">
+          </div>
+          <div class="hero-card-label">
+            <div class="hero-card-label-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div class="hero-card-label-text">
+              <h4>100% Reclaimed Wood</h4>
+              <p>Every piece diverted from landfills</p>
+            </div>
+          </div>
+        </div>
+        <div class="hero-float-card">
+          <div class="float-icon" style="background: var(--sage-light);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--forest)" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          </div>
+          <div>
+            <div class="float-text-sm">Etsy Reviews</div>
+            <div class="float-text-lg">5.0 Stars</div>
+          </div>
+        </div>
+        <div class="hero-float-card2">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div class="float-icon" style="background: #FFF3E0;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--amber)" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div>
+              <div class="float-text-sm">Made in</div>
+              <div class="float-text-lg">Portland, OR</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee">
+    <div class="marquee-track" id="marqueeTrack">
+      <div class="marquee-item"><span class="marquee-dot"></span> Endgrain Cutting Boards</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Charcuterie Boards</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Cribbage Boards</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Serving Boards</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Wood Basketball Hoops</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Smartphone Stands</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Board Butter</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Custom Orders</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Oregon-Shaped Boards</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Pet Feeders</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Candle Holders</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Endgrain Cutting Boards</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Charcuterie Boards</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Cribbage Boards</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Serving Boards</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Wood Basketball Hoops</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Smartphone Stands</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Board Butter</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Custom Orders</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Oregon-Shaped Boards</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Pet Feeders</div>
+      <div class="marquee-item"><span class="marquee-dot"></span> Candle Holders</div>
+    </div>
+  </div>
+
+  <!-- PRODUCTS -->
+  <section class="products" id="products">
+    <div class="section-header">
+      <div class="section-label reveal">Shop</div>
+      <h2 class="section-title reveal reveal-delay-1">Handcrafted Collection</h2>
+      <p class="section-desc reveal reveal-delay-2">Every piece is one-of-a-kind, made from wood that would have otherwise gone to waste. Browse our collection or request a custom creation.</p>
+    </div>
+    <div class="products-grid" id="productsGrid">
+      <!-- Product cards are rendered by JS -->
+    </div>
+  </section>
+
+  <!-- STORY -->
+  <section class="story" id="story">
+    <div class="story-inner">
+      <div class="story-visual reveal">
+        <div class="story-img-main">
+          <img src="https://images.pexels.com/photos/6790076/pexels-photo-6790076.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Woodworking workshop with handcrafted boards" loading="lazy">
+        </div>
+        <div class="story-img-accent">
+          <div class="story-img-accent-inner">
+            <span class="num">11+</span>
+            <span class="label">Years in Business</span>
+          </div>
+        </div>
+      </div>
+      <div class="story-content">
+        <div class="section-label reveal">Our Story</div>
+        <h2 class="section-title reveal reveal-delay-1">From Scrap Pile<br>to <em>Your Table</em></h2>
+        <p class="section-desc reveal reveal-delay-2">Brian Dunn started his career building decks and fences as a remodeling carpenter in Portland. He saw how much quality wood was wasted on every job &mdash; offcuts, tear-outs, surplus material all headed for the landfill.</p>
+        <p class="section-desc reveal reveal-delay-2" style="margin-top: 16px;">Driven by a deep recycling ethic and creative spirit, Brian started diverting that wood and turning it into something beautiful. Today, Closed Loop Woodworks sources leftover material from furniture makers, cabinet shops, mills, and flooring contractors &mdash; transforming it into unique, functional art.</p>
+        <div class="story-values reveal reveal-delay-3">
+          <div class="story-value">
+            <div class="story-value-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div>
+              <h4>Zero Waste Mission</h4>
+              <p>Every piece of wood we use was destined for the landfill, burn pile, or chipper.</p>
+            </div>
+          </div>
+          <div class="story-value">
+            <div class="story-value-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+            </div>
+            <div>
+              <h4>Handcrafted in Portland</h4>
+              <p>Built one at a time in our garage workshop with care and attention to detail.</p>
+            </div>
+          </div>
+          <div class="story-value">
+            <div class="story-value-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            </div>
+            <div>
+              <h4>One-of-a-Kind</h4>
+              <p>No two pieces are the same &mdash; each board tells the story of the wood it came from.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process" id="process">
+    <div class="section-header">
+      <div class="section-label reveal">How It Works</div>
+      <h2 class="section-title reveal reveal-delay-1">From Scraps to <em>Masterpiece</em></h2>
+      <p class="section-desc reveal reveal-delay-2">Every board follows the same thoughtful journey from salvaged offcuts to a piece of art in your kitchen.</p>
+    </div>
+    <div class="process-grid">
+      <div class="process-step reveal">
+        <div class="process-step-num">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+        </div>
+        <h3>Source</h3>
+        <p>Collect quality offcuts from woodworkers, cabinet shops, and mills across Portland</p>
+      </div>
+      <div class="process-step reveal reveal-delay-1">
+        <div class="process-step-num">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+        </div>
+        <h3>Design</h3>
+        <p>Sort by species, color, and grain pattern to plan each unique composition</p>
+      </div>
+      <div class="process-step reveal reveal-delay-2">
+        <div class="process-step-num">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>
+        </div>
+        <h3>Craft</h3>
+        <p>Cut, glue, clamp, sand, and finish by hand in our Portland workshop</p>
+      </div>
+      <div class="process-step reveal reveal-delay-3">
+        <div class="process-step-num">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </div>
+        <h3>Deliver</h3>
+        <p>Ship nationwide with care, or pick up at Portland markets and pop-ups</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SUSTAINABILITY -->
+  <section class="sustainability" id="sustainability">
+    <div class="sustainability-inner">
+      <div class="section-header">
+        <div class="section-label reveal">Sustainability</div>
+        <h2 class="section-title reveal reveal-delay-1">Closing the Loop<br>on <em>Wood Waste</em></h2>
+        <p class="section-desc reveal reveal-delay-2">Every product we make is a statement against waste. Wood that was headed for burn piles, chippers, and landfills gets a second life as something beautiful and useful.</p>
+      </div>
+      <div class="sustain-stats">
+        <div class="sustain-stat reveal">
+          <div class="sustain-stat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <h3>100%</h3>
+          <p>Reclaimed & salvaged materials</p>
+        </div>
+        <div class="sustain-stat reveal reveal-delay-1">
+          <div class="sustain-stat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3>3,600+</h3>
+          <p>Products crafted from rescued wood</p>
+        </div>
+        <div class="sustain-stat reveal reveal-delay-2">
+          <div class="sustain-stat-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          </div>
+          <h3>11</h3>
+          <p>Years of sustainable craftsmanship</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="reviews" id="reviews">
+    <div class="section-header">
+      <div class="section-label reveal">Reviews</div>
+      <h2 class="section-title reveal reveal-delay-1">What Customers Say</h2>
+      <p class="section-desc reveal reveal-delay-2">Perfect 5.0 rating across 55 reviews on Etsy. Here's what people love about our work.</p>
+    </div>
+    <div class="reviews-grid">
+      <div class="review-card reveal">
+        <div class="review-stars">
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="review-text">"Fantastic quality, seller responded quickly to messages and the board is beautiful. Absolutely love it!"</p>
+        <div class="review-author">
+          <div class="review-avatar">M</div>
+          <div class="review-author-info">
+            <h4>Madeleine</h4>
+            <p>Cribbage Board</p>
+          </div>
+        </div>
+      </div>
+      <div class="review-card reveal reveal-delay-1">
+        <div class="review-stars">
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="review-text">"Great quality, came really fast, exceeded expectations! Got for my mom as a Christmas present and she loves them."</p>
+        <div class="review-author">
+          <div class="review-avatar">K</div>
+          <div class="review-author-info">
+            <h4>Kayla</h4>
+            <p>Oregon Coasters</p>
+          </div>
+        </div>
+      </div>
+      <div class="review-card reveal reveal-delay-2">
+        <div class="review-stars">
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        </div>
+        <p class="review-text">"Beautiful cribbage board! High quality wood and cutting. Fun to have the display stand. Gave it as a gift and they were super excited!"</p>
+        <div class="review-author">
+          <div class="review-avatar">Z</div>
+          <div class="review-author-info">
+            <h4>Zachary</h4>
+            <p>Cribbage Board</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section class="gallery" id="gallery">
+    <div class="section-header">
+      <div class="section-label reveal">Gallery</div>
+      <h2 class="section-title reveal reveal-delay-1">From the Workshop</h2>
+      <p class="section-desc reveal reveal-delay-2">A look at our process, materials, and finished pieces. Every grain tells a story.</p>
+    </div>
+    <div class="gallery-grid">
+      <div class="gallery-item reveal">
+        <div class="gallery-item-bg"><img src="https://images.pexels.com/photos/6791495/pexels-photo-6791495.jpeg?auto=compress&cs=tinysrgb&w=800" alt="Woodworking process" loading="eager"></div>
+      </div>
+      <div class="gallery-item reveal reveal-delay-1">
+        <div class="gallery-item-bg"><img src="https://images.pexels.com/photos/129721/pexels-photo-129721.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Wood grain texture close-up" loading="eager"></div>
+      </div>
+      <div class="gallery-item reveal reveal-delay-2">
+        <div class="gallery-item-bg"><img src="https://images.pexels.com/photos/6004718/pexels-photo-6004718.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Charcuterie board with food" loading="eager"></div>
+      </div>
+      <div class="gallery-item reveal reveal-delay-1">
+        <div class="gallery-item-bg"><img src="https://images.pexels.com/photos/6790070/pexels-photo-6790070.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Craftsman in workshop" loading="eager"></div>
+      </div>
+      <div class="gallery-item reveal reveal-delay-2">
+        <div class="gallery-item-bg"><img src="https://images.pexels.com/photos/301717/pexels-photo-301717.jpeg?auto=compress&cs=tinysrgb&w=600" alt="Natural wood materials" loading="eager"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq" id="faq">
+    <div class="section-header">
+      <div class="section-label reveal">FAQ</div>
+      <h2 class="section-title reveal reveal-delay-1">Common Questions</h2>
+    </div>
+    <div class="faq-inner">
+      <div class="faq-item reveal">
+        <button class="faq-question">
+          <h3>What types of wood do you use?</h3>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="faq-answer"><p>We use whatever quality hardwood we can salvage! Common species include walnut, maple, cherry, purpleheart, padauk, oak, and bamboo. Every piece is different based on what's available from local woodworkers, cabinet shops, and mills.</p></div>
+      </div>
+      <div class="faq-item reveal reveal-delay-1">
+        <button class="faq-question">
+          <h3>Do you take custom orders?</h3>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="faq-answer"><p>Absolutely! We love custom projects. Whether it's a specific size, wood combination, or shape (like our Oregon-shaped boards), reach out through our contact form or message us on Instagram @closedloopww to discuss your idea.</p></div>
+      </div>
+      <div class="faq-item reveal reveal-delay-2">
+        <button class="faq-question">
+          <h3>How do I care for my cutting board?</h3>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="faq-answer"><p>Hand wash with warm water and mild soap &mdash; never put it in the dishwasher. Dry immediately after washing. Apply our Board Butter conditioner regularly to keep the wood nourished and protected. With proper care, your board will last a lifetime.</p></div>
+      </div>
+      <div class="faq-item reveal">
+        <button class="faq-question">
+          <h3>Do you ship nationwide?</h3>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="faq-answer"><p>Yes! All orders ship free across the United States. We carefully package every piece to ensure it arrives in perfect condition. Local Portland customers can also pick up at markets and pop-up events.</p></div>
+      </div>
+      <div class="faq-item reveal reveal-delay-1">
+        <button class="faq-question">
+          <h3>Are your boards food-safe?</h3>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="faq-answer"><p>Yes, all our cutting and serving boards are finished with food-safe mineral oil and beeswax. Our Board Butter is also 100% food-safe and made specifically for maintaining wood cutting boards.</p></div>
+      </div>
+      <div class="faq-item reveal reveal-delay-2">
+        <button class="faq-question">
+          <h3>Where can I find you in person?</h3>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </button>
+        <div class="faq-answer"><p>We regularly set up at the Portland Night Market and various pop-up events around the Portland area. Follow us on Instagram @closedloopww for announcements about upcoming markets and shows.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact" id="contact">
+    <div class="contact-inner">
+      <div class="contact-info">
+        <div class="section-label reveal">Get in Touch</div>
+        <h2 class="section-title reveal reveal-delay-1">Let's Create<br>Something <em>Together</em></h2>
+        <p class="section-desc reveal reveal-delay-2">Whether you want a custom board, wholesale inquiry, or just want to say hello &mdash; we'd love to hear from you.</p>
+        <div class="reveal reveal-delay-3">
+          <div class="contact-detail">
+            <div class="contact-detail-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div>
+              <h4>Location</h4>
+              <p>Portland, Oregon 97217</p>
+            </div>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div>
+              <h4>Email</h4>
+              <p><a href="mailto:hello@closedloopwoodworks.com">hello@closedloopwoodworks.com</a></p>
+            </div>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </div>
+            <div>
+              <h4>Instagram</h4>
+              <p><a href="https://instagram.com/closedloopww" target="_blank" rel="noopener">@closedloopww</a></p>
+            </div>
+          </div>
+          <div class="contact-detail">
+            <div class="contact-detail-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+            </div>
+            <div>
+              <h4>Etsy Shop</h4>
+              <p><a href="https://closedloopwoodworks.etsy.com" target="_blank" rel="noopener">closedloopwoodworks.etsy.com</a></p>
+            </div>
+          </div>
+        </div>
+        <div class="contact-social reveal reveal-delay-4">
+          <a href="https://instagram.com/closedloopww" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          <a href="https://closedloopwoodworks.etsy.com" target="_blank" rel="noopener" aria-label="Etsy">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="contact-form reveal">
+        <h3>Send a Message</h3>
+        <p>Custom orders, questions, or wholesale inquiries &mdash; we'll get back to you within 24 hours.</p>
+        <form id="contactForm" action="https://formsubmit.co/hello@closedloopwoodworks.com" method="POST">
+          <input type="hidden" name="_subject" value="New inquiry from Closed Loop Woodworks website">
+          <input type="hidden" name="_captcha" value="false">
+          <input type="text" name="_honey" style="display:none">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input type="text" id="name" name="name" placeholder="Your name" required>
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" placeholder="you@email.com" required>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="interest">I'm interested in...</label>
+            <select id="interest" name="interest">
+              <option value="">Select an option</option>
+              <option value="cutting-board">Custom Cutting Board</option>
+              <option value="cribbage">Cribbage Board</option>
+              <option value="serving-board">Serving / Charcuterie Board</option>
+              <option value="custom">Other Custom Project</option>
+              <option value="wholesale">Wholesale Inquiry</option>
+              <option value="general">General Question</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" placeholder="Tell us about what you're looking for..." required></textarea>
+          </div>
+          <button type="submit" class="form-submit">
+            Send Message
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BANNER -->
+  <section class="cta-banner">
+    <div class="cta-banner-inner">
+      <h2 class="reveal">Ready for a Board<br>That <em>Tells a Story?</em></h2>
+      <p class="reveal reveal-delay-1">Every piece is handcrafted from salvaged wood. No two are alike. Order yours today or request a custom creation.</p>
+      <a href="#products" class="btn-primary reveal reveal-delay-2">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        Shop the Collection
+      </a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <a href="#" class="nav-logo">
+            <div class="nav-logo-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+                <path d="M8 12l3 3 5-5"/>
+              </svg>
+            </div>
+            <span class="nav-logo-text">Closed <span>Loop</span></span>
+          </a>
+          <p>Sustainably crafted functional art from reclaimed wood. Based in Portland, Oregon since 2015.</p>
+          <div class="webnari-badge">Built and managed by <a href="https://webnari.io" target="_blank" rel="noopener">Webnari</a></div>
+        </div>
+        <div class="footer-col">
+          <h4>Shop</h4>
+          <ul>
+            <li><a href="#products">Cutting Boards</a></li>
+            <li><a href="#products">Cribbage Boards</a></li>
+            <li><a href="#products">Serving Boards</a></li>
+            <li><a href="#products">Accessories</a></li>
+            <li><a href="#contact">Custom Orders</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#story">Our Story</a></li>
+            <li><a href="#process">Process</a></li>
+            <li><a href="#sustainability">Sustainability</a></li>
+            <li><a href="#reviews">Reviews</a></li>
+            <li><a href="#faq">FAQ</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Connect</h4>
+          <ul>
+            <li><a href="https://instagram.com/closedloopww" target="_blank" rel="noopener">Instagram</a></li>
+            <li><a href="https://closedloopwoodworks.etsy.com" target="_blank" rel="noopener">Etsy Shop</a></li>
+            <li><a href="#contact">Contact Us</a></li>
+            <li><a href="mailto:hello@closedloopwoodworks.com">Email</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 Closed Loop Woodworks. All rights reserved. Portland, Oregon.</p>
+        <div class="webnari-badge">Built and managed by <a href="https://webnari.io" target="_blank" rel="noopener">Webnari</a></div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- CART DRAWER -->
+  <div class="cart-overlay" id="cartOverlay"></div>
+  <div class="cart-drawer" id="cartDrawer">
+    <div class="cart-header">
+      <h3>Your Cart</h3>
+      <button class="cart-close" id="cartClose">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <div class="cart-empty" id="cartEmpty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        <p>Your cart is empty</p>
+      </div>
+    </div>
+    <div class="cart-footer" id="cartFooter" style="display:none;">
+      <div class="cart-total">
+        <span>Total</span>
+        <span class="total-price" id="cartTotal">$0.00</span>
+      </div>
+      <button class="cart-checkout" id="checkoutBtn">Proceed to Checkout</button>
+    </div>
+  </div>
+
+  <script>
+    /* ===== LOADER ===== */
+    (function() {
+      if (sessionStorage.getItem('clww-loaded')) {
+        document.getElementById('loader').classList.add('hidden');
+        return;
+      }
+      const fill = document.getElementById('loaderFill');
+      let w = 0;
+      const iv = setInterval(() => {
+        w += Math.random() * 25 + 10;
+        if (w >= 100) { w = 100; clearInterval(iv); }
+        fill.style.width = w + '%';
+        if (w >= 100) {
+          setTimeout(() => {
+            document.getElementById('loader').classList.add('hidden');
+            sessionStorage.setItem('clww-loaded', '1');
+          }, 300);
+        }
+      }, 200);
+    })();
+
+    /* ===== NAV SCROLL ===== */
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    /* ===== HAMBURGER ===== */
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('open');
+      mobileMenu.classList.toggle('open');
+      document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+    });
+    function closeMobile() {
+      hamburger.classList.remove('open');
+      mobileMenu.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    /* ===== SCROLL REVEAL ===== */
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+    }, { threshold: 0.05, rootMargin: '0px 0px 0px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => {
+      // Skip hero elements — they're always visible via CSS
+      if (!el.closest('.hero')) observer.observe(el);
+    });
+
+    /* ===== FAQ ===== */
+    document.querySelectorAll('.faq-question').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.parentElement;
+        const wasOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+        if (!wasOpen) item.classList.add('open');
+      });
+    });
+
+    /* ===== PRODUCTS DATA ===== */
+    const products = [
+      {
+        id: 1,
+        name: 'Endgrain Cutting Board',
+        desc: 'One-of-a-kind endgrain board made from salvaged hardwoods. Each pattern is unique.',
+        price: 35,
+        badge: 'Best Seller',
+        img: 'https://images.pexels.com/photos/866509/pexels-photo-866509.jpeg?auto=compress&cs=tinysrgb&w=600',
+        colors: ['#D4B48E', '#6B5344', '#9C4A3A']
+      },
+      {
+        id: 2,
+        name: 'Bamboo Cribbage Board',
+        desc: 'Handcrafted cribbage board with pegs and display stand. A game piece and art piece in one.',
+        price: 90,
+        badge: 'Popular',
+        img: 'https://images.pexels.com/photos/5974333/pexels-photo-5974333.jpeg?auto=compress&cs=tinysrgb&w=600',
+        colors: ['#E8D5B7', '#C49A6C', '#4A3728']
+      },
+      {
+        id: 3,
+        name: 'Oregon-Shaped Board',
+        desc: 'State pride meets sustainable craftsmanship. Cut from reclaimed endgrain in the shape of Oregon.',
+        price: 45,
+        badge: 'Unique',
+        img: 'https://images.pexels.com/photos/7026919/pexels-photo-7026919.jpeg?auto=compress&cs=tinysrgb&w=600',
+        colors: ['#C49A6C', '#8B6F47', '#D4B48E']
+      },
+      {
+        id: 4,
+        name: 'Board Butter Conditioner',
+        desc: 'All-natural, food-safe board butter to keep your cutting boards nourished and protected.',
+        price: 18,
+        badge: null,
+        img: 'https://images.pexels.com/photos/5974277/pexels-photo-5974277.jpeg?auto=compress&cs=tinysrgb&w=600',
+        colors: ['#F5E6C8', '#E8D5B7', '#C49A6C']
+      },
+      {
+        id: 5,
+        name: 'Wood Basketball Hoop',
+        desc: 'Handmade decorative basketball hoop crafted from salvaged exotic hardwoods.',
+        price: 175,
+        badge: 'Premium',
+        img: 'https://images.pexels.com/photos/15212608/pexels-photo-15212608.jpeg?auto=compress&cs=tinysrgb&w=600',
+        colors: ['#9C4A3A', '#6B5344', '#C49A6C']
+      },
+      {
+        id: 6,
+        name: 'Smartphone Stand',
+        desc: 'Unique wooden phone holder made from reclaimed hardwood. Functional desk art.',
+        price: 20,
+        badge: null,
+        img: 'https://images.pexels.com/photos/5081969/pexels-photo-5081969.jpeg?auto=compress&cs=tinysrgb&w=600',
+        colors: ['#6B5344', '#D4B48E', '#E8D5B7']
+      }
+    ];
+
+    /* ===== RENDER PRODUCTS ===== */
+    const grid = document.getElementById('productsGrid');
+    products.forEach((p, i) => {
+      const card = document.createElement('div');
+      card.className = `product-card reveal${i < 3 ? ' reveal-delay-' + (i + 1) : ''}`;
+      const grad = `linear-gradient(135deg, ${p.colors[0]}, ${p.colors[1]} 50%, ${p.colors[2]})`;
+      card.innerHTML = `
+        <div class="product-img">
+          <div class="product-img-bg" style="background: ${grad};">
+            <img src="${p.img}" alt="${p.name}" loading="lazy">
+          </div>
+          ${p.badge ? `<div class="product-badge">${p.badge}</div>` : ''}
+        </div>
+        <div class="product-info">
+          <h3>${p.name}</h3>
+          <p class="product-desc">${p.desc}</p>
+          <div class="product-footer">
+            <div class="product-price">$${p.price} <span>+ free shipping</span></div>
+            <button class="product-cart-btn" data-id="${p.id}" aria-label="Add to cart">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            </button>
+          </div>
+        </div>
+      `;
+      grid.appendChild(card);
+      observer.observe(card);
+    });
+
+    /* ===== CART SYSTEM ===== */
+    let cart = JSON.parse(localStorage.getItem('clww-cart') || '[]');
+
+    function saveCart() { localStorage.setItem('clww-cart', JSON.stringify(cart)); }
+    function updateCartUI() {
+      const countEl = document.getElementById('cartCount');
+      const total = cart.reduce((s, i) => s + i.qty, 0);
+      countEl.textContent = total;
+      countEl.classList.toggle('show', total > 0);
+
+      const itemsEl = document.getElementById('cartItems');
+      const emptyEl = document.getElementById('cartEmpty');
+      const footerEl = document.getElementById('cartFooter');
+
+      if (cart.length === 0) {
+        emptyEl.style.display = '';
+        footerEl.style.display = 'none';
+        itemsEl.querySelectorAll('.cart-item').forEach(e => e.remove());
+        return;
+      }
+      emptyEl.style.display = 'none';
+      footerEl.style.display = '';
+      itemsEl.querySelectorAll('.cart-item').forEach(e => e.remove());
+
+      let totalPrice = 0;
+      cart.forEach(ci => {
+        const p = products.find(pr => pr.id === ci.id);
+        if (!p) return;
+        totalPrice += p.price * ci.qty;
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
+          <div class="cart-item-img" style="background-image: url(${p.img}); background-size: cover; background-position: center;"></div>
+          <div class="cart-item-info">
+            <h4>${p.name}</h4>
+            <span class="price">$${p.price * ci.qty}</span>
+            <div class="cart-item-qty">
+              <button data-action="dec" data-id="${ci.id}">-</button>
+              <span>${ci.qty}</span>
+              <button data-action="inc" data-id="${ci.id}">+</button>
+            </div>
+            <button class="cart-item-remove" data-id="${ci.id}">Remove</button>
+          </div>
+        `;
+        itemsEl.appendChild(div);
+      });
+      document.getElementById('cartTotal').textContent = '$' + totalPrice.toFixed(2);
+    }
+
+    function addToCart(id) {
+      const existing = cart.find(i => i.id === id);
+      if (existing) existing.qty++;
+      else cart.push({ id, qty: 1 });
+      saveCart();
+      updateCartUI();
+      openCart();
+    }
+
+    function openCart() {
+      document.getElementById('cartOverlay').classList.add('open');
+      document.getElementById('cartDrawer').classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeCart() {
+      document.getElementById('cartOverlay').classList.remove('open');
+      document.getElementById('cartDrawer').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    document.getElementById('cartToggle').addEventListener('click', openCart);
+    document.getElementById('cartClose').addEventListener('click', closeCart);
+    document.getElementById('cartOverlay').addEventListener('click', closeCart);
+
+    document.getElementById('cartItems').addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-action], .cart-item-remove');
+      if (!btn) return;
+      const id = parseInt(btn.dataset.id);
+      if (btn.classList.contains('cart-item-remove')) {
+        cart = cart.filter(i => i.id !== id);
+      } else if (btn.dataset.action === 'inc') {
+        const item = cart.find(i => i.id === id);
+        if (item) item.qty++;
+      } else if (btn.dataset.action === 'dec') {
+        const item = cart.find(i => i.id === id);
+        if (item) { item.qty--; if (item.qty <= 0) cart = cart.filter(i => i.id !== id); }
+      }
+      saveCart();
+      updateCartUI();
+    });
+
+    // Checkout placeholder
+    document.getElementById('checkoutBtn').addEventListener('click', () => {
+      alert('Checkout integration coming soon! For now, please message us on Instagram @closedloopww or visit our Etsy shop to complete your order.');
+    });
+
+    grid.addEventListener('click', (e) => {
+      const btn = e.target.closest('.product-cart-btn');
+      if (btn) addToCart(parseInt(btn.dataset.id));
+    });
+
+    updateCartUI();
+
+    /* ===== SMOOTH SCROLL ===== */
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', (e) => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
