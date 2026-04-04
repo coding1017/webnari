@@ -60,6 +60,7 @@ export function Footer() {
                 { href: "/about", label: "About Meesh" },
                 { href: "/contact", label: "Contact" },
                 { href: "/blog", label: "Blog" },
+                { href: "/track", label: "Track Your Order" },
                 { href: "/shipping", label: "Shipping & Returns" },
                 { href: "/privacy", label: "Privacy Policy" },
                 { href: "/terms", label: "Terms of Service" },
