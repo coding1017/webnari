@@ -220,9 +220,12 @@ export default {
         return await handleAdminDeleteDiscount(request, sb, env, storeId, discountId, corsOrigin);
       }
 
-      // Public discount validation
+      // Public discount endpoints
       if (method === 'POST' && path === '/api/discount/validate') {
         return await handleValidateDiscount(request, sb, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/discount/auto-apply') {
+        return await handleAutoApplyDiscount(request, sb, storeId, corsOrigin);
       }
 
       // Admin Subscribers
@@ -410,7 +413,9 @@ async function handleGetStoreConfig(sb, storeId, corsOrigin) {
 
 async function handleCreateCheckout(request, sb, env, storeId, corsOrigin) {
   const body = await request.json();
-  const { items, customer, shippingState, successUrl, cancelUrl, provider, discountCode } = body;
+  const { items, customer, shippingState, successUrl, cancelUrl, provider, discountCode, discountCodes } = body;
+  // Support both single discountCode and array discountCodes
+  const manualCodes = discountCodes || (discountCode ? [discountCode] : []);
 
   // items: [{ productId, variantId?, quantity }]
   // customer: { email, name, phone? }
@@ -489,26 +494,49 @@ async function handleCreateCheckout(request, sb, env, storeId, corsOrigin) {
     });
   }
 
-  // ── 4. Apply discount code (if provided) ─────────────────
-  let discountAmount = 0;
-  let appliedDiscount = null;
+  // ── 4. Apply discounts (manual codes + automatic) ────────
+  let totalDiscountAmount = 0;
+  const appliedDiscounts = [];
+  let hasFreeshipping = false;
+  let runningSubtotal = subtotal;
 
-  if (discountCode) {
-    const discountResult = await validateDiscountCode(sb, storeId, discountCode, subtotal, customer.email, lineItems);
-    if (!discountResult.valid) {
-      return json({ error: discountResult.reason }, 400, corsOrigin);
-    }
-    discountAmount = discountResult.amountOff;
-    appliedDiscount = discountResult.discount;
+  // 4a. Check automatic discounts first
+  const autoDiscounts = await findAutoDiscounts(sb, storeId, subtotal, customer.email, lineItems);
+  for (const auto of autoDiscounts) {
+    appliedDiscounts.push(auto);
+    totalDiscountAmount += auto.amountOff;
+    runningSubtotal -= auto.amountOff;
+    if (auto.discount.type === 'free_shipping') hasFreeshipping = true;
   }
 
-  const discountedSubtotal = subtotal - discountAmount;
+  // 4b. Apply manual discount codes (max 2)
+  for (const code of manualCodes.slice(0, 2)) {
+    const result = await validateDiscountCode(sb, storeId, code, runningSubtotal, customer.email, lineItems);
+    if (!result.valid) {
+      return json({ error: result.reason }, 400, corsOrigin);
+    }
+    // Check stackable
+    if (!result.discount.stackable && (appliedDiscounts.length > 0)) {
+      return json({ error: `Code "${code}" cannot be combined with other discounts` }, 400, corsOrigin);
+    }
+    if (appliedDiscounts.some(d => !d.discount.stackable)) {
+      return json({ error: 'A non-stackable discount is already applied' }, 400, corsOrigin);
+    }
+    appliedDiscounts.push(result);
+    totalDiscountAmount += result.amountOff;
+    runningSubtotal -= result.amountOff;
+    if (result.discount.type === 'free_shipping') hasFreeshipping = true;
+  }
+
+  // Ensure discount doesn't exceed subtotal
+  totalDiscountAmount = Math.min(totalDiscountAmount, subtotal);
+  const discountedSubtotal = subtotal - totalDiscountAmount;
 
   // ── 5. Calculate shipping ───────────────────────────────
   let shippingCost = calculateShippingFromRules(store.shipping_rules, discountedSubtotal);
 
   // Free shipping discount overrides
-  if (appliedDiscount?.type === 'free_shipping') {
+  if (hasFreeshipping) {
     shippingCost = 0;
   }
 
@@ -533,7 +561,8 @@ async function handleCreateCheckout(request, sb, env, storeId, corsOrigin) {
     return await createStripeCheckout(sb, env, storeId, store, {
       lineItems, customer, subtotal: discountedSubtotal, shippingCost, taxAmount, total,
       shippingState, reservations, successUrl, cancelUrl,
-      discountCode: appliedDiscount?.code || null, discountAmount,
+      discountCode: appliedDiscounts.map(d => d.discount.code).join('+') || null,
+      discountAmount: totalDiscountAmount,
     }, corsOrigin);
   }
 
@@ -541,7 +570,8 @@ async function handleCreateCheckout(request, sb, env, storeId, corsOrigin) {
     return await createSquareCheckout(sb, env, storeId, store, {
       lineItems, customer, subtotal: discountedSubtotal, shippingCost, taxAmount, total,
       shippingState, reservations, successUrl, cancelUrl,
-      discountCode: appliedDiscount?.code || null, discountAmount,
+      discountCode: appliedDiscounts.map(d => d.discount.code).join('+') || null,
+      discountAmount: totalDiscountAmount,
     }, corsOrigin);
   }
 
@@ -2262,51 +2292,121 @@ async function handlePublicFeaturedProducts(sb, storeId, url, corsOrigin) {
 //  DISCOUNT VALIDATION (shared logic)
 // ═══════════════════════════════════════════════════════════════
 
-async function validateDiscountCode(sb, storeId, code, subtotal, customerEmail, lineItems) {
-  const discount = await sb.query('discount_codes', {
-    filters: { store_id: `eq.${storeId}`, code: `eq.${code.toUpperCase().trim()}` },
-    single: true,
-  });
-
-  if (!discount) return { valid: false, reason: 'Invalid discount code' };
-  if (!discount.is_active) return { valid: false, reason: 'This discount code is no longer active' };
+async function validateDiscountRecord(discount, sb, subtotal, customerEmail, lineItems) {
+  // Shared validation for both code-based and automatic discounts
+  if (!discount.is_active) return { valid: false, reason: 'This discount is no longer active' };
 
   const now = new Date();
   if (discount.starts_at && new Date(discount.starts_at) > now) {
-    return { valid: false, reason: 'This discount code is not yet active' };
+    return { valid: false, reason: 'This discount is not yet active' };
   }
   if (discount.expires_at && new Date(discount.expires_at) < now) {
-    return { valid: false, reason: 'This discount code has expired' };
+    return { valid: false, reason: 'This discount has expired' };
   }
   if (discount.max_uses !== null && discount.uses_count >= discount.max_uses) {
-    return { valid: false, reason: 'This discount code has been fully redeemed' };
+    return { valid: false, reason: 'This discount has been fully redeemed' };
   }
   if (discount.max_uses_per_customer !== null && customerEmail) {
     const usage = await sb.query('discount_usage', {
       filters: { discount_id: `eq.${discount.id}`, customer_email: `eq.${customerEmail}` },
     });
     if (usage.length >= discount.max_uses_per_customer) {
-      return { valid: false, reason: 'You have already used this discount code' };
+      return { valid: false, reason: 'You have already used this discount' };
     }
   }
   if (discount.min_subtotal !== null && subtotal < discount.min_subtotal) {
     const minDollars = (discount.min_subtotal / 100).toFixed(2);
-    return { valid: false, reason: `Minimum purchase of $${minDollars} required for this code` };
+    return { valid: false, reason: `Minimum purchase of $${minDollars} required` };
   }
 
   let amountOff = 0;
   const value = parseFloat(discount.value);
+
   if (discount.type === 'percentage') {
     amountOff = Math.round(subtotal * value / 100);
   } else if (discount.type === 'fixed') {
     amountOff = Math.min(Math.round(value), subtotal);
+  } else if (discount.type === 'free_shipping') {
+    amountOff = 0; // Handled in shipping calc
+  } else if (discount.type === 'buy_x_get_y' && lineItems) {
+    // Buy-X-Get-Y logic
+    const buyQty = discount.buy_min_qty || 1;
+    const getQty = discount.get_qty || 1;
+    const getPercent = parseFloat(discount.get_discount_percent || 100);
+    const buyCategory = discount.buy_category;
+    const getCategory = discount.get_category || buyCategory;
+
+    // Count qualifying "buy" items
+    let qualifyingBuyItems = [];
+    let qualifyingGetItems = [];
+
+    for (const item of lineItems) {
+      const matchesBuy = !buyCategory || item.category === buyCategory;
+      const matchesGet = !getCategory || item.category === getCategory;
+
+      if (matchesBuy) {
+        for (let i = 0; i < item.quantity; i++) {
+          qualifyingBuyItems.push(item.price);
+        }
+      }
+      if (matchesGet) {
+        for (let i = 0; i < item.quantity; i++) {
+          qualifyingGetItems.push(item.price);
+        }
+      }
+    }
+
+    if (qualifyingBuyItems.length < buyQty) {
+      return { valid: false, reason: `Add ${buyQty} qualifying items to use this discount` };
+    }
+
+    // Sort get items by price ascending (discount the cheapest)
+    qualifyingGetItems.sort((a, b) => a - b);
+    const itemsToDiscount = qualifyingGetItems.slice(0, getQty);
+
+    for (const price of itemsToDiscount) {
+      amountOff += Math.round(price * getPercent / 100);
+    }
   }
 
   return {
     valid: true,
-    discount: { id: discount.id, code: discount.code, type: discount.type, value },
+    discount: {
+      id: discount.id,
+      code: discount.code,
+      type: discount.type,
+      value,
+      stackable: discount.stackable,
+      is_automatic: discount.is_automatic,
+    },
     amountOff,
   };
+}
+
+async function validateDiscountCode(sb, storeId, code, subtotal, customerEmail, lineItems) {
+  const discount = await sb.query('discount_codes', {
+    filters: { store_id: `eq.${storeId}`, code: `eq.${code.toUpperCase().trim()}` },
+    single: true,
+  });
+  if (!discount) return { valid: false, reason: 'Invalid discount code' };
+  return validateDiscountRecord(discount, sb, subtotal, customerEmail, lineItems);
+}
+
+async function findAutoDiscounts(sb, storeId, subtotal, customerEmail, lineItems) {
+  // Find all active automatic discounts for this store
+  const autos = await sb.query('discount_codes', {
+    filters: { store_id: `eq.${storeId}`, is_automatic: 'eq.true', is_active: 'eq.true' },
+  });
+
+  const results = [];
+  for (const discount of autos) {
+    const result = await validateDiscountRecord(discount, sb, subtotal, customerEmail, lineItems);
+    if (result.valid) results.push(result);
+  }
+
+  // Sort by amountOff descending (best deal first)
+  results.sort((a, b) => b.amountOff - a.amountOff);
+  return results;
 }
 
 
@@ -2369,17 +2469,22 @@ async function handleAdminCreateDiscount(request, sb, env, storeId, corsOrigin) 
   if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const body = await request.json();
-  if (!body.code || !body.type) return json({ error: 'Code and type are required' }, 400, corsOrigin);
+  if (!body.type) return json({ error: 'Type is required' }, 400, corsOrigin);
+  const isAutomatic = body.is_automatic || false;
+  if (!isAutomatic && !body.code) return json({ error: 'Code is required for non-automatic discounts' }, 400, corsOrigin);
 
-  const code = body.code.toUpperCase().trim().replace(/\s+/g, '');
-  const validTypes = ['percentage', 'fixed', 'free_shipping'];
-  if (!validTypes.includes(body.type)) return json({ error: 'Type must be percentage, fixed, or free_shipping' }, 400, corsOrigin);
+  const code = body.code ? body.code.toUpperCase().trim().replace(/\s+/g, '') : `AUTO_${Date.now()}`;
+  const validTypes = ['percentage', 'fixed', 'free_shipping', 'buy_x_get_y'];
+  if (!validTypes.includes(body.type)) return json({ error: 'Invalid discount type' }, 400, corsOrigin);
 
-  const existing = await sb.query('discount_codes', {
-    filters: { store_id: `eq.${storeId}`, code: `eq.${code}` },
-    single: true,
-  });
-  if (existing) return json({ error: `Discount code "${code}" already exists` }, 400, corsOrigin);
+  // Check for duplicate code (only for non-automatic)
+  if (!isAutomatic) {
+    const existing = await sb.query('discount_codes', {
+      filters: { store_id: `eq.${storeId}`, code: `eq.${code}` },
+      single: true,
+    });
+    if (existing) return json({ error: `Discount code "${code}" already exists` }, 400, corsOrigin);
+  }
 
   const [discount] = await sb.insert('discount_codes', {
     store_id: storeId,
@@ -2391,8 +2496,17 @@ async function handleAdminCreateDiscount(request, sb, env, storeId, corsOrigin) 
     max_uses_per_customer: body.max_uses_per_customer ?? 1,
     category_restriction: body.category_restriction || null,
     is_active: body.is_active !== undefined ? body.is_active : true,
+    is_automatic: isAutomatic,
+    stackable: body.stackable !== undefined ? body.stackable : true,
     starts_at: body.starts_at || null,
     expires_at: body.expires_at || null,
+    buy_min_qty: body.buy_min_qty || null,
+    buy_category: body.buy_category || null,
+    buy_product_id: body.buy_product_id || null,
+    get_qty: body.get_qty || 1,
+    get_category: body.get_category || null,
+    get_product_id: body.get_product_id || null,
+    get_discount_percent: body.get_discount_percent || 100,
   });
 
   return json(discount, 201, corsOrigin);
@@ -2421,7 +2535,8 @@ async function handleAdminUpdateDiscount(request, sb, env, storeId, discountId, 
 
   const body = await request.json();
   const allowed = ['code', 'type', 'value', 'min_subtotal', 'max_uses', 'max_uses_per_customer',
-    'category_restriction', 'is_active', 'starts_at', 'expires_at'];
+    'category_restriction', 'is_active', 'is_automatic', 'stackable', 'starts_at', 'expires_at',
+    'buy_min_qty', 'buy_category', 'buy_product_id', 'get_qty', 'get_category', 'get_product_id', 'get_discount_percent'];
   const updates = {};
   for (const key of allowed) {
     if (body[key] !== undefined) {
@@ -2439,4 +2554,43 @@ async function handleAdminDeleteDiscount(request, sb, env, storeId, discountId, 
 
   await sb.delete('discount_codes', { id: `eq.${discountId}`, store_id: `eq.${storeId}` });
   return json({ deleted: true }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  PUBLIC — AUTO-APPLY DISCOUNT ENDPOINT
+// ═══════════════════════════════════════════════════════════════
+
+async function handleAutoApplyDiscount(request, sb, storeId, corsOrigin) {
+  const body = await request.json();
+  const { subtotal, customerEmail, items } = body;
+
+  if (subtotal === undefined) return json({ error: 'Subtotal required' }, 400, corsOrigin);
+
+  const lineItems = items || [];
+  const results = await findAutoDiscounts(sb, storeId, subtotal, customerEmail, lineItems);
+
+  if (results.length === 0) {
+    return json({ applied: false, discounts: [] }, 200, corsOrigin);
+  }
+
+  return json({
+    applied: true,
+    discounts: results.map(r => ({
+      code: r.discount.code || '(automatic)',
+      type: r.discount.type,
+      value: r.discount.value,
+      amountOff: r.amountOff,
+      description: r.discount.type === 'percentage'
+        ? `${r.discount.value}% off (automatic)`
+        : r.discount.type === 'fixed'
+          ? `$${(r.discount.value / 100).toFixed(2)} off (automatic)`
+          : r.discount.type === 'free_shipping'
+            ? 'Free shipping (automatic)'
+            : r.discount.type === 'buy_x_get_y'
+              ? 'Buy & save (automatic)'
+              : 'Discount applied',
+    })),
+    totalSaved: results.reduce((sum, r) => sum + r.amountOff, 0),
+  }, 200, corsOrigin);
 }

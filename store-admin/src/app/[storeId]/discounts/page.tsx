@@ -15,6 +15,8 @@ interface Discount {
   uses_count: number;
   category_restriction: string | null;
   is_active: boolean;
+  is_automatic: boolean;
+  stackable: boolean;
   starts_at: string | null;
   expires_at: string | null;
   status: string;
@@ -61,6 +63,14 @@ export default function DiscountsPage() {
   const [newMaxPerCustomer, setNewMaxPerCustomer] = useState("1");
   const [newStartsAt, setNewStartsAt] = useState("");
   const [newExpiresAt, setNewExpiresAt] = useState("");
+  const [newIsAutomatic, setNewIsAutomatic] = useState(false);
+  const [newStackable, setNewStackable] = useState(true);
+  // Buy X Get Y fields
+  const [newBuyMinQty, setNewBuyMinQty] = useState("");
+  const [newBuyCategory, setNewBuyCategory] = useState("");
+  const [newGetQty, setNewGetQty] = useState("1");
+  const [newGetCategory, setNewGetCategory] = useState("");
+  const [newGetDiscountPercent, setNewGetDiscountPercent] = useState("100");
 
   useEffect(() => { load(); }, [storeId]);
 
@@ -72,14 +82,11 @@ export default function DiscountsPage() {
   }
 
   function resetForm() {
-    setNewCode("");
-    setNewType("percentage");
-    setNewValue("");
-    setNewMinSubtotal("");
-    setNewMaxUses("");
-    setNewMaxPerCustomer("1");
-    setNewStartsAt("");
-    setNewExpiresAt("");
+    setNewCode(""); setNewType("percentage"); setNewValue("");
+    setNewMinSubtotal(""); setNewMaxUses(""); setNewMaxPerCustomer("1");
+    setNewStartsAt(""); setNewExpiresAt(""); setNewIsAutomatic(false);
+    setNewStackable(true); setNewBuyMinQty(""); setNewBuyCategory("");
+    setNewGetQty("1"); setNewGetCategory(""); setNewGetDiscountPercent("100");
     setShowCreate(false);
   }
 
@@ -92,14 +99,23 @@ export default function DiscountsPage() {
     setMessage("");
     try {
       await createDiscount(storeId, {
-        code: newCode.trim(),
+        code: newIsAutomatic ? undefined : newCode.trim(),
         type: newType,
-        value: newType === "fixed" ? Math.round(parseFloat(newValue) * 100) : parseFloat(newValue),
+        value: newType === "fixed" ? Math.round(parseFloat(newValue || "0") * 100) : parseFloat(newValue || "0"),
         min_subtotal: newMinSubtotal ? Math.round(parseFloat(newMinSubtotal) * 100) : null,
         max_uses: newMaxUses ? parseInt(newMaxUses) : null,
         max_uses_per_customer: newMaxPerCustomer ? parseInt(newMaxPerCustomer) : null,
         starts_at: newStartsAt || null,
         expires_at: newExpiresAt || null,
+        is_automatic: newIsAutomatic,
+        stackable: newStackable,
+        ...(newType === "buy_x_get_y" ? {
+          buy_min_qty: parseInt(newBuyMinQty) || 2,
+          buy_category: newBuyCategory || null,
+          get_qty: parseInt(newGetQty) || 1,
+          get_category: newGetCategory || null,
+          get_discount_percent: parseFloat(newGetDiscountPercent) || 100,
+        } : {}),
       });
       resetForm();
       await load();
@@ -172,30 +188,32 @@ export default function DiscountsPage() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" style={{ marginBottom: "16px" }}>
-            {/* Code */}
-            <div>
-              <label>Discount Code</label>
-              <div style={{ display: "flex", gap: "8px" }}>
-                <input
-                  value={newCode}
-                  onChange={(e) => setNewCode(e.target.value.toUpperCase())}
-                  placeholder="e.g. SUMMER20"
-                  style={{ flex: 1, textTransform: "uppercase", fontFamily: "monospace", letterSpacing: "0.05em" }}
-                />
-                <button
-                  type="button"
-                  onClick={() => setNewCode(generateCode())}
-                  style={{
-                    fontSize: "11px", fontWeight: 600, padding: "8px 12px",
-                    background: "var(--bg-grouped)", border: "1px solid var(--border)",
-                    borderRadius: "var(--radius-sm)", cursor: "pointer", color: "var(--text-secondary)",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  Random
-                </button>
+            {/* Code (hidden for automatic) */}
+            {!newIsAutomatic && (
+              <div>
+                <label>Discount Code</label>
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <input
+                    value={newCode}
+                    onChange={(e) => setNewCode(e.target.value.toUpperCase())}
+                    placeholder="e.g. SUMMER20"
+                    style={{ flex: 1, textTransform: "uppercase", fontFamily: "monospace", letterSpacing: "0.05em" }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setNewCode(generateCode())}
+                    style={{
+                      fontSize: "11px", fontWeight: 600, padding: "8px 12px",
+                      background: "var(--bg-grouped)", border: "1px solid var(--border)",
+                      borderRadius: "var(--radius-sm)", cursor: "pointer", color: "var(--text-secondary)",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    Random
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
 
             {/* Type */}
             <div>
@@ -204,23 +222,74 @@ export default function DiscountsPage() {
                 <option value="percentage">Percentage Off</option>
                 <option value="fixed">Fixed Amount Off</option>
                 <option value="free_shipping">Free Shipping</option>
+                <option value="buy_x_get_y">Buy X Get Y</option>
               </select>
             </div>
 
-            {/* Value */}
-            <div>
-              <label>{newType === "percentage" ? "Percentage (%)" : newType === "fixed" ? "Amount ($)" : "Value"}</label>
-              <input
-                type="number"
-                step={newType === "percentage" ? "1" : "0.01"}
-                min="0"
-                max={newType === "percentage" ? "100" : undefined}
-                value={newValue}
-                onChange={(e) => setNewValue(e.target.value)}
-                placeholder={newType === "percentage" ? "e.g. 20" : newType === "fixed" ? "e.g. 10.00" : "0"}
-                disabled={newType === "free_shipping"}
-              />
+            {/* Value (hidden for BXGY and free shipping) */}
+            {newType !== "buy_x_get_y" && (
+              <div>
+                <label>{newType === "percentage" ? "Percentage (%)" : newType === "fixed" ? "Amount ($)" : "Value"}</label>
+                <input
+                  type="number"
+                  step={newType === "percentage" ? "1" : "0.01"}
+                  min="0"
+                  max={newType === "percentage" ? "100" : undefined}
+                  value={newValue}
+                  onChange={(e) => setNewValue(e.target.value)}
+                  placeholder={newType === "percentage" ? "e.g. 20" : newType === "fixed" ? "e.g. 10.00" : "0"}
+                  disabled={newType === "free_shipping"}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Buy X Get Y fields */}
+          {newType === "buy_x_get_y" && (
+            <div style={{ padding: "16px", background: "var(--bg-grouped)", borderRadius: "var(--radius-sm)", border: "1px solid var(--border)", marginBottom: "16px" }}>
+              <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "12px" }}>
+                Buy X Get Y Configuration
+              </div>
+              <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+                <div>
+                  <label>Buy Qty</label>
+                  <input type="number" min="1" value={newBuyMinQty} onChange={(e) => setNewBuyMinQty(e.target.value)} placeholder="2" />
+                </div>
+                <div>
+                  <label>Buy Category</label>
+                  <input value={newBuyCategory} onChange={(e) => setNewBuyCategory(e.target.value)} placeholder="Any category" />
+                </div>
+                <div>
+                  <label>Get Qty</label>
+                  <input type="number" min="1" value={newGetQty} onChange={(e) => setNewGetQty(e.target.value)} placeholder="1" />
+                </div>
+                <div>
+                  <label>Get Category</label>
+                  <input value={newGetCategory} onChange={(e) => setNewGetCategory(e.target.value)} placeholder="Same as buy" />
+                </div>
+                <div>
+                  <label>Discount (%)</label>
+                  <input type="number" min="1" max="100" value={newGetDiscountPercent} onChange={(e) => setNewGetDiscountPercent(e.target.value)} placeholder="100 = free" />
+                </div>
+              </div>
+              <p style={{ fontSize: "11px", color: "var(--text-tertiary)", marginTop: "8px" }}>
+                Example: Buy 2 from &quot;pouches&quot;, get 1 from &quot;pouches&quot; at 100% off (free)
+              </p>
             </div>
+          )}
+
+          {/* Toggles */}
+          <div className="flex items-center gap-8" style={{ marginBottom: "16px" }}>
+            <label className="flex items-center gap-2 cursor-pointer" style={{ marginBottom: 0 }}>
+              <input type="checkbox" checked={newIsAutomatic} onChange={(e) => setNewIsAutomatic(e.target.checked)} />
+              <span style={{ fontSize: "13px", fontWeight: 500, color: "var(--text-secondary)" }}>Automatic</span>
+              <span style={{ fontSize: "11px", color: "var(--text-tertiary)" }}>(no code needed)</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer" style={{ marginBottom: 0 }}>
+              <input type="checkbox" checked={newStackable} onChange={(e) => setNewStackable(e.target.checked)} />
+              <span style={{ fontSize: "13px", fontWeight: 500, color: "var(--text-secondary)" }}>Stackable</span>
+              <span style={{ fontSize: "11px", color: "var(--text-tertiary)" }}>(can combine with others)</span>
+            </label>
           </div>
 
           {/* Conditions */}
@@ -301,9 +370,13 @@ export default function DiscountsPage() {
                 return (
                   <tr key={d.id}>
                     <td>
-                      <span style={{ fontFamily: "monospace", fontWeight: 700, fontSize: "14px", color: "var(--text-primary)", letterSpacing: "0.04em" }}>
-                        {d.code}
-                      </span>
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                        <span style={{ fontFamily: "monospace", fontWeight: 700, fontSize: "14px", color: "var(--text-primary)", letterSpacing: "0.04em" }}>
+                          {d.is_automatic ? "(Auto)" : d.code}
+                        </span>
+                        {d.is_automatic && <span className="badge badge-purple" style={{ fontSize: "9px", padding: "1px 6px" }}>Auto</span>}
+                        {!d.stackable && <span className="badge badge-gray" style={{ fontSize: "9px", padding: "1px 6px" }}>Solo</span>}
+                      </div>
                       {d.min_subtotal && (
                         <div style={{ fontSize: "11px", color: "var(--text-tertiary)" }}>
                           Min ${(d.min_subtotal / 100).toFixed(2)}
