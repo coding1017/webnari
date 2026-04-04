@@ -129,6 +129,11 @@ export default {
         return await handleAdminStats(request, sb, env, storeId, corsOrigin);
       }
 
+      // Analytics
+      if (method === 'GET' && path === '/api/admin/analytics') {
+        return await handleAdminAnalytics(request, sb, env, storeId, url, corsOrigin);
+      }
+
       // Admin Products
       if (method === 'GET' && path === '/api/admin/products') {
         return await handleAdminListProducts(request, sb, env, storeId, url, corsOrigin);
@@ -2972,4 +2977,106 @@ function buildAbandonedCartHTML(storeName, domain, items, total) {
       </div>
     </div>
   </body></html>`;
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  ADMIN — ANALYTICS
+// ═══════════════════════════════════════════════════════════════
+
+async function handleAdminAnalytics(request, sb, env, storeId, url, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const range = url.searchParams.get('range') || '30d';
+
+  // Calculate date ranges
+  const now = new Date();
+  let daysBack = 30;
+  if (range === '7d') daysBack = 7;
+  else if (range === '90d') daysBack = 90;
+  else if (range === 'all') daysBack = 365 * 5;
+
+  const startDate = new Date(now.getTime() - daysBack * 24 * 60 * 60 * 1000);
+  const prevStartDate = new Date(startDate.getTime() - daysBack * 24 * 60 * 60 * 1000);
+
+  // Fetch all orders for this store
+  const allOrders = await sb.query('orders', {
+    filters: { store_id: `eq.${storeId}` },
+    order: 'created_at.asc',
+  });
+
+  // Filter by date ranges
+  const currentOrders = allOrders.filter(o => new Date(o.created_at) >= startDate);
+  const previousOrders = allOrders.filter(o => {
+    const d = new Date(o.created_at);
+    return d >= prevStartDate && d < startDate;
+  });
+
+  // Valid orders (not cancelled/refunded)
+  const validCurrent = currentOrders.filter(o => o.status !== 'cancelled' && o.status !== 'refunded');
+  const validPrevious = previousOrders.filter(o => o.status !== 'cancelled' && o.status !== 'refunded');
+
+  // Revenue
+  const currentRevenue = validCurrent.reduce((sum, o) => sum + (o.total || 0), 0);
+  const previousRevenue = validPrevious.reduce((sum, o) => sum + (o.total || 0), 0);
+  const revenueChange = previousRevenue > 0 ? Math.round((currentRevenue - previousRevenue) / previousRevenue * 1000) / 10 : 0;
+
+  // Orders count
+  const currentOrderCount = currentOrders.length;
+  const previousOrderCount = previousOrders.length;
+  const ordersChange = previousOrderCount > 0 ? Math.round((currentOrderCount - previousOrderCount) / previousOrderCount * 1000) / 10 : 0;
+
+  // Customers
+  const currentEmails = new Set(currentOrders.map(o => o.customer_email).filter(Boolean));
+  const allTimeEmails = new Set(allOrders.filter(o => new Date(o.created_at) < startDate).map(o => o.customer_email).filter(Boolean));
+  const newCustomers = [...currentEmails].filter(e => !allTimeEmails.has(e)).length;
+  const returningCustomers = currentEmails.size - newCustomers;
+
+  // Avg order value
+  const avgOrderValue = validCurrent.length > 0 ? Math.round(currentRevenue / validCurrent.length) : 0;
+
+  // Revenue by day
+  const revenueByDay = {};
+  for (let d = new Date(startDate); d <= now; d.setDate(d.getDate() + 1)) {
+    const key = d.toISOString().slice(0, 10);
+    revenueByDay[key] = { date: key, revenue: 0, orders: 0 };
+  }
+  for (const order of validCurrent) {
+    const key = order.created_at.slice(0, 10);
+    if (revenueByDay[key]) {
+      revenueByDay[key].revenue += order.total || 0;
+      revenueByDay[key].orders += 1;
+    }
+  }
+
+  // Status breakdown
+  const statusBreakdown = {};
+  for (const order of currentOrders) {
+    statusBreakdown[order.status] = (statusBreakdown[order.status] || 0) + 1;
+  }
+
+  // Top products
+  const productRevenue = {};
+  // Fetch order items for current orders
+  for (const order of validCurrent) {
+    const items = await sb.query('order_items', { filters: { order_id: `eq.${order.id}` } });
+    for (const item of items) {
+      const key = item.product_name;
+      if (!productRevenue[key]) productRevenue[key] = { name: key, revenue: 0, quantity: 0 };
+      productRevenue[key].revenue += (item.price || 0) * (item.quantity || 1);
+      productRevenue[key].quantity += item.quantity || 1;
+    }
+  }
+  const topProducts = Object.values(productRevenue).sort((a, b) => b.revenue - a.revenue).slice(0, 5);
+
+  return json({
+    range,
+    revenue: { total: currentRevenue, previous: previousRevenue, change: revenueChange },
+    orders: { total: currentOrderCount, previous: previousOrderCount, change: ordersChange },
+    customers: { total: currentEmails.size, new: newCustomers, returning: returningCustomers },
+    avgOrderValue,
+    revenueByDay: Object.values(revenueByDay),
+    statusBreakdown,
+    topProducts,
+  }, 200, corsOrigin);
 }

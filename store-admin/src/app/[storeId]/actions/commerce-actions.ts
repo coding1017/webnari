@@ -121,3 +121,8 @@ export async function deleteDiscount(storeId: string, discountId: string) {
   const client = new CommerceClient(storeId);
   return client.deleteDiscount(discountId);
 }
+
+export async function getAnalytics(storeId: string, range: string = '30d') {
+  const client = new CommerceClient(storeId);
+  return client.getAnalytics(range);
+}

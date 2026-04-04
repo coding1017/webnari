@@ -210,6 +210,11 @@ export class CommerceClient {
     return this.fetch(`/api/admin/discounts/${id}`, { method: 'DELETE' });
   }
 
+  // ── Analytics ─────────────────────────────────────────
+  async getAnalytics(range: string = '30d') {
+    return this.fetch(`/api/admin/analytics?range=${range}`);
+  }
+
   // ── Categories ─────────────────────────────────────────
   async getCategories() {
     return this.fetch('/api/admin/categories');
