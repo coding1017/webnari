@@ -380,6 +380,196 @@ function requireAdmin(request, env) {
 
 
 // ═══════════════════════════════════════════════════════════════
+//  EMAIL SYSTEM
+// ═══════════════════════════════════════════════════════════════
+
+async function sendEmail(env, storeId, { to, subject, html }) {
+  const apiKey = getStoreSecret(env, storeId, 'RESEND_API_KEY') || env.RESEND_API_KEY;
+  if (!apiKey) return null; // Silently skip if not configured
+
+  const fromEmail = getStoreSecret(env, storeId, 'EMAIL_FROM') || env.EMAIL_FROM || 'Webnari <onboarding@resend.dev>';
+
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+      body: JSON.stringify({ from: fromEmail, to, subject, html }),
+    });
+    const data = await res.json();
+    if (!res.ok) console.error('Resend error:', JSON.stringify(data));
+    return data;
+  } catch (err) {
+    console.error('Email send failed:', err);
+    return null;
+  }
+}
+
+function emailHeader(storeName) {
+  return `
+    <div style="background:linear-gradient(135deg,#B8892A,#D4A63A);padding:24px 32px;text-align:center;">
+      <h1 style="margin:0;color:#fff;font-family:'Helvetica Neue',Arial,sans-serif;font-size:22px;font-weight:700;letter-spacing:0.02em;">${storeName}</h1>
+    </div>`;
+}
+
+function emailFooter() {
+  return `
+    <div style="padding:24px 32px;text-align:center;border-top:1px solid #E4DDD3;">
+      <p style="margin:0;color:#B0A8AD;font-size:11px;font-family:'Helvetica Neue',Arial,sans-serif;">
+        Powered by <a href="https://webnari.io" style="color:#B8892A;text-decoration:none;font-weight:600;">Webnari</a>
+      </p>
+    </div>`;
+}
+
+function formatCentsEmail(cents) {
+  return '$' + (cents / 100).toFixed(2);
+}
+
+function buildOrderConfirmationHTML(storeName, order, items) {
+  const itemRows = items.map(item => `
+    <tr>
+      <td style="padding:12px 0;border-bottom:1px solid #F0EBE3;font-family:'Helvetica Neue',Arial,sans-serif;font-size:14px;color:#3D3540;">
+        ${item.product_name}${item.variant_name ? ` <span style="color:#7A7078;">— ${item.variant_name}</span>` : ''}
+        <span style="color:#7A7078;"> x${item.quantity}</span>
+      </td>
+      <td style="padding:12px 0;border-bottom:1px solid #F0EBE3;text-align:right;font-family:'Helvetica Neue',Arial,sans-serif;font-size:14px;font-weight:600;color:#1A1518;">
+        ${formatCentsEmail(item.price * item.quantity)}
+      </td>
+    </tr>`).join('');
+
+  const address = order.shipping_address;
+  const addressHTML = address ? `
+    <div style="margin-top:24px;padding:16px 20px;background:#FAF7F2;border-radius:8px;border:1px solid #E4DDD3;">
+      <p style="margin:0 0 8px;font-size:12px;font-weight:700;color:#7A7078;text-transform:uppercase;letter-spacing:0.06em;font-family:'Helvetica Neue',Arial,sans-serif;">Ship To</p>
+      <p style="margin:0;font-size:14px;color:#1A1518;font-family:'Helvetica Neue',Arial,sans-serif;line-height:1.5;">
+        ${order.customer_name || ''}<br>
+        ${address.line1}${address.line2 ? '<br>' + address.line2 : ''}<br>
+        ${address.city}, ${address.state} ${address.zip}
+      </p>
+    </div>` : '';
+
+  return `
+  <!DOCTYPE html>
+  <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+  <body style="margin:0;padding:0;background:#F2F0EC;font-family:'Helvetica Neue',Arial,sans-serif;">
+    <div style="max-width:560px;margin:32px auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+      ${emailHeader(storeName)}
+      <div style="padding:32px;">
+        <h2 style="margin:0 0 4px;font-size:20px;font-weight:700;color:#1A1518;">Order Confirmed</h2>
+        <p style="margin:0 0 24px;font-size:14px;color:#7A7078;">Thank you for your purchase, ${order.customer_name || 'there'}!</p>
+
+        <div style="padding:12px 16px;background:#FAF7F2;border-radius:8px;border:1px solid #E4DDD3;margin-bottom:24px;">
+          <p style="margin:0;font-size:12px;font-weight:700;color:#7A7078;text-transform:uppercase;letter-spacing:0.06em;">Order Number</p>
+          <p style="margin:4px 0 0;font-size:18px;font-weight:700;color:#B8892A;font-family:monospace;letter-spacing:0.03em;">${order.order_number}</p>
+        </div>
+
+        <table style="width:100%;border-collapse:collapse;">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding:8px 0;border-bottom:2px solid #E4DDD3;font-size:11px;font-weight:700;color:#7A7078;text-transform:uppercase;letter-spacing:0.06em;font-family:'Helvetica Neue',Arial,sans-serif;">Item</th>
+              <th style="text-align:right;padding:8px 0;border-bottom:2px solid #E4DDD3;font-size:11px;font-weight:700;color:#7A7078;text-transform:uppercase;letter-spacing:0.06em;font-family:'Helvetica Neue',Arial,sans-serif;">Price</th>
+            </tr>
+          </thead>
+          <tbody>${itemRows}</tbody>
+        </table>
+
+        <div style="margin-top:16px;padding-top:16px;border-top:2px solid #E4DDD3;">
+          <table style="width:100%;border-collapse:collapse;">
+            <tr>
+              <td style="padding:4px 0;font-size:13px;color:#7A7078;font-family:'Helvetica Neue',Arial,sans-serif;">Subtotal</td>
+              <td style="padding:4px 0;text-align:right;font-size:13px;color:#3D3540;font-family:'Helvetica Neue',Arial,sans-serif;">${formatCentsEmail(order.subtotal)}</td>
+            </tr>
+            ${order.discount_amount > 0 ? `<tr>
+              <td style="padding:4px 0;font-size:13px;color:#3D9A5F;font-family:'Helvetica Neue',Arial,sans-serif;">Discount${order.discount_code ? ' (' + order.discount_code + ')' : ''}</td>
+              <td style="padding:4px 0;text-align:right;font-size:13px;color:#3D9A5F;font-family:'Helvetica Neue',Arial,sans-serif;">-${formatCentsEmail(order.discount_amount)}</td>
+            </tr>` : ''}
+            <tr>
+              <td style="padding:4px 0;font-size:13px;color:#7A7078;font-family:'Helvetica Neue',Arial,sans-serif;">Shipping</td>
+              <td style="padding:4px 0;text-align:right;font-size:13px;color:#3D3540;font-family:'Helvetica Neue',Arial,sans-serif;">${order.shipping > 0 ? formatCentsEmail(order.shipping) : 'Free'}</td>
+            </tr>
+            <tr>
+              <td style="padding:4px 0;font-size:13px;color:#7A7078;font-family:'Helvetica Neue',Arial,sans-serif;">Tax</td>
+              <td style="padding:4px 0;text-align:right;font-size:13px;color:#3D3540;font-family:'Helvetica Neue',Arial,sans-serif;">${formatCentsEmail(order.tax)}</td>
+            </tr>
+            <tr>
+              <td style="padding:12px 0 0;font-size:16px;font-weight:700;color:#1A1518;border-top:2px solid #E4DDD3;font-family:'Helvetica Neue',Arial,sans-serif;">Total</td>
+              <td style="padding:12px 0 0;text-align:right;font-size:16px;font-weight:700;color:#1A1518;border-top:2px solid #E4DDD3;font-family:'Helvetica Neue',Arial,sans-serif;">${formatCentsEmail(order.total)}</td>
+            </tr>
+          </table>
+        </div>
+
+        ${addressHTML}
+      </div>
+      ${emailFooter()}
+    </div>
+  </body></html>`;
+}
+
+function buildShippingNotificationHTML(storeName, order) {
+  const trackingHTML = order.tracking_url
+    ? `<a href="${order.tracking_url}" style="display:inline-block;margin-top:16px;padding:12px 28px;background:linear-gradient(135deg,#B8892A,#D4A63A);color:#fff;text-decoration:none;border-radius:8px;font-size:14px;font-weight:600;font-family:'Helvetica Neue',Arial,sans-serif;">Track Your Package</a>`
+    : '';
+
+  return `
+  <!DOCTYPE html>
+  <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+  <body style="margin:0;padding:0;background:#F2F0EC;font-family:'Helvetica Neue',Arial,sans-serif;">
+    <div style="max-width:560px;margin:32px auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+      ${emailHeader(storeName)}
+      <div style="padding:32px;">
+        <h2 style="margin:0 0 4px;font-size:20px;font-weight:700;color:#1A1518;">Your Order Has Shipped!</h2>
+        <p style="margin:0 0 24px;font-size:14px;color:#7A7078;">Great news — your order is on its way.</p>
+
+        <div style="padding:16px 20px;background:#FAF7F2;border-radius:8px;border:1px solid #E4DDD3;margin-bottom:20px;">
+          <table style="width:100%;border-collapse:collapse;">
+            <tr>
+              <td style="padding:4px 0;font-size:12px;font-weight:700;color:#7A7078;text-transform:uppercase;letter-spacing:0.06em;">Order</td>
+              <td style="padding:4px 0;text-align:right;font-size:14px;font-weight:700;color:#B8892A;font-family:monospace;">${order.order_number}</td>
+            </tr>
+            ${order.tracking_number ? `<tr>
+              <td style="padding:4px 0;font-size:12px;font-weight:700;color:#7A7078;text-transform:uppercase;letter-spacing:0.06em;">Tracking #</td>
+              <td style="padding:4px 0;text-align:right;font-size:14px;color:#1A1518;font-family:monospace;">${order.tracking_number}</td>
+            </tr>` : ''}
+          </table>
+        </div>
+
+        <div style="text-align:center;">${trackingHTML}</div>
+      </div>
+      ${emailFooter()}
+    </div>
+  </body></html>`;
+}
+
+function buildRefundConfirmationHTML(storeName, order) {
+  return `
+  <!DOCTYPE html>
+  <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+  <body style="margin:0;padding:0;background:#F2F0EC;font-family:'Helvetica Neue',Arial,sans-serif;">
+    <div style="max-width:560px;margin:32px auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+      ${emailHeader(storeName)}
+      <div style="padding:32px;">
+        <h2 style="margin:0 0 4px;font-size:20px;font-weight:700;color:#1A1518;">Refund Processed</h2>
+        <p style="margin:0 0 24px;font-size:14px;color:#7A7078;">Your refund has been processed. Please allow 5-10 business days for the funds to appear.</p>
+
+        <div style="padding:16px 20px;background:#FAF7F2;border-radius:8px;border:1px solid #E4DDD3;">
+          <table style="width:100%;border-collapse:collapse;">
+            <tr>
+              <td style="padding:4px 0;font-size:12px;font-weight:700;color:#7A7078;text-transform:uppercase;letter-spacing:0.06em;">Order</td>
+              <td style="padding:4px 0;text-align:right;font-size:14px;font-weight:700;color:#B8892A;font-family:monospace;">${order.order_number}</td>
+            </tr>
+            <tr>
+              <td style="padding:4px 0;font-size:12px;font-weight:700;color:#7A7078;text-transform:uppercase;letter-spacing:0.06em;">Refund Amount</td>
+              <td style="padding:4px 0;text-align:right;font-size:16px;font-weight:700;color:#1A1518;">${formatCentsEmail(order.total)}</td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      ${emailFooter()}
+    </div>
+  </body></html>`;
+}
+
+
+// ═══════════════════════════════════════════════════════════════
 //  STORE CONFIG
 // ═══════════════════════════════════════════════════════════════
 
@@ -843,6 +1033,17 @@ async function handleStripeSessionCompleted(sb, env, storeId, session) {
     }
 
     await sb.insert('order_items', orderItems);
+
+    // Send order confirmation email
+    if (order.customer_email) {
+      const store = await sb.query('stores', { filters: { id: `eq.${storeId}` }, single: true });
+      const storeName = store?.name || storeId;
+      sendEmail(env, storeId, {
+        to: order.customer_email,
+        subject: `Order Confirmed — #${order.order_number}`,
+        html: buildOrderConfirmationHTML(storeName, order, orderItems),
+      }).catch(err => console.error('Order confirmation email failed:', err));
+    }
   }
 }
 
@@ -1326,6 +1527,29 @@ async function handleUpdateOrder(request, sb, env, storeId, orderId, corsOrigin)
     { id: `eq.${orderId}`, store_id: `eq.${storeId}` },
     updates
   );
+
+  // Send status change emails
+  const updatedOrder = await sb.query('orders', { filters: { id: `eq.${orderId}` }, single: true });
+  if (updatedOrder?.customer_email) {
+    const store = await sb.query('stores', { filters: { id: `eq.${storeId}` }, single: true });
+    const storeName = store?.name || storeId;
+
+    if (updates.status === 'shipped') {
+      sendEmail(env, storeId, {
+        to: updatedOrder.customer_email,
+        subject: `Your Order Has Shipped — #${updatedOrder.order_number}`,
+        html: buildShippingNotificationHTML(storeName, updatedOrder),
+      }).catch(err => console.error('Shipping email failed:', err));
+    }
+
+    if (updates.status === 'refunded') {
+      sendEmail(env, storeId, {
+        to: updatedOrder.customer_email,
+        subject: `Refund Processed — #${updatedOrder.order_number}`,
+        html: buildRefundConfirmationHTML(storeName, updatedOrder),
+      }).catch(err => console.error('Refund email failed:', err));
+    }
+  }
 
   return json(result[0] || { updated: true }, 200, corsOrigin);
 }
