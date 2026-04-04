@@ -127,6 +127,11 @@ export async function getAnalytics(storeId: string, range: string = '30d') {
   return client.getAnalytics(range);
 }
 
+export async function getCustomers(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.getCustomers();
+}
+
 export async function exportProductsCSV(storeId: string) {
   const client = new CommerceClient(storeId);
   return client.exportProductsCSV();

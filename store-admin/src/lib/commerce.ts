@@ -220,6 +220,10 @@ export class CommerceClient {
     return this.fetch('/api/admin/products/export');
   }
 
+  async getCustomers() {
+    return this.fetch('/api/admin/customers');
+  }
+
   async importProductsCSV(rows: Record<string, string>[]) {
     return this.fetch('/api/admin/products/import', {
       method: 'POST',

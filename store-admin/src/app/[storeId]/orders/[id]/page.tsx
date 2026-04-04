@@ -204,6 +204,45 @@ export default function OrderDetailPage() {
             </div>
           </div>
 
+          {/* Refund section */}
+          {order.status !== "refunded" && order.status !== "cancelled" && (
+            <div className="rounded-xl p-5" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)" }}>
+              <h3 style={{ fontSize: "14px", fontWeight: 600, color: "var(--text-primary)", marginBottom: "8px" }}>Refund</h3>
+              <p style={{ fontSize: "12px", color: "var(--text-tertiary)", marginBottom: "12px" }}>
+                Process a full refund of {formatCents(order.total)} to the customer. This will restore inventory and refund the payment.
+              </p>
+              <button
+                onClick={async () => {
+                  if (!confirm(`Process a full refund of ${formatCents(order.total)} for order ${order.order_number}? This cannot be undone.`)) return;
+                  setSaving(true);
+                  try {
+                    await updateOrder(storeId, orderId, { status: "refunded" });
+                    setStatus("refunded");
+                    setMessage("Refund processed");
+                    setTimeout(() => setMessage(""), 3000);
+                  } catch (err) {
+                    setMessage((err as Error).message);
+                  }
+                  setSaving(false);
+                }}
+                disabled={saving}
+                className="btn btn-danger"
+                style={{ fontSize: "12px", width: "100%" }}
+              >
+                Process Full Refund
+              </button>
+            </div>
+          )}
+
+          {order.status === "refunded" && (
+            <div className="rounded-xl p-5" style={{ background: "var(--red-light)", border: "1px solid var(--red)20" }}>
+              <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--red)" }}>Refunded</div>
+              <div style={{ fontSize: "12px", color: "var(--text-tertiary)", marginTop: "4px" }}>
+                {formatCents(order.total)} has been refunded to the customer.
+              </div>
+            </div>
+          )}
+
           <div className="rounded-xl p-5" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)" }}>
             <div className="text-xs space-y-2" style={{ color: "var(--text-tertiary)" }}>
               <div>Payment: {order.payment_provider || "—"}</div>

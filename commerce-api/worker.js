@@ -250,6 +250,11 @@ export default {
         return await handleAdminListAbandonedCarts(request, sb, env, storeId, corsOrigin);
       }
 
+      // Admin Customers
+      if (method === 'GET' && path === '/api/admin/customers') {
+        return await handleAdminListCustomers(request, sb, env, storeId, corsOrigin);
+      }
+
       // Admin Subscribers
       if (method === 'GET' && path === '/api/admin/subscribers') {
         return await handleAdminListSubscribers(request, sb, env, storeId, corsOrigin);
@@ -3291,4 +3296,48 @@ async function handleAdminImportProducts(request, sb, env, storeId, corsOrigin) 
   }
 
   return json({ created, updated, errors: errors.slice(0, 10), total: Object.keys(productGroups).length }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  ADMIN — CUSTOMERS
+// ═══════════════════════════════════════════════════════════════
+
+async function handleAdminListCustomers(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const orders = await sb.query('orders', {
+    filters: { store_id: `eq.${storeId}` },
+    order: 'created_at.desc',
+  });
+
+  // Group by customer email
+  const customerMap = {};
+  for (const order of orders) {
+    if (!order.customer_email) continue;
+    if (!customerMap[order.customer_email]) {
+      customerMap[order.customer_email] = {
+        email: order.customer_email,
+        name: order.customer_name || '',
+        phone: order.customer_phone || '',
+        orderCount: 0,
+        totalSpent: 0,
+        lastOrderDate: order.created_at,
+        lastOrderStatus: order.status,
+        firstOrderDate: order.created_at,
+      };
+    }
+    const c = customerMap[order.customer_email];
+    c.orderCount++;
+    if (order.status !== 'cancelled' && order.status !== 'refunded') {
+      c.totalSpent += order.total || 0;
+    }
+    if (order.customer_name && !c.name) c.name = order.customer_name;
+    if (order.customer_phone && !c.phone) c.phone = order.customer_phone;
+    if (order.created_at < c.firstOrderDate) c.firstOrderDate = order.created_at;
+  }
+
+  const customers = Object.values(customerMap).sort((a, b) => b.totalSpent - a.totalSpent);
+
+  return json(customers, 200, corsOrigin);
 }
