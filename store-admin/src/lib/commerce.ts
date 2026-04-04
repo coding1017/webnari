@@ -198,6 +198,119 @@ export class CommerceClient {
     return this.fetch(`/api/admin/categories/${id}`, { method: 'DELETE' });
   }
 
+  // ── Discounts ─────────────────────────────────────────
+  async getDiscounts() {
+    return this.fetch('/api/admin/discounts');
+  }
+
+  async createDiscount(data: Record<string, unknown>) {
+    return this.fetch('/api/admin/discounts', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateDiscount(id: string, data: Record<string, unknown>) {
+    return this.fetch(`/api/admin/discounts/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteDiscount(id: string) {
+    return this.fetch(`/api/admin/discounts/${id}`, { method: 'DELETE' });
+  }
+
+  // ── Analytics ─────────────────────────────────────────
+  async getAnalytics(params?: { range?: string }) {
+    const qs = new URLSearchParams();
+    if (params?.range) qs.set('range', params.range);
+    const query = qs.toString();
+    return this.fetch(`/api/admin/analytics${query ? `?${query}` : ''}`);
+  }
+
+  // ── Customers ─────────────────────────────────────────
+  async getCustomers() {
+    return this.fetch('/api/admin/customers');
+  }
+
+  // ── CSV Import/Export ─────────────────────────────────
+  async exportProductsCSV() {
+    return this.fetch('/api/admin/products/export');
+  }
+
+  async importProductsCSV(rows: Record<string, string>[]) {
+    return this.fetch('/api/admin/products/import', {
+      method: 'POST',
+      body: JSON.stringify({ rows }),
+    });
+  }
+
+  // ── Blog ──────────────────────────────────────────────
+  async getBlogPosts() {
+    return this.fetch('/api/admin/blog');
+  }
+
+  async createBlogPost(data: Record<string, unknown>) {
+    return this.fetch('/api/admin/blog', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateBlogPost(id: string, data: Record<string, unknown>) {
+    return this.fetch(`/api/admin/blog/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteBlogPost(id: string) {
+    return this.fetch(`/api/admin/blog/${id}`, { method: 'DELETE' });
+  }
+
+  // ── Gift Cards ───────────────────────────────────────
+  async getGiftCards() {
+    return this.fetch('/api/admin/gift-cards');
+  }
+
+  async createGiftCard(data: Record<string, unknown>) {
+    return this.fetch('/api/admin/gift-cards', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateGiftCard(id: string, data: Record<string, unknown>) {
+    return this.fetch(`/api/admin/gift-cards/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
+  // ── Glossary ──────────────────────────────────────────
+  async getGlossary() {
+    return this.fetch('/api/admin/glossary');
+  }
+
+  async createGlossaryTerm(data: Record<string, unknown>) {
+    return this.fetch('/api/admin/glossary', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateGlossaryTerm(id: string, data: Record<string, unknown>) {
+    return this.fetch(`/api/admin/glossary/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteGlossaryTerm(id: string) {
+    return this.fetch(`/api/admin/glossary/${id}`, { method: 'DELETE' });
+  }
+
   // ── Shipping ──────────────────────────────────────────
   async calculateShipping(subtotal: number) {
     return this.fetch('/api/shipping/calculate', {

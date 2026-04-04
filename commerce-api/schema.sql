@@ -200,7 +200,87 @@ create table if not exists wishlist_items (
 );
 
 
--- ── 13. Store Admins ────────────────────────────────────────
+-- ── 13. Discounts ───────────────────────────────────────────
+create table if not exists discounts (
+  id                 text primary key default gen_random_uuid()::text,
+  store_id           text not null references stores(id) on delete cascade,
+  code               text not null,
+  type               text not null default 'percentage',  -- 'percentage' | 'fixed' | 'free_shipping' | 'bxgy'
+  value              numeric(10,2) not null default 0,    -- percent or cents
+  min_order          integer default 0,                   -- cents
+  max_uses           integer,
+  used_count         integer not null default 0,
+  is_active          boolean not null default true,
+  starts_at          timestamptz,
+  expires_at         timestamptz,
+  created_at         timestamptz not null default now(),
+  unique(store_id, code)
+);
+
+create index if not exists idx_discounts_store on discounts(store_id);
+
+
+-- ── 14. Blog Posts (was 13) ──────────────────────────────────────────
+create table if not exists blog_posts (
+  id                 text primary key default gen_random_uuid()::text,
+  store_id           text not null references stores(id) on delete cascade,
+  title              text not null,
+  slug               text,
+  excerpt            text,
+  content            text,
+  category           text,
+  read_time          integer,
+  image_url          text,
+  published          boolean not null default false,
+  created_at         timestamptz not null default now(),
+  updated_at         timestamptz not null default now()
+);
+
+create index if not exists idx_blog_store on blog_posts(store_id);
+create index if not exists idx_blog_slug on blog_posts(store_id, slug);
+
+
+-- ── 14. Gift Cards ──────────────────────────────────────────
+create table if not exists gift_cards (
+  id                 text primary key default gen_random_uuid()::text,
+  store_id           text not null references stores(id) on delete cascade,
+  code               text not null,
+  initial_balance    integer not null default 0,   -- cents
+  current_balance    integer not null default 0,   -- cents
+  purchaser_email    text,
+  recipient_email    text,
+  recipient_name     text,
+  message            text,
+  is_active          boolean not null default true,
+  expires_at         timestamptz,
+  created_at         timestamptz not null default now(),
+  unique(store_id, code)
+);
+
+create index if not exists idx_giftcards_store on gift_cards(store_id);
+create index if not exists idx_giftcards_code on gift_cards(store_id, code);
+
+
+-- ── 15. Glossary Terms ──────────────────────────────────────
+create table if not exists glossary_terms (
+  id                 text primary key default gen_random_uuid()::text,
+  store_id           text not null references stores(id) on delete cascade,
+  term               text not null,
+  slug               text,
+  definition         text not null,
+  category           text,                    -- e.g. "materials", "techniques", "care"
+  image_url          text,
+  sort_order         integer not null default 0,
+  is_published       boolean not null default true,
+  created_at         timestamptz not null default now(),
+  updated_at         timestamptz not null default now()
+);
+
+create index if not exists idx_glossary_store on glossary_terms(store_id);
+create index if not exists idx_glossary_slug on glossary_terms(store_id, slug);
+
+
+-- ── 16. Store Admins ────────────────────────────────────────
 -- Maps Supabase Auth users to stores they can manage
 create table if not exists store_admins (
   id       uuid primary key default gen_random_uuid(),
@@ -265,6 +345,20 @@ create policy "Read own wishlist" on wishlist_items for select using (true);
 create policy "Add to wishlist" on wishlist_items for insert with check (true);
 create policy "Remove from wishlist" on wishlist_items for delete using (true);
 
+-- Discounts: no public access (service role only)
+alter table discounts enable row level security;
+
+-- Blog posts: public read published posts
+alter table blog_posts enable row level security;
+create policy "Public read published blog" on blog_posts for select using (published = true);
+
+-- Gift cards: no public access (service role only)
+alter table gift_cards enable row level security;
+
+-- Glossary: public read published terms
+alter table glossary_terms enable row level security;
+create policy "Public read published glossary" on glossary_terms for select using (is_published = true);
+
 -- Store admins: users can read their own store assignments
 alter table store_admins enable row level security;
 create policy "Read own admin access" on store_admins for select using (auth.uid() = user_id);
@@ -293,6 +387,26 @@ $$;
 create trigger set_product_updated
   before update on products
   for each row execute procedure touch_product_updated();
+
+-- Auto-update updated_at on blog_posts
+create or replace function touch_blog_updated()
+returns trigger language plpgsql as $$
+begin new.updated_at = now(); return new; end;
+$$;
+
+create trigger set_blog_updated
+  before update on blog_posts
+  for each row execute procedure touch_blog_updated();
+
+-- Auto-update updated_at on glossary_terms
+create or replace function touch_glossary_updated()
+returns trigger language plpgsql as $$
+begin new.updated_at = now(); return new; end;
+$$;
+
+create trigger set_glossary_updated
+  before update on glossary_terms
+  for each row execute procedure touch_glossary_updated();
 
 -- Generate order number (store prefix + timestamp-based)
 create or replace function generate_order_number(p_store_id text)

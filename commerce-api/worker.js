@@ -120,6 +120,12 @@ export default {
       if (method === 'POST' && path === '/api/admin/products') {
         return await handleAdminCreateProduct(request, sb, env, storeId, corsOrigin);
       }
+      if (method === 'GET' && path === '/api/admin/products/export') {
+        return await handleAdminExportProducts(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/admin/products/import') {
+        return await handleAdminImportProducts(request, sb, env, storeId, corsOrigin);
+      }
       if (method === 'GET' && path.match(/^\/api\/admin\/products\/[^/]+$/)) {
         const productId = path.split('/').pop();
         return await handleAdminGetProduct(request, sb, env, storeId, productId, corsOrigin);
@@ -192,6 +198,106 @@ export default {
         return await handleAdminExportSubscribers(request, sb, env, storeId, corsOrigin);
       }
 
+      // Admin Discounts
+      if (method === 'GET' && path === '/api/admin/discounts') {
+        return await handleAdminListDiscounts(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/admin/discounts') {
+        return await handleAdminCreateDiscount(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'PATCH' && path.match(/^\/api\/admin\/discounts\/[^/]+$/)) {
+        const discountId = path.split('/').pop();
+        return await handleAdminUpdateDiscount(request, sb, env, storeId, discountId, corsOrigin);
+      }
+      if (method === 'DELETE' && path.match(/^\/api\/admin\/discounts\/[^/]+$/)) {
+        const discountId = path.split('/').pop();
+        return await handleAdminDeleteDiscount(request, sb, env, storeId, discountId, corsOrigin);
+      }
+
+      // Admin Analytics
+      if (method === 'GET' && path === '/api/admin/analytics') {
+        return await handleAdminAnalytics(request, sb, env, storeId, url, corsOrigin);
+      }
+
+      // Admin Customers
+      if (method === 'GET' && path === '/api/admin/customers') {
+        return await handleAdminListCustomers(request, sb, env, storeId, corsOrigin);
+      }
+
+      // Admin Blog
+      if (method === 'GET' && path === '/api/admin/blog') {
+        return await handleAdminListBlog(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/admin/blog') {
+        return await handleAdminCreateBlog(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'PATCH' && path.match(/^\/api\/admin\/blog\/[^/]+$/)) {
+        const postId = path.split('/').pop();
+        return await handleAdminUpdateBlog(request, sb, env, storeId, postId, corsOrigin);
+      }
+      if (method === 'DELETE' && path.match(/^\/api\/admin\/blog\/[^/]+$/)) {
+        const postId = path.split('/').pop();
+        return await handleAdminDeleteBlog(request, sb, env, storeId, postId, corsOrigin);
+      }
+
+      // Admin Gift Cards
+      if (method === 'GET' && path === '/api/admin/gift-cards') {
+        return await handleAdminListGiftCards(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/admin/gift-cards') {
+        return await handleAdminCreateGiftCard(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'PATCH' && path.match(/^\/api\/admin\/gift-cards\/[^/]+$/)) {
+        const cardId = path.split('/').pop();
+        return await handleAdminUpdateGiftCard(request, sb, env, storeId, cardId, corsOrigin);
+      }
+
+      // Public blog (no admin required)
+      if (method === 'GET' && path === '/api/blog') {
+        const posts = await sb.query('blog_posts', {
+          filters: { store_id: `eq.${storeId}`, published: 'eq.true' },
+          order: 'created_at.desc',
+        });
+        return json(posts, 200, corsOrigin);
+      }
+
+      // Public gift card balance check
+      if (method === 'GET' && path === '/api/gift-cards/check') {
+        const code = url.searchParams.get('code');
+        if (!code) return json({ error: 'Code is required' }, 400, corsOrigin);
+        const card = await sb.query('gift_cards', {
+          filters: { store_id: `eq.${storeId}`, code: `eq.${code}`, is_active: 'eq.true' },
+          single: true,
+        });
+        if (!card) return json({ error: 'Gift card not found' }, 404, corsOrigin);
+        return json({ balance: card.current_balance, code: card.code }, 200, corsOrigin);
+      }
+
+      // Admin Glossary
+      if (method === 'GET' && path === '/api/admin/glossary') {
+        return await handleAdminListGlossary(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/admin/glossary') {
+        return await handleAdminCreateGlossary(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'PATCH' && path.match(/^\/api\/admin\/glossary\/[^/]+$/)) {
+        const termId = path.split('/').pop();
+        return await handleAdminUpdateGlossary(request, sb, env, storeId, termId, corsOrigin);
+      }
+      if (method === 'DELETE' && path.match(/^\/api\/admin\/glossary\/[^/]+$/)) {
+        const termId = path.split('/').pop();
+        return await handleAdminDeleteGlossary(request, sb, env, storeId, termId, corsOrigin);
+      }
+
+      // Public glossary (no admin required)
+      if (method === 'GET' && path === '/api/glossary') {
+        const terms = await sb.query('glossary_terms', {
+          filters: { store_id: `eq.${storeId}`, is_published: 'eq.true' },
+          order: 'sort_order.asc,term.asc',
+        });
+        return json(terms, 200, corsOrigin);
+      }
+
       // Admin Store Settings
       if (method === 'PATCH' && path === '/api/admin/store') {
         return await handleAdminUpdateStore(request, sb, env, storeId, corsOrigin);
@@ -223,7 +329,7 @@ export default {
 function corsHeaders(origin) {
   return {
     'Access-Control-Allow-Origin': origin,
-    'Access-Control-Allow-Methods': 'GET, POST, PATCH, OPTIONS',
+    'Access-Control-Allow-Methods': 'GET, POST, PATCH, DELETE, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, X-Store-ID, Authorization',
     'Access-Control-Max-Age': '86400',
   };
@@ -1985,6 +2091,444 @@ async function handleAdminDeleteCategory(request, sb, env, storeId, catId, corsO
   if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   await sb.delete('categories', { id: `eq.${catId}`, store_id: `eq.${storeId}` });
+
+  return json({ deleted: true }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  ADMIN — DISCOUNTS
+// ═══════════════════════════════════════════════════════════════
+
+async function handleAdminListDiscounts(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const discounts = await sb.query('discounts', {
+    filters: { store_id: `eq.${storeId}` },
+    order: 'created_at.desc',
+  });
+
+  return json(discounts, 200, corsOrigin);
+}
+
+async function handleAdminCreateDiscount(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const body = await request.json();
+  if (!body.code) return json({ error: 'Discount code required' }, 400, corsOrigin);
+
+  const [discount] = await sb.insert('discounts', {
+    store_id: storeId,
+    code: body.code.toUpperCase().replace(/\s+/g, ''),
+    type: body.type || 'percentage',
+    value: body.value || 0,
+    min_order: body.min_order || 0,
+    max_uses: body.max_uses || null,
+    is_active: body.is_active !== undefined ? body.is_active : true,
+    starts_at: body.starts_at || null,
+    expires_at: body.expires_at || null,
+  });
+
+  return json(discount, 201, corsOrigin);
+}
+
+async function handleAdminUpdateDiscount(request, sb, env, storeId, discountId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const body = await request.json();
+  const allowed = ['code', 'type', 'value', 'min_order', 'max_uses', 'is_active', 'starts_at', 'expires_at'];
+  const updates = {};
+  for (const key of allowed) {
+    if (body[key] !== undefined) updates[key] = body[key];
+  }
+
+  if (Object.keys(updates).length === 0) {
+    return json({ error: 'No valid fields to update' }, 400, corsOrigin);
+  }
+
+  await sb.update('discounts', { id: `eq.${discountId}`, store_id: `eq.${storeId}` }, updates);
+
+  return json({ updated: true }, 200, corsOrigin);
+}
+
+async function handleAdminDeleteDiscount(request, sb, env, storeId, discountId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  await sb.delete('discounts', { id: `eq.${discountId}`, store_id: `eq.${storeId}` });
+
+  return json({ deleted: true }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  ADMIN — ANALYTICS
+// ═══════════════════════════════════════════════════════════════
+
+async function handleAdminAnalytics(request, sb, env, storeId, url, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const range = url.searchParams.get('range') || '30d';
+  const days = range === '7d' ? 7 : range === '90d' ? 90 : 30;
+  const since = new Date(Date.now() - days * 86400000).toISOString();
+
+  const orders = await sb.query('orders', {
+    filters: { store_id: `eq.${storeId}`, created_at: `gte.${since}` },
+    order: 'created_at.asc',
+  });
+
+  const revenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
+  const orderCount = orders.length;
+  const customers = new Set(orders.map(o => o.customer_email)).size;
+  const avgOrder = orderCount > 0 ? Math.round(revenue / orderCount) : 0;
+
+  // Daily breakdown
+  const daily = {};
+  for (const o of orders) {
+    const day = o.created_at.slice(0, 10);
+    if (!daily[day]) daily[day] = { date: day, revenue: 0, orders: 0 };
+    daily[day].revenue += o.total || 0;
+    daily[day].orders += 1;
+  }
+
+  // Top products
+  const productSales = {};
+  for (const o of orders) {
+    if (o.status === 'cancelled' || o.status === 'refunded') continue;
+    // We'd need order_items for proper breakdown, but aggregate by order for now
+  }
+
+  return json({
+    revenue,
+    orders: orderCount,
+    customers,
+    avgOrder,
+    daily: Object.values(daily),
+  }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  ADMIN — CUSTOMERS
+// ═══════════════════════════════════════════════════════════════
+
+async function handleAdminListCustomers(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const orders = await sb.query('orders', {
+    filters: { store_id: `eq.${storeId}` },
+    order: 'created_at.desc',
+  });
+
+  // Aggregate by email
+  const customerMap = {};
+  for (const o of orders) {
+    const email = o.customer_email;
+    if (!email) continue;
+    if (!customerMap[email]) {
+      customerMap[email] = {
+        email,
+        name: o.customer_name || '',
+        phone: o.customer_phone || '',
+        orderCount: 0,
+        totalSpent: 0,
+        lastOrder: o.created_at,
+      };
+    }
+    customerMap[email].orderCount++;
+    customerMap[email].totalSpent += o.total || 0;
+    if (o.customer_name && !customerMap[email].name) {
+      customerMap[email].name = o.customer_name;
+    }
+  }
+
+  const customers = Object.values(customerMap).sort((a, b) => b.totalSpent - a.totalSpent);
+
+  return json(customers, 200, corsOrigin);
+}
+
+
+// ══════════════════════════════════════════════════��════════════
+//  ADMIN — CSV PRODUCT IMPORT/EXPORT
+// ═══════════════════════════════════════════════════════════════
+
+async function handleAdminExportProducts(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const products = await sb.query('products', {
+    filters: { store_id: `eq.${storeId}` },
+    order: 'sort_order.asc,name.asc',
+  });
+
+  const headers = ['id', 'name', 'slug', 'category', 'description', 'price', 'compare_at_price', 'badge', 'in_stock', 'stock_quantity', 'sort_order'];
+  const csv = headers.join(',') + '\n' + products.map(p =>
+    headers.map(h => {
+      const val = p[h];
+      if (val === null || val === undefined) return '';
+      const str = String(val);
+      return str.includes(',') || str.includes('"') || str.includes('\n') ? `"${str.replace(/"/g, '""')}"` : str;
+    }).join(',')
+  ).join('\n');
+
+  return new Response(csv, {
+    status: 200,
+    headers: {
+      'Content-Type': 'text/csv',
+      'Content-Disposition': `attachment; filename="${storeId}-products-${new Date().toISOString().slice(0,10)}.csv"`,
+      ...corsHeaders(corsOrigin),
+    },
+  });
+}
+
+async function handleAdminImportProducts(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const body = await request.json();
+  const rows = body.rows;
+  if (!rows || !Array.isArray(rows) || rows.length === 0) {
+    return json({ error: 'No rows to import' }, 400, corsOrigin);
+  }
+
+  let created = 0;
+  let updated = 0;
+  const errors = [];
+
+  for (const row of rows) {
+    const name = row.name || row.Name;
+    if (!name) { errors.push('Row missing name'); continue; }
+
+    const slug = row.slug || name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const price = parseInt(row.price || row.Price || '0') || 0;
+
+    // Check if product with this slug already exists
+    const existing = await sb.query('products', {
+      filters: { store_id: `eq.${storeId}`, slug: `eq.${slug}` },
+      single: true,
+    });
+
+    if (existing) {
+      const updates = {};
+      if (row.price || row.Price) updates.price = price;
+      if (row.category) updates.category = row.category;
+      if (row.description) updates.description = row.description;
+      if (row.stock_quantity) updates.stock_quantity = parseInt(row.stock_quantity) || 0;
+      if (Object.keys(updates).length > 0) {
+        await sb.update('products', { id: `eq.${existing.id}`, store_id: `eq.${storeId}` }, updates);
+        updated++;
+      }
+    } else {
+      await sb.insert('products', {
+        store_id: storeId,
+        name,
+        slug,
+        price,
+        category: row.category || null,
+        description: row.description || null,
+        stock_quantity: parseInt(row.stock_quantity || '0') || 0,
+      });
+      created++;
+    }
+  }
+
+  return json({ created, updated, errors: errors.length > 0 ? errors : undefined }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  ADMIN — BLOG
+// ═══════════════════════════════════════════════════════════════
+
+async function handleAdminListBlog(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const posts = await sb.query('blog_posts', {
+    filters: { store_id: `eq.${storeId}` },
+    order: 'created_at.desc',
+  });
+
+  return json(posts, 200, corsOrigin);
+}
+
+async function handleAdminCreateBlog(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const body = await request.json();
+  if (!body.title) return json({ error: 'Title is required' }, 400, corsOrigin);
+
+  const slug = body.slug || body.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+  const [post] = await sb.insert('blog_posts', {
+    store_id: storeId,
+    title: body.title,
+    slug,
+    excerpt: body.excerpt || null,
+    content: body.content || null,
+    category: body.category || null,
+    read_time: body.read_time || null,
+    image_url: body.image_url || null,
+    published: body.published || false,
+  });
+
+  return json(post, 201, corsOrigin);
+}
+
+async function handleAdminUpdateBlog(request, sb, env, storeId, postId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const body = await request.json();
+  const allowed = ['title', 'slug', 'excerpt', 'content', 'category', 'read_time', 'image_url', 'published'];
+  const updates = {};
+  for (const key of allowed) {
+    if (body[key] !== undefined) updates[key] = body[key];
+  }
+
+  if (Object.keys(updates).length === 0) {
+    return json({ error: 'No valid fields to update' }, 400, corsOrigin);
+  }
+
+  await sb.update('blog_posts', { id: `eq.${postId}`, store_id: `eq.${storeId}` }, updates);
+
+  return json({ updated: true }, 200, corsOrigin);
+}
+
+async function handleAdminDeleteBlog(request, sb, env, storeId, postId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  await sb.delete('blog_posts', { id: `eq.${postId}`, store_id: `eq.${storeId}` });
+
+  return json({ deleted: true }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  ADMIN — GIFT CARDS
+// ═══════════════════════════════════════════════════════════════
+
+function generateGiftCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let code = '';
+  for (let i = 0; i < 16; i++) {
+    if (i > 0 && i % 4 === 0) code += '-';
+    code += chars[Math.floor(Math.random() * chars.length)];
+  }
+  return code;
+}
+
+async function handleAdminListGiftCards(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const cards = await sb.query('gift_cards', {
+    filters: { store_id: `eq.${storeId}` },
+    order: 'created_at.desc',
+  });
+
+  return json(cards, 200, corsOrigin);
+}
+
+async function handleAdminCreateGiftCard(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const body = await request.json();
+  if (!body.amount || body.amount <= 0) return json({ error: 'Valid amount is required' }, 400, corsOrigin);
+
+  const balanceCents = Math.round(body.amount * 100);
+  const code = generateGiftCode();
+
+  const [card] = await sb.insert('gift_cards', {
+    store_id: storeId,
+    code,
+    initial_balance: balanceCents,
+    current_balance: balanceCents,
+    purchaser_email: body.purchaser_email || null,
+    recipient_email: body.recipient_email || null,
+    recipient_name: body.recipient_name || null,
+    message: body.message || null,
+    is_active: true,
+  });
+
+  return json(card, 201, corsOrigin);
+}
+
+async function handleAdminUpdateGiftCard(request, sb, env, storeId, cardId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const body = await request.json();
+  const allowed = ['is_active', 'current_balance', 'recipient_email', 'recipient_name', 'message'];
+  const updates = {};
+  for (const key of allowed) {
+    if (body[key] !== undefined) updates[key] = body[key];
+  }
+
+  if (Object.keys(updates).length === 0) {
+    return json({ error: 'No valid fields to update' }, 400, corsOrigin);
+  }
+
+  await sb.update('gift_cards', { id: `eq.${cardId}`, store_id: `eq.${storeId}` }, updates);
+
+  return json({ updated: true }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  ADMIN — GLOSSARY
+// ═══════════════════════════════════════════════════════════════
+
+async function handleAdminListGlossary(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const terms = await sb.query('glossary_terms', {
+    filters: { store_id: `eq.${storeId}` },
+    order: 'sort_order.asc,term.asc',
+  });
+
+  return json(terms, 200, corsOrigin);
+}
+
+async function handleAdminCreateGlossary(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const body = await request.json();
+  if (!body.term) return json({ error: 'Term is required' }, 400, corsOrigin);
+  if (!body.definition) return json({ error: 'Definition is required' }, 400, corsOrigin);
+
+  const slug = body.slug || body.term.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+  const [term] = await sb.insert('glossary_terms', {
+    store_id: storeId,
+    term: body.term,
+    slug,
+    definition: body.definition,
+    category: body.category || null,
+    image_url: body.image_url || null,
+    sort_order: body.sort_order || 0,
+    is_published: body.is_published !== undefined ? body.is_published : true,
+  });
+
+  return json(term, 201, corsOrigin);
+}
+
+async function handleAdminUpdateGlossary(request, sb, env, storeId, termId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const body = await request.json();
+  const allowed = ['term', 'slug', 'definition', 'category', 'image_url', 'sort_order', 'is_published'];
+  const updates = {};
+  for (const key of allowed) {
+    if (body[key] !== undefined) updates[key] = body[key];
+  }
+
+  if (Object.keys(updates).length === 0) {
+    return json({ error: 'No valid fields to update' }, 400, corsOrigin);
+  }
+
+  await sb.update('glossary_terms', { id: `eq.${termId}`, store_id: `eq.${storeId}` }, updates);
+
+  return json({ updated: true }, 200, corsOrigin);
+}
+
+async function handleAdminDeleteGlossary(request, sb, env, storeId, termId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  await sb.delete('glossary_terms', { id: `eq.${termId}`, store_id: `eq.${storeId}` });
 
   return json({ deleted: true }, 200, corsOrigin);
 }
