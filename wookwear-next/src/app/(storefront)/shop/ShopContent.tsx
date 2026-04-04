@@ -22,7 +22,7 @@ function ShopGrid({ products }: { products: Product[] }) {
         catMap.set(p.category, label);
       }
     }
-    return Array.from(catMap.entries()).map(([slug, label]) => ({ slug, label }));
+    return Array.from(catMap.entries()).map(([slug, label]) => ({ slug, label })).sort((a, b) => a.label.localeCompare(b.label));
   }, [products]);
   const [sortBy, setSortBy] = useState<"default" | "price-asc" | "price-desc" | "rating">("default");
   const [search, setSearch] = useState("");

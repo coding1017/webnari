@@ -70,12 +70,12 @@ export default {
       if (method === 'GET' && path === '/api/products') {
         return await handlePublicListProducts(sb, storeId, url, corsOrigin);
       }
+      if (method === 'GET' && path === '/api/products/featured') {
+        return await handlePublicFeaturedProducts(sb, storeId, url, corsOrigin);
+      }
       if (method === 'GET' && path.match(/^\/api\/products\/[^/]+$/)) {
         const productId = path.split('/').pop();
         return await handlePublicGetProduct(sb, storeId, productId, corsOrigin);
-      }
-      if (method === 'GET' && path === '/api/products/featured') {
-        return await handlePublicFeaturedProducts(sb, storeId, url, corsOrigin);
       }
 
       // Checkout
