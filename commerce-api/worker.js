@@ -250,6 +250,37 @@ export default {
         return await handleAdminListAbandonedCarts(request, sb, env, storeId, corsOrigin);
       }
 
+      // Admin Gift Cards
+      if (method === 'GET' && path === '/api/admin/gift-cards') {
+        return await handleAdminListGiftCards(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/admin/gift-cards') {
+        return await handleAdminCreateGiftCard(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'PATCH' && path.match(/^\/api\/admin\/gift-cards\/[^/]+$/)) {
+        const cardId = path.split('/').pop();
+        return await handleAdminUpdateGiftCard(request, sb, env, storeId, cardId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/gift-card/check') {
+        return await handleCheckGiftCard(request, sb, storeId, corsOrigin);
+      }
+
+      // Admin Blog
+      if (method === 'GET' && path === '/api/admin/blog') {
+        return await handleAdminListBlog(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/admin/blog') {
+        return await handleAdminCreateBlog(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'PATCH' && path.match(/^\/api\/admin\/blog\/[^/]+$/)) {
+        const postId = path.split('/').pop();
+        return await handleAdminUpdateBlog(request, sb, env, storeId, postId, corsOrigin);
+      }
+      if (method === 'DELETE' && path.match(/^\/api\/admin\/blog\/[^/]+$/)) {
+        const postId = path.split('/').pop();
+        return await handleAdminDeleteBlog(request, sb, env, storeId, postId, corsOrigin);
+      }
+
       // Admin Customers
       if (method === 'GET' && path === '/api/admin/customers') {
         return await handleAdminListCustomers(request, sb, env, storeId, corsOrigin);
@@ -1991,7 +2022,8 @@ async function handleAdminUpdateProduct(request, sb, env, storeId, productId, co
   // Update product fields
   const allowed = ['name', 'slug', 'category', 'description', 'price', 'compare_at_price',
     'badge', 'in_stock', 'track_inventory', 'stock_quantity', 'low_stock_threshold',
-    'is_collection', 'rating', 'stripe_price_id', 'square_catalog_id', 'sort_order'];
+    'is_collection', 'rating', 'stripe_price_id', 'square_catalog_id', 'sort_order',
+    'meta_title', 'meta_description'];
   const updates = {};
   for (const key of allowed) {
     if (productData[key] !== undefined) updates[key] = productData[key];
@@ -2423,6 +2455,8 @@ async function handlePublicListProducts(sb, storeId, url, corsOrigin) {
       price: p.price, compareAtPrice: p.compare_at_price, badge: p.badge,
       inStock: p.in_stock, stockQuantity: p.stock_quantity,
       desc: p.description,
+      metaTitle: p.meta_title || null,
+      metaDescription: p.meta_description || null,
       img: imgs[0] || null, imgs,
       rating: Number(p.rating) || 0, reviewCount: 0, reviews: [],
       isCollection: variants.length > 0, variants,
@@ -2489,6 +2523,8 @@ async function handlePublicGetProduct(sb, storeId, productId, corsOrigin) {
     stockQuantity: product.stock_quantity,
     trackInventory: product.track_inventory,
     desc: product.description,
+    metaTitle: product.meta_title || null,
+    metaDescription: product.meta_description || null,
     img: images[0]?.url || null,
     imgs: images.map(i => i.url),
     rating: avgRating,
@@ -3340,4 +3376,171 @@ async function handleAdminListCustomers(request, sb, env, storeId, corsOrigin) {
   const customers = Object.values(customerMap).sort((a, b) => b.totalSpent - a.totalSpent);
 
   return json(customers, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  ADMIN — BLOG
+// ═══════════════════════════════════════════════════════════════
+
+async function handleAdminListBlog(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  const posts = await sb.query('blog_posts', {
+    filters: { store_id: `eq.${storeId}` },
+    order: 'created_at.desc',
+  });
+  return json(posts, 200, corsOrigin);
+}
+
+async function handleAdminCreateBlog(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  const body = await request.json();
+  if (!body.title) return json({ error: 'Title required' }, 400, corsOrigin);
+  const slug = body.slug || body.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+  const [post] = await sb.insert('blog_posts', {
+    store_id: storeId, slug, title: body.title, excerpt: body.excerpt || null,
+    content: body.content || null, category: body.category || null,
+    tags: body.tags || null, read_time: body.read_time || null,
+    image_url: body.image_url || null, published: body.published || false,
+  });
+  return json(post, 201, corsOrigin);
+}
+
+async function handleAdminUpdateBlog(request, sb, env, storeId, postId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  const body = await request.json();
+  const allowed = ['title', 'slug', 'excerpt', 'content', 'category', 'tags', 'read_time', 'image_url', 'published'];
+  const updates = {};
+  for (const key of allowed) { if (body[key] !== undefined) updates[key] = body[key]; }
+  if (Object.keys(updates).length === 0) return json({ error: 'No fields' }, 400, corsOrigin);
+  updates.updated_at = new Date().toISOString();
+  await sb.update('blog_posts', { id: `eq.${postId}`, store_id: `eq.${storeId}` }, updates);
+  return json({ updated: true }, 200, corsOrigin);
+}
+
+async function handleAdminDeleteBlog(request, sb, env, storeId, postId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  await sb.delete('blog_posts', { id: `eq.${postId}`, store_id: `eq.${storeId}` });
+  return json({ deleted: true }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  ADMIN — GIFT CARDS
+// ═══════════════════════════════════════════════════════════════
+
+function generateGiftCode() {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const segments = [];
+  for (let s = 0; s < 4; s++) {
+    let seg = '';
+    for (let i = 0; i < 4; i++) seg += chars[Math.floor(Math.random() * chars.length)];
+    segments.push(seg);
+  }
+  return segments.join('-'); // e.g. ABCD-EFGH-JKLM-NPQR
+}
+
+async function handleAdminListGiftCards(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  const cards = await sb.query('gift_cards', {
+    filters: { store_id: `eq.${storeId}` },
+    order: 'created_at.desc',
+  });
+  return json(cards, 200, corsOrigin);
+}
+
+async function handleAdminCreateGiftCard(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  const body = await request.json();
+  const amount = Math.round(parseFloat(body.amount || '0') * 100);
+  if (amount <= 0) return json({ error: 'Amount must be greater than 0' }, 400, corsOrigin);
+
+  const code = body.code || generateGiftCode();
+
+  const [card] = await sb.insert('gift_cards', {
+    store_id: storeId,
+    code,
+    initial_balance: amount,
+    current_balance: amount,
+    purchaser_email: body.purchaser_email || null,
+    recipient_email: body.recipient_email || null,
+    recipient_name: body.recipient_name || null,
+    message: body.message || null,
+    expires_at: body.expires_at || null,
+  });
+
+  // Send gift card email if recipient email provided
+  if (body.recipient_email) {
+    const store = await sb.query('stores', { filters: { id: `eq.${storeId}` }, single: true });
+    const storeName = store?.name || storeId;
+    sendEmail(env, storeId, {
+      to: body.recipient_email,
+      subject: `You received a gift card from ${storeName}!`,
+      html: buildGiftCardEmailHTML(storeName, code, amount, body.recipient_name, body.message),
+    }).catch(() => {});
+  }
+
+  return json(card, 201, corsOrigin);
+}
+
+async function handleAdminUpdateGiftCard(request, sb, env, storeId, cardId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  const body = await request.json();
+  const updates = {};
+  if (body.is_active !== undefined) updates.is_active = body.is_active;
+  if (body.current_balance !== undefined) updates.current_balance = Math.round(body.current_balance * 100);
+  if (body.expires_at !== undefined) updates.expires_at = body.expires_at;
+  if (Object.keys(updates).length === 0) return json({ error: 'No fields' }, 400, corsOrigin);
+  await sb.update('gift_cards', { id: `eq.${cardId}`, store_id: `eq.${storeId}` }, updates);
+  return json({ updated: true }, 200, corsOrigin);
+}
+
+async function handleCheckGiftCard(request, sb, storeId, corsOrigin) {
+  const body = await request.json();
+  if (!body.code) return json({ error: 'Code required' }, 400, corsOrigin);
+
+  const card = await sb.query('gift_cards', {
+    filters: { store_id: `eq.${storeId}`, code: `eq.${body.code.toUpperCase().replace(/\s/g, '')}` },
+    single: true,
+  });
+
+  if (!card) return json({ valid: false, reason: 'Invalid gift card code' }, 200, corsOrigin);
+  if (!card.is_active) return json({ valid: false, reason: 'This gift card has been deactivated' }, 200, corsOrigin);
+  if (card.expires_at && new Date(card.expires_at) < new Date()) return json({ valid: false, reason: 'This gift card has expired' }, 200, corsOrigin);
+  if (card.current_balance <= 0) return json({ valid: false, reason: 'This gift card has no remaining balance' }, 200, corsOrigin);
+
+  return json({
+    valid: true,
+    balance: card.current_balance,
+    balanceFormatted: '$' + (card.current_balance / 100).toFixed(2),
+  }, 200, corsOrigin);
+}
+
+function buildGiftCardEmailHTML(storeName, code, amount, recipientName, message) {
+  return `
+  <!DOCTYPE html>
+  <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+  <body style="margin:0;padding:0;background:#F2F0EC;font-family:'Helvetica Neue',Arial,sans-serif;">
+    <div style="max-width:560px;margin:32px auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+      <div style="background:linear-gradient(135deg,#B8892A,#D4A63A);padding:32px;text-align:center;">
+        <h1 style="margin:0 0 8px;color:#fff;font-size:24px;font-weight:700;">${storeName}</h1>
+        <p style="margin:0;color:rgba(255,255,255,0.85);font-size:14px;">Gift Card</p>
+      </div>
+      <div style="padding:32px;text-align:center;">
+        <h2 style="margin:0 0 8px;font-size:20px;font-weight:700;color:#1A1518;">
+          ${recipientName ? `Hey ${recipientName}!` : 'You received a gift!'}
+        </h2>
+        ${message ? `<p style="margin:0 0 24px;font-size:14px;color:#7A7078;font-style:italic;">"${message}"</p>` : ''}
+        <div style="margin:24px 0;padding:24px;background:#FAF7F2;border-radius:12px;border:2px dashed #D4A63A;">
+          <p style="margin:0 0 8px;font-size:12px;font-weight:700;color:#7A7078;text-transform:uppercase;letter-spacing:0.08em;">Your Gift Card Code</p>
+          <p style="margin:0 0 16px;font-size:28px;font-weight:700;color:#B8892A;font-family:monospace;letter-spacing:0.08em;">${code}</p>
+          <p style="margin:0;font-size:32px;font-weight:700;color:#1A1518;">$${(amount / 100).toFixed(2)}</p>
+        </div>
+        <p style="margin:24px 0 0;font-size:13px;color:#7A7078;">Use this code at checkout to redeem your gift card.</p>
+      </div>
+      <div style="padding:24px 32px;text-align:center;border-top:1px solid #E4DDD3;">
+        <p style="margin:0;color:#B0A8AD;font-size:11px;">Powered by <a href="https://webnari.io" style="color:#B8892A;text-decoration:none;font-weight:600;">Webnari</a></p>
+      </div>
+    </div>
+  </body></html>`;
 }

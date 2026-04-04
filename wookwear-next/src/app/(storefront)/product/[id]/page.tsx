@@ -15,12 +15,17 @@ export async function generateMetadata({
   const product = await db.getProductById(id);
   if (!product) return { title: "Product Not Found" };
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const p = product as any;
+  const metaTitle = p.metaTitle || `${product.name} | Wook Wear`;
+  const metaDesc = p.metaDescription || product.desc?.slice(0, 160) || `${product.name} — handmade by Meesh. ${formatPrice(product.price)}`;
+
   return {
-    title: `${product.name} | Wook Wear`,
-    description: product.desc?.slice(0, 160) || `${product.name} — handmade by Meesh. ${formatPrice(product.price)}`,
+    title: metaTitle,
+    description: metaDesc,
     openGraph: {
-      title: `${product.name} | Wook Wear`,
-      description: product.desc?.slice(0, 160) || `Handmade by Meesh — ${formatPrice(product.price)}`,
+      title: metaTitle,
+      description: metaDesc,
       images: product.img ? [{ url: product.img, width: 800, height: 800 }] : undefined,
     },
   };

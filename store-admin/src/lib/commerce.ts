@@ -220,6 +220,17 @@ export class CommerceClient {
     return this.fetch('/api/admin/products/export');
   }
 
+  // ── Gift Cards ─────────────────────────────────────────
+  async getGiftCards() { return this.fetch('/api/admin/gift-cards'); }
+  async createGiftCard(data: Record<string, unknown>) { return this.fetch('/api/admin/gift-cards', { method: 'POST', body: JSON.stringify(data) }); }
+  async updateGiftCard(id: string, data: Record<string, unknown>) { return this.fetch(`/api/admin/gift-cards/${id}`, { method: 'PATCH', body: JSON.stringify(data) }); }
+
+  // ── Blog ───────────────────────────────────────────────
+  async getBlogPosts() { return this.fetch('/api/admin/blog'); }
+  async createBlogPost(data: Record<string, unknown>) { return this.fetch('/api/admin/blog', { method: 'POST', body: JSON.stringify(data) }); }
+  async updateBlogPost(id: string, data: Record<string, unknown>) { return this.fetch(`/api/admin/blog/${id}`, { method: 'PATCH', body: JSON.stringify(data) }); }
+  async deleteBlogPost(id: string) { return this.fetch(`/api/admin/blog/${id}`, { method: 'DELETE' }); }
+
   async getCustomers() {
     return this.fetch('/api/admin/customers');
   }

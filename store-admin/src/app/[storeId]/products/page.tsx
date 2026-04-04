@@ -34,6 +34,8 @@ interface Product {
   variantCount: number;
   thumbnail: string | null;
   images?: { url: string }[];
+  meta_title?: string;
+  meta_description?: string;
 }
 
 interface Category {
@@ -61,6 +63,8 @@ export default function ProductsPage() {
   const [editPrice, setEditPrice] = useState("");
   const [editCategory, setEditCategory] = useState("");
   const [editDescription, setEditDescription] = useState("");
+  const [editMetaTitle, setEditMetaTitle] = useState("");
+  const [editMetaDesc, setEditMetaDesc] = useState("");
   const [editBadge, setEditBadge] = useState("");
   const [editInStock, setEditInStock] = useState(true);
   const [editStockQty, setEditStockQty] = useState(0);
@@ -94,6 +98,8 @@ export default function ProductsPage() {
     setEditPrice((p.price / 100).toFixed(2));
     setEditCategory(p.category || "");
     setEditDescription(p.description || "");
+    setEditMetaTitle(p.meta_title || "");
+    setEditMetaDesc(p.meta_description || "");
     setEditBadge(p.badge || "");
     setEditInStock(p.in_stock);
     setEditStockQty(p.stock_quantity);
@@ -133,6 +139,8 @@ export default function ProductsPage() {
         price: Math.round(parseFloat(editPrice || "0") * 100),
         category: editCategory || null,
         description: editDescription,
+        meta_title: editMetaTitle || null,
+        meta_description: editMetaDesc || null,
         badge: editBadge || null,
         in_stock: editInStock,
         stock_quantity: editStockQty,
@@ -441,6 +449,26 @@ export default function ProductsPage() {
                           <input type="checkbox" checked={editInStock} onChange={(e) => setEditInStock(e.target.checked)} />
                           <span style={{ fontSize: "14px", fontWeight: 500, color: "var(--text-secondary)" }}>In Stock</span>
                         </label>
+                      </div>
+
+                      {/* SEO */}
+                      <div style={{ padding: "16px", background: "var(--bg-elevated)", borderRadius: "var(--radius-sm)", border: "1px solid var(--border)", marginBottom: "20px" }}>
+                        <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "12px", display: "flex", alignItems: "center", gap: "6px" }}>
+                          <svg style={{ width: "14px", height: "14px" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                          SEO
+                        </div>
+                        <div className="grid grid-cols-1 gap-3">
+                          <div>
+                            <label style={{ fontSize: "11px" }}>Meta Title <span style={{ color: "var(--text-tertiary)", fontWeight: 400 }}>(50-60 chars)</span></label>
+                            <input value={editMetaTitle} onChange={(e) => setEditMetaTitle(e.target.value)} placeholder={editName || "Product name"} maxLength={70} />
+                            <div style={{ fontSize: "10px", color: editMetaTitle.length > 60 ? "var(--red)" : "var(--text-tertiary)", marginTop: "2px" }}>{editMetaTitle.length}/60</div>
+                          </div>
+                          <div>
+                            <label style={{ fontSize: "11px" }}>Meta Description <span style={{ color: "var(--text-tertiary)", fontWeight: 400 }}>(140-160 chars)</span></label>
+                            <textarea value={editMetaDesc} onChange={(e) => setEditMetaDesc(e.target.value)} rows={2} placeholder="Brief description for search results..." maxLength={170} style={{ minHeight: "60px" }} />
+                            <div style={{ fontSize: "10px", color: editMetaDesc.length > 160 ? "var(--red)" : "var(--text-tertiary)", marginTop: "2px" }}>{editMetaDesc.length}/160</div>
+                          </div>
+                        </div>
                       </div>
 
                       <div style={{ marginBottom: "20px" }}>

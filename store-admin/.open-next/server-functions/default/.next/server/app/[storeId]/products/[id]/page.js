@@ -10,6 +10,7 @@ R.c("server/chunks/ssr/node_modules_next_dist_client_components_builtin_forbidde
 R.c("server/chunks/ssr/node_modules_next_dist_client_components_builtin_unauthorized_0cjv-23.js")
 R.c("server/chunks/ssr/node_modules_next_dist_client_components_builtin_global-error_0lgvd_..js")
 R.c("server/chunks/ssr/src_0qup9rd._.js")
-R.c("server/chunks/ssr/_0avezvv._.js")
+R.c("server/chunks/ssr/_next-internal_server_app_[storeId]_products_[id]_page_actions_0y_lhm..js")
+R.c("server/chunks/ssr/_01q4-vw._.js")
 R.m(82175)
 module.exports=R.m(82175).exports

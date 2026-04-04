@@ -127,6 +127,15 @@ export async function getAnalytics(storeId: string, range: string = '30d') {
   return client.getAnalytics(range);
 }
 
+export async function getGiftCards(storeId: string) { const c = new CommerceClient(storeId); return c.getGiftCards(); }
+export async function createGiftCard(storeId: string, data: Record<string, unknown>) { const c = new CommerceClient(storeId); return c.createGiftCard(data); }
+export async function updateGiftCard(storeId: string, cardId: string, data: Record<string, unknown>) { const c = new CommerceClient(storeId); return c.updateGiftCard(cardId, data); }
+
+export async function getBlogPosts(storeId: string) { const c = new CommerceClient(storeId); return c.getBlogPosts(); }
+export async function createBlogPost(storeId: string, data: Record<string, unknown>) { const c = new CommerceClient(storeId); return c.createBlogPost(data); }
+export async function updateBlogPost(storeId: string, postId: string, data: Record<string, unknown>) { const c = new CommerceClient(storeId); return c.updateBlogPost(postId, data); }
+export async function deleteBlogPost(storeId: string, postId: string) { const c = new CommerceClient(storeId); return c.deleteBlogPost(postId); }
+
 export async function getCustomers(storeId: string) {
   const client = new CommerceClient(storeId);
   return client.getCustomers();

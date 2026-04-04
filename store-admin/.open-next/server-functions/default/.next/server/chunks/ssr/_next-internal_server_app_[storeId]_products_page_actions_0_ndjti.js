@@ -1,0 +1,3 @@
+module.exports=[76835,a=>{"use strict";var b=a.i(54727);a.s([],22704),a.i(22704),a.s(["40a5ef9841815a9e8bcb11bcbc355340e16559dc1f",()=>b.exportProductsCSV,"40fa8e4a1337b40364a170098ee03a1ce3fd6042aa",()=>b.getCategories,"6021091f1bd6204251ff6021da073d5132d9dd7897",()=>b.deleteProduct,"60a6ff699b710b910843a2ee72252eb3515e51dc1e",()=>b.importProductsCSV,"60ba79f0643865416bdf46bc38b03d264a48e7949e",()=>b.getProduct,"60f41a35238fab8376261bac34e3942cdcc88485c9",()=>b.getProducts,"70304cefd43d8e71aa2c137aad9c076f06a0ad404f",()=>b.updateProduct],76835)}];
+
+//# sourceMappingURL=_next-internal_server_app_%5BstoreId%5D_products_page_actions_0_ndjti.js.map
