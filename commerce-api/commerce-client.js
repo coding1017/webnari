@@ -122,6 +122,48 @@ class WebnariCommerce {
 
 
   // ═════════════════════════════════════════════════════════
+  //  PRODUCTS (Storefront)
+  // ═════════════════════════════════════════════════════════
+
+  /**
+   * Get all products for this store.
+   * @param {Object} params - { category?, search?, sort?, in_stock?, limit? }
+   */
+  async getProducts(params = {}) {
+    const qs = new URLSearchParams();
+    if (params.category) qs.set('category', params.category);
+    if (params.search) qs.set('search', params.search);
+    if (params.sort) qs.set('sort', params.sort);
+    if (params.in_stock) qs.set('in_stock', 'true');
+    if (params.limit) qs.set('limit', params.limit.toString());
+    const query = qs.toString();
+    return this._fetch(`/api/products${query ? `?${query}` : ''}`);
+  }
+
+  /**
+   * Get a single product by ID or slug.
+   */
+  async getProduct(idOrSlug) {
+    return this._fetch(`/api/products/${idOrSlug}`);
+  }
+
+  /**
+   * Get featured (in-stock) products.
+   * @param {number} limit - Number of products to return
+   */
+  async getFeaturedProducts(limit = 8) {
+    return this._fetch(`/api/products/featured?limit=${limit}`);
+  }
+
+  /**
+   * Get categories for this store.
+   */
+  async getCategories() {
+    return this._fetch('/api/categories');
+  }
+
+
+  // ═════════════════════════════════════════════════════════
   //  CHECKOUT
   // ═════════════════════════════════════════════════════════
 

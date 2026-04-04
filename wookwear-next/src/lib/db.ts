@@ -1,234 +1,113 @@
 /**
  * Database abstraction layer
  *
- * Fetches from Supabase when configured, falls back to local static data.
- * All prices from Supabase are in cents — convert to dollars for display.
+ * Fetches from the Webnari Commerce API, falls back to local static data.
+ * Prices from the API are in cents — convert to dollars for display.
  *
  * Usage in Server Components:
  *   import { db } from "@/lib/db";
  *   const products = await db.getProducts();
  */
 
-import { createClient as createServerClient } from "@/lib/supabase/server";
 import { products as localProducts, getProductById as localGetProductById } from "@/data/products";
 import { posts as localPosts, getPostBySlug as localGetPostBySlug } from "@/data/blog";
 import { glossaryTerms as localGlossary, getTermBySlug as localGetTermBySlug } from "@/data/glossary";
 import type { Product, Variant, Review } from "@/types/product";
 
-const isSupabaseConfigured =
-  process.env.NEXT_PUBLIC_SUPABASE_URL &&
-  !process.env.NEXT_PUBLIC_SUPABASE_URL.includes("YOUR_PROJECT");
+const COMMERCE_API = process.env.NEXT_PUBLIC_COMMERCE_API_URL || "https://webnari.io/commerce";
+const STORE_ID = process.env.NEXT_PUBLIC_STORE_ID || "wookwear";
 
-// ─── Product helpers ─────────────────────────────────────────────────────────
+async function apiFetch(path: string) {
+  const res = await fetch(`${COMMERCE_API}${path}`, {
+    headers: { "X-Store-ID": STORE_ID, "Content-Type": "application/json" },
+    next: { revalidate: 60 },
+  });
+  if (!res.ok) throw new Error(`API error: ${res.status}`);
+  return res.json();
+}
 
-function mapSupabaseProduct(row: any): Product {
-  const imgs = (row.product_images || [])
-    .sort((a: any, b: any) => a.sort_order - b.sort_order)
-    .map((img: any) => img.url);
+function mapApiProduct(p: any): Product {
+  const variants: Variant[] = (p.variants || []).map((v: any) => ({
+    id: v.id,
+    name: v.name,
+    color: v.color || "",
+    price: (v.price || p.price) / 100,
+    inStock: v.inStock,
+    imgs: v.imgs || [],
+  }));
 
-  const variants: Variant[] = (row.variants || [])
-    .sort((a: any, b: any) => a.sort_order - b.sort_order)
-    .map((v: any) => ({
-      id: v.id,
-      name: v.name,
-      color: v.color,
-      price: v.price / 100,
-      inStock: v.in_stock,
-      imgs: (v.variant_images || [])
-        .sort((a: any, b: any) => a.sort_order - b.sort_order)
-        .map((img: any) => img.url),
-    }));
-
-  const reviews: Review[] = (row.reviews || [])
-    .map((r: any) => ({
-      name: r.name,
-      text: r.text,
-      rating: r.rating,
-      date: r.date,
-    }));
+  const reviews: Review[] = (p.reviews || []).map((r: any) => ({
+    name: r.name,
+    text: r.text,
+    rating: r.rating,
+    date: r.date,
+  }));
 
   return {
-    id: row.id,
-    name: row.name,
-    category: row.category,
-    price: row.price / 100,
-    badge: row.badge,
-    inStock: row.in_stock,
-    img: imgs[0] || "",
-    imgs,
-    desc: row.description,
-    rating: Number(row.rating),
-    reviewCount: row.review_count,
+    id: p.id,
+    name: p.name,
+    category: p.category,
+    price: p.price / 100,
+    badge: p.badge?.toLowerCase() || null,
+    inStock: p.inStock,
+    img: p.img || "",
+    imgs: p.imgs || [],
+    desc: p.desc || "",
+    rating: p.rating || 0,
+    reviewCount: p.reviewCount || 0,
     reviews,
-    isCollection: row.is_collection,
+    isCollection: p.isCollection || false,
     variants: variants.length > 0 ? variants : undefined,
   };
 }
-
-const PRODUCT_SELECT = `
-  *,
-  product_images ( url, sort_order ),
-  variants (
-    id, name, color, price, in_stock, sort_order,
-    variant_images ( url, sort_order )
-  ),
-  reviews ( name, text, rating, date )
-`;
 
 // ─── DB interface ────────────────────────────────────────────────────────────
 
 export const db = {
   // Products
   async getProducts(): Promise<Product[]> {
-    if (!isSupabaseConfigured) return localProducts;
-
-    const supabase = await createServerClient();
-    const { data, error } = await supabase
-      .from("products")
-      .select(PRODUCT_SELECT)
-      .order("sort_order") as { data: any[] | null; error: any };
-
-    if (error || !data) {
-      console.error("Supabase getProducts error:", error?.message);
+    try {
+      const data = await apiFetch("/api/products");
+      return data.map(mapApiProduct);
+    } catch (err) {
+      console.error("Commerce API getProducts error:", err);
       return localProducts;
     }
-
-    return data.map(mapSupabaseProduct);
   },
 
   async getProductById(id: string): Promise<Product | null> {
-    if (!isSupabaseConfigured) return localGetProductById(id);
-
-    const supabase = await createServerClient();
-    const { data, error } = await supabase
-      .from("products")
-      .select(PRODUCT_SELECT)
-      .eq("id", id)
-      .single() as { data: any | null; error: any };
-
-    if (error || !data) {
-      // Try finding it as a variant parent
-      const { data: variantData } = await supabase
-        .from("variants")
-        .select("product_id")
-        .eq("id", id)
-        .single() as { data: { product_id: string } | null };
-
-      if (variantData) {
-        return db.getProductById(variantData.product_id);
-      }
-
+    try {
+      const data = await apiFetch(`/api/products/${id}`);
+      return mapApiProduct(data);
+    } catch {
       return localGetProductById(id);
     }
-
-    return mapSupabaseProduct(data);
   },
 
   async getFeaturedProducts(count = 4): Promise<Product[]> {
-    if (!isSupabaseConfigured) {
+    try {
+      const data = await apiFetch(`/api/products/featured?limit=${count}`);
+      return data.map(mapApiProduct);
+    } catch {
       return localProducts.filter((p) => p.inStock).slice(0, count);
     }
-
-    const supabase = await createServerClient();
-    const { data, error } = await supabase
-      .from("products")
-      .select(PRODUCT_SELECT)
-      .eq("in_stock", true)
-      .order("sort_order")
-      .limit(count) as { data: any[] | null; error: any };
-
-    if (error || !data) return localProducts.filter((p) => p.inStock).slice(0, count);
-    return data.map(mapSupabaseProduct);
   },
 
-  // Blog
+  // Blog (still uses local data — no commerce API for blog yet)
   async getPosts() {
-    if (!isSupabaseConfigured) return localPosts;
-
-    const supabase = await createServerClient();
-    const { data, error } = await supabase
-      .from("blog_posts")
-      .select("*")
-      .eq("published", true)
-      .order("date", { ascending: false }) as { data: any[] | null; error: any };
-
-    if (error || !data) return localPosts;
-
-    return data.map((row: any) => ({
-      slug: row.slug,
-      title: row.title,
-      excerpt: row.excerpt,
-      content: row.content,
-      category: row.category,
-      tags: row.tags,
-      readTime: row.read_time,
-      image: row.image_url,
-      date: row.date,
-    }));
+    return localPosts;
   },
 
   async getPostBySlug(slug: string) {
-    if (!isSupabaseConfigured) return localGetPostBySlug(slug);
-
-    const supabase = await createServerClient();
-    const { data, error } = await supabase
-      .from("blog_posts")
-      .select("*")
-      .eq("slug", slug)
-      .single() as { data: any | null; error: any };
-
-    if (error || !data) return localGetPostBySlug(slug);
-
-    return {
-      slug: data.slug,
-      title: data.title,
-      excerpt: data.excerpt,
-      content: data.content,
-      category: data.category,
-      tags: data.tags,
-      readTime: data.read_time,
-      image: data.image_url,
-      date: data.date,
-    };
+    return localGetPostBySlug(slug);
   },
 
-  // Glossary
+  // Glossary (still uses local data)
   async getGlossaryTerms() {
-    if (!isSupabaseConfigured) return localGlossary;
-
-    const supabase = await createServerClient();
-    const { data, error } = await supabase
-      .from("glossary_terms")
-      .select("*")
-      .order("term") as { data: any[] | null; error: any };
-
-    if (error || !data) return localGlossary;
-
-    return data.map((row: any) => ({
-      term: row.term,
-      slug: row.slug,
-      definition: row.definition,
-      category: row.category,
-    }));
+    return localGlossary;
   },
 
   async getTermBySlug(slug: string) {
-    if (!isSupabaseConfigured) return localGetTermBySlug(slug);
-
-    const supabase = await createServerClient();
-    const { data, error } = await supabase
-      .from("glossary_terms")
-      .select("*")
-      .eq("slug", slug)
-      .single() as { data: any | null; error: any };
-
-    if (error || !data) return localGetTermBySlug(slug);
-
-    return {
-      term: data.term,
-      slug: data.slug,
-      definition: data.definition,
-      category: data.category,
-    };
+    return localGetTermBySlug(slug);
   },
 };

@@ -21,7 +21,11 @@
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    const path = url.pathname;
+    // Strip /commerce prefix if routed via webnari.io/commerce/*
+    let path = url.pathname;
+    if (path.startsWith('/commerce/')) {
+      path = path.replace('/commerce', '');
+    }
     const method = request.method;
 
     // ── CORS ──────────────────────────────────────────────
@@ -60,6 +64,18 @@ export default {
       // Store config
       if (method === 'GET' && path === '/api/store/config') {
         return await handleGetStoreConfig(sb, storeId, corsOrigin);
+      }
+
+      // ── Public Product Endpoints (storefront) ─────────
+      if (method === 'GET' && path === '/api/products') {
+        return await handlePublicListProducts(sb, storeId, url, corsOrigin);
+      }
+      if (method === 'GET' && path.match(/^\/api\/products\/[^/]+$/)) {
+        const productId = path.split('/').pop();
+        return await handlePublicGetProduct(sb, storeId, productId, corsOrigin);
+      }
+      if (method === 'GET' && path === '/api/products/featured') {
+        return await handlePublicFeaturedProducts(sb, storeId, url, corsOrigin);
       }
 
       // Checkout
@@ -1987,4 +2003,195 @@ async function handleAdminDeleteCategory(request, sb, env, storeId, catId, corsO
   await sb.delete('categories', { id: `eq.${catId}`, store_id: `eq.${storeId}` });
 
   return json({ deleted: true }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  PUBLIC — STOREFRONT PRODUCT ENDPOINTS
+// ═══════════════════════════════════════════════════════════════
+
+async function handlePublicListProducts(sb, storeId, url, corsOrigin) {
+  const category = url.searchParams.get('category');
+  const search = url.searchParams.get('search');
+  const sort = url.searchParams.get('sort'); // price-asc, price-desc, rating, newest
+  const limit = url.searchParams.get('limit') || '100';
+  const inStockOnly = url.searchParams.get('in_stock') === 'true';
+
+  const filters = { store_id: `eq.${storeId}` };
+  if (category) filters.category = `eq.${category}`;
+  if (search) filters.name = `ilike.*${search}*`;
+  if (inStockOnly) filters.in_stock = 'eq.true';
+
+  let order = 'sort_order.asc,created_at.desc';
+  if (sort === 'price-asc') order = 'price.asc';
+  if (sort === 'price-desc') order = 'price.desc';
+  if (sort === 'rating') order = 'rating.desc.nullslast';
+  if (sort === 'newest') order = 'created_at.desc';
+
+  const products = await sb.query('products', {
+    filters,
+    order,
+    limit: parseInt(limit),
+  });
+
+  // Enrich with images and variants
+  const enriched = await Promise.all(products.map(async p => {
+    const [images, variants, reviews] = await Promise.all([
+      sb.query('product_images', { filters: { product_id: `eq.${p.id}` }, order: 'sort_order.asc' }),
+      sb.query('variants', { filters: { product_id: `eq.${p.id}` }, order: 'sort_order.asc' }),
+      sb.query('reviews', { filters: { product_id: `eq.${p.id}`, approved: 'eq.true' }, order: 'created_at.desc' }),
+    ]);
+
+    // Get variant images
+    const variantsWithImages = await Promise.all(variants.map(async v => {
+      const vImages = await sb.query('variant_images', {
+        filters: { variant_id: `eq.${v.id}` },
+        order: 'sort_order.asc',
+      });
+      return {
+        id: v.id,
+        name: v.name,
+        color: v.color,
+        size: v.size,
+        sku: v.sku,
+        price: v.price,
+        inStock: v.in_stock,
+        stockQuantity: v.stock_quantity,
+        imgs: vImages.map(i => i.url),
+      };
+    }));
+
+    const reviewCount = reviews.length;
+    const avgRating = reviewCount > 0
+      ? Math.round(reviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount * 10) / 10
+      : 0;
+
+    return {
+      id: p.id,
+      name: p.name,
+      slug: p.slug,
+      category: p.category,
+      price: p.price,
+      compareAtPrice: p.compare_at_price,
+      badge: p.badge,
+      inStock: p.in_stock,
+      stockQuantity: p.stock_quantity,
+      desc: p.description,
+      img: images[0]?.url || null,
+      imgs: images.map(i => i.url),
+      rating: avgRating,
+      reviewCount,
+      reviews: reviews.map(r => ({ name: r.name, text: r.text, rating: r.rating, date: r.created_at })),
+      isCollection: variants.length > 0,
+      variants: variantsWithImages,
+    };
+  }));
+
+  return json(enriched, 200, corsOrigin);
+}
+
+async function handlePublicGetProduct(sb, storeId, productId, corsOrigin) {
+  // Try by ID first, then by slug
+  let product = await sb.query('products', {
+    filters: { id: `eq.${productId}`, store_id: `eq.${storeId}` },
+    single: true,
+  });
+
+  if (!product) {
+    product = await sb.query('products', {
+      filters: { slug: `eq.${productId}`, store_id: `eq.${storeId}` },
+      single: true,
+    });
+  }
+
+  if (!product) return json({ error: 'Product not found' }, 404, corsOrigin);
+
+  const [images, variants, reviews] = await Promise.all([
+    sb.query('product_images', { filters: { product_id: `eq.${product.id}` }, order: 'sort_order.asc' }),
+    sb.query('variants', { filters: { product_id: `eq.${product.id}` }, order: 'sort_order.asc' }),
+    sb.query('reviews', { filters: { product_id: `eq.${product.id}`, approved: 'eq.true' }, order: 'created_at.desc' }),
+  ]);
+
+  const variantsWithImages = await Promise.all(variants.map(async v => {
+    const vImages = await sb.query('variant_images', {
+      filters: { variant_id: `eq.${v.id}` },
+      order: 'sort_order.asc',
+    });
+    return {
+      id: v.id,
+      name: v.name,
+      color: v.color,
+      size: v.size,
+      sku: v.sku,
+      price: v.price,
+      inStock: v.in_stock,
+      stockQuantity: v.stock_quantity,
+      imgs: vImages.map(i => i.url),
+    };
+  }));
+
+  const reviewCount = reviews.length;
+  const avgRating = reviewCount > 0
+    ? Math.round(reviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount * 10) / 10
+    : 0;
+
+  return json({
+    id: product.id,
+    name: product.name,
+    slug: product.slug,
+    category: product.category,
+    price: product.price,
+    compareAtPrice: product.compare_at_price,
+    badge: product.badge,
+    inStock: product.in_stock,
+    stockQuantity: product.stock_quantity,
+    trackInventory: product.track_inventory,
+    desc: product.description,
+    img: images[0]?.url || null,
+    imgs: images.map(i => i.url),
+    rating: avgRating,
+    reviewCount,
+    reviews: reviews.map(r => ({ name: r.name, text: r.text, rating: r.rating, date: r.created_at })),
+    isCollection: variants.length > 0,
+    variants: variantsWithImages,
+  }, 200, corsOrigin);
+}
+
+async function handlePublicFeaturedProducts(sb, storeId, url, corsOrigin) {
+  const limit = url.searchParams.get('limit') || '8';
+
+  const products = await sb.query('products', {
+    filters: { store_id: `eq.${storeId}`, in_stock: 'eq.true' },
+    order: 'sort_order.asc,created_at.desc',
+    limit: parseInt(limit),
+  });
+
+  const enriched = await Promise.all(products.map(async p => {
+    const images = await sb.query('product_images', {
+      filters: { product_id: `eq.${p.id}` },
+      order: 'sort_order.asc',
+      limit: 1,
+    });
+    const variants = await sb.query('variants', {
+      select: 'id',
+      filters: { product_id: `eq.${p.id}` },
+    });
+
+    return {
+      id: p.id,
+      name: p.name,
+      slug: p.slug,
+      category: p.category,
+      price: p.price,
+      badge: p.badge,
+      inStock: p.in_stock,
+      img: images[0]?.url || null,
+      rating: p.rating || 0,
+      reviewCount: 0,
+      isCollection: variants.length > 0,
+      variantCount: variants.length,
+    };
+  }));
+
+  return json(enriched, 200, corsOrigin);
 }
