@@ -12,9 +12,14 @@ export default async function StoreLayout({
 
   let storeName = storeId;
   try {
-    const client = new CommerceClient(storeId);
-    const config = await client.getStoreConfig();
-    storeName = config.name || storeId;
+    const res = await fetch(`https://webnari.io/commerce/api/store/config`, {
+      headers: { 'X-Store-ID': storeId },
+      cache: 'no-store',
+    });
+    if (res.ok) {
+      const config = await res.json();
+      storeName = config.name || storeId;
+    }
   } catch {
     // Use storeId as fallback
   }

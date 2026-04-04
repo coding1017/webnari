@@ -7,7 +7,7 @@ interface ImageUploaderProps {
   storeId: string;
   images: string[];
   onChange: (images: string[]) => void;
-  folder?: string; // e.g. "products/beany" or "variants/abc123"
+  folder?: string;
   maxImages?: number;
 }
 
@@ -21,188 +21,218 @@ export default function ImageUploader({
   const [uploading, setUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [error, setError] = useState("");
+  const [dragIdx, setDragIdx] = useState<number | null>(null);
+  const [dragOverIdx, setDragOverIdx] = useState<number | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const uploadFiles = useCallback(async (files: FileList | File[]) => {
     const fileArray = Array.from(files);
-    if (fileArray.length === 0) return;
-
-    // Check max
+    if (!fileArray.length) return;
     if (images.length + fileArray.length > maxImages) {
       setError(`Maximum ${maxImages} images allowed`);
       return;
     }
-
-    // Validate types
     const validTypes = ["image/jpeg", "image/png", "image/webp", "image/gif"];
-    const invalid = fileArray.find(f => !validTypes.includes(f.type));
-    if (invalid) {
-      setError("Only JPEG, PNG, WebP, and GIF files are allowed");
+    if (fileArray.find(f => !validTypes.includes(f.type))) {
+      setError("Only JPEG, PNG, WebP, and GIF allowed");
       return;
     }
-
-    // Validate sizes (5MB max each)
-    const tooBig = fileArray.find(f => f.size > 5 * 1024 * 1024);
-    if (tooBig) {
+    if (fileArray.find(f => f.size > 5 * 1024 * 1024)) {
       setError("Each file must be under 5MB");
       return;
     }
 
     setUploading(true);
     setError("");
-
     const newUrls: string[] = [];
 
     for (const file of fileArray) {
       const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
       const fileName = `${storeId}/${folder}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-
       const { error: uploadError } = await supabase.storage
         .from("product-images")
-        .upload(fileName, file, {
-          contentType: file.type,
-          upsert: false,
-        });
-
+        .upload(fileName, file, { contentType: file.type, upsert: false });
       if (uploadError) {
-        console.error("Upload error:", uploadError);
         setError(`Upload failed: ${uploadError.message}`);
         continue;
       }
-
-      // Get public URL
-      const { data } = supabase.storage
-        .from("product-images")
-        .getPublicUrl(fileName);
-
-      if (data?.publicUrl) {
-        newUrls.push(data.publicUrl);
-      }
+      const { data } = supabase.storage.from("product-images").getPublicUrl(fileName);
+      if (data?.publicUrl) newUrls.push(data.publicUrl);
     }
 
-    if (newUrls.length > 0) {
-      onChange([...images, ...newUrls]);
-    }
-
+    if (newUrls.length > 0) onChange([...images, ...newUrls]);
     setUploading(false);
   }, [images, onChange, storeId, folder, maxImages]);
 
-  // Drag handlers
-  function handleDragEnter(e: React.DragEvent) {
+  // ── File drop zone handlers ────────────────
+  function handleZoneDragEnter(e: React.DragEvent) {
     e.preventDefault();
     e.stopPropagation();
-    setDragActive(true);
+    // Only activate for files, not image reorder
+    if (e.dataTransfer.types.includes("Files")) setDragActive(true);
   }
-
-  function handleDragLeave(e: React.DragEvent) {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-  }
-
-  function handleDragOver(e: React.DragEvent) {
-    e.preventDefault();
-    e.stopPropagation();
-  }
-
-  function handleDrop(e: React.DragEvent) {
+  function handleZoneDragLeave(e: React.DragEvent) {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    if (e.dataTransfer.files) {
-      uploadFiles(e.dataTransfer.files);
-    }
   }
-
+  function handleZoneDragOver(e: React.DragEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  function handleZoneDrop(e: React.DragEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragActive(false);
+    if (e.dataTransfer.files?.length) uploadFiles(e.dataTransfer.files);
+  }
   function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
-    if (e.target.files) {
-      uploadFiles(e.target.files);
-    }
-    // Reset so the same file can be selected again
+    if (e.target.files) uploadFiles(e.target.files);
     e.target.value = "";
+  }
+
+  // ── Image reorder drag handlers ────────────
+  function handleImageDragStart(e: React.DragEvent, idx: number) {
+    setDragIdx(idx);
+    e.dataTransfer.effectAllowed = "move";
+    // Set a tiny transparent drag image so browser doesn't show the full image
+    const el = e.currentTarget as HTMLElement;
+    e.dataTransfer.setDragImage(el, 40, 40);
+  }
+  function handleImageDragOver(e: React.DragEvent, idx: number) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    setDragOverIdx(idx);
+  }
+  function handleImageDragEnd() {
+    if (dragIdx !== null && dragOverIdx !== null && dragIdx !== dragOverIdx) {
+      const updated = [...images];
+      const [moved] = updated.splice(dragIdx, 1);
+      updated.splice(dragOverIdx, 0, moved);
+      onChange(updated);
+    }
+    setDragIdx(null);
+    setDragOverIdx(null);
   }
 
   function removeImage(index: number) {
     onChange(images.filter((_, i) => i !== index));
   }
 
-  function moveImage(from: number, to: number) {
-    if (to < 0 || to >= images.length) return;
-    const updated = [...images];
-    const [moved] = updated.splice(from, 1);
-    updated.splice(to, 0, moved);
-    onChange(updated);
-  }
-
   return (
-    <div className="space-y-3">
-      {/* Image grid */}
+    <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+      {/* Image grid — drag to reorder */}
       {images.length > 0 && (
-        <div className="grid grid-cols-4 gap-3">
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(90px, 1fr))", gap: "10px" }}>
           {images.map((url, i) => (
-            <div key={i} className="relative group rounded-lg overflow-hidden" style={{ border: "1px solid var(--border)" }}>
-              <img src={url} alt="" className="w-full h-24 object-cover" />
+            <div
+              key={`${url}-${i}`}
+              draggable
+              onDragStart={(e) => handleImageDragStart(e, i)}
+              onDragOver={(e) => handleImageDragOver(e, i)}
+              onDragEnd={handleImageDragEnd}
+              className="relative group"
+              style={{
+                borderRadius: "var(--radius-sm)",
+                overflow: "hidden",
+                border: dragOverIdx === i ? "2px solid var(--gold)" : "1px solid var(--border)",
+                opacity: dragIdx === i ? 0.4 : 1,
+                cursor: "grab",
+                aspectRatio: "1",
+                transition: "border-color 0.15s, opacity 0.15s",
+              }}
+            >
+              <img src={url} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
 
-              {/* Overlay controls */}
-              <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
-                {/* Move left */}
-                {i > 0 && (
-                  <button
-                    type="button"
-                    onClick={() => moveImage(i, i - 1)}
-                    className="w-6 h-6 rounded flex items-center justify-center text-white text-xs"
-                    style={{ background: "rgba(255,255,255,0.2)" }}
-                  >
-                    &larr;
-                  </button>
-                )}
+              {/* Delete button */}
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); removeImage(i); }}
+                className="opacity-0 group-hover:opacity-100 transition-opacity"
+                style={{
+                  position: "absolute",
+                  top: "4px",
+                  right: "4px",
+                  width: "22px",
+                  height: "22px",
+                  borderRadius: "50%",
+                  background: "var(--red)",
+                  color: "white",
+                  border: "none",
+                  fontSize: "12px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  cursor: "pointer",
+                }}
+              >
+                x
+              </button>
 
-                {/* Delete */}
-                <button
-                  type="button"
-                  onClick={() => removeImage(i)}
-                  className="w-6 h-6 rounded flex items-center justify-center text-white text-xs"
-                  style={{ background: "var(--red)" }}
-                >
-                  x
-                </button>
-
-                {/* Move right */}
-                {i < images.length - 1 && (
-                  <button
-                    type="button"
-                    onClick={() => moveImage(i, i + 1)}
-                    className="w-6 h-6 rounded flex items-center justify-center text-white text-xs"
-                    style={{ background: "rgba(255,255,255,0.2)" }}
-                  >
-                    &rarr;
-                  </button>
-                )}
-              </div>
-
-              {/* First image badge */}
+              {/* Main badge */}
               {i === 0 && (
-                <div className="absolute top-1 left-1 px-1.5 py-0.5 rounded text-[10px] font-medium text-white" style={{ background: "var(--blue)" }}>
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: "4px",
+                    left: "4px",
+                    padding: "2px 6px",
+                    borderRadius: "4px",
+                    fontSize: "9px",
+                    fontWeight: 700,
+                    color: "white",
+                    background: "var(--gold)",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.04em",
+                  }}
+                >
                   Main
                 </div>
               )}
+
+              {/* Drag hint */}
+              <div
+                className="opacity-0 group-hover:opacity-100 transition-opacity"
+                style={{
+                  position: "absolute",
+                  top: "4px",
+                  left: "4px",
+                  width: "20px",
+                  height: "20px",
+                  borderRadius: "4px",
+                  background: "rgba(0,0,0,0.5)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="white">
+                  <circle cx="3" cy="2" r="1" /><circle cx="7" cy="2" r="1" />
+                  <circle cx="3" cy="5" r="1" /><circle cx="7" cy="5" r="1" />
+                  <circle cx="3" cy="8" r="1" /><circle cx="7" cy="8" r="1" />
+                </svg>
+              </div>
             </div>
           ))}
         </div>
       )}
 
-      {/* Drop zone */}
+      {/* Upload drop zone */}
       {images.length < maxImages && (
         <div
-          onDragEnter={handleDragEnter}
-          onDragLeave={handleDragLeave}
-          onDragOver={handleDragOver}
-          onDrop={handleDrop}
+          onDragEnter={handleZoneDragEnter}
+          onDragLeave={handleZoneDragLeave}
+          onDragOver={handleZoneDragOver}
+          onDrop={handleZoneDrop}
           onClick={() => inputRef.current?.click()}
-          className="rounded-xl py-4 px-6 text-center cursor-pointer transition-all"
           style={{
-            border: `2px dashed ${dragActive ? "var(--blue)" : "var(--border)"}`,
-            background: dragActive ? "var(--blue-light)" : "var(--bg-grouped)",
+            border: `2px dashed ${dragActive ? "var(--gold)" : "var(--border)"}`,
+            borderRadius: "var(--radius-md)",
+            padding: "16px",
+            textAlign: "center",
+            cursor: "pointer",
+            background: dragActive ? "var(--gold-light)" : "var(--bg-grouped)",
+            transition: "all 0.2s",
           }}
         >
           <input
@@ -213,31 +243,26 @@ export default function ImageUploader({
             onChange={handleFileSelect}
             style={{ display: "none" }}
           />
-
           {uploading ? (
-            <div>
-              <div className="w-8 h-8 mx-auto mb-2 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: "var(--blue)", borderTopColor: "transparent" }} />
-              <p className="text-sm" style={{ color: "var(--blue)" }}>Uploading...</p>
-            </div>
+            <div style={{ fontSize: "13px", fontWeight: 500, color: "var(--gold)" }}>Uploading...</div>
           ) : (
             <>
-              <svg className="w-5 h-5 mx-auto mb-1" fill="none" viewBox="0 0 24 24" stroke={dragActive ? "var(--blue)" : "var(--text-tertiary)"} strokeWidth={1.5}>
+              <svg style={{ width: "20px", height: "20px", margin: "0 auto 4px" }} fill="none" viewBox="0 0 24 24" stroke={dragActive ? "var(--gold)" : "var(--text-tertiary)"} strokeWidth={1.5}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M12 16v-8m0 0l-3 3m3-3l3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z" />
               </svg>
-              <p className="text-xs font-medium" style={{ color: dragActive ? "var(--blue)" : "var(--text-primary)" }}>
-                {dragActive ? "Drop images here" : "Drag & drop, or click to browse"}
-              </p>
-              <p className="text-[10px] mt-0.5" style={{ color: "var(--text-tertiary)" }}>
-                JPEG, PNG, WebP, GIF up to 5MB
-              </p>
+              <div style={{ fontSize: "12px", fontWeight: 500, color: "var(--text-secondary)" }}>
+                Drag & drop, or click to browse
+              </div>
+              <div style={{ fontSize: "10px", color: "var(--text-tertiary)", marginTop: "2px" }}>
+                JPEG, PNG, WebP, GIF up to 5MB. Drag images above to reorder.
+              </div>
             </>
           )}
         </div>
       )}
 
-      {/* Error */}
       {error && (
-        <p className="text-xs" style={{ color: "var(--red)" }}>{error}</p>
+        <div style={{ fontSize: "12px", color: "var(--red)" }}>{error}</div>
       )}
     </div>
   );

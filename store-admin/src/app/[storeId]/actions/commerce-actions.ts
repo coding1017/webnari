@@ -12,6 +12,11 @@ export async function updateProduct(storeId: string, productId: string, data: Re
   return client.updateProduct(productId, data);
 }
 
+export async function getProduct(storeId: string, productId: string) {
+  const client = new CommerceClient(storeId);
+  return client.getProduct(productId);
+}
+
 export async function deleteProduct(storeId: string, productId: string) {
   const client = new CommerceClient(storeId);
   return client.deleteProduct(productId);

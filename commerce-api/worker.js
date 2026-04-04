@@ -2013,7 +2013,7 @@ async function handleAdminDeleteCategory(request, sb, env, storeId, catId, corsO
 async function handlePublicListProducts(sb, storeId, url, corsOrigin) {
   const category = url.searchParams.get('category');
   const search = url.searchParams.get('search');
-  const sort = url.searchParams.get('sort'); // price-asc, price-desc, rating, newest
+  const sort = url.searchParams.get('sort');
   const limit = url.searchParams.get('limit') || '100';
   const inStockOnly = url.searchParams.get('in_stock') === 'true';
 
@@ -2028,64 +2028,48 @@ async function handlePublicListProducts(sb, storeId, url, corsOrigin) {
   if (sort === 'rating') order = 'rating.desc.nullslast';
   if (sort === 'newest') order = 'created_at.desc';
 
-  const products = await sb.query('products', {
-    filters,
-    order,
-    limit: parseInt(limit),
-  });
+  const products = await sb.query('products', { filters, order, limit: parseInt(limit) });
+  if (!products.length) return json([], 200, corsOrigin);
 
-  // Enrich with images and variants
-  const enriched = await Promise.all(products.map(async p => {
-    const [images, variants, reviews] = await Promise.all([
-      sb.query('product_images', { filters: { product_id: `eq.${p.id}` }, order: 'sort_order.asc' }),
-      sb.query('variants', { filters: { product_id: `eq.${p.id}` }, order: 'sort_order.asc' }),
-      sb.query('reviews', { filters: { product_id: `eq.${p.id}`, approved: 'eq.true' }, order: 'created_at.desc' }),
-    ]);
+  // Batch fetch all images and variants for all products at once (2 queries total)
+  const productIds = products.map(p => p.id);
+  const idsFilter = `in.(${productIds.join(',')})`;
 
-    // Get variant images
-    const variantsWithImages = await Promise.all(variants.map(async v => {
-      const vImages = await sb.query('variant_images', {
-        filters: { variant_id: `eq.${v.id}` },
-        order: 'sort_order.asc',
-      });
-      return {
-        id: v.id,
-        name: v.name,
-        color: v.color,
-        size: v.size,
-        sku: v.sku,
-        price: v.price,
-        inStock: v.in_stock,
-        stockQuantity: v.stock_quantity,
-        imgs: vImages.map(i => i.url),
-      };
-    }));
+  const [allImages, allVariants] = await Promise.all([
+    sb.query('product_images', { filters: { product_id: idsFilter }, order: 'sort_order.asc' }),
+    sb.query('variants', { filters: { product_id: idsFilter }, order: 'sort_order.asc' }),
+  ]);
 
-    const reviewCount = reviews.length;
-    const avgRating = reviewCount > 0
-      ? Math.round(reviews.reduce((sum, r) => sum + r.rating, 0) / reviewCount * 10) / 10
-      : 0;
+  // Group by product_id
+  const imagesByProduct = {};
+  for (const img of allImages) {
+    if (!imagesByProduct[img.product_id]) imagesByProduct[img.product_id] = [];
+    imagesByProduct[img.product_id].push(img.url);
+  }
 
+  const variantsByProduct = {};
+  for (const v of allVariants) {
+    if (!variantsByProduct[v.product_id]) variantsByProduct[v.product_id] = [];
+    variantsByProduct[v.product_id].push({
+      id: v.id, name: v.name, color: v.color, size: v.size,
+      sku: v.sku, price: v.price, inStock: v.in_stock,
+      stockQuantity: v.stock_quantity, imgs: [],
+    });
+  }
+
+  const enriched = products.map(p => {
+    const imgs = imagesByProduct[p.id] || [];
+    const variants = variantsByProduct[p.id] || [];
     return {
-      id: p.id,
-      name: p.name,
-      slug: p.slug,
-      category: p.category,
-      price: p.price,
-      compareAtPrice: p.compare_at_price,
-      badge: p.badge,
-      inStock: p.in_stock,
-      stockQuantity: p.stock_quantity,
+      id: p.id, name: p.name, slug: p.slug, category: p.category,
+      price: p.price, compareAtPrice: p.compare_at_price, badge: p.badge,
+      inStock: p.in_stock, stockQuantity: p.stock_quantity,
       desc: p.description,
-      img: images[0]?.url || null,
-      imgs: images.map(i => i.url),
-      rating: avgRating,
-      reviewCount,
-      reviews: reviews.map(r => ({ name: r.name, text: r.text, rating: r.rating, date: r.created_at })),
-      isCollection: variants.length > 0,
-      variants: variantsWithImages,
+      img: imgs[0] || null, imgs,
+      rating: Number(p.rating) || 0, reviewCount: 0, reviews: [],
+      isCollection: variants.length > 0, variants,
     };
-  }));
+  });
 
   return json(enriched, 200, corsOrigin);
 }

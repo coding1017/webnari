@@ -1,4 +1,12 @@
-const API_BASE = process.env.NEXT_PUBLIC_COMMERCE_API_URL || 'https://webnari-commerce.webnari.workers.dev';
+const API_BASE = 'https://webnari.io/commerce';
+
+function getAdminKey(): string {
+  try {
+    return process.env.NEXT_PUBLIC_COMMERCE_ADMIN_KEY || '';
+  } catch {
+    return '';
+  }
+}
 
 export class CommerceClient {
   private storeId: string;
@@ -6,7 +14,7 @@ export class CommerceClient {
 
   constructor(storeId: string, adminKey?: string) {
     this.storeId = storeId;
-    this.adminKey = adminKey || process.env.COMMERCE_ADMIN_KEY || '';
+    this.adminKey = adminKey || getAdminKey();
   }
 
   private async fetch(path: string, options: RequestInit = {}) {
