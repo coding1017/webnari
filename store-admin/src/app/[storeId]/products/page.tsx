@@ -9,6 +9,8 @@ import {
   getCategories,
   updateProduct,
   deleteProduct,
+  exportProductsCSV,
+  importProductsCSV,
 } from "@/app/[storeId]/actions/commerce-actions";
 import ImageUploader from "@/components/ImageUploader";
 
@@ -182,12 +184,71 @@ export default function ProductsPage() {
             Click any product to edit inline
           </p>
         </div>
-        <Link href={`/${storeId}/products/new`} className="btn btn-primary">
-          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-          </svg>
-          Add Product
-        </Link>
+        <div style={{ display: "flex", gap: "8px" }}>
+          <button
+            onClick={async () => {
+              try {
+                const csv = await exportProductsCSV(storeId);
+                const blob = new Blob([csv], { type: "text/csv" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `${storeId}-products.csv`;
+                a.click();
+                URL.revokeObjectURL(url);
+              } catch {}
+            }}
+            className="btn btn-secondary"
+            style={{ fontSize: "12px" }}
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            Export CSV
+          </button>
+          <label
+            className="btn btn-secondary"
+            style={{ fontSize: "12px", cursor: "pointer" }}
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+            </svg>
+            Import CSV
+            <input
+              type="file"
+              accept=".csv"
+              style={{ display: "none" }}
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                const text = await file.text();
+                const lines = text.split("\n").filter(Boolean);
+                if (lines.length < 2) { setMessage("CSV file is empty"); return; }
+                const headers = lines[0].split(",").map(h => h.trim().replace(/^"|"$/g, ""));
+                const rows = lines.slice(1).map(line => {
+                  const values = line.split(",").map(v => v.trim().replace(/^"|"$/g, ""));
+                  const row: Record<string, string> = {};
+                  headers.forEach((h, i) => { row[h] = values[i] || ""; });
+                  return row;
+                });
+                try {
+                  const result = await importProductsCSV(storeId, rows);
+                  setMessage(`Imported: ${result.created} created, ${result.updated} updated${result.errors?.length ? `, ${result.errors.length} errors` : ""}`);
+                  await load();
+                } catch (err) {
+                  setMessage((err as Error).message);
+                }
+                e.target.value = "";
+              }}
+            />
+          </label>
+          <Link href={`/${storeId}/products/new`} className="btn btn-primary">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+            </svg>
+            Add Product
+          </Link>
+        </div>
       </div>
 
       {/* Search */}

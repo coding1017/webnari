@@ -215,6 +215,18 @@ export class CommerceClient {
     return this.fetch(`/api/admin/analytics?range=${range}`);
   }
 
+  // ── CSV Import/Export ─────────────────────────────────
+  async exportProductsCSV() {
+    return this.fetch('/api/admin/products/export');
+  }
+
+  async importProductsCSV(rows: Record<string, string>[]) {
+    return this.fetch('/api/admin/products/import', {
+      method: 'POST',
+      body: JSON.stringify({ rows }),
+    });
+  }
+
   // ── Categories ─────────────────────────────────────────
   async getCategories() {
     return this.fetch('/api/admin/categories');

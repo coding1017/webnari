@@ -126,3 +126,13 @@ export async function getAnalytics(storeId: string, range: string = '30d') {
   const client = new CommerceClient(storeId);
   return client.getAnalytics(range);
 }
+
+export async function exportProductsCSV(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.exportProductsCSV();
+}
+
+export async function importProductsCSV(storeId: string, rows: Record<string, string>[]) {
+  const client = new CommerceClient(storeId);
+  return client.importProductsCSV(rows);
+}

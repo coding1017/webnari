@@ -135,6 +135,12 @@ export default {
       }
 
       // Admin Products
+      if (method === 'GET' && path === '/api/admin/products/export') {
+        return await handleAdminExportProducts(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/admin/products/import') {
+        return await handleAdminImportProducts(request, sb, env, storeId, corsOrigin);
+      }
       if (method === 'GET' && path === '/api/admin/products') {
         return await handleAdminListProducts(request, sb, env, storeId, url, corsOrigin);
       }
@@ -3079,4 +3085,210 @@ async function handleAdminAnalytics(request, sb, env, storeId, url, corsOrigin) 
     statusBreakdown,
     topProducts,
   }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  ADMIN — CSV PRODUCT EXPORT/IMPORT
+// ═══════════════════════════════════════════════════════════════
+
+async function handleAdminExportProducts(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const products = await sb.query('products', {
+    filters: { store_id: `eq.${storeId}` },
+    order: 'sort_order.asc,created_at.desc',
+  });
+
+  // Get images and variants for each product
+  const rows = [];
+  for (const p of products) {
+    const images = await sb.query('product_images', {
+      filters: { product_id: `eq.${p.id}` },
+      order: 'sort_order.asc',
+    });
+    const variants = await sb.query('variants', {
+      filters: { product_id: `eq.${p.id}` },
+      order: 'sort_order.asc',
+    });
+
+    if (variants.length === 0) {
+      // Product without variants — one row
+      rows.push({
+        id: p.id,
+        name: p.name,
+        slug: p.slug || '',
+        category: p.category || '',
+        price: (p.price / 100).toFixed(2),
+        compare_at_price: p.compare_at_price ? (p.compare_at_price / 100).toFixed(2) : '',
+        description: (p.description || '').replace(/"/g, '""'),
+        badge: p.badge || '',
+        in_stock: p.in_stock ? 'yes' : 'no',
+        stock_quantity: p.stock_quantity,
+        low_stock_threshold: p.low_stock_threshold,
+        track_inventory: p.track_inventory ? 'yes' : 'no',
+        variant_name: '',
+        variant_sku: '',
+        variant_color: '',
+        variant_size: '',
+        variant_price: '',
+        variant_stock: '',
+        image_urls: images.map(i => i.url).join('|'),
+      });
+    } else {
+      // Product with variants — one row per variant
+      for (const v of variants) {
+        rows.push({
+          id: p.id,
+          name: p.name,
+          slug: p.slug || '',
+          category: p.category || '',
+          price: (p.price / 100).toFixed(2),
+          compare_at_price: p.compare_at_price ? (p.compare_at_price / 100).toFixed(2) : '',
+          description: (p.description || '').replace(/"/g, '""'),
+          badge: p.badge || '',
+          in_stock: p.in_stock ? 'yes' : 'no',
+          stock_quantity: p.stock_quantity,
+          low_stock_threshold: p.low_stock_threshold,
+          track_inventory: p.track_inventory ? 'yes' : 'no',
+          variant_name: v.name,
+          variant_sku: v.sku || '',
+          variant_color: v.color || '',
+          variant_size: v.size || '',
+          variant_price: v.price ? (v.price / 100).toFixed(2) : '',
+          variant_stock: v.stock_quantity,
+          image_urls: images.map(i => i.url).join('|'),
+        });
+      }
+    }
+  }
+
+  const headers = ['id','name','slug','category','price','compare_at_price','description','badge','in_stock','stock_quantity','low_stock_threshold','track_inventory','variant_name','variant_sku','variant_color','variant_size','variant_price','variant_stock','image_urls'];
+  const csvHeader = headers.join(',');
+  const csvRows = rows.map(r => headers.map(h => {
+    const val = String(r[h] ?? '');
+    return val.includes(',') || val.includes('"') || val.includes('\n') ? `"${val}"` : val;
+  }).join(','));
+
+  const csv = [csvHeader, ...csvRows].join('\n');
+
+  return new Response(csv, {
+    status: 200,
+    headers: {
+      'Content-Type': 'text/csv',
+      'Content-Disposition': `attachment; filename="${storeId}-products-${new Date().toISOString().slice(0,10)}.csv"`,
+      ...corsHeaders(corsOrigin),
+    },
+  });
+}
+
+async function handleAdminImportProducts(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const body = await request.json();
+  const { rows } = body; // Array of objects with CSV column names
+
+  if (!rows?.length) return json({ error: 'No rows to import' }, 400, corsOrigin);
+
+  let created = 0;
+  let updated = 0;
+  let errors = [];
+
+  // Group rows by product (id or name+slug combo)
+  const productGroups = {};
+  for (const row of rows) {
+    const key = row.id || row.slug || row.name;
+    if (!key) { errors.push('Row missing name/slug/id'); continue; }
+    if (!productGroups[key]) productGroups[key] = { product: row, variants: [] };
+    if (row.variant_name) {
+      productGroups[key].variants.push(row);
+    }
+  }
+
+  for (const [key, group] of Object.entries(productGroups)) {
+    const row = group.product;
+    const price = Math.round(parseFloat(row.price || '0') * 100);
+    const compareAtPrice = row.compare_at_price ? Math.round(parseFloat(row.compare_at_price) * 100) : null;
+
+    const productData = {
+      store_id: storeId,
+      name: row.name,
+      slug: row.slug || row.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+      category: row.category || null,
+      price,
+      compare_at_price: compareAtPrice,
+      description: row.description || null,
+      badge: row.badge || null,
+      in_stock: row.in_stock !== 'no',
+      stock_quantity: parseInt(row.stock_quantity) || 0,
+      low_stock_threshold: parseInt(row.low_stock_threshold) || 5,
+      track_inventory: row.track_inventory !== 'no',
+    };
+
+    try {
+      // Check if product exists (by id or slug)
+      let existing = null;
+      if (row.id) {
+        existing = await sb.query('products', {
+          filters: { id: `eq.${row.id}`, store_id: `eq.${storeId}` },
+          single: true,
+        });
+      }
+      if (!existing && row.slug) {
+        existing = await sb.query('products', {
+          filters: { slug: `eq.${productData.slug}`, store_id: `eq.${storeId}` },
+          single: true,
+        });
+      }
+
+      let productId;
+      if (existing) {
+        // Update existing
+        await sb.update('products', { id: `eq.${existing.id}` }, productData);
+        productId = existing.id;
+        updated++;
+      } else {
+        // Create new
+        const [newProduct] = await sb.insert('products', productData);
+        productId = newProduct.id;
+        created++;
+      }
+
+      // Handle images
+      if (row.image_urls) {
+        await sb.delete('product_images', { product_id: `eq.${productId}` });
+        const urls = row.image_urls.split('|').filter(Boolean);
+        if (urls.length > 0) {
+          await sb.insert('product_images', urls.map((url, i) => ({
+            product_id: productId,
+            url: url.trim(),
+            sort_order: i,
+          })));
+        }
+      }
+
+      // Handle variants
+      if (group.variants.length > 0) {
+        await sb.delete('variants', { product_id: `eq.${productId}` });
+        for (let i = 0; i < group.variants.length; i++) {
+          const v = group.variants[i];
+          await sb.insert('variants', {
+            product_id: productId,
+            name: v.variant_name,
+            sku: v.variant_sku || null,
+            color: v.variant_color || null,
+            size: v.variant_size || null,
+            price: v.variant_price ? Math.round(parseFloat(v.variant_price) * 100) : null,
+            stock_quantity: parseInt(v.variant_stock) || 0,
+            in_stock: parseInt(v.variant_stock) > 0,
+            sort_order: i,
+          });
+        }
+      }
+    } catch (err) {
+      errors.push(`Failed to import "${row.name}": ${err.message}`);
+    }
+  }
+
+  return json({ created, updated, errors: errors.slice(0, 10), total: Object.keys(productGroups).length }, 200, corsOrigin);
 }
