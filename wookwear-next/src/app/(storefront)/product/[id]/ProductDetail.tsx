@@ -23,9 +23,7 @@ export function ProductDetail({
   relatedProducts: Product[];
 }) {
   const { addItem } = useCart();
-  const [selectedVariant, setSelectedVariant] = useState<Variant | null>(
-    product.variants?.[0] || null
-  );
+  const [selectedVariant, setSelectedVariant] = useState<Variant | null>(null);
   const [activeImgIndex, setActiveImgIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
 
@@ -150,11 +148,14 @@ export function ProductDetail({
 
             {/* Add to Cart */}
             <button
-              onClick={() => currentInStock && addItem(currentId)}
-              disabled={!currentInStock}
+              onClick={() => {
+                if (product.variants?.length && !selectedVariant) return;
+                if (currentInStock) addItem(currentId);
+              }}
+              disabled={!currentInStock || (!!product.variants?.length && !selectedVariant)}
               className="w-full py-4 bg-[image:var(--gradient)] text-ww-white font-head text-sm font-extrabold tracking-[0.1em] uppercase rounded-[12px] border-none cursor-pointer hover:shadow-[0_0_32px_rgba(255,45,155,0.3)] transition-all disabled:opacity-40 disabled:cursor-not-allowed mb-4"
             >
-              {currentInStock ? "Add to Cart" : "Sold Out"}
+              {!currentInStock ? "Sold Out" : product.variants?.length && !selectedVariant ? "Select a Style" : "Add to Cart"}
             </button>
 
             {/* Shipping Info */}
