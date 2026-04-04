@@ -122,6 +122,40 @@ class WebnariCommerce {
 
 
   // ═════════════════════════════════════════════════════════
+  //  ABANDONED CART TRACKING
+  // ═════════════════════════════════════════════════════════
+
+  /**
+   * Save cart state for abandoned cart recovery.
+   * Call this whenever the cart changes. Uses a session ID
+   * stored in localStorage to track the cart.
+   */
+  async saveCartForRecovery(email = '') {
+    const items = this.getCart();
+    const sessionId = this._getSessionId();
+
+    return this._fetch('/api/cart/save', {
+      method: 'POST',
+      body: JSON.stringify({
+        sessionId,
+        email,
+        items: items.map(i => ({ productId: i.productId, variantId: i.variantId, quantity: i.quantity, name: i.name })),
+        total: items.reduce((sum, i) => sum + (i.price || 0) * i.quantity, 0),
+      }),
+    });
+  }
+
+  _getSessionId() {
+    let sid = localStorage.getItem(`${this.cartKey}_sid`);
+    if (!sid) {
+      sid = 'sess_' + Date.now() + '_' + Math.random().toString(36).slice(2, 10);
+      localStorage.setItem(`${this.cartKey}_sid`, sid);
+    }
+    return sid;
+  }
+
+
+  // ═════════════════════════════════════════════════════════
   //  DISCOUNTS
   // ═════════════════════════════════════════════════════════
 

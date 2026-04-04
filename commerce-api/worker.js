@@ -228,6 +228,17 @@ export default {
         return await handleAutoApplyDiscount(request, sb, storeId, corsOrigin);
       }
 
+      // Abandoned cart
+      if (method === 'POST' && path === '/api/cart/save') {
+        return await handleSaveCart(request, sb, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/cart/send-reminders') {
+        return await handleSendCartReminders(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'GET' && path === '/api/admin/abandoned-carts') {
+        return await handleAdminListAbandonedCarts(request, sb, env, storeId, corsOrigin);
+      }
+
       // Admin Subscribers
       if (method === 'GET' && path === '/api/admin/subscribers') {
         return await handleAdminListSubscribers(request, sb, env, storeId, corsOrigin);
@@ -2817,4 +2828,148 @@ async function handleAutoApplyDiscount(request, sb, storeId, corsOrigin) {
     })),
     totalSaved: results.reduce((sum, r) => sum + r.amountOff, 0),
   }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  ABANDONED CART SYSTEM
+// ═══════════════════════════════════════════════════════════════
+
+async function handleSaveCart(request, sb, storeId, corsOrigin) {
+  const body = await request.json();
+  const { sessionId, email, items, total } = body;
+
+  if (!sessionId) return json({ error: 'sessionId required' }, 400, corsOrigin);
+  if (!items?.length) {
+    // Empty cart — delete any existing record
+    await sb.delete('abandoned_carts', { store_id: `eq.${storeId}`, session_id: `eq.${sessionId}` });
+    return json({ saved: true }, 200, corsOrigin);
+  }
+
+  // Upsert cart
+  const existing = await sb.query('abandoned_carts', {
+    filters: { store_id: `eq.${storeId}`, session_id: `eq.${sessionId}` },
+    single: true,
+  });
+
+  if (existing) {
+    await sb.update('abandoned_carts',
+      { id: `eq.${existing.id}` },
+      {
+        customer_email: email || existing.customer_email,
+        cart_items: items,
+        cart_total: total || 0,
+        updated_at: new Date().toISOString(),
+      }
+    );
+  } else {
+    await sb.insert('abandoned_carts', {
+      store_id: storeId,
+      session_id: sessionId,
+      customer_email: email || null,
+      cart_items: items,
+      cart_total: total || 0,
+    });
+  }
+
+  return json({ saved: true }, 200, corsOrigin);
+}
+
+async function handleSendCartReminders(request, sb, env, storeId, corsOrigin) {
+  // This can be called by a cron job or manually from admin
+  // Find carts older than 1 hour with an email, not yet reminded, not recovered
+
+  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+
+  const carts = await sb.query('abandoned_carts', {
+    filters: {
+      store_id: `eq.${storeId}`,
+      reminder_sent: 'eq.false',
+      recovered: 'eq.false',
+      updated_at: `lt.${oneHourAgo}`,
+    },
+  });
+
+  // Filter to ones with emails
+  const cartsWithEmail = carts.filter(c => c.customer_email);
+
+  const store = await sb.query('stores', { filters: { id: `eq.${storeId}` }, single: true });
+  const storeName = store?.name || storeId;
+  const domain = store?.domain || 'webnari.io';
+  let sent = 0;
+
+  for (const cart of cartsWithEmail) {
+    const items = cart.cart_items || [];
+    if (items.length === 0) continue;
+
+    await sendEmail(env, storeId, {
+      to: cart.customer_email,
+      subject: `You left something behind! — ${storeName}`,
+      html: buildAbandonedCartHTML(storeName, domain, items, cart.cart_total),
+    }).catch(() => {});
+
+    await sb.update('abandoned_carts',
+      { id: `eq.${cart.id}` },
+      { reminder_sent: true, reminder_sent_at: new Date().toISOString() }
+    );
+    sent++;
+  }
+
+  return json({ sent, total: cartsWithEmail.length }, 200, corsOrigin);
+}
+
+async function handleAdminListAbandonedCarts(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const carts = await sb.query('abandoned_carts', {
+    filters: { store_id: `eq.${storeId}` },
+    order: 'updated_at.desc',
+    limit: 50,
+  });
+
+  return json(carts, 200, corsOrigin);
+}
+
+function buildAbandonedCartHTML(storeName, domain, items, total) {
+  const itemRows = items.map(item => `
+    <tr>
+      <td style="padding:10px 0;border-bottom:1px solid #F0EBE3;font-family:'Helvetica Neue',Arial,sans-serif;font-size:14px;color:#3D3540;">
+        ${item.name || item.productName || 'Item'}
+        ${item.quantity > 1 ? `<span style="color:#7A7078;"> x${item.quantity}</span>` : ''}
+      </td>
+    </tr>`).join('');
+
+  return `
+  <!DOCTYPE html>
+  <html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+  <body style="margin:0;padding:0;background:#F2F0EC;font-family:'Helvetica Neue',Arial,sans-serif;">
+    <div style="max-width:560px;margin:32px auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+      <div style="background:linear-gradient(135deg,#B8892A,#D4A63A);padding:24px 32px;text-align:center;">
+        <h1 style="margin:0;color:#fff;font-size:22px;font-weight:700;">${storeName}</h1>
+      </div>
+      <div style="padding:32px;">
+        <h2 style="margin:0 0 8px;font-size:20px;font-weight:700;color:#1A1518;">You left something behind!</h2>
+        <p style="margin:0 0 24px;font-size:14px;color:#7A7078;line-height:1.6;">
+          Looks like you were checking out some great items. They're still waiting for you — but they won't last forever!
+        </p>
+
+        <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+          <tbody>${itemRows}</tbody>
+        </table>
+
+        ${total > 0 ? `<p style="margin:0 0 24px;font-size:16px;font-weight:700;color:#1A1518;">Cart Total: $${(total / 100).toFixed(2)}</p>` : ''}
+
+        <div style="text-align:center;">
+          <a href="https://${domain}/shop" style="display:inline-block;padding:14px 32px;background:linear-gradient(135deg,#B8892A,#D4A63A);color:#fff;text-decoration:none;border-radius:8px;font-size:15px;font-weight:600;">
+            Complete Your Order
+          </a>
+        </div>
+      </div>
+      <div style="padding:24px 32px;text-align:center;border-top:1px solid #E4DDD3;">
+        <p style="margin:0;color:#B0A8AD;font-size:11px;">
+          Powered by <a href="https://webnari.io" style="color:#B8892A;text-decoration:none;font-weight:600;">Webnari</a>
+        </p>
+      </div>
+    </div>
+  </body></html>`;
 }
