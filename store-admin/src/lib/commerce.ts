@@ -183,6 +183,33 @@ export class CommerceClient {
     return this.fetch(`/api/admin/tax-rates/${id}`, { method: 'DELETE' });
   }
 
+  // ── Discounts ─────────────────────────────────────────
+  async getDiscounts() {
+    return this.fetch('/api/admin/discounts');
+  }
+
+  async getDiscount(id: string) {
+    return this.fetch(`/api/admin/discounts/${id}`);
+  }
+
+  async createDiscount(data: Record<string, unknown>) {
+    return this.fetch('/api/admin/discounts', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateDiscount(id: string, data: Record<string, unknown>) {
+    return this.fetch(`/api/admin/discounts/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteDiscount(id: string) {
+    return this.fetch(`/api/admin/discounts/${id}`, { method: 'DELETE' });
+  }
+
   // ── Categories ─────────────────────────────────────────
   async getCategories() {
     return this.fetch('/api/admin/categories');

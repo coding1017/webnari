@@ -122,6 +122,25 @@ class WebnariCommerce {
 
 
   // ═════════════════════════════════════════════════════════
+  //  DISCOUNTS
+  // ═════════════════════════════════════════════════════════
+
+  /**
+   * Validate a discount code and get the savings amount.
+   * @param {string} code - The discount code
+   * @param {number} subtotal - Cart subtotal in cents
+   * @param {string} customerEmail - Customer's email (for per-customer limits)
+   * @returns {{ valid, code?, type?, value?, amountOff?, description?, reason? }}
+   */
+  async validateDiscount(code, subtotal, customerEmail = '') {
+    return this._fetch('/api/discount/validate', {
+      method: 'POST',
+      body: JSON.stringify({ code, subtotal, customerEmail }),
+    });
+  }
+
+
+  // ═════════════════════════════════════════════════════════
   //  PRODUCTS (Storefront)
   // ═════════════════════════════════════════════════════════
 

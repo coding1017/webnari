@@ -200,6 +200,31 @@ export default {
         return json(cats, 200, corsOrigin);
       }
 
+      // Admin Discounts
+      if (method === 'GET' && path === '/api/admin/discounts') {
+        return await handleAdminListDiscounts(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/admin/discounts') {
+        return await handleAdminCreateDiscount(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'GET' && path.match(/^\/api\/admin\/discounts\/[^/]+$/)) {
+        const discountId = path.split('/').pop();
+        return await handleAdminGetDiscount(request, sb, env, storeId, discountId, corsOrigin);
+      }
+      if (method === 'PATCH' && path.match(/^\/api\/admin\/discounts\/[^/]+$/)) {
+        const discountId = path.split('/').pop();
+        return await handleAdminUpdateDiscount(request, sb, env, storeId, discountId, corsOrigin);
+      }
+      if (method === 'DELETE' && path.match(/^\/api\/admin\/discounts\/[^/]+$/)) {
+        const discountId = path.split('/').pop();
+        return await handleAdminDeleteDiscount(request, sb, env, storeId, discountId, corsOrigin);
+      }
+
+      // Public discount validation
+      if (method === 'POST' && path === '/api/discount/validate') {
+        return await handleValidateDiscount(request, sb, storeId, corsOrigin);
+      }
+
       // Admin Subscribers
       if (method === 'GET' && path === '/api/admin/subscribers') {
         return await handleAdminListSubscribers(request, sb, env, storeId, corsOrigin);
@@ -385,7 +410,7 @@ async function handleGetStoreConfig(sb, storeId, corsOrigin) {
 
 async function handleCreateCheckout(request, sb, env, storeId, corsOrigin) {
   const body = await request.json();
-  const { items, customer, shippingState, successUrl, cancelUrl, provider } = body;
+  const { items, customer, shippingState, successUrl, cancelUrl, provider, discountCode } = body;
 
   // items: [{ productId, variantId?, quantity }]
   // customer: { email, name, phone? }
@@ -464,10 +489,30 @@ async function handleCreateCheckout(request, sb, env, storeId, corsOrigin) {
     });
   }
 
-  // ── 4. Calculate shipping ───────────────────────────────
-  const shippingCost = calculateShippingFromRules(store.shipping_rules, subtotal);
+  // ── 4. Apply discount code (if provided) ─────────────────
+  let discountAmount = 0;
+  let appliedDiscount = null;
 
-  // ── 5. Calculate tax ────────────────────────────────────
+  if (discountCode) {
+    const discountResult = await validateDiscountCode(sb, storeId, discountCode, subtotal, customer.email, lineItems);
+    if (!discountResult.valid) {
+      return json({ error: discountResult.reason }, 400, corsOrigin);
+    }
+    discountAmount = discountResult.amountOff;
+    appliedDiscount = discountResult.discount;
+  }
+
+  const discountedSubtotal = subtotal - discountAmount;
+
+  // ── 5. Calculate shipping ───────────────────────────────
+  let shippingCost = calculateShippingFromRules(store.shipping_rules, discountedSubtotal);
+
+  // Free shipping discount overrides
+  if (appliedDiscount?.type === 'free_shipping') {
+    shippingCost = 0;
+  }
+
+  // ── 6. Calculate tax ────────────────────────────────────
   let taxAmount = 0;
   if (shippingState) {
     const taxRate = await sb.query('store_tax_rates', {
@@ -475,26 +520,28 @@ async function handleCreateCheckout(request, sb, env, storeId, corsOrigin) {
       single: true,
     });
     if (taxRate) {
-      taxAmount = Math.round(subtotal * parseFloat(taxRate.rate));
+      taxAmount = Math.round(discountedSubtotal * parseFloat(taxRate.rate));
     }
   }
 
-  const total = subtotal + shippingCost + taxAmount;
+  const total = discountedSubtotal + shippingCost + taxAmount;
 
   // ── 6. Determine payment provider ───────────────────────
   const paymentProvider = provider || store.payment_provider;
 
   if (paymentProvider === 'stripe' || paymentProvider === 'both') {
     return await createStripeCheckout(sb, env, storeId, store, {
-      lineItems, customer, subtotal, shippingCost, taxAmount, total,
+      lineItems, customer, subtotal: discountedSubtotal, shippingCost, taxAmount, total,
       shippingState, reservations, successUrl, cancelUrl,
+      discountCode: appliedDiscount?.code || null, discountAmount,
     }, corsOrigin);
   }
 
   if (paymentProvider === 'square') {
     return await createSquareCheckout(sb, env, storeId, store, {
-      lineItems, customer, subtotal, shippingCost, taxAmount, total,
+      lineItems, customer, subtotal: discountedSubtotal, shippingCost, taxAmount, total,
       shippingState, reservations, successUrl, cancelUrl,
+      discountCode: appliedDiscount?.code || null, discountAmount,
     }, corsOrigin);
   }
 
@@ -2208,4 +2255,188 @@ async function handlePublicFeaturedProducts(sb, storeId, url, corsOrigin) {
   }));
 
   return json(enriched, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  DISCOUNT VALIDATION (shared logic)
+// ═══════════════════════════════════════════════════════════════
+
+async function validateDiscountCode(sb, storeId, code, subtotal, customerEmail, lineItems) {
+  const discount = await sb.query('discount_codes', {
+    filters: { store_id: `eq.${storeId}`, code: `eq.${code.toUpperCase().trim()}` },
+    single: true,
+  });
+
+  if (!discount) return { valid: false, reason: 'Invalid discount code' };
+  if (!discount.is_active) return { valid: false, reason: 'This discount code is no longer active' };
+
+  const now = new Date();
+  if (discount.starts_at && new Date(discount.starts_at) > now) {
+    return { valid: false, reason: 'This discount code is not yet active' };
+  }
+  if (discount.expires_at && new Date(discount.expires_at) < now) {
+    return { valid: false, reason: 'This discount code has expired' };
+  }
+  if (discount.max_uses !== null && discount.uses_count >= discount.max_uses) {
+    return { valid: false, reason: 'This discount code has been fully redeemed' };
+  }
+  if (discount.max_uses_per_customer !== null && customerEmail) {
+    const usage = await sb.query('discount_usage', {
+      filters: { discount_id: `eq.${discount.id}`, customer_email: `eq.${customerEmail}` },
+    });
+    if (usage.length >= discount.max_uses_per_customer) {
+      return { valid: false, reason: 'You have already used this discount code' };
+    }
+  }
+  if (discount.min_subtotal !== null && subtotal < discount.min_subtotal) {
+    const minDollars = (discount.min_subtotal / 100).toFixed(2);
+    return { valid: false, reason: `Minimum purchase of $${minDollars} required for this code` };
+  }
+
+  let amountOff = 0;
+  const value = parseFloat(discount.value);
+  if (discount.type === 'percentage') {
+    amountOff = Math.round(subtotal * value / 100);
+  } else if (discount.type === 'fixed') {
+    amountOff = Math.min(Math.round(value), subtotal);
+  }
+
+  return {
+    valid: true,
+    discount: { id: discount.id, code: discount.code, type: discount.type, value },
+    amountOff,
+  };
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  PUBLIC — DISCOUNT VALIDATION ENDPOINT
+// ═══════════════════════════════════════════════════════════════
+
+async function handleValidateDiscount(request, sb, storeId, corsOrigin) {
+  const body = await request.json();
+  const { code, subtotal, customerEmail } = body;
+  if (!code) return json({ error: 'Discount code required' }, 400, corsOrigin);
+  if (subtotal === undefined) return json({ error: 'Subtotal required' }, 400, corsOrigin);
+
+  const result = await validateDiscountCode(sb, storeId, code, subtotal, customerEmail, null);
+  if (!result.valid) {
+    return json({ valid: false, reason: result.reason }, 200, corsOrigin);
+  }
+
+  return json({
+    valid: true,
+    code: result.discount.code,
+    type: result.discount.type,
+    value: result.discount.value,
+    amountOff: result.amountOff,
+    description: result.discount.type === 'percentage'
+      ? `${result.discount.value}% off`
+      : result.discount.type === 'fixed'
+        ? `$${(result.discount.value / 100).toFixed(2)} off`
+        : 'Free shipping',
+  }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  ADMIN — DISCOUNTS
+// ═══════════════════════════════════════════════════════════════
+
+async function handleAdminListDiscounts(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const discounts = await sb.query('discount_codes', {
+    filters: { store_id: `eq.${storeId}` },
+    order: 'created_at.desc',
+  });
+
+  const now = new Date();
+  const enriched = discounts.map(d => {
+    let status = 'active';
+    if (!d.is_active) status = 'paused';
+    else if (d.expires_at && new Date(d.expires_at) < now) status = 'expired';
+    else if (d.starts_at && new Date(d.starts_at) > now) status = 'scheduled';
+    else if (d.max_uses !== null && d.uses_count >= d.max_uses) status = 'exhausted';
+    return { ...d, status };
+  });
+
+  return json(enriched, 200, corsOrigin);
+}
+
+async function handleAdminCreateDiscount(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const body = await request.json();
+  if (!body.code || !body.type) return json({ error: 'Code and type are required' }, 400, corsOrigin);
+
+  const code = body.code.toUpperCase().trim().replace(/\s+/g, '');
+  const validTypes = ['percentage', 'fixed', 'free_shipping'];
+  if (!validTypes.includes(body.type)) return json({ error: 'Type must be percentage, fixed, or free_shipping' }, 400, corsOrigin);
+
+  const existing = await sb.query('discount_codes', {
+    filters: { store_id: `eq.${storeId}`, code: `eq.${code}` },
+    single: true,
+  });
+  if (existing) return json({ error: `Discount code "${code}" already exists` }, 400, corsOrigin);
+
+  const [discount] = await sb.insert('discount_codes', {
+    store_id: storeId,
+    code,
+    type: body.type,
+    value: body.value || 0,
+    min_subtotal: body.min_subtotal || null,
+    max_uses: body.max_uses || null,
+    max_uses_per_customer: body.max_uses_per_customer ?? 1,
+    category_restriction: body.category_restriction || null,
+    is_active: body.is_active !== undefined ? body.is_active : true,
+    starts_at: body.starts_at || null,
+    expires_at: body.expires_at || null,
+  });
+
+  return json(discount, 201, corsOrigin);
+}
+
+async function handleAdminGetDiscount(request, sb, env, storeId, discountId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const discount = await sb.query('discount_codes', {
+    filters: { id: `eq.${discountId}`, store_id: `eq.${storeId}` },
+    single: true,
+  });
+  if (!discount) return json({ error: 'Discount not found' }, 404, corsOrigin);
+
+  const usage = await sb.query('discount_usage', {
+    filters: { discount_id: `eq.${discountId}` },
+    order: 'created_at.desc',
+    limit: 50,
+  });
+
+  return json({ ...discount, usage }, 200, corsOrigin);
+}
+
+async function handleAdminUpdateDiscount(request, sb, env, storeId, discountId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const body = await request.json();
+  const allowed = ['code', 'type', 'value', 'min_subtotal', 'max_uses', 'max_uses_per_customer',
+    'category_restriction', 'is_active', 'starts_at', 'expires_at'];
+  const updates = {};
+  for (const key of allowed) {
+    if (body[key] !== undefined) {
+      updates[key] = key === 'code' ? body[key].toUpperCase().trim() : body[key];
+    }
+  }
+  if (Object.keys(updates).length === 0) return json({ error: 'No valid fields' }, 400, corsOrigin);
+
+  await sb.update('discount_codes', { id: `eq.${discountId}`, store_id: `eq.${storeId}` }, updates);
+  return json({ updated: true }, 200, corsOrigin);
+}
+
+async function handleAdminDeleteDiscount(request, sb, env, storeId, discountId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  await sb.delete('discount_codes', { id: `eq.${discountId}`, store_id: `eq.${storeId}` });
+  return json({ deleted: true }, 200, corsOrigin);
 }

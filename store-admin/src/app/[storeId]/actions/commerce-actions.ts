@@ -101,3 +101,23 @@ export async function deleteCategory(storeId: string, categoryId: string) {
   const client = new CommerceClient(storeId);
   return client.deleteCategory(categoryId);
 }
+
+export async function getDiscounts(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.getDiscounts();
+}
+
+export async function createDiscount(storeId: string, data: Record<string, unknown>) {
+  const client = new CommerceClient(storeId);
+  return client.createDiscount(data);
+}
+
+export async function updateDiscount(storeId: string, discountId: string, data: Record<string, unknown>) {
+  const client = new CommerceClient(storeId);
+  return client.updateDiscount(discountId, data);
+}
+
+export async function deleteDiscount(storeId: string, discountId: string) {
+  const client = new CommerceClient(storeId);
+  return client.deleteDiscount(discountId);
+}
