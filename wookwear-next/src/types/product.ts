@@ -17,7 +17,7 @@ export interface Variant {
 export interface Product {
   id: string;
   name: string;
-  category: 'pouches' | 'bags' | 'mats' | 'buddy';
+  category: string;
   price: number;
   badge: 'new' | 'sold' | 'oneofone' | 'collection' | null;
   inStock: boolean;

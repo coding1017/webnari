@@ -2,15 +2,28 @@
 
 import { useState, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
-import { Product, Category, CATEGORIES, CATEGORY_LABELS } from "@/types/product";
+import { Product } from "@/types/product";
 import { ProductCard } from "@/components/product/ProductCard";
 import { cn } from "@/lib/utils";
 import { Suspense } from "react";
 
 function ShopGrid({ products }: { products: Product[] }) {
   const searchParams = useSearchParams();
-  const initialCat = searchParams.get("cat") as Category | null;
-  const [activeCategory, setActiveCategory] = useState<Category | "all">(initialCat || "all");
+  const initialCat = searchParams.get("cat");
+  const [activeCategory, setActiveCategory] = useState<string>(initialCat || "all");
+
+  // Build categories dynamically from the actual products
+  const dynamicCategories = useMemo(() => {
+    const catMap = new Map<string, string>();
+    for (const p of products) {
+      if (p.category && !catMap.has(p.category)) {
+        // Convert slug to label: "buddy-pouches" → "Buddy Pouches"
+        const label = p.category.split("-").map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+        catMap.set(p.category, label);
+      }
+    }
+    return Array.from(catMap.entries()).map(([slug, label]) => ({ slug, label }));
+  }, [products]);
   const [sortBy, setSortBy] = useState<"default" | "price-asc" | "price-desc" | "rating">("default");
   const [search, setSearch] = useState("");
 
@@ -94,18 +107,18 @@ function ShopGrid({ products }: { products: Product[] }) {
           >
             All
           </button>
-          {CATEGORIES.map((cat) => (
+          {dynamicCategories.map((cat) => (
             <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
+              key={cat.slug}
+              onClick={() => setActiveCategory(cat.slug)}
               className={cn(
                 "px-4 py-2 font-head text-xs font-bold tracking-[0.1em] uppercase rounded-[12px] border transition-all",
-                activeCategory === cat
+                activeCategory === cat.slug
                   ? "bg-[rgba(168,85,247,0.15)] border-ww-purple text-ww-white"
                   : "bg-transparent border-ww-border text-ww-text hover:border-ww-purple hover:text-ww-white"
               )}
             >
-              {CATEGORY_LABELS[cat]}
+              {cat.label}
             </button>
           ))}
 
