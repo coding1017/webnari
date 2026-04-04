@@ -64,7 +64,7 @@ export default function ProductsPage() {
   const [editStockQty, setEditStockQty] = useState(0);
   const [editLowThreshold, setEditLowThreshold] = useState(5);
   const [editImages, setEditImages] = useState<string[]>([]);
-  const [editVariants, setEditVariants] = useState<{ id?: string; name: string; color: string; price: string; stock_quantity: number; in_stock: boolean }[]>([]);
+  const [editVariants, setEditVariants] = useState<{ id?: string; name: string; color: string; price: string; stock_quantity: number; in_stock: boolean; images: string[] }[]>([]);
 
   const load = useCallback(async () => {
     try {
@@ -106,13 +106,14 @@ export default function ProductsPage() {
         setEditImages(full.images.map((i: { url: string }) => i.url));
       }
       if (full?.variants?.length) {
-        setEditVariants(full.variants.map((v: { id: string; name: string; color: string; price: number; stock_quantity: number; in_stock: boolean }) => ({
+        setEditVariants(full.variants.map((v: { id: string; name: string; color: string; price: number; stock_quantity: number; in_stock: boolean; images?: { url: string }[]; imgs?: string[] }) => ({
           id: v.id,
           name: v.name,
           color: v.color || "",
           price: v.price ? (v.price / 100).toFixed(2) : "",
           stock_quantity: v.stock_quantity || 0,
           in_stock: v.in_stock,
+          images: v.images?.map((i: { url: string }) => i.url) || v.imgs || [],
         })));
       }
     } catch {
@@ -134,6 +135,14 @@ export default function ProductsPage() {
         stock_quantity: editStockQty,
         low_stock_threshold: editLowThreshold,
         images: editImages.map((url) => ({ url, alt: editName })),
+        variants: editVariants.map((v) => ({
+          name: v.name,
+          color: v.color || null,
+          price: v.price ? Math.round(parseFloat(v.price) * 100) : null,
+          stock_quantity: v.stock_quantity,
+          in_stock: v.in_stock,
+          images: (v.images || []).map((url) => ({ url })),
+        })),
       });
       setMessage("Saved");
       setTimeout(() => setMessage(""), 2000);
@@ -389,7 +398,7 @@ export default function ProductsPage() {
                           <label style={{ marginBottom: 0, fontSize: "14px", fontWeight: 600 }}>Variants</label>
                           <button
                             type="button"
-                            onClick={() => setEditVariants([...editVariants, { name: "", color: "", price: "", stock_quantity: 0, in_stock: true }])}
+                            onClick={() => setEditVariants([...editVariants, { name: "", color: "", price: "", stock_quantity: 0, in_stock: true, images: [] }])}
                             style={{
                               fontSize: "12px",
                               fontWeight: 600,
@@ -411,62 +420,84 @@ export default function ProductsPage() {
                               <div
                                 key={vi}
                                 style={{
-                                  display: "grid",
-                                  gridTemplateColumns: "1fr 80px 90px 70px 30px",
-                                  gap: "8px",
-                                  alignItems: "end",
-                                  padding: "10px 12px",
+                                  padding: "12px",
                                   background: "var(--bg-elevated)",
                                   borderRadius: "var(--radius-sm)",
                                   border: "1px solid var(--border)",
                                 }}
                               >
+                                {/* Variant header */}
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
+                                  <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
+                                    Variant {vi + 1}{v.name ? ` — ${v.name}` : ""}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={() => setEditVariants(editVariants.filter((_, i) => i !== vi))}
+                                    style={{ color: "var(--red)", fontSize: "12px", cursor: "pointer", background: "none", border: "none", fontWeight: 600 }}
+                                  >
+                                    Remove
+                                  </button>
+                                </div>
+
+                                {/* Variant fields */}
+                                <div style={{ display: "grid", gridTemplateColumns: "1fr 80px 90px 70px", gap: "8px", marginBottom: "10px" }}>
+                                  <div>
+                                    <label style={{ fontSize: "10px" }}>Name</label>
+                                    <input
+                                      value={v.name}
+                                      onChange={(e) => { const u = [...editVariants]; u[vi] = { ...u[vi], name: e.target.value }; setEditVariants(u); }}
+                                      placeholder="e.g. Red / Large"
+                                      style={{ fontSize: "13px", padding: "8px 10px", minHeight: "36px" }}
+                                    />
+                                  </div>
+                                  <div>
+                                    <label style={{ fontSize: "10px" }}>Color</label>
+                                    <input
+                                      value={v.color}
+                                      onChange={(e) => { const u = [...editVariants]; u[vi] = { ...u[vi], color: e.target.value }; setEditVariants(u); }}
+                                      placeholder="#hex"
+                                      style={{ fontSize: "13px", padding: "8px 10px", minHeight: "36px" }}
+                                    />
+                                  </div>
+                                  <div>
+                                    <label style={{ fontSize: "10px" }}>Price ($)</label>
+                                    <input
+                                      type="number"
+                                      step="0.01"
+                                      value={v.price}
+                                      onChange={(e) => { const u = [...editVariants]; u[vi] = { ...u[vi], price: e.target.value }; setEditVariants(u); }}
+                                      placeholder="Override"
+                                      style={{ fontSize: "13px", padding: "8px 10px", minHeight: "36px" }}
+                                    />
+                                  </div>
+                                  <div>
+                                    <label style={{ fontSize: "10px" }}>Stock</label>
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      value={v.stock_quantity}
+                                      onChange={(e) => { const u = [...editVariants]; u[vi] = { ...u[vi], stock_quantity: parseInt(e.target.value) || 0 }; setEditVariants(u); }}
+                                      style={{ fontSize: "13px", padding: "8px 10px", minHeight: "36px" }}
+                                    />
+                                  </div>
+                                </div>
+
+                                {/* Variant image */}
                                 <div>
-                                  <label style={{ fontSize: "10px" }}>Name</label>
-                                  <input
-                                    value={v.name}
-                                    onChange={(e) => { const u = [...editVariants]; u[vi] = { ...u[vi], name: e.target.value }; setEditVariants(u); }}
-                                    placeholder="e.g. Red / Large"
-                                    style={{ fontSize: "13px", padding: "8px 10px", minHeight: "36px" }}
+                                  <label style={{ fontSize: "10px" }}>Variant Image</label>
+                                  <ImageUploader
+                                    storeId={storeId}
+                                    images={v.images || []}
+                                    onChange={(newImages) => {
+                                      const u = [...editVariants];
+                                      u[vi] = { ...u[vi], images: newImages };
+                                      setEditVariants(u);
+                                    }}
+                                    folder={`variants/${p.slug || p.id}/${v.name || `v${vi}`}`}
+                                    maxImages={3}
                                   />
                                 </div>
-                                <div>
-                                  <label style={{ fontSize: "10px" }}>Color</label>
-                                  <input
-                                    value={v.color}
-                                    onChange={(e) => { const u = [...editVariants]; u[vi] = { ...u[vi], color: e.target.value }; setEditVariants(u); }}
-                                    placeholder="#hex"
-                                    style={{ fontSize: "13px", padding: "8px 10px", minHeight: "36px" }}
-                                  />
-                                </div>
-                                <div>
-                                  <label style={{ fontSize: "10px" }}>Price ($)</label>
-                                  <input
-                                    type="number"
-                                    step="0.01"
-                                    value={v.price}
-                                    onChange={(e) => { const u = [...editVariants]; u[vi] = { ...u[vi], price: e.target.value }; setEditVariants(u); }}
-                                    placeholder="Override"
-                                    style={{ fontSize: "13px", padding: "8px 10px", minHeight: "36px" }}
-                                  />
-                                </div>
-                                <div>
-                                  <label style={{ fontSize: "10px" }}>Stock</label>
-                                  <input
-                                    type="number"
-                                    min="0"
-                                    value={v.stock_quantity}
-                                    onChange={(e) => { const u = [...editVariants]; u[vi] = { ...u[vi], stock_quantity: parseInt(e.target.value) || 0 }; setEditVariants(u); }}
-                                    style={{ fontSize: "13px", padding: "8px 10px", minHeight: "36px" }}
-                                  />
-                                </div>
-                                <button
-                                  type="button"
-                                  onClick={() => setEditVariants(editVariants.filter((_, i) => i !== vi))}
-                                  style={{ color: "var(--red)", fontSize: "16px", cursor: "pointer", background: "none", border: "none", minHeight: "36px" }}
-                                >
-                                  x
-                                </button>
                               </div>
                             ))}
                           </div>

@@ -1686,6 +1686,36 @@ async function handleAdminUpdateProduct(request, sb, env, storeId, productId, co
     }
   }
 
+  // Replace variants if provided
+  const { variants } = body;
+  if (variants !== undefined) {
+    // Delete existing variants (cascade deletes variant_images)
+    await sb.delete('variants', { product_id: `eq.${productId}` });
+    if (variants?.length) {
+      for (let i = 0; i < variants.length; i++) {
+        const { images: vImages, ...vData } = variants[i];
+        const [variant] = await sb.insert('variants', {
+          product_id: productId,
+          name: vData.name || '',
+          color: vData.color || null,
+          price: vData.price || null,
+          in_stock: vData.in_stock !== undefined ? vData.in_stock : true,
+          stock_quantity: vData.stock_quantity || 0,
+          sku: vData.sku || null,
+          size: vData.size || null,
+          sort_order: i,
+        });
+        if (vImages?.length) {
+          await sb.insert('variant_images', vImages.map((img, j) => ({
+            variant_id: variant.id,
+            url: typeof img === 'string' ? img : img.url,
+            sort_order: j,
+          })));
+        }
+      }
+    }
+  }
+
   return json({ updated: true }, 200, corsOrigin);
 }
 
