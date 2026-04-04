@@ -65,6 +65,7 @@ export default function ProductsPage() {
   const [editLowThreshold, setEditLowThreshold] = useState(5);
   const [editImages, setEditImages] = useState<string[]>([]);
   const [editVariants, setEditVariants] = useState<{ id?: string; name: string; color: string; price: string; stock_quantity: number; in_stock: boolean; images: string[] }[]>([]);
+  const [expandedVariantImg, setExpandedVariantImg] = useState<number | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -415,91 +416,135 @@ export default function ProductsPage() {
                         </div>
 
                         {editVariants.length > 0 ? (
-                          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                            {editVariants.map((v, vi) => (
-                              <div
-                                key={vi}
-                                style={{
-                                  padding: "12px",
-                                  background: "var(--bg-elevated)",
-                                  borderRadius: "var(--radius-sm)",
-                                  border: "1px solid var(--border)",
-                                }}
-                              >
-                                {/* Variant header */}
-                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "8px" }}>
-                                  <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.04em" }}>
-                                    Variant {vi + 1}{v.name ? ` — ${v.name}` : ""}
-                                  </span>
-                                  <button
-                                    type="button"
-                                    onClick={() => setEditVariants(editVariants.filter((_, i) => i !== vi))}
-                                    style={{ color: "var(--red)", fontSize: "12px", cursor: "pointer", background: "none", border: "none", fontWeight: 600 }}
-                                  >
-                                    Remove
-                                  </button>
-                                </div>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                            {editVariants.map((v, vi) => {
+                              const imgExpanded = expandedVariantImg === vi;
+                              const hasImg = v.images && v.images.length > 0;
+                              return (
+                                <div
+                                  key={vi}
+                                  style={{
+                                    background: "var(--bg-elevated)",
+                                    borderRadius: "var(--radius-sm)",
+                                    border: "1px solid var(--border)",
+                                    overflow: "hidden",
+                                  }}
+                                >
+                                  {/* Compact row: thumbnail + fields */}
+                                  <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 12px" }}>
+                                    {/* Thumbnail / image toggle */}
+                                    <button
+                                      type="button"
+                                      onClick={() => setExpandedVariantImg(imgExpanded ? null : vi)}
+                                      style={{
+                                        width: "40px",
+                                        height: "40px",
+                                        borderRadius: "8px",
+                                        border: `1px solid ${imgExpanded ? "var(--gold)" : "var(--border)"}`,
+                                        overflow: "hidden",
+                                        cursor: "pointer",
+                                        background: "var(--bg-grouped)",
+                                        flexShrink: 0,
+                                        padding: 0,
+                                        position: "relative",
+                                      }}
+                                      title={imgExpanded ? "Hide images" : "Add/edit image"}
+                                    >
+                                      {hasImg ? (
+                                        <img src={v.images[0]} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+                                      ) : (
+                                        <svg style={{ width: "16px", height: "16px", margin: "auto", display: "block" }} fill="none" viewBox="0 0 24 24" stroke="var(--text-tertiary)" strokeWidth={1.5}>
+                                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                                        </svg>
+                                      )}
+                                      {/* Small expand indicator */}
+                                      <div style={{
+                                        position: "absolute",
+                                        bottom: "1px",
+                                        right: "1px",
+                                        width: "12px",
+                                        height: "12px",
+                                        borderRadius: "3px",
+                                        background: "rgba(0,0,0,0.5)",
+                                        display: "flex",
+                                        alignItems: "center",
+                                        justifyContent: "center",
+                                      }}>
+                                        <svg style={{ width: "8px", height: "8px", transform: imgExpanded ? "rotate(180deg)" : "rotate(0deg)" }} fill="white" viewBox="0 0 10 6">
+                                          <path d="M1 1l4 4 4-4" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" />
+                                        </svg>
+                                      </div>
+                                    </button>
 
-                                {/* Variant fields */}
-                                <div style={{ display: "grid", gridTemplateColumns: "1fr 80px 90px 70px", gap: "8px", marginBottom: "10px" }}>
-                                  <div>
-                                    <label style={{ fontSize: "10px" }}>Name</label>
+                                    {/* Color swatch */}
+                                    {v.color && (
+                                      <div style={{ width: "16px", height: "16px", borderRadius: "50%", background: v.color, border: "1px solid var(--border)", flexShrink: 0 }} />
+                                    )}
+
+                                    {/* Name */}
                                     <input
                                       value={v.name}
                                       onChange={(e) => { const u = [...editVariants]; u[vi] = { ...u[vi], name: e.target.value }; setEditVariants(u); }}
-                                      placeholder="e.g. Red / Large"
-                                      style={{ fontSize: "13px", padding: "8px 10px", minHeight: "36px" }}
+                                      placeholder="Variant name"
+                                      style={{ fontSize: "13px", padding: "6px 8px", minHeight: "32px", flex: 1 }}
                                     />
-                                  </div>
-                                  <div>
-                                    <label style={{ fontSize: "10px" }}>Color</label>
+
+                                    {/* Color hex */}
                                     <input
                                       value={v.color}
                                       onChange={(e) => { const u = [...editVariants]; u[vi] = { ...u[vi], color: e.target.value }; setEditVariants(u); }}
                                       placeholder="#hex"
-                                      style={{ fontSize: "13px", padding: "8px 10px", minHeight: "36px" }}
+                                      style={{ fontSize: "12px", padding: "6px 8px", minHeight: "32px", width: "70px", flexShrink: 0 }}
                                     />
-                                  </div>
-                                  <div>
-                                    <label style={{ fontSize: "10px" }}>Price ($)</label>
+
+                                    {/* Price */}
                                     <input
                                       type="number"
                                       step="0.01"
                                       value={v.price}
                                       onChange={(e) => { const u = [...editVariants]; u[vi] = { ...u[vi], price: e.target.value }; setEditVariants(u); }}
-                                      placeholder="Override"
-                                      style={{ fontSize: "13px", padding: "8px 10px", minHeight: "36px" }}
+                                      placeholder="$"
+                                      style={{ fontSize: "12px", padding: "6px 8px", minHeight: "32px", width: "75px", flexShrink: 0 }}
                                     />
-                                  </div>
-                                  <div>
-                                    <label style={{ fontSize: "10px" }}>Stock</label>
+
+                                    {/* Stock */}
                                     <input
                                       type="number"
                                       min="0"
                                       value={v.stock_quantity}
                                       onChange={(e) => { const u = [...editVariants]; u[vi] = { ...u[vi], stock_quantity: parseInt(e.target.value) || 0 }; setEditVariants(u); }}
-                                      style={{ fontSize: "13px", padding: "8px 10px", minHeight: "36px" }}
+                                      style={{ fontSize: "12px", padding: "6px 8px", minHeight: "32px", width: "55px", flexShrink: 0 }}
                                     />
-                                  </div>
-                                </div>
 
-                                {/* Variant image */}
-                                <div>
-                                  <label style={{ fontSize: "10px" }}>Variant Image</label>
-                                  <ImageUploader
-                                    storeId={storeId}
-                                    images={v.images || []}
-                                    onChange={(newImages) => {
-                                      const u = [...editVariants];
-                                      u[vi] = { ...u[vi], images: newImages };
-                                      setEditVariants(u);
-                                    }}
-                                    folder={`variants/${p.slug || p.id}/${v.name || `v${vi}`}`}
-                                    maxImages={3}
-                                  />
+                                    {/* Remove */}
+                                    <button
+                                      type="button"
+                                      onClick={() => { setEditVariants(editVariants.filter((_, i) => i !== vi)); if (expandedVariantImg === vi) setExpandedVariantImg(null); }}
+                                      style={{ color: "var(--red)", fontSize: "14px", cursor: "pointer", background: "none", border: "none", padding: "4px", flexShrink: 0 }}
+                                    >
+                                      x
+                                    </button>
+                                  </div>
+
+                                  {/* Expandable image uploader */}
+                                  {imgExpanded && (
+                                    <div className="fade-in" style={{ padding: "10px 12px", borderTop: "1px solid var(--border)", background: "var(--bg-grouped)" }}>
+                                      <ImageUploader
+                                        storeId={storeId}
+                                        images={v.images || []}
+                                        onChange={(newImages) => {
+                                          const u = [...editVariants];
+                                          u[vi] = { ...u[vi], images: newImages };
+                                          setEditVariants(u);
+                                        }}
+                                        folder={`variants/${p.slug || p.id}/${v.name || `v${vi}`}`}
+                                        maxImages={3}
+                                      />
+                                    </div>
+                                  )}
                                 </div>
-                              </div>
-                            ))}
+                              );
+                            })}
                           </div>
                         ) : (
                           <div style={{ fontSize: "12px", color: "var(--text-tertiary)", padding: "8px 0" }}>
