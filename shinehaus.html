@@ -96,6 +96,17 @@ button { font-family: inherit; }
 .reveal-delay-3 { transition-delay: 0.3s; }
 .reveal-delay-4 { transition-delay: 0.4s; }
 
+/* Hero reveals animate on load via JS, not scroll */
+.hero .reveal { animation: heroRevealIn 0.9s var(--ease) forwards; }
+.hero .reveal.reveal-delay-1 { animation-delay: 0.15s; }
+.hero .reveal.reveal-delay-2 { animation-delay: 0.3s; }
+.hero .reveal.reveal-delay-3 { animation-delay: 0.45s; }
+.hero .reveal.reveal-delay-4 { animation-delay: 0.6s; }
+@keyframes heroRevealIn {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* ─── NAV ────────────────────────────────────────────────────────────────── */
 .site-nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
@@ -111,33 +122,38 @@ button { font-family: inherit; }
 }
 .nav-logo {
   font-family: var(--serif); font-weight: 400; font-size: 24px;
-  letter-spacing: 0.02em; color: var(--heading);
+  letter-spacing: 0.02em; color: var(--cream); transition: color 0.4s;
 }
+.site-nav.scrolled .nav-logo { color: var(--heading); }
 .nav-logo span { font-style: italic; color: var(--copper); }
 .nav-links {
   display: flex; align-items: center; gap: 32px; margin-left: auto;
 }
 .nav-links a {
   font-family: var(--sans); font-size: 14px; font-weight: 500;
-  color: var(--charcoal); position: relative; padding: 4px 0;
-  transition: color 0.2s;
+  color: rgba(255,255,255,0.6); position: relative; padding: 4px 0;
+  transition: color 0.4s;
 }
+.site-nav.scrolled .nav-links a { color: var(--charcoal); }
 .nav-links a::after {
   content: ''; position: absolute; bottom: 0; left: 0; right: 0;
   height: 1px; background: var(--copper); transform: scaleX(0);
   transform-origin: right; transition: transform 0.3s var(--ease);
 }
-.nav-links a:hover { color: var(--heading); }
+.nav-links a:hover { color: var(--cream); }
+.site-nav.scrolled .nav-links a:hover { color: var(--heading); }
 .nav-links a:hover::after { transform: scaleX(1); transform-origin: left; }
 .nav-cta {
   font-family: var(--sans); font-size: 13px; font-weight: 700;
   letter-spacing: 0.08em; text-transform: uppercase; color: var(--white);
-  background: var(--espresso); padding: 12px 28px; border: none;
-  cursor: pointer; transition: background 0.25s;
+  background: var(--copper); padding: 12px 28px; border: none;
+  cursor: pointer; transition: all 0.4s;
   display: inline-flex; align-items: center; gap: 8px;
   margin-left: 24px;
 }
-.nav-cta:hover { background: var(--copper); }
+.nav-cta:hover { background: var(--copper2); }
+.site-nav.scrolled .nav-cta { background: var(--espresso); color: var(--white); }
+.site-nav.scrolled .nav-cta:hover { background: var(--copper); }
 
 /* Hamburger */
 .hamburger {
@@ -145,9 +161,10 @@ button { font-family: inherit; }
   border: none; cursor: pointer; padding: 4px; margin-left: auto;
 }
 .hamburger span {
-  display: block; width: 24px; height: 1.5px; background: var(--heading);
+  display: block; width: 24px; height: 1.5px; background: var(--cream);
   transition: all 0.3s;
 }
+.site-nav.scrolled .hamburger span { background: var(--heading); }
 .hamburger.open span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
 .hamburger.open span:nth-child(2) { opacity: 0; }
 .hamburger.open span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
@@ -176,71 +193,264 @@ button { font-family: inherit; }
 /* ─── HERO ───────────────────────────────────────────────────────────────── */
 .hero {
   min-height: 100vh; display: flex; flex-direction: column;
-  justify-content: center; padding: 120px 0 40px;
-  background: linear-gradient(180deg, var(--cream) 0%, var(--cream2) 100%);
-  position: relative; overflow: hidden;
+  justify-content: center; padding: 120px 0 60px;
+  background: var(--espresso); position: relative; overflow: hidden;
 }
+/* Warm radial glow */
 .hero::before {
-  content: ''; position: absolute; top: 50%; right: -10%;
+  content: ''; position: absolute; top: -20%; right: -10%;
+  width: 900px; height: 900px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(196,122,74,0.15) 0%, rgba(212,165,116,0.06) 40%, transparent 70%);
+  pointer-events: none; animation: heroGlowDrift 12s ease-in-out infinite alternate;
+}
+/* Secondary subtle glow bottom-left */
+.hero::after {
+  content: ''; position: absolute; bottom: -15%; left: -5%;
   width: 600px; height: 600px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(196,122,74,0.06) 0%, transparent 70%);
-  transform: translateY(-50%); pointer-events: none;
+  background: radial-gradient(circle, rgba(122,143,110,0.1) 0%, transparent 60%);
+  pointer-events: none; animation: heroGlowDrift2 10s ease-in-out infinite alternate;
 }
-.hero-content {
+@keyframes heroGlowDrift {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-40px, 30px) scale(1.08); }
+}
+@keyframes heroGlowDrift2 {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(20px, -20px) scale(1.05); }
+}
+
+/* Decorative grid lines */
+.hero-grid-bg {
+  position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  opacity: 0.04;
+  background-image:
+    linear-gradient(rgba(212,165,116,1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(212,165,116,1) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 70%);
+}
+
+/* Floating sparkle particles */
+.hero-sparkles {
+  position: absolute; inset: 0; pointer-events: none; z-index: 1; overflow: hidden;
+}
+.sparkle {
+  position: absolute; width: 3px; height: 3px; border-radius: 50%;
+  background: var(--gold2); opacity: 0;
+  animation: sparkleFloat 6s ease-in-out infinite;
+}
+.sparkle:nth-child(1) { top: 20%; left: 15%; animation-delay: 0s; }
+.sparkle:nth-child(2) { top: 35%; left: 75%; animation-delay: 1.2s; width: 2px; height: 2px; }
+.sparkle:nth-child(3) { top: 60%; left: 40%; animation-delay: 2.5s; }
+.sparkle:nth-child(4) { top: 15%; left: 60%; animation-delay: 3.8s; width: 2px; height: 2px; }
+.sparkle:nth-child(5) { top: 70%; left: 80%; animation-delay: 0.8s; }
+.sparkle:nth-child(6) { top: 80%; left: 20%; animation-delay: 4.2s; width: 2px; height: 2px; }
+.sparkle:nth-child(7) { top: 45%; left: 90%; animation-delay: 2s; }
+.sparkle:nth-child(8) { top: 10%; left: 45%; animation-delay: 5s; width: 2px; height: 2px; }
+@keyframes sparkleFloat {
+  0%, 100% { opacity: 0; transform: translateY(0) scale(0.5); }
+  20% { opacity: 0.8; transform: translateY(-8px) scale(1); }
+  50% { opacity: 0.4; transform: translateY(-20px) scale(0.8); }
+  80% { opacity: 0.6; transform: translateY(-12px) scale(1); }
+}
+
+.hero-inner {
   max-width: 1200px; margin: 0 auto; padding: 0 24px; position: relative; z-index: 2;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
 }
+
+/* ─ Left column: text ─ */
+.hero-text { position: relative; }
 .hero-label {
-  font-family: var(--sans); font-size: 12px; font-weight: 700;
-  letter-spacing: 0.25em; text-transform: uppercase; color: var(--copper);
-  margin-bottom: 24px;
+  font-family: var(--sans); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.3em; text-transform: uppercase; color: var(--copper);
+  margin-bottom: 28px; display: inline-flex; align-items: center; gap: 14px;
+}
+.hero-label::before {
+  content: ''; width: 32px; height: 1px; background: var(--copper);
 }
 .hero-h1 {
-  font-family: var(--serif); font-size: clamp(52px, 8vw, 96px);
-  font-weight: 400; color: var(--heading); line-height: 1.05;
-  letter-spacing: -0.02em; max-width: 700px;
+  font-family: var(--serif); font-size: clamp(48px, 6vw, 80px);
+  font-weight: 400; color: var(--cream); line-height: 1.08;
+  letter-spacing: -0.02em;
 }
-.hero-h1 em { font-style: italic; color: var(--copper); }
+.hero-h1 em {
+  font-style: italic; display: inline-block; position: relative;
+  background: linear-gradient(135deg, var(--copper), var(--gold2), var(--copper2));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+/* Animated shimmer across the italic word */
+.hero-h1 em::after {
+  content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.15) 50%, transparent 100%);
+  -webkit-background-clip: text; background-clip: text;
+  animation: shimmer 4s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0% { left: -100%; }
+  40%, 100% { left: 200%; }
+}
+
 .hero-desc {
-  margin-top: 28px; font-size: 18px; line-height: 1.8; color: var(--text);
-  max-width: 480px;
+  margin-top: 24px; font-size: 17px; line-height: 1.85;
+  color: rgba(255,255,255,0.5); max-width: 420px;
 }
-.hero-actions { display: flex; gap: 16px; margin-top: 40px; flex-wrap: wrap; align-items: center; }
+.hero-actions { display: flex; gap: 16px; margin-top: 36px; flex-wrap: wrap; align-items: center; }
 .btn-primary {
   display: inline-flex; align-items: center; gap: 10px;
-  padding: 16px 36px; background: var(--espresso); color: var(--white);
-  font-family: var(--sans); font-size: 14px; font-weight: 700;
+  padding: 16px 36px; background: var(--copper); color: var(--white);
+  font-family: var(--sans); font-size: 13px; font-weight: 700;
   letter-spacing: 0.08em; text-transform: uppercase; border: none;
-  cursor: pointer; transition: background 0.3s;
+  cursor: pointer; transition: all 0.3s; position: relative; overflow: hidden;
 }
-.btn-primary:hover { background: var(--copper); }
+.btn-primary::before {
+  content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+  transition: left 0.5s;
+}
+.btn-primary:hover { background: var(--copper2); transform: translateY(-1px); }
+.btn-primary:hover::before { left: 100%; }
 .btn-primary svg { flex-shrink: 0; }
 .btn-text {
   display: inline-flex; align-items: center; gap: 8px;
   font-family: var(--sans); font-size: 14px; font-weight: 600;
-  color: var(--charcoal); padding: 16px 8px; position: relative;
-  transition: color 0.2s;
+  color: rgba(255,255,255,0.7); padding: 14px 28px; position: relative;
+  transition: color 0.2s, border-color 0.2s;
+  border: 1px solid rgba(255,255,255,0.35);
 }
-.btn-text::after {
-  content: ''; position: absolute; bottom: 12px; left: 8px; right: 8px;
-  height: 1px; background: var(--copper); transform: scaleX(0);
-  transform-origin: right; transition: transform 0.3s var(--ease);
-}
-.btn-text:hover { color: var(--copper); }
-.btn-text:hover::after { transform: scaleX(1); transform-origin: left; }
+.btn-text:hover { color: var(--white); border-color: rgba(255,255,255,0.7); }
 
-/* Hero stats ticker */
-.hero-ticker {
-  margin-top: 80px; border-top: 1px solid var(--cream3);
-  padding-top: 32px; display: flex; gap: 48px; flex-wrap: wrap;
+/* ─ Right column: visual composition ─ */
+.hero-visual {
+  position: relative; display: flex; align-items: center; justify-content: center;
+  height: 520px;
 }
-.ticker-stat { display: flex; flex-direction: column; }
-.ticker-num {
-  font-family: var(--serif); font-style: italic; font-size: 32px;
-  color: var(--heading); letter-spacing: -0.02em;
+
+/* Glowing orb centerpiece */
+.hero-orb {
+  width: 374px; height: 374px; border-radius: 50%; position: relative;
+  background: radial-gradient(circle at 40% 35%,
+    rgba(212,165,116,0.2) 0%,
+    rgba(196,122,74,0.12) 30%,
+    rgba(28,20,16,0.4) 70%,
+    transparent 100%
+  );
+  border: 1px solid rgba(212,165,116,0.12);
+  animation: orbPulse 6s ease-in-out infinite;
+  box-shadow:
+    0 0 80px rgba(196,122,74,0.12),
+    0 0 160px rgba(196,122,74,0.06),
+    inset 0 0 60px rgba(212,165,116,0.06);
 }
-.ticker-label {
-  font-size: 12px; font-weight: 600; color: var(--sand);
-  letter-spacing: 0.08em; text-transform: uppercase; margin-top: 4px;
+.orb-img {
+  width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
+}
+@keyframes orbPulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 80px rgba(196,122,74,0.12), 0 0 160px rgba(196,122,74,0.06), inset 0 0 60px rgba(212,165,116,0.06); }
+  50% { transform: scale(1.03); box-shadow: 0 0 100px rgba(196,122,74,0.18), 0 0 200px rgba(196,122,74,0.08), inset 0 0 80px rgba(212,165,116,0.08); }
+}
+/* Inner orb ring */
+.hero-orb::before {
+  content: ''; position: absolute; inset: 30px; border-radius: 50%;
+  border: 1px solid rgba(212,165,116,0.1);
+  animation: orbSpin 30s linear infinite;
+}
+.hero-orb::after {
+  content: ''; position: absolute; inset: 60px; border-radius: 50%;
+  border: 1px dashed rgba(212,165,116,0.06);
+  animation: orbSpin 20s linear infinite reverse;
+}
+@keyframes orbSpin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/* Orbiting decorative ring */
+.orb-ring {
+  position: absolute; width: 484px; height: 484px; border-radius: 50%;
+  border: 1px solid rgba(212,165,116,0.06);
+  animation: orbSpin 25s linear infinite;
+  top: 50%; left: 50%; transform: translate(-50%,-50%);
+}
+.orb-ring-dot {
+  position: absolute; width: 6px; height: 6px; border-radius: 50%;
+  background: var(--copper); top: -3px; left: 50%; transform: translateX(-50%);
+  box-shadow: 0 0 12px rgba(196,122,74,0.5);
+}
+
+/* Floating stat cards around orb */
+.hero-float-card {
+  position: absolute;
+  background: linear-gradient(135deg, rgba(44,34,24,0.85), rgba(58,46,34,0.9));
+  backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(212,165,116,0.15);
+  padding: 14px 18px; border-radius: 12px;
+  display: flex; flex-direction: column; z-index: 3;
+}
+.hero-float-card .float-num {
+  font-family: var(--serif); font-style: italic; font-size: 22px;
+  color: var(--cream); letter-spacing: -0.02em; line-height: 1;
+}
+.hero-float-card .float-label {
+  font-family: var(--sans); font-size: 9px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--gold2); margin-top: 5px;
+}
+.float-card-1 {
+  top: -10px; right: -30px;
+  animation: floatCard1 5s ease-in-out infinite;
+}
+.float-card-2 {
+  bottom: 20px; left: -40px;
+  animation: floatCard2 6s ease-in-out infinite;
+}
+.float-card-3 {
+  top: 45%; right: -60px; transform: translateY(-50%);
+  animation: floatCard3 5.5s ease-in-out infinite;
+}
+.float-card-4 {
+  bottom: -20px; right: 30%;
+  animation: floatCard4 4.5s ease-in-out infinite;
+}
+@keyframes floatCard1 {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+@keyframes floatCard2 {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+@keyframes floatCard3 {
+  0%, 100% { transform: translate(0, -50%); }
+  50% { transform: translate(-6px, calc(-50% - 8px)); }
+}
+@keyframes floatCard4 {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+/* Decorative accent lines */
+.hero-accent-line {
+  position: absolute; background: linear-gradient(to bottom, var(--copper), transparent);
+  width: 1px; height: 120px; opacity: 0.15; z-index: 1;
+}
+.accent-line-1 { top: 10%; left: 20%; transform: rotate(-15deg); }
+.accent-line-2 { bottom: 15%; right: 25%; transform: rotate(20deg); height: 80px; }
+
+/* Bottom trust bar spanning full width */
+.hero-trust-bar {
+  position: relative; z-index: 2; max-width: 1200px; margin: 60px auto 0;
+  padding: 0 24px;
+  display: flex; align-items: center; gap: 40px;
+  border-top: 1px solid rgba(212,165,116,0.1); padding-top: 28px;
+}
+.trust-item {
+  display: flex; align-items: center; gap: 10px;
+  font-family: var(--sans); font-size: 13px; color: rgba(255,255,255,0.3);
+  white-space: nowrap;
+}
+.trust-item svg { flex-shrink: 0; color: var(--copper); opacity: 0.6; }
+.trust-divider {
+  width: 1px; height: 20px; background: rgba(212,165,116,0.1); flex-shrink: 0;
 }
 
 /* ─── SERVICES SCROLL ────────────────────────────────────────────────────── */
@@ -620,6 +830,11 @@ button { font-family: inherit; }
   .nav-links { display: none; }
   .nav-cta { display: none; }
   .hamburger { display: flex; }
+  .hero-inner { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+  .hero-text { display: flex; flex-direction: column; align-items: center; }
+  .hero-desc { max-width: 520px; }
+  .hero-actions { justify-content: center; }
+  .hero-trust-bar { justify-content: center; flex-wrap: wrap; }
   .about-grid { grid-template-columns: 1fr; gap: 40px; }
   .about-img { height: 360px; }
   .booking-grid { grid-template-columns: 1fr; }
@@ -633,9 +848,17 @@ button { font-family: inherit; }
 }
 @media (max-width: 768px) {
   .hero { padding: 100px 0 40px; }
+  .hero-inner { grid-template-columns: 1fr; gap: 20px; }
   .hero-h1 { font-size: clamp(38px, 10vw, 52px); }
-  .hero-ticker { gap: 32px; }
-  .ticker-num { font-size: 26px; }
+  .hero-visual { height: 320px; margin: 0 auto; max-width: 360px; }
+  .hero-orb { width: 220px; height: 220px; }
+  .orb-ring { width: 300px; height: 300px; }
+  .hero-float-card { padding: 12px 16px; }
+  .hero-float-card .float-num { font-size: 22px; }
+  .hero-float-card .float-label { font-size: 9px; }
+  .float-card-3 { right: -10px; }
+  .hero-trust-bar { flex-wrap: wrap; gap: 16px; margin-top: 32px; }
+  .trust-divider { display: none; }
   .process-step { grid-template-columns: 60px 1fr; gap: 20px; }
   .step-num { font-size: 44px; }
   .svc-card { width: 280px; }
@@ -686,37 +909,73 @@ button { font-family: inherit; }
 
 <!-- ── HERO ───────────────────────────────────────────────────────────────── -->
 <section class="hero" id="home">
-  <div class="hero-content">
-    <div class="hero-label reveal">Premium Cleaning Services</div>
-    <h1 class="hero-h1 reveal reveal-delay-1">The art of<br><em>clean.</em></h1>
-    <p class="hero-desc reveal reveal-delay-2">Where meticulous attention meets warm hospitality. We bring the beauty back to every space we touch — naturally, thoroughly, beautifully.</p>
-    <div class="hero-actions reveal reveal-delay-3">
-      <a href="#booking" class="btn-primary">
-        Schedule a Cleaning
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
-      <a href="tel:5035550500" class="btn-text">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.01 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.13.88.36 1.74.7 2.56"/></svg>
-        (503) 555-0500
-      </a>
+  <div class="hero-grid-bg"></div>
+  <div class="hero-sparkles">
+    <div class="sparkle"></div><div class="sparkle"></div><div class="sparkle"></div>
+    <div class="sparkle"></div><div class="sparkle"></div><div class="sparkle"></div>
+    <div class="sparkle"></div><div class="sparkle"></div>
+  </div>
+
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-label reveal">Premium Cleaning Services</div>
+      <h1 class="hero-h1 reveal reveal-delay-1">The art of<br><em>beautiful clean.</em></h1>
+      <p class="hero-desc reveal reveal-delay-2">Where meticulous attention meets warm hospitality. We bring the beauty back to every space we touch — naturally, thoroughly, beautifully.</p>
+      <div class="hero-actions reveal reveal-delay-3">
+        <a href="#booking" class="btn-primary">
+          Schedule a Cleaning
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+        <a href="tel:5035550500" class="btn-text">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.01 1.18 2 2 0 012 0h3a2 2 0 012 1.72c.13.88.36 1.74.7 2.56"/></svg>
+          (503) 555-0500
+        </a>
+      </div>
     </div>
-    <div class="hero-ticker reveal reveal-delay-4">
-      <div class="ticker-stat">
-        <div class="ticker-num" data-target="15">0+</div>
-        <div class="ticker-label">Years</div>
+
+    <div class="hero-visual reveal reveal-delay-2">
+      <div class="orb-ring"><div class="orb-ring-dot"></div></div>
+      <div class="hero-orb"><img src="images/shinehaus-hero.webp" alt="Beautiful clean kitchen" class="orb-img"></div>
+      <div class="hero-accent-line accent-line-1"></div>
+      <div class="hero-accent-line accent-line-2"></div>
+      <div class="hero-float-card float-card-1 reveal reveal-delay-3">
+        <div class="float-num" data-target="15">0+</div>
+        <div class="float-label">Years Experience</div>
       </div>
-      <div class="ticker-stat">
-        <div class="ticker-num" data-target="1800">0+</div>
-        <div class="ticker-label">Clients</div>
+      <div class="hero-float-card float-card-2 reveal reveal-delay-4">
+        <div class="float-num" data-target="1800">0+</div>
+        <div class="float-label">Happy Clients</div>
       </div>
-      <div class="ticker-stat">
-        <div class="ticker-num">4.9</div>
-        <div class="ticker-label">Rating</div>
+      <div class="hero-float-card float-card-3 reveal reveal-delay-3">
+        <div class="float-num">4.9</div>
+        <div class="float-label">Star Rating</div>
       </div>
-      <div class="ticker-stat">
-        <div class="ticker-num">24/7</div>
-        <div class="ticker-label">Support</div>
+      <div class="hero-float-card float-card-4 reveal reveal-delay-4">
+        <div class="float-num">24/7</div>
+        <div class="float-label">Support</div>
       </div>
+    </div>
+  </div>
+
+  <div class="hero-trust-bar reveal reveal-delay-4">
+    <div class="trust-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Licensed & Insured
+    </div>
+    <div class="trust-divider"></div>
+    <div class="trust-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 3a9 9 0 100 18 9 9 0 000-18z"/><path d="M12 7v5l3 3"/></svg>
+      Same-Day Availability
+    </div>
+    <div class="trust-divider"></div>
+    <div class="trust-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><path d="M22 4L12 14.01l-3-3"/></svg>
+      100% Satisfaction Guarantee
+    </div>
+    <div class="trust-divider"></div>
+    <div class="trust-item">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+      Eco-Friendly Products
     </div>
   </div>
 </section>
@@ -814,29 +1073,6 @@ button { font-family: inherit; }
             <div><div class="about-item-title">Satisfaction Guarantee</div><div class="about-item-desc">Not happy? We re-clean within 24 hours at no charge. No questions, no fine print.</div></div>
           </div>
         </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── HOW IT WORKS ──────────────────────────────────────────────────────── -->
-<section class="process-section" id="process">
-  <div class="container">
-    <div class="section-label reveal">Simple Process</div>
-    <h2 class="section-title reveal reveal-delay-1">Three steps to <em>spotless.</em></h2>
-    <div class="gold-line reveal reveal-delay-2"></div>
-    <div class="process-steps">
-      <div class="process-step reveal">
-        <div class="step-num">01</div>
-        <div><div class="step-title">Book Online</div><div class="step-desc">Pick your service, date, and time. We confirm within 30 minutes. No commitment, no hidden fees.</div></div>
-      </div>
-      <div class="process-step reveal reveal-delay-1">
-        <div class="step-num">02</div>
-        <div><div class="step-title">We Clean</div><div class="step-desc">Our certified team arrives on time with premium equipment and eco-friendly products. Thorough, careful, beautiful.</div></div>
-      </div>
-      <div class="process-step reveal reveal-delay-2">
-        <div class="step-num">03</div>
-        <div><div class="step-title">You Enjoy</div><div class="step-desc">Walk into a space that feels brand new. If anything isn't perfect, we come back — free of charge.</div></div>
       </div>
     </div>
   </div>
@@ -1087,7 +1323,7 @@ button { font-family: inherit; }
 (function(){var els=document.querySelectorAll('.reveal');if(!('IntersectionObserver' in window)){els.forEach(function(el){el.classList.add('visible');});return;}var io=new IntersectionObserver(function(entries){entries.forEach(function(e){if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target);}});},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});els.forEach(function(el){io.observe(el);});})();
 
 // ── COUNTER ANIMATION
-(function(){var animated=false;var stats=document.querySelectorAll('.ticker-num[data-target]');if(!stats.length)return;function animate(){if(animated)return;animated=true;stats.forEach(function(el){var target=parseInt(el.dataset.target);var dur=1800,st=performance.now();function step(now){var p=Math.min((now-st)/dur,1);var ease=1-Math.pow(1-p,3);var val=Math.round(target*ease);el.textContent=(val>=1000?val.toLocaleString():val)+'+';if(p<1)requestAnimationFrame(step);}requestAnimationFrame(step);});}if('IntersectionObserver' in window){var io=new IntersectionObserver(function(entries){if(entries[0].isIntersecting){animate();io.disconnect();}},{threshold:0.3});io.observe(document.querySelector('.hero-ticker'));}else{animate();}})();
+(function(){var animated=false;var stats=document.querySelectorAll('.float-num[data-target]');if(!stats.length)return;function animate(){if(animated)return;animated=true;stats.forEach(function(el){var target=parseInt(el.dataset.target);var dur=1800,st=performance.now();function step(now){var p=Math.min((now-st)/dur,1);var ease=1-Math.pow(1-p,3);var val=Math.round(target*ease);el.textContent=(val>=1000?val.toLocaleString():val)+'+';if(p<1)requestAnimationFrame(step);}requestAnimationFrame(step);});}if('IntersectionObserver' in window){var io=new IntersectionObserver(function(entries){if(entries[0].isIntersecting){animate();io.disconnect();}},{threshold:0.3});io.observe(document.querySelector('.hero-visual'));}else{animate();}})();
 
 // ── SERVICES SCROLL ARROWS
 (function(){var wrap=document.getElementById('svc-scroll');var prev=document.getElementById('svc-prev');var next=document.getElementById('svc-next');if(!wrap||!prev||!next)return;prev.addEventListener('click',function(){wrap.scrollBy({left:-360,behavior:'smooth'});});next.addEventListener('click',function(){wrap.scrollBy({left:360,behavior:'smooth'});});})();
