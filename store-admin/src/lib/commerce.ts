@@ -1,12 +1,4 @@
-const API_BASE = 'https://webnari.io/commerce';
-
-function getAdminKey(): string {
-  try {
-    return process.env.NEXT_PUBLIC_COMMERCE_ADMIN_KEY || '';
-  } catch {
-    return '';
-  }
-}
+const API_BASE = process.env.NEXT_PUBLIC_COMMERCE_API_URL || 'https://webnari-commerce.webnari.workers.dev';
 
 export class CommerceClient {
   private storeId: string;
@@ -14,7 +6,7 @@ export class CommerceClient {
 
   constructor(storeId: string, adminKey?: string) {
     this.storeId = storeId;
-    this.adminKey = adminKey || getAdminKey();
+    this.adminKey = adminKey || process.env.COMMERCE_ADMIN_KEY || '';
   }
 
   private async fetch(path: string, options: RequestInit = {}) {
@@ -181,65 +173,6 @@ export class CommerceClient {
 
   async deleteTaxRate(id: string) {
     return this.fetch(`/api/admin/tax-rates/${id}`, { method: 'DELETE' });
-  }
-
-  // ── Discounts ─────────────────────────────────────────
-  async getDiscounts() {
-    return this.fetch('/api/admin/discounts');
-  }
-
-  async getDiscount(id: string) {
-    return this.fetch(`/api/admin/discounts/${id}`);
-  }
-
-  async createDiscount(data: Record<string, unknown>) {
-    return this.fetch('/api/admin/discounts', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    });
-  }
-
-  async updateDiscount(id: string, data: Record<string, unknown>) {
-    return this.fetch(`/api/admin/discounts/${id}`, {
-      method: 'PATCH',
-      body: JSON.stringify(data),
-    });
-  }
-
-  async deleteDiscount(id: string) {
-    return this.fetch(`/api/admin/discounts/${id}`, { method: 'DELETE' });
-  }
-
-  // ── Analytics ─────────────────────────────────────────
-  async getAnalytics(range: string = '30d') {
-    return this.fetch(`/api/admin/analytics?range=${range}`);
-  }
-
-  // ── CSV Import/Export ─────────────────────────────────
-  async exportProductsCSV() {
-    return this.fetch('/api/admin/products/export');
-  }
-
-  // ── Gift Cards ─────────────────────────────────────────
-  async getGiftCards() { return this.fetch('/api/admin/gift-cards'); }
-  async createGiftCard(data: Record<string, unknown>) { return this.fetch('/api/admin/gift-cards', { method: 'POST', body: JSON.stringify(data) }); }
-  async updateGiftCard(id: string, data: Record<string, unknown>) { return this.fetch(`/api/admin/gift-cards/${id}`, { method: 'PATCH', body: JSON.stringify(data) }); }
-
-  // ── Blog ───────────────────────────────────────────────
-  async getBlogPosts() { return this.fetch('/api/admin/blog'); }
-  async createBlogPost(data: Record<string, unknown>) { return this.fetch('/api/admin/blog', { method: 'POST', body: JSON.stringify(data) }); }
-  async updateBlogPost(id: string, data: Record<string, unknown>) { return this.fetch(`/api/admin/blog/${id}`, { method: 'PATCH', body: JSON.stringify(data) }); }
-  async deleteBlogPost(id: string) { return this.fetch(`/api/admin/blog/${id}`, { method: 'DELETE' }); }
-
-  async getCustomers() {
-    return this.fetch('/api/admin/customers');
-  }
-
-  async importProductsCSV(rows: Record<string, string>[]) {
-    return this.fetch('/api/admin/products/import', {
-      method: 'POST',
-      body: JSON.stringify({ rows }),
-    });
   }
 
   // ── Categories ─────────────────────────────────────────

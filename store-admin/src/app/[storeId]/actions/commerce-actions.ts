@@ -12,11 +12,6 @@ export async function updateProduct(storeId: string, productId: string, data: Re
   return client.updateProduct(productId, data);
 }
 
-export async function getProduct(storeId: string, productId: string) {
-  const client = new CommerceClient(storeId);
-  return client.getProduct(productId);
-}
-
 export async function deleteProduct(storeId: string, productId: string) {
   const client = new CommerceClient(storeId);
   return client.deleteProduct(productId);
@@ -100,53 +95,4 @@ export async function updateCategory(storeId: string, categoryId: string, data: 
 export async function deleteCategory(storeId: string, categoryId: string) {
   const client = new CommerceClient(storeId);
   return client.deleteCategory(categoryId);
-}
-
-export async function getDiscounts(storeId: string) {
-  const client = new CommerceClient(storeId);
-  return client.getDiscounts();
-}
-
-export async function createDiscount(storeId: string, data: Record<string, unknown>) {
-  const client = new CommerceClient(storeId);
-  return client.createDiscount(data);
-}
-
-export async function updateDiscount(storeId: string, discountId: string, data: Record<string, unknown>) {
-  const client = new CommerceClient(storeId);
-  return client.updateDiscount(discountId, data);
-}
-
-export async function deleteDiscount(storeId: string, discountId: string) {
-  const client = new CommerceClient(storeId);
-  return client.deleteDiscount(discountId);
-}
-
-export async function getAnalytics(storeId: string, range: string = '30d') {
-  const client = new CommerceClient(storeId);
-  return client.getAnalytics(range);
-}
-
-export async function getGiftCards(storeId: string) { const c = new CommerceClient(storeId); return c.getGiftCards(); }
-export async function createGiftCard(storeId: string, data: Record<string, unknown>) { const c = new CommerceClient(storeId); return c.createGiftCard(data); }
-export async function updateGiftCard(storeId: string, cardId: string, data: Record<string, unknown>) { const c = new CommerceClient(storeId); return c.updateGiftCard(cardId, data); }
-
-export async function getBlogPosts(storeId: string) { const c = new CommerceClient(storeId); return c.getBlogPosts(); }
-export async function createBlogPost(storeId: string, data: Record<string, unknown>) { const c = new CommerceClient(storeId); return c.createBlogPost(data); }
-export async function updateBlogPost(storeId: string, postId: string, data: Record<string, unknown>) { const c = new CommerceClient(storeId); return c.updateBlogPost(postId, data); }
-export async function deleteBlogPost(storeId: string, postId: string) { const c = new CommerceClient(storeId); return c.deleteBlogPost(postId); }
-
-export async function getCustomers(storeId: string) {
-  const client = new CommerceClient(storeId);
-  return client.getCustomers();
-}
-
-export async function exportProductsCSV(storeId: string) {
-  const client = new CommerceClient(storeId);
-  return client.exportProductsCSV();
-}
-
-export async function importProductsCSV(storeId: string, rows: Record<string, string>[]) {
-  const client = new CommerceClient(storeId);
-  return client.importProductsCSV(rows);
 }
