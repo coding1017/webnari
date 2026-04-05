@@ -50,9 +50,6 @@ export default function SettingsPage() {
       setConfig(cfg);
       setStoreName(cfg.name);
       setShippingRules(cfg.shippingRules || []);
-
-      // Load tax rates via admin endpoint
-      // For now we'll calculate from a known set
     } catch {
       // empty
     }
@@ -113,108 +110,143 @@ export default function SettingsPage() {
   }
 
   if (!config) {
-    return <div className="p-8 text-center" style={{ color: "var(--text-tertiary)" }}>Loading...</div>;
+    return <div style={{ padding: "60px", textAlign: "center", color: "var(--text-tertiary)", fontSize: "14px" }}>Loading...</div>;
   }
 
   return (
-    <div className="max-w-2xl">
-      <h1 className="text-2xl font-bold mb-8" style={{ color: "var(--text-primary)" }}>Settings</h1>
+    <div className="fade-in" style={{ maxWidth: "720px" }}>
+      <div style={{ marginBottom: "28px" }}>
+        <h1 className="heading-lg">Settings</h1>
+        <p style={{ fontSize: "14px", color: "var(--text-tertiary)", marginTop: "4px" }}>
+          Configure your store details, shipping, and taxes
+        </p>
+      </div>
 
       {message && (
-        <div className="p-3 rounded-lg text-sm mb-6" style={{ background: message.includes("saved") || message.includes("added") ? "#22c55e20" : "#ef444420", color: message.includes("saved") || message.includes("added") ? "var(--green)" : "var(--red)" }}>
+        <div className={`alert ${message.includes("saved") || message.includes("added") ? "alert-success" : "alert-error"}`} style={{ marginBottom: "20px", borderRadius: "var(--radius-sm)" }}>
           {message}
         </div>
       )}
 
       {/* Store Info */}
-      <section className="rounded-xl p-6 space-y-4 mb-6" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)" }}>
-        <h2 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Store Info</h2>
-        <div>
+      <div className="card" style={{ marginBottom: "20px" }}>
+        <div className="flex items-center gap-3" style={{ marginBottom: "20px" }}>
+          <div style={{ width: "36px", height: "36px", borderRadius: "var(--radius-sm)", background: "var(--gold-light)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <svg style={{ width: "18px", height: "18px" }} fill="none" viewBox="0 0 24 24" stroke="var(--gold)" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div>
+            <h2 className="heading-sm" style={{ marginBottom: 0 }}>Store Info</h2>
+            <p style={{ fontSize: "12px", color: "var(--text-tertiary)", margin: 0 }}>Basic details about your store</p>
+          </div>
+        </div>
+
+        <div style={{ marginBottom: "16px" }}>
           <label>Store Name</label>
           <input value={storeName} onChange={(e) => setStoreName(e.target.value)} />
         </div>
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label>Currency</label>
-            <input value={config.currency.toUpperCase()} disabled className="opacity-50" />
+            <input value={config.currency.toUpperCase()} disabled style={{ opacity: 0.5, cursor: "not-allowed" }} />
           </div>
           <div>
             <label>Payment Provider</label>
-            <input value={config.paymentProvider} disabled className="opacity-50" />
+            <input value={config.paymentProvider} disabled style={{ opacity: 0.5, cursor: "not-allowed" }} />
           </div>
         </div>
-        <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
+        <p style={{ fontSize: "12px", color: "var(--text-tertiary)", marginTop: "12px" }}>
           Payment keys and currency are managed by Webnari. Contact support to update.
         </p>
-      </section>
+      </div>
 
       {/* Shipping Rules */}
-      <section className="rounded-xl p-6 space-y-4 mb-6" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)" }}>
-        <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Shipping Rules</h2>
-          <button onClick={addShippingRule} className="text-xs font-medium px-3 py-1.5 rounded-lg" style={{ background: "var(--bg-grouped)", color: "var(--gold)", border: "1px solid var(--border)" }}>
-            + Add Rule
+      <div className="card" style={{ marginBottom: "20px" }}>
+        <div className="flex items-center justify-between" style={{ marginBottom: "20px" }}>
+          <div className="flex items-center gap-3">
+            <div style={{ width: "36px", height: "36px", borderRadius: "var(--radius-sm)", background: "#dbeafe", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg style={{ width: "18px", height: "18px" }} fill="none" viewBox="0 0 24 24" stroke="var(--blue)" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4" />
+              </svg>
+            </div>
+            <div>
+              <h2 className="heading-sm" style={{ marginBottom: 0 }}>Shipping Rules</h2>
+              <p style={{ fontSize: "12px", color: "var(--text-tertiary)", margin: 0 }}>Set cost tiers by order total</p>
+            </div>
+          </div>
+          <button onClick={addShippingRule} className="btn btn-secondary btn-sm" style={{ fontSize: "12px" }}>
+            <svg style={{ width: "14px", height: "14px" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
+            Add Rule
           </button>
         </div>
 
-        {shippingRules.map((rule, i) => (
-          <div key={i} className="grid grid-cols-5 gap-3 items-end">
-            <div>
-              <label>Min Total ($)</label>
-              <input type="number" step="0.01" value={formatCents(rule.min_total)} onChange={(e) => updateShippingRule(i, "min_total", e.target.value)} />
-            </div>
-            <div>
-              <label>Max Total ($)</label>
-              <input type="number" step="0.01" value={rule.max_total !== null ? formatCents(rule.max_total) : ""} onChange={(e) => updateShippingRule(i, "max_total", e.target.value)} placeholder="No limit" />
-            </div>
-            <div>
-              <label>Cost ($)</label>
-              <input type="number" step="0.01" value={formatCents(rule.cost)} onChange={(e) => updateShippingRule(i, "cost", e.target.value)} />
-            </div>
-            <div>
-              <label>Label</label>
-              <input value={rule.label} onChange={(e) => updateShippingRule(i, "label", e.target.value)} />
-            </div>
-            <div>
-              <button onClick={() => removeShippingRule(i)} className="text-xs py-2.5" style={{ color: "var(--red)" }}>Remove</button>
-            </div>
+        {shippingRules.length > 0 ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            {shippingRules.map((rule, i) => (
+              <div key={i} className="grid grid-cols-5 gap-3 items-end" style={{ padding: "12px 16px", background: "var(--bg-grouped)", borderRadius: "var(--radius-sm)" }}>
+                <div>
+                  <label>Min Total ($)</label>
+                  <input type="number" step="0.01" value={formatCents(rule.min_total)} onChange={(e) => updateShippingRule(i, "min_total", e.target.value)} />
+                </div>
+                <div>
+                  <label>Max Total ($)</label>
+                  <input type="number" step="0.01" value={rule.max_total !== null ? formatCents(rule.max_total) : ""} onChange={(e) => updateShippingRule(i, "max_total", e.target.value)} placeholder="No limit" />
+                </div>
+                <div>
+                  <label>Cost ($)</label>
+                  <input type="number" step="0.01" value={formatCents(rule.cost)} onChange={(e) => updateShippingRule(i, "cost", e.target.value)} />
+                </div>
+                <div>
+                  <label>Label</label>
+                  <input value={rule.label} onChange={(e) => updateShippingRule(i, "label", e.target.value)} />
+                </div>
+                <div className="flex items-end">
+                  <button onClick={() => removeShippingRule(i)} className="btn btn-danger btn-sm" style={{ fontSize: "12px", minHeight: "36px" }}>Remove</button>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-
-        {shippingRules.length === 0 && (
-          <p className="text-xs text-center py-3" style={{ color: "var(--text-tertiary)" }}>No shipping rules. Free shipping by default.</p>
+        ) : (
+          <p style={{ fontSize: "13px", color: "var(--text-tertiary)", textAlign: "center", padding: "16px 0" }}>No shipping rules. Free shipping by default.</p>
         )}
-      </section>
+      </div>
 
       {/* Tax Rates */}
-      <section className="rounded-xl p-6 space-y-4 mb-6" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)" }}>
-        <h2 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>Tax Rates</h2>
+      <div className="card" style={{ marginBottom: "24px" }}>
+        <div className="flex items-center gap-3" style={{ marginBottom: "20px" }}>
+          <div style={{ width: "36px", height: "36px", borderRadius: "var(--radius-sm)", background: "#f3e8ff", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <svg style={{ width: "18px", height: "18px" }} fill="none" viewBox="0 0 24 24" stroke="var(--purple)" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z" />
+            </svg>
+          </div>
+          <div>
+            <h2 className="heading-sm" style={{ marginBottom: 0 }}>Tax Rates</h2>
+            <p style={{ fontSize: "12px", color: "var(--text-tertiary)", margin: 0 }}>Calculated by customer shipping state</p>
+          </div>
+        </div>
 
         <div className="flex gap-3 items-end">
-          <div className="w-20">
+          <div style={{ width: "80px" }}>
             <label>State</label>
-            <input value={newState} onChange={(e) => setNewState(e.target.value)} placeholder="FL" maxLength={2} />
+            <input value={newState} onChange={(e) => setNewState(e.target.value)} placeholder="FL" maxLength={2} style={{ textTransform: "uppercase" }} />
           </div>
-          <div className="w-24">
+          <div style={{ width: "120px" }}>
             <label>Rate (%)</label>
             <input type="number" step="0.01" value={newRate} onChange={(e) => setNewRate(e.target.value)} placeholder="7.00" />
           </div>
-          <button onClick={addTaxRate} className="px-4 py-2.5 rounded-lg text-sm font-medium shrink-0" style={{ background: "var(--bg-grouped)", color: "var(--text-primary)", border: "1px solid var(--border)" }}>
-            Add
+          <button onClick={addTaxRate} className="btn btn-secondary btn-sm" style={{ fontSize: "12px", minHeight: "44px" }}>
+            Add Rate
           </button>
         </div>
-
-        <p className="text-xs" style={{ color: "var(--text-tertiary)" }}>
-          Tax is calculated based on the customer's shipping state.
-        </p>
-      </section>
+      </div>
 
       {/* Save */}
       <button
         onClick={saveSettings}
         disabled={saving}
-        className="px-6 py-2.5 rounded-lg text-sm font-medium text-white"
-        style={{ background: saving ? "var(--text-tertiary)" : "var(--blue)" }}
+        className="btn btn-primary"
+        style={{ fontSize: "14px" }}
       >
         {saving ? "Saving..." : "Save Settings"}
       </button>

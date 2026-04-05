@@ -17,6 +17,7 @@ export default function CategoriesPage() {
   const storeId = params.storeId as string;
 
   const [categories, setCategories] = useState<Category[]>([]);
+  const [showCreate, setShowCreate] = useState(false);
   const [newName, setNewName] = useState("");
   const [adding, setAdding] = useState(false);
   const [editing, setEditing] = useState<string | null>(null);
@@ -44,6 +45,7 @@ export default function CategoriesPage() {
     try {
       await createCategory(storeId, { name: newName.trim() });
       setNewName("");
+      setShowCreate(false);
       await load();
     } catch (err) {
       setError((err as Error).message);
@@ -80,99 +82,139 @@ export default function CategoriesPage() {
     if (e.key === "Enter") action();
   }
 
+  const totalProducts = categories.reduce((sum, c) => sum + c.productCount, 0);
+
   return (
-    <div className="max-w-2xl">
-      <h1 className="text-2xl font-bold mb-8" style={{ color: "var(--text-primary)" }}>Categories</h1>
+    <div className="fade-in">
+      <div className="flex items-center justify-between" style={{ marginBottom: "28px" }}>
+        <div>
+          <h1 className="heading-lg">Categories</h1>
+          <p style={{ fontSize: "14px", color: "var(--text-tertiary)", marginTop: "4px" }}>
+            Organize products into browsable groups
+          </p>
+        </div>
+        <button onClick={() => setShowCreate(true)} className="btn btn-primary">
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
+          Add Category
+        </button>
+      </div>
 
       {error && (
-        <div className="p-3 rounded-lg text-sm mb-4" style={{ background: "#ef444420", color: "var(--red)" }}>
+        <div className="alert alert-error" style={{ marginBottom: "20px", borderRadius: "var(--radius-sm)" }}>
           {error}
         </div>
       )}
 
-      {/* Add new category */}
-      <div className="flex gap-3 mb-6">
-        <input
-          value={newName}
-          onChange={(e) => setNewName(e.target.value)}
-          onKeyDown={(e) => handleKeyDown(e, handleAdd)}
-          placeholder="New category name..."
-          className="flex-1"
-        />
-        <button
-          onClick={handleAdd}
-          disabled={adding || !newName.trim()}
-          className="px-5 py-2.5 rounded-lg text-sm font-medium text-white shrink-0"
-          style={{ background: adding ? "var(--text-tertiary)" : "var(--blue)" }}
-        >
-          {adding ? "Adding..." : "Add Category"}
-        </button>
+      {/* KPIs */}
+      <div className="grid grid-cols-3 gap-5" style={{ marginBottom: "24px" }}>
+        {[
+          { label: "CATEGORIES", value: categories.length, accent: "#5856d6" },
+          { label: "PRODUCTS ORGANIZED", value: totalProducts, accent: "#34c759" },
+          { label: "AVG PER CATEGORY", value: categories.length ? Math.round(totalProducts / categories.length) : 0, accent: "#ff9500" },
+        ].map(kpi => (
+          <div key={kpi.label} className="bg-white relative overflow-hidden" style={{ borderRadius: "var(--radius-lg)", padding: "20px", border: "1px solid var(--border-subtle)", boxShadow: "var(--shadow-sm)" }}>
+            <div className="absolute top-0 left-0 right-0" style={{ height: "3px", background: kpi.accent }} />
+            <div className="label-caps" style={{ marginBottom: "8px" }}>{kpi.label}</div>
+            <div style={{ fontSize: "24px", fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.03em", fontVariantNumeric: "tabular-nums" }}>{kpi.value}</div>
+          </div>
+        ))}
       </div>
 
-      {/* Categories list */}
-      <div className="rounded-xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
+      {/* Create Form */}
+      {showCreate && (
+        <div className="card fade-in" style={{ marginBottom: "24px" }}>
+          <div className="flex items-center justify-between" style={{ marginBottom: "20px" }}>
+            <h2 className="heading-sm">New Category</h2>
+            <button onClick={() => { setShowCreate(false); setNewName(""); }} style={{ color: "var(--text-tertiary)", fontSize: "13px", background: "none", border: "none", cursor: "pointer" }}>Cancel</button>
+          </div>
+          <div className="flex gap-3">
+            <div style={{ flex: 1 }}>
+              <label>Category Name</label>
+              <input
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                onKeyDown={(e) => handleKeyDown(e, handleAdd)}
+                placeholder="e.g. Pouches, Bags, Accessories"
+                autoFocus
+              />
+            </div>
+            <div className="flex items-end">
+              <button
+                onClick={handleAdd}
+                disabled={adding || !newName.trim()}
+                className="btn btn-primary"
+                style={{ fontSize: "13px" }}
+              >
+                {adding ? "Adding..." : "Create"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Categories table */}
+      <div className="card-section">
         {categories.length > 0 ? (
-          <table className="w-full">
+          <table>
             <thead>
-              <tr style={{ background: "var(--bg-elevated)" }}>
-                <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-tertiary)", borderBottom: "1px solid var(--border)" }}>Category</th>
-                <th className="text-left px-5 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-tertiary)", borderBottom: "1px solid var(--border)" }}>Slug</th>
-                <th className="text-center px-5 py-3 text-xs font-semibold uppercase tracking-wider" style={{ color: "var(--text-tertiary)", borderBottom: "1px solid var(--border)" }}>Products</th>
-                <th className="px-5 py-3" style={{ borderBottom: "1px solid var(--border)" }}></th>
+              <tr>
+                <th>Category</th>
+                <th className="hide-mobile">Slug</th>
+                <th className="text-center">Products</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
               {categories.map((cat) => (
-                <tr key={cat.id} style={{ borderBottom: "1px solid var(--border)" }}>
-                  <td className="px-5 py-3.5">
+                <tr key={cat.id}>
+                  <td>
                     {editing === cat.id ? (
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 items-center">
                         <input
                           value={editName}
                           onChange={(e) => setEditName(e.target.value)}
                           onKeyDown={(e) => handleKeyDown(e, () => handleUpdate(cat.id))}
-                          className="text-sm"
+                          style={{ minHeight: "36px", padding: "6px 10px", maxWidth: "240px" }}
                           autoFocus
                         />
                         <button
                           onClick={() => handleUpdate(cat.id)}
                           disabled={acting}
-                          className="text-xs font-medium px-2 py-1 rounded"
-                          style={{ background: "var(--blue)", color: "white" }}
+                          className="btn btn-primary btn-sm"
+                          style={{ fontSize: "12px", minHeight: "36px" }}
                         >
                           Save
                         </button>
                         <button
                           onClick={() => setEditing(null)}
-                          className="text-xs"
-                          style={{ color: "var(--text-tertiary)" }}
+                          className="btn btn-ghost btn-sm"
+                          style={{ fontSize: "12px", minHeight: "36px" }}
                         >
                           Cancel
                         </button>
                       </div>
                     ) : (
-                      <span className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>{cat.name}</span>
+                      <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>{cat.name}</span>
                     )}
                   </td>
-                  <td className="px-5 py-3.5 text-sm" style={{ color: "var(--text-tertiary)" }}>{cat.slug}</td>
-                  <td className="px-5 py-3.5 text-sm text-center">
-                    <span className="inline-block px-2 py-0.5 rounded-full text-xs" style={{ background: "var(--bg-grouped)", color: "var(--text-primary)" }}>
+                  <td className="hide-mobile" style={{ fontSize: "12px", color: "var(--text-tertiary)", fontFamily: "monospace" }}>/{cat.slug}</td>
+                  <td className="text-center">
+                    <span className="badge badge-blue" style={{ fontSize: "11px" }}>
                       {cat.productCount}
                     </span>
                   </td>
-                  <td className="px-5 py-3.5 text-right">
-                    <div className="flex gap-3 justify-end">
+                  <td>
+                    <div style={{ display: "flex", gap: "12px", justifyContent: "flex-end" }}>
                       <button
                         onClick={() => { setEditing(cat.id); setEditName(cat.name); }}
-                        className="text-xs font-medium"
-                        style={{ color: "var(--gold)" }}
+                        className="text-link"
+                        style={{ fontSize: "12px" }}
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => handleDelete(cat.id, cat.name)}
-                        className="text-xs font-medium"
-                        style={{ color: "var(--red)" }}
+                        style={{ fontSize: "12px", fontWeight: 600, color: "var(--red)", background: "none", border: "none", cursor: "pointer" }}
                       >
                         Delete
                       </button>
@@ -183,12 +225,13 @@ export default function CategoriesPage() {
             </tbody>
           </table>
         ) : (
-          <div className="p-12 text-center">
-            <svg className="w-10 h-10 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="var(--text-tertiary)" strokeWidth={1}>
+          <div style={{ padding: "60px 24px", textAlign: "center" }}>
+            <svg className="mx-auto" style={{ width: "48px", height: "48px", marginBottom: "12px" }} fill="none" viewBox="0 0 24 24" stroke="var(--border-strong)" strokeWidth={1}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A2 2 0 013 12V7a4 4 0 014-4z" />
             </svg>
-            <p className="text-sm" style={{ color: "var(--text-tertiary)" }}>No categories yet</p>
-            <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>Add categories above to organize your products</p>
+            <p style={{ fontSize: "14px", fontWeight: 500, color: "var(--text-secondary)" }}>No categories yet</p>
+            <p style={{ fontSize: "12px", color: "var(--text-tertiary)", marginTop: "4px", marginBottom: "16px" }}>Add categories above to organize your products</p>
+            <button onClick={() => setShowCreate(true)} className="btn btn-primary" style={{ fontSize: "13px" }}>Add a Category</button>
           </div>
         )}
       </div>

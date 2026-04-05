@@ -25,6 +25,7 @@ export default function BlogAdminPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
+  const [filterStatus, setFilterStatus] = useState<"all" | "published" | "draft">("all");
 
   // Form state
   const [title, setTitle] = useState("");
@@ -83,6 +84,16 @@ export default function BlogAdminPage() {
     try { await updateBlogPost(storeId, p.id, { published: !p.published }); await load(); } catch {}
   }
 
+  const publishedCount = posts.filter(p => p.published).length;
+  const draftCount = posts.filter(p => !p.published).length;
+  const blogCategories = Array.from(new Set(posts.map(p => p.category).filter(Boolean)));
+
+  const filtered = posts.filter(p => {
+    if (filterStatus === "published") return p.published;
+    if (filterStatus === "draft") return !p.published;
+    return true;
+  });
+
   return (
     <div className="fade-in">
       <div className="flex items-center justify-between" style={{ marginBottom: "28px" }}>
@@ -103,6 +114,22 @@ export default function BlogAdminPage() {
           {message}
         </div>
       )}
+
+      {/* KPIs */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-5" style={{ marginBottom: "24px" }}>
+        {[
+          { label: "TOTAL POSTS", value: posts.length, accent: "#5856d6" },
+          { label: "PUBLISHED", value: publishedCount, accent: "#34c759" },
+          { label: "DRAFTS", value: draftCount, accent: "#ff9500" },
+          { label: "CATEGORIES", value: blogCategories.length, accent: "#007aff" },
+        ].map(kpi => (
+          <div key={kpi.label} className="bg-white relative overflow-hidden" style={{ borderRadius: "var(--radius-lg)", padding: "20px", border: "1px solid var(--border-subtle)", boxShadow: "var(--shadow-sm)" }}>
+            <div className="absolute top-0 left-0 right-0" style={{ height: "3px", background: kpi.accent }} />
+            <div className="label-caps" style={{ marginBottom: "8px" }}>{kpi.label}</div>
+            <div style={{ fontSize: "24px", fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.03em", fontVariantNumeric: "tabular-nums" }}>{kpi.value}</div>
+          </div>
+        ))}
+      </div>
 
       {/* Create/Edit Form */}
       {showCreate && (
@@ -160,9 +187,28 @@ export default function BlogAdminPage() {
         </div>
       )}
 
+      {/* Filters */}
+      <div className="flex items-center gap-2" style={{ marginBottom: "16px" }}>
+        <span style={{ fontSize: "12px", fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.05em" }}>Filter:</span>
+        {([
+          { key: "all", label: "All" },
+          { key: "published", label: "Published" },
+          { key: "draft", label: "Drafts" },
+        ] as const).map(f => (
+          <button
+            key={f.key}
+            onClick={() => setFilterStatus(f.key)}
+            className={`badge ${filterStatus === f.key ? "badge-gold" : "badge-gray"}`}
+            style={{ cursor: "pointer", border: "none" }}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
+
       {/* Posts table */}
       <div className="card-section">
-        {posts.length > 0 ? (
+        {filtered.length > 0 ? (
           <table>
             <thead>
               <tr>
@@ -174,13 +220,13 @@ export default function BlogAdminPage() {
               </tr>
             </thead>
             <tbody>
-              {posts.map((p) => (
+              {filtered.map((p) => (
                 <tr key={p.id}>
                   <td>
                     <div style={{ fontWeight: 600, color: "var(--text-primary)" }}>{p.title}</div>
                     <div style={{ fontSize: "11px", color: "var(--text-tertiary)", fontFamily: "monospace" }}>/{p.slug}</div>
                   </td>
-                  <td className="hide-mobile" style={{ fontSize: "13px", textTransform: "capitalize" }}>{p.category || "—"}</td>
+                  <td className="hide-mobile" style={{ fontSize: "13px", textTransform: "capitalize" }}>{p.category || "\u2014"}</td>
                   <td className="text-center">
                     <button onClick={() => handleTogglePublish(p)} className={`badge ${p.published ? "badge-green" : "badge-gray"}`} style={{ cursor: "pointer", border: "none" }}>
                       {p.published ? "Published" : "Draft"}
