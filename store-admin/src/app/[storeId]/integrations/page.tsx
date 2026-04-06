@@ -124,7 +124,7 @@ export default function IntegrationsPage() {
   const showMessage = useCallback((msg: string, type: "success" | "error" = "success") => {
     setMessage(msg);
     setMessageType(type);
-    setTimeout(() => setMessage(""), 5000);
+    setTimeout(() => setMessage(""), 10000);
   }, []);
 
   const loadData = useCallback(async () => {
@@ -481,9 +481,32 @@ export default function IntegrationsPage() {
       {message && (
         <div
           className={`alert ${messageType === "success" ? "alert-success" : "alert-error"}`}
-          style={{ marginBottom: "20px", borderRadius: "var(--radius-sm)" }}
+          style={{
+            position: "sticky",
+            top: "16px",
+            zIndex: 50,
+            marginBottom: "20px",
+            borderRadius: "var(--radius-sm)",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+          }}
         >
           {message}
+          <button
+            onClick={() => setMessage("")}
+            style={{
+              float: "right",
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              fontSize: "16px",
+              lineHeight: 1,
+              color: "inherit",
+              opacity: 0.6,
+              padding: "0 4px",
+            }}
+          >
+            &times;
+          </button>
         </div>
       )}
 
