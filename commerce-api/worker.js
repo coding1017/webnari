@@ -64,6 +64,11 @@ export default {
         return await handleQuickBooksCallback(request, sb, env, null, url, corsOrigin);
       }
 
+      // Stripe Connect OAuth callback — browser redirect from Stripe, no X-Store-ID
+      if (method === 'GET' && path === '/api/admin/integrations/stripe/callback') {
+        return await handleStripeConnectCallback(request, sb, env, url, corsOrigin);
+      }
+
       // All other /api/ routes require X-Store-ID (except webhooks)
       if (!storeId && !isWebhook && path.startsWith('/api/')) {
         return json({ error: 'Missing X-Store-ID header' }, 400, corsOrigin);
@@ -370,6 +375,24 @@ export default {
       }
       if (method === 'GET' && path === '/api/admin/integrations/quickbooks/sync-log') {
         return await handleQuickBooksSyncLog(request, sb, env, storeId, corsOrigin);
+      }
+
+      // ── Stripe Connect routes ────────────────────────────
+      // Note: Stripe callback is handled earlier (before X-Store-ID check) since it's a browser redirect
+      if (method === 'POST' && path === '/api/admin/integrations/stripe/connect') {
+        return await handleStripeConnect(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'DELETE' && path === '/api/admin/integrations/stripe/disconnect') {
+        return await handleStripeDisconnect(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/admin/integrations/stripe/test') {
+        return await handleStripeTest(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/admin/integrations/stripe/sync') {
+        return await handleStripeSyncProducts(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'GET' && path === '/api/admin/integrations/stripe/status') {
+        return await handleStripeOnboardingStatus(request, sb, env, storeId, corsOrigin);
       }
 
       // Admin Store Settings
@@ -681,7 +704,28 @@ async function handleCreateCheckout(request, sb, env, storeId, corsOrigin) {
 // ═══════════════════════════════════════════════════════════════
 
 async function createStripeCheckout(sb, env, storeId, store, data, corsOrigin) {
-  const stripeKey = getStoreSecret(env, storeId, 'STRIPE_SECRET_KEY');
+  // Check for Stripe Connect integration first, fall back to per-store secret
+  let stripeKey = null;
+  let stripeAccountHeader = {};
+  let applicationFee = null;
+
+  const connectIntegration = await sb.query('store_integrations', {
+    filters: { store_id: `eq.${storeId}`, provider: 'eq.stripe' },
+    single: true,
+  });
+
+  if (connectIntegration?.merchant_id) {
+    // Use platform key + connected account
+    stripeKey = env.STRIPE_SECRET_KEY;
+    stripeAccountHeader = { 'Stripe-Account': connectIntegration.merchant_id };
+    // Platform fee: 3% of total (configurable in store settings)
+    const feePercent = store.platform_fee_percent || 3;
+    applicationFee = Math.round(data.total * feePercent / 100);
+  } else {
+    // Fall back to per-store Stripe secret key
+    stripeKey = getStoreSecret(env, storeId, 'STRIPE_SECRET_KEY');
+  }
+
   if (!stripeKey) return json({ error: 'Stripe not configured for this store' }, 500, corsOrigin);
 
   // Build Stripe line items
@@ -732,12 +776,18 @@ async function createStripeCheckout(sb, env, storeId, store, data, corsOrigin) {
   // Shipping address collection
   params.set('shipping_address_collection[allowed_countries][]', 'US');
 
+  // Stripe Connect: application fee for platform revenue
+  if (applicationFee && applicationFee > 0) {
+    params.set('payment_intent_data[application_fee_amount]', applicationFee.toString());
+  }
+
   // Create Stripe Checkout Session
   const res = await fetch('https://api.stripe.com/v1/checkout/sessions', {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${stripeKey}`,
       'Content-Type': 'application/x-www-form-urlencoded',
+      ...stripeAccountHeader,
     },
     body: params.toString(),
   });
@@ -797,8 +847,8 @@ async function handleStripeWebhook(request, sb, env, corsOrigin) {
     return json({ error: 'Missing store_id' }, 400, corsOrigin);
   }
 
-  // Verify webhook signature
-  const webhookSecret = getStoreSecret(env, storeId, 'STRIPE_WEBHOOK_SECRET');
+  // Verify webhook signature — try per-store secret first, then platform secret
+  const webhookSecret = getStoreSecret(env, storeId, 'STRIPE_WEBHOOK_SECRET') || env.STRIPE_WEBHOOK_SECRET;
   if (webhookSecret && sig) {
     const isValid = await verifyStripeSignature(body, sig, webhookSecret);
     if (!isValid) {
@@ -813,6 +863,33 @@ async function handleStripeWebhook(request, sb, env, corsOrigin) {
 
   if (event.type === 'checkout.session.expired') {
     await handleCheckoutExpired(sb, event.data.object.id);
+  }
+
+  // Handle Connect deauthorization (store disconnected from Stripe dashboard)
+  if (event.type === 'account.application.deauthorized') {
+    const connectedAccountId = event.account;
+    if (connectedAccountId) {
+      // Find and remove the integration
+      const integration = await sb.query('store_integrations', {
+        filters: { merchant_id: `eq.${connectedAccountId}`, provider: 'eq.stripe' },
+        single: true,
+      });
+      if (integration) {
+        await sb.delete('product_mappings', {
+          store_id: `eq.${integration.store_id}`,
+          provider: 'eq.stripe',
+        });
+        await sb.delete('store_integrations', { id: `eq.${integration.id}` });
+        await sb.insert('sync_log', {
+          store_id: integration.store_id,
+          provider: 'stripe',
+          event_type: 'disconnected',
+          direction: 'inbound',
+          status: 'success',
+          details: JSON.stringify({ reason: 'deauthorized_via_stripe_dashboard', account_id: connectedAccountId }),
+        });
+      }
+    }
   }
 
   return json({ received: true }, 200, corsOrigin);
@@ -833,10 +910,22 @@ async function handleStripeSessionCompleted(sb, env, storeId, session) {
     filters: { session_id: `eq.${sessionId}`, status: `eq.held` },
   });
 
-  // Get line items from Stripe
-  const stripeKey = getStoreSecret(env, storeId, 'STRIPE_SECRET_KEY');
+  // Get line items from Stripe — support both per-store key and Connect
+  let stripeKey = getStoreSecret(env, storeId, 'STRIPE_SECRET_KEY');
+  const liHeaders = { Authorization: `Bearer ${stripeKey || env.STRIPE_SECRET_KEY}` };
+
+  // If using Stripe Connect, add the connected account header
+  const connectIntegration = await sb.query('store_integrations', {
+    filters: { store_id: `eq.${storeId}`, provider: 'eq.stripe' },
+    single: true,
+  });
+  if (connectIntegration?.merchant_id) {
+    liHeaders['Stripe-Account'] = connectIntegration.merchant_id;
+    if (!stripeKey) stripeKey = env.STRIPE_SECRET_KEY;
+  }
+
   const liRes = await fetch(`https://api.stripe.com/v1/checkout/sessions/${sessionId}/line_items?limit=100`, {
-    headers: { Authorization: `Bearer ${stripeKey}` },
+    headers: liHeaders,
   });
   const lineItemsData = await liRes.json();
 
@@ -4756,5 +4845,482 @@ async function syncOrderToQuickBooks(sb, env, storeId, order, orderItems) {
       status: 'error',
       details: JSON.stringify({ order_id: order.id, error: err.message }),
     });
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  STRIPE CONNECT
+// ═══════════════════════════════════════════════════════════════
+
+// Start Stripe Connect — creates a connected account + onboarding link (Account Links flow)
+async function handleStripeConnect(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const stripeSecret = env.STRIPE_SECRET_KEY;
+  if (!stripeSecret) return json({ error: 'Stripe not configured — missing STRIPE_SECRET_KEY' }, 500, corsOrigin);
+
+  const stripeHeaders = {
+    Authorization: `Bearer ${stripeSecret}`,
+    'Content-Type': 'application/x-www-form-urlencoded',
+  };
+
+  const adminBase = 'https://webnari-store-admin.webnari.workers.dev';
+  const returnUrl = `${adminBase}/${storeId}/integrations?stripe_return=true`;
+  const refreshUrl = `${adminBase}/${storeId}/integrations?stripe_refresh=true`;
+
+  try {
+    // Check if there's already a pending/incomplete connected account for this store
+    const existing = await sb.query('store_integrations', {
+      filters: { store_id: `eq.${storeId}`, provider: 'eq.stripe' },
+      single: true,
+    });
+
+    let stripeAccountId;
+
+    if (existing?.merchant_id) {
+      // Re-use existing connected account (might need to finish onboarding)
+      stripeAccountId = existing.merchant_id;
+    } else {
+      // Create a new connected account (Standard type — gets their own Stripe dashboard)
+      const createRes = await fetch('https://api.stripe.com/v1/accounts', {
+        method: 'POST',
+        headers: stripeHeaders,
+        body: new URLSearchParams({
+          type: 'standard',
+          'metadata[store_id]': storeId,
+          'metadata[platform]': 'webnari',
+        }).toString(),
+      });
+
+      const account = await createRes.json();
+      if (!createRes.ok) {
+        console.error('Stripe account creation failed:', account);
+        return json({ error: 'Failed to create Stripe account', details: account.error?.message }, 500, corsOrigin);
+      }
+
+      stripeAccountId = account.id;
+
+      // Save the connected account ID immediately (onboarding may not be complete yet)
+      await sb.insert('store_integrations', {
+        store_id: storeId,
+        provider: 'stripe',
+        merchant_id: stripeAccountId,
+        company_name: '',
+        access_token: null,
+        refresh_token: null,
+        token_expires_at: null,
+        settings: {},
+        metadata: { onboarding_complete: false },
+        connected_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+    }
+
+    // Create an Account Link for Stripe-hosted onboarding
+    const linkRes = await fetch('https://api.stripe.com/v1/account_links', {
+      method: 'POST',
+      headers: stripeHeaders,
+      body: new URLSearchParams({
+        account: stripeAccountId,
+        refresh_url: refreshUrl,
+        return_url: returnUrl,
+        type: 'account_onboarding',
+      }).toString(),
+    });
+
+    const link = await linkRes.json();
+    if (!linkRes.ok) {
+      console.error('Stripe account link failed:', link);
+      return json({ error: 'Failed to create onboarding link', details: link.error?.message }, 500, corsOrigin);
+    }
+
+    return json({ url: link.url }, 200, corsOrigin);
+
+  } catch (err) {
+    console.error('Stripe Connect error:', err);
+    return json({ error: 'Stripe Connect failed', details: err.message }, 500, corsOrigin);
+  }
+}
+
+// Stripe Connect callback — called when store returns from onboarding, checks account status
+async function handleStripeConnectCallback(request, sb, env, url, corsOrigin) {
+  // Account Links flow: the return/refresh URLs go directly to the admin frontend
+  // This callback route is kept for backward compatibility but redirects to the admin
+  const adminBase = 'https://webnari-store-admin.webnari.workers.dev';
+  return Response.redirect(`${adminBase}?stripe_return=true`, 302);
+}
+
+// Check Stripe onboarding status — called when store returns from Stripe onboarding
+async function handleStripeOnboardingStatus(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const stripeSecret = env.STRIPE_SECRET_KEY;
+  if (!stripeSecret) return json({ error: 'Stripe not configured' }, 500, corsOrigin);
+
+  const integration = await sb.query('store_integrations', {
+    filters: { store_id: `eq.${storeId}`, provider: 'eq.stripe' },
+    single: true,
+  });
+
+  if (!integration) return json({ error: 'No Stripe integration found' }, 404, corsOrigin);
+
+  // Fetch the account to check onboarding status
+  const acctRes = await fetch(`https://api.stripe.com/v1/accounts/${integration.merchant_id}`, {
+    headers: { Authorization: `Bearer ${stripeSecret}` },
+  });
+
+  if (!acctRes.ok) {
+    return json({ error: 'Failed to fetch account status' }, 502, corsOrigin);
+  }
+
+  const acct = await acctRes.json();
+  const isComplete = acct.charges_enabled && acct.details_submitted;
+  const accountName = acct.business_profile?.name
+    || acct.settings?.dashboard?.display_name
+    || acct.email
+    || '';
+
+  // Update integration record with onboarding status
+  await sb.update('store_integrations', { id: `eq.${integration.id}` }, {
+    company_name: accountName || integration.company_name,
+    metadata: {
+      ...(integration.metadata || {}),
+      onboarding_complete: isComplete,
+      charges_enabled: acct.charges_enabled,
+      payouts_enabled: acct.payouts_enabled,
+      details_submitted: acct.details_submitted,
+    },
+    updated_at: new Date().toISOString(),
+  });
+
+  // Log connection if onboarding just completed
+  if (isComplete && !integration.metadata?.onboarding_complete) {
+    await sb.insert('sync_log', {
+      store_id: storeId,
+      provider: 'stripe',
+      event_type: 'connected',
+      direction: 'system',
+      status: 'success',
+      details: JSON.stringify({ account_id: integration.merchant_id, account_name: accountName }),
+    });
+  }
+
+  return json({
+    accountId: integration.merchant_id,
+    accountName,
+    chargesEnabled: acct.charges_enabled,
+    payoutsEnabled: acct.payouts_enabled,
+    detailsSubmitted: acct.details_submitted,
+    onboardingComplete: isComplete,
+  }, 200, corsOrigin);
+}
+
+// Disconnect Stripe Connect
+async function handleStripeDisconnect(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const integration = await sb.query('store_integrations', {
+    filters: { store_id: `eq.${storeId}`, provider: 'eq.stripe' },
+    single: true,
+  });
+
+  if (!integration) return json({ error: 'Stripe not connected' }, 404, corsOrigin);
+
+  // Delete the connected account at Stripe (optional — removes it entirely)
+  const stripeSecret = env.STRIPE_SECRET_KEY;
+  if (stripeSecret && integration.merchant_id) {
+    try {
+      await fetch(`https://api.stripe.com/v1/accounts/${integration.merchant_id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${stripeSecret}` },
+      });
+    } catch { /* best effort — account may already be deleted */ }
+  }
+
+  // Clean up mappings
+  await sb.delete('product_mappings', {
+    store_id: `eq.${storeId}`,
+    provider: 'eq.stripe',
+  });
+
+  // Delete integration record
+  await sb.delete('store_integrations', { id: `eq.${integration.id}` });
+
+  // Log disconnection
+  await sb.insert('sync_log', {
+    store_id: storeId,
+    provider: 'stripe',
+    event_type: 'disconnected',
+    direction: 'system',
+    status: 'success',
+    details: JSON.stringify({ account_id: integration.merchant_id }),
+  });
+
+  return json({ disconnected: true }, 200, corsOrigin);
+}
+
+// Test Stripe Connect — verify the connected account is reachable
+async function handleStripeTest(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const integration = await sb.query('store_integrations', {
+    filters: { store_id: `eq.${storeId}`, provider: 'eq.stripe' },
+    single: true,
+  });
+
+  if (!integration) return json({ error: 'Stripe not connected' }, 404, corsOrigin);
+
+  const stripeSecret = env.STRIPE_SECRET_KEY;
+  if (!stripeSecret) return json({ error: 'Platform Stripe key not configured' }, 500, corsOrigin);
+
+  try {
+    const res = await fetch(`https://api.stripe.com/v1/accounts/${integration.merchant_id}`, {
+      headers: { Authorization: `Bearer ${stripeSecret}` },
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      return json({ error: 'Connection test failed', details: err }, 500, corsOrigin);
+    }
+
+    const acct = await res.json();
+    return json({
+      connected: true,
+      accountName: acct.business_profile?.name || acct.settings?.dashboard?.display_name || acct.email,
+      accountId: integration.merchant_id,
+      chargesEnabled: acct.charges_enabled,
+      payoutsEnabled: acct.payouts_enabled,
+    }, 200, corsOrigin);
+  } catch (err) {
+    return json({ error: 'Connection test failed', details: err.message }, 500, corsOrigin);
+  }
+}
+
+// Sync products between Webnari and Stripe connected account
+async function handleStripeSyncProducts(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const integration = await sb.query('store_integrations', {
+    filters: { store_id: `eq.${storeId}`, provider: 'eq.stripe' },
+    single: true,
+  });
+
+  if (!integration) return json({ error: 'Stripe not connected' }, 400, corsOrigin);
+
+  const stripeSecret = env.STRIPE_SECRET_KEY;
+  if (!stripeSecret) return json({ error: 'Platform Stripe key not configured' }, 500, corsOrigin);
+
+  const stripeAccountId = integration.merchant_id;
+  const stripeHeaders = {
+    Authorization: `Bearer ${stripeSecret}`,
+    'Stripe-Account': stripeAccountId,
+    'Content-Type': 'application/x-www-form-urlencoded',
+  };
+
+  try {
+    // Parse options
+    const body = await request.text();
+    const opts = body ? JSON.parse(body) : {};
+    const freshSync = opts.fresh === true;
+
+    if (freshSync) {
+      // Clear existing Stripe mappings
+      await sb.delete('product_mappings', {
+        store_id: `eq.${storeId}`,
+        provider: 'eq.stripe',
+      });
+    }
+
+    // ── STEP 1: Pull Stripe catalog ──────────────────────
+    let allStripeProducts = [];
+    let hasMore = true;
+    let startingAfter = null;
+
+    while (hasMore) {
+      const params = new URLSearchParams({ limit: '100', active: 'true' });
+      if (startingAfter) params.set('starting_after', startingAfter);
+
+      const res = await fetch(`https://api.stripe.com/v1/products?${params}`, {
+        headers: { Authorization: `Bearer ${stripeSecret}`, 'Stripe-Account': stripeAccountId },
+      });
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(`Stripe product fetch failed: ${res.status} — ${data.error?.message || 'unknown'}`);
+
+      allStripeProducts = allStripeProducts.concat(data.data || []);
+      hasMore = data.has_more || false;
+      if (data.data?.length > 0) startingAfter = data.data[data.data.length - 1].id;
+    }
+
+    // Fetch default price for each Stripe product
+    const stripeProductPrices = {};
+    for (const sp of allStripeProducts) {
+      if (sp.default_price) {
+        try {
+          const priceRes = await fetch(`https://api.stripe.com/v1/prices/${sp.default_price}`, {
+            headers: { Authorization: `Bearer ${stripeSecret}`, 'Stripe-Account': stripeAccountId },
+          });
+          if (priceRes.ok) {
+            stripeProductPrices[sp.id] = await priceRes.json();
+          }
+        } catch { /* skip */ }
+      }
+    }
+
+    // ── STEP 2: Get Webnari products + existing mappings ─
+    const products = await sb.query('products', {
+      filters: { store_id: `eq.${storeId}` },
+    });
+
+    let variants = [];
+    if (products.length > 0) {
+      const productIds = products.map(p => p.id);
+      variants = await sb.query('variants', {
+        filters: { product_id: `in.(${productIds.join(',')})` },
+      });
+    }
+
+    const existingMappings = await sb.query('product_mappings', {
+      filters: { store_id: `eq.${storeId}`, provider: 'eq.stripe' },
+    });
+
+    const mappedExternalIds = new Set(existingMappings.map(m => m.external_id));
+    const mappedWebnariIds = new Set(existingMappings.map(m => m.webnari_product_id));
+
+    // ── STEP 3: Match Stripe products to Webnari by SKU ──
+    let newMappings = 0;
+    let skipped = 0;
+
+    for (const sp of allStripeProducts) {
+      if (mappedExternalIds.has(sp.id)) { skipped++; continue; }
+
+      const stripeSku = sp.metadata?.sku || sp.metadata?.webnari_sku || '';
+      if (!stripeSku) continue;
+
+      // Find matching Webnari product by SKU
+      const matchProduct = products.find(p => p.sku && p.sku.toLowerCase() === stripeSku.toLowerCase());
+      if (matchProduct && !mappedWebnariIds.has(matchProduct.id)) {
+        await sb.insert('product_mappings', {
+          store_id: storeId,
+          provider: 'stripe',
+          webnari_product_id: matchProduct.id,
+          webnari_variant_id: null,
+          external_id: sp.id,
+          external_name: sp.name,
+          external_sku: stripeSku,
+          auto_sync: true,
+        });
+        newMappings++;
+        mappedWebnariIds.add(matchProduct.id);
+        mappedExternalIds.add(sp.id);
+      }
+    }
+
+    // ── STEP 4: Push unmapped Webnari products to Stripe ─
+    let pushed = 0;
+
+    for (const product of products) {
+      if (mappedWebnariIds.has(product.id)) continue;
+
+      // Create product on connected account
+      const productParams = new URLSearchParams();
+      productParams.set('name', product.name);
+      if (product.description) productParams.set('description', product.description.slice(0, 500));
+      if (product.sku) productParams.set('metadata[sku]', product.sku);
+      productParams.set('metadata[webnari_id]', product.id);
+
+      // Add first image if available
+      if (product.images?.length > 0) {
+        productParams.set('images[0]', product.images[0]);
+      }
+
+      const createRes = await fetch('https://api.stripe.com/v1/products', {
+        method: 'POST',
+        headers: stripeHeaders,
+        body: productParams.toString(),
+      });
+
+      const created = await createRes.json();
+      if (!createRes.ok) {
+        console.error(`Failed to create Stripe product for ${product.name}:`, created.error?.message);
+        continue;
+      }
+
+      // Create a default price
+      const priceParams = new URLSearchParams();
+      priceParams.set('product', created.id);
+      priceParams.set('unit_amount', (product.price || 0).toString());
+      priceParams.set('currency', 'usd');
+
+      const priceRes = await fetch('https://api.stripe.com/v1/prices', {
+        method: 'POST',
+        headers: stripeHeaders,
+        body: priceParams.toString(),
+      });
+
+      const priceData = await priceRes.json();
+
+      // Set as default price
+      if (priceRes.ok) {
+        await fetch(`https://api.stripe.com/v1/products/${created.id}`, {
+          method: 'POST',
+          headers: stripeHeaders,
+          body: new URLSearchParams({ default_price: priceData.id }).toString(),
+        });
+      }
+
+      // Create mapping
+      await sb.insert('product_mappings', {
+        store_id: storeId,
+        provider: 'stripe',
+        webnari_product_id: product.id,
+        webnari_variant_id: null,
+        external_id: created.id,
+        external_name: created.name,
+        external_sku: product.sku || null,
+        auto_sync: true,
+      });
+
+      pushed++;
+    }
+
+    // Log sync
+    await sb.insert('sync_log', {
+      store_id: storeId,
+      provider: 'stripe',
+      event_type: 'catalog_sync',
+      direction: 'outbound',
+      status: 'success',
+      details: JSON.stringify({
+        stripe_products_found: allStripeProducts.length,
+        matched_by_sku: newMappings,
+        pushed_to_stripe: pushed,
+        skipped_existing: skipped,
+        total_webnari_products: products.length,
+      }),
+    });
+
+    return json({
+      synced: true,
+      stripeProductsFound: allStripeProducts.length,
+      matchedBySku: newMappings,
+      pushedToStripe: pushed,
+      skippedExisting: skipped,
+    }, 200, corsOrigin);
+
+  } catch (err) {
+    console.error('Stripe sync error:', err);
+
+    await sb.insert('sync_log', {
+      store_id: storeId,
+      provider: 'stripe',
+      event_type: 'catalog_sync',
+      direction: 'outbound',
+      status: 'error',
+      details: JSON.stringify({ error: err.message }),
+    });
+
+    return json({ error: 'Sync failed', details: err.message }, 500, corsOrigin);
   }
 }

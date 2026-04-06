@@ -18,6 +18,11 @@ import {
   disconnectQuickBooks,
   testQuickBooks,
   getQuickBooksSyncLog,
+  connectStripe,
+  disconnectStripe,
+  testStripe,
+  syncStripeProducts,
+  getStripeStatus,
 } from "@/app/[storeId]/actions/commerce-actions";
 
 interface Integration {
@@ -104,8 +109,17 @@ export default function IntegrationsPage() {
   const [qbTesting, setQbTesting] = useState(false);
   const [qbTab, setQbTab] = useState<"overview" | "activity">("overview");
 
+  const [stripeConnecting, setStripeConnecting] = useState(false);
+  const [stripeDisconnecting, setStripeDisconnecting] = useState(false);
+  const [stripeTesting, setStripeTesting] = useState(false);
+  const [stripeSyncing, setStripeSyncing] = useState(false);
+  const [stripeSyncLog, setStripeSyncLog] = useState<SyncLogEntry[]>([]);
+  const [stripeMappings, setStripeMappings] = useState<ProductMapping[]>([]);
+  const [stripeTab, setStripeTab] = useState<"overview" | "mappings" | "activity">("overview");
+
   const squareIntegration = integrations.find((i) => i.provider === "square") || null;
   const qbIntegration = integrations.find((i) => i.provider === "quickbooks") || null;
+  const stripeIntegration = integrations.find((i) => i.provider === "stripe") || null;
 
   const showMessage = useCallback((msg: string, type: "success" | "error" = "success") => {
     setMessage(msg);
@@ -133,6 +147,16 @@ export default function IntegrationsPage() {
         const qbLogs = await getQuickBooksSyncLog(storeId);
         setQbSyncLog(qbLogs);
       }
+
+      const stripe = integ.find((i: Integration) => i.provider === "stripe");
+      if (stripe) {
+        const [mapData, logData] = await Promise.all([
+          getProductMappings(storeId),
+          getSyncLog(storeId),
+        ]);
+        setStripeMappings(mapData.filter((m: ProductMapping) => m.provider === "stripe"));
+        setStripeSyncLog(logData.filter((l: SyncLogEntry) => l.provider === "stripe"));
+      }
     } catch {
       // empty
     }
@@ -152,6 +176,41 @@ export default function IntegrationsPage() {
     if (connected === "square") {
       showMessage("Square connected successfully");
       loadData();
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+    if (connected === "stripe") {
+      showMessage("Stripe connected successfully");
+      loadData();
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+    const stripeReturn = urlParams.get("stripe_return");
+    const stripeRefresh = urlParams.get("stripe_refresh");
+    if (stripeReturn === "true") {
+      // Returned from Stripe onboarding — check status
+      (async () => {
+        try {
+          const status = await getStripeStatus(storeId);
+          if (status.onboardingComplete) {
+            showMessage(`Stripe connected — ${status.accountName || status.accountId}`);
+          } else {
+            showMessage("Stripe onboarding incomplete — click Connect Stripe to continue setup", "error");
+          }
+          loadData();
+        } catch {
+          showMessage("Checking Stripe status...");
+          loadData();
+        }
+      })();
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+    if (stripeRefresh === "true") {
+      // Onboarding link expired — need to generate a new one
+      showMessage("Onboarding link expired. Click Connect Stripe to continue.", "error");
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+    const stripeError = urlParams.get("stripe_error");
+    if (stripeError) {
+      showMessage(`Stripe error: ${stripeError}`, "error");
       window.history.replaceState({}, "", window.location.pathname);
     }
     const qbConnected = urlParams.get("qb_connected");
@@ -321,6 +380,63 @@ export default function IntegrationsPage() {
       showMessage(`Test failed: ${(err as Error).message}`, "error");
     }
     setQbTesting(false);
+  }
+
+  // ── Stripe Handlers ──────────────────────────────────
+  async function handleStripeConnect() {
+    setStripeConnecting(true);
+    try {
+      const { url } = await connectStripe(storeId);
+      if (url) window.location.href = url;
+    } catch (err) {
+      showMessage((err as Error).message, "error");
+      setStripeConnecting(false);
+    }
+  }
+
+  async function handleStripeDisconnect() {
+    if (!confirm("Disconnect Stripe? This will remove all product mappings and stop payment processing via Connect.")) return;
+    setStripeDisconnecting(true);
+    try {
+      await disconnectStripe(storeId);
+      setIntegrations(integrations.filter((i) => i.provider !== "stripe"));
+      setStripeMappings([]);
+      setStripeSyncLog([]);
+      showMessage("Stripe disconnected");
+    } catch (err) {
+      showMessage((err as Error).message, "error");
+    }
+    setStripeDisconnecting(false);
+  }
+
+  async function handleStripeTest() {
+    setStripeTesting(true);
+    try {
+      const result = await testStripe(storeId);
+      const parts = [result.accountName || result.accountId];
+      if (result.chargesEnabled) parts.push("charges enabled");
+      if (result.payoutsEnabled) parts.push("payouts enabled");
+      showMessage(`Connection OK — ${parts.join(", ")}`);
+    } catch (err) {
+      showMessage(`Test failed: ${(err as Error).message}`, "error");
+    }
+    setStripeTesting(false);
+  }
+
+  async function handleStripeSync() {
+    setStripeSyncing(true);
+    try {
+      const result = await syncStripeProducts(storeId);
+      const parts = [];
+      if (result.matchedBySku) parts.push(`${result.matchedBySku} matched by SKU`);
+      if (result.pushedToStripe) parts.push(`${result.pushedToStripe} pushed to Stripe`);
+      if (result.skippedExisting) parts.push(`${result.skippedExisting} already synced`);
+      showMessage(`Sync complete: ${parts.join(", ") || "everything up to date"}`);
+      loadData();
+    } catch (err) {
+      showMessage((err as Error).message, "error");
+    }
+    setStripeSyncing(false);
   }
 
   function formatDate(dateStr: string) {
@@ -1027,6 +1143,317 @@ export default function IntegrationsPage() {
                           </span>
                           <span style={{ fontSize: "11px", color: "var(--text-quaternary)", whiteSpace: "nowrap" }}>
                             {timeAgo(log.created_at)}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
+      {/* Stripe Connect Card */}
+      <div className="card" style={{ marginBottom: "24px" }}>
+        <div className="flex items-center justify-between" style={{ marginBottom: "20px" }}>
+          <div className="flex items-center gap-3">
+            <div
+              style={{
+                width: "44px",
+                height: "44px",
+                borderRadius: "var(--radius-md)",
+                background: "#635BFF",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                <path d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.591-7.305z" />
+              </svg>
+            </div>
+            <div>
+              <h2 className="heading-sm" style={{ marginBottom: 0 }}>Stripe</h2>
+              <p style={{ fontSize: "12px", color: "var(--text-tertiary)", margin: 0 }}>
+                {stripeIntegration
+                  ? `Connected to ${stripeIntegration.company_name || stripeIntegration.merchant_id || "Stripe"}`
+                  : "Accept payments and sync your product catalog"}
+              </p>
+            </div>
+          </div>
+
+          {stripeIntegration ? (
+            stripeIntegration.metadata?.onboarding_complete ? (
+              <span className="badge badge-green">Connected</span>
+            ) : (
+              <span className="badge badge-orange">Pending Setup</span>
+            )
+          ) : (
+            <span className="badge badge-gray">Not Connected</span>
+          )}
+        </div>
+
+        {!stripeIntegration || !stripeIntegration.metadata?.onboarding_complete ? (
+          <div style={{ textAlign: "center", padding: "24px 0 8px" }}>
+            <div
+              style={{
+                width: "64px",
+                height: "64px",
+                borderRadius: "var(--radius-lg)",
+                background: "var(--bg-grouped)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 16px",
+              }}
+            >
+              <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="var(--text-quaternary)" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5z" />
+              </svg>
+            </div>
+            <p style={{ fontSize: "14px", color: "var(--text-secondary)", fontWeight: 600, marginBottom: "4px" }}>
+              {stripeIntegration ? "Finish Stripe setup" : "Connect your Stripe account"}
+            </p>
+            <p style={{ fontSize: "13px", color: "var(--text-tertiary)", maxWidth: "420px", margin: "0 auto 20px" }}>
+              {stripeIntegration
+                ? "Your Stripe account was created but onboarding isn't complete. Click below to finish setup."
+                : "Accept online payments via Stripe Checkout. Products sync automatically and payments route directly to your Stripe account."}
+            </p>
+            <button onClick={handleStripeConnect} disabled={stripeConnecting} className="btn btn-primary" style={{ fontSize: "14px" }}>
+              {stripeConnecting ? "Redirecting to Stripe..." : stripeIntegration ? "Continue Setup" : "Connect Stripe"}
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center gap-3" style={{ marginBottom: "20px", flexWrap: "wrap" }}>
+              <button onClick={handleStripeTest} disabled={stripeTesting} className="btn btn-secondary btn-sm" style={{ fontSize: "13px" }}>
+                {stripeTesting ? "Testing..." : "Test Connection"}
+              </button>
+              <button onClick={handleStripeSync} disabled={stripeSyncing} className="btn btn-secondary btn-sm" style={{ fontSize: "13px" }}>
+                {stripeSyncing ? "Syncing..." : "Sync Products"}
+              </button>
+              <button onClick={handleStripeDisconnect} disabled={stripeDisconnecting} className="btn btn-danger btn-sm" style={{ fontSize: "13px" }}>
+                {stripeDisconnecting ? "Disconnecting..." : "Disconnect"}
+              </button>
+            </div>
+
+            {/* Stripe Tabs */}
+            <div className="flex gap-1" style={{ borderBottom: "1px solid var(--border)", marginBottom: "20px" }}>
+              {(["overview", "mappings", "activity"] as const).map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setStripeTab(t)}
+                  style={{
+                    padding: "8px 16px",
+                    fontSize: "13px",
+                    fontWeight: stripeTab === t ? 600 : 500,
+                    color: stripeTab === t ? "var(--gold)" : "var(--text-tertiary)",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    borderBottom: `2px solid ${stripeTab === t ? "var(--gold)" : "transparent"}`,
+                    marginBottom: "-1px",
+                  }}
+                >
+                  {t === "overview" ? "Overview" : t === "mappings" ? `Mappings (${stripeMappings.length})` : "Activity"}
+                </button>
+              ))}
+            </div>
+
+            {stripeTab === "overview" && (
+              <div>
+                <p style={{ fontSize: "13px", color: "var(--text-secondary)", marginBottom: "20px" }}>
+                  Payments process through your connected Stripe account. Products are synced to Stripe for catalog management and Checkout sessions.
+                </p>
+                <div className="grid grid-cols-3 gap-4">
+                  {[
+                    { step: "1", title: "Products Synced", desc: "Webnari products pushed to your Stripe catalog with prices" },
+                    { step: "2", title: "Checkout Created", desc: "Customer clicks buy — Stripe Checkout session opens" },
+                    { step: "3", title: "Payment Received", desc: "Funds go directly to your Stripe account" },
+                  ].map((s) => (
+                    <div
+                      key={s.step}
+                      style={{ padding: "16px", background: "var(--bg-grouped)", borderRadius: "var(--radius-sm)", textAlign: "center" }}
+                    >
+                      <div
+                        style={{
+                          width: "32px",
+                          height: "32px",
+                          borderRadius: "999px",
+                          background: "var(--gold-light)",
+                          color: "var(--gold)",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "14px",
+                          fontWeight: 700,
+                          marginBottom: "8px",
+                        }}
+                      >
+                        {s.step}
+                      </div>
+                      <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-primary)", marginBottom: "4px" }}>
+                        {s.title}
+                      </div>
+                      <div style={{ fontSize: "12px", color: "var(--text-tertiary)" }}>{s.desc}</div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ marginTop: "20px", padding: "12px 16px", background: "var(--bg-grouped)", borderRadius: "var(--radius-sm)", fontSize: "12px", color: "var(--text-tertiary)" }}>
+                  <strong style={{ color: "var(--text-secondary)" }}>Connection details:</strong>{" "}
+                  Account: {stripeIntegration.merchant_id || "—"} · Connected {timeAgo(stripeIntegration.connected_at)}
+                </div>
+              </div>
+            )}
+
+            {stripeTab === "mappings" && (
+              <div className="card-section">
+                <div className="card-section-header">
+                  <span className="heading-sm">Product Mappings</span>
+                  {stripeMappings.length > 0 && (
+                    <button
+                      onClick={async () => {
+                        if (!confirm(`Delete all ${stripeMappings.length} Stripe product mappings?`)) return;
+                        try {
+                          await deleteAllProductMappings(storeId);
+                          setStripeMappings([]);
+                          showMessage("All Stripe mappings deleted");
+                        } catch (err) {
+                          showMessage((err as Error).message, "error");
+                        }
+                      }}
+                      className="btn btn-ghost btn-sm"
+                      style={{ color: "var(--red)", fontSize: "12px" }}
+                    >
+                      Delete All
+                    </button>
+                  )}
+                </div>
+                {stripeMappings.length === 0 ? (
+                  <div style={{ padding: "40px 24px", textAlign: "center" }}>
+                    <p style={{ fontSize: "14px", color: "var(--text-tertiary)" }}>
+                      No product mappings yet. Click &quot;Sync Products&quot; to match your catalog.
+                    </p>
+                  </div>
+                ) : (
+                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
+                    <thead>
+                      <tr style={{ borderBottom: "1px solid var(--border)" }}>
+                        <th style={{ padding: "10px 16px", textAlign: "left", fontWeight: 600, color: "var(--text-secondary)", fontSize: "12px" }}>
+                          Webnari Product
+                        </th>
+                        <th className="hide-mobile" style={{ padding: "10px 16px", textAlign: "left", fontWeight: 600, color: "var(--text-secondary)", fontSize: "12px" }}>
+                          SKU
+                        </th>
+                        <th style={{ padding: "10px 16px", textAlign: "left", fontWeight: 600, color: "var(--text-secondary)", fontSize: "12px" }}>
+                          Stripe Product
+                        </th>
+                        <th style={{ padding: "10px 8px", width: "40px" }}></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {stripeMappings.map((m) => (
+                        <tr key={m.id} style={{ borderBottom: "1px solid var(--border-subtle)" }}>
+                          <td style={{ padding: "10px 16px" }}>
+                            <div style={{ fontSize: "13px", fontWeight: 500, color: "var(--text-primary)" }}>
+                              {m.webnari_product_name}
+                            </div>
+                          </td>
+                          <td className="hide-mobile">
+                            <code style={{ fontSize: "12px", padding: "2px 6px", background: "var(--bg-grouped)", borderRadius: "4px", color: "var(--text-tertiary)" }}>
+                              {m.webnari_sku || "\u2014"}
+                            </code>
+                          </td>
+                          <td>
+                            <div style={{ fontSize: "13px", color: "var(--text-secondary)" }}>
+                              {m.external_name || m.external_id.slice(0, 20) + "..."}
+                            </div>
+                          </td>
+                          <td>
+                            <button
+                              onClick={async () => {
+                                try {
+                                  await deleteProductMapping(storeId, m.id);
+                                  setStripeMappings(stripeMappings.filter((x) => x.id !== m.id));
+                                  showMessage("Mapping removed");
+                                } catch (err) {
+                                  showMessage((err as Error).message, "error");
+                                }
+                              }}
+                              className="btn btn-ghost btn-sm"
+                              style={{ color: "var(--red)", padding: "4px 8px", minHeight: "28px" }}
+                            >
+                              <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                )}
+              </div>
+            )}
+
+            {stripeTab === "activity" && (
+              <div>
+                {stripeSyncLog.length === 0 ? (
+                  <p style={{ fontSize: "13px", color: "var(--text-tertiary)", textAlign: "center", padding: "32px 0" }}>
+                    No sync activity yet. Connect and sync to see events here.
+                  </p>
+                ) : (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    {stripeSyncLog.map((entry) => (
+                      <div
+                        key={entry.id}
+                        className="flex items-center justify-between"
+                        style={{ padding: "10px 14px", background: "var(--bg-grouped)", borderRadius: "var(--radius-sm)" }}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span
+                            style={{
+                              width: "8px",
+                              height: "8px",
+                              borderRadius: "999px",
+                              background: entry.status === "success" ? "#22c55e" : "#ef4444",
+                              flexShrink: 0,
+                            }}
+                          />
+                          <div>
+                            <div style={{ fontSize: "13px", fontWeight: 500, color: "var(--text-primary)" }}>
+                              {entry.event_type.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+                            </div>
+                            {entry.details && (
+                              <div style={{ fontSize: "11px", color: "var(--text-tertiary)", marginTop: "2px" }}>
+                                {typeof entry.details === "string" ? entry.details : JSON.stringify(entry.details)}
+                              </div>
+                            )}
+                            {entry.error && (
+                              <div style={{ fontSize: "11px", color: "#ef4444", marginTop: "2px" }}>
+                                {entry.error}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span
+                            style={{
+                              fontSize: "10px",
+                              fontWeight: 600,
+                              padding: "2px 8px",
+                              borderRadius: "999px",
+                              background: entry.status === "success" ? "#dcfce7" : "#fee2e2",
+                              color: entry.status === "success" ? "#15803d" : "#dc2626",
+                              textTransform: "uppercase",
+                            }}
+                          >
+                            {entry.status}
+                          </span>
+                          <span style={{ fontSize: "11px", color: "var(--text-quaternary)", whiteSpace: "nowrap" }}>
+                            {timeAgo(entry.created_at)}
                           </span>
                         </div>
                       </div>

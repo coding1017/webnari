@@ -278,3 +278,30 @@ export async function getQuickBooksSyncLog(storeId: string) {
   const client = new CommerceClient(storeId);
   return client.getQuickBooksSyncLog();
 }
+
+// ── Stripe Connect ────────────────────────────────────
+
+export async function connectStripe(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.connectStripe();
+}
+
+export async function disconnectStripe(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.disconnectStripe();
+}
+
+export async function testStripe(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.testStripe();
+}
+
+export async function getStripeStatus(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.getStripeStatus();
+}
+
+export async function syncStripeProducts(storeId: string, options?: { fresh?: boolean }) {
+  const client = new CommerceClient(storeId);
+  return client.syncStripeProducts(options);
+}

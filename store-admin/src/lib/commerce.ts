@@ -385,6 +385,31 @@ export class CommerceClient {
     return this.fetch('/api/admin/integrations/quickbooks/sync-log');
   }
 
+  // ── Stripe Connect ────────────────────────────────────
+
+  async connectStripe() {
+    return this.fetch('/api/admin/integrations/stripe/connect', { method: 'POST' });
+  }
+
+  async disconnectStripe() {
+    return this.fetch('/api/admin/integrations/stripe/disconnect', { method: 'DELETE' });
+  }
+
+  async testStripe() {
+    return this.fetch('/api/admin/integrations/stripe/test', { method: 'POST' });
+  }
+
+  async getStripeStatus() {
+    return this.fetch('/api/admin/integrations/stripe/status');
+  }
+
+  async syncStripeProducts(options?: { fresh?: boolean }) {
+    return this.fetch('/api/admin/integrations/stripe/sync', {
+      method: 'POST',
+      body: options ? JSON.stringify(options) : undefined,
+    });
+  }
+
   // ── Shipping ──────────────────────────────────────────
   async calculateShipping(subtotal: number) {
     return this.fetch('/api/shipping/calculate', {
