@@ -45,6 +45,7 @@ interface Order {
   notes: string | null;
   created_at: string;
   items: OrderItem[];
+  invoice_url: string | null;
 }
 
 export default function OrderDetailPage() {
@@ -122,6 +123,20 @@ export default function OrderDetailPage() {
             Placed {new Date(order.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
           </p>
         </div>
+        {order.invoice_url && (
+          <a
+            href={order.invoice_url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn btn-ghost btn-sm"
+            style={{ fontSize: "13px", gap: "6px", display: "flex", alignItems: "center", textDecoration: "none" }}
+          >
+            <svg style={{ width: "16px", height: "16px" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Invoice
+          </a>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
