@@ -91,9 +91,13 @@ export default {
       }
 
       // Orders
+      if (method === 'GET' && path.match(/^\/api\/orders\/[^/]+\/invoice$/)) {
+        const orderId = path.split('/')[3];
+        return await handleGetInvoice(request, sb, env, storeId, orderId, corsOrigin);
+      }
       if (method === 'GET' && path.match(/^\/api\/orders\/[^/]+$/)) {
         const orderId = path.split('/').pop();
-        return await handleGetOrder(request, sb, storeId, orderId, corsOrigin);
+        return await handleGetOrder(request, sb, env, storeId, orderId, corsOrigin);
       }
       if (method === 'GET' && path === '/api/orders') {
         return await handleListOrders(request, sb, env, storeId, url, corsOrigin);
@@ -437,6 +441,27 @@ function json(data, status = 200, origin = '*') {
     status,
     headers: { 'Content-Type': 'application/json', ...corsHeaders(origin) },
   });
+}
+
+function esc(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// HMAC-signed invoice tokens — prevents unauthorized access to customer PII
+async function generateInvoiceToken(orderId, email, secret) {
+  const data = `invoice:${orderId}:${email}`;
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw', encoder.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+  );
+  const sig = await crypto.subtle.sign('HMAC', key, encoder.encode(data));
+  return Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function verifyInvoiceToken(orderId, email, token, secret) {
+  const expected = await generateInvoiceToken(orderId, email, secret);
+  return expected === token;
 }
 
 function supabase(url, serviceKey) {
@@ -1374,7 +1399,7 @@ async function verifySquareSignature(body, signature, sigKey, url) {
 //  ORDERS
 // ═══════════════════════════════════════════════════════════════
 
-async function handleGetOrder(request, sb, storeId, orderId, corsOrigin) {
+async function handleGetOrder(request, sb, env, storeId, orderId, corsOrigin) {
   // Customers can look up by order ID + email
   const url = new URL(request.url);
   const email = url.searchParams.get('email');
@@ -1394,8 +1419,195 @@ async function handleGetOrder(request, sb, storeId, orderId, corsOrigin) {
     filters: { order_id: `eq.${order.id}` },
   });
 
-  return json({ ...order, items }, 200, corsOrigin);
+  // Build signed invoice URL — HMAC token prevents unauthorized access to customer PII
+  const baseUrl = url.origin;
+  const secret = env.ADMIN_API_KEY || 'invoice-secret';
+  const token = await generateInvoiceToken(order.id, order.customer_email || '', secret);
+  const invoiceUrl = `${baseUrl}/api/orders/${order.id}/invoice?email=${encodeURIComponent(order.customer_email || '')}&token=${token}`;
+
+  return json({ ...order, items, invoice_url: invoiceUrl }, 200, corsOrigin);
 }
+
+
+async function handleGetInvoice(request, sb, env, storeId, orderId, corsOrigin) {
+  const url = new URL(request.url);
+  const token = url.searchParams.get('token');
+  const email = url.searchParams.get('email');
+  const isAdmin = requireAdmin(request, env, storeId);
+
+  // Auth: admin via Bearer token, or customer via signed HMAC token
+  if (!isAdmin) {
+    if (!token || !email) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+    const secret = env.ADMIN_API_KEY || 'invoice-secret';
+    const valid = await verifyInvoiceToken(orderId, email, token, secret);
+    if (!valid) return json({ error: 'Invalid or expired link' }, 403, corsOrigin);
+  }
+
+  const filters = { id: `eq.${orderId}` };
+  if (storeId) filters.store_id = `eq.${storeId}`;
+  if (email) filters.customer_email = `eq.${email}`;
+
+  const order = await sb.query('orders', { filters, single: true });
+  if (!order) return json({ error: 'Order not found' }, 404, corsOrigin);
+
+  const items = await sb.query('order_items', {
+    filters: { order_id: `eq.${order.id}` },
+  });
+
+  // Get store info for branding
+  const store = await sb.query('stores', {
+    filters: { id: `eq.${order.store_id}` },
+    single: true,
+    select: 'id,name,domain,settings',
+  });
+
+  const storeName = store?.name || 'Store';
+  const storeEmail = store?.settings?.email || '';
+  const orderDate = new Date(order.created_at).toLocaleDateString('en-US', {
+    year: 'numeric', month: 'long', day: 'numeric',
+  });
+
+  const fmtCents = (c) => `$${(c / 100).toFixed(2)}`;
+
+  const addr = order.shipping_address;
+  const shipTo = addr
+    ? `${addr.line1 || ''}${addr.line2 ? ', ' + addr.line2 : ''}<br>${addr.city || ''}, ${addr.state || ''} ${addr.zip || ''}`
+    : '';
+
+  const itemRows = items.map(item => `
+    <tr>
+      <td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;">
+        ${esc(item.product_name)}${item.variant_name ? `<br><span style="color:#6b7280;font-size:12px;">${esc(item.variant_name)}</span>` : ''}
+      </td>
+      <td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;text-align:center;">${item.quantity}</td>
+      <td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;text-align:right;">${fmtCents(item.price)}</td>
+      <td style="padding:10px 12px;border-bottom:1px solid #e5e7eb;text-align:right;">${fmtCents(item.price * item.quantity)}</td>
+    </tr>
+  `).join('');
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Invoice ${esc(order.order_number)} — ${esc(storeName)}</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#111827;background:#f9fafb;padding:40px 20px}
+  .invoice{max-width:800px;margin:0 auto;background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,0.1);overflow:hidden}
+  .header{padding:40px 40px 32px;border-bottom:2px solid #111827}
+  .header h1{font-size:28px;font-weight:800;letter-spacing:-0.5px}
+  .header .invoice-label{font-size:13px;color:#6b7280;text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+  .meta{display:flex;justify-content:space-between;padding:32px 40px;gap:24px;flex-wrap:wrap}
+  .meta-col{min-width:180px}
+  .meta-col h3{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#6b7280;margin-bottom:8px;font-weight:600}
+  .meta-col p{font-size:14px;line-height:1.6;color:#374151}
+  table{width:100%;border-collapse:collapse}
+  thead th{padding:12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#6b7280;border-bottom:2px solid #e5e7eb;font-weight:600}
+  thead th:nth-child(2){text-align:center}
+  thead th:nth-child(3),thead th:nth-child(4){text-align:right}
+  .table-wrap{padding:0 40px}
+  .summary{padding:24px 40px 32px;display:flex;justify-content:flex-end}
+  .summary-table{width:260px}
+  .summary-row{display:flex;justify-content:space-between;padding:6px 0;font-size:14px;color:#374151}
+  .summary-row.total{border-top:2px solid #111827;margin-top:8px;padding-top:12px;font-weight:800;font-size:16px;color:#111827}
+  .footer{padding:32px 40px;background:#f9fafb;border-top:1px solid #e5e7eb;text-align:center}
+  .footer p{font-size:13px;color:#6b7280;line-height:1.6}
+  .badge{display:inline-block;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px}
+  .badge-paid{background:#d1fae5;color:#065f46}
+  .badge-refunded{background:#fee2e2;color:#991b1b}
+  .badge-pending{background:#fef3c7;color:#92400e}
+  .print-btn{position:fixed;bottom:24px;right:24px;padding:12px 24px;background:#111827;color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.15);z-index:100}
+  .print-btn:hover{background:#374151}
+  @media print{
+    body{background:#fff;padding:0}
+    .invoice{box-shadow:none;border-radius:0}
+    .print-btn{display:none}
+    .header{border-bottom-width:1px}
+  }
+  @media(max-width:600px){
+    .header,.meta,.table-wrap,.summary,.footer{padding-left:20px;padding-right:20px}
+    .meta{flex-direction:column;gap:16px}
+  }
+</style>
+</head>
+<body>
+<button class="print-btn" onclick="window.print()">Save as PDF</button>
+<div class="invoice">
+  <div class="header">
+    <h1>${esc(storeName)}</h1>
+    <div class="invoice-label">Invoice</div>
+  </div>
+
+  <div class="meta">
+    <div class="meta-col">
+      <h3>Invoice Details</h3>
+      <p>
+        <strong>${esc(order.order_number)}</strong><br>
+        ${esc(orderDate)}<br>
+        <span class="badge ${order.status === 'refunded' ? 'badge-refunded' : order.status === 'pending' ? 'badge-pending' : 'badge-paid'}">
+          ${esc(order.status)}
+        </span>
+      </p>
+    </div>
+    <div class="meta-col">
+      <h3>Bill To</h3>
+      <p>
+        ${order.customer_name ? esc(order.customer_name) + '<br>' : ''}
+        ${esc(order.customer_email)}
+        ${order.customer_phone ? '<br>' + esc(order.customer_phone) : ''}
+      </p>
+    </div>
+    ${shipTo ? `
+    <div class="meta-col">
+      <h3>Ship To</h3>
+      <p>${order.customer_name ? esc(order.customer_name) + '<br>' : ''}${shipTo}</p>
+    </div>` : ''}
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Qty</th>
+          <th>Unit Price</th>
+          <th>Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${itemRows}
+      </tbody>
+    </table>
+  </div>
+
+  <div class="summary">
+    <div class="summary-table">
+      <div class="summary-row"><span>Subtotal</span><span>${fmtCents(order.subtotal)}</span></div>
+      <div class="summary-row"><span>Shipping</span><span>${order.shipping ? fmtCents(order.shipping) : 'Free'}</span></div>
+      <div class="summary-row"><span>Tax</span><span>${fmtCents(order.tax)}</span></div>
+      <div class="summary-row total"><span>Total</span><span>${fmtCents(order.total)}</span></div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <p><strong>Thank you for your purchase!</strong></p>
+    ${storeEmail ? `<p>${esc(storeEmail)}</p>` : ''}
+    <p style="margin-top:12px;font-size:11px;color:#9ca3af;">Payment via ${esc(order.payment_provider || 'card')}</p>
+  </div>
+</div>
+</body>
+</html>`;
+
+  return new Response(html, {
+    status: 200,
+    headers: {
+      'Content-Type': 'text/html;charset=UTF-8',
+      'Cache-Control': 'private, no-cache',
+    },
+  });
+}
+
 
 async function handleListOrders(request, sb, env, storeId, url, corsOrigin) {
   const email = url.searchParams.get('email');
