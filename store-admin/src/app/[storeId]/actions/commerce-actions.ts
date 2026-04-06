@@ -1,6 +1,112 @@
 "use server";
 
 import { CommerceClient } from "@/lib/commerce";
+import Anthropic from "@anthropic-ai/sdk";
+
+// ── AI Product Scanner ──────────────────────────────────────
+
+export interface ScanResult {
+  name: string;
+  description: string;
+  category: string | null;
+  color: string | null;
+  material: string | null;
+  suggestedPrice: string | null;
+  badge: string | null;
+  dimensions: {
+    width: string | null;
+    height: string | null;
+    depth: string | null;
+    unit: "in" | "cm";
+    referenceObjectUsed: boolean;
+  } | null;
+  confidence: number;
+  rawAnalysis: string;
+}
+
+export async function scanProduct(formData: FormData): Promise<ScanResult> {
+  const imageFile = formData.get("image") as File;
+  if (!imageFile) throw new Error("No image provided");
+
+  const categoriesJson = formData.get("categories") as string;
+  let categoryList = "pouches, bags, mats, buddy, shoes, sneakers, clothing, accessories, hats, shirts, pants, jackets, socks";
+  if (categoriesJson) {
+    try {
+      const cats = JSON.parse(categoriesJson) as { slug: string; name: string }[];
+      categoryList = cats.map(c => c.slug).join(", ");
+    } catch {}
+  }
+
+  // Convert file to base64
+  const arrayBuffer = await imageFile.arrayBuffer();
+  const base64 = Buffer.from(arrayBuffer).toString("base64");
+  const mediaType = imageFile.type as "image/jpeg" | "image/png" | "image/webp" | "image/gif";
+
+  const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+
+  const prompt = `You are a product cataloging assistant for an e-commerce store. Analyze this product photo and extract structured data for a product listing.
+
+AVAILABLE CATEGORIES (use the slug value): ${categoryList}
+
+AVAILABLE COLORS: Black, White, Pink, Red, Blue, Green, Tie-Dye, Rainbow, Orange, Purple, Yellow, Brown, Gray, Gold, Silver, Teal, Coral, Maroon, Navy
+
+REFERENCE OBJECT: If you see a credit card, debit card, ID card, or coin next to the product, use it to estimate real dimensions. A standard credit card is 3.375 x 2.125 inches (85.6 x 53.98 mm). A US quarter is 0.955 inches (24.26 mm) diameter.
+
+Respond ONLY with valid JSON (no markdown, no code fences) matching this schema:
+{
+  "name": "concise product name, e.g. 'Tie-Dye Crossbody Pouch'",
+  "description": "1-2 sentence product description for an online store listing",
+  "category": "one of the category slugs listed above, or null if uncertain",
+  "color": "primary color from the AVAILABLE COLORS list, or a descriptive color name if not in the list, or null",
+  "material": "detected material/fabric/texture, e.g. 'cotton canvas', 'leather', 'polyester blend', or null if unclear",
+  "suggestedPrice": "estimated retail price in dollars (just the number, e.g. '29.99') based on product type, size, and apparent quality, or null if too uncertain",
+  "badge": "'NEW' if the product looks new/unused, null otherwise",
+  "dimensions": {
+    "width": "estimated width with unit, e.g. '8 inches', or null",
+    "height": "estimated height with unit, or null",
+    "depth": "estimated depth with unit, or null",
+    "unit": "in",
+    "referenceObjectUsed": true or false
+  },
+  "confidence": 0.0 to 1.0 representing overall confidence in the analysis,
+  "rawAnalysis": "brief explanation of what you see and your reasoning for each field"
+}`;
+
+  try {
+    const response = await anthropic.messages.create({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 1024,
+      messages: [{
+        role: "user",
+        content: [
+          { type: "image", source: { type: "base64", media_type: mediaType, data: base64 } },
+          { type: "text", text: prompt },
+        ],
+      }],
+    });
+
+    const text = response.content[0].type === "text" ? response.content[0].text : "";
+
+    // Parse JSON — handle potential markdown fences
+    const cleaned = text.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+    const parsed = JSON.parse(cleaned) as ScanResult;
+
+    return {
+      name: parsed.name || "",
+      description: parsed.description || "",
+      category: parsed.category || null,
+      color: parsed.color || null,
+      material: parsed.material || null,
+      suggestedPrice: parsed.suggestedPrice || null,
+      badge: parsed.badge || null,
+      dimensions: parsed.dimensions || null,
+      confidence: typeof parsed.confidence === "number" ? parsed.confidence : 0.5,
+      rawAnalysis: parsed.rawAnalysis || "",
+    };
+  } catch (err) {
+    throw new Error(`Scan failed: ${(err as Error).message}`);
+  }
+}
 
 export async function createProduct(storeId: string, data: Record<string, unknown>) {
   const client = new CommerceClient(storeId);
