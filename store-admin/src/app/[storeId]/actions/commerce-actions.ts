@@ -198,6 +198,7 @@ export async function deleteGlossaryTerm(storeId: string, termId: string) {
 }
 
 // ── Integrations ──────────────────────────────────────────
+
 export async function getIntegrations(storeId: string) {
   const client = new CommerceClient(storeId);
   return client.getIntegrations();
@@ -251,4 +252,24 @@ export async function deleteAllProductMappings(storeId: string) {
 export async function getSyncLog(storeId: string) {
   const client = new CommerceClient(storeId);
   return client.getSyncLog();
+}
+
+export async function connectQuickBooks(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.connectQuickBooks();
+}
+
+export async function disconnectQuickBooks(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.disconnectQuickBooks();
+}
+
+export async function testQuickBooks(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.testQuickBooks();
+}
+
+export async function getQuickBooksSyncLog(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.getQuickBooksSyncLog();
 }

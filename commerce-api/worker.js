@@ -305,7 +305,7 @@ export default {
         return json(terms, 200, corsOrigin);
       }
 
-      // ── Admin Integrations ─────────────────────────────
+      // ── Admin Integrations (Square + QuickBooks) ────────
       if (method === 'GET' && path === '/api/admin/integrations') {
         return await handleAdminListIntegrations(request, sb, env, storeId, corsOrigin);
       }
@@ -350,6 +350,23 @@ export default {
       // Square inventory webhook (no auth, verify signature)
       if (method === 'POST' && path === '/api/webhooks/square/inventory') {
         return await handleSquareInventoryWebhook(request, sb, env, corsOrigin);
+      }
+
+      // ── QuickBooks routes ─────────────────────────────
+      if (method === 'POST' && path === '/api/admin/integrations/quickbooks/connect') {
+        return await handleQuickBooksConnect(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'GET' && path === '/api/admin/integrations/quickbooks/callback') {
+        return await handleQuickBooksCallback(request, sb, env, storeId, url, corsOrigin);
+      }
+      if (method === 'DELETE' && path === '/api/admin/integrations/quickbooks/disconnect') {
+        return await handleQuickBooksDisconnect(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/admin/integrations/quickbooks/test') {
+        return await handleQuickBooksTest(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'GET' && path === '/api/admin/integrations/quickbooks/sync-log') {
+        return await handleQuickBooksSyncLog(request, sb, env, storeId, corsOrigin);
       }
 
       // Admin Store Settings
@@ -923,6 +940,11 @@ async function handleStripeSessionCompleted(sb, env, storeId, session) {
     }
 
     await sb.insert('order_items', orderItems);
+
+    // Sync order to QuickBooks if connected
+    syncOrderToQuickBooks(sb, env, storeId, order, orderItems).catch(err =>
+      console.error('QB sync (Stripe) failed:', err)
+    );
   }
 }
 
@@ -1228,6 +1250,11 @@ async function handleSquareWebhook(request, sb, env, corsOrigin) {
 
       if (orderItems.length > 0) {
         await sb.insert('order_items', orderItems);
+
+        // Sync order to QuickBooks if connected
+        syncOrderToQuickBooks(sb, env, store.id, order, orderItems).catch(err =>
+          console.error('QB sync (Square) failed:', err)
+        );
       }
     }
   }
@@ -2664,7 +2691,7 @@ async function handleAdminDeleteGlossary(request, sb, env, storeId, termId, cors
 
 
 // ═══════════════════════════════════════════════════════════════
-//  ADMIN — INTEGRATIONS (Square OAuth + Inventory Sync)
+//  ADMIN — INTEGRATIONS (Square OAuth + Inventory Sync + QuickBooks)
 // ═══════════════════════════════════════════════════════════════
 
 // Auto-detect sandbox vs production based on SQUARE_APP_ID
@@ -2679,12 +2706,19 @@ function getSquareOAuthUrl(env) {
   return getSquareBase(env) + '/oauth2/authorize';
 }
 
+// QuickBooks constants
+const QB_AUTH_URL = 'https://appcenter.intuit.com/connect/oauth2';
+const QB_TOKEN_URL = 'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer';
+const QB_REVOKE_URL = 'https://developer.api.intuit.com/v2/oauth2/tokens/revoke';
+const QB_API_BASE = 'https://quickbooks.api.intuit.com';
+const QB_SANDBOX_API_BASE = 'https://sandbox-quickbooks.api.intuit.com';
+
 // List all integrations for a store
 async function handleAdminListIntegrations(request, sb, env, storeId, corsOrigin) {
   if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const integrations = await sb.query('store_integrations', {
-    select: 'id,store_id,provider,merchant_id,location_id,settings,connected_at,updated_at,token_expires_at',
+    select: 'id,store_id,provider,merchant_id,location_id,realm_id,company_name,settings,connected_at,updated_at,token_expires_at,metadata',
     filters: { store_id: `eq.${storeId}` },
   });
 
@@ -2915,6 +2949,175 @@ async function handleSquareOAuthDisconnect(request, sb, env, storeId, corsOrigin
     details: 'Square account disconnected',
     status: 'success',
   });
+
+  return json({ disconnected: true }, 200, corsOrigin);
+}
+
+// ── QuickBooks OAuth ────────────────────────────────────
+
+// Generate QuickBooks OAuth URL
+async function handleQuickBooksConnect(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const clientId = env.QUICKBOOKS_CLIENT_ID;
+  if (!clientId) return json({ error: 'QuickBooks not configured — missing QUICKBOOKS_CLIENT_ID' }, 500, corsOrigin);
+
+  // Build the redirect URI — the callback route on this worker
+  const redirectUri = `https://webnari.io/commerce/api/admin/integrations/quickbooks/callback`;
+
+  // State encodes storeId so we know which store on callback
+  const state = btoa(JSON.stringify({ storeId }));
+
+  const params = new URLSearchParams({
+    client_id: clientId,
+    redirect_uri: redirectUri,
+    response_type: 'code',
+    scope: 'com.intuit.quickbooks.accounting',
+    state,
+  });
+
+  return json({ url: `${QB_AUTH_URL}?${params}` }, 200, corsOrigin);
+}
+
+// OAuth callback — exchange code for tokens
+async function handleQuickBooksCallback(request, sb, env, storeId, url, corsOrigin) {
+  const code = url.searchParams.get('code');
+  const realmId = url.searchParams.get('realmId');
+  const state = url.searchParams.get('state');
+  const error = url.searchParams.get('error');
+
+  if (error) {
+    // Redirect back to admin with error
+    return Response.redirect(`https://webnari.io/store-admin/${storeId}/integrations?qb_error=${encodeURIComponent(error)}`, 302);
+  }
+
+  if (!code || !realmId) {
+    return json({ error: 'Missing code or realmId' }, 400, corsOrigin);
+  }
+
+  // Decode storeId from state if present
+  let callbackStoreId = storeId;
+  if (state) {
+    try {
+      const parsed = JSON.parse(atob(state));
+      if (parsed.storeId) callbackStoreId = parsed.storeId;
+    } catch { /* use header storeId */ }
+  }
+
+  const clientId = env.QUICKBOOKS_CLIENT_ID;
+  const clientSecret = env.QUICKBOOKS_CLIENT_SECRET;
+  if (!clientId || !clientSecret) {
+    return json({ error: 'QuickBooks not configured' }, 500, corsOrigin);
+  }
+
+  const redirectUri = `https://webnari.io/commerce/api/admin/integrations/quickbooks/callback`;
+
+  // Exchange code for tokens
+  const tokenRes = await fetch(QB_TOKEN_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Authorization: `Basic ${btoa(`${clientId}:${clientSecret}`)}`,
+      Accept: 'application/json',
+    },
+    body: new URLSearchParams({
+      grant_type: 'authorization_code',
+      code,
+      redirect_uri: redirectUri,
+    }).toString(),
+  });
+
+  const tokens = await tokenRes.json();
+  if (!tokenRes.ok) {
+    console.error('QB token exchange failed:', JSON.stringify(tokens));
+    return Response.redirect(`https://webnari.io/store-admin/${callbackStoreId}/integrations?qb_error=token_exchange_failed`, 302);
+  }
+
+  // Fetch company name from QB
+  let companyName = '';
+  try {
+    const apiBase = env.QUICKBOOKS_SANDBOX === 'true' ? QB_SANDBOX_API_BASE : QB_API_BASE;
+    const infoRes = await fetch(`${apiBase}/v3/company/${realmId}/companyinfo/${realmId}`, {
+      headers: {
+        Authorization: `Bearer ${tokens.access_token}`,
+        Accept: 'application/json',
+      },
+    });
+    if (infoRes.ok) {
+      const infoData = await infoRes.json();
+      companyName = infoData.CompanyInfo?.CompanyName || '';
+    }
+  } catch { /* non-critical */ }
+
+  // Upsert integration record
+  const expiresAt = new Date(Date.now() + (tokens.expires_in || 3600) * 1000).toISOString();
+  const refreshExpiresAt = new Date(Date.now() + (tokens.x_refresh_token_expires_in || 8726400) * 1000).toISOString();
+
+  // Check if already exists
+  const existing = await sb.query('store_integrations', {
+    filters: { store_id: `eq.${callbackStoreId}`, provider: `eq.quickbooks` },
+    single: true,
+  });
+
+  if (existing) {
+    await sb.update('store_integrations',
+      { id: `eq.${existing.id}` },
+      {
+        access_token: tokens.access_token,
+        refresh_token: tokens.refresh_token,
+        token_expires_at: expiresAt,
+        realm_id: realmId,
+        company_name: companyName,
+        metadata: { refresh_expires_at: refreshExpiresAt },
+        connected_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      }
+    );
+  } else {
+    await sb.insert('store_integrations', {
+      store_id: callbackStoreId,
+      provider: 'quickbooks',
+      access_token: tokens.access_token,
+      refresh_token: tokens.refresh_token,
+      token_expires_at: expiresAt,
+      realm_id: realmId,
+      company_name: companyName,
+      metadata: { refresh_expires_at: refreshExpiresAt },
+    });
+  }
+
+  // Redirect back to integrations page
+  return Response.redirect(`https://webnari.io/store-admin/${callbackStoreId}/integrations?qb_connected=true`, 302);
+}
+
+// Disconnect QuickBooks
+async function handleQuickBooksDisconnect(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const integration = await sb.query('store_integrations', {
+    filters: { store_id: `eq.${storeId}`, provider: `eq.quickbooks` },
+    single: true,
+  });
+
+  if (!integration) return json({ error: 'QuickBooks not connected' }, 404, corsOrigin);
+
+  // Revoke token at Intuit
+  const clientId = env.QUICKBOOKS_CLIENT_ID;
+  const clientSecret = env.QUICKBOOKS_CLIENT_SECRET;
+  if (clientId && clientSecret && integration.refresh_token) {
+    try {
+      await fetch(QB_REVOKE_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Basic ${btoa(`${clientId}:${clientSecret}`)}`,
+        },
+        body: JSON.stringify({ token: integration.refresh_token }),
+      });
+    } catch { /* best effort */ }
+  }
+
+  await sb.delete('store_integrations', { id: `eq.${integration.id}` });
 
   return json({ disconnected: true }, 200, corsOrigin);
 }
@@ -3876,6 +4079,47 @@ async function handleAdminSyncLog(request, sb, env, storeId, corsOrigin) {
   return json(logs, 200, corsOrigin);
 }
 
+// Test QuickBooks connection by querying CompanyInfo
+async function handleQuickBooksTest(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const integration = await getQuickBooksIntegration(sb, env, storeId);
+  if (!integration) return json({ error: 'QuickBooks not connected' }, 404, corsOrigin);
+
+  const apiBase = env.QUICKBOOKS_SANDBOX === 'true' ? QB_SANDBOX_API_BASE : QB_API_BASE;
+  const res = await fetch(`${apiBase}/v3/company/${integration.realm_id}/companyinfo/${integration.realm_id}`, {
+    headers: {
+      Authorization: `Bearer ${integration.access_token}`,
+      Accept: 'application/json',
+    },
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    return json({ error: 'Connection test failed', details: err }, 500, corsOrigin);
+  }
+
+  const data = await res.json();
+  return json({
+    connected: true,
+    companyName: data.CompanyInfo?.CompanyName,
+    companyId: integration.realm_id,
+  }, 200, corsOrigin);
+}
+
+// Get QB sync log
+async function handleQuickBooksSyncLog(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const logs = await sb.query('sync_log', {
+    filters: { store_id: `eq.${storeId}`, provider: `eq.quickbooks` },
+    order: 'created_at.desc',
+    limit: 50,
+  });
+
+  return json(logs, 200, corsOrigin);
+}
+
 // ── Square Inventory Webhook ─────────────────────────────
 
 async function handleSquareInventoryWebhook(request, sb, env, corsOrigin) {
@@ -4280,4 +4524,229 @@ async function getSquareIntegration(sb, env, storeId) {
   }
 
   return integration;
+}
+
+// ── QuickBooks Helpers ──────────────────────────────────
+
+// Get integration with auto-refresh
+async function getQuickBooksIntegration(sb, env, storeId) {
+  const integration = await sb.query('store_integrations', {
+    filters: { store_id: `eq.${storeId}`, provider: `eq.quickbooks` },
+    single: true,
+  });
+
+  if (!integration) return null;
+
+  // Check if token needs refresh (within 5 min of expiry)
+  const expiresAt = new Date(integration.token_expires_at).getTime();
+  const fiveMinFromNow = Date.now() + 5 * 60 * 1000;
+
+  if (expiresAt < fiveMinFromNow) {
+    const refreshed = await refreshQuickBooksToken(sb, env, integration);
+    if (refreshed) return refreshed;
+  }
+
+  return integration;
+}
+
+// Refresh QuickBooks OAuth token
+async function refreshQuickBooksToken(sb, env, integration) {
+  const clientId = env.QUICKBOOKS_CLIENT_ID;
+  const clientSecret = env.QUICKBOOKS_CLIENT_SECRET;
+  if (!clientId || !clientSecret || !integration.refresh_token) return null;
+
+  try {
+    const res = await fetch(QB_TOKEN_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        Authorization: `Basic ${btoa(`${clientId}:${clientSecret}`)}`,
+        Accept: 'application/json',
+      },
+      body: new URLSearchParams({
+        grant_type: 'refresh_token',
+        refresh_token: integration.refresh_token,
+      }).toString(),
+    });
+
+    const tokens = await res.json();
+    if (!res.ok) {
+      console.error('QB token refresh failed:', JSON.stringify(tokens));
+      return null;
+    }
+
+    const expiresAt = new Date(Date.now() + (tokens.expires_in || 3600) * 1000).toISOString();
+    const refreshExpiresAt = new Date(Date.now() + (tokens.x_refresh_token_expires_in || 8726400) * 1000).toISOString();
+
+    await sb.update('store_integrations',
+      { id: `eq.${integration.id}` },
+      {
+        access_token: tokens.access_token,
+        refresh_token: tokens.refresh_token,
+        token_expires_at: expiresAt,
+        metadata: { ...integration.metadata, refresh_expires_at: refreshExpiresAt },
+        updated_at: new Date().toISOString(),
+      }
+    );
+
+    return { ...integration, access_token: tokens.access_token, token_expires_at: expiresAt };
+  } catch (err) {
+    console.error('QB token refresh error:', err);
+    return null;
+  }
+}
+
+// Sync a completed order to QuickBooks as a SalesReceipt
+async function syncOrderToQuickBooks(sb, env, storeId, order, orderItems) {
+  let integration;
+  try {
+    integration = await getQuickBooksIntegration(sb, env, storeId);
+  } catch { /* silent if no integration */ }
+  if (!integration) return; // QB not connected, skip
+
+  const apiBase = env.QUICKBOOKS_SANDBOX === 'true' ? QB_SANDBOX_API_BASE : QB_API_BASE;
+  const realmId = integration.realm_id;
+  const headers = {
+    Authorization: `Bearer ${integration.access_token}`,
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+  };
+
+  try {
+    // 1. Find or create customer by email
+    let customerId = null;
+    if (order.customer_email) {
+      const qbCustomers = await fetch(
+        `${apiBase}/v3/company/${realmId}/query?query=${encodeURIComponent(`SELECT * FROM Customer WHERE PrimaryEmailAddr = '${order.customer_email}'`)}`,
+        { headers }
+      );
+      const custData = await qbCustomers.json();
+      const existing = custData.QueryResponse?.Customer?.[0];
+
+      if (existing) {
+        customerId = existing.Id;
+      } else {
+        // Create customer
+        const createRes = await fetch(`${apiBase}/v3/company/${realmId}/customer`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({
+            DisplayName: order.customer_name || order.customer_email,
+            PrimaryEmailAddr: { Address: order.customer_email },
+          }),
+        });
+        if (createRes.ok) {
+          const newCust = await createRes.json();
+          customerId = newCust.Customer?.Id;
+
+          await sb.insert('sync_log', {
+            store_id: storeId,
+            provider: 'quickbooks',
+            event_type: 'customer_created',
+            direction: 'outbound',
+            status: 'success',
+            details: { customer_email: order.customer_email, qb_customer_id: customerId },
+          });
+        }
+      }
+    }
+
+    // 2. Build SalesReceipt line items
+    const lines = orderItems.map((item, i) => ({
+      LineNum: i + 1,
+      Amount: (item.price * item.quantity) / 100, // cents → dollars
+      DetailType: 'SalesItemLineDetail',
+      Description: item.variant_name ? `${item.product_name} — ${item.variant_name}` : item.product_name,
+      SalesItemLineDetail: {
+        Qty: item.quantity,
+        UnitPrice: item.price / 100,
+      },
+    }));
+
+    // Add shipping line if > 0
+    if (order.shipping > 0) {
+      lines.push({
+        LineNum: lines.length + 1,
+        Amount: order.shipping / 100,
+        DetailType: 'SalesItemLineDetail',
+        Description: 'Shipping',
+        SalesItemLineDetail: {
+          Qty: 1,
+          UnitPrice: order.shipping / 100,
+        },
+      });
+    }
+
+    // Add tax line if > 0
+    if (order.tax > 0) {
+      lines.push({
+        LineNum: lines.length + 1,
+        Amount: order.tax / 100,
+        DetailType: 'SalesItemLineDetail',
+        Description: 'Sales Tax',
+        SalesItemLineDetail: {
+          Qty: 1,
+          UnitPrice: order.tax / 100,
+        },
+      });
+    }
+
+    // 3. Create SalesReceipt
+    const receipt = {
+      Line: lines,
+      PrivateNote: `Webnari Order #${order.order_number}`,
+      DocNumber: order.order_number,
+    };
+
+    if (customerId) {
+      receipt.CustomerRef = { value: customerId };
+    }
+
+    const receiptRes = await fetch(`${apiBase}/v3/company/${realmId}/salesreceipt`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify(receipt),
+    });
+
+    const receiptData = await receiptRes.json();
+
+    if (receiptRes.ok) {
+      await sb.insert('sync_log', {
+        store_id: storeId,
+        provider: 'quickbooks',
+        event_type: 'order_synced',
+        direction: 'outbound',
+        status: 'success',
+        details: {
+          order_id: order.id,
+          order_number: order.order_number,
+          qb_receipt_id: receiptData.SalesReceipt?.Id,
+          total: order.total / 100,
+        },
+      });
+    } else {
+      await sb.insert('sync_log', {
+        store_id: storeId,
+        provider: 'quickbooks',
+        event_type: 'order_synced',
+        direction: 'outbound',
+        status: 'error',
+        details: {
+          order_id: order.id,
+          order_number: order.order_number,
+          error: receiptData.Fault?.Error?.[0]?.Detail || 'Unknown error',
+        },
+      });
+    }
+  } catch (err) {
+    console.error('QB sync error:', err);
+    await sb.insert('sync_log', {
+      store_id: storeId,
+      provider: 'quickbooks',
+      event_type: 'order_synced',
+      direction: 'outbound',
+      status: 'error',
+      details: { order_id: order.id, error: err.message },
+    });
+  }
 }

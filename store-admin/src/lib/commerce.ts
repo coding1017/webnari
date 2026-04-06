@@ -362,6 +362,22 @@ export class CommerceClient {
     return this.fetch('/api/admin/integrations/sync-log');
   }
 
+  async connectQuickBooks() {
+    return this.fetch('/api/admin/integrations/quickbooks/connect', { method: 'POST' });
+  }
+
+  async disconnectQuickBooks() {
+    return this.fetch('/api/admin/integrations/quickbooks/disconnect', { method: 'DELETE' });
+  }
+
+  async testQuickBooks() {
+    return this.fetch('/api/admin/integrations/quickbooks/test', { method: 'POST' });
+  }
+
+  async getQuickBooksSyncLog() {
+    return this.fetch('/api/admin/integrations/quickbooks/sync-log');
+  }
+
   // ── Shipping ──────────────────────────────────────────
   async calculateShipping(subtotal: number) {
     return this.fetch('/api/shipping/calculate', {
