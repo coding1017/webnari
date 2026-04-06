@@ -311,6 +311,57 @@ export class CommerceClient {
     return this.fetch(`/api/admin/glossary/${id}`, { method: 'DELETE' });
   }
 
+  // ── Integrations ──────────────────────────────────────
+  async getIntegrations() {
+    return this.fetch('/api/admin/integrations');
+  }
+
+  async connectSquare() {
+    return this.fetch('/api/admin/integrations/square/connect', { method: 'POST' });
+  }
+
+  async disconnectSquare() {
+    return this.fetch('/api/admin/integrations/square/disconnect', { method: 'DELETE' });
+  }
+
+  async syncSquare() {
+    return this.fetch('/api/admin/integrations/square/sync', { method: 'POST' });
+  }
+
+  async getSquareLocations() {
+    return this.fetch('/api/admin/integrations/square/locations');
+  }
+
+  async setSquareLocation(locationId: string) {
+    return this.fetch('/api/admin/integrations/square/location', {
+      method: 'PATCH',
+      body: JSON.stringify({ location_id: locationId }),
+    });
+  }
+
+  async getProductMappings() {
+    return this.fetch('/api/admin/integrations/mappings');
+  }
+
+  async createProductMapping(data: Record<string, unknown>) {
+    return this.fetch('/api/admin/integrations/mappings', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteProductMapping(id: string) {
+    return this.fetch(`/api/admin/integrations/mappings/${id}`, { method: 'DELETE' });
+  }
+
+  async deleteAllProductMappings() {
+    return this.fetch('/api/admin/integrations/mappings', { method: 'DELETE' });
+  }
+
+  async getSyncLog() {
+    return this.fetch('/api/admin/integrations/sync-log');
+  }
+
   // ── Shipping ──────────────────────────────────────────
   async calculateShipping(subtotal: number) {
     return this.fetch('/api/shipping/calculate', {

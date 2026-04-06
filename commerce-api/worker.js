@@ -21,7 +21,9 @@
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
-    const path = url.pathname;
+    // Strip /commerce prefix when accessed via custom domain route (webnari.io/commerce/*)
+    const rawPath = url.pathname;
+    const path = rawPath.startsWith('/commerce/') ? rawPath.slice('/commerce'.length) : rawPath;
     const method = request.method;
 
     // ── CORS ──────────────────────────────────────────────
@@ -50,6 +52,11 @@ export default {
       // Health check (no store ID required)
       if (path === '/api/health') {
         return json({ status: 'ok', service: 'webnari-commerce' }, 200, corsOrigin);
+      }
+
+      // Square OAuth callback — browser redirect from Square, no X-Store-ID
+      if (method === 'GET' && path === '/api/admin/integrations/square/callback') {
+        return await handleSquareOAuthCallback(request, sb, env, url, corsOrigin);
       }
 
       // All other /api/ routes require X-Store-ID (except webhooks)
@@ -298,6 +305,53 @@ export default {
         return json(terms, 200, corsOrigin);
       }
 
+      // ── Admin Integrations ─────────────────────────────
+      if (method === 'GET' && path === '/api/admin/integrations') {
+        return await handleAdminListIntegrations(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/admin/integrations/square/connect') {
+        return await handleSquareOAuthConnect(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'DELETE' && path === '/api/admin/integrations/square/disconnect') {
+        return await handleSquareOAuthDisconnect(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/admin/integrations/square/sync') {
+        return await handleSquareManualSync(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/admin/integrations/square/sync-images') {
+        return await handleSquareSyncImages(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'GET' && path === '/api/admin/integrations/square/locations') {
+        return await handleSquareListLocations(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'PATCH' && path === '/api/admin/integrations/square/location') {
+        return await handleSquareSetLocation(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'GET' && path === '/api/admin/integrations/mappings') {
+        return await handleAdminListMappings(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/admin/integrations/mappings') {
+        return await handleAdminCreateMapping(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'DELETE' && path === '/api/admin/integrations/mappings') {
+        return await handleAdminDeleteAllMappings(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'DELETE' && path.match(/^\/api\/admin\/integrations\/mappings\/[^/]+$/)) {
+        const mappingId = path.split('/').pop();
+        return await handleAdminDeleteMapping(request, sb, env, storeId, mappingId, corsOrigin);
+      }
+      if (method === 'GET' && path === '/api/admin/integrations/sync-log') {
+        return await handleAdminSyncLog(request, sb, env, storeId, corsOrigin);
+      }
+
+      // Square OAuth callback (browser redirect — no admin auth, no X-Store-ID)
+      // Must be BEFORE the storeId check since it comes from Square redirect
+
+      // Square inventory webhook (no auth, verify signature)
+      if (method === 'POST' && path === '/api/webhooks/square/inventory') {
+        return await handleSquareInventoryWebhook(request, sb, env, corsOrigin);
+      }
+
       // Admin Store Settings
       if (method === 'PATCH' && path === '/api/admin/store') {
         return await handleAdminUpdateStore(request, sb, env, storeId, corsOrigin);
@@ -431,13 +485,23 @@ function getStoreSecret(env, storeId, key) {
   return null;
 }
 
-// Admin auth check — expects Authorization: Bearer <admin-key>
-function requireAdmin(request, env) {
+/// Admin auth check — expects Authorization: Bearer <admin-key>
+// Supports: master key (ADMIN_API_KEY) or per-store key (ADMIN_API_KEY_STOREID)
+function requireAdmin(request, env, storeId) {
   const auth = request.headers.get('Authorization');
   if (!auth || !auth.startsWith('Bearer ')) return false;
   const token = auth.slice(7);
-  const adminKey = env.ADMIN_API_KEY;
-  return adminKey && token === adminKey;
+
+  // Check master admin key (your Webnari admin access)
+  if (env.ADMIN_API_KEY && token === env.ADMIN_API_KEY) return true;
+
+  // Check per-store admin key (client-specific access)
+  if (storeId) {
+    const storeKey = env[`ADMIN_API_KEY_${storeId.toUpperCase().replace(/-/g, '_')}`];
+    if (storeKey && token === storeKey) return true;
+  }
+
+  return false;
 }
 
 
@@ -848,6 +912,9 @@ async function handleStripeSessionCompleted(sb, env, storeId, session) {
         }
       }
 
+      // Sync sale to Square (non-blocking)
+      pushSaleToSquare(sb, env, storeId, res.product_id, res.variant_id, res.quantity).catch(() => {});
+
       // Mark reservation completed
       await sb.update('inventory_reservations',
         { id: `eq.${res.id}` },
@@ -1215,7 +1282,7 @@ async function handleListOrders(request, sb, env, storeId, url, corsOrigin) {
   const email = url.searchParams.get('email');
   const status = url.searchParams.get('status');
   const limit = url.searchParams.get('limit') || '50';
-  const isAdmin = requireAdmin(request, env);
+  const isAdmin = requireAdmin(request, env, storeId);
 
   // Non-admin must provide email
   if (!isAdmin && !email) {
@@ -1236,7 +1303,7 @@ async function handleListOrders(request, sb, env, storeId, url, corsOrigin) {
 }
 
 async function handleUpdateOrder(request, sb, env, storeId, orderId, corsOrigin) {
-  if (!requireAdmin(request, env)) {
+  if (!requireAdmin(request, env, storeId)) {
     return json({ error: 'Unauthorized' }, 401, corsOrigin);
   }
 
@@ -1382,7 +1449,7 @@ async function handleGetInventory(sb, storeId, productId, corsOrigin) {
 }
 
 async function handleUpdateInventory(request, sb, env, storeId, productId, corsOrigin) {
-  if (!requireAdmin(request, env)) {
+  if (!requireAdmin(request, env, storeId)) {
     return json({ error: 'Unauthorized' }, 401, corsOrigin);
   }
 
@@ -1418,7 +1485,7 @@ async function handleUpdateInventory(request, sb, env, storeId, productId, corsO
 }
 
 async function handleLowStock(request, sb, env, storeId, corsOrigin) {
-  if (!requireAdmin(request, env)) {
+  if (!requireAdmin(request, env, storeId)) {
     return json({ error: 'Unauthorized' }, 401, corsOrigin);
   }
 
@@ -1589,7 +1656,7 @@ async function generateOrderNumber(sb, storeId) {
 // ═══════════════════════════════════════════════════════════════
 
 async function handleAdminStats(request, sb, env, storeId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const [products, orders, subscribers, lowStockProducts] = await Promise.all([
     sb.query('products', { filters: { store_id: `eq.${storeId}` } }),
@@ -1641,7 +1708,7 @@ async function handleAdminStats(request, sb, env, storeId, corsOrigin) {
 // ═══════════════════════════════════════════════════════════════
 
 async function handleAdminListProducts(request, sb, env, storeId, url, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const search = url.searchParams.get('search');
   const category = url.searchParams.get('category');
@@ -1674,7 +1741,7 @@ async function handleAdminListProducts(request, sb, env, storeId, url, corsOrigi
 }
 
 async function handleAdminGetProduct(request, sb, env, storeId, productId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const product = await sb.query('products', {
     filters: { id: `eq.${productId}`, store_id: `eq.${storeId}` },
@@ -1701,7 +1768,7 @@ async function handleAdminGetProduct(request, sb, env, storeId, productId, corsO
 }
 
 async function handleAdminCreateProduct(request, sb, env, storeId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const body = await request.json();
   const { images, variants, ...productData } = body;
@@ -1741,11 +1808,14 @@ async function handleAdminCreateProduct(request, sb, env, storeId, corsOrigin) {
     }
   }
 
+  // Auto-push to Square if connected (non-blocking)
+  pushProductToSquare(sb, env, storeId, product).catch(() => {});
+
   return json(product, 201, corsOrigin);
 }
 
 async function handleAdminUpdateProduct(request, sb, env, storeId, productId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const body = await request.json();
   const { images, ...productData } = body;
@@ -1780,7 +1850,7 @@ async function handleAdminUpdateProduct(request, sb, env, storeId, productId, co
 }
 
 async function handleAdminDeleteProduct(request, sb, env, storeId, productId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   // Cascading delete handles images, variants, variant_images, reviews
   await sb.delete('products', { id: `eq.${productId}`, store_id: `eq.${storeId}` });
@@ -1794,7 +1864,7 @@ async function handleAdminDeleteProduct(request, sb, env, storeId, productId, co
 // ═══════════════════════════════════════════════════════════════
 
 async function handleAdminCreateVariant(request, sb, env, storeId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const body = await request.json();
   const { images, ...variantData } = body;
@@ -1820,7 +1890,13 @@ async function handleAdminCreateVariant(request, sb, env, storeId, corsOrigin) {
 }
 
 async function handleAdminUpdateVariant(request, sb, env, storeId, variantId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  // Verify variant belongs to a product owned by this store
+  const variant = await sb.query('variants', { filters: { id: `eq.${variantId}` }, single: true });
+  if (!variant) return json({ error: 'Variant not found' }, 404, corsOrigin);
+  const product = await sb.query('products', { filters: { id: `eq.${variant.product_id}`, store_id: `eq.${storeId}` }, single: true });
+  if (!product) return json({ error: 'Not authorized' }, 403, corsOrigin);
 
   const body = await request.json();
   const { images, ...variantData } = body;
@@ -1850,7 +1926,13 @@ async function handleAdminUpdateVariant(request, sb, env, storeId, variantId, co
 }
 
 async function handleAdminDeleteVariant(request, sb, env, storeId, variantId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  // Verify variant belongs to a product owned by this store
+  const variant = await sb.query('variants', { filters: { id: `eq.${variantId}` }, single: true });
+  if (!variant) return json({ error: 'Variant not found' }, 404, corsOrigin);
+  const product = await sb.query('products', { filters: { id: `eq.${variant.product_id}`, store_id: `eq.${storeId}` }, single: true });
+  if (!product) return json({ error: 'Not authorized' }, 403, corsOrigin);
 
   await sb.delete('variants', { id: `eq.${variantId}` });
 
@@ -1863,7 +1945,7 @@ async function handleAdminDeleteVariant(request, sb, env, storeId, variantId, co
 // ═══════════════════════════════════════════════════════════════
 
 async function handleAdminListReviews(request, sb, env, storeId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const reviews = await sb.query('reviews', {
     filters: { store_id: `eq.${storeId}` },
@@ -1884,7 +1966,7 @@ async function handleAdminListReviews(request, sb, env, storeId, corsOrigin) {
 }
 
 async function handleAdminUpdateReview(request, sb, env, storeId, reviewId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const body = await request.json();
   const updates = {};
@@ -1900,7 +1982,7 @@ async function handleAdminUpdateReview(request, sb, env, storeId, reviewId, cors
 }
 
 async function handleAdminDeleteReview(request, sb, env, storeId, reviewId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   await sb.delete('reviews', { id: `eq.${reviewId}`, store_id: `eq.${storeId}` });
 
@@ -1913,7 +1995,7 @@ async function handleAdminDeleteReview(request, sb, env, storeId, reviewId, cors
 // ═══════════════════════════════════════════════════════════════
 
 async function handleAdminListSubscribers(request, sb, env, storeId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const subscribers = await sb.query('newsletter_subscribers', {
     filters: { store_id: `eq.${storeId}` },
@@ -1924,7 +2006,7 @@ async function handleAdminListSubscribers(request, sb, env, storeId, corsOrigin)
 }
 
 async function handleAdminExportSubscribers(request, sb, env, storeId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const subscribers = await sb.query('newsletter_subscribers', {
     filters: { store_id: `eq.${storeId}`, unsubscribed_at: 'is.null' },
@@ -1949,7 +2031,7 @@ async function handleAdminExportSubscribers(request, sb, env, storeId, corsOrigi
 // ═══════════════════════════════════════════════════════════════
 
 async function handleAdminUpdateStore(request, sb, env, storeId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const body = await request.json();
   const allowed = ['name', 'domain', 'currency', 'payment_provider', 'shipping_rules', 'settings'];
@@ -1973,7 +2055,7 @@ async function handleAdminUpdateStore(request, sb, env, storeId, corsOrigin) {
 // ═══════════════════════════════════════════════════════════════
 
 async function handleAdminUpsertTaxRate(request, sb, env, storeId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const body = await request.json();
   if (!body.state || body.rate === undefined) {
@@ -2004,7 +2086,7 @@ async function handleAdminUpsertTaxRate(request, sb, env, storeId, corsOrigin) {
 }
 
 async function handleAdminDeleteTaxRate(request, sb, env, storeId, rateId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   await sb.delete('store_tax_rates', { id: `eq.${rateId}`, store_id: `eq.${storeId}` });
 
@@ -2017,7 +2099,7 @@ async function handleAdminDeleteTaxRate(request, sb, env, storeId, rateId, corsO
 // ═══════════════════════════════════════════════════════════════
 
 async function handleAdminListCategories(request, sb, env, storeId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const categories = await sb.query('categories', {
     filters: { store_id: `eq.${storeId}` },
@@ -2044,7 +2126,7 @@ async function handleAdminListCategories(request, sb, env, storeId, corsOrigin) 
 }
 
 async function handleAdminCreateCategory(request, sb, env, storeId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const body = await request.json();
   if (!body.name) return json({ error: 'Category name required' }, 400, corsOrigin);
@@ -2069,7 +2151,7 @@ async function handleAdminCreateCategory(request, sb, env, storeId, corsOrigin) 
 }
 
 async function handleAdminUpdateCategory(request, sb, env, storeId, catId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const body = await request.json();
   const allowed = ['name', 'slug', 'sort_order'];
@@ -2088,7 +2170,7 @@ async function handleAdminUpdateCategory(request, sb, env, storeId, catId, corsO
 }
 
 async function handleAdminDeleteCategory(request, sb, env, storeId, catId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   await sb.delete('categories', { id: `eq.${catId}`, store_id: `eq.${storeId}` });
 
@@ -2101,7 +2183,7 @@ async function handleAdminDeleteCategory(request, sb, env, storeId, catId, corsO
 // ═══════════════════════════════════════════════════════════════
 
 async function handleAdminListDiscounts(request, sb, env, storeId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const discounts = await sb.query('discounts', {
     filters: { store_id: `eq.${storeId}` },
@@ -2112,7 +2194,7 @@ async function handleAdminListDiscounts(request, sb, env, storeId, corsOrigin) {
 }
 
 async function handleAdminCreateDiscount(request, sb, env, storeId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const body = await request.json();
   if (!body.code) return json({ error: 'Discount code required' }, 400, corsOrigin);
@@ -2133,7 +2215,7 @@ async function handleAdminCreateDiscount(request, sb, env, storeId, corsOrigin) 
 }
 
 async function handleAdminUpdateDiscount(request, sb, env, storeId, discountId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const body = await request.json();
   const allowed = ['code', 'type', 'value', 'min_order', 'max_uses', 'is_active', 'starts_at', 'expires_at'];
@@ -2152,7 +2234,7 @@ async function handleAdminUpdateDiscount(request, sb, env, storeId, discountId, 
 }
 
 async function handleAdminDeleteDiscount(request, sb, env, storeId, discountId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   await sb.delete('discounts', { id: `eq.${discountId}`, store_id: `eq.${storeId}` });
 
@@ -2165,21 +2247,49 @@ async function handleAdminDeleteDiscount(request, sb, env, storeId, discountId, 
 // ═══════════════════════════════════════════════════════════════
 
 async function handleAdminAnalytics(request, sb, env, storeId, url, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const range = url.searchParams.get('range') || '30d';
-  const days = range === '7d' ? 7 : range === '90d' ? 90 : 30;
+  const days = range === '7d' ? 7 : range === '90d' ? 90 : range === 'all' ? 3650 : 30;
   const since = new Date(Date.now() - days * 86400000).toISOString();
+  const prevSince = new Date(Date.now() - days * 2 * 86400000).toISOString();
 
+  // Current period orders
   const orders = await sb.query('orders', {
     filters: { store_id: `eq.${storeId}`, created_at: `gte.${since}` },
     order: 'created_at.asc',
   });
 
+  // Previous period orders (for comparison)
+  const prevOrders = range !== 'all' ? await sb.query('orders', {
+    filters: { store_id: `eq.${storeId}`, created_at: `gte.${prevSince}`, created_at: `lt.${since}` },
+    order: 'created_at.asc',
+  }) : [];
+
   const revenue = orders.reduce((sum, o) => sum + (o.total || 0), 0);
+  const prevRevenue = prevOrders.reduce((sum, o) => sum + (o.total || 0), 0);
   const orderCount = orders.length;
-  const customers = new Set(orders.map(o => o.customer_email)).size;
+  const prevOrderCount = prevOrders.length;
   const avgOrder = orderCount > 0 ? Math.round(revenue / orderCount) : 0;
+
+  // Customer breakdown
+  const emails = new Set(orders.map(o => o.customer_email).filter(Boolean));
+  const allTimeOrders = await sb.query('orders', {
+    filters: { store_id: `eq.${storeId}`, created_at: `lt.${since}` },
+    select: 'customer_email',
+  });
+  const prevEmails = new Set(allTimeOrders.map(o => o.customer_email).filter(Boolean));
+  let newCustomers = 0;
+  let returningCustomers = 0;
+  for (const email of emails) {
+    if (prevEmails.has(email)) returningCustomers++;
+    else newCustomers++;
+  }
+
+  function pctChange(curr, prev) {
+    if (prev === 0) return curr > 0 ? 100 : 0;
+    return Math.round(((curr - prev) / prev) * 100);
+  }
 
   // Daily breakdown
   const daily = {};
@@ -2190,19 +2300,38 @@ async function handleAdminAnalytics(request, sb, env, storeId, url, corsOrigin) 
     daily[day].orders += 1;
   }
 
-  // Top products
+  // Status breakdown
+  const statusBreakdown = {};
+  for (const o of orders) {
+    const s = o.status || 'pending';
+    statusBreakdown[s] = (statusBreakdown[s] || 0) + 1;
+  }
+
+  // Top products (from order line items if available, else from order names)
   const productSales = {};
   for (const o of orders) {
     if (o.status === 'cancelled' || o.status === 'refunded') continue;
-    // We'd need order_items for proper breakdown, but aggregate by order for now
+    const items = o.items || o.line_items || [];
+    if (items.length > 0) {
+      for (const item of items) {
+        const name = item.name || item.product_name || 'Unknown';
+        if (!productSales[name]) productSales[name] = { name, revenue: 0, quantity: 0 };
+        productSales[name].revenue += (item.price || 0) * (item.quantity || 1);
+        productSales[name].quantity += item.quantity || 1;
+      }
+    }
   }
+  const topProducts = Object.values(productSales).sort((a, b) => b.revenue - a.revenue).slice(0, 10);
 
   return json({
-    revenue,
-    orders: orderCount,
-    customers,
-    avgOrder,
-    daily: Object.values(daily),
+    range,
+    revenue: { total: revenue, previous: prevRevenue, change: pctChange(revenue, prevRevenue) },
+    orders: { total: orderCount, previous: prevOrderCount, change: pctChange(orderCount, prevOrderCount) },
+    customers: { total: emails.size, new: newCustomers, returning: returningCustomers },
+    avgOrderValue: avgOrder,
+    revenueByDay: Object.values(daily),
+    statusBreakdown,
+    topProducts,
   }, 200, corsOrigin);
 }
 
@@ -2212,7 +2341,7 @@ async function handleAdminAnalytics(request, sb, env, storeId, url, corsOrigin) 
 // ═══════════════════════════════════════════════════════════════
 
 async function handleAdminListCustomers(request, sb, env, storeId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const orders = await sb.query('orders', {
     filters: { store_id: `eq.${storeId}` },
@@ -2252,7 +2381,7 @@ async function handleAdminListCustomers(request, sb, env, storeId, corsOrigin) {
 // ═══════════════════════════════════════════════════════════════
 
 async function handleAdminExportProducts(request, sb, env, storeId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const products = await sb.query('products', {
     filters: { store_id: `eq.${storeId}` },
@@ -2280,7 +2409,7 @@ async function handleAdminExportProducts(request, sb, env, storeId, corsOrigin) 
 }
 
 async function handleAdminImportProducts(request, sb, env, storeId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const body = await request.json();
   const rows = body.rows;
@@ -2338,7 +2467,7 @@ async function handleAdminImportProducts(request, sb, env, storeId, corsOrigin) 
 // ═══════════════════════════════════════════════════════════════
 
 async function handleAdminListBlog(request, sb, env, storeId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const posts = await sb.query('blog_posts', {
     filters: { store_id: `eq.${storeId}` },
@@ -2349,7 +2478,7 @@ async function handleAdminListBlog(request, sb, env, storeId, corsOrigin) {
 }
 
 async function handleAdminCreateBlog(request, sb, env, storeId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const body = await request.json();
   if (!body.title) return json({ error: 'Title is required' }, 400, corsOrigin);
@@ -2372,7 +2501,7 @@ async function handleAdminCreateBlog(request, sb, env, storeId, corsOrigin) {
 }
 
 async function handleAdminUpdateBlog(request, sb, env, storeId, postId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const body = await request.json();
   const allowed = ['title', 'slug', 'excerpt', 'content', 'category', 'read_time', 'image_url', 'published'];
@@ -2391,7 +2520,7 @@ async function handleAdminUpdateBlog(request, sb, env, storeId, postId, corsOrig
 }
 
 async function handleAdminDeleteBlog(request, sb, env, storeId, postId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   await sb.delete('blog_posts', { id: `eq.${postId}`, store_id: `eq.${storeId}` });
 
@@ -2414,7 +2543,7 @@ function generateGiftCode() {
 }
 
 async function handleAdminListGiftCards(request, sb, env, storeId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const cards = await sb.query('gift_cards', {
     filters: { store_id: `eq.${storeId}` },
@@ -2425,7 +2554,7 @@ async function handleAdminListGiftCards(request, sb, env, storeId, corsOrigin) {
 }
 
 async function handleAdminCreateGiftCard(request, sb, env, storeId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const body = await request.json();
   if (!body.amount || body.amount <= 0) return json({ error: 'Valid amount is required' }, 400, corsOrigin);
@@ -2449,7 +2578,7 @@ async function handleAdminCreateGiftCard(request, sb, env, storeId, corsOrigin) 
 }
 
 async function handleAdminUpdateGiftCard(request, sb, env, storeId, cardId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const body = await request.json();
   const allowed = ['is_active', 'current_balance', 'recipient_email', 'recipient_name', 'message'];
@@ -2473,7 +2602,7 @@ async function handleAdminUpdateGiftCard(request, sb, env, storeId, cardId, cors
 // ═══════════════════════════════════════════════════════════════
 
 async function handleAdminListGlossary(request, sb, env, storeId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const terms = await sb.query('glossary_terms', {
     filters: { store_id: `eq.${storeId}` },
@@ -2484,7 +2613,7 @@ async function handleAdminListGlossary(request, sb, env, storeId, corsOrigin) {
 }
 
 async function handleAdminCreateGlossary(request, sb, env, storeId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const body = await request.json();
   if (!body.term) return json({ error: 'Term is required' }, 400, corsOrigin);
@@ -2507,7 +2636,7 @@ async function handleAdminCreateGlossary(request, sb, env, storeId, corsOrigin) 
 }
 
 async function handleAdminUpdateGlossary(request, sb, env, storeId, termId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const body = await request.json();
   const allowed = ['term', 'slug', 'definition', 'category', 'image_url', 'sort_order', 'is_published'];
@@ -2526,9 +2655,1629 @@ async function handleAdminUpdateGlossary(request, sb, env, storeId, termId, cors
 }
 
 async function handleAdminDeleteGlossary(request, sb, env, storeId, termId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   await sb.delete('glossary_terms', { id: `eq.${termId}`, store_id: `eq.${storeId}` });
 
   return json({ deleted: true }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  ADMIN — INTEGRATIONS (Square OAuth + Inventory Sync)
+// ═══════════════════════════════════════════════════════════════
+
+// Auto-detect sandbox vs production based on SQUARE_APP_ID
+function getSquareBase(env) {
+  const appId = env.SQUARE_APP_ID || '';
+  if (appId.startsWith('sandbox-')) {
+    return 'https://connect.squareupsandbox.com';
+  }
+  return 'https://connect.squareup.com';
+}
+function getSquareOAuthUrl(env) {
+  return getSquareBase(env) + '/oauth2/authorize';
+}
+
+// List all integrations for a store
+async function handleAdminListIntegrations(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const integrations = await sb.query('store_integrations', {
+    select: 'id,store_id,provider,merchant_id,location_id,settings,connected_at,updated_at,token_expires_at',
+    filters: { store_id: `eq.${storeId}` },
+  });
+
+  // Get mapping counts per provider
+  for (const integ of integrations) {
+    const mappings = await sb.query('product_mappings', {
+      select: 'id',
+      filters: { store_id: `eq.${storeId}`, provider: `eq.${integ.provider}` },
+    });
+    integ.mapping_count = mappings.length;
+  }
+
+  return json(integrations, 200, corsOrigin);
+}
+
+// Start Square OAuth — returns the URL to redirect the user to
+async function handleSquareOAuthConnect(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const appId = env.SQUARE_APP_ID;
+  if (!appId) return json({ error: 'Square app not configured' }, 500, corsOrigin);
+
+  // Encode store_id in the state param for CSRF protection + identification
+  const statePayload = JSON.stringify({ store_id: storeId, ts: Date.now() });
+  const state = btoa(statePayload);
+
+  const scopes = [
+    'INVENTORY_READ',
+    'INVENTORY_WRITE',
+    'ITEMS_READ',
+    'ITEMS_WRITE',
+    'MERCHANT_PROFILE_READ',
+    'ORDERS_READ',
+  ].join('+');
+
+  const redirectUri = encodeURIComponent(
+    `https://webnari.io/commerce/api/admin/integrations/square/callback`
+  );
+
+  const oauthUrl = `${getSquareOAuthUrl(env)}?client_id=${appId}&response_type=code&scope=${scopes}&state=${encodeURIComponent(state)}&redirect_uri=${redirectUri}`;
+
+  return json({ url: oauthUrl }, 200, corsOrigin);
+}
+
+// Square OAuth callback — browser redirect, exchanges code for tokens
+async function handleSquareOAuthCallback(request, sb, env, url, corsOrigin) {
+  const code = url.searchParams.get('code');
+  const stateParam = url.searchParams.get('state');
+  const error = url.searchParams.get('error');
+
+  // Admin dashboard base URL
+  const adminBase = 'https://webnari-store-admin.webnari.workers.dev';
+
+  if (error) {
+    return Response.redirect(`${adminBase}?integration_error=${encodeURIComponent(error)}`, 302);
+  }
+
+  if (!code || !stateParam) {
+    return Response.redirect(`${adminBase}?integration_error=missing_code`, 302);
+  }
+
+  // Decode the state to get store_id
+  let storeId;
+  try {
+    const stateData = JSON.parse(atob(decodeURIComponent(stateParam)));
+    storeId = stateData.store_id;
+    // Check state is not too old (30 minutes)
+    if (Date.now() - stateData.ts > 30 * 60 * 1000) {
+      return Response.redirect(`${adminBase}?integration_error=state_expired`, 302);
+    }
+  } catch {
+    return Response.redirect(`${adminBase}?integration_error=invalid_state`, 302);
+  }
+
+  if (!storeId) {
+    return Response.redirect(`${adminBase}?integration_error=missing_store`, 302);
+  }
+
+  // Exchange authorization code for access token
+  const appId = env.SQUARE_APP_ID;
+  const appSecret = env.SQUARE_APP_SECRET;
+
+  try {
+    const tokenRes = await fetch(`${getSquareBase(env)}/oauth2/token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        client_id: appId,
+        client_secret: appSecret,
+        code,
+        grant_type: 'authorization_code',
+        redirect_uri: 'https://webnari.io/commerce/api/admin/integrations/square/callback',
+      }),
+    });
+
+    const tokenData = await tokenRes.json();
+
+    if (!tokenRes.ok || !tokenData.access_token) {
+      console.error('Square OAuth token exchange failed:', tokenData);
+      const errDetail = encodeURIComponent(
+        tokenData.message || tokenData.error || JSON.stringify(tokenData).slice(0, 200)
+      );
+      return Response.redirect(
+        `${adminBase}/${storeId}/integrations?error=${errDetail}`, 302
+      );
+    }
+
+    // Get merchant info
+    let merchantId = tokenData.merchant_id || null;
+    let locationId = null;
+
+    // Fetch merchant's locations
+    try {
+      const locRes = await fetch(`${getSquareBase(env)}/v2/locations`, {
+        headers: { Authorization: `Bearer ${tokenData.access_token}` },
+      });
+      const locData = await locRes.json();
+      if (locData.locations && locData.locations.length > 0) {
+        // Default to first active location
+        const activeLoc = locData.locations.find(l => l.status === 'ACTIVE') || locData.locations[0];
+        locationId = activeLoc.id;
+        if (!merchantId) merchantId = activeLoc.merchant_id;
+      }
+    } catch (err) {
+      console.error('Failed to fetch Square locations:', err);
+    }
+
+    // Calculate token expiry
+    let tokenExpiresAt = null;
+    if (tokenData.expires_at) {
+      tokenExpiresAt = tokenData.expires_at;
+    }
+
+    // Upsert the integration record
+    // Check if exists first
+    const existing = await sb.query('store_integrations', {
+      filters: { store_id: `eq.${storeId}`, provider: 'eq.square' },
+      single: true,
+    });
+
+    if (existing) {
+      await sb.update('store_integrations',
+        { store_id: `eq.${storeId}`, provider: 'eq.square' },
+        {
+          access_token: tokenData.access_token,
+          refresh_token: tokenData.refresh_token || null,
+          merchant_id: merchantId,
+          location_id: locationId,
+          token_expires_at: tokenExpiresAt,
+          updated_at: new Date().toISOString(),
+        }
+      );
+    } else {
+      await sb.insert('store_integrations', {
+        store_id: storeId,
+        provider: 'square',
+        access_token: tokenData.access_token,
+        refresh_token: tokenData.refresh_token || null,
+        merchant_id: merchantId,
+        location_id: locationId,
+        token_expires_at: tokenExpiresAt,
+      });
+    }
+
+    // Log the connection
+    await sb.insert('sync_log', {
+      store_id: storeId,
+      provider: 'square',
+      direction: 'system',
+      event_type: 'connected',
+      details: `Square account connected (merchant: ${merchantId})`,
+      status: 'success',
+    });
+
+    return Response.redirect(`${adminBase}/${storeId}/integrations?connected=square`, 302);
+
+  } catch (err) {
+    console.error('Square OAuth error:', err);
+    return Response.redirect(
+      `${adminBase}/${storeId}/integrations?error=oauth_failed`, 302
+    );
+  }
+}
+
+// Disconnect Square
+async function handleSquareOAuthDisconnect(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  // Get the integration to revoke the token
+  const integration = await sb.query('store_integrations', {
+    filters: { store_id: `eq.${storeId}`, provider: 'eq.square' },
+    single: true,
+  });
+
+  if (!integration) {
+    return json({ error: 'No Square integration found' }, 404, corsOrigin);
+  }
+
+  // Revoke the access token at Square
+  if (integration.access_token) {
+    try {
+      await fetch(`${getSquareBase(env)}/oauth2/revoke`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Client ${env.SQUARE_APP_SECRET}`,
+        },
+        body: JSON.stringify({
+          client_id: env.SQUARE_APP_ID,
+          access_token: integration.access_token,
+        }),
+      });
+    } catch (err) {
+      console.error('Failed to revoke Square token:', err);
+    }
+  }
+
+  // Delete mappings and integration record
+  await sb.delete('product_mappings', { store_id: `eq.${storeId}`, provider: 'eq.square' });
+  await sb.delete('store_integrations', { store_id: `eq.${storeId}`, provider: 'eq.square' });
+
+  // Log the disconnection
+  await sb.insert('sync_log', {
+    store_id: storeId,
+    provider: 'square',
+    direction: 'system',
+    event_type: 'disconnected',
+    details: 'Square account disconnected',
+    status: 'success',
+  });
+
+  return json({ disconnected: true }, 200, corsOrigin);
+}
+
+// List Square locations for the connected merchant
+async function handleSquareListLocations(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const integration = await getSquareIntegration(sb, env, storeId);
+  if (!integration) return json({ error: 'Square not connected' }, 400, corsOrigin);
+
+  const res = await fetch(`${getSquareBase(env)}/v2/locations`, {
+    headers: { Authorization: `Bearer ${integration.access_token}` },
+  });
+  const data = await res.json();
+
+  if (!res.ok) return json({ error: 'Failed to fetch locations' }, 502, corsOrigin);
+
+  const locations = (data.locations || []).map(l => ({
+    id: l.id,
+    name: l.name,
+    status: l.status,
+    address: l.address,
+  }));
+
+  return json({ locations, current: integration.location_id }, 200, corsOrigin);
+}
+
+// Set active Square location
+async function handleSquareSetLocation(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const body = await request.json();
+  if (!body.location_id) return json({ error: 'location_id is required' }, 400, corsOrigin);
+
+  await sb.update('store_integrations',
+    { store_id: `eq.${storeId}`, provider: 'eq.square' },
+    { location_id: body.location_id, updated_at: new Date().toISOString() }
+  );
+
+  return json({ updated: true }, 200, corsOrigin);
+}
+
+// Manual sync — pull Square catalog and auto-map by SKU
+async function handleSquareManualSync(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const integration = await getSquareIntegration(sb, env, storeId);
+  if (!integration) return json({ error: 'Square not connected' }, 400, corsOrigin);
+
+  try {
+    // Parse options
+    const body = await request.text();
+    const opts = body ? JSON.parse(body) : {};
+    const freshSync = opts.fresh === true;
+    const includeImages = opts.include_images === true || opts.includeImages === true;
+
+    if (freshSync) {
+      // Delete all existing Square catalog items created by Webnari
+      const oldMappings = await sb.query('product_mappings', {
+        filters: { store_id: `eq.${storeId}`, provider: 'eq.square' },
+      });
+
+      if (oldMappings.length > 0) {
+        // Get unique parent item IDs from Square
+        const variationIds = oldMappings.map(m => m.external_id).filter(Boolean);
+
+        // Batch retrieve to get parent item IDs
+        if (variationIds.length > 0) {
+          try {
+            const batchRes = await fetch(`${getSquareBase(env)}/v2/catalog/batch-retrieve`, {
+              method: 'POST',
+              headers: {
+                Authorization: `Bearer ${integration.access_token}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ object_ids: variationIds }),
+            });
+            const batchData = await batchRes.json();
+
+            // Collect parent item IDs (variations have item_variation_data.item_id)
+            const parentIds = new Set();
+            for (const obj of (batchData.objects || [])) {
+              if (obj.type === 'ITEM_VARIATION' && obj.item_variation_data?.item_id) {
+                parentIds.add(obj.item_variation_data.item_id);
+              } else if (obj.type === 'ITEM') {
+                parentIds.add(obj.id);
+              }
+            }
+
+            // Delete parent items from Square
+            if (parentIds.size > 0) {
+              await fetch(`${getSquareBase(env)}/v2/catalog/batch-delete`, {
+                method: 'POST',
+                headers: {
+                  Authorization: `Bearer ${integration.access_token}`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ object_ids: [...parentIds] }),
+              });
+            }
+          } catch (e) {
+            console.error('Failed to delete old Square items:', e.message);
+          }
+        }
+
+        // Clear all mappings
+        await sb.delete('product_mappings', {
+          store_id: `eq.${storeId}`,
+          provider: 'eq.square',
+        });
+      }
+    }
+
+    // ── STEP 1: Pull Square catalog ──────────────────────
+    let cursor = null;
+    let allSquareItems = [];
+
+    do {
+      const params = new URLSearchParams({ types: 'ITEM' });
+      if (cursor) params.set('cursor', cursor);
+
+      const res = await fetch(`${getSquareBase(env)}/v2/catalog/list?${params}`, {
+        headers: { Authorization: `Bearer ${integration.access_token}` },
+      });
+      const data = await res.json();
+
+      if (!res.ok) throw new Error(`Square catalog fetch failed: ${res.status}`);
+
+      if (data.objects) allSquareItems = allSquareItems.concat(data.objects);
+      cursor = data.cursor || null;
+    } while (cursor);
+
+    // ── STEP 2: Get Webnari products + existing mappings ─
+    const products = await sb.query('products', {
+      filters: { store_id: `eq.${storeId}` },
+    });
+
+    // Variants don't have store_id — fetch by product IDs
+    let variants = [];
+    if (products.length > 0) {
+      const productIds = products.map(p => p.id);
+      variants = await sb.query('variants', {
+        filters: { product_id: `in.(${productIds.join(',')})` },
+        order: 'name.asc',
+      });
+    }
+
+    let existingMappings = await sb.query('product_mappings', {
+      filters: { store_id: `eq.${storeId}`, provider: 'eq.square' },
+    });
+
+    // ── Clean up stale mappings (pointing to deleted Square items) ──
+    const allSquareVariationIds = new Set();
+    for (const item of allSquareItems) {
+      for (const v of (item.item_data?.variations || [])) {
+        allSquareVariationIds.add(v.id);
+      }
+    }
+    const staleMappings = existingMappings.filter(m => !allSquareVariationIds.has(m.external_id));
+    if (staleMappings.length > 0) {
+      for (const stale of staleMappings) {
+        await sb.delete('product_mappings', { id: `eq.${stale.id}` });
+      }
+      // Re-fetch clean mappings
+      existingMappings = existingMappings.filter(m => allSquareVariationIds.has(m.external_id));
+      console.log(`Cleaned up ${staleMappings.length} stale mappings`);
+    }
+
+    const mappedExternalIds = new Set(existingMappings.map(m => m.external_id));
+    const mappedWebnariIds = new Set(existingMappings.map(m => m.webnari_product_id));
+
+    // Build SKU lookups
+    const skuToWebnari = {};
+    for (const p of products) {
+      if (p.sku) skuToWebnari[p.sku.toUpperCase()] = { product_id: p.id, variant_id: null, product: p };
+    }
+    for (const v of variants) {
+      if (v.sku) skuToWebnari[v.sku.toUpperCase()] = { product_id: v.product_id, variant_id: v.id };
+    }
+
+    // Build name lookup as fallback (normalize: lowercase, trim)
+    const nameToWebnari = {};
+    for (const p of products) {
+      if (p.name) nameToWebnari[p.name.trim().toLowerCase()] = { product_id: p.id, variant_id: null, product: p };
+    }
+
+    let matched = 0;
+    let skipped = 0;
+    let importedFromSquare = 0;
+    let pushedToSquare = 0;
+    const newMappings = [];
+
+    // ── STEP 3: Square → Webnari (match or import) ───────
+    for (const item of allSquareItems) {
+      const itemData = item.item_data;
+      if (!itemData || !itemData.variations) continue;
+
+      for (const variation of itemData.variations) {
+        const varData = variation.item_variation_data;
+        const externalId = variation.id;
+
+        if (mappedExternalIds.has(externalId)) { skipped++; continue; }
+
+        // Try matching: SKU first, then product name
+        const squareSku = varData?.sku?.toUpperCase();
+        let match = squareSku ? skuToWebnari[squareSku] : null;
+
+        if (!match && itemData.name) {
+          const nameKey = itemData.name.trim().toLowerCase();
+          const nameMatch = nameToWebnari[nameKey];
+          // Only use name match if that product isn't already mapped
+          if (nameMatch && !mappedWebnariIds.has(nameMatch.product_id)) {
+            match = nameMatch;
+          }
+        }
+
+        if (match) {
+          // Matched by SKU or name — link them
+          newMappings.push({
+            store_id: storeId,
+            provider: 'square',
+            webnari_product_id: match.product_id,
+            webnari_variant_id: match.variant_id,
+            external_id: externalId,
+            external_name: `${itemData.name} — ${varData?.name || 'Default'}`,
+            external_sku: varData?.sku || null,
+            auto_sync: true,
+          });
+          matched++;
+        } else {
+          // No match — import from Square as a new Webnari product
+          const priceMoney = varData?.price_money;
+          const priceCents = priceMoney ? priceMoney.amount : 0;
+
+          const slug = itemData.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+          const [newProduct] = await sb.insert('products', {
+            store_id: storeId,
+            name: itemData.name,
+            slug: slug + '-' + Date.now().toString(36),
+            description: itemData.description || '',
+            sku: varData?.sku || null,
+            price: priceCents,
+            stock_quantity: 0, // Will be updated by inventory sync
+            track_inventory: true,
+            in_stock: true,
+          });
+
+          newMappings.push({
+            store_id: storeId,
+            provider: 'square',
+            webnari_product_id: newProduct.id,
+            webnari_variant_id: null,
+            external_id: externalId,
+            external_name: `${itemData.name} — ${varData?.name || 'Default'}`,
+            external_sku: varData?.sku || null,
+            auto_sync: true,
+          });
+
+          importedFromSquare++;
+        }
+      }
+    }
+
+    // ── STEP 4: Webnari → Square (push unmapped products with variants + images) ─
+    for (const product of products) {
+      if (mappedWebnariIds.has(product.id)) continue;
+
+      // Check if this product's SKU already matched above
+      const alreadyMapped = newMappings.some(m => m.webnari_product_id === product.id);
+      if (alreadyMapped) continue;
+
+      // Push this product to Square catalog
+      try {
+        // Fetch variants for this product
+        const productVariants = variants.filter(v => v.product_id === product.id);
+
+        // Build Square variations array
+        let squareVariations = [];
+        if (productVariants.length > 0) {
+          // Product has real variants — push each one
+          squareVariations = productVariants.map(v => ({
+            type: 'ITEM_VARIATION',
+            id: `#webnari-var-${v.id}`,
+            item_variation_data: {
+              item_id: `#webnari-${product.id}`,
+              name: v.name || 'Default',
+              sku: v.sku || undefined,
+              pricing_type: 'FIXED_PRICING',
+              price_money: {
+                amount: v.price || product.price || 0,
+                currency: 'USD',
+              },
+            },
+          }));
+        } else {
+          // No variants — single "Default" variation
+          squareVariations = [{
+            type: 'ITEM_VARIATION',
+            id: `#webnari-var-${product.id}`,
+            item_variation_data: {
+              item_id: `#webnari-${product.id}`,
+              name: 'Default',
+              sku: product.sku || undefined,
+              pricing_type: 'FIXED_PRICING',
+              price_money: {
+                amount: product.price || 0,
+                currency: 'USD',
+              },
+            },
+          }];
+        }
+
+        const idempotencyKey = `webnari-${product.id}-${Date.now()}`;
+        const squareItem = {
+          idempotency_key: idempotencyKey,
+          object: {
+            type: 'ITEM',
+            id: `#webnari-${product.id}`,
+            item_data: {
+              name: product.name,
+              description: product.description || '',
+              variations: squareVariations,
+            },
+          },
+        };
+
+        const pushRes = await fetch(`${getSquareBase(env)}/v2/catalog/object`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${integration.access_token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(squareItem),
+        });
+
+        const pushData = await pushRes.json();
+
+        if (pushRes.ok && pushData.catalog_object) {
+          const createdItem = pushData.catalog_object;
+          const createdVariations = createdItem.item_data?.variations || [];
+
+          if (productVariants.length > 0) {
+            // Map each variant to its Square variation
+            for (let vi = 0; vi < createdVariations.length; vi++) {
+              const sqVar = createdVariations[vi];
+              const wnVar = productVariants[vi]; // Order matches
+              if (sqVar && wnVar) {
+                newMappings.push({
+                  store_id: storeId,
+                  provider: 'square',
+                  webnari_product_id: product.id,
+                  webnari_variant_id: wnVar.id,
+                  external_id: sqVar.id,
+                  external_name: `${product.name} — ${wnVar.name || 'Variant'}`,
+                  external_sku: wnVar.sku || null,
+                  auto_sync: true,
+                });
+
+                // Set inventory for each variant
+                if (wnVar.stock_quantity > 0 && integration.location_id) {
+                  await pushInventoryToSquare(env, integration, sqVar.id, wnVar.stock_quantity);
+                }
+              }
+            }
+          } else {
+            // Single default variation
+            const createdVariation = createdVariations[0];
+            if (createdVariation) {
+              newMappings.push({
+                store_id: storeId,
+                provider: 'square',
+                webnari_product_id: product.id,
+                webnari_variant_id: null,
+                external_id: createdVariation.id,
+                external_name: `${product.name} — Default`,
+                external_sku: product.sku || null,
+                auto_sync: true,
+              });
+
+              if (product.stock_quantity > 0 && integration.location_id) {
+                await pushInventoryToSquare(env, integration, createdVariation.id, product.stock_quantity);
+              }
+            }
+          }
+
+          // ── Upload product images to Square (only when includeImages is set) ──
+          if (includeImages) try {
+            const productImages = await sb.query('product_images', {
+              filters: { product_id: `eq.${product.id}` },
+              order: 'sort_order.asc',
+            });
+
+            const createdItemId = createdItem.id;
+            for (const img of productImages.slice(0, 5)) { // Max 5 images per item
+              try {
+                // Download the image from Supabase storage
+                const imgRes = await fetch(img.url);
+                if (!imgRes.ok) continue;
+                const imgBlob = await imgRes.arrayBuffer();
+                const contentType = imgRes.headers.get('content-type') || 'image/jpeg';
+
+                // Square requires multipart form upload for images
+                const boundary = '----WebKitFormBoundary' + Date.now().toString(36);
+                const imageJson = JSON.stringify({
+                  idempotency_key: `img-${img.id}-${Date.now()}`,
+                  object_id: createdItemId,
+                  image: {
+                    type: 'IMAGE',
+                    id: `#img-${img.id}`,
+                    image_data: {
+                      name: img.alt || product.name,
+                      caption: img.alt || '',
+                    },
+                  },
+                });
+
+                // Build multipart body
+                const encoder = new TextEncoder();
+                const parts = [
+                  encoder.encode(`--${boundary}\r\nContent-Disposition: form-data; name="request"\r\nContent-Type: application/json\r\n\r\n${imageJson}\r\n`),
+                  encoder.encode(`--${boundary}\r\nContent-Disposition: form-data; name="image_file"; filename="image.jpg"\r\nContent-Type: ${contentType}\r\n\r\n`),
+                  new Uint8Array(imgBlob),
+                  encoder.encode(`\r\n--${boundary}--\r\n`),
+                ];
+
+                const totalLength = parts.reduce((sum, p) => sum + p.byteLength, 0);
+                const body = new Uint8Array(totalLength);
+                let offset = 0;
+                for (const part of parts) {
+                  body.set(part, offset);
+                  offset += part.byteLength;
+                }
+
+                await fetch(`${getSquareBase(env)}/v2/catalog/images`, {
+                  method: 'POST',
+                  headers: {
+                    Authorization: `Bearer ${integration.access_token}`,
+                    'Content-Type': `multipart/form-data; boundary=${boundary}`,
+                  },
+                  body: body,
+                });
+              } catch (imgErr) {
+                console.error(`Image upload failed for ${product.name}:`, imgErr.message);
+              }
+            }
+
+            // Upload variant-specific images
+            for (let vi = 0; vi < productVariants.length && vi < createdVariations.length; vi++) {
+              const wnVar = productVariants[vi];
+              const sqVar = createdVariations[vi];
+              try {
+                const varImages = await sb.query('variant_images', {
+                  filters: { variant_id: `eq.${wnVar.id}` },
+                  order: 'sort_order.asc',
+                });
+
+                for (const vimg of varImages.slice(0, 3)) { // Up to 3 images per variant
+                  try {
+                    const imgRes = await fetch(vimg.url);
+                    if (!imgRes.ok) continue;
+                    const imgBlob = await imgRes.arrayBuffer();
+                    const contentType = imgRes.headers.get('content-type') || 'image/jpeg';
+
+                    const boundary = '----WebKitFormBoundary' + Date.now().toString(36);
+                    const imageJson = JSON.stringify({
+                      idempotency_key: `vimg-${vimg.id}-${Date.now()}`,
+                      object_id: sqVar.id, // Attach to the specific ITEM_VARIATION
+                      image: {
+                        type: 'IMAGE',
+                        id: `#vimg-${vimg.id}`,
+                        image_data: {
+                          name: `${product.name} - ${wnVar.name}`,
+                          caption: wnVar.name || '',
+                        },
+                      },
+                    });
+
+                    const encoder = new TextEncoder();
+                    const parts = [
+                      encoder.encode(`--${boundary}\r\nContent-Disposition: form-data; name="request"\r\nContent-Type: application/json\r\n\r\n${imageJson}\r\n`),
+                      encoder.encode(`--${boundary}\r\nContent-Disposition: form-data; name="image_file"; filename="image.jpg"\r\nContent-Type: ${contentType}\r\n\r\n`),
+                      new Uint8Array(imgBlob),
+                      encoder.encode(`\r\n--${boundary}--\r\n`),
+                    ];
+
+                    const totalLength = parts.reduce((sum, p) => sum + p.byteLength, 0);
+                    const body = new Uint8Array(totalLength);
+                    let offset = 0;
+                    for (const part of parts) {
+                      body.set(part, offset);
+                      offset += part.byteLength;
+                    }
+
+                    await fetch(`${getSquareBase(env)}/v2/catalog/images`, {
+                      method: 'POST',
+                      headers: {
+                        Authorization: `Bearer ${integration.access_token}`,
+                        'Content-Type': `multipart/form-data; boundary=${boundary}`,
+                      },
+                      body: body,
+                    });
+                  } catch (vimgErr) {
+                    console.error(`Variant image upload failed:`, vimgErr.message);
+                  }
+                }
+              } catch (e) {
+                // variant_images table might not exist or no images
+              }
+            }
+          } catch (imgErr) {
+            console.error(`Image sync failed for ${product.name}:`, imgErr.message);
+          }
+
+          pushedToSquare++;
+        } else {
+          console.error('Failed to push product to Square:', pushData);
+        }
+      } catch (err) {
+        console.error(`Failed to push product ${product.name} to Square:`, err);
+      }
+    }
+
+    // ── STEP 5: Save mappings + log ──────────────────────
+    if (newMappings.length > 0) {
+      await sb.insert('product_mappings', newMappings);
+    }
+
+    // Pull inventory counts from Square for all mapped items
+    let inventoryUpdated = 0;
+    if (integration.location_id) {
+      const allMappingIds = [...existingMappings, ...newMappings.map(m => ({ ...m }))];
+      const catalogIds = allMappingIds.map(m => m.external_id).filter(Boolean);
+
+      if (catalogIds.length > 0) {
+        // Batch retrieve inventory counts
+        try {
+          const invRes = await fetch(`${getSquareBase(env)}/v2/inventory/counts/batch-retrieve`, {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${integration.access_token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              catalog_object_ids: catalogIds.slice(0, 100),
+              location_ids: [integration.location_id],
+            }),
+          });
+          const invData = await invRes.json();
+
+          if (invData.counts) {
+            for (const count of invData.counts) {
+              const mapping = allMappingIds.find(m => m.external_id === count.catalog_object_id);
+              if (!mapping) continue;
+
+              const qty = parseInt(count.quantity, 10) || 0;
+
+              if (mapping.webnari_variant_id) {
+                await sb.update('variants',
+                  { id: `eq.${mapping.webnari_variant_id}` },
+                  { stock_quantity: qty }
+                );
+              } else {
+                await sb.update('products',
+                  { id: `eq.${mapping.webnari_product_id}` },
+                  { stock_quantity: qty }
+                );
+              }
+              inventoryUpdated++;
+            }
+          }
+        } catch (err) {
+          console.error('Inventory count sync error:', err);
+        }
+      }
+    }
+
+    await sb.insert('sync_log', {
+      store_id: storeId,
+      provider: 'square',
+      direction: 'both',
+      event_type: 'catalog_sync',
+      details: `Bidirectional sync: ${matched} matched by SKU, ${importedFromSquare} imported from Square, ${pushedToSquare} pushed to Square, ${inventoryUpdated} inventory counts updated, ${skipped} already mapped`,
+      status: 'success',
+    });
+
+    return json({
+      synced: true,
+      square_items: allSquareItems.length,
+      webnari_products: products.length,
+      matched,
+      imported_from_square: importedFromSquare,
+      pushed_to_square: pushedToSquare,
+      inventory_updated: inventoryUpdated,
+      skipped,
+      total_mappings: existingMappings.length + newMappings.length,
+    }, 200, corsOrigin);
+
+  } catch (err) {
+    console.error('Square manual sync error:', err);
+
+    await sb.insert('sync_log', {
+      store_id: storeId,
+      provider: 'square',
+      direction: 'inbound',
+      event_type: 'catalog_sync',
+      details: 'Manual catalog sync failed',
+      status: 'error',
+      error: err.message,
+    });
+
+    return json({ error: 'Sync failed: ' + err.message }, 500, corsOrigin);
+  }
+}
+
+// ── Sync images to Square (one product at a time) ───────
+async function handleSquareSyncImages(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const integration = await getSquareIntegration(sb, env, storeId);
+  if (!integration) return json({ error: 'Square not connected' }, 400, corsOrigin);
+
+  try {
+    const body = await request.text();
+    const opts = body ? JSON.parse(body) : {};
+    const targetProductId = opts.product_id || null; // optional: sync images for one product
+    const skipCount = parseInt(opts.offset || opts.skip || '0', 10) || 0;
+
+    // Get mappings to find Square item IDs
+    const mappings = await sb.query('product_mappings', {
+      filters: { store_id: `eq.${storeId}`, provider: 'eq.square' },
+    });
+    if (!mappings.length) return json({ error: 'No product mappings found' }, 400, corsOrigin);
+
+    // Group mappings by webnari_product_id to get parent Square item IDs
+    const productMappings = {};
+    for (const m of mappings) {
+      if (!productMappings[m.webnari_product_id]) {
+        productMappings[m.webnari_product_id] = [];
+      }
+      productMappings[m.webnari_product_id].push(m);
+    }
+
+    // If targeting specific product, filter
+    const productIds = targetProductId
+      ? [targetProductId]
+      : Object.keys(productMappings);
+
+    // Process products in batches to stay within subrequest limits
+    // 1 per call since variant images add many subrequests
+    const maxProducts = 1;
+    const toProcess = productIds.slice(skipCount, skipCount + maxProducts);
+    let uploaded = 0;
+    let failed = 0;
+    const processed = [];
+
+    for (const productId of toProcess) {
+      const prodMappings = productMappings[productId];
+      if (!prodMappings || !prodMappings.length) continue;
+
+      // Get the Square parent item ID by batch-retrieving one variation
+      const firstVariationId = prodMappings[0].external_id;
+      let squareItemId = null;
+
+      try {
+        const batchRes = await fetch(`${getSquareBase(env)}/v2/catalog/batch-retrieve`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${integration.access_token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ object_ids: [firstVariationId] }),
+        });
+        const batchData = await batchRes.json();
+        const obj = (batchData.objects || [])[0];
+        if (obj?.type === 'ITEM_VARIATION') {
+          squareItemId = obj.item_variation_data?.item_id;
+        } else if (obj?.type === 'ITEM') {
+          squareItemId = obj.id;
+        }
+      } catch (e) {
+        console.error('Failed to resolve Square item ID:', e.message);
+        failed++;
+        continue;
+      }
+
+      if (!squareItemId) { failed++; continue; }
+
+      // Get product info
+      const products = await sb.query('products', {
+        filters: { id: `eq.${productId}` },
+      });
+      const product = products[0];
+      if (!product) { failed++; continue; }
+
+      // Upload product images
+      try {
+        const productImages = await sb.query('product_images', {
+          filters: { product_id: `eq.${productId}` },
+          order: 'sort_order.asc',
+        });
+
+        for (const img of productImages.slice(0, 5)) {
+          try {
+            const imgRes = await fetch(img.url);
+            if (!imgRes.ok) continue;
+            const imgBlob = await imgRes.arrayBuffer();
+            const contentType = imgRes.headers.get('content-type') || 'image/jpeg';
+
+            const boundary = '----WebKitFormBoundary' + Date.now().toString(36);
+            const imageJson = JSON.stringify({
+              idempotency_key: `img-${img.id}-${Date.now()}`,
+              object_id: squareItemId,
+              image: {
+                type: 'IMAGE',
+                id: `#img-${img.id}`,
+                image_data: {
+                  name: img.alt || product.name,
+                  caption: img.alt || '',
+                },
+              },
+            });
+
+            const encoder = new TextEncoder();
+            const parts = [
+              encoder.encode(`--${boundary}\r\nContent-Disposition: form-data; name="request"\r\nContent-Type: application/json\r\n\r\n${imageJson}\r\n`),
+              encoder.encode(`--${boundary}\r\nContent-Disposition: form-data; name="image_file"; filename="image.jpg"\r\nContent-Type: ${contentType}\r\n\r\n`),
+              new Uint8Array(imgBlob),
+              encoder.encode(`\r\n--${boundary}--\r\n`),
+            ];
+
+            const totalLength = parts.reduce((sum, p) => sum + p.byteLength, 0);
+            const bodyBuf = new Uint8Array(totalLength);
+            let offset = 0;
+            for (const part of parts) {
+              bodyBuf.set(part, offset);
+              offset += part.byteLength;
+            }
+
+            const upRes = await fetch(`${getSquareBase(env)}/v2/catalog/images`, {
+              method: 'POST',
+              headers: {
+                Authorization: `Bearer ${integration.access_token}`,
+                'Content-Type': `multipart/form-data; boundary=${boundary}`,
+              },
+              body: bodyBuf,
+            });
+
+            if (upRes.ok) {
+              uploaded++;
+            } else {
+              const errData = await upRes.json().catch(() => ({}));
+              console.error('Image upload error:', JSON.stringify(errData));
+              failed++;
+            }
+          } catch (imgErr) {
+            console.error(`Image upload failed:`, imgErr.message);
+            failed++;
+          }
+        }
+      } catch (e) {
+        // product_images table might not exist
+        console.error('Product images query failed:', e.message);
+      }
+
+      // ── Upload variant-specific images ──
+      // Find mappings that have a webnari_variant_id for this product
+      const variantMappingsForProduct = prodMappings.filter(m => m.webnari_variant_id);
+      for (const vm of variantMappingsForProduct) {
+        try {
+          const varImages = await sb.query('variant_images', {
+            filters: { variant_id: `eq.${vm.webnari_variant_id}` },
+            order: 'sort_order.asc',
+          });
+
+          for (const vimg of varImages.slice(0, 3)) { // Up to 3 images per variant
+            try {
+              const imgRes = await fetch(vimg.url);
+              if (!imgRes.ok) continue;
+              const imgBlob = await imgRes.arrayBuffer();
+              const contentType = imgRes.headers.get('content-type') || 'image/jpeg';
+
+              const boundary = '----WebKitFormBoundary' + Date.now().toString(36);
+              const imageJson = JSON.stringify({
+                idempotency_key: `vimg-${vimg.id}-${Date.now()}`,
+                object_id: vm.external_id, // Attach to the specific ITEM_VARIATION, not parent item
+                image: {
+                  type: 'IMAGE',
+                  id: `#vimg-${vimg.id}`,
+                  image_data: {
+                    name: `${product.name} - ${vm.external_name?.split(' — ')[1] || 'Variant'}`,
+                    caption: vm.external_name?.split(' — ')[1] || '',
+                  },
+                },
+              });
+
+              const encoder = new TextEncoder();
+              const parts = [
+                encoder.encode(`--${boundary}\r\nContent-Disposition: form-data; name="request"\r\nContent-Type: application/json\r\n\r\n${imageJson}\r\n`),
+                encoder.encode(`--${boundary}\r\nContent-Disposition: form-data; name="image_file"; filename="image.jpg"\r\nContent-Type: ${contentType}\r\n\r\n`),
+                new Uint8Array(imgBlob),
+                encoder.encode(`\r\n--${boundary}--\r\n`),
+              ];
+
+              const totalLength = parts.reduce((sum, p) => sum + p.byteLength, 0);
+              const bodyBuf = new Uint8Array(totalLength);
+              let offset = 0;
+              for (const part of parts) {
+                bodyBuf.set(part, offset);
+                offset += part.byteLength;
+              }
+
+              const upRes = await fetch(`${getSquareBase(env)}/v2/catalog/images`, {
+                method: 'POST',
+                headers: {
+                  Authorization: `Bearer ${integration.access_token}`,
+                  'Content-Type': `multipart/form-data; boundary=${boundary}`,
+                },
+                body: bodyBuf,
+              });
+
+              if (upRes.ok) {
+                uploaded++;
+              } else {
+                const errData = await upRes.json().catch(() => ({}));
+                console.error('Variant image upload error:', JSON.stringify(errData));
+                failed++;
+              }
+            } catch (vimgErr) {
+              console.error(`Variant image upload failed:`, vimgErr.message);
+              failed++;
+            }
+          }
+        } catch (e) {
+          // variant_images table might not exist or no images for this variant
+        }
+      }
+
+      processed.push(product.name);
+    }
+
+    const remaining = productIds.length - (skipCount + toProcess.length);
+
+    await sb.insert('sync_log', {
+      store_id: storeId,
+      provider: 'square',
+      direction: 'outbound',
+      event_type: 'image_sync',
+      details: `Image sync: ${uploaded} uploaded, ${failed} failed. Products: ${processed.join(', ')}${remaining > 0 ? `. ${remaining} more products remaining.` : ''}`,
+      status: failed > 0 ? 'partial' : 'success',
+    });
+
+    return json({
+      uploaded,
+      failed,
+      products_processed: processed,
+      remaining_products: remaining,
+      next_offset: remaining > 0 ? skipCount + toProcess.length : null,
+    }, 200, corsOrigin);
+
+  } catch (err) {
+    console.error('Image sync error:', err);
+    return json({ error: 'Image sync failed: ' + err.message }, 500, corsOrigin);
+  }
+}
+
+// List product mappings
+async function handleAdminListMappings(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const mappings = await sb.query('product_mappings', {
+    filters: { store_id: `eq.${storeId}` },
+    order: 'created_at.desc',
+  });
+
+  // Enrich with Webnari product names
+  for (const m of mappings) {
+    try {
+      if (m.webnari_product_id) {
+        const products = await sb.query('products', {
+          filters: { id: `eq.${m.webnari_product_id}` },
+        });
+        const product = products[0];
+        m.webnari_product_name = product?.name || 'Unknown';
+        m.webnari_sku = product?.sku || null;
+      } else {
+        m.webnari_product_name = 'Unknown';
+        m.webnari_sku = null;
+      }
+
+      if (m.webnari_variant_id) {
+        const vlist = await sb.query('variants', {
+          filters: { id: `eq.${m.webnari_variant_id}` },
+        });
+        const variant = vlist[0];
+        m.webnari_variant_name = variant?.name || null;
+        if (variant?.sku) m.webnari_sku = variant.sku;
+      }
+    } catch (err) {
+      m.webnari_product_name = m.webnari_product_name || 'Unknown';
+      m.webnari_sku = m.webnari_sku || null;
+    }
+  }
+
+  return json(mappings, 200, corsOrigin);
+}
+
+// Create a manual product mapping
+async function handleAdminCreateMapping(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const body = await request.json();
+  if (!body.webnari_product_id || !body.external_id || !body.provider) {
+    return json({ error: 'webnari_product_id, external_id, and provider are required' }, 400, corsOrigin);
+  }
+
+  const [mapping] = await sb.insert('product_mappings', {
+    store_id: storeId,
+    provider: body.provider,
+    webnari_product_id: body.webnari_product_id,
+    webnari_variant_id: body.webnari_variant_id || null,
+    external_id: body.external_id,
+    external_name: body.external_name || null,
+    external_sku: body.external_sku || null,
+    auto_sync: body.auto_sync !== false,
+  });
+
+  return json(mapping, 201, corsOrigin);
+}
+
+// Delete a product mapping
+async function handleAdminDeleteAllMappings(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  await sb.delete('product_mappings', { store_id: `eq.${storeId}` });
+
+  return json({ deleted: true, all: true }, 200, corsOrigin);
+}
+
+async function handleAdminDeleteMapping(request, sb, env, storeId, mappingId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  await sb.delete('product_mappings', { id: `eq.${mappingId}`, store_id: `eq.${storeId}` });
+
+  return json({ deleted: true }, 200, corsOrigin);
+}
+
+// View sync log
+async function handleAdminSyncLog(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const logs = await sb.query('sync_log', {
+    filters: { store_id: `eq.${storeId}` },
+    order: 'created_at.desc',
+    limit: 50,
+  });
+
+  return json(logs, 200, corsOrigin);
+}
+
+// ── Square Inventory Webhook ─────────────────────────────
+
+async function handleSquareInventoryWebhook(request, sb, env, corsOrigin) {
+  const body = await request.text();
+  let event;
+  try {
+    event = JSON.parse(body);
+  } catch {
+    return json({ error: 'Invalid JSON' }, 400, corsOrigin);
+  }
+
+  const eventType = event.type;
+
+  // We handle inventory.count.updated and payment.completed
+  if (eventType === 'inventory.count.updated') {
+    const counts = event.data?.object?.inventory_counts;
+    if (!counts || counts.length === 0) return json({ received: true }, 200, corsOrigin);
+
+    for (const count of counts) {
+      const catalogObjId = count.catalog_object_id;
+      const locationId = count.location_id;
+      const newQuantity = parseInt(count.quantity, 10) || 0;
+
+      // Find the mapping for this Square catalog object
+      const mappings = await sb.query('product_mappings', {
+        filters: { provider: 'eq.square', external_id: `eq.${catalogObjId}` },
+      });
+
+      for (const mapping of mappings) {
+        // Verify webhook signature if we have a key
+        const sigKey = env.SQUARE_WEBHOOK_SIGNATURE_KEY;
+        if (sigKey) {
+          const sigHeader = request.headers.get('x-square-hmacsha256-signature');
+          if (sigHeader) {
+            const isValid = await verifySquareSignature(body, sigHeader, sigKey, request.url);
+            if (!isValid) return json({ error: 'Invalid signature' }, 401, corsOrigin);
+          }
+        }
+
+        if (!mapping.auto_sync) continue;
+
+        // Update Webnari inventory
+        try {
+          if (mapping.webnari_variant_id) {
+            await sb.update('variants',
+              { id: `eq.${mapping.webnari_variant_id}` },
+              { stock_quantity: Math.max(0, newQuantity) }
+            );
+          } else {
+            await sb.update('products',
+              { id: `eq.${mapping.webnari_product_id}` },
+              { stock_quantity: Math.max(0, newQuantity) }
+            );
+          }
+
+          // Log the sync
+          await sb.insert('sync_log', {
+            store_id: mapping.store_id,
+            provider: 'square',
+            direction: 'inbound',
+            event_type: 'inventory_update',
+            details: `Stock updated to ${newQuantity} for ${mapping.external_name || catalogObjId}`,
+            status: 'success',
+          });
+        } catch (err) {
+          console.error('Square inventory sync error:', err);
+          await sb.insert('sync_log', {
+            store_id: mapping.store_id,
+            provider: 'square',
+            direction: 'inbound',
+            event_type: 'inventory_update',
+            details: `Failed to update stock for ${mapping.external_name || catalogObjId}`,
+            status: 'error',
+            error: err.message,
+          });
+        }
+      }
+    }
+  }
+
+  if (eventType === 'payment.completed') {
+    const payment = event.data?.object?.payment;
+    if (!payment) return json({ received: true }, 200, corsOrigin);
+
+    const locationId = payment.location_id;
+    if (!locationId) return json({ received: true }, 200, corsOrigin);
+
+    // Find the store with this Square location
+    const integration = await sb.query('store_integrations', {
+      filters: { provider: 'eq.square', location_id: `eq.${locationId}` },
+      single: true,
+    });
+
+    if (!integration) return json({ received: true }, 200, corsOrigin);
+
+    // Verify signature
+    const sigKey = env.SQUARE_WEBHOOK_SIGNATURE_KEY;
+    if (sigKey) {
+      const sigHeader = request.headers.get('x-square-hmacsha256-signature');
+      if (sigHeader) {
+        const isValid = await verifySquareSignature(body, sigHeader, sigKey, request.url);
+        if (!isValid) return json({ error: 'Invalid signature' }, 401, corsOrigin);
+      }
+    }
+
+    // Get the Square order line items to find which products were sold
+    const orderId = payment.order_id;
+    if (orderId) {
+      try {
+        const orderRes = await fetch(`${getSquareBase(env)}/v2/orders/${orderId}`, {
+          headers: { Authorization: `Bearer ${integration.access_token}` },
+        });
+        const orderData = await orderRes.json();
+
+        if (orderData.order && orderData.order.line_items) {
+          for (const lineItem of orderData.order.line_items) {
+            const catalogObjId = lineItem.catalog_object_id;
+            if (!catalogObjId) continue;
+
+            const mapping = await sb.query('product_mappings', {
+              filters: {
+                store_id: `eq.${integration.store_id}`,
+                provider: 'eq.square',
+                external_id: `eq.${catalogObjId}`,
+              },
+              single: true,
+            });
+
+            if (mapping && mapping.auto_sync) {
+              const qtySold = parseInt(lineItem.quantity, 10) || 1;
+
+              // Decrement Webnari stock
+              if (mapping.webnari_variant_id) {
+                const variant = await sb.query('variants', {
+                  filters: { id: `eq.${mapping.webnari_variant_id}` },
+                  single: true,
+                });
+                if (variant) {
+                  await sb.update('variants',
+                    { id: `eq.${mapping.webnari_variant_id}` },
+                    { stock_quantity: Math.max(0, variant.stock_quantity - qtySold) }
+                  );
+                }
+              } else {
+                const product = await sb.query('products', {
+                  filters: { id: `eq.${mapping.webnari_product_id}` },
+                  single: true,
+                });
+                if (product) {
+                  await sb.update('products',
+                    { id: `eq.${mapping.webnari_product_id}` },
+                    { stock_quantity: Math.max(0, product.stock_quantity - qtySold) }
+                  );
+                }
+              }
+
+              await sb.insert('sync_log', {
+                store_id: integration.store_id,
+                provider: 'square',
+                direction: 'inbound',
+                event_type: 'pos_sale',
+                details: `POS sale: ${qtySold}x ${mapping.external_name || catalogObjId} — stock decremented`,
+                status: 'success',
+              });
+            }
+          }
+        }
+      } catch (err) {
+        console.error('Square POS sale sync error:', err);
+        await sb.insert('sync_log', {
+          store_id: integration.store_id,
+          provider: 'square',
+          direction: 'inbound',
+          event_type: 'pos_sale',
+          details: 'Failed to process POS sale',
+          status: 'error',
+          error: err.message,
+        });
+      }
+    }
+  }
+
+  return json({ received: true }, 200, corsOrigin);
+}
+
+// ── Square Outbound Helpers ──────────────────────────────
+
+// Push inventory count to Square
+async function pushInventoryToSquare(env, integration, catalogObjectId, quantity) {
+  try {
+    await fetch(`${getSquareBase(env)}/v2/inventory/changes/batch-create`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${integration.access_token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        idempotency_key: `inv-${catalogObjectId}-${Date.now()}`,
+        changes: [{
+          type: 'PHYSICAL_COUNT',
+          physical_count: {
+            catalog_object_id: catalogObjectId,
+            location_id: integration.location_id,
+            quantity: String(quantity),
+            state: 'IN_STOCK',
+            occurred_at: new Date().toISOString(),
+          },
+        }],
+      }),
+    });
+  } catch (err) {
+    console.error('Push inventory to Square failed:', err);
+  }
+}
+
+// Push a new product to Square catalog (called after product create)
+async function pushProductToSquare(sb, env, storeId, product) {
+  const integration = await getSquareIntegration(sb, env, storeId);
+  if (!integration) return;
+
+  // Check if already mapped
+  const existing = await sb.query('product_mappings', {
+    filters: { store_id: `eq.${storeId}`, provider: 'eq.square', webnari_product_id: `eq.${product.id}` },
+    single: true,
+  });
+  if (existing) return;
+
+  try {
+    const idempotencyKey = `webnari-${product.id}-${Date.now()}`;
+    const res = await fetch(`${getSquareBase(env)}/v2/catalog/object`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${integration.access_token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        idempotency_key: idempotencyKey,
+        object: {
+          type: 'ITEM',
+          id: `#webnari-${product.id}`,
+          item_data: {
+            name: product.name,
+            description: product.description || '',
+            variations: [{
+              type: 'ITEM_VARIATION',
+              id: `#webnari-var-${product.id}`,
+              item_variation_data: {
+                item_id: `#webnari-${product.id}`,
+                name: 'Default',
+                sku: product.sku || undefined,
+                pricing_type: 'FIXED_PRICING',
+                price_money: { amount: product.price || 0, currency: 'USD' },
+              },
+            }],
+          },
+        },
+      }),
+    });
+
+    const data = await res.json();
+    if (res.ok && data.catalog_object) {
+      const createdVariation = data.catalog_object.item_data?.variations?.[0];
+      if (createdVariation) {
+        await sb.insert('product_mappings', {
+          store_id: storeId,
+          provider: 'square',
+          webnari_product_id: product.id,
+          webnari_variant_id: null,
+          external_id: createdVariation.id,
+          external_name: `${product.name} — Default`,
+          external_sku: product.sku || null,
+          auto_sync: true,
+        });
+
+        if (product.stock_quantity > 0 && integration.location_id) {
+          await pushInventoryToSquare(env, integration, createdVariation.id, product.stock_quantity);
+        }
+
+        await sb.insert('sync_log', {
+          store_id: storeId,
+          provider: 'square',
+          direction: 'outbound',
+          event_type: 'product_created',
+          details: `Auto-pushed "${product.name}" to Square catalog`,
+          status: 'success',
+        });
+      }
+    }
+  } catch (err) {
+    console.error('Auto-push product to Square failed:', err);
+  }
+}
+
+// Push inventory change to Square after a Webnari sale
+async function pushSaleToSquare(sb, env, storeId, productId, variantId, qtySold) {
+  const integration = await getSquareIntegration(sb, env, storeId);
+  if (!integration || !integration.location_id) return;
+
+  // Find the mapping
+  const filters = {
+    store_id: `eq.${storeId}`,
+    provider: 'eq.square',
+    webnari_product_id: `eq.${productId}`,
+  };
+  if (variantId) filters.webnari_variant_id = `eq.${variantId}`;
+
+  const mapping = await sb.query('product_mappings', { filters, single: true });
+  if (!mapping || !mapping.auto_sync) return;
+
+  try {
+    await fetch(`${getSquareBase(env)}/v2/inventory/changes/batch-create`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${integration.access_token}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        idempotency_key: `sale-${productId}-${Date.now()}`,
+        changes: [{
+          type: 'ADJUSTMENT',
+          adjustment: {
+            catalog_object_id: mapping.external_id,
+            location_id: integration.location_id,
+            quantity: String(-qtySold),
+            from_state: 'IN_STOCK',
+            to_state: 'SOLD',
+            occurred_at: new Date().toISOString(),
+          },
+        }],
+      }),
+    });
+
+    await sb.insert('sync_log', {
+      store_id: storeId,
+      provider: 'square',
+      direction: 'outbound',
+      event_type: 'inventory_adjustment',
+      details: `Online sale: ${qtySold}x ${mapping.external_name || productId} — Square stock decremented`,
+      status: 'success',
+    });
+  } catch (err) {
+    console.error('Push sale to Square failed:', err);
+    await sb.insert('sync_log', {
+      store_id: storeId,
+      provider: 'square',
+      direction: 'outbound',
+      event_type: 'inventory_adjustment',
+      details: `Failed to sync sale to Square for ${mapping.external_name || productId}`,
+      status: 'error',
+      error: err.message,
+    });
+  }
+}
+
+// ── Square Token Refresh Helper ──────────────────────────
+
+async function getSquareIntegration(sb, env, storeId) {
+  const integration = await sb.query('store_integrations', {
+    filters: { store_id: `eq.${storeId}`, provider: 'eq.square' },
+    single: true,
+  });
+
+  if (!integration) return null;
+
+  // Check if token needs refresh (refresh 24h before expiry)
+  if (integration.token_expires_at && integration.refresh_token) {
+    const expiresAt = new Date(integration.token_expires_at).getTime();
+    const refreshThreshold = 24 * 60 * 60 * 1000; // 24 hours
+
+    if (Date.now() > expiresAt - refreshThreshold) {
+      try {
+        const res = await fetch(`${getSquareBase(env)}/oauth2/token`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            client_id: env.SQUARE_APP_ID,
+            client_secret: env.SQUARE_APP_SECRET,
+            refresh_token: integration.refresh_token,
+            grant_type: 'refresh_token',
+          }),
+        });
+
+        const data = await res.json();
+        if (res.ok && data.access_token) {
+          integration.access_token = data.access_token;
+          if (data.refresh_token) integration.refresh_token = data.refresh_token;
+
+          await sb.update('store_integrations',
+            { store_id: `eq.${storeId}`, provider: 'eq.square' },
+            {
+              access_token: data.access_token,
+              refresh_token: data.refresh_token || integration.refresh_token,
+              token_expires_at: data.expires_at || null,
+              updated_at: new Date().toISOString(),
+            }
+          );
+        }
+      } catch (err) {
+        console.error('Square token refresh failed:', err);
+      }
+    }
+  }
+
+  return integration;
 }

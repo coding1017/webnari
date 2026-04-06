@@ -196,3 +196,59 @@ export async function deleteGlossaryTerm(storeId: string, termId: string) {
   const client = new CommerceClient(storeId);
   return client.deleteGlossaryTerm(termId);
 }
+
+// ── Integrations ──────────────────────────────────────────
+export async function getIntegrations(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.getIntegrations();
+}
+
+export async function connectSquare(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.connectSquare();
+}
+
+export async function disconnectSquare(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.disconnectSquare();
+}
+
+export async function syncSquare(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.syncSquare();
+}
+
+export async function getSquareLocations(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.getSquareLocations();
+}
+
+export async function setSquareLocation(storeId: string, locationId: string) {
+  const client = new CommerceClient(storeId);
+  return client.setSquareLocation(locationId);
+}
+
+export async function getProductMappings(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.getProductMappings();
+}
+
+export async function createProductMapping(storeId: string, data: Record<string, unknown>) {
+  const client = new CommerceClient(storeId);
+  return client.createProductMapping(data);
+}
+
+export async function deleteProductMapping(storeId: string, mappingId: string) {
+  const client = new CommerceClient(storeId);
+  return client.deleteProductMapping(mappingId);
+}
+
+export async function deleteAllProductMappings(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.deleteAllProductMappings();
+}
+
+export async function getSyncLog(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.getSyncLog();
+}

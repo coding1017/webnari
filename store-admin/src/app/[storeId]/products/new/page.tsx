@@ -8,8 +8,13 @@ export default async function NewProductPage({
   const { storeId } = await params;
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-8" style={{ color: "var(--text-primary)" }}>Add Product</h1>
+    <div className="fade-in">
+      <div style={{ marginBottom: "28px" }}>
+        <h1 className="heading-lg">Add Product</h1>
+        <p style={{ fontSize: "14px", color: "var(--text-tertiary)", marginTop: "4px" }}>
+          Create a new product for your store
+        </p>
+      </div>
       <ProductForm storeId={storeId} />
     </div>
   );

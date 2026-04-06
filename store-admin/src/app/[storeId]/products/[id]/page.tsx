@@ -14,16 +14,24 @@ export default async function EditProductPage({
     product = await client.getProduct(id);
   } catch {
     return (
-      <div>
-        <h1 className="text-2xl font-bold mb-4" style={{ color: "var(--text-primary)" }}>Product Not Found</h1>
-        <p style={{ color: "var(--text-tertiary)" }}>This product doesn&apos;t exist or couldn&apos;t be loaded.</p>
+      <div className="fade-in" style={{ textAlign: "center", padding: "60px" }}>
+        <svg className="mx-auto" style={{ width: "48px", height: "48px", marginBottom: "12px" }} fill="none" viewBox="0 0 24 24" stroke="var(--border-strong)" strokeWidth={1}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+        </svg>
+        <h1 style={{ fontSize: "18px", fontWeight: 700, color: "var(--text-primary)", marginBottom: "6px" }}>Product Not Found</h1>
+        <p style={{ fontSize: "13px", color: "var(--text-tertiary)" }}>This product doesn&apos;t exist or couldn&apos;t be loaded.</p>
       </div>
     );
   }
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-8" style={{ color: "var(--text-primary)" }}>Edit: {product.name}</h1>
+    <div className="fade-in">
+      <div style={{ marginBottom: "28px" }}>
+        <h1 className="heading-lg">Edit: {product.name}</h1>
+        <p style={{ fontSize: "14px", color: "var(--text-tertiary)", marginTop: "4px" }}>
+          Update product details, pricing, and variants
+        </p>
+      </div>
       <ProductForm storeId={storeId} product={product} />
     </div>
   );
