@@ -1018,10 +1018,220 @@ export default function IntegrationsPage() {
         )}
       </div>
 
-      {/* QuickBooks card is below the Square tabs section */}
+      {/* QuickBooks Online Card */}
+      <div className="card" style={{ marginBottom: "24px" }}>
+        <div className="flex items-center justify-between" style={{ marginBottom: "20px" }}>
+          <div className="flex items-center gap-3">
+            <div
+              style={{
+                width: "44px",
+                height: "44px",
+                borderRadius: "var(--radius-md)",
+                background: "#2CA01C",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" />
+              </svg>
+            </div>
+            <div>
+              <h2 className="heading-sm" style={{ marginBottom: 0 }}>QuickBooks Online</h2>
+              <p style={{ fontSize: "12px", color: "var(--text-tertiary)", margin: 0 }}>
+                {qbIntegration
+                  ? `Connected to ${qbIntegration.company_name || qbIntegration.realm_id || "QuickBooks"}`
+                  : "Auto-sync orders to your accounting software"}
+              </p>
+            </div>
+          </div>
 
-      {/* Tabs: Mappings & Sync Log (only if Square connected) */}
-      {squareIntegration && (
+          {qbIntegration ? (
+            <span className="badge badge-green">Connected</span>
+          ) : (
+            <span className="badge badge-gray">Not Connected</span>
+          )}
+        </div>
+
+        {!qbIntegration ? (
+          <div style={{ textAlign: "center", padding: "24px 0 8px" }}>
+            <div
+              style={{
+                width: "64px",
+                height: "64px",
+                borderRadius: "var(--radius-lg)",
+                background: "var(--bg-grouped)",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                margin: "0 auto 16px",
+              }}
+            >
+              <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="var(--text-quaternary)" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <p style={{ fontSize: "14px", color: "var(--text-secondary)", fontWeight: 600, marginBottom: "4px" }}>
+              Connect your QuickBooks account
+            </p>
+            <p style={{ fontSize: "13px", color: "var(--text-tertiary)", maxWidth: "420px", margin: "0 auto 20px" }}>
+              When an order is placed, it automatically creates a Sales Receipt in QuickBooks with customer, line items, tax, and shipping.
+            </p>
+            <button onClick={handleQBConnect} disabled={qbConnecting} className="btn btn-primary" style={{ fontSize: "14px" }}>
+              {qbConnecting ? "Redirecting to Intuit..." : "Connect QuickBooks"}
+            </button>
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center gap-3" style={{ marginBottom: "20px", flexWrap: "wrap" }}>
+              <button onClick={handleQBTest} disabled={qbTesting} className="btn btn-secondary btn-sm" style={{ fontSize: "13px" }}>
+                {qbTesting ? "Testing..." : "Test Connection"}
+              </button>
+              <button onClick={handleQBDisconnect} disabled={qbDisconnecting} className="btn btn-danger btn-sm" style={{ fontSize: "13px" }}>
+                {qbDisconnecting ? "Disconnecting..." : "Disconnect"}
+              </button>
+            </div>
+
+            {/* QB Tabs */}
+            <div className="flex gap-1" style={{ borderBottom: "1px solid var(--border)", marginBottom: "20px" }}>
+              {(["overview", "activity"] as const).map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setQbTab(t)}
+                  style={{
+                    padding: "8px 16px",
+                    fontSize: "13px",
+                    fontWeight: qbTab === t ? 600 : 500,
+                    color: qbTab === t ? "var(--gold)" : "var(--text-tertiary)",
+                    background: "none",
+                    border: "none",
+                    cursor: "pointer",
+                    borderBottom: `2px solid ${qbTab === t ? "var(--gold)" : "transparent"}`,
+                    marginBottom: "-1px",
+                  }}
+                >
+                  {t === "overview" ? "Overview" : "Sync Activity"}
+                </button>
+              ))}
+            </div>
+
+            {qbTab === "overview" && (
+              <div>
+                <p style={{ fontSize: "13px", color: "var(--text-secondary)", marginBottom: "20px" }}>
+                  When an order is placed, it automatically syncs to QuickBooks as a Sales Receipt. Customer records are created or matched by email.
+                </p>
+                <div className="grid grid-cols-3 gap-4">
+                  {[
+                    { step: "1", title: "Order Placed", desc: "Customer completes checkout via Stripe or Square" },
+                    { step: "2", title: "Customer Matched", desc: "Email lookup in QB — created if new" },
+                    { step: "3", title: "Sales Receipt Created", desc: "Line items, tax, shipping auto-posted" },
+                  ].map((s) => (
+                    <div
+                      key={s.step}
+                      style={{ padding: "16px", background: "var(--bg-grouped)", borderRadius: "var(--radius-sm)", textAlign: "center" }}
+                    >
+                      <div
+                        style={{
+                          width: "32px",
+                          height: "32px",
+                          borderRadius: "999px",
+                          background: "var(--gold-light)",
+                          color: "var(--gold)",
+                          display: "inline-flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "14px",
+                          fontWeight: 700,
+                          marginBottom: "8px",
+                        }}
+                      >
+                        {s.step}
+                      </div>
+                      <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-primary)", marginBottom: "4px" }}>
+                        {s.title}
+                      </div>
+                      <div style={{ fontSize: "12px", color: "var(--text-tertiary)" }}>{s.desc}</div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ marginTop: "20px", padding: "12px 16px", background: "var(--bg-grouped)", borderRadius: "var(--radius-sm)", fontSize: "12px", color: "var(--text-tertiary)" }}>
+                  <strong style={{ color: "var(--text-secondary)" }}>Connection details:</strong>{" "}
+                  Company ID: {qbIntegration.realm_id || "—"} · Connected {timeAgo(qbIntegration.connected_at)}
+                </div>
+              </div>
+            )}
+
+            {qbTab === "activity" && (
+              <div>
+                {qbSyncLog.length === 0 ? (
+                  <p style={{ fontSize: "13px", color: "var(--text-tertiary)", textAlign: "center", padding: "32px 0" }}>
+                    No sync activity yet. Orders will appear here once placed.
+                  </p>
+                ) : (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                    {qbSyncLog.map((log) => (
+                      <div
+                        key={log.id}
+                        className="flex items-center justify-between"
+                        style={{ padding: "10px 14px", background: "var(--bg-grouped)", borderRadius: "var(--radius-sm)" }}
+                      >
+                        <div className="flex items-center gap-3">
+                          <span
+                            style={{
+                              width: "8px",
+                              height: "8px",
+                              borderRadius: "999px",
+                              background: log.status === "success" ? "#22c55e" : "#ef4444",
+                              flexShrink: 0,
+                            }}
+                          />
+                          <div>
+                            <div style={{ fontSize: "13px", fontWeight: 500, color: "var(--text-primary)" }}>
+                              {log.event_type === "order_synced"
+                                ? `Order #${log.details?.order_number || "—"} synced`
+                                : log.event_type === "customer_created"
+                                  ? `Customer created: ${log.details?.customer_email || "—"}`
+                                  : log.event_type}
+                            </div>
+                            {log.status === "error" && log.details?.error && (
+                              <div style={{ fontSize: "11px", color: "#ef4444", marginTop: "2px" }}>
+                                {log.details.error}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span
+                            style={{
+                              fontSize: "10px",
+                              fontWeight: 600,
+                              padding: "2px 8px",
+                              borderRadius: "999px",
+                              background: log.status === "success" ? "#dcfce7" : "#fee2e2",
+                              color: log.status === "success" ? "#15803d" : "#dc2626",
+                              textTransform: "uppercase",
+                            }}
+                          >
+                            {log.status}
+                          </span>
+                          <span style={{ fontSize: "11px", color: "var(--text-quaternary)", whiteSpace: "nowrap" }}>
+                            {timeAgo(log.created_at)}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
+
+      {/* Tabs: Overview, Product Mappings & Sync Log */}
+      {(squareIntegration || stripeIntegration || qbIntegration) && (
         <>
           <div className="flex items-center gap-2" style={{ marginBottom: "20px" }}>
             {(["overview", "mappings", "log"] as Tab[]).map((t) => (
@@ -1279,217 +1489,6 @@ export default function IntegrationsPage() {
         </>
       )}
 
-
-      {/* QuickBooks Online Card */}
-      <div className="card" style={{ marginBottom: "24px" }}>
-        <div className="flex items-center justify-between" style={{ marginBottom: "20px" }}>
-          <div className="flex items-center gap-3">
-            <div
-              style={{
-                width: "44px",
-                height: "44px",
-                borderRadius: "var(--radius-md)",
-                background: "#2CA01C",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" />
-              </svg>
-            </div>
-            <div>
-              <h2 className="heading-sm" style={{ marginBottom: 0 }}>QuickBooks Online</h2>
-              <p style={{ fontSize: "12px", color: "var(--text-tertiary)", margin: 0 }}>
-                {qbIntegration
-                  ? `Connected to ${qbIntegration.company_name || qbIntegration.realm_id || "QuickBooks"}`
-                  : "Auto-sync orders to your accounting software"}
-              </p>
-            </div>
-          </div>
-
-          {qbIntegration ? (
-            <span className="badge badge-green">Connected</span>
-          ) : (
-            <span className="badge badge-gray">Not Connected</span>
-          )}
-        </div>
-
-        {!qbIntegration ? (
-          <div style={{ textAlign: "center", padding: "24px 0 8px" }}>
-            <div
-              style={{
-                width: "64px",
-                height: "64px",
-                borderRadius: "var(--radius-lg)",
-                background: "var(--bg-grouped)",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                margin: "0 auto 16px",
-              }}
-            >
-              <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="var(--text-quaternary)" strokeWidth={1.5}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-              </svg>
-            </div>
-            <p style={{ fontSize: "14px", color: "var(--text-secondary)", fontWeight: 600, marginBottom: "4px" }}>
-              Connect your QuickBooks account
-            </p>
-            <p style={{ fontSize: "13px", color: "var(--text-tertiary)", maxWidth: "420px", margin: "0 auto 20px" }}>
-              When an order is placed, it automatically creates a Sales Receipt in QuickBooks with customer, line items, tax, and shipping.
-            </p>
-            <button onClick={handleQBConnect} disabled={qbConnecting} className="btn btn-primary" style={{ fontSize: "14px" }}>
-              {qbConnecting ? "Redirecting to Intuit..." : "Connect QuickBooks"}
-            </button>
-          </div>
-        ) : (
-          <>
-            <div className="flex items-center gap-3" style={{ marginBottom: "20px", flexWrap: "wrap" }}>
-              <button onClick={handleQBTest} disabled={qbTesting} className="btn btn-secondary btn-sm" style={{ fontSize: "13px" }}>
-                {qbTesting ? "Testing..." : "Test Connection"}
-              </button>
-              <button onClick={handleQBDisconnect} disabled={qbDisconnecting} className="btn btn-danger btn-sm" style={{ fontSize: "13px" }}>
-                {qbDisconnecting ? "Disconnecting..." : "Disconnect"}
-              </button>
-            </div>
-
-            {/* QB Tabs */}
-            <div className="flex gap-1" style={{ borderBottom: "1px solid var(--border)", marginBottom: "20px" }}>
-              {(["overview", "activity"] as const).map((t) => (
-                <button
-                  key={t}
-                  onClick={() => setQbTab(t)}
-                  style={{
-                    padding: "8px 16px",
-                    fontSize: "13px",
-                    fontWeight: qbTab === t ? 600 : 500,
-                    color: qbTab === t ? "var(--gold)" : "var(--text-tertiary)",
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    borderBottom: `2px solid ${qbTab === t ? "var(--gold)" : "transparent"}`,
-                    marginBottom: "-1px",
-                  }}
-                >
-                  {t === "overview" ? "Overview" : "Sync Activity"}
-                </button>
-              ))}
-            </div>
-
-            {qbTab === "overview" && (
-              <div>
-                <p style={{ fontSize: "13px", color: "var(--text-secondary)", marginBottom: "20px" }}>
-                  When an order is placed, it automatically syncs to QuickBooks as a Sales Receipt. Customer records are created or matched by email.
-                </p>
-                <div className="grid grid-cols-3 gap-4">
-                  {[
-                    { step: "1", title: "Order Placed", desc: "Customer completes checkout via Stripe or Square" },
-                    { step: "2", title: "Customer Matched", desc: "Email lookup in QB — created if new" },
-                    { step: "3", title: "Sales Receipt Created", desc: "Line items, tax, shipping auto-posted" },
-                  ].map((s) => (
-                    <div
-                      key={s.step}
-                      style={{ padding: "16px", background: "var(--bg-grouped)", borderRadius: "var(--radius-sm)", textAlign: "center" }}
-                    >
-                      <div
-                        style={{
-                          width: "32px",
-                          height: "32px",
-                          borderRadius: "999px",
-                          background: "var(--gold-light)",
-                          color: "var(--gold)",
-                          display: "inline-flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontSize: "14px",
-                          fontWeight: 700,
-                          marginBottom: "8px",
-                        }}
-                      >
-                        {s.step}
-                      </div>
-                      <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-primary)", marginBottom: "4px" }}>
-                        {s.title}
-                      </div>
-                      <div style={{ fontSize: "12px", color: "var(--text-tertiary)" }}>{s.desc}</div>
-                    </div>
-                  ))}
-                </div>
-                <div style={{ marginTop: "20px", padding: "12px 16px", background: "var(--bg-grouped)", borderRadius: "var(--radius-sm)", fontSize: "12px", color: "var(--text-tertiary)" }}>
-                  <strong style={{ color: "var(--text-secondary)" }}>Connection details:</strong>{" "}
-                  Company ID: {qbIntegration.realm_id || "—"} · Connected {timeAgo(qbIntegration.connected_at)}
-                </div>
-              </div>
-            )}
-
-            {qbTab === "activity" && (
-              <div>
-                {qbSyncLog.length === 0 ? (
-                  <p style={{ fontSize: "13px", color: "var(--text-tertiary)", textAlign: "center", padding: "32px 0" }}>
-                    No sync activity yet. Orders will appear here once placed.
-                  </p>
-                ) : (
-                  <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                    {qbSyncLog.map((log) => (
-                      <div
-                        key={log.id}
-                        className="flex items-center justify-between"
-                        style={{ padding: "10px 14px", background: "var(--bg-grouped)", borderRadius: "var(--radius-sm)" }}
-                      >
-                        <div className="flex items-center gap-3">
-                          <span
-                            style={{
-                              width: "8px",
-                              height: "8px",
-                              borderRadius: "999px",
-                              background: log.status === "success" ? "#22c55e" : "#ef4444",
-                              flexShrink: 0,
-                            }}
-                          />
-                          <div>
-                            <div style={{ fontSize: "13px", fontWeight: 500, color: "var(--text-primary)" }}>
-                              {log.event_type === "order_synced"
-                                ? `Order #${log.details?.order_number || "—"} synced`
-                                : log.event_type === "customer_created"
-                                  ? `Customer created: ${log.details?.customer_email || "—"}`
-                                  : log.event_type}
-                            </div>
-                            {log.status === "error" && log.details?.error && (
-                              <div style={{ fontSize: "11px", color: "#ef4444", marginTop: "2px" }}>
-                                {log.details.error}
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <span
-                            style={{
-                              fontSize: "10px",
-                              fontWeight: 600,
-                              padding: "2px 8px",
-                              borderRadius: "999px",
-                              background: log.status === "success" ? "#dcfce7" : "#fee2e2",
-                              color: log.status === "success" ? "#15803d" : "#dc2626",
-                              textTransform: "uppercase",
-                            }}
-                          >
-                            {log.status}
-                          </span>
-                          <span style={{ fontSize: "11px", color: "var(--text-quaternary)", whiteSpace: "nowrap" }}>
-                            {timeAgo(log.created_at)}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-          </>
-        )}
-      </div>
 
     </div>
   );
