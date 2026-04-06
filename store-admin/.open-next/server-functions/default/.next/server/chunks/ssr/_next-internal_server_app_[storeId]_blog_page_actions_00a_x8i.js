@@ -1,3 +1,0 @@
-module.exports=[31495,a=>{"use strict";var b=a.i(54727);a.s([],85570),a.i(85570),a.s(["403806ed06625b047e45d70f2103ae0dae26b7a454",()=>b.getBlogPosts,"6029ed12cd207004c8f565ad9731ad14ce25508fba",()=>b.deleteBlogPost,"60cc93ade521cb43b98785685b742534bdb6076ca9",()=>b.createBlogPost,"70570628fc2e9bf7b17c1ff055a37cb474eb27aa8c",()=>b.updateBlogPost],31495)}];
-
-//# sourceMappingURL=_next-internal_server_app_%5BstoreId%5D_blog_page_actions_00a_x8i.js.map

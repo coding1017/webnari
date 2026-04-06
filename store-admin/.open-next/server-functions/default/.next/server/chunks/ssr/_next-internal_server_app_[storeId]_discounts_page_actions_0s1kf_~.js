@@ -1,3 +1,0 @@
-module.exports=[78348,a=>{"use strict";var b=a.i(54727);a.s([],47987),a.i(47987),a.s(["4083ee60f0344e2fdf789ca0db078c7a7c959a4cb2",()=>b.getDiscounts,"60b738a7e5a0d2bac0ffd7ce8abee24678795fd400",()=>b.createDiscount,"60fac466b7b9853216120d43e11866121ee4dd62ce",()=>b.deleteDiscount,"70bd9d67b5a63141a4b603c5369cc6c23017860117",()=>b.updateDiscount],78348)}];
-
-//# sourceMappingURL=_next-internal_server_app_%5BstoreId%5D_discounts_page_actions_0s1kf_~.js.map
