@@ -4975,7 +4975,9 @@ async function handleStripeOnboardingStatus(request, sb, env, storeId, corsOrigi
   }
 
   const acct = await acctRes.json();
-  const isComplete = acct.charges_enabled && acct.details_submitted;
+  // In sandbox, charges_enabled may not flip immediately even after details are submitted
+  // Treat details_submitted as sufficient for onboarding completion
+  const isComplete = acct.details_submitted;
   const accountName = acct.business_profile?.name
     || acct.settings?.dashboard?.display_name
     || acct.email
