@@ -21,6 +21,7 @@ function formatCents(cents: number) {
 interface Product {
   id: string;
   name: string;
+  sku: string | null;
   slug: string;
   category: string;
   description: string;
@@ -294,7 +295,7 @@ export default function ProductsPage() {
               className="hide-mobile"
               style={{
                 display: "grid",
-                gridTemplateColumns: "1fr 120px 100px 80px 90px 50px",
+                gridTemplateColumns: "1fr 130px 120px 100px 80px 90px 50px",
                 gap: "12px",
                 padding: "12px 24px",
                 background: "var(--bg-grouped)",
@@ -302,6 +303,7 @@ export default function ProductsPage() {
               }}
             >
               <span className="label-caps">Product</span>
+              <span className="label-caps">SKU</span>
               <span className="label-caps">Category</span>
               <span className="label-caps text-right">Price</span>
               <span className="label-caps text-center">Stock</span>
@@ -319,7 +321,7 @@ export default function ProductsPage() {
                     className="transition-all"
                     style={{
                       display: "grid",
-                      gridTemplateColumns: "1fr 120px 100px 80px 90px 50px",
+                      gridTemplateColumns: "1fr 130px 120px 100px 80px 90px 50px",
                       gap: "12px",
                       padding: "16px 24px",
                       alignItems: "center",
@@ -352,6 +354,10 @@ export default function ProductsPage() {
                         )}
                       </div>
                     </div>
+
+                    <span className="hide-mobile" style={{ fontSize: "12px", fontFamily: "monospace", letterSpacing: "0.05em", color: p.sku ? "var(--blue)" : "var(--text-tertiary)" }}>
+                      {p.sku || "—"}
+                    </span>
 
                     <span className="capitalize hide-mobile" style={{ fontSize: "13px", color: "var(--text-secondary)" }}>
                       {p.category || "—"}

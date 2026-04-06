@@ -22,6 +22,7 @@ interface ProductFormProps {
   product?: {
     id: string;
     name: string;
+    sku: string | null;
     slug: string;
     category: string;
     description: string;
@@ -37,6 +38,27 @@ interface ProductFormProps {
   };
 }
 
+// SKU auto-generation helpers
+const STYLE_PRESETS = ["CROSS", "MINI", "LRG", "DISP", "SET", "CSTM"];
+
+function categoryCode(cat: string): string {
+  // Common mappings, fallback to first 3 letters
+  const map: Record<string, string> = {
+    pouches: "PCH", bags: "BAG", mats: "MAT", buddy: "BDY",
+    shoes: "SHO", sneakers: "SNK", clothing: "CLO", accessories: "ACC",
+    hats: "HAT", shirts: "SHR", pants: "PNT", jackets: "JKT",
+  };
+  const slug = cat.toLowerCase().replace(/[^a-z]/g, "");
+  return map[slug] || slug.slice(0, 3).toUpperCase() || "GEN";
+}
+
+function buildSku(cat: string, style: string, num: string): string {
+  const parts = [categoryCode(cat)];
+  if (style.trim()) parts.push(style.trim().toUpperCase());
+  parts.push(num.padStart(3, "0"));
+  return parts.join("-");
+}
+
 export default function ProductForm({ storeId, product }: ProductFormProps) {
   const router = useRouter();
   const isEdit = !!product;
@@ -44,6 +66,22 @@ export default function ProductForm({ storeId, product }: ProductFormProps) {
   const [name, setName] = useState(product?.name || "");
   const [slug, setSlug] = useState(product?.slug || "");
   const [category, setCategory] = useState(product?.category || "");
+
+  // SKU auto-generator state
+  const existingSku = product?.sku || "";
+  const [skuStyle, setSkuStyle] = useState(() => {
+    if (!existingSku) return "";
+    const parts = existingSku.split("-");
+    return parts.length >= 3 ? parts.slice(1, -1).join("-") : "";
+  });
+  const [skuNumber, setSkuNumber] = useState(() => {
+    if (!existingSku) return "001";
+    const parts = existingSku.split("-");
+    return parts[parts.length - 1] || "001";
+  });
+  const [skuManual, setSkuManual] = useState(existingSku);
+  const [skuMode, setSkuMode] = useState<"auto" | "manual">(existingSku ? "manual" : "auto");
+  const generatedSku = skuMode === "auto" ? buildSku(category, skuStyle, skuNumber) : skuManual;
   const [description, setDescription] = useState(product?.description || "");
   const [price, setPrice] = useState(product ? (product.price / 100).toFixed(2) : "");
   const [comparePrice, setComparePrice] = useState(product?.compare_at_price ? (product.compare_at_price / 100).toFixed(2) : "");
@@ -89,6 +127,7 @@ export default function ProductForm({ storeId, product }: ProductFormProps) {
 
     const data = {
       name,
+      sku: generatedSku || null,
       slug: slug || autoSlug(name),
       category,
       description,
@@ -195,6 +234,97 @@ export default function ProductForm({ storeId, product }: ProductFormProps) {
               <span className="text-sm">In Stock</span>
             </label>
           </div>
+        </div>
+      </section>
+
+      {/* SKU Generator */}
+      <section className="rounded-xl p-6 space-y-4" style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)" }}>
+        <div className="flex items-center justify-between">
+          <h2 className="text-sm font-semibold" style={{ color: "var(--text-primary)" }}>SKU</h2>
+          <button
+            type="button"
+            onClick={() => {
+              if (skuMode === "auto") {
+                setSkuManual(generatedSku);
+                setSkuMode("manual");
+              } else {
+                setSkuMode("auto");
+              }
+            }}
+            className="text-xs font-medium"
+            style={{ color: "var(--blue)" }}
+          >
+            {skuMode === "auto" ? "Edit manually" : "Use generator"}
+          </button>
+        </div>
+
+        {skuMode === "auto" ? (
+          <div className="space-y-3">
+            <div className="grid grid-cols-3 gap-3">
+              <div>
+                <label>Category Code</label>
+                <div className="px-3 py-2 rounded-lg text-sm font-mono" style={{ background: "var(--bg-grouped)", border: "1px solid var(--border)", color: "var(--text-primary)" }}>
+                  {category ? categoryCode(category) : "—"}
+                </div>
+                <p className="text-xs mt-1" style={{ color: "var(--text-tertiary)" }}>Auto from category</p>
+              </div>
+              <div>
+                <label>Style (optional)</label>
+                <input
+                  value={skuStyle}
+                  onChange={(e) => setSkuStyle(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ""))}
+                  placeholder="CROSS"
+                  maxLength={6}
+                  style={{ textTransform: "uppercase" }}
+                />
+              </div>
+              <div>
+                <label>Number</label>
+                <input
+                  value={skuNumber}
+                  onChange={(e) => setSkuNumber(e.target.value.replace(/[^0-9]/g, "").slice(0, 4))}
+                  placeholder="001"
+                  maxLength={4}
+                />
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-1.5">
+              {STYLE_PRESETS.map((preset) => (
+                <button
+                  key={preset}
+                  type="button"
+                  onClick={() => setSkuStyle(preset)}
+                  className="px-2.5 py-1 text-xs rounded-md"
+                  style={{
+                    background: skuStyle === preset ? "rgba(59,130,246,0.15)" : "var(--bg-grouped)",
+                    border: `1px solid ${skuStyle === preset ? "var(--blue)" : "var(--border)"}`,
+                    color: skuStyle === preset ? "var(--blue)" : "var(--text-tertiary)",
+                  }}
+                >
+                  {preset}
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div>
+            <label>SKU</label>
+            <input
+              value={skuManual}
+              onChange={(e) => setSkuManual(e.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, ""))}
+              placeholder="PCH-CROSS-001"
+              style={{ textTransform: "uppercase", fontFamily: "monospace" }}
+            />
+          </div>
+        )}
+
+        {/* Preview */}
+        <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg" style={{ background: "var(--bg-grouped)", border: "1px solid var(--border)" }}>
+          <span className="text-xs" style={{ color: "var(--text-tertiary)" }}>Generated SKU:</span>
+          <span className="text-sm font-semibold font-mono tracking-wider" style={{ color: "var(--blue)" }}>
+            {generatedSku || "—"}
+          </span>
         </div>
       </section>
 

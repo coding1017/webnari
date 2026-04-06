@@ -39,6 +39,7 @@ create table if not exists products (
   id                 text primary key default gen_random_uuid()::text,
   store_id           text not null references stores(id) on delete cascade,
   name               text not null,
+  sku                text,                               -- e.g. PCH-CROSS-001
   slug               text,
   category           text,
   description        text,

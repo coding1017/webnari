@@ -1751,7 +1751,7 @@ async function handleAdminUpdateProduct(request, sb, env, storeId, productId, co
   const { images, ...productData } = body;
 
   // Update product fields
-  const allowed = ['name', 'slug', 'category', 'description', 'price', 'compare_at_price',
+  const allowed = ['name', 'sku', 'slug', 'category', 'description', 'price', 'compare_at_price',
     'badge', 'in_stock', 'track_inventory', 'stock_quantity', 'low_stock_threshold',
     'is_collection', 'rating', 'stripe_price_id', 'square_catalog_id', 'sort_order'];
   const updates = {};
