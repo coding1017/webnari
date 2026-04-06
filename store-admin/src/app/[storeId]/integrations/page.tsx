@@ -1,12 +1,13 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import {
   getIntegrations,
   disconnectSquare,
   connectSquare,
   syncSquare,
+  syncSquareImages,
   getSquareLocations,
   setSquareLocation,
   getProductMappings,
@@ -25,7 +26,10 @@ interface Integration {
   provider: string;
   merchant_id: string | null;
   location_id: string | null;
+  realm_id: string | null;
+  company_name: string | null;
   settings: Record<string, unknown>;
+  metadata: Record<string, unknown>;
   connected_at: string;
   updated_at: string;
   token_expires_at: string | null;
@@ -79,7 +83,6 @@ type Tab = "overview" | "mappings" | "log";
 
 export default function IntegrationsPage() {
   const params = useParams();
-  const searchParams = useSearchParams();
   const storeId = params.storeId as string;
 
   const [integrations, setIntegrations] = useState<Integration[]>([]);
@@ -199,13 +202,42 @@ export default function IntegrationsPage() {
   async function handleSync() {
     setSyncing(true);
     try {
+      // Phase 1: Catalog sync (products, variants, inventory)
       const result = await syncSquare(storeId);
       const parts = [];
       if (result.matched) parts.push(`${result.matched} matched by SKU`);
       if (result.imported_from_square) parts.push(`${result.imported_from_square} imported from Square`);
       if (result.pushed_to_square) parts.push(`${result.pushed_to_square} pushed to Square`);
       if (result.inventory_updated) parts.push(`${result.inventory_updated} inventory counts synced`);
-      showMessage(`Sync complete: ${parts.join(', ') || 'everything up to date'}`);
+      showMessage(`Catalog synced: ${parts.join(', ') || 'up to date'}. Uploading images...`);
+
+      // Phase 2: Image sync (5 products per batch)
+      let totalUploaded = 0;
+      let totalFailed = 0;
+      let currentOffset = 0;
+      let hasMore = true;
+      let batchCount = 0;
+      while (hasMore && batchCount < 20) {
+        try {
+          const imgResult = await syncSquareImages(storeId, currentOffset);
+          totalUploaded += imgResult.uploaded || 0;
+          totalFailed += imgResult.failed || 0;
+          if (imgResult.next_offset != null && imgResult.remaining_products > 0) {
+            currentOffset = imgResult.next_offset;
+          } else {
+            hasMore = false;
+          }
+        } catch {
+          hasMore = false;
+        }
+        batchCount++;
+      }
+
+      if (totalUploaded > 0 || totalFailed > 0) {
+        showMessage(`Sync complete: ${parts.join(', ')}. Images: ${totalUploaded} uploaded${totalFailed > 0 ? `, ${totalFailed} failed` : ''}`);
+      } else {
+        showMessage(`Sync complete: ${parts.join(', ') || 'everything up to date'}`);
+      }
       loadData();
     } catch (err) {
       showMessage((err as Error).message, "error");
@@ -535,35 +567,7 @@ export default function IntegrationsPage() {
         )}
       </div>
 
-      {/* QuickBooks Card (coming soon) */}
-      <div className="card" style={{ marginBottom: "32px", opacity: 0.6 }}>
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div
-              style={{
-                width: "44px",
-                height: "44px",
-                borderRadius: "var(--radius-md)",
-                background: "#2CA01C",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M12 4C7.58 4 4 7.58 4 12s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8zm-2 11.5c-1.93 0-3.5-1.57-3.5-3.5S8.07 8.5 10 8.5h.5v1.5H10c-1.1 0-2 .9-2 2s.9 2 2 2h1v-3h1.5v4.5H10zm6.5-3.5c0 1.93-1.57 3.5-3.5 3.5h-.5v-1.5h.5c1.1 0 2-.9 2-2s-.9-2-2-2h-1v3H10.5V8.5H14c1.93 0 3.5 1.57 3.5 3.5z" fill="white" />
-              </svg>
-            </div>
-            <div>
-              <h2 className="heading-sm" style={{ marginBottom: 0 }}>QuickBooks Online</h2>
-              <p style={{ fontSize: "12px", color: "var(--text-tertiary)", margin: 0 }}>
-                Auto-sync orders to your accounting books
-              </p>
-            </div>
-          </div>
-          <span className="badge badge-gray">Coming Soon</span>
-        </div>
-      </div>
+      {/* QuickBooks card is below the Square tabs section */}
 
       {/* Tabs: Mappings & Sync Log (only if Square connected) */}
       {squareIntegration && (
@@ -847,7 +851,7 @@ export default function IntegrationsPage() {
               <h2 className="heading-sm" style={{ marginBottom: 0 }}>QuickBooks Online</h2>
               <p style={{ fontSize: "12px", color: "var(--text-tertiary)", margin: 0 }}>
                 {qbIntegration
-                  ? `Connected to ${(qbIntegration as Record<string, string>).company_name || (qbIntegration as Record<string, string>).realm_id || "QuickBooks"}`
+                  ? `Connected to ${qbIntegration.company_name || qbIntegration.realm_id || "QuickBooks"}`
                   : "Auto-sync orders to your accounting software"}
               </p>
             </div>
@@ -963,7 +967,7 @@ export default function IntegrationsPage() {
                 </div>
                 <div style={{ marginTop: "20px", padding: "12px 16px", background: "var(--bg-grouped)", borderRadius: "var(--radius-sm)", fontSize: "12px", color: "var(--text-tertiary)" }}>
                   <strong style={{ color: "var(--text-secondary)" }}>Connection details:</strong>{" "}
-                  Company ID: {(qbIntegration as Record<string, string>).realm_id || "—"} · Connected {timeAgo(qbIntegration.connected_at)}
+                  Company ID: {qbIntegration.realm_id || "—"} · Connected {timeAgo(qbIntegration.connected_at)}
                 </div>
               </div>
             )}

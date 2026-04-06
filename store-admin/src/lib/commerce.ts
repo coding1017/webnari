@@ -328,6 +328,13 @@ export class CommerceClient {
     return this.fetch('/api/admin/integrations/square/sync', { method: 'POST' });
   }
 
+  async syncSquareImages(offset?: number) {
+    return this.fetch('/api/admin/integrations/square/sync-images', {
+      method: 'POST',
+      body: JSON.stringify(offset ? { skip: offset } : {}),
+    });
+  }
+
   async getSquareLocations() {
     return this.fetch('/api/admin/integrations/square/locations');
   }

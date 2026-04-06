@@ -219,6 +219,11 @@ export async function syncSquare(storeId: string) {
   return client.syncSquare();
 }
 
+export async function syncSquareImages(storeId: string, offset?: number) {
+  const client = new CommerceClient(storeId);
+  return client.syncSquareImages(offset);
+}
+
 export async function getSquareLocations(storeId: string) {
   const client = new CommerceClient(storeId);
   return client.getSquareLocations();

@@ -59,6 +59,11 @@ export default {
         return await handleSquareOAuthCallback(request, sb, env, url, corsOrigin);
       }
 
+      // QuickBooks OAuth callback — browser redirect from Intuit, no X-Store-ID
+      if (method === 'GET' && path === '/api/admin/integrations/quickbooks/callback') {
+        return await handleQuickBooksCallback(request, sb, env, null, url, corsOrigin);
+      }
+
       // All other /api/ routes require X-Store-ID (except webhooks)
       if (!storeId && !isWebhook && path.startsWith('/api/')) {
         return json({ error: 'Missing X-Store-ID header' }, 400, corsOrigin);
@@ -353,11 +358,9 @@ export default {
       }
 
       // ── QuickBooks routes ─────────────────────────────
+      // Note: QB callback is handled earlier (before X-Store-ID check) since it's a browser redirect
       if (method === 'POST' && path === '/api/admin/integrations/quickbooks/connect') {
         return await handleQuickBooksConnect(request, sb, env, storeId, corsOrigin);
-      }
-      if (method === 'GET' && path === '/api/admin/integrations/quickbooks/callback') {
-        return await handleQuickBooksCallback(request, sb, env, storeId, url, corsOrigin);
       }
       if (method === 'DELETE' && path === '/api/admin/integrations/quickbooks/disconnect') {
         return await handleQuickBooksDisconnect(request, sb, env, storeId, corsOrigin);
@@ -1848,9 +1851,9 @@ async function handleAdminUpdateProduct(request, sb, env, storeId, productId, co
   const { images, ...productData } = body;
 
   // Update product fields
-  const allowed = ['name', 'sku', 'slug', 'category', 'description', 'price', 'compare_at_price',
+  const allowed = ['name', 'sku', 'color', 'slug', 'category', 'description', 'price', 'compare_at_price',
     'badge', 'in_stock', 'track_inventory', 'stock_quantity', 'low_stock_threshold',
-    'is_collection', 'rating', 'stripe_price_id', 'square_catalog_id', 'sort_order'];
+    'is_collection', 'rating', 'stripe_price_id', 'square_catalog_id', 'meta_title', 'meta_description', 'sort_order'];
   const updates = {};
   for (const key of allowed) {
     if (productData[key] !== undefined) updates[key] = productData[key];
@@ -2957,7 +2960,7 @@ async function handleSquareOAuthDisconnect(request, sb, env, storeId, corsOrigin
 
 // Generate QuickBooks OAuth URL
 async function handleQuickBooksConnect(request, sb, env, storeId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const clientId = env.QUICKBOOKS_CLIENT_ID;
   if (!clientId) return json({ error: 'QuickBooks not configured — missing QUICKBOOKS_CLIENT_ID' }, 500, corsOrigin);
@@ -2965,8 +2968,8 @@ async function handleQuickBooksConnect(request, sb, env, storeId, corsOrigin) {
   // Build the redirect URI — the callback route on this worker
   const redirectUri = `https://webnari.io/commerce/api/admin/integrations/quickbooks/callback`;
 
-  // State encodes storeId so we know which store on callback
-  const state = btoa(JSON.stringify({ storeId }));
+  // State encodes storeId + timestamp for CSRF protection
+  const state = btoa(JSON.stringify({ storeId, ts: Date.now() }));
 
   const params = new URLSearchParams({
     client_id: clientId,
@@ -2981,27 +2984,34 @@ async function handleQuickBooksConnect(request, sb, env, storeId, corsOrigin) {
 
 // OAuth callback — exchange code for tokens
 async function handleQuickBooksCallback(request, sb, env, storeId, url, corsOrigin) {
+  try {
   const code = url.searchParams.get('code');
   const realmId = url.searchParams.get('realmId');
   const state = url.searchParams.get('state');
   const error = url.searchParams.get('error');
 
-  if (error) {
-    // Redirect back to admin with error
-    return Response.redirect(`https://webnari.io/store-admin/${storeId}/integrations?qb_error=${encodeURIComponent(error)}`, 302);
-  }
-
-  if (!code || !realmId) {
-    return json({ error: 'Missing code or realmId' }, 400, corsOrigin);
-  }
-
-  // Decode storeId from state if present
+  // Decode storeId from state first (needed for redirect URLs)
   let callbackStoreId = storeId;
   if (state) {
     try {
       const parsed = JSON.parse(atob(state));
       if (parsed.storeId) callbackStoreId = parsed.storeId;
+      // Validate state is not older than 30 minutes
+      if (parsed.ts && Date.now() - parsed.ts > 30 * 60 * 1000) {
+        const adminUrl = `https://webnari-store-admin.webnari.workers.dev/${callbackStoreId || 'unknown'}/integrations`;
+        return Response.redirect(`${adminUrl}?qb_error=${encodeURIComponent('OAuth session expired. Please try again.')}`, 302);
+      }
     } catch { /* use header storeId */ }
+  }
+
+  const adminUrl = `https://webnari-store-admin.webnari.workers.dev/${callbackStoreId || 'unknown'}/integrations`;
+
+  if (error) {
+    return Response.redirect(`${adminUrl}?qb_error=${encodeURIComponent(error)}`, 302);
+  }
+
+  if (!code || !realmId) {
+    return Response.redirect(`${adminUrl}?qb_error=${encodeURIComponent('Missing code or realmId')}`, 302);
   }
 
   const clientId = env.QUICKBOOKS_CLIENT_ID;
@@ -3030,7 +3040,7 @@ async function handleQuickBooksCallback(request, sb, env, storeId, url, corsOrig
   const tokens = await tokenRes.json();
   if (!tokenRes.ok) {
     console.error('QB token exchange failed:', JSON.stringify(tokens));
-    return Response.redirect(`https://webnari.io/store-admin/${callbackStoreId}/integrations?qb_error=token_exchange_failed`, 302);
+    return Response.redirect(`https://webnari-store-admin.webnari.workers.dev/${callbackStoreId}/integrations?qb_error=token_exchange_failed`, 302);
   }
 
   // Fetch company name from QB
@@ -3087,12 +3097,16 @@ async function handleQuickBooksCallback(request, sb, env, storeId, url, corsOrig
   }
 
   // Redirect back to integrations page
-  return Response.redirect(`https://webnari.io/store-admin/${callbackStoreId}/integrations?qb_connected=true`, 302);
+  return Response.redirect(`https://webnari-store-admin.webnari.workers.dev/${callbackStoreId}/integrations?qb_connected=true`, 302);
+  } catch (err) {
+    console.error('QB callback error:', err);
+    return json({ error: 'QuickBooks callback failed', details: err.message }, 500, corsOrigin);
+  }
 }
 
 // Disconnect QuickBooks
 async function handleQuickBooksDisconnect(request, sb, env, storeId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const integration = await sb.query('store_integrations', {
     filters: { store_id: `eq.${storeId}`, provider: `eq.quickbooks` },
@@ -3767,9 +3781,8 @@ async function handleSquareSyncImages(request, sb, env, storeId, corsOrigin) {
       ? [targetProductId]
       : Object.keys(productMappings);
 
-    // Process products in batches to stay within subrequest limits
-    // 1 per call since variant images add many subrequests
-    const maxProducts = 1;
+    // Process 5 products per call — balances speed vs Worker timeout
+    const maxProducts = 5;
     const toProcess = productIds.slice(skipCount, skipCount + maxProducts);
     let uploaded = 0;
     let failed = 0;
@@ -3962,14 +3975,8 @@ async function handleSquareSyncImages(request, sb, env, storeId, corsOrigin) {
 
     const remaining = productIds.length - (skipCount + toProcess.length);
 
-    await sb.insert('sync_log', {
-      store_id: storeId,
-      provider: 'square',
-      direction: 'outbound',
-      event_type: 'image_sync',
-      details: `Image sync: ${uploaded} uploaded, ${failed} failed. Products: ${processed.join(', ')}${remaining > 0 ? `. ${remaining} more products remaining.` : ''}`,
-      status: failed > 0 ? 'partial' : 'success',
-    });
+    // No per-call sync_log — the frontend aggregates all batches
+    // and the catalog_sync log entry covers the main sync
 
     return json({
       uploaded,
@@ -4081,7 +4088,7 @@ async function handleAdminSyncLog(request, sb, env, storeId, corsOrigin) {
 
 // Test QuickBooks connection by querying CompanyInfo
 async function handleQuickBooksTest(request, sb, env, storeId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const integration = await getQuickBooksIntegration(sb, env, storeId);
   if (!integration) return json({ error: 'QuickBooks not connected' }, 404, corsOrigin);
@@ -4109,7 +4116,7 @@ async function handleQuickBooksTest(request, sb, env, storeId, corsOrigin) {
 
 // Get QB sync log
 async function handleQuickBooksSyncLog(request, sb, env, storeId, corsOrigin) {
-  if (!requireAdmin(request, env)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const logs = await sb.query('sync_log', {
     filters: { store_id: `eq.${storeId}`, provider: `eq.quickbooks` },
@@ -4603,6 +4610,7 @@ async function syncOrderToQuickBooks(sb, env, storeId, order, orderItems) {
     integration = await getQuickBooksIntegration(sb, env, storeId);
   } catch { /* silent if no integration */ }
   if (!integration) return; // QB not connected, skip
+  if (!orderItems || orderItems.length === 0) return; // No items to sync
 
   const apiBase = env.QUICKBOOKS_SANDBOX === 'true' ? QB_SANDBOX_API_BASE : QB_API_BASE;
   const realmId = integration.realm_id;
@@ -4617,7 +4625,7 @@ async function syncOrderToQuickBooks(sb, env, storeId, order, orderItems) {
     let customerId = null;
     if (order.customer_email) {
       const qbCustomers = await fetch(
-        `${apiBase}/v3/company/${realmId}/query?query=${encodeURIComponent(`SELECT * FROM Customer WHERE PrimaryEmailAddr = '${order.customer_email}'`)}`,
+        `${apiBase}/v3/company/${realmId}/query?query=${encodeURIComponent(`SELECT * FROM Customer WHERE PrimaryEmailAddr = '${(order.customer_email || '').replace(/'/g, "\\'")}'`)}`,
         { headers }
       );
       const custData = await qbCustomers.json();
@@ -4645,7 +4653,7 @@ async function syncOrderToQuickBooks(sb, env, storeId, order, orderItems) {
             event_type: 'customer_created',
             direction: 'outbound',
             status: 'success',
-            details: { customer_email: order.customer_email, qb_customer_id: customerId },
+            details: JSON.stringify({ customer_email: order.customer_email, qb_customer_id: customerId }),
           });
         }
       }
@@ -4717,12 +4725,12 @@ async function syncOrderToQuickBooks(sb, env, storeId, order, orderItems) {
         event_type: 'order_synced',
         direction: 'outbound',
         status: 'success',
-        details: {
+        details: JSON.stringify({
           order_id: order.id,
           order_number: order.order_number,
           qb_receipt_id: receiptData.SalesReceipt?.Id,
           total: order.total / 100,
-        },
+        }),
       });
     } else {
       await sb.insert('sync_log', {
@@ -4731,11 +4739,11 @@ async function syncOrderToQuickBooks(sb, env, storeId, order, orderItems) {
         event_type: 'order_synced',
         direction: 'outbound',
         status: 'error',
-        details: {
+        details: JSON.stringify({
           order_id: order.id,
           order_number: order.order_number,
           error: receiptData.Fault?.Error?.[0]?.Detail || 'Unknown error',
-        },
+        }),
       });
     }
   } catch (err) {
@@ -4746,7 +4754,7 @@ async function syncOrderToQuickBooks(sb, env, storeId, order, orderItems) {
       event_type: 'order_synced',
       direction: 'outbound',
       status: 'error',
-      details: { order_id: order.id, error: err.message },
+      details: JSON.stringify({ order_id: order.id, error: err.message }),
     });
   }
 }
