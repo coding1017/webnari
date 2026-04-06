@@ -41,8 +41,9 @@ export default {
     // ── Store ID from header ──────────────────────────────
     const storeId = request.headers.get('X-Store-ID');
 
-    // Webhooks don't need X-Store-ID (store is in the payload metadata)
+    // Webhooks and invoice pages don't need X-Store-ID (store is in the payload/order)
     const isWebhook = path.includes('/webhook/');
+    const isInvoice = path.match(/^\/api\/orders\/[^/]+\/invoice$/);
 
     // ── Supabase client helper ────────────────────────────
     const sb = supabase(env.SUPABASE_URL, env.SUPABASE_SERVICE_KEY);
@@ -70,7 +71,7 @@ export default {
       }
 
       // All other /api/ routes require X-Store-ID (except webhooks)
-      if (!storeId && !isWebhook && path.startsWith('/api/')) {
+      if (!storeId && !isWebhook && !isInvoice && path.startsWith('/api/')) {
         return json({ error: 'Missing X-Store-ID header' }, 400, corsOrigin);
       }
 
@@ -1420,10 +1421,12 @@ async function handleGetOrder(request, sb, env, storeId, orderId, corsOrigin) {
   });
 
   // Build signed invoice URL — HMAC token prevents unauthorized access to customer PII
-  const baseUrl = url.origin;
+  // Preserve /commerce prefix when accessed via webnari.io/commerce/*
+  const rawPath = url.pathname;
+  const prefix = rawPath.startsWith('/commerce/') ? '/commerce' : '';
   const secret = env.ADMIN_API_KEY || 'invoice-secret';
   const token = await generateInvoiceToken(order.id, order.customer_email || '', secret);
-  const invoiceUrl = `${baseUrl}/api/orders/${order.id}/invoice?email=${encodeURIComponent(order.customer_email || '')}&token=${token}`;
+  const invoiceUrl = `${url.origin}${prefix}/api/orders/${order.id}/invoice?email=${encodeURIComponent(order.customer_email || '')}&token=${token}`;
 
   return json({ ...order, items, invoice_url: invoiceUrl }, 200, corsOrigin);
 }
