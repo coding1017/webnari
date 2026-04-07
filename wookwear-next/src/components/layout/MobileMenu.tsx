@@ -40,6 +40,21 @@ export function MobileMenu({ open, onClose }: MobileMenuProps) {
 
       <div className="mb-7">
         <div className="font-head text-[10px] font-bold tracking-[0.2em] uppercase text-ww-muted mb-3 pb-2 border-b border-ww-border">
+          Account
+        </div>
+        <Link href="/account" onClick={onClose} className="block py-3 text-base text-ww-text border-b border-[rgba(42,34,68,0.3)] hover:text-ww-pink2 transition-colors">
+          My Account
+        </Link>
+        <Link href="/account/orders" onClick={onClose} className="block py-3 text-base text-ww-text border-b border-[rgba(42,34,68,0.3)] hover:text-ww-pink2 transition-colors">
+          Order History
+        </Link>
+        <Link href="/track" onClick={onClose} className="block py-3 text-base text-ww-text border-b border-[rgba(42,34,68,0.3)] hover:text-ww-pink2 transition-colors">
+          Track Order
+        </Link>
+      </div>
+
+      <div className="mb-7">
+        <div className="font-head text-[10px] font-bold tracking-[0.2em] uppercase text-ww-muted mb-3 pb-2 border-b border-ww-border">
           Follow
         </div>
         <a

@@ -108,6 +108,11 @@ Respond ONLY with valid JSON (no markdown, no code fences) matching this schema:
   }
 }
 
+export async function getCartRecoveryStats(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.getCartRecoveryStats();
+}
+
 export async function createProduct(storeId: string, data: Record<string, unknown>) {
   const client = new CommerceClient(storeId);
   return client.createProduct(data);
@@ -410,4 +415,125 @@ export async function getStripeStatus(storeId: string) {
 export async function syncStripeProducts(storeId: string, options?: { fresh?: boolean }) {
   const client = new CommerceClient(storeId);
   return client.syncStripeProducts(options);
+}
+
+// ── GA4 ──────────────────────────────────────────────
+
+export async function configureGA4(storeId: string, data: { measurement_id: string; api_secret: string }) {
+  const client = new CommerceClient(storeId);
+  return client.configureGA4(data);
+}
+
+export async function disconnectGA4(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.disconnectGA4();
+}
+
+export async function testGA4(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.testGA4();
+}
+
+// ── Twilio SMS ───────────────────────────────────────
+
+export async function configureTwilio(storeId: string, data: { account_sid: string; auth_token: string; from_number: string; owner_phone: string; notify_events?: string[] }) {
+  const client = new CommerceClient(storeId);
+  return client.configureTwilio(data);
+}
+
+export async function disconnectTwilio(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.disconnectTwilio();
+}
+
+export async function testTwilio(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.testTwilio();
+}
+
+export async function updateTwilioSettings(storeId: string, data: { notify_events?: string[]; owner_phone?: string }) {
+  const client = new CommerceClient(storeId);
+  return client.updateTwilioSettings(data);
+}
+
+// ── Apps ─────────────────────────────────────────────
+
+export async function getApps(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.getApps();
+}
+
+// ── Webhooks ─────────────────────────────────────────
+
+export async function getWebhooks(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.getWebhooks();
+}
+
+export async function createWebhook(storeId: string, data: { url: string; events: string[]; description?: string }) {
+  const client = new CommerceClient(storeId);
+  return client.createWebhook(data);
+}
+
+export async function getWebhook(storeId: string, id: string) {
+  const client = new CommerceClient(storeId);
+  return client.getWebhook(id);
+}
+
+export async function updateWebhook(storeId: string, id: string, data: Record<string, unknown>) {
+  const client = new CommerceClient(storeId);
+  return client.updateWebhook(id, data);
+}
+
+export async function deleteWebhook(storeId: string, id: string) {
+  const client = new CommerceClient(storeId);
+  return client.deleteWebhook(id);
+}
+
+export async function getWebhookDeliveries(storeId: string, id: string, params?: { limit?: number; offset?: number }) {
+  const client = new CommerceClient(storeId);
+  return client.getWebhookDeliveries(id, params);
+}
+
+export async function testWebhook(storeId: string, id: string) {
+  const client = new CommerceClient(storeId);
+  return client.testWebhook(id);
+}
+
+export async function getWebhookEvents(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.getWebhookEvents();
+}
+
+// ── Tax Lookup ──────────────────────────────────────────────
+
+export async function calculateTax(storeId: string, subtotal: number, toZip: string) {
+  const client = new CommerceClient(storeId);
+  return client.calculateTax(subtotal, toZip);
+}
+
+// ── Fulfillment ──────────────────────────────────────────────
+
+export async function getUnfulfilledOrders(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.getUnfulfilledOrders();
+}
+
+export async function getShippedOrders(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.getShippedOrders();
+}
+
+// ── Store ────────────────────────────────────────────────────
+
+export async function getStoreSettings(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.getStore();
+}
+
+// ── SEO ──────────────────────────────────────────────────────
+
+export async function getSeoHealth(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.getSeoHealth();
 }

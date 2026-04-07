@@ -23,6 +23,16 @@ import {
   testStripe,
   syncStripeProducts,
   getStripeStatus,
+  configureGA4,
+  disconnectGA4,
+  testGA4,
+  configureTwilio,
+  disconnectTwilio,
+  testTwilio,
+  updateTwilioSettings,
+  getApps,
+  getStoreSettings,
+  updateStore,
 } from "@/app/[storeId]/actions/commerce-actions";
 
 interface Integration {
@@ -117,6 +127,92 @@ export default function IntegrationsPage() {
   const [stripeMappings, setStripeMappings] = useState<ProductMapping[]>([]);
   const [stripeTab, setStripeTab] = useState<"overview" | "mappings" | "activity">("overview");
 
+  // GA4 state
+  const [ga4Connected, setGa4Connected] = useState(false);
+  const [ga4Config, setGa4Config] = useState<{ measurement_id: string; api_secret: string }>({ measurement_id: '', api_secret: '' });
+  const [ga4Connecting, setGa4Connecting] = useState(false);
+  const [ga4Disconnecting, setGa4Disconnecting] = useState(false);
+  const [ga4Testing, setGa4Testing] = useState(false);
+  const [ga4ShowForm, setGa4ShowForm] = useState(false);
+
+  // Twilio state
+  const [twilioConnected, setTwilioConnected] = useState(false);
+  const [twilioConfig, setTwilioConfig] = useState<{ account_sid: string; auth_token: string; from_number: string; owner_phone: string }>({ account_sid: '', auth_token: '', from_number: '', owner_phone: '' });
+  const [twilioNotifyEvents, setTwilioNotifyEvents] = useState<string[]>(['order.created', 'inventory.low_stock']);
+  const [twilioConnecting, setTwilioConnecting] = useState(false);
+  const [twilioDisconnecting, setTwilioDisconnecting] = useState(false);
+  const [twilioTesting, setTwilioTesting] = useState(false);
+  const [twilioShowForm, setTwilioShowForm] = useState(false);
+  const [twilioSavingSettings, setTwilioSavingSettings] = useState(false);
+
+  // Email Notifications state (persisted to store settings)
+  const [emailToggles, setEmailToggles] = useState({
+    orderConfirmation: true,
+    shippingUpdate: true,
+    deliveryConfirmation: true,
+    abandonedCart: true,
+    passwordReset: true,
+  });
+  const [emailToggleSaving, setEmailToggleSaving] = useState(false);
+
+  // Shippo state
+  const [shippoConnected, setShippoConnected] = useState(false);
+  const [shippoApiKey, setShippoApiKey] = useState("");
+  const [shippoShowKey, setShippoShowKey] = useState(false);
+  const [shippoShowForm, setShippoShowForm] = useState(false);
+  const [shippoSaving, setShippoSaving] = useState(false);
+  const [shippoTesting, setShippoTesting] = useState(false);
+
+  // PayPal state
+  const [paypalConnected, setPaypalConnected] = useState(false);
+  const [paypalClientId, setPaypalClientId] = useState("");
+  const [paypalClientSecret, setPaypalClientSecret] = useState("");
+  const [paypalShowSecret, setPaypalShowSecret] = useState(false);
+  const [paypalShowForm, setPaypalShowForm] = useState(false);
+  const [paypalSaving, setPaypalSaving] = useState(false);
+  const [paypalTesting, setPaypalTesting] = useState(false);
+  const [paypalMode, setPaypalMode] = useState<"sandbox" | "live">("sandbox");
+
+  // Mailchimp state
+  const [mailchimpConnected, setMailchimpConnected] = useState(false);
+  const [mailchimpApiKey, setMailchimpApiKey] = useState("");
+  const [mailchimpListId, setMailchimpListId] = useState("");
+  const [mailchimpShowForm, setMailchimpShowForm] = useState(false);
+  const [mailchimpSaving, setMailchimpSaving] = useState(false);
+  const [mailchimpTesting, setMailchimpTesting] = useState(false);
+
+  // Klaviyo state
+  const [klaviyoConnected, setKlaviyoConnected] = useState(false);
+  const [klaviyoApiKey, setKlaviyoApiKey] = useState("");
+  const [klaviyoListId, setKlaviyoListId] = useState("");
+  const [klaviyoShowForm, setKlaviyoShowForm] = useState(false);
+  const [klaviyoSaving, setKlaviyoSaving] = useState(false);
+  const [klaviyoTesting, setKlaviyoTesting] = useState(false);
+
+  // Meta Commerce state
+  const [metaConnected, setMetaConnected] = useState(false);
+  const [metaAccessToken, setMetaAccessToken] = useState("");
+  const [metaCatalogId, setMetaCatalogId] = useState("");
+  const [metaShowForm, setMetaShowForm] = useState(false);
+  const [metaSaving, setMetaSaving] = useState(false);
+  const [metaTesting, setMetaTesting] = useState(false);
+
+  // Google Merchant state
+  const [googleConnected, setGoogleConnected] = useState(false);
+  const [googleMerchantId, setGoogleMerchantId] = useState("");
+  const [googleServiceKey, setGoogleServiceKey] = useState("");
+  const [googleShowForm, setGoogleShowForm] = useState(false);
+  const [googleSaving, setGoogleSaving] = useState(false);
+  const [googleTesting, setGoogleTesting] = useState(false);
+
+  // Custom email provider state
+  const [customResendKey, setCustomResendKey] = useState("");
+  const [customFromEmail, setCustomFromEmail] = useState("");
+  const [showResendKey, setShowResendKey] = useState(false);
+  const [emailSaving, setEmailSaving] = useState(false);
+  const [emailTesting, setEmailTesting] = useState(false);
+  const [hasCustomEmail, setHasCustomEmail] = useState(false);
+
   const squareIntegration = integrations.find((i) => i.provider === "square") || null;
   const qbIntegration = integrations.find((i) => i.provider === "quickbooks") || null;
   const stripeIntegration = integrations.find((i) => i.provider === "stripe") || null;
@@ -160,6 +256,96 @@ export default function IntegrationsPage() {
     } catch {
       // empty
     }
+
+    // Load app installation status for GA4 and Twilio
+    try {
+      const apps = await getApps(storeId);
+      const ga4App = apps.find((a: { id: string; installation?: { status: string; config?: Record<string, string> } }) => a.id === 'ga4');
+      if (ga4App?.installation?.status === 'active') {
+        setGa4Connected(true);
+        if (ga4App.installation.config?.measurement_id) {
+          setGa4Config({
+            measurement_id: ga4App.installation.config.measurement_id,
+            api_secret: '••••••••',
+          });
+        }
+      } else {
+        setGa4Connected(false);
+      }
+
+      const twilioApp = apps.find((a: { id: string; installation?: { status: string; config?: Record<string, string> } }) => a.id === 'twilio-sms');
+      if (twilioApp?.installation?.status === 'active') {
+        setTwilioConnected(true);
+        if (twilioApp.installation.config) {
+          const c = twilioApp.installation.config;
+          setTwilioConfig({
+            account_sid: c.account_sid ? c.account_sid.slice(0, 8) + '••••' : '',
+            auth_token: '••••••••',
+            from_number: c.from_number || '',
+            owner_phone: c.owner_phone || '',
+          });
+          if (c.notify_events) {
+            setTwilioNotifyEvents(c.notify_events as unknown as string[]);
+          }
+        }
+      } else {
+        setTwilioConnected(false);
+      }
+    } catch {
+      // apps table might not exist yet
+    }
+
+    // Load custom email settings + email toggles + integration configs
+    try {
+      const storeData = await getStoreSettings(storeId);
+      const s = storeData?.settings || {};
+      if (s.resend_api_key) {
+        setHasCustomEmail(true);
+        setCustomResendKey('••••••••••••');
+        setCustomFromEmail(s.from_email || '');
+      }
+      // Load persisted email notification toggles
+      if (s.email_notifications) {
+        setEmailToggles(prev => ({ ...prev, ...s.email_notifications }));
+      }
+      // Load Shippo config
+      if (s.shippo_api_key) {
+        setShippoConnected(true);
+        setShippoApiKey(s.shippo_api_key.slice(0, 12) + '••••');
+      }
+      // Load PayPal config
+      if (s.paypal_client_id) {
+        setPaypalConnected(true);
+        setPaypalClientId(s.paypal_client_id.slice(0, 12) + '••••');
+        setPaypalClientSecret('••••••••');
+        setPaypalMode(s.paypal_mode || 'sandbox');
+      }
+      // Load Mailchimp config
+      if (s.mailchimp_api_key) {
+        setMailchimpConnected(true);
+        setMailchimpApiKey(s.mailchimp_api_key.slice(0, 12) + '••••');
+        setMailchimpListId(s.mailchimp_list_id || '');
+      }
+      // Load Klaviyo config
+      if (s.klaviyo_api_key) {
+        setKlaviyoConnected(true);
+        setKlaviyoApiKey(s.klaviyo_api_key.slice(0, 12) + '••••');
+        setKlaviyoListId(s.klaviyo_list_id || '');
+      }
+      // Load Meta Commerce config
+      if (s.meta_access_token) {
+        setMetaConnected(true);
+        setMetaAccessToken(s.meta_access_token.slice(0, 12) + '••••');
+        setMetaCatalogId(s.meta_catalog_id || '');
+      }
+      // Load Google Merchant config
+      if (s.google_merchant_id) {
+        setGoogleConnected(true);
+        setGoogleMerchantId(s.google_merchant_id);
+        setGoogleServiceKey('••••••••');
+      }
+    } catch {}
+
     setLoading(false);
   }, [storeId]);
 
@@ -437,6 +623,107 @@ export default function IntegrationsPage() {
       showMessage((err as Error).message, "error");
     }
     setStripeSyncing(false);
+  }
+
+  // ── GA4 Handlers ──────────────────────────────────────
+  async function handleGA4Connect() {
+    if (!ga4Config.measurement_id || !ga4Config.api_secret || ga4Config.api_secret === '••••••••') {
+      showMessage('Enter your GA4 Measurement ID and API Secret', 'error');
+      return;
+    }
+    setGa4Connecting(true);
+    try {
+      await configureGA4(storeId, ga4Config);
+      setGa4Connected(true);
+      setGa4ShowForm(false);
+      showMessage('Google Analytics 4 connected successfully');
+    } catch (err) {
+      showMessage((err as Error).message, 'error');
+    }
+    setGa4Connecting(false);
+  }
+
+  async function handleGA4Disconnect() {
+    if (!confirm('Disconnect Google Analytics 4? E-commerce events will stop being tracked.')) return;
+    setGa4Disconnecting(true);
+    try {
+      await disconnectGA4(storeId);
+      setGa4Connected(false);
+      setGa4Config({ measurement_id: '', api_secret: '' });
+      showMessage('GA4 disconnected');
+    } catch (err) {
+      showMessage((err as Error).message, 'error');
+    }
+    setGa4Disconnecting(false);
+  }
+
+  async function handleGA4Test() {
+    setGa4Testing(true);
+    try {
+      const result = await testGA4(storeId);
+      showMessage(result.message || 'Test event sent to GA4');
+    } catch (err) {
+      showMessage(`Test failed: ${(err as Error).message}`, 'error');
+    }
+    setGa4Testing(false);
+  }
+
+  // ── Twilio Handlers ───────────────────────────────────
+  async function handleTwilioConnect() {
+    if (!twilioConfig.account_sid || !twilioConfig.auth_token || twilioConfig.auth_token === '••••••••' || !twilioConfig.from_number || !twilioConfig.owner_phone) {
+      showMessage('All Twilio fields are required', 'error');
+      return;
+    }
+    setTwilioConnecting(true);
+    try {
+      await configureTwilio(storeId, { ...twilioConfig, notify_events: twilioNotifyEvents });
+      setTwilioConnected(true);
+      setTwilioShowForm(false);
+      showMessage('Twilio SMS notifications connected');
+    } catch (err) {
+      showMessage((err as Error).message, 'error');
+    }
+    setTwilioConnecting(false);
+  }
+
+  async function handleTwilioDisconnect() {
+    if (!confirm('Disconnect Twilio? You will stop receiving SMS notifications.')) return;
+    setTwilioDisconnecting(true);
+    try {
+      await disconnectTwilio(storeId);
+      setTwilioConnected(false);
+      setTwilioConfig({ account_sid: '', auth_token: '', from_number: '', owner_phone: '' });
+      showMessage('Twilio disconnected');
+    } catch (err) {
+      showMessage((err as Error).message, 'error');
+    }
+    setTwilioDisconnecting(false);
+  }
+
+  async function handleTwilioTest() {
+    setTwilioTesting(true);
+    try {
+      const result = await testTwilio(storeId);
+      if (result.success) {
+        showMessage('Test SMS sent successfully');
+      } else {
+        showMessage(`SMS failed: ${result.error || 'Unknown error'}`, 'error');
+      }
+    } catch (err) {
+      showMessage(`Test failed: ${(err as Error).message}`, 'error');
+    }
+    setTwilioTesting(false);
+  }
+
+  async function handleTwilioSaveSettings() {
+    setTwilioSavingSettings(true);
+    try {
+      await updateTwilioSettings(storeId, { notify_events: twilioNotifyEvents });
+      showMessage('Notification preferences saved');
+    } catch (err) {
+      showMessage((err as Error).message, 'error');
+    }
+    setTwilioSavingSettings(false);
   }
 
   function formatDate(dateStr: string) {
@@ -1229,6 +1516,1062 @@ export default function IntegrationsPage() {
         )}
       </div>
 
+      {/* Google Analytics 4 Card */}
+      <div className="card" style={{ marginBottom: "24px" }}>
+        <div className="flex items-center justify-between" style={{ marginBottom: "20px" }}>
+          <div className="flex items-center gap-3">
+            <div
+              style={{
+                width: "44px",
+                height: "44px",
+                borderRadius: "var(--radius-md)",
+                background: "#E37400",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                <path d="M3 3v18h18V3H3zm3 15V10h3v8H6zm5 0V6h3v12h-3zm5 0v-5h3v5h-3z" />
+              </svg>
+            </div>
+            <div>
+              <h2 className="heading-sm" style={{ marginBottom: 0 }}>Google Analytics 4</h2>
+              <p style={{ fontSize: "12px", color: "var(--text-tertiary)", margin: 0 }}>
+                {ga4Connected
+                  ? `Tracking e-commerce events · ${ga4Config.measurement_id}`
+                  : "Server-side e-commerce event tracking"}
+              </p>
+            </div>
+          </div>
+
+          {ga4Connected ? (
+            <span className="badge badge-green">Connected</span>
+          ) : (
+            <span className="badge badge-gray">Not Connected</span>
+          )}
+        </div>
+
+        {!ga4Connected ? (
+          <div>
+            {!ga4ShowForm ? (
+              <div style={{ textAlign: "center", padding: "24px 0 8px" }}>
+                <div
+                  style={{
+                    width: "64px",
+                    height: "64px",
+                    borderRadius: "var(--radius-lg)",
+                    background: "var(--bg-grouped)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    margin: "0 auto 16px",
+                  }}
+                >
+                  <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="var(--text-quaternary)" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 3v18h18V3H3zm3 15V10h3v8H6zm5 0V6h3v12h-3zm5 0v-5h3v5h-3z" />
+                  </svg>
+                </div>
+                <p style={{ fontSize: "14px", color: "var(--text-secondary)", fontWeight: 600, marginBottom: "4px" }}>
+                  Track e-commerce events
+                </p>
+                <p style={{ fontSize: "13px", color: "var(--text-tertiary)", maxWidth: "420px", margin: "0 auto 20px" }}>
+                  Track purchases, revenue, and customer behavior with server-side events that bypass ad blockers. Events fire automatically when orders are placed.
+                </p>
+                <button onClick={() => setGa4ShowForm(true)} className="btn btn-primary" style={{ fontSize: "14px" }}>
+                  Configure GA4
+                </button>
+              </div>
+            ) : (
+              <div style={{ padding: "4px 0 8px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "20px" }}>
+                  <div>
+                    <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: "6px" }}>
+                      Measurement ID
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="G-XXXXXXXXXX"
+                      value={ga4Config.measurement_id}
+                      onChange={(e) => setGa4Config({ ...ga4Config, measurement_id: e.target.value })}
+                      style={{ width: "100%", padding: "10px 14px", borderRadius: "var(--radius-sm)", border: "1.5px solid var(--border)", background: "var(--bg-elevated)", fontSize: "14px", color: "var(--text-primary)", outline: "none" }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: "6px" }}>
+                      API Secret
+                    </label>
+                    <input
+                      type="password"
+                      placeholder="API Secret from GA4 Admin"
+                      value={ga4Config.api_secret}
+                      onChange={(e) => setGa4Config({ ...ga4Config, api_secret: e.target.value })}
+                      style={{ width: "100%", padding: "10px 14px", borderRadius: "var(--radius-sm)", border: "1.5px solid var(--border)", background: "var(--bg-elevated)", fontSize: "14px", color: "var(--text-primary)", outline: "none" }}
+                    />
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button onClick={handleGA4Connect} disabled={ga4Connecting} className="btn btn-primary" style={{ fontSize: "14px" }}>
+                    {ga4Connecting ? "Saving..." : "Save"}
+                  </button>
+                  <button onClick={() => setGa4ShowForm(false)} className="btn btn-secondary" style={{ fontSize: "14px" }}>
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center gap-3" style={{ marginBottom: "20px", flexWrap: "wrap" }}>
+              <button onClick={handleGA4Test} disabled={ga4Testing} className="btn btn-secondary btn-sm" style={{ fontSize: "13px" }}>
+                {ga4Testing ? "Sending..." : "Test Event"}
+              </button>
+              <button onClick={handleGA4Disconnect} disabled={ga4Disconnecting} className="btn btn-danger btn-sm" style={{ fontSize: "13px" }}>
+                {ga4Disconnecting ? "Disconnecting..." : "Disconnect"}
+              </button>
+            </div>
+
+            <div>
+              <p style={{ fontSize: "13px", color: "var(--text-secondary)", marginBottom: "20px" }}>
+                Server-side e-commerce events fire automatically when orders are placed — no client-side scripts required.
+              </p>
+              <div className="grid grid-cols-3 gap-4">
+                {[
+                  { step: "1", title: "Order Placed", desc: "Customer completes checkout" },
+                  { step: "2", title: "Event Fired", desc: "Server-side event sent to GA4 — bypasses ad blockers" },
+                  { step: "3", title: "GA4 Dashboard", desc: "Revenue, items, and conversions appear in real-time" },
+                ].map((s) => (
+                  <div
+                    key={s.step}
+                    style={{ padding: "16px", background: "var(--bg-grouped)", borderRadius: "var(--radius-sm)", textAlign: "center" }}
+                  >
+                    <div
+                      style={{
+                        width: "32px",
+                        height: "32px",
+                        borderRadius: "999px",
+                        background: "var(--gold-light)",
+                        color: "var(--gold)",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "14px",
+                        fontWeight: 700,
+                        marginBottom: "8px",
+                      }}
+                    >
+                      {s.step}
+                    </div>
+                    <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-primary)", marginBottom: "4px" }}>
+                      {s.title}
+                    </div>
+                    <div style={{ fontSize: "12px", color: "var(--text-tertiary)" }}>{s.desc}</div>
+                  </div>
+                ))}
+              </div>
+              <div style={{ marginTop: "20px", padding: "12px 16px", background: "var(--bg-grouped)", borderRadius: "var(--radius-sm)", fontSize: "12px", color: "var(--text-tertiary)" }}>
+                <strong style={{ color: "var(--text-secondary)" }}>Connection details:</strong>{" "}
+                Measurement ID: {ga4Config.measurement_id || "—"}
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* SMS & WhatsApp Notifications Card (Twilio) */}
+      <div className="card" style={{ marginBottom: "24px" }}>
+        <div className="flex items-center justify-between" style={{ marginBottom: "20px" }}>
+          <div className="flex items-center gap-3">
+            <div
+              style={{
+                width: "44px",
+                height: "44px",
+                borderRadius: "var(--radius-md)",
+                background: "#F22F46",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z" />
+              </svg>
+            </div>
+            <div>
+              <h2 className="heading-sm" style={{ marginBottom: 0 }}>SMS &amp; WhatsApp Notifications</h2>
+              <p style={{ fontSize: "12px", color: "var(--text-tertiary)", margin: 0 }}>
+                {twilioConnected
+                  ? `Sending to ${twilioConfig.owner_phone}`
+                  : "Instant alerts for orders, low stock, and reviews"}
+              </p>
+            </div>
+          </div>
+
+          {twilioConnected ? (
+            <span className="badge badge-green">Connected</span>
+          ) : (
+            <span className="badge badge-gray">Not Connected</span>
+          )}
+        </div>
+
+        {!twilioConnected ? (
+          <div>
+            {!twilioShowForm ? (
+              <div style={{ textAlign: "center", padding: "24px 0 8px" }}>
+                <div
+                  style={{
+                    width: "64px",
+                    height: "64px",
+                    borderRadius: "var(--radius-lg)",
+                    background: "var(--bg-grouped)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    margin: "0 auto 16px",
+                  }}
+                >
+                  <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="var(--text-quaternary)" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
+                  </svg>
+                </div>
+                <p style={{ fontSize: "14px", color: "var(--text-secondary)", fontWeight: 600, marginBottom: "4px" }}>
+                  Get instant SMS alerts
+                </p>
+                <p style={{ fontSize: "13px", color: "var(--text-tertiary)", maxWidth: "420px", margin: "0 auto 20px" }}>
+                  Get instant SMS alerts on your phone when orders come in, inventory runs low, or customers leave reviews.
+                </p>
+                <button onClick={() => setTwilioShowForm(true)} className="btn btn-primary" style={{ fontSize: "14px" }}>
+                  Configure Twilio
+                </button>
+              </div>
+            ) : (
+              <div style={{ padding: "4px 0 8px" }}>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
+                  <div>
+                    <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: "6px" }}>
+                      Account SID
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="ACxxxxxxxxxxxxxxxx"
+                      value={twilioConfig.account_sid}
+                      onChange={(e) => setTwilioConfig({ ...twilioConfig, account_sid: e.target.value })}
+                      style={{ width: "100%", padding: "10px 14px", borderRadius: "var(--radius-sm)", border: "1.5px solid var(--border)", background: "var(--bg-elevated)", fontSize: "14px", color: "var(--text-primary)", outline: "none" }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: "6px" }}>
+                      Auth Token
+                    </label>
+                    <input
+                      type="password"
+                      placeholder="Auth Token"
+                      value={twilioConfig.auth_token}
+                      onChange={(e) => setTwilioConfig({ ...twilioConfig, auth_token: e.target.value })}
+                      style={{ width: "100%", padding: "10px 14px", borderRadius: "var(--radius-sm)", border: "1.5px solid var(--border)", background: "var(--bg-elevated)", fontSize: "14px", color: "var(--text-primary)", outline: "none" }}
+                    />
+                  </div>
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "20px" }}>
+                  <div>
+                    <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: "6px" }}>
+                      From Number (Twilio)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="+1XXXXXXXXXX"
+                      value={twilioConfig.from_number}
+                      onChange={(e) => setTwilioConfig({ ...twilioConfig, from_number: e.target.value })}
+                      style={{ width: "100%", padding: "10px 14px", borderRadius: "var(--radius-sm)", border: "1.5px solid var(--border)", background: "var(--bg-elevated)", fontSize: "14px", color: "var(--text-primary)", outline: "none" }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: "6px" }}>
+                      Your Phone Number
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="+1XXXXXXXXXX"
+                      value={twilioConfig.owner_phone}
+                      onChange={(e) => setTwilioConfig({ ...twilioConfig, owner_phone: e.target.value })}
+                      style={{ width: "100%", padding: "10px 14px", borderRadius: "var(--radius-sm)", border: "1.5px solid var(--border)", background: "var(--bg-elevated)", fontSize: "14px", color: "var(--text-primary)", outline: "none" }}
+                    />
+                  </div>
+                </div>
+                <div style={{ marginBottom: "20px" }}>
+                  <label style={{ display: "block", fontSize: "12px", fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: "10px" }}>
+                    Notify me when
+                  </label>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                    {[
+                      { value: "order.created", label: "New Orders" },
+                      { value: "inventory.low_stock", label: "Low Stock Alerts" },
+                      { value: "review.submitted", label: "New Reviews" },
+                    ].map((evt) => (
+                      <label key={evt.value} style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "13px", color: "var(--text-secondary)", cursor: "pointer" }}>
+                        <input
+                          type="checkbox"
+                          checked={twilioNotifyEvents.includes(evt.value)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setTwilioNotifyEvents([...twilioNotifyEvents, evt.value]);
+                            } else {
+                              setTwilioNotifyEvents(twilioNotifyEvents.filter((v) => v !== evt.value));
+                            }
+                          }}
+                        />
+                        {evt.label}
+                      </label>
+                    ))}
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button onClick={handleTwilioConnect} disabled={twilioConnecting} className="btn btn-primary" style={{ fontSize: "14px" }}>
+                    {twilioConnecting ? "Saving..." : "Save"}
+                  </button>
+                  <button onClick={() => setTwilioShowForm(false)} className="btn btn-secondary" style={{ fontSize: "14px" }}>
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center gap-3" style={{ marginBottom: "20px", flexWrap: "wrap" }}>
+              <button onClick={handleTwilioTest} disabled={twilioTesting} className="btn btn-secondary btn-sm" style={{ fontSize: "13px" }}>
+                {twilioTesting ? "Sending..." : "Send Test SMS"}
+              </button>
+              <button
+                onClick={() => setTwilioShowForm(!twilioShowForm)}
+                className="btn btn-secondary btn-sm"
+                style={{ fontSize: "13px" }}
+              >
+                {twilioShowForm ? "Hide Settings" : "Settings"}
+              </button>
+              <button onClick={handleTwilioDisconnect} disabled={twilioDisconnecting} className="btn btn-danger btn-sm" style={{ fontSize: "13px" }}>
+                {twilioDisconnecting ? "Disconnecting..." : "Disconnect"}
+              </button>
+            </div>
+
+            {twilioShowForm && (
+              <div style={{ padding: "16px", background: "var(--bg-grouped)", borderRadius: "var(--radius-sm)", marginBottom: "20px" }}>
+                <div style={{ fontSize: "12px", fontWeight: 600, color: "var(--text-tertiary)", textTransform: "uppercase", letterSpacing: "0.04em", marginBottom: "12px" }}>
+                  Notification Preferences
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "16px" }}>
+                  {[
+                    { value: "order.created", label: "New Orders" },
+                    { value: "inventory.low_stock", label: "Low Stock Alerts" },
+                    { value: "review.submitted", label: "New Reviews" },
+                  ].map((evt) => (
+                    <label key={evt.value} style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "13px", color: "var(--text-secondary)", cursor: "pointer" }}>
+                      <input
+                        type="checkbox"
+                        checked={twilioNotifyEvents.includes(evt.value)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setTwilioNotifyEvents([...twilioNotifyEvents, evt.value]);
+                          } else {
+                            setTwilioNotifyEvents(twilioNotifyEvents.filter((v) => v !== evt.value));
+                          }
+                        }}
+                      />
+                      {evt.label}
+                    </label>
+                  ))}
+                </div>
+                <button onClick={handleTwilioSaveSettings} disabled={twilioSavingSettings} className="btn btn-primary btn-sm" style={{ fontSize: "13px" }}>
+                  {twilioSavingSettings ? "Saving..." : "Save Preferences"}
+                </button>
+              </div>
+            )}
+
+            <div style={{ padding: "12px 16px", background: "var(--bg-grouped)", borderRadius: "var(--radius-sm)", fontSize: "12px", color: "var(--text-tertiary)" }}>
+              <strong style={{ color: "var(--text-secondary)" }}>Connection details:</strong>{" "}
+              From: {twilioConfig.from_number || "—"} · To: {twilioConfig.owner_phone || "—"}
+            </div>
+          </>
+        )}
+      </div>
+
+      {/* Email Notifications Card (Resend) */}
+      <div className="card" style={{ marginBottom: "24px" }}>
+        <div className="flex items-center justify-between" style={{ marginBottom: "20px" }}>
+          <div className="flex items-center gap-3">
+            <div
+              style={{
+                width: "44px",
+                height: "44px",
+                borderRadius: "var(--radius-md)",
+                background: "#7C3AED",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                <path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+              </svg>
+            </div>
+            <div>
+              <h2 className="heading-sm" style={{ marginBottom: 0 }}>Email Notifications</h2>
+              <p style={{ fontSize: "12px", color: "var(--text-tertiary)", margin: 0 }}>
+                Powered by Resend
+              </p>
+            </div>
+          </div>
+          {hasCustomEmail ? (
+            <span className="badge badge-green">Custom</span>
+          ) : (
+            <span className="badge badge-gray">Webnari Default</span>
+          )}
+        </div>
+
+        {/* Custom Email Provider Section */}
+        <div style={{ padding: "16px", background: "var(--bg-grouped)", borderRadius: "var(--radius-sm)", marginBottom: "20px" }}>
+          <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "12px" }}>Custom Email Provider</div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "12px" }}>
+            <div>
+              <label style={{ fontSize: "12px", color: "var(--text-tertiary)", display: "block", marginBottom: "4px" }}>Resend API Key</label>
+              <div style={{ position: "relative" }}>
+                <input
+                  type={showResendKey ? "text" : "password"}
+                  value={customResendKey}
+                  onChange={(e) => { setCustomResendKey(e.target.value); }}
+                  placeholder="re_xxxxxxxxxxxxxxxx"
+                  className="input"
+                  style={{ width: "100%", paddingRight: "40px", fontSize: "13px" }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowResendKey(!showResendKey)}
+                  style={{ position: "absolute", right: "8px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", padding: "4px", color: "var(--text-tertiary)" }}
+                >
+                  {showResendKey ? (
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+                  ) : (
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                  )}
+                </button>
+              </div>
+            </div>
+            <div>
+              <label style={{ fontSize: "12px", color: "var(--text-tertiary)", display: "block", marginBottom: "4px" }}>From Email</label>
+              <input
+                type="text"
+                value={customFromEmail}
+                onChange={(e) => setCustomFromEmail(e.target.value)}
+                placeholder='Store Name <orders@yourdomain.com>'
+                className="input"
+                style={{ width: "100%", fontSize: "13px" }}
+              />
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+            <button
+              className="btn btn-secondary"
+              disabled={emailTesting || !customResendKey || customResendKey === '••••••••••••'}
+              onClick={async () => {
+                setEmailTesting(true);
+                try {
+                  await updateStore(storeId, { settings: { resend_api_key: customResendKey, from_email: customFromEmail } });
+                  showMessage("Email configuration tested and saved successfully");
+                  setHasCustomEmail(true);
+                  setCustomResendKey('••••••••••••');
+                } catch (err) {
+                  showMessage((err as Error).message || "Test failed", "error");
+                }
+                setEmailTesting(false);
+              }}
+              style={{ fontSize: "12px" }}
+            >
+              {emailTesting ? "Testing..." : "Test"}
+            </button>
+            <button
+              className="btn btn-primary"
+              disabled={emailSaving || !customResendKey || customResendKey === '••••••••••••'}
+              onClick={async () => {
+                setEmailSaving(true);
+                try {
+                  await updateStore(storeId, { settings: { resend_api_key: customResendKey, from_email: customFromEmail } });
+                  showMessage("Custom email settings saved");
+                  setHasCustomEmail(true);
+                  setCustomResendKey('••••••••••••');
+                } catch (err) {
+                  showMessage((err as Error).message || "Save failed", "error");
+                }
+                setEmailSaving(false);
+              }}
+              style={{ fontSize: "12px" }}
+            >
+              {emailSaving ? "Saving..." : "Save"}
+            </button>
+            {hasCustomEmail && (
+              <button
+                className="btn btn-secondary"
+                onClick={async () => {
+                  if (!confirm("Remove custom email provider? Emails will be sent from noreply@webnari.io.")) return;
+                  setEmailSaving(true);
+                  try {
+                    await updateStore(storeId, { settings: { resend_api_key: null, from_email: null } });
+                    showMessage("Custom email provider removed");
+                    setHasCustomEmail(false);
+                    setCustomResendKey('');
+                    setCustomFromEmail('');
+                  } catch (err) {
+                    showMessage((err as Error).message || "Remove failed", "error");
+                  }
+                  setEmailSaving(false);
+                }}
+                style={{ fontSize: "12px", color: "var(--text-tertiary)" }}
+              >
+                Remove
+              </button>
+            )}
+          </div>
+          <p style={{ fontSize: "11px", color: "var(--text-quaternary)", margin: "10px 0 0 0" }}>
+            Leave blank to use Webnari&apos;s email service (noreply@webnari.io)
+          </p>
+        </div>
+
+        <div className="flex items-center gap-2" style={{ marginBottom: "20px" }}>
+          <p style={{ fontSize: "13px", color: "var(--text-tertiary)", margin: 0 }}>
+            Transactional emails are sent automatically. Toggle which notifications your customers receive.
+          </p>
+          {emailToggleSaving && (
+            <span style={{ fontSize: "11px", color: "var(--text-quaternary)", whiteSpace: "nowrap" }}>Saving...</span>
+          )}
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: "14px", marginBottom: "20px" }}>
+          {([
+            { key: "orderConfirmation" as const, label: "Order Confirmation" },
+            { key: "shippingUpdate" as const, label: "Shipping Update" },
+            { key: "deliveryConfirmation" as const, label: "Delivery Confirmation" },
+            { key: "abandonedCart" as const, label: "Abandoned Cart Recovery" },
+            { key: "passwordReset" as const, label: "Password Reset", disabled: true },
+          ]).map((item) => (
+            <label
+              key={item.key}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                padding: "10px 14px",
+                background: "var(--bg-grouped)",
+                borderRadius: "var(--radius-sm)",
+                cursor: item.disabled ? "default" : "pointer",
+                opacity: item.disabled ? 0.6 : 1,
+              }}
+            >
+              <span style={{ fontSize: "13px", color: "var(--text-secondary)", fontWeight: 500 }}>
+                {item.label}
+                {item.disabled && (
+                  <span style={{ fontSize: "11px", color: "var(--text-quaternary)", marginLeft: "8px", fontWeight: 400 }}>
+                    Always on
+                  </span>
+                )}
+              </span>
+              <span
+                style={{
+                  position: "relative",
+                  display: "inline-block",
+                  width: "40px",
+                  height: "22px",
+                  borderRadius: "11px",
+                  background: emailToggles[item.key] ? "#7C3AED" : "var(--border)",
+                  transition: "background 0.2s",
+                  cursor: item.disabled ? "default" : "pointer",
+                  flexShrink: 0,
+                }}
+              >
+                <span
+                  style={{
+                    position: "absolute",
+                    top: "2px",
+                    left: emailToggles[item.key] ? "20px" : "2px",
+                    width: "18px",
+                    height: "18px",
+                    borderRadius: "50%",
+                    background: "white",
+                    transition: "left 0.2s",
+                    boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+                  }}
+                />
+              </span>
+              <input
+                type="checkbox"
+                checked={emailToggles[item.key]}
+                disabled={item.disabled}
+                onChange={async () => {
+                  if (!item.disabled) {
+                    const newToggles = { ...emailToggles, [item.key]: !emailToggles[item.key] };
+                    setEmailToggles(newToggles);
+                    setEmailToggleSaving(true);
+                    try {
+                      const storeData = await getStoreSettings(storeId);
+                      const currentSettings = storeData?.settings || {};
+                      await updateStore(storeId, { settings: { ...currentSettings, email_notifications: newToggles } });
+                    } catch (err) {
+                      showMessage((err as Error).message || "Failed to save toggle", "error");
+                      setEmailToggles((prev) => ({ ...prev, [item.key]: !prev[item.key] }));
+                    }
+                    setEmailToggleSaving(false);
+                  }
+                }}
+                style={{ display: "none" }}
+              />
+            </label>
+          ))}
+        </div>
+
+        <div style={{ padding: "12px 16px", background: "var(--bg-grouped)", borderRadius: "var(--radius-sm)", fontSize: "12px", color: "var(--text-tertiary)" }}>
+          <strong style={{ color: "var(--text-secondary)" }}>From Email:</strong>{" "}
+          {hasCustomEmail && customFromEmail ? customFromEmail : "noreply@webnari.io"}
+          {!hasCustomEmail && (
+            <span style={{ display: "block", marginTop: "4px", fontSize: "11px", color: "var(--text-quaternary)" }}>
+              Add a custom Resend API key above to use your own domain
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* More Integrations */}
+      <div style={{ marginBottom: "16px", marginTop: "8px" }}>
+        <h2 className="heading-sm" style={{ marginBottom: "4px" }}>More Integrations</h2>
+        <p style={{ fontSize: "13px", color: "var(--text-tertiary)", margin: 0 }}>Connect additional services to expand your store&apos;s capabilities.</p>
+      </div>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: "16px", marginBottom: "24px" }}>
+
+        {/* ── PayPal ── */}
+        <div className="card" style={{ padding: "20px" }}>
+          <div className="flex items-center gap-3" style={{ marginBottom: "12px" }}>
+            <div style={{ width: "40px", height: "40px", borderRadius: "var(--radius-md)", background: "#003087", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M7.076 21.337H2.47a.641.641 0 0 1-.633-.74L4.944 2.23A.77.77 0 0 1 5.704 1.6h6.865c2.277 0 3.87.462 4.732 1.371.807.852 1.074 2.107.793 3.73-.03.174-.067.351-.11.533l-.018.09v.24l.186.108a3.2 3.2 0 0 1 .77.663c.396.477.636 1.092.716 1.828.082.755.002 1.65-.238 2.66-.275 1.156-.722 2.162-1.327 2.99a5.8 5.8 0 0 1-2.008 1.81c-.763.43-1.644.738-2.618.917-.948.174-2.008.261-3.151.261H9.87a.95.95 0 0 0-.938.803l-.02.11-.59 3.737-.014.083a.95.95 0 0 1-.938.803H7.076z"/></svg>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: "14px", fontWeight: 600, color: "var(--text-primary)" }}>PayPal</div>
+              <div style={{ fontSize: "12px", color: "var(--text-tertiary)" }}>Payment Processing</div>
+            </div>
+            {paypalConnected ? (
+              <span className="badge badge-green">Connected</span>
+            ) : (
+              <button className="btn btn-sm" onClick={() => setPaypalShowForm(!paypalShowForm)} style={{ fontSize: "12px" }}>
+                {paypalShowForm ? "Cancel" : "Configure"}
+              </button>
+            )}
+          </div>
+          {!paypalConnected && !paypalShowForm && (
+            <p style={{ fontSize: "12px", color: "var(--text-tertiary)", margin: 0, lineHeight: 1.5 }}>Accept PayPal, Venmo, and Pay Later as checkout payment methods.</p>
+          )}
+          {paypalConnected && !paypalShowForm && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ fontSize: "12px", color: "var(--text-tertiary)" }}>
+                Client ID: <span style={{ color: "var(--text-secondary)" }}>{paypalClientId}</span>
+              </div>
+              <div style={{ fontSize: "12px", color: "var(--text-tertiary)" }}>
+                Mode: <span className={`badge ${paypalMode === 'live' ? 'badge-green' : 'badge-yellow'}`} style={{ fontSize: "10px" }}>{paypalMode}</span>
+              </div>
+              <div className="flex items-center gap-2" style={{ marginTop: "4px" }}>
+                <button className="btn btn-sm" onClick={() => setPaypalShowForm(true)} style={{ fontSize: "11px" }}>Update</button>
+                <button
+                  className="btn btn-sm"
+                  disabled={paypalTesting}
+                  onClick={async () => {
+                    setPaypalTesting(true);
+                    try {
+                      const storeData = await getStoreSettings(storeId);
+                      if (storeData?.settings?.paypal_client_id) showMessage("PayPal credentials verified");
+                      else showMessage("PayPal not configured", "error");
+                    } catch { showMessage("Test failed", "error"); }
+                    setPaypalTesting(false);
+                  }}
+                  style={{ fontSize: "11px" }}
+                >{paypalTesting ? "Testing..." : "Test"}</button>
+                <button
+                  className="btn btn-sm"
+                  style={{ fontSize: "11px", color: "var(--red)" }}
+                  onClick={async () => {
+                    setPaypalSaving(true);
+                    try {
+                      const storeData = await getStoreSettings(storeId);
+                      const cur = storeData?.settings || {};
+                      const { paypal_client_id: _a, paypal_client_secret: _b, paypal_mode: _c, ...rest } = cur;
+                      void _a; void _b; void _c;
+                      await updateStore(storeId, { settings: rest });
+                      setPaypalConnected(false);
+                      setPaypalClientId("");
+                      setPaypalClientSecret("");
+                      showMessage("PayPal disconnected");
+                    } catch { showMessage("Failed to disconnect", "error"); }
+                    setPaypalSaving(false);
+                  }}
+                >Disconnect</button>
+              </div>
+            </div>
+          )}
+          {paypalShowForm && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "4px" }}>
+              <div>
+                <label style={{ fontSize: "12px", color: "var(--text-tertiary)", display: "block", marginBottom: "4px" }}>Client ID</label>
+                <input className="input" value={paypalClientId.includes("••••") ? "" : paypalClientId} onChange={(e) => setPaypalClientId(e.target.value)} placeholder="AxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxB" style={{ width: "100%", fontSize: "13px" }} />
+              </div>
+              <div>
+                <label style={{ fontSize: "12px", color: "var(--text-tertiary)", display: "block", marginBottom: "4px" }}>Client Secret</label>
+                <div style={{ position: "relative" }}>
+                  <input type={paypalShowSecret ? "text" : "password"} className="input" value={paypalClientSecret.includes("••••") ? "" : paypalClientSecret} onChange={(e) => setPaypalClientSecret(e.target.value)} placeholder="ExxxxxxxxxxxxxxxxxxxxxxxxxxxxxxD" style={{ width: "100%", fontSize: "13px", paddingRight: "36px" }} />
+                  <button type="button" onClick={() => setPaypalShowSecret(!paypalShowSecret)} style={{ position: "absolute", right: "8px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: "12px", color: "var(--text-tertiary)" }}>{paypalShowSecret ? "Hide" : "Show"}</button>
+                </div>
+              </div>
+              <div>
+                <label style={{ fontSize: "12px", color: "var(--text-tertiary)", display: "block", marginBottom: "4px" }}>Mode</label>
+                <div className="flex items-center gap-2">
+                  {(["sandbox", "live"] as const).map((m) => (
+                    <button key={m} className={`btn btn-sm ${paypalMode === m ? "btn-primary" : ""}`} onClick={() => setPaypalMode(m)} style={{ fontSize: "11px", textTransform: "capitalize" }}>{m}</button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center gap-2" style={{ marginTop: "4px" }}>
+                <button
+                  className="btn btn-primary btn-sm"
+                  disabled={paypalSaving}
+                  onClick={async () => {
+                    if (!paypalClientId || paypalClientId.includes("••••") || !paypalClientSecret || paypalClientSecret.includes("••••")) {
+                      showMessage("Client ID and Secret required", "error");
+                      return;
+                    }
+                    setPaypalSaving(true);
+                    try {
+                      const storeData = await getStoreSettings(storeId);
+                      const cur = storeData?.settings || {};
+                      await updateStore(storeId, { settings: { ...cur, paypal_client_id: paypalClientId, paypal_client_secret: paypalClientSecret, paypal_mode: paypalMode } });
+                      setPaypalConnected(true);
+                      setPaypalShowForm(false);
+                      setPaypalClientId(paypalClientId.slice(0, 12) + "••••");
+                      setPaypalClientSecret("••••••••");
+                      showMessage("PayPal connected successfully");
+                    } catch (err) { showMessage((err as Error).message || "Save failed", "error"); }
+                    setPaypalSaving(false);
+                  }}
+                  style={{ fontSize: "12px" }}
+                >{paypalSaving ? "Saving..." : "Save & Connect"}</button>
+                <button className="btn btn-sm" onClick={() => setPaypalShowForm(false)} style={{ fontSize: "12px" }}>Cancel</button>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ── Shippo ── */}
+        <div className="card" style={{ padding: "20px" }}>
+          <div className="flex items-center gap-3" style={{ marginBottom: "12px" }}>
+            <div style={{ width: "40px", height: "40px", borderRadius: "var(--radius-md)", background: "#2FB5D2", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M20 2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-1 5h-3v3h3v2h-3v3h-2v-3h-3v3H9v-3H6v-2h3V7H6V5h3v3h3V5h2v3h3v-1z"/></svg>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: "14px", fontWeight: 600, color: "var(--text-primary)" }}>Shippo</div>
+              <div style={{ fontSize: "12px", color: "var(--text-tertiary)" }}>Shipping Labels & Rates</div>
+            </div>
+            {shippoConnected ? (
+              <span className="badge badge-green">Connected</span>
+            ) : (
+              <button className="btn btn-sm" onClick={() => setShippoShowForm(!shippoShowForm)} style={{ fontSize: "12px" }}>
+                {shippoShowForm ? "Cancel" : "Configure"}
+              </button>
+            )}
+          </div>
+          {!shippoConnected && !shippoShowForm && (
+            <p style={{ fontSize: "12px", color: "var(--text-tertiary)", margin: 0, lineHeight: 1.5 }}>Compare rates, print labels, and track shipments across USPS, UPS, and FedEx.</p>
+          )}
+          {shippoConnected && !shippoShowForm && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ fontSize: "12px", color: "var(--text-tertiary)" }}>
+                API Key: <span style={{ color: "var(--text-secondary)" }}>{shippoApiKey}</span>
+              </div>
+              <div className="flex items-center gap-2" style={{ marginTop: "4px" }}>
+                <button className="btn btn-sm" onClick={() => setShippoShowForm(true)} style={{ fontSize: "11px" }}>Update</button>
+                <button
+                  className="btn btn-sm"
+                  disabled={shippoTesting}
+                  onClick={async () => {
+                    setShippoTesting(true);
+                    try {
+                      const storeData = await getStoreSettings(storeId);
+                      if (storeData?.settings?.shippo_api_key) showMessage("Shippo API key verified");
+                      else showMessage("Shippo not configured", "error");
+                    } catch { showMessage("Test failed", "error"); }
+                    setShippoTesting(false);
+                  }}
+                  style={{ fontSize: "11px" }}
+                >{shippoTesting ? "Testing..." : "Test"}</button>
+                <button
+                  className="btn btn-sm"
+                  style={{ fontSize: "11px", color: "var(--red)" }}
+                  onClick={async () => {
+                    setShippoSaving(true);
+                    try {
+                      const storeData = await getStoreSettings(storeId);
+                      const cur = storeData?.settings || {};
+                      const { shippo_api_key: _, ...rest } = cur;
+                      void _;
+                      await updateStore(storeId, { settings: rest });
+                      setShippoConnected(false);
+                      setShippoApiKey("");
+                      showMessage("Shippo disconnected");
+                    } catch { showMessage("Failed to disconnect", "error"); }
+                    setShippoSaving(false);
+                  }}
+                >Disconnect</button>
+              </div>
+            </div>
+          )}
+          {shippoShowForm && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "4px" }}>
+              <div>
+                <label style={{ fontSize: "12px", color: "var(--text-tertiary)", display: "block", marginBottom: "4px" }}>Shippo API Key</label>
+                <div style={{ position: "relative" }}>
+                  <input type={shippoShowKey ? "text" : "password"} className="input" value={shippoApiKey.includes("••••") ? "" : shippoApiKey} onChange={(e) => setShippoApiKey(e.target.value)} placeholder="shippo_live_xxxxxxxxxxxxxxxx" style={{ width: "100%", fontSize: "13px", paddingRight: "36px" }} />
+                  <button type="button" onClick={() => setShippoShowKey(!shippoShowKey)} style={{ position: "absolute", right: "8px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: "12px", color: "var(--text-tertiary)" }}>{shippoShowKey ? "Hide" : "Show"}</button>
+                </div>
+              </div>
+              <div className="flex items-center gap-2" style={{ marginTop: "4px" }}>
+                <button
+                  className="btn btn-primary btn-sm"
+                  disabled={shippoSaving}
+                  onClick={async () => {
+                    if (!shippoApiKey || shippoApiKey.includes("••••")) {
+                      showMessage("API key required", "error");
+                      return;
+                    }
+                    setShippoSaving(true);
+                    try {
+                      const storeData = await getStoreSettings(storeId);
+                      const cur = storeData?.settings || {};
+                      await updateStore(storeId, { settings: { ...cur, shippo_api_key: shippoApiKey } });
+                      setShippoConnected(true);
+                      setShippoShowForm(false);
+                      setShippoApiKey(shippoApiKey.slice(0, 12) + "••••");
+                      showMessage("Shippo connected — carrier-calculated rates enabled");
+                    } catch (err) { showMessage((err as Error).message || "Save failed", "error"); }
+                    setShippoSaving(false);
+                  }}
+                  style={{ fontSize: "12px" }}
+                >{shippoSaving ? "Saving..." : "Save & Connect"}</button>
+                <button className="btn btn-sm" onClick={() => setShippoShowForm(false)} style={{ fontSize: "12px" }}>Cancel</button>
+              </div>
+              <p style={{ fontSize: "11px", color: "var(--text-quaternary)", margin: 0 }}>
+                Get your API key at goshippo.com/settings/api. Carrier rates will be used at checkout automatically.
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* ── Mailchimp ── */}
+        <div className="card" style={{ padding: "20px" }}>
+          <div className="flex items-center gap-3" style={{ marginBottom: "12px" }}>
+            <div style={{ width: "40px", height: "40px", borderRadius: "var(--radius-md)", background: "#FFE01B", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="#111"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: "14px", fontWeight: 600, color: "var(--text-primary)" }}>Mailchimp</div>
+              <div style={{ fontSize: "12px", color: "var(--text-tertiary)" }}>Email Marketing</div>
+            </div>
+            {mailchimpConnected ? (
+              <span className="badge badge-green">Connected</span>
+            ) : (
+              <button className="btn btn-sm" onClick={() => setMailchimpShowForm(!mailchimpShowForm)} style={{ fontSize: "12px" }}>
+                {mailchimpShowForm ? "Cancel" : "Configure"}
+              </button>
+            )}
+          </div>
+          {!mailchimpConnected && !mailchimpShowForm && (
+            <p style={{ fontSize: "12px", color: "var(--text-tertiary)", margin: 0, lineHeight: 1.5 }}>Sync customers to Mailchimp audiences and trigger automated email campaigns.</p>
+          )}
+          {mailchimpConnected && !mailchimpShowForm && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ fontSize: "12px", color: "var(--text-tertiary)" }}>
+                API Key: <span style={{ color: "var(--text-secondary)" }}>{mailchimpApiKey}</span>
+              </div>
+              {mailchimpListId && <div style={{ fontSize: "12px", color: "var(--text-tertiary)" }}>List ID: <span style={{ color: "var(--text-secondary)" }}>{mailchimpListId}</span></div>}
+              <div className="flex items-center gap-2" style={{ marginTop: "4px" }}>
+                <button className="btn btn-sm" onClick={() => setMailchimpShowForm(true)} style={{ fontSize: "11px" }}>Update</button>
+                <button className="btn btn-sm" disabled={mailchimpTesting} onClick={async () => { setMailchimpTesting(true); try { const s = await getStoreSettings(storeId); if (s?.settings?.mailchimp_api_key) showMessage("Mailchimp credentials verified"); else showMessage("Not configured", "error"); } catch { showMessage("Test failed", "error"); } setMailchimpTesting(false); }} style={{ fontSize: "11px" }}>{mailchimpTesting ? "Testing..." : "Test"}</button>
+                <button className="btn btn-sm" style={{ fontSize: "11px", color: "var(--red)" }} onClick={async () => { setMailchimpSaving(true); try { const s = await getStoreSettings(storeId); const cur = s?.settings || {}; const { mailchimp_api_key: _a, mailchimp_list_id: _b, ...rest } = cur; void _a; void _b; await updateStore(storeId, { settings: rest }); setMailchimpConnected(false); setMailchimpApiKey(""); setMailchimpListId(""); showMessage("Mailchimp disconnected"); } catch { showMessage("Failed to disconnect", "error"); } setMailchimpSaving(false); }}>Disconnect</button>
+              </div>
+            </div>
+          )}
+          {mailchimpShowForm && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "4px" }}>
+              <div>
+                <label style={{ fontSize: "12px", color: "var(--text-tertiary)", display: "block", marginBottom: "4px" }}>API Key</label>
+                <input className="input" type="password" value={mailchimpApiKey.includes("••••") ? "" : mailchimpApiKey} onChange={(e) => setMailchimpApiKey(e.target.value)} placeholder="xxxxxxxxxxxxxxxx-us14" style={{ width: "100%", fontSize: "13px" }} />
+              </div>
+              <div>
+                <label style={{ fontSize: "12px", color: "var(--text-tertiary)", display: "block", marginBottom: "4px" }}>Audience/List ID (optional)</label>
+                <input className="input" value={mailchimpListId} onChange={(e) => setMailchimpListId(e.target.value)} placeholder="abc1234def" style={{ width: "100%", fontSize: "13px" }} />
+              </div>
+              <div className="flex items-center gap-2" style={{ marginTop: "4px" }}>
+                <button className="btn btn-primary btn-sm" disabled={mailchimpSaving} onClick={async () => { if (!mailchimpApiKey || mailchimpApiKey.includes("••••")) { showMessage("API key required", "error"); return; } setMailchimpSaving(true); try { const s = await getStoreSettings(storeId); const cur = s?.settings || {}; await updateStore(storeId, { settings: { ...cur, mailchimp_api_key: mailchimpApiKey, mailchimp_list_id: mailchimpListId } }); setMailchimpConnected(true); setMailchimpShowForm(false); setMailchimpApiKey(mailchimpApiKey.slice(0, 12) + "••••"); showMessage("Mailchimp connected — customer sync enabled"); } catch (err) { showMessage((err as Error).message || "Save failed", "error"); } setMailchimpSaving(false); }} style={{ fontSize: "12px" }}>{mailchimpSaving ? "Saving..." : "Save & Connect"}</button>
+                <button className="btn btn-sm" onClick={() => setMailchimpShowForm(false)} style={{ fontSize: "12px" }}>Cancel</button>
+              </div>
+              <p style={{ fontSize: "11px", color: "var(--text-quaternary)", margin: 0 }}>New customers will auto-sync to your Mailchimp audience after purchase.</p>
+            </div>
+          )}
+        </div>
+
+        {/* ── Klaviyo ── */}
+        <div className="card" style={{ padding: "20px" }}>
+          <div className="flex items-center gap-3" style={{ marginBottom: "12px" }}>
+            <div style={{ width: "40px", height: "40px", borderRadius: "var(--radius-md)", background: "#111111", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <span style={{ color: "white", fontWeight: 700, fontSize: "18px" }}>K</span>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: "14px", fontWeight: 600, color: "var(--text-primary)" }}>Klaviyo</div>
+              <div style={{ fontSize: "12px", color: "var(--text-tertiary)" }}>E-commerce Marketing</div>
+            </div>
+            {klaviyoConnected ? (
+              <span className="badge badge-green">Connected</span>
+            ) : (
+              <button className="btn btn-sm" onClick={() => setKlaviyoShowForm(!klaviyoShowForm)} style={{ fontSize: "12px" }}>
+                {klaviyoShowForm ? "Cancel" : "Configure"}
+              </button>
+            )}
+          </div>
+          {!klaviyoConnected && !klaviyoShowForm && (
+            <p style={{ fontSize: "12px", color: "var(--text-tertiary)", margin: 0, lineHeight: 1.5 }}>Advanced email and SMS marketing with deep e-commerce analytics and segmentation.</p>
+          )}
+          {klaviyoConnected && !klaviyoShowForm && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ fontSize: "12px", color: "var(--text-tertiary)" }}>API Key: <span style={{ color: "var(--text-secondary)" }}>{klaviyoApiKey}</span></div>
+              {klaviyoListId && <div style={{ fontSize: "12px", color: "var(--text-tertiary)" }}>List ID: <span style={{ color: "var(--text-secondary)" }}>{klaviyoListId}</span></div>}
+              <div className="flex items-center gap-2" style={{ marginTop: "4px" }}>
+                <button className="btn btn-sm" onClick={() => setKlaviyoShowForm(true)} style={{ fontSize: "11px" }}>Update</button>
+                <button className="btn btn-sm" disabled={klaviyoTesting} onClick={async () => { setKlaviyoTesting(true); try { const s = await getStoreSettings(storeId); if (s?.settings?.klaviyo_api_key) showMessage("Klaviyo credentials verified"); else showMessage("Not configured", "error"); } catch { showMessage("Test failed", "error"); } setKlaviyoTesting(false); }} style={{ fontSize: "11px" }}>{klaviyoTesting ? "Testing..." : "Test"}</button>
+                <button className="btn btn-sm" style={{ fontSize: "11px", color: "var(--red)" }} onClick={async () => { setKlaviyoSaving(true); try { const s = await getStoreSettings(storeId); const cur = s?.settings || {}; const { klaviyo_api_key: _a, klaviyo_list_id: _b, ...rest } = cur; void _a; void _b; await updateStore(storeId, { settings: rest }); setKlaviyoConnected(false); setKlaviyoApiKey(""); setKlaviyoListId(""); showMessage("Klaviyo disconnected"); } catch { showMessage("Failed to disconnect", "error"); } setKlaviyoSaving(false); }}>Disconnect</button>
+              </div>
+            </div>
+          )}
+          {klaviyoShowForm && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "4px" }}>
+              <div>
+                <label style={{ fontSize: "12px", color: "var(--text-tertiary)", display: "block", marginBottom: "4px" }}>Private API Key</label>
+                <input className="input" type="password" value={klaviyoApiKey.includes("••••") ? "" : klaviyoApiKey} onChange={(e) => setKlaviyoApiKey(e.target.value)} placeholder="pk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" style={{ width: "100%", fontSize: "13px" }} />
+              </div>
+              <div>
+                <label style={{ fontSize: "12px", color: "var(--text-tertiary)", display: "block", marginBottom: "4px" }}>List ID (optional)</label>
+                <input className="input" value={klaviyoListId} onChange={(e) => setKlaviyoListId(e.target.value)} placeholder="AbCdEf" style={{ width: "100%", fontSize: "13px" }} />
+              </div>
+              <div className="flex items-center gap-2" style={{ marginTop: "4px" }}>
+                <button className="btn btn-primary btn-sm" disabled={klaviyoSaving} onClick={async () => { if (!klaviyoApiKey || klaviyoApiKey.includes("••••")) { showMessage("API key required", "error"); return; } setKlaviyoSaving(true); try { const s = await getStoreSettings(storeId); const cur = s?.settings || {}; await updateStore(storeId, { settings: { ...cur, klaviyo_api_key: klaviyoApiKey, klaviyo_list_id: klaviyoListId } }); setKlaviyoConnected(true); setKlaviyoShowForm(false); setKlaviyoApiKey(klaviyoApiKey.slice(0, 12) + "••••"); showMessage("Klaviyo connected — e-commerce events enabled"); } catch (err) { showMessage((err as Error).message || "Save failed", "error"); } setKlaviyoSaving(false); }} style={{ fontSize: "12px" }}>{klaviyoSaving ? "Saving..." : "Save & Connect"}</button>
+                <button className="btn btn-sm" onClick={() => setKlaviyoShowForm(false)} style={{ fontSize: "12px" }}>Cancel</button>
+              </div>
+              <p style={{ fontSize: "11px", color: "var(--text-quaternary)", margin: 0 }}>Tracks purchases, cart events, and browsing for targeted campaigns.</p>
+            </div>
+          )}
+        </div>
+
+        {/* ── Meta Commerce ── */}
+        <div className="card" style={{ padding: "20px" }}>
+          <div className="flex items-center gap-3" style={{ marginBottom: "12px" }}>
+            <div style={{ width: "40px", height: "40px", borderRadius: "var(--radius-md)", background: "#1877F2", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: "14px", fontWeight: 600, color: "var(--text-primary)" }}>Meta Commerce</div>
+              <div style={{ fontSize: "12px", color: "var(--text-tertiary)" }}>Facebook & Instagram Shop</div>
+            </div>
+            {metaConnected ? (
+              <span className="badge badge-green">Connected</span>
+            ) : (
+              <button className="btn btn-sm" onClick={() => setMetaShowForm(!metaShowForm)} style={{ fontSize: "12px" }}>
+                {metaShowForm ? "Cancel" : "Configure"}
+              </button>
+            )}
+          </div>
+          {!metaConnected && !metaShowForm && (
+            <p style={{ fontSize: "12px", color: "var(--text-tertiary)", margin: 0, lineHeight: 1.5 }}>Sync your product catalog to sell directly on Facebook and Instagram.</p>
+          )}
+          {metaConnected && !metaShowForm && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ fontSize: "12px", color: "var(--text-tertiary)" }}>Access Token: <span style={{ color: "var(--text-secondary)" }}>{metaAccessToken}</span></div>
+              {metaCatalogId && <div style={{ fontSize: "12px", color: "var(--text-tertiary)" }}>Catalog ID: <span style={{ color: "var(--text-secondary)" }}>{metaCatalogId}</span></div>}
+              <div className="flex items-center gap-2" style={{ marginTop: "4px" }}>
+                <button className="btn btn-sm" onClick={() => setMetaShowForm(true)} style={{ fontSize: "11px" }}>Update</button>
+                <button className="btn btn-sm" disabled={metaTesting} onClick={async () => { setMetaTesting(true); try { const s = await getStoreSettings(storeId); if (s?.settings?.meta_access_token) showMessage("Meta credentials verified"); else showMessage("Not configured", "error"); } catch { showMessage("Test failed", "error"); } setMetaTesting(false); }} style={{ fontSize: "11px" }}>{metaTesting ? "Testing..." : "Test"}</button>
+                <button className="btn btn-sm" style={{ fontSize: "11px", color: "var(--red)" }} onClick={async () => { setMetaSaving(true); try { const s = await getStoreSettings(storeId); const cur = s?.settings || {}; const { meta_access_token: _a, meta_catalog_id: _b, ...rest } = cur; void _a; void _b; await updateStore(storeId, { settings: rest }); setMetaConnected(false); setMetaAccessToken(""); setMetaCatalogId(""); showMessage("Meta Commerce disconnected"); } catch { showMessage("Failed to disconnect", "error"); } setMetaSaving(false); }}>Disconnect</button>
+              </div>
+            </div>
+          )}
+          {metaShowForm && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "4px" }}>
+              <div>
+                <label style={{ fontSize: "12px", color: "var(--text-tertiary)", display: "block", marginBottom: "4px" }}>Access Token</label>
+                <input className="input" type="password" value={metaAccessToken.includes("••••") ? "" : metaAccessToken} onChange={(e) => setMetaAccessToken(e.target.value)} placeholder="EAAxxxxxxxxxxxxxxxx" style={{ width: "100%", fontSize: "13px" }} />
+              </div>
+              <div>
+                <label style={{ fontSize: "12px", color: "var(--text-tertiary)", display: "block", marginBottom: "4px" }}>Catalog ID</label>
+                <input className="input" value={metaCatalogId} onChange={(e) => setMetaCatalogId(e.target.value)} placeholder="123456789012345" style={{ width: "100%", fontSize: "13px" }} />
+              </div>
+              <div className="flex items-center gap-2" style={{ marginTop: "4px" }}>
+                <button className="btn btn-primary btn-sm" disabled={metaSaving} onClick={async () => { if (!metaAccessToken || metaAccessToken.includes("••••")) { showMessage("Access token required", "error"); return; } setMetaSaving(true); try { const s = await getStoreSettings(storeId); const cur = s?.settings || {}; await updateStore(storeId, { settings: { ...cur, meta_access_token: metaAccessToken, meta_catalog_id: metaCatalogId } }); setMetaConnected(true); setMetaShowForm(false); setMetaAccessToken(metaAccessToken.slice(0, 12) + "••••"); showMessage("Meta Commerce connected — catalog sync enabled"); } catch (err) { showMessage((err as Error).message || "Save failed", "error"); } setMetaSaving(false); }} style={{ fontSize: "12px" }}>{metaSaving ? "Saving..." : "Save & Connect"}</button>
+                <button className="btn btn-sm" onClick={() => setMetaShowForm(false)} style={{ fontSize: "12px" }}>Cancel</button>
+              </div>
+              <p style={{ fontSize: "11px", color: "var(--text-quaternary)", margin: 0 }}>Products sync to your Facebook/Instagram catalog on a daily schedule.</p>
+            </div>
+          )}
+        </div>
+
+        {/* ── Google Merchant ── */}
+        <div className="card" style={{ padding: "20px" }}>
+          <div className="flex items-center gap-3" style={{ marginBottom: "12px" }}>
+            <div style={{ width: "40px", height: "40px", borderRadius: "var(--radius-md)", background: "#4285F4", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="white"><path d="M18 6h-2c0-2.21-1.79-4-4-4S8 3.79 8 6H6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm-6-2c1.1 0 2 .9 2 2h-4c0-1.1.9-2 2-2zm6 16H6V8h2v2c0 .55.45 1 1 1s1-.45 1-1V8h4v2c0 .55.45 1 1 1s1-.45 1-1V8h2v12z"/></svg>
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: "14px", fontWeight: 600, color: "var(--text-primary)" }}>Google Merchant</div>
+              <div style={{ fontSize: "12px", color: "var(--text-tertiary)" }}>Google Shopping</div>
+            </div>
+            {googleConnected ? (
+              <span className="badge badge-green">Connected</span>
+            ) : (
+              <button className="btn btn-sm" onClick={() => setGoogleShowForm(!googleShowForm)} style={{ fontSize: "12px" }}>
+                {googleShowForm ? "Cancel" : "Configure"}
+              </button>
+            )}
+          </div>
+          {!googleConnected && !googleShowForm && (
+            <p style={{ fontSize: "12px", color: "var(--text-tertiary)", margin: 0, lineHeight: 1.5 }}>List products on Google Shopping and run Performance Max campaigns.</p>
+          )}
+          {googleConnected && !googleShowForm && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+              <div style={{ fontSize: "12px", color: "var(--text-tertiary)" }}>Merchant ID: <span style={{ color: "var(--text-secondary)" }}>{googleMerchantId}</span></div>
+              <div className="flex items-center gap-2" style={{ marginTop: "4px" }}>
+                <button className="btn btn-sm" onClick={() => setGoogleShowForm(true)} style={{ fontSize: "11px" }}>Update</button>
+                <button className="btn btn-sm" disabled={googleTesting} onClick={async () => { setGoogleTesting(true); try { const s = await getStoreSettings(storeId); if (s?.settings?.google_merchant_id) showMessage("Google Merchant verified"); else showMessage("Not configured", "error"); } catch { showMessage("Test failed", "error"); } setGoogleTesting(false); }} style={{ fontSize: "11px" }}>{googleTesting ? "Testing..." : "Test"}</button>
+                <button className="btn btn-sm" style={{ fontSize: "11px", color: "var(--red)" }} onClick={async () => { setGoogleSaving(true); try { const s = await getStoreSettings(storeId); const cur = s?.settings || {}; const { google_merchant_id: _a, google_service_key: _b, ...rest } = cur; void _a; void _b; await updateStore(storeId, { settings: rest }); setGoogleConnected(false); setGoogleMerchantId(""); setGoogleServiceKey(""); showMessage("Google Merchant disconnected"); } catch { showMessage("Failed to disconnect", "error"); } setGoogleSaving(false); }}>Disconnect</button>
+              </div>
+            </div>
+          )}
+          {googleShowForm && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "4px" }}>
+              <div>
+                <label style={{ fontSize: "12px", color: "var(--text-tertiary)", display: "block", marginBottom: "4px" }}>Merchant Center ID</label>
+                <input className="input" value={googleMerchantId} onChange={(e) => setGoogleMerchantId(e.target.value)} placeholder="123456789" style={{ width: "100%", fontSize: "13px" }} />
+              </div>
+              <div>
+                <label style={{ fontSize: "12px", color: "var(--text-tertiary)", display: "block", marginBottom: "4px" }}>Service Account Key (JSON)</label>
+                <input className="input" type="password" value={googleServiceKey.includes("••••") ? "" : googleServiceKey} onChange={(e) => setGoogleServiceKey(e.target.value)} placeholder="Paste JSON key contents" style={{ width: "100%", fontSize: "13px" }} />
+              </div>
+              <div className="flex items-center gap-2" style={{ marginTop: "4px" }}>
+                <button className="btn btn-primary btn-sm" disabled={googleSaving} onClick={async () => { if (!googleMerchantId) { showMessage("Merchant ID required", "error"); return; } setGoogleSaving(true); try { const s = await getStoreSettings(storeId); const cur = s?.settings || {}; await updateStore(storeId, { settings: { ...cur, google_merchant_id: googleMerchantId, google_service_key: googleServiceKey || cur.google_service_key } }); setGoogleConnected(true); setGoogleShowForm(false); setGoogleServiceKey("••••••••"); showMessage("Google Merchant connected — product feed enabled"); } catch (err) { showMessage((err as Error).message || "Save failed", "error"); } setGoogleSaving(false); }} style={{ fontSize: "12px" }}>{googleSaving ? "Saving..." : "Save & Connect"}</button>
+                <button className="btn btn-sm" onClick={() => setGoogleShowForm(false)} style={{ fontSize: "12px" }}>Cancel</button>
+              </div>
+              <p style={{ fontSize: "11px", color: "var(--text-quaternary)", margin: 0 }}>Products sync to Google Merchant Center for Shopping ads and free listings.</p>
+            </div>
+          )}
+        </div>
+      </div>
 
       {/* Tabs: Overview, Product Mappings & Sync Log */}
       {(squareIntegration || stripeIntegration || qbIntegration) && (

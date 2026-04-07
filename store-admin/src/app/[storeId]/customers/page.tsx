@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { getCustomers } from "@/app/[storeId]/actions/commerce-actions";
+import { getCustomers, getAnalytics } from "@/app/[storeId]/actions/commerce-actions";
 
 function formatCents(cents: number) { return "$" + (cents / 100).toLocaleString("en-US", { minimumFractionDigits: 2 }); }
 
@@ -22,9 +22,14 @@ export default function CustomersPage() {
   const storeId = params.storeId as string;
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [search, setSearch] = useState("");
+  const [analytics, setAnalytics] = useState<{
+    customers?: { total: number; new: number; returning: number };
+    revenueByDay?: { date: string; revenue: number; orders: number }[];
+  } | null>(null);
 
   useEffect(() => {
     getCustomers(storeId).then(setCustomers).catch(() => {});
+    getAnalytics(storeId).then(setAnalytics).catch(() => {});
   }, [storeId]);
 
   const filtered = search
@@ -61,6 +66,40 @@ export default function CustomersPage() {
             <div style={{ fontSize: "24px", fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.03em", fontVariantNumeric: "tabular-nums" }}>{kpi.value}</div>
           </div>
         ))}
+      </div>
+
+      {/* Customer Insights */}
+      <div style={{ marginBottom: "24px" }}>
+        <div className="label-caps" style={{ marginBottom: "12px", padding: "0 4px" }}>Customer Insights</div>
+        <div className="grid grid-cols-3 gap-4">
+          <div style={{ padding: "16px 18px", background: "var(--bg-grouped)", borderRadius: "var(--radius-md)", border: "1px solid var(--border-subtle)" }}>
+            <div className="flex items-center gap-2" style={{ marginBottom: "6px" }}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" style={{ width: "16px", height: "16px", color: "#34c759" }}>
+                <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4-4v2" /><circle cx="9" cy="7" r="4" /><line x1="19" y1="8" x2="19" y2="14" /><line x1="22" y1="11" x2="16" y2="11" />
+              </svg>
+              <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-tertiary)", letterSpacing: "0.05em", textTransform: "uppercase" }}>New This Month</span>
+            </div>
+            <div style={{ fontSize: "22px", fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>{analytics?.customers?.new || 0}</div>
+          </div>
+          <div style={{ padding: "16px 18px", background: "var(--bg-grouped)", borderRadius: "var(--radius-md)", border: "1px solid var(--border-subtle)" }}>
+            <div className="flex items-center gap-2" style={{ marginBottom: "6px" }}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" style={{ width: "16px", height: "16px", color: "#007aff" }}>
+                <polyline points="23 4 23 10 17 10" /><polyline points="1 20 1 14 7 14" /><path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15" />
+              </svg>
+              <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-tertiary)", letterSpacing: "0.05em", textTransform: "uppercase" }}>Returning</span>
+            </div>
+            <div style={{ fontSize: "22px", fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>{analytics?.customers?.returning || 0}</div>
+          </div>
+          <div style={{ padding: "16px 18px", background: "var(--bg-grouped)", borderRadius: "var(--radius-md)", border: "1px solid var(--border-subtle)" }}>
+            <div className="flex items-center gap-2" style={{ marginBottom: "6px" }}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" style={{ width: "16px", height: "16px", color: "#B8892A" }}>
+                <path d="M18 20V10" /><path d="M12 20V4" /><path d="M6 20v-6" />
+              </svg>
+              <span style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-tertiary)", letterSpacing: "0.05em", textTransform: "uppercase" }}>Active Rate</span>
+            </div>
+            <div style={{ fontSize: "22px", fontWeight: 700, color: "var(--text-primary)", letterSpacing: "-0.02em" }}>{totalCustomers > 0 ? Math.round(((analytics?.customers?.returning || 0) / totalCustomers) * 100) : 0}%</div>
+          </div>
+        </div>
       </div>
 
       {/* Search */}
@@ -121,6 +160,42 @@ export default function CustomersPage() {
           </div>
         )}
       </div>
+
+      {/* Recent Activity */}
+      {customers.length > 0 && (
+        <div className="card-section" style={{ marginTop: "24px" }}>
+          <div className="card-section-header">
+            <span className="heading-sm">Recent Activity</span>
+          </div>
+          <div style={{ padding: "4px 0" }}>
+            {customers
+              .filter(c => c.lastOrderDate)
+              .sort((a, b) => new Date(b.lastOrderDate).getTime() - new Date(a.lastOrderDate).getTime())
+              .slice(0, 8)
+              .map((c, i) => (
+                <div key={i} className="flex items-center gap-3" style={{ padding: "12px 24px", borderBottom: i < 7 ? "1px solid var(--border-subtle)" : "none" }}>
+                  <div style={{ width: "32px", height: "32px", borderRadius: "50%", background: "var(--gradient-gold)", display: "flex", alignItems: "center", justifyContent: "center", color: "white", fontSize: "12px", fontWeight: 700, flexShrink: 0 }}>
+                    {(c.name || c.email).charAt(0).toUpperCase()}
+                  </div>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-primary)" }}>{c.name || c.email}</div>
+                    <div style={{ fontSize: "12px", color: "var(--text-tertiary)" }}>
+                      {c.orderCount} order{c.orderCount !== 1 ? "s" : ""} · {formatCents(c.totalSpent)} total
+                    </div>
+                  </div>
+                  <div style={{ textAlign: "right", flexShrink: 0 }}>
+                    <div style={{ fontSize: "12px", color: "var(--text-tertiary)" }}>
+                      {new Date(c.lastOrderDate).toLocaleDateString()}
+                    </div>
+                    <span className={`badge ${c.lastOrderStatus === 'delivered' ? 'badge-green' : c.lastOrderStatus === 'shipped' ? 'badge-blue' : 'badge-gray'}`} style={{ fontSize: "10px" }}>
+                      {c.lastOrderStatus}
+                    </span>
+                  </div>
+                </div>
+              ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

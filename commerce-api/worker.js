@@ -169,6 +169,12 @@ export default {
       if (method === 'POST' && path === '/api/checkout/webhook/square') {
         return await handleSquareWebhook(request, sb, env, corsOrigin);
       }
+      if (method === 'POST' && path === '/api/checkout/paypal/capture') {
+        return await handlePayPalCapture(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/checkout/webhook/paypal') {
+        return await handlePayPalWebhook(request, sb, env, corsOrigin);
+      }
 
       // Orders
       if (method === 'GET' && path.match(/^\/api\/orders\/[^/]+\/invoice$/)) {
@@ -486,6 +492,9 @@ export default {
       }
 
       // Admin Store Settings
+      if (method === 'GET' && path === '/api/admin/store') {
+        return await handleAdminGetStore(request, sb, env, storeId, corsOrigin);
+      }
       if (method === 'PATCH' && path === '/api/admin/store') {
         return await handleAdminUpdateStore(request, sb, env, storeId, corsOrigin);
       }
@@ -584,6 +593,11 @@ export default {
       if (method === 'DELETE' && path.match(/^\/api\/admin\/webhooks\/[^/]+$/)) {
         const webhookId = path.split('/').pop();
         return await handleAdminDeleteWebhook(request, sb, env, storeId, webhookId, corsOrigin);
+      }
+
+      // ── Cart Recovery Stats (admin) ────────────────────────
+      if (method === 'GET' && path === '/api/admin/cart-recovery/stats') {
+        return await handleCartRecoveryStats(request, sb, env, storeId, corsOrigin);
       }
 
       // ── App Ecosystem (admin) ─────────────────────────────
@@ -723,13 +737,15 @@ function esc(str) {
 //  EMAIL — Resend integration for transactional emails
 // ═══════════════════════════════════════════════════════════════
 
-async function sendEmail(env, { to, subject, html, replyTo }) {
-  const apiKey = env.RESEND_API_KEY;
+async function sendEmail(env, { to, subject, html, replyTo, storeSettings }) {
+  // Try per-store Resend key first, fall back to master
+  const apiKey = storeSettings?.resend_api_key || env.RESEND_API_KEY;
   if (!apiKey) {
     console.warn('RESEND_API_KEY not set — skipping email to', to);
     return null;
   }
-  const from = env.RESEND_FROM || 'Webnari <orders@webnari.io>';
+  // Per-store from address, fallback to env, fallback to Webnari default
+  const from = storeSettings?.from_email || env.RESEND_FROM || 'Webnari <orders@webnari.io>';
   const body = { from, to: Array.isArray(to) ? to : [to], subject, html };
   if (replyTo) body.reply_to = replyTo;
 
@@ -907,6 +923,10 @@ async function sendOrderConfirmationEmail(sb, env, storeId, order, items) {
   const storeName = store?.name || 'Store';
   const storeEmail = store?.settings?.email || null;
 
+  // Respect email notification toggles (defaults to true if not set)
+  const toggles = store?.settings?.email_notifications || {};
+  if (toggles.orderConfirmation === false) return;
+
   // Build invoice URL
   const secret = env.ADMIN_API_KEY || 'invoice-secret';
   const token = await generateInvoiceToken(order.id, order.customer_email, secret);
@@ -921,6 +941,7 @@ async function sendOrderConfirmationEmail(sb, env, storeId, order, items) {
     subject: `Order Confirmed — ${order.order_number}`,
     html,
     replyTo: storeEmail,
+    storeSettings: store?.settings,
   });
 }
 
@@ -931,6 +952,11 @@ async function sendOrderStatusEmail(sb, env, storeId, order, newStatus, tracking
   });
   const storeName = store?.name || 'Store';
   const storeEmail = store?.settings?.email || null;
+
+  // Respect email notification toggles (defaults to true if not set)
+  const toggles = store?.settings?.email_notifications || {};
+  if (newStatus === 'shipped' && toggles.shippingUpdate === false) return;
+  if (newStatus === 'delivered' && toggles.deliveryConfirmation === false) return;
 
   let subject, html;
   if (newStatus === 'shipped') {
@@ -943,7 +969,7 @@ async function sendOrderStatusEmail(sb, env, storeId, order, newStatus, tracking
     return; // Only send emails for shipped + delivered
   }
 
-  await sendEmail(env, { to: order.customer_email, subject, html, replyTo: storeEmail });
+  await sendEmail(env, { to: order.customer_email, subject, html, replyTo: storeEmail, storeSettings: store?.settings });
 }
 
 // HMAC-signed invoice tokens — prevents unauthorized access to customer PII
@@ -1275,20 +1301,22 @@ async function handleCreateCheckout(request, sb, env, storeId, corsOrigin) {
   // ── 6. Determine payment provider ───────────────────────
   const paymentProvider = provider || store.payment_provider;
 
+  const checkoutData = {
+    lineItems, customer, subtotal: discountedSubtotal, shippingCost, taxAmount, total,
+    shippingState, reservations, successUrl, cancelUrl,
+    discountAmount, discountId, discountLabel, giftCardAmount, giftCardId,
+  };
+
   if (paymentProvider === 'stripe' || paymentProvider === 'both') {
-    return await createStripeCheckout(sb, env, storeId, store, {
-      lineItems, customer, subtotal: discountedSubtotal, shippingCost, taxAmount, total,
-      shippingState, reservations, successUrl, cancelUrl,
-      discountAmount, discountId, discountLabel, giftCardAmount, giftCardId,
-    }, corsOrigin);
+    return await createStripeCheckout(sb, env, storeId, store, checkoutData, corsOrigin);
   }
 
   if (paymentProvider === 'square') {
-    return await createSquareCheckout(sb, env, storeId, store, {
-      lineItems, customer, subtotal: discountedSubtotal, shippingCost, taxAmount, total,
-      shippingState, reservations, successUrl, cancelUrl,
-      discountAmount, discountId, discountLabel, giftCardAmount, giftCardId,
-    }, corsOrigin);
+    return await createSquareCheckout(sb, env, storeId, store, checkoutData, corsOrigin);
+  }
+
+  if (paymentProvider === 'paypal') {
+    return await createPayPalCheckout(sb, env, storeId, store, checkoutData, corsOrigin);
   }
 
   return json({ error: `Unsupported payment provider: ${paymentProvider}` }, 400, corsOrigin);
@@ -2119,6 +2147,281 @@ async function verifySquareSignature(body, signature, sigKey, url) {
 
 
 // ═══════════════════════════════════════════════════════════════
+//  PAYPAL
+// ═══════════════════════════════════════════════════════════════
+
+async function getPayPalAccessToken(clientId, clientSecret, mode) {
+  const base = mode === 'live'
+    ? 'https://api-m.paypal.com'
+    : 'https://api-m.sandbox.paypal.com';
+  const res = await fetch(`${base}/v1/oauth2/token`, {
+    method: 'POST',
+    headers: {
+      'Authorization': 'Basic ' + btoa(`${clientId}:${clientSecret}`),
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: 'grant_type=client_credentials',
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    console.error('PayPal auth failed:', res.status, err);
+    return null;
+  }
+  const data = await res.json();
+  return { token: data.access_token, base };
+}
+
+async function createPayPalCheckout(sb, env, storeId, store, data, corsOrigin) {
+  const settings = store.settings || {};
+  const clientId = settings.paypal_client_id;
+  const clientSecret = settings.paypal_client_secret;
+  const mode = settings.paypal_mode || 'sandbox';
+
+  if (!clientId || !clientSecret) {
+    return json({ error: 'PayPal not configured for this store' }, 500, corsOrigin);
+  }
+
+  const auth = await getPayPalAccessToken(clientId, clientSecret, mode);
+  if (!auth) return json({ error: 'PayPal authentication failed' }, 500, corsOrigin);
+
+  // Create inventory reservations
+  const reservationIds = [];
+  for (const res of data.reservations) {
+    const [r] = await sb.insert('inventory_reservations', {
+      store_id: storeId,
+      product_id: res.product_id,
+      variant_id: res.variant_id,
+      quantity: res.quantity,
+      status: 'held',
+      expires_at: new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+    });
+    reservationIds.push(r.id);
+  }
+
+  // Build PayPal order
+  const purchaseItems = data.lineItems.map(item => ({
+    name: item.name.slice(0, 127),
+    quantity: String(item.quantity),
+    unit_amount: { currency_code: (store.currency || 'usd').toUpperCase(), value: (item.price / 100).toFixed(2) },
+  }));
+
+  const orderBody = {
+    intent: 'CAPTURE',
+    purchase_units: [{
+      amount: {
+        currency_code: (store.currency || 'usd').toUpperCase(),
+        value: (data.total / 100).toFixed(2),
+        breakdown: {
+          item_total: { currency_code: (store.currency || 'usd').toUpperCase(), value: (data.subtotal / 100).toFixed(2) },
+          shipping: { currency_code: (store.currency || 'usd').toUpperCase(), value: (data.shippingCost / 100).toFixed(2) },
+          tax_total: { currency_code: (store.currency || 'usd').toUpperCase(), value: (data.taxAmount / 100).toFixed(2) },
+          ...(data.discountAmount > 0 ? { discount: { currency_code: (store.currency || 'usd').toUpperCase(), value: (data.discountAmount / 100).toFixed(2) } } : {}),
+        },
+      },
+      items: purchaseItems,
+      custom_id: JSON.stringify({
+        store_id: storeId,
+        reservation_ids: reservationIds,
+        discount_id: data.discountId || null,
+        discount_amount: data.discountAmount || 0,
+        gift_card_id: data.giftCardId || null,
+        gift_card_amount: data.giftCardAmount || 0,
+      }),
+    }],
+    application_context: {
+      return_url: data.successUrl || `https://${store.domain || 'webnari.io'}?checkout=success`,
+      cancel_url: data.cancelUrl || `https://${store.domain || 'webnari.io'}?checkout=cancelled`,
+      brand_name: store.name || 'Store',
+      shipping_preference: 'NO_SHIPPING',
+      user_action: 'PAY_NOW',
+    },
+  };
+
+  const ppRes = await fetch(`${auth.base}/v2/checkout/orders`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${auth.token}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(orderBody),
+  });
+
+  if (!ppRes.ok) {
+    const err = await ppRes.text();
+    console.error('PayPal create order failed:', ppRes.status, err);
+    return json({ error: 'Failed to create PayPal order' }, 500, corsOrigin);
+  }
+
+  const ppOrder = await ppRes.json();
+  const approveUrl = ppOrder.links?.find(l => l.rel === 'approve')?.href;
+
+  return json({
+    checkoutUrl: approveUrl,
+    paypalOrderId: ppOrder.id,
+    provider: 'paypal',
+  }, 200, corsOrigin);
+}
+
+async function handlePayPalCapture(request, sb, env, storeId, corsOrigin) {
+  const body = await request.json();
+  const { paypalOrderId } = body;
+
+  if (!paypalOrderId) return json({ error: 'paypalOrderId required' }, 400, corsOrigin);
+
+  const store = await sb.query('stores', {
+    filters: { id: `eq.${storeId}` }, single: true,
+  });
+  if (!store) return json({ error: 'Store not found' }, 404, corsOrigin);
+
+  const settings = store.settings || {};
+  const auth = await getPayPalAccessToken(settings.paypal_client_id, settings.paypal_client_secret, settings.paypal_mode || 'sandbox');
+  if (!auth) return json({ error: 'PayPal auth failed' }, 500, corsOrigin);
+
+  const captureRes = await fetch(`${auth.base}/v2/checkout/orders/${paypalOrderId}/capture`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${auth.token}`,
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!captureRes.ok) {
+    const err = await captureRes.text();
+    console.error('PayPal capture failed:', captureRes.status, err);
+    return json({ error: 'Payment capture failed' }, 500, corsOrigin);
+  }
+
+  const capture = await captureRes.json();
+  if (capture.status !== 'COMPLETED') {
+    return json({ error: `Payment not completed: ${capture.status}` }, 400, corsOrigin);
+  }
+
+  // Parse custom_id metadata
+  const pu = capture.purchase_units?.[0];
+  let meta = {};
+  try { meta = JSON.parse(pu?.payments?.captures?.[0]?.custom_id || pu?.custom_id || '{}'); } catch {}
+
+  const payer = capture.payer || {};
+  const customerEmail = payer.email_address || '';
+  const customerName = payer.name ? `${payer.name.given_name || ''} ${payer.name.surname || ''}`.trim() : '';
+
+  // Process reservations → create order
+  const reservationIds = meta.reservation_ids || [];
+  const reservations = [];
+  for (const rid of reservationIds) {
+    const r = await sb.query('inventory_reservations', { filters: { id: `eq.${rid}` }, single: true });
+    if (r && r.status === 'held') reservations.push(r);
+  }
+
+  const orderNumber = await generateOrderNumber(sb, storeId);
+  const captureAmount = pu?.payments?.captures?.[0]?.amount;
+  const totalCents = Math.round(parseFloat(captureAmount?.value || '0') * 100);
+
+  const [order] = await sb.insert('orders', {
+    store_id: storeId,
+    order_number: orderNumber,
+    payment_provider: 'paypal',
+    paypal_order_id: paypalOrderId,
+    status: 'confirmed',
+    customer_email: customerEmail,
+    customer_name: customerName,
+    subtotal: totalCents,
+    total: totalCents,
+    discount_amount: meta.discount_amount || 0,
+    discount_label: meta.discount_id ? 'Discount applied' : null,
+    gift_card_amount: meta.gift_card_amount || 0,
+  });
+
+  // Process line items from reservations
+  const orderItems = [];
+  for (const res of reservations) {
+    const product = await sb.query('products', { filters: { id: `eq.${res.product_id}` }, single: true });
+    let price = product?.price || 0;
+    let variantName = null;
+
+    if (res.variant_id) {
+      const variant = await sb.query('variants', { filters: { id: `eq.${res.variant_id}` }, single: true });
+      if (variant) { price = variant.price || price; variantName = variant.name; }
+    }
+
+    orderItems.push({
+      order_id: order.id,
+      store_id: storeId,
+      product_id: res.product_id,
+      variant_id: res.variant_id,
+      product_name: product?.name || 'Unknown',
+      variant_name: variantName,
+      price,
+      quantity: res.quantity,
+    });
+
+    // Decrement stock
+    if (res.variant_id) {
+      const variant = await sb.query('variants', { filters: { id: `eq.${res.variant_id}` }, single: true });
+      if (variant) {
+        await sb.update('variants', { id: `eq.${res.variant_id}` }, { stock_quantity: Math.max(0, variant.stock_quantity - res.quantity) });
+      }
+    } else if (product) {
+      await sb.update('products', { id: `eq.${res.product_id}` }, { stock_quantity: Math.max(0, product.stock_quantity - res.quantity) });
+    }
+
+    await sb.update('inventory_reservations', { id: `eq.${res.id}` }, { status: 'completed' });
+  }
+
+  if (orderItems.length > 0) {
+    await sb.insert('order_items', orderItems);
+
+    // Discount bookkeeping
+    if (meta.discount_id) {
+      try {
+        const disc = await sb.query('discounts', { filters: { id: `eq.${meta.discount_id}` }, single: true });
+        if (disc) await sb.update('discounts', { id: `eq.${meta.discount_id}` }, { used_count: (disc.used_count || 0) + 1 });
+      } catch {}
+    }
+
+    // Gift card bookkeeping
+    if (meta.gift_card_id && meta.gift_card_amount > 0) {
+      try {
+        const gc = await sb.query('gift_cards', { filters: { id: `eq.${meta.gift_card_id}` }, single: true });
+        if (gc) {
+          const newBal = Math.max(0, gc.current_balance - meta.gift_card_amount);
+          await sb.update('gift_cards', { id: `eq.${meta.gift_card_id}` }, { current_balance: newBal, is_active: newBal > 0 });
+        }
+      } catch {}
+    }
+
+    // Send email, sync QB, emit webhooks (non-blocking)
+    sendOrderConfirmationEmail(sb, env, storeId, order, orderItems).catch(err => console.error('Order email (PayPal) failed:', err));
+    syncOrderToQuickBooks(sb, env, storeId, order, orderItems).catch(err => console.error('QB sync (PayPal) failed:', err));
+    emitEvent(sb, env, storeId, 'order.created', order).catch(err => console.error('Webhook emit error:', err));
+    dispatchToIntegrations(sb, env, storeId, 'order.created', order).catch(err => console.error('Integration dispatch error:', err));
+
+    if (customerEmail) {
+      sb.update('saved_carts', { recovered: true }, { store_id: `eq.${storeId}`, email: `eq.${customerEmail}`, recovered: 'eq.false' }).catch(() => {});
+    }
+  }
+
+  return json({ success: true, orderId: order.id, orderNumber }, 200, corsOrigin);
+}
+
+async function handlePayPalWebhook(request, sb, env, corsOrigin) {
+  // PayPal IPN/webhook — mainly for dispute resolution and refund tracking
+  const body = await request.json();
+  const eventType = body.event_type;
+
+  if (eventType === 'PAYMENT.CAPTURE.REFUNDED') {
+    const captureId = body.resource?.id;
+    if (captureId) {
+      console.log('PayPal refund received for capture:', captureId);
+      // Could update order status here if needed
+    }
+  }
+
+  return json({ received: true }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
 //  ORDERS
 // ═══════════════════════════════════════════════════════════════
 
@@ -2660,7 +2963,11 @@ function calculateShippingFromRules(rules, subtotal) {
 // ═══════════════════════════════════════════════════════════
 
 async function handleShippingRates(request, sb, env, storeId, corsOrigin) {
-  const apiKey = env.SHIPPO_API_KEY;
+  // Check per-store Shippo key first, then fall back to env
+  const storeForKey = await sb.query('stores', {
+    filters: { id: `eq.${storeId}` }, single: true, select: 'settings',
+  });
+  const apiKey = storeForKey?.settings?.shippo_api_key || env.SHIPPO_API_KEY;
   if (!apiKey) {
     return json({ error: 'Carrier rates not configured' }, 501, corsOrigin);
   }
@@ -3513,11 +3820,24 @@ async function handleAdminExportSubscribers(request, sb, env, storeId, corsOrigi
 //  ADMIN — STORE SETTINGS
 // ═══════════════════════════════════════════════════════════════
 
+async function handleAdminGetStore(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const store = await sb.query('stores', {
+    filters: { id: `eq.${storeId}` },
+    single: true,
+  });
+  if (!store) return json({ error: 'Store not found' }, 404, corsOrigin);
+
+  return json(store, 200, corsOrigin);
+}
+
 async function handleAdminUpdateStore(request, sb, env, storeId, corsOrigin) {
   if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const body = await request.json();
-  const allowed = ['name', 'domain', 'currency', 'payment_provider', 'shipping_rules', 'settings'];
+  const allowed = ['name', 'domain', 'currency', 'payment_provider', 'shipping_rules', 'settings',
+    'seo_title', 'seo_description', 'social_image_url', 'logo_url', 'business_phone', 'business_address', 'social_links', 'business_type'];
   const updates = {};
   for (const key of allowed) {
     if (body[key] !== undefined) updates[key] = body[key];
@@ -6777,6 +7097,10 @@ async function handleAbandonedCartCron(env) {
     const store = stores[cart.store_id];
     if (!store) continue;
 
+    // Respect email notification toggles
+    const toggles = store.settings?.email_notifications || {};
+    if (toggles.abandonedCart === false) continue;
+
     const storeName = store.name || 'Store';
     const domain = store.domain || store.settings?.domain || 'webnari.io';
     const shopUrl = `https://${domain}`;
@@ -6790,6 +7114,7 @@ async function handleAbandonedCartCron(env) {
       subject: `${storeName} — You left items in your cart!`,
       html,
       replyTo: storeEmail,
+      storeSettings: store?.settings,
     });
 
     // Mark as sent
@@ -6801,6 +7126,71 @@ async function handleAbandonedCartCron(env) {
   }
 
   console.log(`Abandoned cart cron: sent ${sent} recovery emails`);
+}
+
+async function handleCartRecoveryStats(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) {
+    return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  }
+
+  const now = new Date();
+  const oneDayAgo = new Date(now - 24 * 60 * 60 * 1000).toISOString();
+  const sevenDaysAgo = new Date(now - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+  // All carts for this store
+  const allCarts = await sb.query('saved_carts', {
+    filters: { store_id: `eq.${storeId}` },
+    select: 'id,recovered,recovery_email_sent_at,total,created_at',
+  }) || [];
+
+  const totalCarts = allCarts.length;
+
+  // Abandoned in last 24h: created in last 24h and not recovered
+  const abandoned24h = allCarts.filter(c =>
+    c.created_at >= oneDayAgo && !c.recovered
+  ).length;
+
+  // Recovery emails sent in last 24h
+  const emailsSent24h = allCarts.filter(c =>
+    c.recovery_email_sent_at && c.recovery_email_sent_at >= oneDayAgo
+  ).length;
+
+  // Recovery emails sent in last 7 days
+  const emailsSent7d = allCarts.filter(c =>
+    c.recovery_email_sent_at && c.recovery_email_sent_at >= sevenDaysAgo
+  ).length;
+
+  // Total emails ever sent
+  const totalEmailsSent = allCarts.filter(c => c.recovery_email_sent_at).length;
+
+  // Recovered all time
+  const recoveredTotal = allCarts.filter(c => c.recovered).length;
+
+  // Recovered in last 7 days
+  const recovered7d = allCarts.filter(c =>
+    c.recovered && c.created_at >= sevenDaysAgo
+  ).length;
+
+  // Recovery rate: recovered / total emails sent
+  const recoveryRate = totalEmailsSent > 0
+    ? Math.round((recoveredTotal / totalEmailsSent) * 10000) / 100
+    : 0;
+
+  // Pending recovery: have email, not recovered, no recovery email sent yet
+  const pendingRecovery = allCarts.filter(c =>
+    !c.recovered && !c.recovery_email_sent_at
+  ).length;
+
+  return json({
+    totalCarts,
+    abandoned24h,
+    emailsSent24h,
+    emailsSent7d,
+    recoveredTotal,
+    recovered7d,
+    recoveryRate,
+    pendingRecovery,
+  }, 200, corsOrigin);
 }
 
 
@@ -7119,6 +7509,7 @@ async function handleForgotPassword(request, sb, env, storeId, corsOrigin) {
       to: customer.email,
       subject: `${storeName} — Reset Your Password`,
       html,
+      storeSettings: store?.settings,
     }).catch(err => console.error('Password reset email failed:', err));
   }
 
@@ -9110,7 +9501,109 @@ async function dispatchToIntegrations(sb, env, storeId, eventType, data) {
     sendTwilioEventNotification(sb, storeId, eventType, data).catch(err =>
       console.error('Twilio dispatch error:', err)
     );
+
+    // Mailchimp: sync customer on order.created
+    if (eventType === 'order.created' && data.customer_email) {
+      syncCustomerToMailchimp(sb, storeId, data).catch(err =>
+        console.error('Mailchimp sync error:', err)
+      );
+    }
+
+    // Klaviyo: track event on order.created
+    if (eventType === 'order.created' && data.customer_email) {
+      trackKlaviyoEvent(sb, storeId, eventType, data).catch(err =>
+        console.error('Klaviyo track error:', err)
+      );
+    }
   } catch (err) {
     console.error('Integration dispatch error:', err);
+  }
+}
+
+async function syncCustomerToMailchimp(sb, storeId, order) {
+  const store = await sb.query('stores', { filters: { id: `eq.${storeId}` }, single: true, select: 'settings' });
+  const settings = store?.settings || {};
+  const apiKey = settings.mailchimp_api_key;
+  if (!apiKey) return;
+
+  // Extract datacenter from API key (format: key-dc)
+  const dc = apiKey.split('-').pop() || 'us1';
+  const listId = settings.mailchimp_list_id;
+  if (!listId) return;
+
+  const nameParts = (order.customer_name || '').split(' ');
+  const body = {
+    email_address: order.customer_email,
+    status_if_new: 'subscribed',
+    merge_fields: {
+      FNAME: nameParts[0] || '',
+      LNAME: nameParts.slice(1).join(' ') || '',
+    },
+    tags: ['customer'],
+  };
+
+  const res = await fetch(`https://${dc}.api.mailchimp.com/3.0/lists/${listId}/members/${order.customer_email}`, {
+    method: 'PUT',
+    headers: {
+      'Authorization': `apikey ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    console.error('Mailchimp sync failed:', res.status, err);
+  }
+}
+
+async function trackKlaviyoEvent(sb, storeId, eventType, order) {
+  const store = await sb.query('stores', { filters: { id: `eq.${storeId}` }, single: true, select: 'settings,name' });
+  const settings = store?.settings || {};
+  const apiKey = settings.klaviyo_api_key;
+  if (!apiKey) return;
+
+  const eventName = eventType === 'order.created' ? 'Placed Order' : eventType;
+  const body = {
+    data: {
+      type: 'event',
+      attributes: {
+        metric: { data: { type: 'metric', attributes: { name: eventName } } },
+        profile: {
+          data: {
+            type: 'profile',
+            attributes: {
+              email: order.customer_email,
+              first_name: (order.customer_name || '').split(' ')[0] || undefined,
+              last_name: (order.customer_name || '').split(' ').slice(1).join(' ') || undefined,
+            },
+          },
+        },
+        properties: {
+          OrderId: order.id,
+          OrderNumber: order.order_number,
+          Value: (order.total || 0) / 100,
+          Currency: 'USD',
+          StoreName: store?.name || 'Store',
+        },
+        value: (order.total || 0) / 100,
+        time: new Date().toISOString(),
+      },
+    },
+  };
+
+  const res = await fetch('https://a.klaviyo.com/api/events/', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Klaviyo-API-Key ${apiKey}`,
+      'Content-Type': 'application/json',
+      'revision': '2024-02-15',
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    console.error('Klaviyo track failed:', res.status, err);
   }
 }

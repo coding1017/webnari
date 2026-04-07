@@ -64,8 +64,22 @@ export function Navbar() {
           </div>
 
           <Link
+            href="/account"
+            className={cn(
+              "relative flex items-center justify-center w-[42px] h-[42px] ml-3 lg:ml-3 max-lg:ml-auto rounded-[12px] hover:bg-[rgba(168,85,247,0.08)] transition-colors",
+              pathname.startsWith("/account") && "bg-[rgba(168,85,247,0.08)]"
+            )}
+            aria-label="Account"
+          >
+            <svg className="w-[20px] h-[20px] text-ww-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" />
+              <circle cx="12" cy="7" r="4" />
+            </svg>
+          </Link>
+
+          <Link
             href="/wishlist"
-            className="relative flex items-center justify-center w-[42px] h-[42px] ml-3 lg:ml-3 max-lg:ml-auto rounded-[12px] hover:bg-[rgba(168,85,247,0.08)] transition-colors"
+            className="relative flex items-center justify-center w-[42px] h-[42px] ml-1 rounded-[12px] hover:bg-[rgba(168,85,247,0.08)] transition-colors"
             aria-label="Wishlist"
           >
             <svg className="w-[20px] h-[20px] text-ww-text" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

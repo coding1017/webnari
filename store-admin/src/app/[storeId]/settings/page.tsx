@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { getStoreConfig, updateStore, upsertTaxRate } from "@/app/[storeId]/actions/commerce-actions";
+import { getStoreConfig, updateStore, upsertTaxRate, calculateTax } from "@/app/[storeId]/actions/commerce-actions";
 
 interface ShippingRule {
   min_total: number;
@@ -39,6 +39,23 @@ export default function SettingsPage() {
   const [newRate, setNewRate] = useState("");
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
+
+  // Tax Rate Lookup
+  const [lookupZip, setLookupZip] = useState("");
+  const [lookupAmount, setLookupAmount] = useState("");
+  const [lookupLoading, setLookupLoading] = useState(false);
+  const [lookupError, setLookupError] = useState("");
+  const [lookupResult, setLookupResult] = useState<{
+    taxAmount: number;
+    rate: number;
+    stateRate: number;
+    countyRate: number;
+    cityRate: number;
+    specialRate: number;
+    label: string;
+    state: string;
+    zip: string;
+  } | null>(null);
 
   useEffect(() => {
     load();
@@ -78,6 +95,25 @@ export default function SettingsPage() {
 
   function removeShippingRule(i: number) {
     setShippingRules(shippingRules.filter((_, idx) => idx !== i));
+  }
+
+  async function lookUpTax() {
+    if (!lookupZip || lookupZip.length !== 5) {
+      setLookupError("Enter a valid 5-digit zip code");
+      return;
+    }
+    setLookupLoading(true);
+    setLookupError("");
+    setLookupResult(null);
+    try {
+      const amountDollars = parseFloat(lookupAmount || "100");
+      const subtotalCents = Math.round(amountDollars * 100);
+      const result = await calculateTax(storeId, subtotalCents, lookupZip);
+      setLookupResult(result);
+    } catch (err) {
+      setLookupError((err as Error).message || "Tax lookup failed");
+    }
+    setLookupLoading(false);
   }
 
   async function saveSettings() {
@@ -239,6 +275,105 @@ export default function SettingsPage() {
             Add Rate
           </button>
         </div>
+      </div>
+
+      {/* Tax Rate Lookup */}
+      <div className="card" style={{ marginBottom: "24px" }}>
+        <div className="flex items-center gap-3" style={{ marginBottom: "20px" }}>
+          <div style={{ width: "36px", height: "36px", borderRadius: "var(--radius-sm)", background: "#cffafe", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <svg style={{ width: "18px", height: "18px" }} fill="none" viewBox="0 0 24 24" stroke="#06b6d4" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 15.75l-2.489-2.489m0 0a3.375 3.375 0 10-4.773-4.773 3.375 3.375 0 004.774 4.774zM21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+          <div>
+            <h2 className="heading-sm" style={{ marginBottom: 0 }}>Tax Rate Lookup</h2>
+            <p style={{ fontSize: "12px", color: "var(--text-tertiary)", margin: 0 }}>Look up the exact tax rate for any US zip code</p>
+          </div>
+        </div>
+
+        <div className="flex gap-3 items-end" style={{ marginBottom: lookupResult || lookupError ? "16px" : 0 }}>
+          <div style={{ width: "120px" }}>
+            <label>Zip Code</label>
+            <input
+              value={lookupZip}
+              onChange={(e) => setLookupZip(e.target.value.replace(/\D/g, "").slice(0, 5))}
+              placeholder="33101"
+              maxLength={5}
+            />
+          </div>
+          <div style={{ width: "140px" }}>
+            <label>Order Amount ($)</label>
+            <input
+              type="number"
+              step="0.01"
+              value={lookupAmount}
+              onChange={(e) => setLookupAmount(e.target.value)}
+              placeholder="100.00"
+            />
+          </div>
+          <button
+            onClick={lookUpTax}
+            disabled={lookupLoading}
+            className="btn btn-secondary btn-sm"
+            style={{ fontSize: "12px", minHeight: "44px" }}
+          >
+            {lookupLoading ? "Looking up..." : "Look Up"}
+          </button>
+        </div>
+
+        {lookupError && (
+          <div className="alert alert-error" style={{ borderRadius: "var(--radius-sm)" }}>
+            {lookupError}
+          </div>
+        )}
+
+        {lookupResult && (
+          <div style={{ padding: "16px", background: "var(--bg-grouped)", borderRadius: "var(--radius-sm)" }}>
+            <div className="grid grid-cols-2 gap-4" style={{ marginBottom: "12px" }}>
+              <div>
+                <p style={{ fontSize: "12px", color: "var(--text-tertiary)", margin: "0 0 2px" }}>Total Tax Rate</p>
+                <p style={{ fontSize: "20px", fontWeight: 700, margin: 0, color: "#06b6d4" }}>
+                  {(lookupResult.rate * 100).toFixed(2)}%
+                </p>
+              </div>
+              <div>
+                <p style={{ fontSize: "12px", color: "var(--text-tertiary)", margin: "0 0 2px" }}>Tax Amount</p>
+                <p style={{ fontSize: "20px", fontWeight: 700, margin: 0 }}>
+                  ${(lookupResult.taxAmount / 100).toFixed(2)}
+                </p>
+              </div>
+            </div>
+
+            {lookupResult.label && (
+              <p style={{ fontSize: "13px", color: "var(--text-secondary)", margin: "0 0 12px" }}>
+                {lookupResult.label}{lookupResult.state ? ` (${lookupResult.state})` : ""}
+              </p>
+            )}
+
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+              {lookupResult.stateRate > 0 && (
+                <span style={{ fontSize: "12px", padding: "4px 10px", borderRadius: "var(--radius-sm)", background: "var(--bg-secondary)", color: "var(--text-secondary)" }}>
+                  State: {(lookupResult.stateRate * 100).toFixed(2)}%
+                </span>
+              )}
+              {lookupResult.countyRate > 0 && (
+                <span style={{ fontSize: "12px", padding: "4px 10px", borderRadius: "var(--radius-sm)", background: "var(--bg-secondary)", color: "var(--text-secondary)" }}>
+                  County: {(lookupResult.countyRate * 100).toFixed(2)}%
+                </span>
+              )}
+              {lookupResult.cityRate > 0 && (
+                <span style={{ fontSize: "12px", padding: "4px 10px", borderRadius: "var(--radius-sm)", background: "var(--bg-secondary)", color: "var(--text-secondary)" }}>
+                  City: {(lookupResult.cityRate * 100).toFixed(2)}%
+                </span>
+              )}
+              {lookupResult.specialRate > 0 && (
+                <span style={{ fontSize: "12px", padding: "4px 10px", borderRadius: "var(--radius-sm)", background: "var(--bg-secondary)", color: "var(--text-secondary)" }}>
+                  Special: {(lookupResult.specialRate * 100).toFixed(2)}%
+                </span>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Save */}

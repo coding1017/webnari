@@ -40,6 +40,10 @@ export class CommerceClient {
     return this.fetch('/api/admin/stats');
   }
 
+  async getCartRecoveryStats() {
+    return this.fetch('/api/admin/cart-recovery/stats');
+  }
+
   // ── Products ──────────────────────────────────────────
   async getProducts(params?: { search?: string; category?: string }) {
     const qs = new URLSearchParams();
@@ -108,6 +112,14 @@ export class CommerceClient {
       method: 'PATCH',
       body: JSON.stringify(data),
     });
+  }
+
+  async getUnfulfilledOrders() {
+    return this.fetch('/api/admin/orders?status=confirmed,processing&limit=50');
+  }
+
+  async getShippedOrders() {
+    return this.fetch('/api/admin/orders?status=shipped&limit=20');
   }
 
   // ── Inventory ─────────────────────────────────────────
@@ -410,6 +422,103 @@ export class CommerceClient {
     });
   }
 
+  // ── GA4 ───────────────────────────────────────────────
+  async configureGA4(data: { measurement_id: string; api_secret: string }) {
+    return this.fetch('/api/admin/integrations/ga4/configure', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async disconnectGA4() {
+    return this.fetch('/api/admin/integrations/ga4/disconnect', { method: 'DELETE' });
+  }
+
+  async testGA4() {
+    return this.fetch('/api/admin/integrations/ga4/test', { method: 'POST' });
+  }
+
+  // ── Twilio SMS ────────────────────────────────────────
+  async configureTwilio(data: { account_sid: string; auth_token: string; from_number: string; owner_phone: string; notify_events?: string[] }) {
+    return this.fetch('/api/admin/integrations/twilio/configure', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async disconnectTwilio() {
+    return this.fetch('/api/admin/integrations/twilio/disconnect', { method: 'DELETE' });
+  }
+
+  async testTwilio() {
+    return this.fetch('/api/admin/integrations/twilio/test', { method: 'POST' });
+  }
+
+  async updateTwilioSettings(data: { notify_events?: string[]; owner_phone?: string }) {
+    return this.fetch('/api/admin/integrations/twilio/settings', {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
+  // ── Apps ──────────────────────────────────────────────
+  async getApps() {
+    return this.fetch('/api/admin/apps');
+  }
+
+  // ── Webhooks ──────────────────────────────────────────
+  async getWebhooks() {
+    return this.fetch('/api/admin/webhooks');
+  }
+
+  async createWebhook(data: { url: string; events: string[]; description?: string }) {
+    return this.fetch('/api/admin/webhooks', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async getWebhook(id: string) {
+    return this.fetch(`/api/admin/webhooks/${id}`);
+  }
+
+  async updateWebhook(id: string, data: Record<string, unknown>) {
+    return this.fetch(`/api/admin/webhooks/${id}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteWebhook(id: string) {
+    return this.fetch(`/api/admin/webhooks/${id}`, { method: 'DELETE' });
+  }
+
+  async getWebhookDeliveries(id: string, params?: { limit?: number; offset?: number }) {
+    const qs = new URLSearchParams();
+    if (params?.limit) qs.set('limit', params.limit.toString());
+    if (params?.offset) qs.set('offset', params.offset.toString());
+    const query = qs.toString();
+    return this.fetch(`/api/admin/webhooks/${id}/deliveries${query ? `?${query}` : ''}`);
+  }
+
+  async testWebhook(id: string) {
+    return this.fetch(`/api/admin/webhooks/${id}/test`, { method: 'POST' });
+  }
+
+  async getWebhookEvents() {
+    return this.fetch('/api/admin/webhook-events');
+  }
+
+  // ── Store ─────────────────────────────────────────────
+  async getStore() {
+    return this.fetch('/api/admin/store');
+  }
+
+  // ── SEO ───────────────────────────────────────────────
+  async getSeoHealth() {
+    return this.fetch('/api/admin/seo/health');
+  }
+
   // ── Shipping ──────────────────────────────────────────
   async calculateShipping(subtotal: number) {
     return this.fetch('/api/shipping/calculate', {
@@ -418,10 +527,10 @@ export class CommerceClient {
     });
   }
 
-  async calculateTax(subtotal: number, state: string) {
+  async calculateTax(subtotal: number, toZip: string) {
     return this.fetch('/api/tax/calculate', {
       method: 'POST',
-      body: JSON.stringify({ subtotal, state }),
+      body: JSON.stringify({ subtotal, toZip }),
     });
   }
 }
