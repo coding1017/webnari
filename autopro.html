@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IronWorks Auto — Full-Service Auto Repair Miami</title>
+  <meta name="description" content="IronWorks Auto delivers honest, expert auto repair in Miami. Engine diagnostics, brake service, transmission, A/C repair, and more. Call (305) 555-1150." />
+  <meta property="og:title" content="IronWorks Auto — Full-Service Auto Repair Miami" />
+  <meta property="og:description" content="Expert auto repair in South Florida. Honest diagnostics, fair prices, certified mechanics." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --black: #0C0C0C;
+      --dark: #151515;
+      --surface: #1E1E1E;
+      --surface2: #282828;
+      --border: #333;
+      --red: #DC2626;
+      --red2: #EF4444;
+      --red3: #FCA5A5;
+      --steel: #71717A;
+      --steel2: #A1A1AA;
+      --yellow: #EAB308;
+      --white: #FAFAFA;
+      --text: #A1A1AA;
+      --font-head: 'Oswald', sans-serif;
+      --font-body: 'Source Sans 3', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--black); color: var(--text); font-family: var(--font-body); font-size: 16px; line-height: 1.6; overflow-x: hidden; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ===== NAV — Heavy industrial top bar ===== */
+    .top-bar {
+      background: var(--red); color: #fff; text-align: center; padding: 8px 16px;
+      font-family: var(--font-head); font-size: 13px; font-weight: 500; letter-spacing: 0.08em;
+    }
+    .top-bar a { color: var(--yellow); font-weight: 600; }
+    nav {
+      position: sticky; top: 0; z-index: 1000;
+      background: var(--black); border-bottom: 3px solid var(--red);
+      height: 70px; display: flex; align-items: center;
+    }
+    .nav-inner {
+      max-width: 1300px; margin: 0 auto; padding: 0 32px;
+      width: 100%; display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: var(--font-head); font-size: 24px; font-weight: 700;
+      color: var(--white); letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .nav-logo span { color: var(--red); }
+    .nav-links { display: flex; align-items: center; gap: 28px; }
+    .nav-links a {
+      font-family: var(--font-head); font-size: 14px; font-weight: 500;
+      color: var(--steel2); letter-spacing: 0.06em; text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--white); }
+    .nav-right { display: flex; align-items: center; gap: 20px; }
+    .nav-phone {
+      font-family: var(--font-head); font-size: 14px; font-weight: 600;
+      color: var(--yellow); letter-spacing: 0.04em;
+    }
+    .nav-cta {
+      background: var(--red); color: #fff; font-family: var(--font-head); font-weight: 600;
+      font-size: 13px; padding: 10px 24px; letter-spacing: 0.08em; text-transform: uppercase;
+      border: none; cursor: pointer; transition: background 0.2s; clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    }
+    .nav-cta:hover { background: var(--red2); }
+    .hamburger {
+      display: none; background: none; border: none; cursor: pointer;
+      width: 32px; height: 24px; position: relative;
+    }
+    .hamburger span {
+      display: block; width: 100%; height: 3px; background: var(--white);
+      position: absolute; left: 0; transition: transform 0.3s, opacity 0.3s;
+    }
+    .hamburger span:nth-child(1) { top: 0; }
+    .hamburger span:nth-child(2) { top: 50%; transform: translateY(-50%); }
+    .hamburger span:nth-child(3) { bottom: 0; }
+    .hamburger.open span:nth-child(1) { transform: translateY(10px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-11px) rotate(-45deg); }
+
+    .mobile-menu {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--black); z-index: 999; padding: 100px 32px 32px;
+      display: none; flex-direction: column; gap: 4px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: var(--font-head); font-size: 28px; font-weight: 600;
+      color: var(--steel2); padding: 12px 0; text-transform: uppercase;
+      letter-spacing: 0.06em; border-bottom: 1px solid var(--border);
+      transition: color 0.2s;
+    }
+    .mobile-menu a:hover { color: var(--red); }
+    .mobile-menu .mobile-cta {
+      margin-top: 24px; background: var(--red); color: #fff; text-align: center;
+      padding: 16px; font-family: var(--font-head); font-weight: 600;
+      font-size: 16px; letter-spacing: 0.08em;
+    }
+
+    /* ===== HERO — Diagonal split with bold text ===== */
+    .hero {
+      min-height: 100vh; position: relative; overflow: hidden;
+      display: flex; align-items: center; padding: 100px 32px;
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, var(--black) 55%, var(--red) 55%);
+    }
+    .hero-bg::after {
+      content: ''; position: absolute; inset: 0;
+      background: repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.02) 40px, rgba(255,255,255,0.02) 41px);
+    }
+    .hero-content { max-width: 1300px; margin: 0 auto; width: 100%; position: relative; z-index: 1; }
+    .hero-tag {
+      display: inline-block; background: var(--red); color: #fff;
+      font-family: var(--font-head); font-size: 12px; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      padding: 6px 20px; margin-bottom: 24px;
+      clip-path: polygon(6px 0, 100% 0, calc(100% - 6px) 100%, 0 100%);
+    }
+    .hero-title {
+      font-family: var(--font-head); font-size: clamp(48px, 8vw, 96px); font-weight: 700;
+      color: var(--white); line-height: 0.95; text-transform: uppercase;
+      margin-bottom: 24px; max-width: 700px;
+    }
+    .hero-title .outline {
+      -webkit-text-stroke: 2px var(--white); color: transparent;
+    }
+    .hero-desc {
+      font-size: 18px; color: var(--steel2); max-width: 480px; line-height: 1.7;
+      margin-bottom: 40px; font-weight: 300;
+    }
+    .hero-btns { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 56px; }
+    .btn-red {
+      background: var(--red); color: #fff; font-family: var(--font-head); font-weight: 600;
+      font-size: 15px; padding: 16px 36px; letter-spacing: 0.08em; text-transform: uppercase;
+      transition: background 0.2s; display: inline-flex; align-items: center; gap: 10px;
+      clip-path: polygon(8px 0, 100% 0, calc(100% - 8px) 100%, 0 100%);
+    }
+    .btn-red:hover { background: var(--red2); }
+    .btn-wire {
+      border: 2px solid var(--steel); color: var(--white); font-family: var(--font-head); font-weight: 600;
+      font-size: 15px; padding: 14px 36px; letter-spacing: 0.08em; text-transform: uppercase;
+      transition: border-color 0.2s; display: inline-flex; align-items: center; gap: 10px;
+    }
+    .btn-wire:hover { border-color: var(--red); }
+    .hero-stats { display: flex; gap: 48px; }
+    .hero-stat { border-left: 3px solid var(--red); padding-left: 16px; }
+    .hero-stat-num { font-family: var(--font-head); font-size: 36px; font-weight: 700; color: var(--white); }
+    .hero-stat-text { font-size: 13px; color: var(--steel); text-transform: uppercase; letter-spacing: 0.06em; }
+
+    /* ===== SECTION ===== */
+    .section { padding: 100px 32px; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .section-tag {
+      display: inline-block; background: rgba(220,38,38,0.12); color: var(--red);
+      font-family: var(--font-head); font-size: 12px; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase; padding: 6px 16px; margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: var(--font-head); font-size: clamp(32px, 5vw, 52px); font-weight: 700;
+      color: var(--white); line-height: 1.05; text-transform: uppercase; margin-bottom: 16px;
+    }
+    .section-desc { max-width: 540px; color: var(--steel); font-size: 16px; line-height: 1.7; margin-bottom: 48px; font-weight: 300; }
+
+    /* ===== SERVICES — Brutalist grid cards ===== */
+    .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--border); }
+    .svc-cell {
+      background: var(--dark); padding: 40px 32px; position: relative;
+      transition: background 0.3s;
+    }
+    .svc-cell:hover { background: var(--surface); }
+    .svc-cell::before {
+      content: attr(data-num); position: absolute; top: 16px; right: 20px;
+      font-family: var(--font-head); font-size: 64px; font-weight: 700;
+      color: rgba(220,38,38,0.08); line-height: 1;
+    }
+    .svc-cell h3 {
+      font-family: var(--font-head); font-size: 22px; font-weight: 600;
+      color: var(--white); text-transform: uppercase; margin-bottom: 10px;
+      position: relative;
+    }
+    .svc-cell h3::after {
+      content: ''; display: block; width: 32px; height: 3px; background: var(--red);
+      margin-top: 8px;
+    }
+    .svc-cell p { font-size: 14px; color: var(--steel); line-height: 1.7; position: relative; }
+
+    /* ===== WHY US — Split dark/red ===== */
+    .why-section { background: var(--dark); }
+    .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+    .why-left {
+      background: var(--red); padding: 64px 48px; display: flex; flex-direction: column; justify-content: center;
+    }
+    .why-left h2 {
+      font-family: var(--font-head); font-size: clamp(28px, 4vw, 44px); font-weight: 700;
+      color: #fff; text-transform: uppercase; line-height: 1.1; margin-bottom: 16px;
+    }
+    .why-left p { color: rgba(255,255,255,0.75); font-size: 16px; line-height: 1.7; font-weight: 300; }
+    .why-right { padding: 48px; display: flex; flex-direction: column; gap: 0; }
+    .why-item {
+      display: flex; gap: 20px; padding: 28px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .why-item:last-child { border-bottom: none; }
+    .why-item-num {
+      font-family: var(--font-head); font-size: 32px; font-weight: 700;
+      color: var(--red); line-height: 1; min-width: 40px;
+    }
+    .why-item h4 { font-family: var(--font-head); font-size: 16px; font-weight: 600; color: var(--white); text-transform: uppercase; margin-bottom: 4px; }
+    .why-item p { font-size: 14px; color: var(--steel); line-height: 1.6; }
+
+    /* ===== PROCESS — Horizontal with connectors ===== */
+    .process-track { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; position: relative; }
+    .process-track::before {
+      content: ''; position: absolute; top: 32px; left: 10%; right: 10%;
+      height: 3px; background: var(--border);
+    }
+    .process-card { text-align: center; padding: 0 16px; position: relative; }
+    .process-dot {
+      width: 64px; height: 64px; border-radius: 0; background: var(--surface);
+      border: 3px solid var(--red); margin: 0 auto 24px; position: relative; z-index: 1;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-head); font-size: 24px; font-weight: 700; color: var(--red);
+      clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+    }
+    .process-card h3 { font-family: var(--font-head); font-size: 16px; font-weight: 600; color: var(--white); text-transform: uppercase; margin-bottom: 6px; }
+    .process-card p { font-size: 13px; color: var(--steel); line-height: 1.6; }
+
+    /* ===== REVIEWS ===== */
+    .reviews-section { background: var(--surface); }
+    .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--border); }
+    .review-cell {
+      background: var(--dark); padding: 36px 28px;
+    }
+    .review-stars { display: flex; gap: 3px; margin-bottom: 16px; }
+    .review-stars svg { width: 14px; height: 14px; fill: var(--yellow); }
+    .review-cell blockquote { font-size: 14.5px; color: var(--steel2); line-height: 1.7; margin-bottom: 20px; font-style: italic; }
+    .review-name { font-family: var(--font-head); font-weight: 600; color: var(--white); font-size: 14px; text-transform: uppercase; letter-spacing: 0.04em; }
+    .review-detail { font-size: 12px; color: var(--steel); }
+
+    /* ===== FAQ ===== */
+    .faq-list { max-width: 800px; display: flex; flex-direction: column; }
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-btn {
+      width: 100%; background: none; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 24px 0; color: var(--white); font-family: var(--font-head);
+      font-size: 17px; font-weight: 600; text-align: left; text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .faq-btn svg { width: 20px; height: 20px; color: var(--red); transition: transform 0.3s; flex-shrink: 0; }
+    .faq-item.open .faq-btn svg { transform: rotate(45deg); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.35s, padding 0.35s; }
+    .faq-item.open .faq-answer { max-height: 200px; padding-bottom: 24px; }
+    .faq-answer p { font-size: 15px; color: var(--steel); line-height: 1.7; }
+
+    /* ===== AREAS ===== */
+    .areas-wrap { display: flex; flex-wrap: wrap; gap: 8px; }
+    .area-tag {
+      background: var(--surface); border: 1px solid var(--border);
+      padding: 8px 20px; font-family: var(--font-head); font-size: 13px;
+      font-weight: 500; color: var(--steel2); text-transform: uppercase;
+      letter-spacing: 0.06em; transition: border-color 0.2s, color 0.2s;
+    }
+    .area-tag:hover { border-color: var(--red); color: var(--white); }
+
+    /* ===== CONTACT ===== */
+    .contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 64px; align-items: start; }
+    .contact-info { display: flex; flex-direction: column; gap: 28px; }
+    .contact-item h4 {
+      font-family: var(--font-head); font-size: 12px; font-weight: 600;
+      color: var(--red); letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 4px;
+    }
+    .contact-item p { font-size: 15px; color: var(--steel2); }
+    .contact-form { display: flex; flex-direction: column; gap: 16px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%; background: var(--surface); border: 1px solid var(--border);
+      padding: 14px 16px; color: var(--white); font-family: var(--font-body);
+      font-size: 14px; outline: none; transition: border-color 0.2s;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--red); }
+    .form-group textarea { resize: vertical; min-height: 100px; }
+    .form-group .error-msg { color: var(--red); font-size: 12px; margin-top: 4px; display: none; }
+    .form-group.error input, .form-group.error textarea { border-color: var(--red); }
+    .form-group.error .error-msg { display: block; }
+
+    /* ===== CTA ===== */
+    .cta-section {
+      background: var(--red); padding: 80px 32px; text-align: center;
+      position: relative; overflow: hidden;
+    }
+    .cta-section::before {
+      content: 'IRONWORKS'; position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: var(--font-head); font-size: clamp(80px, 15vw, 200px); font-weight: 700;
+      color: rgba(0,0,0,0.08); text-transform: uppercase; white-space: nowrap;
+    }
+    .cta-section h2 { font-family: var(--font-head); font-size: clamp(28px, 4vw, 48px); font-weight: 700; color: #fff; text-transform: uppercase; margin-bottom: 16px; position: relative; }
+    .cta-section p { color: rgba(255,255,255,0.75); font-size: 17px; max-width: 520px; margin: 0 auto 32px; position: relative; font-weight: 300; }
+    .cta-btn-dark {
+      background: var(--black); color: var(--red); font-family: var(--font-head); font-weight: 700;
+      font-size: 16px; padding: 16px 40px; letter-spacing: 0.08em; text-transform: uppercase;
+      display: inline-flex; align-items: center; gap: 10px; position: relative;
+      transition: background 0.2s;
+      clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
+    }
+    .cta-btn-dark:hover { background: #1a1a1a; }
+
+    /* ===== FOOTER ===== */
+    footer { background: var(--black); border-top: 3px solid var(--red); padding: 64px 32px 32px; }
+    .footer-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 48px; }
+    .footer-brand p { font-size: 14px; color: var(--steel); line-height: 1.7; margin: 12px 0; max-width: 260px; }
+    .footer-license { font-size: 12px; color: var(--steel); opacity: 0.6; }
+    .footer-col h4 { font-family: var(--font-head); font-size: 13px; font-weight: 600; color: var(--red); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 16px; }
+    .footer-col a { display: block; font-size: 14px; color: var(--steel); padding: 3px 0; transition: color 0.15s; }
+    .footer-col a:hover { color: var(--white); }
+    .footer-bottom {
+      max-width: 1200px; margin: 40px auto 0; padding-top: 24px;
+      border-top: 1px solid var(--border); display: flex; justify-content: space-between;
+      align-items: center; font-size: 12px; color: var(--steel);
+    }
+    .webnari-badge { display: flex; align-items: center; gap: 6px; opacity: 0.4; transition: opacity 0.2s; }
+    .webnari-badge:hover { opacity: 0.8; }
+
+    /* ===== REVEAL ===== */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s, transform 0.6s; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .services-grid { grid-template-columns: repeat(2, 1fr); }
+      .why-grid { grid-template-columns: 1fr; }
+      .process-track { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+      .process-track::before { display: none; }
+      .reviews-grid { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+      .footer-inner { grid-template-columns: repeat(2, 1fr); }
+      .hero-stats { flex-wrap: wrap; gap: 24px; }
+    }
+    @media (max-width: 768px) {
+      .nav-links, .nav-phone, .nav-cta { display: none; }
+      .hamburger { display: block; }
+      .top-bar { font-size: 11px; }
+      .services-grid { grid-template-columns: 1fr; }
+      .hero-title { font-size: 42px; }
+      .hero-bg { background: linear-gradient(160deg, var(--black) 65%, var(--red) 65%); }
+      .process-track { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .section { padding: 64px 20px; }
+      .footer-inner { grid-template-columns: 1fr; }
+      .hero { padding: 80px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP BAR -->
+  <div class="top-bar">HONEST REPAIRS. FAIR PRICES. NO UPSELLS. &mdash; <a href="tel:+13055551150">CALL (305) 555-1150</a></div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-inner">
+      <a href="autopro.html" class="nav-logo">IRON<span>WORKS</span> AUTO</a>
+      <div class="nav-links">
+        <a href="#services">Services</a>
+        <a href="#why">Why Us</a>
+        <a href="#process">Process</a>
+        <a href="#reviews">Reviews</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <div class="nav-right">
+        <a href="tel:+13055551150" class="nav-phone">(305) 555-1150</a>
+        <a href="#contact" class="nav-cta">Get Estimate</a>
+      </div>
+      <button class="hamburger" onclick="toggleMobile()" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#services" onclick="closeMobile()">Services</a>
+    <a href="#why" onclick="closeMobile()">Why Us</a>
+    <a href="#process" onclick="closeMobile()">Process</a>
+    <a href="#reviews" onclick="closeMobile()">Reviews</a>
+    <a href="#faq" onclick="closeMobile()">FAQ</a>
+    <a href="#contact" onclick="closeMobile()">Contact</a>
+    <a href="tel:+13055551150" class="mobile-cta" onclick="closeMobile()">CALL (305) 555-1150</a>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-content">
+      <div class="hero-tag">ASE Certified Master Technicians</div>
+      <h1 class="hero-title">BUILT ON <span class="outline">TRUST.</span> DRIVEN BY <span class="outline">SKILL.</span></h1>
+      <p class="hero-desc">IronWorks Auto is Miami's shop for drivers who want it done right the first time. Expert diagnostics, honest advice, and repairs that last. No surprises, no upsells.</p>
+      <div class="hero-btns">
+        <a href="#contact" class="btn-red">GET FREE ESTIMATE <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></a>
+        <a href="tel:+13055551150" class="btn-wire">CALL NOW</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><div class="hero-stat-num">25+</div><div class="hero-stat-text">Years Experience</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">40K+</div><div class="hero-stat-text">Vehicles Repaired</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">4.9</div><div class="hero-stat-text">Google Rating</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">2yr</div><div class="hero-stat-text">Warranty</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="section" id="services">
+    <div class="container">
+      <div class="section-tag reveal">What We Fix</div>
+      <h2 class="section-title reveal">Full-Service Auto Repair</h2>
+      <p class="section-desc reveal">From check engine lights to complete engine rebuilds, we handle all makes and models with the same no-nonsense approach.</p>
+      <div class="services-grid reveal">
+        <div class="svc-cell" data-num="01"><h3>Engine Diagnostics</h3><p>OBD-II scanning, compression testing, and computerized engine analysis. We find the real problem before we touch a wrench.</p></div>
+        <div class="svc-cell" data-num="02"><h3>Brake Service</h3><p>Pads, rotors, calipers, brake lines, and ABS systems. We inspect the entire brake system and replace only what's needed.</p></div>
+        <div class="svc-cell" data-num="03"><h3>Transmission</h3><p>Fluid flushes, solenoid repair, clutch replacement, and full rebuilds for automatic and manual transmissions.</p></div>
+        <div class="svc-cell" data-num="04"><h3>A/C & Heating</h3><p>Refrigerant recharge, compressor replacement, evaporator and condenser repair. Essential for Miami's brutal heat.</p></div>
+        <div class="svc-cell" data-num="05"><h3>Electrical Systems</h3><p>Alternator, starter, battery, wiring harness diagnostics, and module programming. We trace every short and fault.</p></div>
+        <div class="svc-cell" data-num="06"><h3>Suspension & Steering</h3><p>Shocks, struts, control arms, tie rods, wheel alignments, and power steering. Restoring that solid, confident ride.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY US -->
+  <section class="section why-section" id="why">
+    <div class="container" style="padding:0;">
+      <div class="why-grid">
+        <div class="why-left reveal">
+          <h2>Why Drivers Choose IronWorks</h2>
+          <p>We're mechanics, not salespeople. We show you the problem, explain your options, and let you decide. Every repair comes with a 2-year / 24,000-mile warranty because we stand behind our work.</p>
+        </div>
+        <div class="why-right">
+          <div class="why-item reveal reveal-delay-1">
+            <div class="why-item-num">01</div>
+            <div><h4>No-Upsell Guarantee</h4><p>We only recommend repairs you actually need. If it's not broken, we won't try to fix it. You'll see the issue yourself before we start work.</p></div>
+          </div>
+          <div class="why-item reveal reveal-delay-2">
+            <div class="why-item-num">02</div>
+            <div><h4>ASE Master Certified</h4><p>Every technician holds ASE Master certification with specializations in engine, electrical, brakes, and A/C systems.</p></div>
+          </div>
+          <div class="why-item reveal reveal-delay-3">
+            <div class="why-item-num">03</div>
+            <div><h4>OEM & Quality Parts</h4><p>We use OEM or premium aftermarket parts. No cheap knockoffs. Every part comes with a manufacturer warranty.</p></div>
+          </div>
+          <div class="why-item reveal reveal-delay-4">
+            <div class="why-item-num">04</div>
+            <div><h4>2-Year Warranty</h4><p>24,000-mile / 2-year warranty on all labor and parts. If a repair fails, we fix it again at zero cost to you.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="section" id="process">
+    <div class="container">
+      <div class="section-tag reveal">How It Works</div>
+      <h2 class="section-title reveal">Straight-Up Process</h2>
+      <p class="section-desc reveal">No games, no runaround. Here's exactly what happens when you bring your vehicle to IronWorks.</p>
+      <div class="process-track">
+        <div class="process-card reveal reveal-delay-1"><div class="process-dot">1</div><h3>Drop Off</h3><p>Bring your vehicle in or schedule a tow. We'll do a quick intake and listen to your concerns.</p></div>
+        <div class="process-card reveal reveal-delay-2"><div class="process-dot">2</div><h3>Diagnose</h3><p>Full diagnostic inspection. We call you with findings, photos, and a detailed estimate before any work begins.</p></div>
+        <div class="process-card reveal reveal-delay-3"><div class="process-dot">3</div><h3>Repair</h3><p>Once approved, we get to work using quality parts and proper procedures. No shortcuts, no hack fixes.</p></div>
+        <div class="process-card reveal reveal-delay-4"><div class="process-dot">4</div><h3>Drive Out</h3><p>Final quality check, test drive, and walkthrough of everything we did. You leave with a 2-year warranty in hand.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="section reviews-section" id="reviews">
+    <div class="container">
+      <div class="section-tag reveal">What Drivers Say</div>
+      <h2 class="section-title reveal">Earned Trust</h2>
+      <p class="section-desc reveal">40,000+ vehicles and counting. Here's why Miami drivers keep coming back.</p>
+      <div class="reviews-grid reveal">
+        <div class="review-cell">
+          <div class="review-stars"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg></div>
+          <blockquote>Took my truck to the dealer first. They quoted $3,200. IronWorks diagnosed the same issue for $1,400, showed me exactly what was wrong on a video call, and had it done in two days. Dealer markup is real.</blockquote>
+          <div class="review-name">Victor Ramirez</div>
+          <div class="review-detail">2019 Ford F-150 / Engine Repair</div>
+        </div>
+        <div class="review-cell">
+          <div class="review-stars"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg></div>
+          <blockquote>My A/C died in July. IronWorks got me in same day, diagnosed a bad compressor, and had it ice cold by the next afternoon. In Miami, that's a lifesaver. Fair price, fast turnaround, great communication.</blockquote>
+          <div class="review-name">Jennifer Wu</div>
+          <div class="review-detail">2021 Honda Accord / A/C Repair</div>
+        </div>
+        <div class="review-cell">
+          <div class="review-stars"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg></div>
+          <blockquote>I manage a fleet of 15 delivery vans. IronWorks handles all our maintenance and repairs. They prioritize our vehicles and keep us on the road. Best fleet partner we've ever had. Responsive, reliable, reasonable.</blockquote>
+          <div class="review-name">Derek Thomas</div>
+          <div class="review-detail">Fleet Manager / 15-Vehicle Fleet</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq">
+    <div class="container">
+      <div class="section-tag reveal">FAQ</div>
+      <h2 class="section-title reveal">Straight Answers</h2>
+      <p class="section-desc reveal">No runaround. Here are the questions we hear most.</p>
+      <div class="faq-list">
+        <div class="faq-item reveal"><button class="faq-btn" onclick="toggleFaq(this)">Do you work on all makes and models? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-answer"><p>Yes. Domestic, European, and Asian vehicles. We have dealer-level scan tools for BMW, Mercedes, Audi, Toyota, Honda, Ford, GM, and more. The only vehicles we don't service are hybrids/EVs and heavy diesel trucks.</p></div></div>
+        <div class="faq-item reveal"><button class="faq-btn" onclick="toggleFaq(this)">How much will my repair cost? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-answer"><p>We never start work without your approval. After diagnosing the issue, we call you with an exact price. No hidden fees, no add-ons. The price we quote is the price you pay, period.</p></div></div>
+        <div class="faq-item reveal"><button class="faq-btn" onclick="toggleFaq(this)">Do you offer loaner vehicles? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-answer"><p>We offer a complimentary shuttle service within a 10-mile radius. For repairs taking more than 2 days, we can arrange a rental car at a discounted partner rate. Just ask when you drop off.</p></div></div>
+        <div class="faq-item reveal"><button class="faq-btn" onclick="toggleFaq(this)">What does the 2-year warranty cover? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-answer"><p>Our warranty covers all parts and labor for 24 months or 24,000 miles, whichever comes first. If a repair we performed fails within that window, we redo it at absolutely no charge to you.</p></div></div>
+        <div class="faq-item reveal"><button class="faq-btn" onclick="toggleFaq(this)">Can I bring my own parts? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-answer"><p>We can install customer-supplied parts, but our warranty won't cover those parts (only the labor). We strongly recommend letting us source parts so the full 2-year warranty applies to everything.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AREAS -->
+  <section class="section" style="background:var(--dark);" id="areas">
+    <div class="container">
+      <div class="section-tag reveal">Coverage</div>
+      <h2 class="section-title reveal">Service Areas</h2>
+      <p class="section-desc reveal">Located in Hialeah, serving drivers across all of Miami-Dade County.</p>
+      <div class="areas-wrap reveal">
+        <span class="area-tag">Miami</span><span class="area-tag">Coral Gables</span><span class="area-tag">Doral</span>
+        <span class="area-tag">Hialeah</span><span class="area-tag">Kendall</span><span class="area-tag">Miami Beach</span>
+        <span class="area-tag">Brickell</span><span class="area-tag">Westchester</span><span class="area-tag">South Miami</span>
+        <span class="area-tag">Homestead</span><span class="area-tag">Miami Gardens</span><span class="area-tag">North Miami</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="section" id="contact">
+    <div class="container">
+      <div class="section-tag reveal">Get in Touch</div>
+      <h2 class="section-title reveal">Request an Estimate</h2>
+      <p class="section-desc reveal">Describe your vehicle's issue and we'll get back to you with a preliminary estimate within the hour.</p>
+      <div class="contact-grid">
+        <div class="contact-info reveal">
+          <div class="contact-item"><h4>Phone</h4><p>(305) 555-1150</p></div>
+          <div class="contact-item"><h4>Email</h4><p>service@ironworksauto.com</p></div>
+          <div class="contact-item"><h4>Hours</h4><p>Mon - Fri: 7AM - 6PM<br>Saturday: 8AM - 3PM<br>Sunday: Closed</p></div>
+          <div class="contact-item"><h4>Shop Address</h4><p>4520 E 11th Avenue<br>Hialeah, FL 33013</p></div>
+        </div>
+        <form class="contact-form reveal" action="https://formsubmit.co/service@ironworksauto.com" method="POST">
+          <input type="hidden" name="_captcha" value="false" /><input type="hidden" name="_template" value="table" />
+          <div class="form-row">
+            <div class="form-group"><input type="text" name="name" placeholder="Full Name" required /><span class="error-msg">Required</span></div>
+            <div class="form-group"><input type="tel" name="phone" placeholder="Phone Number" required /><span class="error-msg">Required</span></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><input type="text" name="vehicle" placeholder="Year / Make / Model" required /><span class="error-msg">Required</span></div>
+            <div class="form-group">
+              <select name="service" required>
+                <option value="" disabled selected>Type of Service</option>
+                <option value="diagnostics">Engine Diagnostics</option>
+                <option value="brakes">Brake Service</option>
+                <option value="transmission">Transmission</option>
+                <option value="ac">A/C & Heating</option>
+                <option value="electrical">Electrical Systems</option>
+                <option value="suspension">Suspension & Steering</option>
+                <option value="other">Other</option>
+              </select>
+              <span class="error-msg">Required</span>
+            </div>
+          </div>
+          <div class="form-group"><textarea name="issue" placeholder="Describe the issue (symptoms, noises, warning lights, when it started...)" rows="4"></textarea></div>
+          <button type="submit" class="btn-red" style="border:none;cursor:pointer;width:100%;justify-content:center;">Submit Estimate Request <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <h2>Your Car Deserves Better Than a Chain Shop</h2>
+    <p>Bring it to IronWorks. ASE-certified mechanics, transparent pricing, and a 2-year warranty on every repair.</p>
+    <a href="tel:+13055551150" class="cta-btn-dark">CALL (305) 555-1150 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg></a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="nav-logo">IRON<span>WORKS</span> AUTO</div>
+        <p>Miami's most trusted independent auto repair shop. ASE Master Certified technicians, honest diagnostics, and a 2-year warranty on every repair since 2001.</p>
+        <div class="footer-license">FL Motor Vehicle Repair #MVR2024-1147</div>
+      </div>
+      <div class="footer-col"><h4>Services</h4><a href="#services">Engine Diagnostics</a><a href="#services">Brake Service</a><a href="#services">Transmission</a><a href="#services">A/C & Heating</a><a href="#services">Electrical Systems</a><a href="#services">Suspension & Steering</a></div>
+      <div class="footer-col"><h4>Company</h4><a href="#why">Why IronWorks</a><a href="#process">Our Process</a><a href="#reviews">Reviews</a><a href="#faq">FAQ</a><a href="#areas">Service Areas</a><a href="#contact">Contact</a></div>
+      <div class="footer-col"><h4>Contact</h4><a href="tel:+13055551150">(305) 555-1150</a><a href="mailto:service@ironworksauto.com">service@ironworksauto.com</a><a>Hialeah, FL 33013</a></div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2025 IronWorks Auto. All rights reserved.</span>
+      <a href="https://webnari.io" class="webnari-badge" target="_blank"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Powered by Webnari</a>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMobile(){document.querySelector('.hamburger').classList.toggle('open');document.getElementById('mobileMenu').classList.toggle('open');document.body.style.overflow=document.getElementById('mobileMenu').classList.contains('open')?'hidden':''}
+    function closeMobile(){document.querySelector('.hamburger').classList.remove('open');document.getElementById('mobileMenu').classList.remove('open');document.body.style.overflow=''}
+    const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}})},{threshold:0.1});
+    document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+    function toggleFaq(btn){const item=btn.parentElement;document.querySelectorAll('.faq-item').forEach(i=>{if(i!==item)i.classList.remove('open')});item.classList.toggle('open')}
+    (function(){const form=document.querySelector('.contact-form');if(!form)return;const inputs=form.querySelectorAll('input[required], select[required]');inputs.forEach(input=>{input.addEventListener('blur',()=>{const g=input.closest('.form-group');if(!input.value.trim()){g.classList.add('error')}else{g.classList.remove('error')}})});form.addEventListener('submit',e=>{let valid=true;inputs.forEach(input=>{const g=input.closest('.form-group');if(!input.value.trim()){g.classList.add('error');valid=false}else{g.classList.remove('error')}});if(!valid)e.preventDefault()})})();
+  </script>
+</body>
+</html>

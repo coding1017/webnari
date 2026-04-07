@@ -23,6 +23,18 @@ A **Website-as-a-Service (WaaS)** platform called **Webnari**. The agency landin
 | Meal Prep | **Jade's Spice** | `jades-spice.html` | standalone | Warm red `#D94040` + gold `#F0A830` + dark brown | — |
 | Cleaning | **PristineClean** | `pristineclean.html` | 6 subpages | Royal Blue `#2563EB` + Silver on light `#FAFBFD` / dark `#06080C` | (305) 555-0400 |
 | Cleaning (Alt) | **Blanc Cleaning Co.** | `blanc.html` | standalone | Electric Blue `#3B82F6` + monochrome black `#08080A` / cream `#FAFAF9` | (305) 555-0500 |
+| Auto Detailing | **Apex Detail** | `apexdetail.html` | standalone | Electric Blue `#2563EB` + gunmetal dark `#08090C` | (305) 555-0600 |
+| Barbershop | **Fade & Co.** | `fadeco.html` | standalone | Gold `#C9A84C` + warm cream `#FAF8F4` / dark charcoal `#1A1614` | (305) 555-0650 |
+| Locksmith | **LockPro** | `lockpro.html` | standalone | Purple `#7C3AED` + gold `#F59E0B` + dark | (305) 555-0700 |
+| Landscaping | **GreenPro** | `greenpro.html` | standalone | Green `#22C55E` + earth brown `#A16207` + dark | (305) 555-0750 |
+| Fitness/Gym | **FitPro** | `fitpro.html` | standalone | Orange `#F97316` + red `#EF4444` + dark | (305) 555-0800 |
+| Pool Service | **PoolPro** | `poolpro.html` | standalone | Aqua/teal `#06B6D4` + dark navy | (305) 555-0850 |
+| Moving | **MovePro** | `movepro.html` | standalone | Orange `#F97316` + warm dark brown `#0A0806` | (305) 555-0900 |
+| Painting | **PaintPro** | `paintpro.html` | standalone | Teal `#14B8A6` + coral `#F97066` + violet `#8B5CF6` (multi-color) | (305) 555-0950 |
+| Towing | **TowPro** | `towpro.html` | standalone | Red `#EF4444` + yellow `#FACC15` + warm dark | (305) 555-1000 |
+| Pet Grooming | **Paws & Co.** | `petpro.html` | standalone | Peach/pink/coral light `#FFECD2` / `#FF6B6B` — LIGHT THEME | (305) 555-1050 |
+| Day Spa | **Serenity Spa** | `spapro.html` | standalone | Lavender `#B8A9D4` + sage `#A8B8A0` on cream `#FAF9F7` — EDITORIAL LIGHT | (305) 555-1100 |
+| Auto Repair | **IronWorks Auto** | `autopro.html` | standalone | Red `#DC2626` + pure black `#0C0C0C` — INDUSTRIAL BRUTALIST | (305) 555-1150 |
 
 ### VoltPro Subpages (electrician)
 `panel-upgrades.html`, `ev-charger.html`, `home-rewiring.html`, `smart-home.html`, `commercial.html`, `emergency-service.html`, `about.html`, `team.html`, `blog.html`, `reviews.html`, `privacy.html`, `contact.html`
@@ -260,6 +272,118 @@ Bottom terminal strip → trunk wires → cable clips → horizontal bundles →
 9. L-profile gutters + downspouts + drip edge
 10. Box vents, pipe boot, soffit details
 11. "ROOFPRO" glow blast with red glow + hero transition
+
+## Apex Detail Design Tokens (apexdetail.html reference)
+```css
+--black: #08090C; --dark: #0E1118; --surface: #141820;
+--surface2: #1A2030; --border: #252D3D; --border2: #303C50;
+--blue: #2563EB; --blue2: #3B82F6; --blue3: #60A5FA;
+--silver: #94A3B8; --silver2: #CBD5E1;
+--white: #F0F4FF; --muted: #64748B; --text: #94A3B8;
+```
+
+## Apex Detail Notes
+- **Brand:** Apex Detail — premium mobile auto detailing, South Florida
+- **Design:** Standard dark template. Barlow Condensed (headings, 900 weight) + Barlow (body). Electric blue accent on gunmetal dark.
+- **Nav:** Logo → Services dropdown (6 items) → Company dropdown (6 items) → 24/7 Mobile Service badge → "Call Now" CTA
+- **Hero:** Grid layout, left copy + right SVG car illustration, 4-stat row
+- **Sections:** Hero → Services (6 cards) → Why Us (split: stats grid + features) → Process (4 steps) → Testimonials (3 cards) → FAQ (accordion) → Service Areas → Contact (split form) → CTA Banner → Footer
+- **Services:** Exterior Detail, Interior Detail, Full Detail Package, Paint Correction, Ceramic Coating, Engine Bay Detail
+- **Phone:** (305) 555-0600
+- **License:** #AUT2024-0156
+- **Note:** Fully mobile service — no physical location, emphasizes "we come to you"
+
+## Fade & Co. Design Tokens (fadeco.html reference)
+```css
+--cream: #FAF8F4; --cream2: #F0EDE6; --dark: #1A1614; --dark2: #2A2422;
+--surface: #FFFFFF; --border: #E5E0D8; --border2: #D5CEC4;
+--gold: #C9A84C; --gold2: #E8C468; --gold3: #F5DFA0;
+--charcoal: #2A2422; --text: #4A4240; --muted: #8A8280;
+--white: #FFFFFF; --heading: #1A1614;
+```
+
+## Fade & Co. Notes
+- **Brand:** Fade & Co. — premium barbershop, 242 Brickell Avenue, Miami FL 33131
+- **Design:** Editorial light template (NOT standard dark Webnari design). Playfair Display (headings, serif with italic accents) + Inter (body). Warm cream backgrounds with charcoal dark sections and gold accents.
+- **Nav:** Minimal — serif logo left, centered text links (Services, About, Reviews, Locations, Book), walk-ins badge + "BOOK NOW" dark/gold CTA
+- **Hero:** Full-height split — dark left panel with giant serif headline + stats row, right panel with hours card + walk-in badge + address card
+- **Sections:** Hero → Marquee → Services (6 cards in bordered grid with numbered labels + prices) → Why Us (big stat dark card + features list) → Process (dark bg, 4 steps) → Testimonials (3 cards) → FAQ (sticky sidebar layout) → Service Areas → Contact (info blocks + booking form) → CTA Banner → Footer
+- **Marquee:** Continuous horizontal scroll of service types with gold dot separators
+- **Services:** Classic Haircut ($35+), Fade & Taper ($40+), Beard Trim & Shape ($25+), Hot Towel Shave ($50+), Kids Cut ($25+), VIP Grooming Package ($100+)
+- **Phone:** (305) 555-0650
+- **License:** #BBR2024-0217
+- **Hours:** Mon–Fri 9AM–8PM, Sat 8AM–7PM, Sun 9AM–5PM
+- **Note:** Walk-ins welcome prominently featured; does not use Barlow fonts — uses Playfair Display + Inter
+
+## New Template Notes (Batch 2 — April 2026)
+
+### LockPro (lockpro.html)
+- **Brand:** LockPro — emergency locksmith, standard dark Webnari design
+- **Design:** Barlow Condensed + Barlow, purple/gold on dark. Standard nav/hero/services/why/process/testimonials/FAQ/areas/contact/CTA/footer
+- **Phone:** (305) 555-0700 | **License:** #LCK2024-0312
+
+### GreenPro (greenpro.html)
+- **Brand:** GreenPro — landscaping, standard dark Webnari design
+- **Design:** Barlow Condensed + Barlow, green/brown on dark. SVG hero: stylized tree with bushes and pathway
+- **Phone:** (305) 555-0750 | **License:** #LND2024-0445
+
+### FitPro (fitpro.html)
+- **Brand:** FitPro — fitness/gym, standard dark Webnari design
+- **Design:** Barlow Condensed + Barlow, orange/red on dark. SVG hero: dumbbell illustration
+- **Phone:** (305) 555-0800 | **License:** #FIT2024-0189
+
+### PoolPro (poolpro.html)
+- **Brand:** PoolPro — pool service, standard dark Webnari design
+- **Design:** Barlow Condensed + Barlow, aqua/teal on dark. SVG hero: swimming pool with ladder and waves
+- **Phone:** (305) 555-0850 | **License:** #POL2024-0267
+
+### MovePro (movepro.html)
+- **Brand:** MovePro — moving company, standard dark Webnari design
+- **Design:** Barlow Condensed + Barlow, orange on warm dark brown. SVG hero: moving truck with boxes and dolly
+- **Phone:** (305) 555-0900 | **License:** FL Mover Reg. #IM3217
+
+### PaintPro (paintpro.html)
+- **Brand:** PaintPro — painting company, dark design with MULTI-COLOR accents
+- **Design:** Barlow Condensed + Barlow. Teal primary, coral/violet/gold secondary. Service cards hover different colors. Process steps use alternating accent colors.
+- **Phone:** (305) 555-0950 | **License:** #PNT2024-0334
+- **SVG hero:** Paint roller with color swatches and drip effects
+
+### TowPro (towpro.html)
+- **Brand:** TowPro — 24/7 towing & roadside, dark urgent design
+- **Design:** Barlow Condensed + Barlow, red/yellow on warm dark. Emergency strip banner below nav with animated pulsing badge. SVG hero: tow truck with animated flashing lights (CSS animation alternates red/yellow).
+- **Phone:** (305) 555-1000 | **License:** #WR2024-0891
+- **Unique:** Fixed emergency strip below nav, faster pulse animation for urgency
+
+### Paws & Co. (petpro.html) — DIFFERENT DESIGN
+- **Brand:** Paws & Co. — pet grooming, LIGHT playful design
+- **Design:** Quicksand + Nunito fonts (NOT Barlow). Warm peach/pink/coral on cream white `#FFFBF7`. Floating pill-shaped nav centered on page. Full-screen mobile overlay.
+- **Hero:** Peach-to-pink gradient with blurred organic blob shapes (lavender, mint, sky). Cute SVG dog face with crown. Pill-shaped buttons with box-shadow.
+- **Sections:** Hero → Services (rounded cards with gradient circle icons + prices) → Why Us (horizontal feature cards) → Process (zigzag timeline with colored dots) → Reviews (avatar-initial cards) → FAQ → Areas → Contact (form in white card with shadow) → CTA → Footer
+- **Phone:** (305) 555-1050 | Located in Coconut Grove
+
+### Serenity Spa (spapro.html) — DIFFERENT DESIGN
+- **Brand:** Serenity Spa — luxury day spa, EDITORIAL MINIMAL LIGHT design
+- **Design:** Cormorant Garamond (serif headings, italic accents) + Jost (sans body). Cream/lavender/sage palette on off-white `#FAF9F7`. Transparent nav with underline-hover links. NO border-radius on most elements.
+- **Hero:** Full-height centered text, no image. Serif headline with italic accent in lavender. Animated scroll hint line. Lots of whitespace.
+- **Marquee:** Dark strip with serif service names and lavender dot separators
+- **Services:** Numbered editorial list rows (not cards) with hover background, duration + price columns
+- **About:** Full dark section with gradient visual placeholder and serif watermark text
+- **Reviews:** Auto-rotating single-quote slider with large serif pullquote and navigation dots (6s interval)
+- **FAQ:** Borderless accordion with serif headings, bottom-border-only style
+- **Contact:** Underline-only form inputs (no boxes), labeled with uppercase micro text
+- **Phone:** (305) 555-1100 | Located in Miami Beach
+
+### IronWorks Auto (autopro.html) — DIFFERENT DESIGN
+- **Brand:** IronWorks Auto — auto repair, INDUSTRIAL BRUTALIST DARK design
+- **Design:** Oswald (headings) + Source Sans 3 (body). Red `#DC2626` + pure black `#0C0C0C`. NO border-radius anywhere — sharp edges throughout. Angled clip-path buttons. Thick red borders.
+- **Hero:** Diagonal split background (black/red at 55% via CSS linear-gradient). Outline text effect (`-webkit-text-stroke`). Horizontal scan lines overlay. Red clip-path tag badge.
+- **Nav:** Sticky (not fixed) with thick 3px red bottom border. Red top emergency bar.
+- **Services:** Brutalist grid with 2px gap (border visible through gap). Large faded number watermarks via `data-num` attr + `::before`. Red underline on h3 via `::after`.
+- **Why Us:** Split section — full red left panel, dark right panel with numbered items
+- **Process:** Diamond-shaped dots (clip-path polygon) with connecting line
+- **Reviews:** Grid cells with 2px gap brutalist layout
+- **CTA:** Red section with giant watermark brand text behind content
+- **Phone:** (305) 555-1150 | **License:** #MVR2024-1147 | Located in Hialeah
 
 ## Git Workflow
 ```bash

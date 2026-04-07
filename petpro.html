@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Paws & Co. — Premium Pet Grooming Miami</title>
+  <meta name="description" content="Paws & Co. provides luxury pet grooming services in Miami. Bath & brush, breed-specific cuts, spa treatments, and puppy packages. Book online today!" />
+  <meta property="og:title" content="Paws & Co. — Premium Pet Grooming Miami" />
+  <meta property="og:description" content="Luxury pet grooming in South Florida. Where every pet leaves looking and feeling their best." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://webnari.io/petpro.html" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Nunito:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --peach: #FFECD2;
+      --peach2: #FFD8B0;
+      --pink: #FF8FA3;
+      --pink2: #FFB3C1;
+      --coral: #FF6B6B;
+      --lavender: #C9B1FF;
+      --mint: #95E8C2;
+      --sky: #87CEEB;
+      --brown: #8B6F47;
+      --brown2: #A0845C;
+      --dark: #2D2016;
+      --text: #5C4A3A;
+      --text2: #7A6B5D;
+      --bg: #FFFBF7;
+      --bg2: #FFF5EC;
+      --white: #FFFFFF;
+      --border: #F0E4D8;
+      --shadow: 0 4px 24px rgba(139,111,71,0.08);
+      --shadow-lg: 0 12px 48px rgba(139,111,71,0.12);
+      --font-head: 'Nunito', sans-serif;
+      --font-body: 'Quicksand', sans-serif;
+      --radius: 16px;
+      --radius-lg: 24px;
+      --radius-full: 9999px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-body); font-size: 16px; line-height: 1.6; overflow-x: hidden; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ===== NAV — Rounded, pill-style, centered ===== */
+    nav {
+      position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 1000;
+      background: rgba(255,255,255,0.85); backdrop-filter: blur(16px);
+      border: 1px solid var(--border); border-radius: var(--radius-full);
+      padding: 10px 12px; display: flex; align-items: center; gap: 4px;
+      box-shadow: var(--shadow);
+    }
+    .nav-logo {
+      font-family: var(--font-head); font-size: 20px; font-weight: 800;
+      color: var(--dark); padding: 0 16px; white-space: nowrap;
+    }
+    .nav-logo svg { display: inline-block; vertical-align: -3px; margin-right: 6px; }
+    .nav-links { display: flex; align-items: center; gap: 2px; }
+    .nav-links a {
+      font-family: var(--font-body); font-size: 14px; font-weight: 600;
+      color: var(--text2); padding: 8px 16px; border-radius: var(--radius-full);
+      transition: background 0.2s, color 0.2s;
+    }
+    .nav-links a:hover { background: var(--peach); color: var(--dark); }
+    .nav-cta {
+      background: var(--coral); color: #fff; font-family: var(--font-head); font-weight: 700;
+      font-size: 14px; padding: 10px 24px; border-radius: var(--radius-full);
+      margin-left: 8px; transition: background 0.2s; border: none; cursor: pointer;
+    }
+    .nav-cta:hover { background: var(--pink); }
+    .hamburger {
+      display: none; background: none; border: none; cursor: pointer;
+      width: 28px; height: 20px; position: relative; margin-left: 8px;
+    }
+    .hamburger span {
+      display: block; width: 100%; height: 2.5px; background: var(--dark);
+      position: absolute; left: 0; transition: transform 0.3s, opacity 0.3s; border-radius: 2px;
+    }
+    .hamburger span:nth-child(1) { top: 0; }
+    .hamburger span:nth-child(2) { top: 50%; transform: translateY(-50%); }
+    .hamburger span:nth-child(3) { bottom: 0; }
+    .hamburger.open span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+    /* ===== MOBILE MENU — Full-screen overlay ===== */
+    .mobile-overlay {
+      position: fixed; inset: 0; z-index: 998;
+      background: rgba(255,251,247,0.97); backdrop-filter: blur(20px);
+      display: none; flex-direction: column; align-items: center; justify-content: center; gap: 16px;
+    }
+    .mobile-overlay.open { display: flex; }
+    .mobile-overlay a {
+      font-family: var(--font-head); font-size: 28px; font-weight: 700;
+      color: var(--dark); padding: 12px 32px; border-radius: var(--radius-full);
+      transition: background 0.2s;
+    }
+    .mobile-overlay a:hover { background: var(--peach); }
+    .mobile-overlay .mobile-cta {
+      background: var(--coral); color: #fff; font-size: 20px; margin-top: 16px; padding: 14px 40px;
+    }
+
+    /* ===== HERO — Full-width peach gradient with organic blob shapes ===== */
+    .hero {
+      min-height: 100vh; padding: 140px 24px 80px;
+      background: linear-gradient(160deg, var(--bg) 0%, var(--peach) 40%, var(--pink2) 100%);
+      display: flex; align-items: center; position: relative; overflow: hidden;
+    }
+    .hero-blob {
+      position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.4; pointer-events: none;
+    }
+    .hero-blob-1 { width: 500px; height: 500px; background: var(--lavender); top: -100px; right: -100px; }
+    .hero-blob-2 { width: 400px; height: 400px; background: var(--mint); bottom: -80px; left: -80px; }
+    .hero-blob-3 { width: 300px; height: 300px; background: var(--sky); top: 50%; left: 50%; transform: translate(-50%, -50%); }
+    .hero-content {
+      max-width: 1200px; margin: 0 auto; display: grid;
+      grid-template-columns: 1.2fr 1fr; gap: 64px; align-items: center; position: relative; z-index: 1;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.7); backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,107,107,0.2);
+      padding: 8px 20px; border-radius: var(--radius-full);
+      font-size: 13px; font-weight: 600; color: var(--coral); margin-bottom: 20px;
+    }
+    .hero-badge svg { width: 16px; height: 16px; }
+    .hero-title {
+      font-family: var(--font-head); font-size: clamp(40px, 6vw, 64px); font-weight: 800;
+      color: var(--dark); line-height: 1.1; margin-bottom: 20px;
+    }
+    .hero-title .accent { color: var(--coral); }
+    .hero-desc { font-size: 18px; color: var(--text2); max-width: 500px; line-height: 1.7; margin-bottom: 36px; }
+    .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 48px; }
+    .btn-primary {
+      background: var(--coral); color: #fff; font-family: var(--font-head); font-weight: 700;
+      font-size: 16px; padding: 16px 32px; border-radius: var(--radius-full);
+      box-shadow: 0 8px 24px rgba(255,107,107,0.3); transition: transform 0.2s, box-shadow 0.2s;
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(255,107,107,0.4); }
+    .btn-outline {
+      border: 2px solid var(--brown2); color: var(--dark); font-family: var(--font-head); font-weight: 700;
+      font-size: 16px; padding: 14px 32px; border-radius: var(--radius-full);
+      transition: background 0.2s, border-color 0.2s; display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-outline:hover { background: var(--white); border-color: var(--coral); }
+    .hero-trust { display: flex; gap: 32px; }
+    .hero-trust-item { display: flex; align-items: center; gap: 8px; }
+    .hero-trust-num { font-family: var(--font-head); font-size: 24px; font-weight: 800; color: var(--dark); }
+    .hero-trust-text { font-size: 13px; color: var(--text2); }
+
+    /* Hero SVG illustration */
+    .hero-visual { display: flex; justify-content: center; align-items: center; }
+    .hero-visual svg { width: 100%; max-width: 440px; height: auto; filter: drop-shadow(0 20px 40px rgba(139,111,71,0.15)); }
+
+    /* ===== SECTION DEFAULTS ===== */
+    .section { padding: 100px 24px; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .section-center { text-align: center; max-width: 640px; margin: 0 auto 56px; }
+    .section-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--peach); padding: 6px 18px; border-radius: var(--radius-full);
+      font-size: 12px; font-weight: 700; color: var(--coral); text-transform: uppercase;
+      letter-spacing: 0.1em; margin-bottom: 14px;
+    }
+    .section-title {
+      font-family: var(--font-head); font-size: clamp(28px, 4vw, 42px); font-weight: 800;
+      color: var(--dark); line-height: 1.15; margin-bottom: 14px;
+    }
+    .section-desc { font-size: 16px; color: var(--text2); line-height: 1.7; }
+
+    /* ===== SERVICES — Rounded cards with illustrations ===== */
+    .services { background: var(--white); }
+    .services-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .svc-card {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 36px 28px; text-align: center;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .svc-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-lg); }
+    .svc-icon {
+      width: 72px; height: 72px; border-radius: 50%; margin: 0 auto 20px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .svc-card:nth-child(1) .svc-icon { background: linear-gradient(135deg, #FFECD2, #FFD8B0); }
+    .svc-card:nth-child(2) .svc-icon { background: linear-gradient(135deg, #FFB3C1, #FF8FA3); }
+    .svc-card:nth-child(3) .svc-icon { background: linear-gradient(135deg, #C9B1FF, #A78BFA); }
+    .svc-card:nth-child(4) .svc-icon { background: linear-gradient(135deg, #95E8C2, #6EE7B7); }
+    .svc-card:nth-child(5) .svc-icon { background: linear-gradient(135deg, #87CEEB, #60A5FA); }
+    .svc-card:nth-child(6) .svc-icon { background: linear-gradient(135deg, #FBBF24, #F59E0B); }
+    .svc-icon svg { width: 32px; height: 32px; color: var(--dark); }
+    .svc-card h3 { font-family: var(--font-head); font-size: 18px; font-weight: 700; color: var(--dark); margin-bottom: 8px; }
+    .svc-card p { font-size: 14px; color: var(--text2); line-height: 1.6; }
+    .svc-price { font-family: var(--font-head); font-weight: 800; color: var(--coral); font-size: 15px; margin-top: 12px; }
+
+    /* ===== WHY US — Horizontal feature cards ===== */
+    .why-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+    .why-card {
+      display: flex; align-items: flex-start; gap: 18px;
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 28px; transition: box-shadow 0.3s;
+    }
+    .why-card:hover { box-shadow: var(--shadow); }
+    .why-card-icon {
+      width: 52px; height: 52px; border-radius: 14px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .why-card:nth-child(1) .why-card-icon { background: var(--peach); }
+    .why-card:nth-child(2) .why-card-icon { background: #E8D5FF; }
+    .why-card:nth-child(3) .why-card-icon { background: #D1FAE5; }
+    .why-card:nth-child(4) .why-card-icon { background: #FFE4E6; }
+    .why-card-icon svg { width: 24px; height: 24px; color: var(--dark); }
+    .why-card h4 { font-family: var(--font-head); font-size: 16px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+    .why-card p { font-size: 14px; color: var(--text2); line-height: 1.6; }
+
+    /* ===== PROCESS — Zigzag timeline ===== */
+    .process-section { background: var(--bg2); }
+    .process-steps { display: flex; flex-direction: column; gap: 0; max-width: 800px; margin: 0 auto; position: relative; }
+    .process-steps::before {
+      content: ''; position: absolute; left: 50%; top: 0; bottom: 0;
+      width: 3px; background: var(--border); transform: translateX(-50%);
+    }
+    .process-step {
+      display: flex; align-items: center; gap: 40px; position: relative;
+    }
+    .process-step:nth-child(even) { flex-direction: row-reverse; }
+    .process-step-content {
+      flex: 1; background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow);
+    }
+    .process-step-dot {
+      width: 48px; height: 48px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-head); font-weight: 800; font-size: 18px; color: #fff;
+      z-index: 1;
+    }
+    .process-step:nth-child(1) .process-step-dot { background: var(--coral); }
+    .process-step:nth-child(2) .process-step-dot { background: var(--lavender); }
+    .process-step:nth-child(3) .process-step-dot { background: var(--mint); }
+    .process-step:nth-child(4) .process-step-dot { background: var(--sky); }
+    .process-step-content h3 { font-family: var(--font-head); font-size: 18px; font-weight: 700; color: var(--dark); margin-bottom: 6px; }
+    .process-step-content p { font-size: 14px; color: var(--text2); line-height: 1.6; }
+    .process-spacer { height: 40px; }
+
+    /* ===== REVIEWS — Rounded photo cards ===== */
+    .reviews-section { background: var(--white); }
+    .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .review-card {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 32px; text-align: center;
+    }
+    .review-avatar {
+      width: 56px; height: 56px; border-radius: 50%; margin: 0 auto 16px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: var(--font-head); font-weight: 800; font-size: 20px; color: #fff;
+    }
+    .review-card:nth-child(1) .review-avatar { background: var(--coral); }
+    .review-card:nth-child(2) .review-avatar { background: var(--lavender); }
+    .review-card:nth-child(3) .review-avatar { background: var(--mint); }
+    .review-stars { display: flex; justify-content: center; gap: 2px; margin-bottom: 14px; }
+    .review-stars svg { width: 16px; height: 16px; fill: #FBBF24; }
+    .review-card blockquote { font-size: 14.5px; color: var(--text); line-height: 1.7; margin-bottom: 16px; font-style: italic; }
+    .review-name { font-family: var(--font-head); font-weight: 700; color: var(--dark); font-size: 14px; }
+    .review-pet { font-size: 12px; color: var(--text2); }
+
+    /* ===== FAQ — Rounded accordion ===== */
+    .faq-list { max-width: 700px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
+    .faq-item { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .faq-btn {
+      width: 100%; background: none; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 20px 24px; color: var(--dark); font-family: var(--font-head);
+      font-size: 15px; font-weight: 700; text-align: left;
+    }
+    .faq-btn svg { width: 20px; height: 20px; color: var(--coral); transition: transform 0.3s; flex-shrink: 0; }
+    .faq-item.open .faq-btn svg { transform: rotate(45deg); }
+    .faq-answer { padding: 0 24px; max-height: 0; overflow: hidden; transition: max-height 0.35s, padding 0.35s; }
+    .faq-item.open .faq-answer { max-height: 200px; padding: 0 24px 20px; }
+    .faq-answer p { font-size: 14px; color: var(--text2); line-height: 1.7; }
+
+    /* ===== AREAS ===== */
+    .areas-wrap { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+    .area-pill {
+      background: var(--white); border: 1px solid var(--border);
+      padding: 10px 22px; border-radius: var(--radius-full); font-size: 14px; font-weight: 600;
+      color: var(--text); transition: background 0.2s, color 0.2s, border-color 0.2s;
+    }
+    .area-pill:hover { background: var(--peach); border-color: var(--coral); color: var(--dark); }
+
+    /* ===== CONTACT — Split warm ===== */
+    .contact-section { background: var(--bg2); }
+    .contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 56px; align-items: start; }
+    .contact-info { display: flex; flex-direction: column; gap: 24px; }
+    .contact-item { display: flex; gap: 14px; align-items: flex-start; }
+    .contact-item-icon {
+      width: 44px; height: 44px; background: var(--peach); border-radius: 12px;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .contact-item-icon svg { width: 20px; height: 20px; color: var(--coral); }
+    .contact-item h4 { font-family: var(--font-head); font-weight: 700; color: var(--dark); font-size: 14px; }
+    .contact-item p { font-size: 13.5px; color: var(--text2); }
+    .contact-form {
+      background: var(--white); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 36px; box-shadow: var(--shadow);
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%; background: var(--bg); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px 16px; color: var(--dark);
+      font-family: var(--font-body); font-size: 14px; outline: none; transition: border-color 0.2s;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--coral); }
+    .form-group textarea { resize: vertical; min-height: 100px; }
+    .form-group input::placeholder, .form-group textarea::placeholder { color: var(--text2); }
+    .form-group .error-msg { color: var(--coral); font-size: 12px; margin-top: 4px; display: none; }
+    .form-group.error input, .form-group.error textarea { border-color: var(--coral); }
+    .form-group.error .error-msg { display: block; }
+
+    /* ===== CTA BANNER ===== */
+    .cta-banner {
+      background: linear-gradient(135deg, var(--coral), var(--pink)); padding: 80px 24px; text-align: center;
+    }
+    .cta-banner h2 { font-family: var(--font-head); font-size: clamp(28px, 4vw, 42px); font-weight: 800; color: #fff; margin-bottom: 14px; }
+    .cta-banner p { color: rgba(255,255,255,0.85); font-size: 17px; max-width: 540px; margin: 0 auto 32px; }
+    .cta-banner-btn {
+      background: #fff; color: var(--coral); font-family: var(--font-head); font-weight: 700;
+      font-size: 16px; padding: 16px 36px; border-radius: var(--radius-full);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1); display: inline-flex; align-items: center; gap: 8px;
+      transition: transform 0.2s;
+    }
+    .cta-banner-btn:hover { transform: translateY(-2px); }
+
+    /* ===== FOOTER — Light, friendly ===== */
+    footer { background: var(--white); border-top: 1px solid var(--border); padding: 56px 24px 28px; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 40px; }
+    .footer-brand p { font-size: 13.5px; color: var(--text2); line-height: 1.7; margin: 12px 0; max-width: 260px; }
+    .footer-col h4 { font-family: var(--font-head); font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 14px; }
+    .footer-col a { display: block; font-size: 13.5px; color: var(--text2); padding: 3px 0; transition: color 0.15s; }
+    .footer-col a:hover { color: var(--coral); }
+    .footer-contact-item { display: flex; align-items: center; gap: 8px; padding: 3px 0; }
+    .footer-contact-item svg { width: 16px; height: 16px; color: var(--coral); }
+    .footer-bottom {
+      max-width: 1100px; margin: 32px auto 0; padding-top: 20px;
+      border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;
+      font-size: 12px; color: var(--text2);
+    }
+    .webnari-badge { display: flex; align-items: center; gap: 6px; opacity: 0.5; transition: opacity 0.2s; }
+    .webnari-badge:hover { opacity: 1; }
+
+    /* ===== REVEAL ===== */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .hero-content { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+      .hero-desc { margin-left: auto; margin-right: auto; }
+      .hero-btns { justify-content: center; }
+      .hero-trust { justify-content: center; }
+      .hero-visual { order: -1; }
+      .services-grid { grid-template-columns: repeat(2, 1fr); }
+      .why-cards { grid-template-columns: 1fr; }
+      .contact-grid { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: block; }
+      nav { padding: 8px 16px; }
+      .services-grid { grid-template-columns: 1fr; }
+      .reviews-grid { grid-template-columns: 1fr; }
+      .process-steps::before { left: 24px; }
+      .process-step, .process-step:nth-child(even) { flex-direction: row; gap: 20px; }
+      .process-step-dot { width: 40px; height: 40px; font-size: 16px; }
+      .hero-trust { flex-direction: column; gap: 16px; align-items: center; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 480px) {
+      .section { padding: 64px 16px; }
+      .hero { padding-top: 120px; }
+      .footer-inner { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="petpro.html" class="nav-logo">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/><path d="M4.93 4.93c-.39.39-.39 1.02 0 1.41l.7.7c-.19.55-.3 1.13-.3 1.73 0 2.76 2.24 5 5 5h.01c.17.64.42 1.25.74 1.82l-1.4 1.4c-.39.39-.39 1.02 0 1.41.2.2.45.29.71.29s.51-.1.71-.29l1.41-1.41A6.95 6.95 0 0012 18c3.87 0 7-3.13 7-7 0-.6-.11-1.18-.3-1.73l.7-.7c.39-.39.39-1.02 0-1.41a.996.996 0 00-1.41 0l-.7.7A4.98 4.98 0 0015 6H9c-.6 0-1.18.11-1.73.3l-.7-.7a.996.996 0 00-1.41 0l-.23.23z"/></svg>
+      Paws & Co.
+    </a>
+    <div class="nav-links">
+      <a href="#services">Services</a>
+      <a href="#why">About</a>
+      <a href="#process">Process</a>
+      <a href="#reviews">Reviews</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <a href="#contact" class="nav-cta">Book Now</a>
+    <button class="hamburger" onclick="toggleMobile()" aria-label="Menu"><span></span><span></span><span></span></button>
+  </nav>
+
+  <div class="mobile-overlay" id="mobileOverlay">
+    <a href="#services" onclick="closeMobile()">Services</a>
+    <a href="#why" onclick="closeMobile()">About</a>
+    <a href="#process" onclick="closeMobile()">Process</a>
+    <a href="#reviews" onclick="closeMobile()">Reviews</a>
+    <a href="#contact" onclick="closeMobile()">Contact</a>
+    <a href="tel:+13055551050" class="mobile-cta" onclick="closeMobile()">Call (305) 555-1050</a>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-blob hero-blob-1"></div>
+    <div class="hero-blob hero-blob-2"></div>
+    <div class="hero-blob hero-blob-3"></div>
+    <div class="hero-content">
+      <div>
+        <div class="hero-badge">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          Voted #1 Pet Grooming in Miami
+        </div>
+        <h1 class="hero-title">Where Every Pet Gets the <span class="accent">Royal Treatment</span></h1>
+        <p class="hero-desc">Paws & Co. is Miami's favorite pet grooming salon. Gentle hands, premium products, and a stress-free experience that keeps tails wagging.</p>
+        <div class="hero-btns">
+          <a href="#contact" class="btn-primary">Book an Appointment <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></a>
+          <a href="tel:+13055551050" class="btn-outline">Call Us</a>
+        </div>
+        <div class="hero-trust">
+          <div class="hero-trust-item"><div class="hero-trust-num">8K+</div><div class="hero-trust-text">Happy Pets</div></div>
+          <div class="hero-trust-item"><div class="hero-trust-num">4.9</div><div class="hero-trust-text">Star Rating</div></div>
+          <div class="hero-trust-item"><div class="hero-trust-num">12+</div><div class="hero-trust-text">Years Open</div></div>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <svg viewBox="0 0 420 400" xmlns="http://www.w3.org/2000/svg">
+          <!-- Cute dog face -->
+          <ellipse cx="210" cy="240" rx="130" ry="120" fill="#F5E6D3"/>
+          <ellipse cx="210" cy="240" rx="130" ry="120" fill="none" stroke="#D4B896" stroke-width="2"/>
+          <!-- Ears -->
+          <ellipse cx="110" cy="160" rx="45" ry="70" fill="#D4A574" transform="rotate(-15, 110, 160)"/>
+          <ellipse cx="310" cy="160" rx="45" ry="70" fill="#D4A574" transform="rotate(15, 310, 160)"/>
+          <!-- Inner ears -->
+          <ellipse cx="112" cy="165" rx="28" ry="45" fill="#FFB3C1" transform="rotate(-15, 112, 165)" opacity="0.6"/>
+          <ellipse cx="308" cy="165" rx="28" ry="45" fill="#FFB3C1" transform="rotate(15, 308, 165)" opacity="0.6"/>
+          <!-- Eyes -->
+          <circle cx="170" cy="220" r="22" fill="#2D2016"/>
+          <circle cx="250" cy="220" r="22" fill="#2D2016"/>
+          <circle cx="178" cy="212" r="7" fill="#FFF"/>
+          <circle cx="258" cy="212" r="7" fill="#FFF"/>
+          <circle cx="173" cy="218" r="3" fill="#FFF" opacity="0.6"/>
+          <circle cx="253" cy="218" r="3" fill="#FFF" opacity="0.6"/>
+          <!-- Nose -->
+          <ellipse cx="210" cy="270" rx="18" ry="14" fill="#2D2016"/>
+          <ellipse cx="206" cy="266" rx="5" ry="4" fill="#5C4A3A" opacity="0.5"/>
+          <!-- Mouth -->
+          <path d="M195 280 Q210 298, 225 280" fill="none" stroke="#2D2016" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- Tongue -->
+          <ellipse cx="210" cy="300" rx="12" ry="16" fill="#FF8FA3"/>
+          <path d="M202 292 Q210 286, 218 292" fill="#FF8FA3"/>
+          <!-- Cheeks -->
+          <circle cx="148" cy="260" r="16" fill="#FFB3C1" opacity="0.3"/>
+          <circle cx="272" cy="260" r="16" fill="#FFB3C1" opacity="0.3"/>
+          <!-- Crown / bow -->
+          <path d="M175 150 L195 120 L210 145 L225 120 L245 150" fill="#FBBF24" stroke="#F59E0B" stroke-width="2" stroke-linejoin="round"/>
+          <circle cx="195" cy="122" r="4" fill="#FF6B6B"/>
+          <circle cx="210" cy="115" r="5" fill="#C9B1FF"/>
+          <circle cx="225" cy="122" r="4" fill="#95E8C2"/>
+          <!-- Sparkles -->
+          <path d="M340 100 L345 115 L350 100 L345 85 Z" fill="#FBBF24" opacity="0.6"/>
+          <path d="M80 100 L85 112 L90 100 L85 88 Z" fill="#FF8FA3" opacity="0.5"/>
+          <path d="M360 260 L364 270 L368 260 L364 250 Z" fill="#C9B1FF" opacity="0.5"/>
+          <path d="M60 270 L64 280 L68 270 L64 260 Z" fill="#95E8C2" opacity="0.5"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="section services" id="services">
+    <div class="container">
+      <div class="section-center reveal">
+        <div class="section-badge">Our Services</div>
+        <h2 class="section-title">Grooming Packages for Every Pet</h2>
+        <p class="section-desc">From a quick freshen-up to the full spa experience, we have packages designed for dogs and cats of all breeds, sizes, and temperaments.</p>
+      </div>
+      <div class="services-grid">
+        <div class="svc-card reveal reveal-delay-1">
+          <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="M7 12.5s1.5 2 5 2 5-2 5-2"/></svg></div>
+          <h3>Bath & Brush</h3>
+          <p>Premium shampoo, conditioning, blow-dry, brush-out, ear cleaning, and nail trim. The perfect maintenance visit.</p>
+          <div class="svc-price">From $45</div>
+        </div>
+        <div class="svc-card reveal reveal-delay-2">
+          <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg></div>
+          <h3>Full Groom</h3>
+          <p>Everything in Bath & Brush plus a breed-specific haircut, face trim, paw pad shave, and sanitary trim. Show-ready results.</p>
+          <div class="svc-price">From $65</div>
+        </div>
+        <div class="svc-card reveal reveal-delay-3">
+          <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+          <h3>Spa Day Package</h3>
+          <p>The ultimate pamper session: blueberry facial, pawdicure, teeth brushing, de-shedding treatment, and aromatherapy spritz.</p>
+          <div class="svc-price">From $95</div>
+        </div>
+        <div class="svc-card reveal reveal-delay-1">
+          <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg></div>
+          <h3>Puppy's First Groom</h3>
+          <p>Gentle introduction to grooming for puppies under 6 months. Positive reinforcement, short session, and lots of treats to build trust.</p>
+          <div class="svc-price">From $35</div>
+        </div>
+        <div class="svc-card reveal reveal-delay-2">
+          <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+          <h3>De-Shedding Treatment</h3>
+          <p>Specialized de-shedding shampoo, high-velocity blow-out, and undercoat removal. Reduces shedding up to 80% for weeks.</p>
+          <div class="svc-price">From $55</div>
+        </div>
+        <div class="svc-card reveal reveal-delay-3">
+          <div class="svc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg></div>
+          <h3>Cat Grooming</h3>
+          <p>Specialized feline grooming with calm-handling techniques. Bath, brush, nail caps, lion cuts, and mat removal for cats of all temperaments.</p>
+          <div class="svc-price">From $60</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY US -->
+  <section class="section" id="why">
+    <div class="container">
+      <div class="section-center reveal">
+        <div class="section-badge">Why Paws & Co.</div>
+        <h2 class="section-title">Your Pet's Happiness Is Our Priority</h2>
+        <p class="section-desc">We're not a factory. Every pet gets one-on-one attention from start to finish with a groomer who genuinely loves animals.</p>
+      </div>
+      <div class="why-cards">
+        <div class="why-card reveal reveal-delay-1">
+          <div class="why-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+          <div><h4>Fear-Free Certified</h4><p>Our groomers are certified in low-stress handling techniques. Anxious pets? We go slow, use calming aids, and never force anything.</p></div>
+        </div>
+        <div class="why-card reveal reveal-delay-2">
+          <div class="why-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+          <div><h4>All-Natural Products</h4><p>We use organic, hypoallergenic shampoos and conditioners. No harsh chemicals, no artificial fragrances. Safe for sensitive skin.</p></div>
+        </div>
+        <div class="why-card reveal reveal-delay-3">
+          <div class="why-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+          <div><h4>One Pet at a Time</h4><p>No cages, no waiting in line. Your pet gets undivided attention from drop-off to pick-up in a calm, quiet environment.</p></div>
+        </div>
+        <div class="why-card reveal reveal-delay-4">
+          <div class="why-card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 00-3-3l-4 9v11h11.28a2 2 0 002-1.7l1.38-9a2 2 0 00-2-2.3H14z"/><path d="M7 22H4a2 2 0 01-2-2v-7a2 2 0 012-2h3"/></svg></div>
+          <div><h4>Photo Updates</h4><p>We send you adorable before-and-after photos of your freshly groomed pet so you can see the transformation.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="section process-section" id="process">
+    <div class="container">
+      <div class="section-center reveal">
+        <div class="section-badge">Our Process</div>
+        <h2 class="section-title">How a Visit Works</h2>
+        <p class="section-desc">From booking to pick-up, here's what to expect when you bring your furry friend to Paws & Co.</p>
+      </div>
+      <div class="process-steps">
+        <div class="process-step reveal"><div class="process-step-dot">1</div><div class="process-step-content"><h3>Book Online or Call</h3><p>Choose your service, pick a date and time that works, and tell us about your pet's breed, size, and any special needs.</p></div></div>
+        <div class="process-spacer"></div>
+        <div class="process-step reveal"><div class="process-step-dot">2</div><div class="process-step-content"><h3>Meet & Greet</h3><p>We greet your pet calmly, do a quick coat assessment, and discuss any specific requests or concerns before we begin.</p></div></div>
+        <div class="process-spacer"></div>
+        <div class="process-step reveal"><div class="process-step-dot">3</div><div class="process-step-content"><h3>Grooming Session</h3><p>Your pet gets pampered one-on-one. We work at their pace, take breaks when needed, and use treats and praise throughout.</p></div></div>
+        <div class="process-spacer"></div>
+        <div class="process-step reveal"><div class="process-step-dot">4</div><div class="process-step-content"><h3>Fresh & Fabulous</h3><p>We send you a photo, apply a finishing spritz, tie on a bandana, and your pet is ready for pick-up looking amazing.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="section reviews-section" id="reviews">
+    <div class="container">
+      <div class="section-center reveal">
+        <div class="section-badge">Reviews</div>
+        <h2 class="section-title">Pet Parents Love Us</h2>
+        <p class="section-desc">Don't just take our word for it. Here's what pet parents across Miami have to say about Paws & Co.</p>
+      </div>
+      <div class="reviews-grid">
+        <div class="review-card reveal reveal-delay-1">
+          <div class="review-avatar">L</div>
+          <div class="review-stars"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg></div>
+          <blockquote>My Goldendoodle used to hate grooming. Since switching to Paws & Co., he actually gets excited when we pull into the parking lot. The fear-free approach really works. He comes home fluffy and happy every time.</blockquote>
+          <div class="review-name">Laura Vega</div>
+          <div class="review-pet">Pet parent to Biscuit (Goldendoodle)</div>
+        </div>
+        <div class="review-card reveal reveal-delay-2">
+          <div class="review-avatar">M</div>
+          <div class="review-stars"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg></div>
+          <blockquote>I have a Persian cat that is extremely difficult to groom. Paws & Co. handled him with such patience and skill. The lion cut was perfect and he came home calm, not stressed at all. The cat grooming specialists here are the best in Miami.</blockquote>
+          <div class="review-name">Michael Torres</div>
+          <div class="review-pet">Pet parent to Mochi (Persian Cat)</div>
+        </div>
+        <div class="review-card reveal reveal-delay-3">
+          <div class="review-avatar">A</div>
+          <div class="review-stars"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.56 5.82 22 7 14.14l-5-4.87 6.91-1.01L12 2z"/></svg></div>
+          <blockquote>The spa day package is worth every penny. My Shih Tzu came home with a blueberry facial, polished nails, and smelled incredible. I love the before-and-after photos they send. It's the little touches that make this place special.</blockquote>
+          <div class="review-name">Ana Reyes</div>
+          <div class="review-pet">Pet parent to Luna (Shih Tzu)</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq">
+    <div class="container">
+      <div class="section-center reveal">
+        <div class="section-badge">FAQ</div>
+        <h2 class="section-title">Common Questions</h2>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item reveal"><button class="faq-btn" onclick="toggleFaq(this)">How long does a grooming appointment take? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-answer"><p>A Bath & Brush typically takes 1-1.5 hours. A Full Groom is 2-3 hours depending on breed, coat condition, and size. Spa Day packages run about 3 hours. We never rush your pet.</p></div></div>
+        <div class="faq-item reveal"><button class="faq-btn" onclick="toggleFaq(this)">Do you groom cats as well as dogs? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-answer"><p>Yes! We have dedicated cat grooming specialists trained in calm-handling techniques. We offer baths, brush-outs, lion cuts, mat removal, and nail caps for felines of all temperaments.</p></div></div>
+        <div class="faq-item reveal"><button class="faq-btn" onclick="toggleFaq(this)">What if my pet is anxious or aggressive? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-answer"><p>We specialize in anxious pets. Our Fear-Free certified groomers use calming techniques, pheromone sprays, and take breaks as needed. We communicate any concerns with you and will never force your pet through distress.</p></div></div>
+        <div class="faq-item reveal"><button class="faq-btn" onclick="toggleFaq(this)">Does my pet need to be up to date on vaccines? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-answer"><p>Yes, for the safety of all pets in our salon. Dogs need current rabies, DHPP, and bordetella vaccinations. Cats need rabies and FVRCP. Please bring proof at your first visit.</p></div></div>
+        <div class="faq-item reveal"><button class="faq-btn" onclick="toggleFaq(this)">How often should I groom my dog? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-answer"><p>Most breeds do best with grooming every 4-6 weeks. Double-coated breeds may need de-shedding treatments seasonally. We'll recommend a schedule based on your pet's specific coat type and lifestyle.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICE AREAS -->
+  <section class="section reviews-section" id="areas">
+    <div class="container">
+      <div class="section-center reveal">
+        <div class="section-badge">Locations</div>
+        <h2 class="section-title">Serving All of South Florida</h2>
+      </div>
+      <div class="areas-wrap reveal">
+        <span class="area-pill">Miami</span><span class="area-pill">Coral Gables</span><span class="area-pill">Doral</span>
+        <span class="area-pill">Hialeah</span><span class="area-pill">Kendall</span><span class="area-pill">Miami Beach</span>
+        <span class="area-pill">Brickell</span><span class="area-pill">Westchester</span><span class="area-pill">South Miami</span>
+        <span class="area-pill">Homestead</span><span class="area-pill">Miami Gardens</span><span class="area-pill">North Miami</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="section contact-section" id="contact">
+    <div class="container">
+      <div class="section-center reveal">
+        <div class="section-badge">Book Now</div>
+        <h2 class="section-title">Schedule Your Pet's Next Visit</h2>
+        <p class="section-desc">Fill out the form and we'll confirm your appointment within the hour. Walk-ins welcome based on availability!</p>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-info reveal">
+          <div class="contact-item"><div class="contact-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg></div><div><h4>Phone</h4><p>(305) 555-1050</p></div></div>
+          <div class="contact-item"><div class="contact-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg></div><div><h4>Email</h4><p>hello@pawsandco.com</p></div></div>
+          <div class="contact-item"><div class="contact-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><div><h4>Hours</h4><p>Mon-Sat: 8AM - 6PM / Sun: 9AM - 4PM</p></div></div>
+          <div class="contact-item"><div class="contact-item-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div><div><h4>Salon</h4><p>3450 Main Highway, Suite 12<br>Coconut Grove, FL 33133</p></div></div>
+        </div>
+        <form class="contact-form reveal" action="https://formsubmit.co/hello@pawsandco.com" method="POST">
+          <input type="hidden" name="_captcha" value="false" /><input type="hidden" name="_template" value="table" />
+          <div class="form-row">
+            <div class="form-group"><input type="text" name="owner_name" placeholder="Your Name" required /><span class="error-msg">Please enter your name</span></div>
+            <div class="form-group"><input type="text" name="pet_name" placeholder="Pet's Name" required /><span class="error-msg">Please enter your pet's name</span></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><input type="tel" name="phone" placeholder="Phone Number" required /><span class="error-msg">Please enter your phone</span></div>
+            <div class="form-group"><input type="email" name="email" placeholder="Email Address" required /><span class="error-msg">Please enter a valid email</span></div>
+          </div>
+          <div class="form-group">
+            <select name="service" required>
+              <option value="" disabled selected>Select a Service</option>
+              <option value="bath-brush">Bath & Brush ($45+)</option>
+              <option value="full-groom">Full Groom ($65+)</option>
+              <option value="spa-day">Spa Day Package ($95+)</option>
+              <option value="puppy-first">Puppy's First Groom ($35+)</option>
+              <option value="deshedding">De-Shedding Treatment ($55+)</option>
+              <option value="cat-groom">Cat Grooming ($60+)</option>
+            </select>
+            <span class="error-msg">Please select a service</span>
+          </div>
+          <div class="form-group"><textarea name="notes" placeholder="Tell us about your pet (breed, size, any special needs or coat concerns...)" rows="4"></textarea></div>
+          <button type="submit" class="btn-primary" style="border:none;cursor:pointer;width:100%;justify-content:center;">Book Appointment <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-banner">
+    <h2>Your Pet Deserves the Best</h2>
+    <p>Book a grooming appointment today and see why thousands of Miami pet parents trust Paws & Co.</p>
+    <a href="tel:+13055551050" class="cta-banner-btn">Call (305) 555-1050 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg></a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="nav-logo" style="font-size:20px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/><path d="M4.93 4.93c-.39.39-.39 1.02 0 1.41l.7.7c-.19.55-.3 1.13-.3 1.73 0 2.76 2.24 5 5 5h.01c.17.64.42 1.25.74 1.82l-1.4 1.4c-.39.39-.39 1.02 0 1.41.2.2.45.29.71.29s.51-.1.71-.29l1.41-1.41A6.95 6.95 0 0012 18c3.87 0 7-3.13 7-7 0-.6-.11-1.18-.3-1.73l.7-.7c.39-.39.39-1.02 0-1.41a.996.996 0 00-1.41 0l-.7.7A4.98 4.98 0 0015 6H9c-.6 0-1.18.11-1.73.3l-.7-.7a.996.996 0 00-1.41 0l-.23.23z"/></svg>
+          Paws & Co.
+        </div>
+        <p>Miami's favorite pet grooming salon. Gentle hands, premium products, and happy tails since 2014.</p>
+      </div>
+      <div class="footer-col"><h4>Services</h4><a href="#services">Bath & Brush</a><a href="#services">Full Groom</a><a href="#services">Spa Day</a><a href="#services">Puppy's First</a><a href="#services">De-Shedding</a><a href="#services">Cat Grooming</a></div>
+      <div class="footer-col"><h4>Company</h4><a href="#why">About Us</a><a href="#process">Our Process</a><a href="#reviews">Reviews</a><a href="#areas">Locations</a><a href="#faq">FAQ</a><a href="#contact">Contact</a></div>
+      <div class="footer-col"><h4>Contact</h4>
+        <div class="footer-contact-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"/></svg> <a href="tel:+13055551050">(305) 555-1050</a></div>
+        <div class="footer-contact-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><path d="M22 6l-10 7L2 6"/></svg> <a href="mailto:hello@pawsandco.com">hello@pawsandco.com</a></div>
+        <div class="footer-contact-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg> Coconut Grove, FL</div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2025 Paws & Co. All rights reserved.</span>
+      <a href="https://webnari.io" class="webnari-badge" target="_blank"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Powered by Webnari</a>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMobile() {
+      document.querySelector('.hamburger').classList.toggle('open');
+      document.getElementById('mobileOverlay').classList.toggle('open');
+      document.body.style.overflow = document.getElementById('mobileOverlay').classList.contains('open') ? 'hidden' : '';
+    }
+    function closeMobile() {
+      document.querySelector('.hamburger').classList.remove('open');
+      document.getElementById('mobileOverlay').classList.remove('open');
+      document.body.style.overflow = '';
+    }
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    function toggleFaq(btn) {
+      const item = btn.parentElement;
+      document.querySelectorAll('.faq-item').forEach(i => { if (i !== item) i.classList.remove('open'); });
+      item.classList.toggle('open');
+    }
+    (function() {
+      const form = document.querySelector('.contact-form');
+      if (!form) return;
+      const inputs = form.querySelectorAll('input[required], select[required]');
+      inputs.forEach(input => {
+        input.addEventListener('blur', () => {
+          const g = input.closest('.form-group');
+          if (!input.value.trim() || (input.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value))) {
+            g.classList.add('error');
+          } else { g.classList.remove('error'); }
+        });
+      });
+      form.addEventListener('submit', e => {
+        let valid = true;
+        inputs.forEach(input => {
+          const g = input.closest('.form-group');
+          if (!input.value.trim() || (input.type === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value))) {
+            g.classList.add('error'); valid = false;
+          } else { g.classList.remove('error'); }
+        });
+        if (!valid) e.preventDefault();
+      });
+    })();
+  </script>
+</body>
+</html>

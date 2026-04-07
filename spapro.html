@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Serenity Spa — Luxury Wellness &amp; Day Spa Miami</title>
+  <meta name="description" content="Serenity Spa offers luxury massage, facials, and body treatments in Miami. Escape the everyday and restore your glow. Book your appointment today." />
+  <meta property="og:title" content="Serenity Spa — Luxury Wellness & Day Spa Miami" />
+  <meta property="og:description" content="Luxury wellness and day spa in South Florida. Massage, facials, body treatments, and more." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #FAF9F7;
+      --bg2: #F3F1ED;
+      --white: #FFFFFF;
+      --dark: #1A1816;
+      --dark2: #2D2A26;
+      --text: #6B645C;
+      --text2: #8A847C;
+      --border: #E8E4DE;
+      --border2: #D8D4CC;
+      --lavender: #B8A9D4;
+      --lavender2: #D4C8E8;
+      --lavender3: #EDE6F5;
+      --sage: #A8B8A0;
+      --sage2: #C8D4C2;
+      --sage3: #E6EDE3;
+      --rose: #D4A0A0;
+      --rose2: #E8C8C8;
+      --cream: #F0EAE0;
+      --font-serif: 'Cormorant Garamond', serif;
+      --font-sans: 'Jost', sans-serif;
+      --radius: 4px;
+      --radius-lg: 8px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: var(--font-sans); font-size: 16px; line-height: 1.7; overflow-x: hidden; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ===== NAV — Minimal transparent ===== */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      background: rgba(250,249,247,0.9); backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      height: 80px; display: flex; align-items: center;
+    }
+    .nav-inner {
+      max-width: 1200px; margin: 0 auto; padding: 0 40px;
+      width: 100%; display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: var(--font-serif); font-size: 26px; font-weight: 500;
+      color: var(--dark); letter-spacing: 0.04em;
+    }
+    .nav-logo em { font-style: italic; color: var(--lavender); }
+    .nav-center { display: flex; align-items: center; gap: 36px; }
+    .nav-center a {
+      font-family: var(--font-sans); font-size: 13px; font-weight: 400;
+      color: var(--text); letter-spacing: 0.12em; text-transform: uppercase;
+      transition: color 0.2s; position: relative;
+    }
+    .nav-center a::after {
+      content: ''; position: absolute; bottom: -4px; left: 0; right: 0;
+      height: 1px; background: var(--lavender); transform: scaleX(0);
+      transition: transform 0.3s; transform-origin: center;
+    }
+    .nav-center a:hover { color: var(--dark); }
+    .nav-center a:hover::after { transform: scaleX(1); }
+    .nav-cta {
+      font-family: var(--font-sans); font-size: 13px; font-weight: 500;
+      color: var(--dark); letter-spacing: 0.12em; text-transform: uppercase;
+      border: 1px solid var(--dark); padding: 10px 28px;
+      transition: background 0.3s, color 0.3s;
+    }
+    .nav-cta:hover { background: var(--dark); color: var(--bg); }
+    .hamburger {
+      display: none; background: none; border: none; cursor: pointer;
+      width: 28px; height: 20px; position: relative;
+    }
+    .hamburger span {
+      display: block; width: 100%; height: 1.5px; background: var(--dark);
+      position: absolute; left: 0; transition: transform 0.3s, opacity 0.3s;
+    }
+    .hamburger span:nth-child(1) { top: 0; }
+    .hamburger span:nth-child(2) { top: 50%; transform: translateY(-50%); }
+    .hamburger span:nth-child(3) { bottom: 0; }
+    .hamburger.open span:nth-child(1) { transform: translateY(9px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+    .mobile-overlay {
+      position: fixed; inset: 0; z-index: 998;
+      background: rgba(250,249,247,0.98); backdrop-filter: blur(20px);
+      display: none; flex-direction: column; align-items: center; justify-content: center; gap: 24px;
+    }
+    .mobile-overlay.open { display: flex; }
+    .mobile-overlay a {
+      font-family: var(--font-serif); font-size: 32px; font-weight: 500;
+      color: var(--dark); transition: color 0.2s;
+    }
+    .mobile-overlay a:hover { color: var(--lavender); }
+
+    /* ===== HERO — Full-height, centered serif headline, minimal ===== */
+    .hero {
+      min-height: 100vh; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; text-align: center; padding: 120px 40px 80px;
+      background: var(--bg); position: relative;
+    }
+    .hero-eyebrow {
+      font-family: var(--font-sans); font-size: 12px; font-weight: 400;
+      color: var(--lavender); letter-spacing: 0.25em; text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .hero-title {
+      font-family: var(--font-serif); font-size: clamp(44px, 7vw, 80px); font-weight: 400;
+      color: var(--dark); line-height: 1.1; max-width: 800px; margin-bottom: 28px;
+    }
+    .hero-title em { font-style: italic; color: var(--lavender); }
+    .hero-desc {
+      font-family: var(--font-sans); font-size: 17px; font-weight: 300;
+      color: var(--text2); max-width: 520px; line-height: 1.8; margin-bottom: 44px;
+    }
+    .hero-btns { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+    .btn-dark {
+      background: var(--dark); color: var(--bg); font-family: var(--font-sans); font-weight: 500;
+      font-size: 13px; padding: 16px 36px; letter-spacing: 0.12em; text-transform: uppercase;
+      transition: background 0.3s; display: inline-flex; align-items: center; gap: 10px;
+    }
+    .btn-dark:hover { background: var(--dark2); }
+    .btn-ghost {
+      border: 1px solid var(--border2); color: var(--dark); font-family: var(--font-sans); font-weight: 500;
+      font-size: 13px; padding: 16px 36px; letter-spacing: 0.12em; text-transform: uppercase;
+      transition: border-color 0.3s, background 0.3s;
+    }
+    .btn-ghost:hover { border-color: var(--dark); background: rgba(26,24,22,0.03); }
+    .hero-scroll {
+      position: absolute; bottom: 40px; left: 50%; transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 8px;
+      font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text2);
+    }
+    .hero-scroll-line { width: 1px; height: 40px; background: var(--border2); animation: scrollHint 2s infinite; }
+    @keyframes scrollHint { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform: scaleY(1); transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
+
+    /* ===== MARQUEE ===== */
+    .marquee {
+      overflow: hidden; background: var(--dark); padding: 18px 0; white-space: nowrap;
+    }
+    .marquee-track {
+      display: inline-flex; animation: marqueeScroll 30s linear infinite;
+    }
+    .marquee-track span {
+      font-family: var(--font-serif); font-size: 15px; font-weight: 400;
+      color: var(--bg); letter-spacing: 0.06em; padding: 0 24px;
+      display: inline-flex; align-items: center; gap: 24px;
+    }
+    .marquee-track span::after { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--lavender); }
+    @keyframes marqueeScroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    /* ===== SECTION ===== */
+    .section { padding: 120px 40px; }
+    .container { max-width: 1100px; margin: 0 auto; }
+    .section-eyebrow {
+      font-family: var(--font-sans); font-size: 12px; font-weight: 400;
+      color: var(--lavender); letter-spacing: 0.25em; text-transform: uppercase; margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: var(--font-serif); font-size: clamp(32px, 4vw, 48px); font-weight: 400;
+      color: var(--dark); line-height: 1.15; margin-bottom: 16px;
+    }
+    .section-title em { font-style: italic; color: var(--lavender); }
+    .section-desc { font-size: 16px; font-weight: 300; color: var(--text2); line-height: 1.8; max-width: 520px; }
+
+    /* ===== SERVICES — Numbered editorial list ===== */
+    .services-list { display: flex; flex-direction: column; border-top: 1px solid var(--border); }
+    .svc-row {
+      display: grid; grid-template-columns: 80px 1fr 200px 120px; align-items: center; gap: 32px;
+      padding: 36px 0; border-bottom: 1px solid var(--border);
+      transition: background 0.3s; cursor: default;
+    }
+    .svc-row:hover { background: var(--bg2); }
+    .svc-num {
+      font-family: var(--font-serif); font-size: 36px; font-weight: 400;
+      color: var(--border2);
+    }
+    .svc-row:hover .svc-num { color: var(--lavender); }
+    .svc-info h3 { font-family: var(--font-serif); font-size: 24px; font-weight: 500; color: var(--dark); margin-bottom: 4px; }
+    .svc-info p { font-size: 14px; color: var(--text2); line-height: 1.6; }
+    .svc-duration { font-size: 13px; color: var(--text2); text-align: right; }
+    .svc-price { font-family: var(--font-serif); font-size: 22px; color: var(--dark); text-align: right; }
+
+    /* ===== ABOUT — Asymmetric split ===== */
+    .about-section { background: var(--dark); color: var(--bg); }
+    .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .about-visual {
+      width: 100%; aspect-ratio: 3/4; background: linear-gradient(160deg, var(--lavender3), var(--sage3), var(--rose2));
+      border-radius: var(--radius-lg); position: relative; overflow: hidden;
+    }
+    .about-visual::after {
+      content: 'Serenity'; position: absolute; bottom: 32px; left: 32px;
+      font-family: var(--font-serif); font-size: 60px; font-weight: 400;
+      color: rgba(255,255,255,0.3); font-style: italic;
+    }
+    .about-section .section-eyebrow { color: var(--lavender2); }
+    .about-section .section-title { color: var(--bg); }
+    .about-section .section-title em { color: var(--lavender2); }
+    .about-section .section-desc { color: rgba(250,249,247,0.6); }
+    .about-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 48px; }
+    .about-stat { border-left: 1px solid rgba(250,249,247,0.15); padding-left: 20px; }
+    .about-stat-num { font-family: var(--font-serif); font-size: 36px; font-weight: 400; color: var(--lavender2); }
+    .about-stat-text { font-size: 13px; color: rgba(250,249,247,0.5); margin-top: 2px; }
+
+    /* ===== PROCESS — Horizontal steps ===== */
+    .process-flow { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; }
+    .process-card {
+      padding: 40px 28px; border-right: 1px solid var(--border); position: relative;
+    }
+    .process-card:last-child { border-right: none; }
+    .process-card-num {
+      font-family: var(--font-serif); font-size: 56px; font-weight: 400;
+      color: var(--border); line-height: 1; margin-bottom: 20px;
+    }
+    .process-card h3 { font-family: var(--font-serif); font-size: 22px; font-weight: 500; color: var(--dark); margin-bottom: 8px; }
+    .process-card p { font-size: 14px; color: var(--text2); line-height: 1.6; }
+
+    /* ===== REVIEWS — Large quote style ===== */
+    .reviews-section { background: var(--bg2); }
+    .reviews-slider { max-width: 720px; margin: 0 auto; }
+    .review-slide { text-align: center; padding: 20px; }
+    .review-quote {
+      font-family: var(--font-serif); font-size: clamp(20px, 3vw, 28px); font-weight: 400;
+      color: var(--dark); line-height: 1.5; font-style: italic; margin-bottom: 28px;
+      position: relative;
+    }
+    .review-quote::before {
+      content: '\201C'; font-family: var(--font-serif); font-size: 80px;
+      color: var(--lavender2); position: absolute; top: -40px; left: 50%; transform: translateX(-50%);
+      line-height: 1;
+    }
+    .review-author { font-family: var(--font-sans); font-size: 13px; font-weight: 500; color: var(--dark); letter-spacing: 0.08em; text-transform: uppercase; }
+    .review-detail { font-size: 13px; color: var(--text2); margin-top: 4px; }
+    .review-dots { display: flex; justify-content: center; gap: 8px; margin-top: 32px; }
+    .review-dot {
+      width: 8px; height: 8px; border-radius: 50%; background: var(--border2);
+      border: none; cursor: pointer; transition: background 0.2s;
+    }
+    .review-dot.active { background: var(--lavender); }
+
+    /* ===== FAQ — Clean minimal ===== */
+    .faq-list { max-width: 680px; margin: 0 auto; display: flex; flex-direction: column; }
+    .faq-item { border-bottom: 1px solid var(--border); }
+    .faq-btn {
+      width: 100%; background: none; border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 24px 0; color: var(--dark); font-family: var(--font-serif);
+      font-size: 20px; font-weight: 500; text-align: left;
+    }
+    .faq-btn svg { width: 20px; height: 20px; color: var(--lavender); transition: transform 0.3s; flex-shrink: 0; }
+    .faq-item.open .faq-btn svg { transform: rotate(45deg); }
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.35s, padding 0.35s; }
+    .faq-item.open .faq-answer { max-height: 200px; padding-bottom: 24px; }
+    .faq-answer p { font-size: 15px; color: var(--text2); line-height: 1.7; }
+
+    /* ===== CONTACT — Elegant split ===== */
+    .contact-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; align-items: start; }
+    .contact-info { display: flex; flex-direction: column; gap: 28px; }
+    .contact-item h4 {
+      font-family: var(--font-sans); font-size: 12px; font-weight: 500;
+      color: var(--lavender); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 4px;
+    }
+    .contact-item p { font-size: 15px; color: var(--dark); }
+    .contact-form { display: flex; flex-direction: column; gap: 20px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .form-group label {
+      display: block; font-size: 12px; font-weight: 500; color: var(--text2);
+      letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 8px;
+    }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--border2);
+      padding: 12px 0; color: var(--dark); font-family: var(--font-sans); font-size: 15px;
+      outline: none; transition: border-color 0.2s;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--lavender); }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+    .form-group .error-msg { color: var(--rose); font-size: 12px; margin-top: 4px; display: none; }
+    .form-group.error input, .form-group.error textarea { border-color: var(--rose); }
+    .form-group.error .error-msg { display: block; }
+
+    /* ===== CTA ===== */
+    .cta-section {
+      background: linear-gradient(160deg, var(--lavender3), var(--sage3));
+      padding: 100px 40px; text-align: center;
+    }
+    .cta-section h2 { font-family: var(--font-serif); font-size: clamp(32px, 4vw, 48px); font-weight: 400; color: var(--dark); margin-bottom: 16px; }
+    .cta-section h2 em { font-style: italic; color: var(--lavender); }
+    .cta-section p { font-size: 16px; font-weight: 300; color: var(--text2); max-width: 480px; margin: 0 auto 36px; }
+
+    /* ===== FOOTER ===== */
+    footer { background: var(--dark); color: rgba(250,249,247,0.5); padding: 64px 40px 32px; }
+    .footer-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 48px; }
+    .footer-brand .nav-logo { color: var(--bg); }
+    .footer-brand .nav-logo em { color: var(--lavender2); }
+    .footer-brand p { font-size: 14px; margin: 16px 0; max-width: 260px; line-height: 1.7; }
+    .footer-col h4 {
+      font-family: var(--font-sans); font-size: 12px; font-weight: 500;
+      color: var(--lavender2); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 16px;
+    }
+    .footer-col a { display: block; font-size: 14px; padding: 4px 0; transition: color 0.15s; }
+    .footer-col a:hover { color: var(--bg); }
+    .footer-bottom {
+      max-width: 1100px; margin: 48px auto 0; padding-top: 24px;
+      border-top: 1px solid rgba(250,249,247,0.1);
+      display: flex; justify-content: space-between; align-items: center; font-size: 12px;
+    }
+    .webnari-badge { display: flex; align-items: center; gap: 6px; opacity: 0.4; transition: opacity 0.2s; }
+    .webnari-badge:hover { opacity: 0.8; }
+
+    /* ===== AREAS ===== */
+    .areas-wrap { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 40px; }
+    .area-pill {
+      border: 1px solid var(--border); padding: 8px 20px; font-size: 13px; font-weight: 400;
+      color: var(--text); letter-spacing: 0.06em; transition: border-color 0.2s, color 0.2s;
+    }
+    .area-pill:hover { border-color: var(--lavender); color: var(--dark); }
+
+    /* ===== REVEAL ===== */
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease-out, transform 0.7s ease-out; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 1024px) {
+      .about-grid { grid-template-columns: 1fr; gap: 48px; }
+      .about-visual { max-height: 400px; }
+      .process-flow { grid-template-columns: repeat(2, 1fr); }
+      .process-card:nth-child(2) { border-right: none; }
+      .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+      .footer-inner { grid-template-columns: repeat(2, 1fr); }
+      .svc-row { grid-template-columns: 60px 1fr 120px; }
+      .svc-duration { display: none; }
+    }
+    @media (max-width: 768px) {
+      .nav-center, .nav-cta { display: none; }
+      .hamburger { display: block; }
+      .section { padding: 80px 24px; }
+      .hero { padding: 120px 24px 80px; }
+      .svc-row { grid-template-columns: 40px 1fr; gap: 16px; }
+      .svc-price { display: none; }
+      .process-flow { grid-template-columns: 1fr; }
+      .process-card { border-right: none; border-bottom: 1px solid var(--border); }
+      .about-stats { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .reviews-slider { padding: 0 8px; }
+    }
+    @media (max-width: 480px) {
+      .footer-inner { grid-template-columns: 1fr; }
+      nav { padding: 0 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-inner">
+      <a href="spapro.html" class="nav-logo">Serenity <em>Spa</em></a>
+      <div class="nav-center">
+        <a href="#services">Services</a>
+        <a href="#about">About</a>
+        <a href="#process">Experience</a>
+        <a href="#reviews">Reviews</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <a href="#contact" class="nav-cta">Book Now</a>
+      <button class="hamburger" onclick="toggleMobile()" aria-label="Menu"><span></span><span></span><span></span></button>
+    </div>
+  </nav>
+
+  <div class="mobile-overlay" id="mobileOverlay">
+    <a href="#services" onclick="closeMobile()">Services</a>
+    <a href="#about" onclick="closeMobile()">About</a>
+    <a href="#process" onclick="closeMobile()">Experience</a>
+    <a href="#reviews" onclick="closeMobile()">Reviews</a>
+    <a href="#contact" onclick="closeMobile()">Contact</a>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-eyebrow">Luxury Wellness &bull; Miami, Florida</div>
+    <h1 class="hero-title">Restore Your Body.<br><em>Renew Your Spirit.</em></h1>
+    <p class="hero-desc">Serenity Spa is a sanctuary for relaxation and renewal. Indulge in expertly crafted treatments designed to melt away stress and reveal your natural radiance.</p>
+    <div class="hero-btns">
+      <a href="#contact" class="btn-dark">Book Your Escape <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></a>
+      <a href="tel:+13055551100" class="btn-ghost">Call (305) 555-1100</a>
+    </div>
+    <div class="hero-scroll"><span>Scroll</span><div class="hero-scroll-line"></div></div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee"><div class="marquee-track"><span>Massage</span><span>Facials</span><span>Body Wraps</span><span>Aromatherapy</span><span>Hot Stone</span><span>Couples Retreat</span><span>Skincare</span><span>Reflexology</span><span>Massage</span><span>Facials</span><span>Body Wraps</span><span>Aromatherapy</span><span>Hot Stone</span><span>Couples Retreat</span><span>Skincare</span><span>Reflexology</span></div></div>
+
+  <!-- SERVICES -->
+  <section class="section" id="services">
+    <div class="container">
+      <div class="reveal" style="margin-bottom:56px;">
+        <div class="section-eyebrow">Our Menu</div>
+        <h2 class="section-title">Treatments Crafted for <em>You</em></h2>
+        <p class="section-desc">Each treatment is personalized to your needs, using organic botanicals and time-honored techniques from around the world.</p>
+      </div>
+      <div class="services-list">
+        <div class="svc-row reveal">
+          <div class="svc-num">01</div>
+          <div class="svc-info"><h3>Swedish Massage</h3><p>Long flowing strokes to ease tension, improve circulation, and promote deep relaxation. The foundation of wellness.</p></div>
+          <div class="svc-duration">60 / 90 min</div>
+          <div class="svc-price">$120</div>
+        </div>
+        <div class="svc-row reveal">
+          <div class="svc-num">02</div>
+          <div class="svc-info"><h3>Deep Tissue Massage</h3><p>Targeted pressure on chronic tension areas. Ideal for athletes, desk workers, and anyone carrying stubborn knots.</p></div>
+          <div class="svc-duration">60 / 90 min</div>
+          <div class="svc-price">$140</div>
+        </div>
+        <div class="svc-row reveal">
+          <div class="svc-num">03</div>
+          <div class="svc-info"><h3>Signature Facial</h3><p>Custom-blended organic serums, gentle exfoliation, LED therapy, and a relaxing facial massage. Your skin, transformed.</p></div>
+          <div class="svc-duration">75 min</div>
+          <div class="svc-price">$150</div>
+        </div>
+        <div class="svc-row reveal">
+          <div class="svc-num">04</div>
+          <div class="svc-info"><h3>Hot Stone Therapy</h3><p>Heated basalt stones placed along energy meridians to melt tension and restore balance. Deeply warming and grounding.</p></div>
+          <div class="svc-duration">90 min</div>
+          <div class="svc-price">$160</div>
+        </div>
+        <div class="svc-row reveal">
+          <div class="svc-num">05</div>
+          <div class="svc-info"><h3>Body Wrap & Scrub</h3><p>Full-body exfoliation followed by a nourishing seaweed or mud wrap. Detoxifies, hydrates, and leaves skin silky smooth.</p></div>
+          <div class="svc-duration">90 min</div>
+          <div class="svc-price">$170</div>
+        </div>
+        <div class="svc-row reveal">
+          <div class="svc-num">06</div>
+          <div class="svc-info"><h3>Couples Retreat</h3><p>Side-by-side massage, champagne, aromatherapy, and a private relaxation lounge. The perfect shared escape.</p></div>
+          <div class="svc-duration">120 min</div>
+          <div class="svc-price">$350</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="section about-section" id="about">
+    <div class="container">
+      <div class="about-grid">
+        <div class="about-visual reveal"></div>
+        <div class="reveal">
+          <div class="section-eyebrow">Our Story</div>
+          <h2 class="section-title">A Sanctuary in the <em>Heart of Miami</em></h2>
+          <p class="section-desc">Founded in 2012, Serenity Spa was born from a simple belief: everyone deserves a place to truly rest. Our team of licensed therapists brings decades of combined experience in massage therapy, skincare, and holistic wellness. Every detail of our space, from the ambient lighting to the organic essential oils, is designed to transport you to a state of complete calm.</p>
+          <div class="about-stats">
+            <div class="about-stat"><div class="about-stat-num">12+</div><div class="about-stat-text">Years of Wellness</div></div>
+            <div class="about-stat"><div class="about-stat-num">20K+</div><div class="about-stat-text">Treatments Given</div></div>
+            <div class="about-stat"><div class="about-stat-num">4.9</div><div class="about-stat-text">Star Rating</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="section" id="process">
+    <div class="container">
+      <div class="reveal" style="text-align:center;margin-bottom:56px;">
+        <div class="section-eyebrow">The Experience</div>
+        <h2 class="section-title">Your Journey to <em>Serenity</em></h2>
+      </div>
+      <div class="process-flow">
+        <div class="process-card reveal reveal-delay-1"><div class="process-card-num">01</div><h3>Book</h3><p>Choose your treatment online or by phone. We'll confirm your appointment and send a welcome guide with pre-visit tips.</p></div>
+        <div class="process-card reveal reveal-delay-2"><div class="process-card-num">02</div><h3>Arrive</h3><p>Check in 15 minutes early. Enjoy herbal tea in our relaxation lounge as you transition from the outside world.</p></div>
+        <div class="process-card reveal reveal-delay-3"><div class="process-card-num">03</div><h3>Indulge</h3><p>Your therapist customizes every detail to your preferences: pressure, temperature, focus areas, and aromatherapy scent.</p></div>
+        <div class="process-card reveal reveal-delay-4"><div class="process-card-num">04</div><h3>Glow</h3><p>Emerge refreshed. Enjoy post-treatment snacks and water in the lounge, and receive personalized self-care recommendations.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- REVIEWS -->
+  <section class="section reviews-section" id="reviews">
+    <div class="container">
+      <div class="reveal" style="text-align:center;margin-bottom:56px;">
+        <div class="section-eyebrow">Kind Words</div>
+        <h2 class="section-title">What Our Guests <em>Say</em></h2>
+      </div>
+      <div class="reviews-slider" id="reviewSlider">
+        <div class="review-slide reveal" id="slide-0">
+          <div class="review-quote">From the moment I walked in, the stress melted away. The hot stone massage was transcendent. I've been to spas all over the world, and Serenity is genuinely one of the best.</div>
+          <div class="review-author">Isabelle Monroe</div>
+          <div class="review-detail">90-Minute Hot Stone</div>
+        </div>
+        <div class="review-slide reveal" id="slide-1" style="display:none;">
+          <div class="review-quote">My husband and I did the Couples Retreat for our anniversary. The private lounge, champagne, side-by-side massage... it was absolutely perfect. Already booked our next visit.</div>
+          <div class="review-author">Carolina Diaz</div>
+          <div class="review-detail">Couples Retreat</div>
+        </div>
+        <div class="review-slide reveal" id="slide-2" style="display:none;">
+          <div class="review-quote">The signature facial completely transformed my skin. My esthetician explained every step, customized the products for my skin type, and the results lasted for weeks. Worth every penny.</div>
+          <div class="review-author">Priya Sharma</div>
+          <div class="review-detail">Signature Facial</div>
+        </div>
+      </div>
+      <div class="review-dots">
+        <button class="review-dot active" onclick="showSlide(0)"></button>
+        <button class="review-dot" onclick="showSlide(1)"></button>
+        <button class="review-dot" onclick="showSlide(2)"></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section" id="faq">
+    <div class="container">
+      <div class="reveal" style="text-align:center;margin-bottom:48px;">
+        <div class="section-eyebrow">Questions</div>
+        <h2 class="section-title">Frequently <em>Asked</em></h2>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item reveal"><button class="faq-btn" onclick="toggleFaq(this)">What should I wear to my appointment? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-answer"><p>Wear whatever is comfortable. We provide robes, slippers, and disposable undergarments. During treatments, you'll be draped for modesty and warmth. Only the area being worked on is exposed.</p></div></div>
+        <div class="faq-item reveal"><button class="faq-btn" onclick="toggleFaq(this)">How early should I arrive? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-answer"><p>We recommend arriving 15 minutes before your appointment to check in, change, and begin relaxing in our lounge. This ensures your full treatment time isn't shortened. Late arrivals may have reduced session length.</p></div></div>
+        <div class="faq-item reveal"><button class="faq-btn" onclick="toggleFaq(this)">Can I request a specific therapist? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-answer"><p>Absolutely. When booking, you can request a specific therapist by name. We also allow you to specify gender preference. We'll do our best to accommodate your request based on availability.</p></div></div>
+        <div class="faq-item reveal"><button class="faq-btn" onclick="toggleFaq(this)">What is your cancellation policy? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-answer"><p>We ask for 24 hours notice for cancellations. Same-day cancellations and no-shows are subject to a 50% charge. We understand that emergencies happen, so please call us and we'll work with you.</p></div></div>
+        <div class="faq-item reveal"><button class="faq-btn" onclick="toggleFaq(this)">Do you offer gift certificates? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></button><div class="faq-answer"><p>Yes! Gift certificates are available for any dollar amount or specific treatment. They can be purchased in-spa or over the phone. We offer beautiful physical cards or instant digital delivery via email.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AREAS -->
+  <section class="section" style="background:var(--white);">
+    <div class="container" style="text-align:center;">
+      <div class="reveal">
+        <div class="section-eyebrow">Location</div>
+        <h2 class="section-title">Serving <em>South Florida</em></h2>
+      </div>
+      <div class="areas-wrap reveal">
+        <span class="area-pill">Miami</span><span class="area-pill">Coral Gables</span><span class="area-pill">Doral</span>
+        <span class="area-pill">Hialeah</span><span class="area-pill">Kendall</span><span class="area-pill">Miami Beach</span>
+        <span class="area-pill">Brickell</span><span class="area-pill">Westchester</span><span class="area-pill">South Miami</span>
+        <span class="area-pill">Homestead</span><span class="area-pill">Miami Gardens</span><span class="area-pill">North Miami</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="section" id="contact">
+    <div class="container">
+      <div class="reveal" style="margin-bottom:56px;">
+        <div class="section-eyebrow">Book Now</div>
+        <h2 class="section-title">Begin Your <em>Journey</em></h2>
+        <p class="section-desc">Reserve your treatment or inquire about our services. We respond within the hour during business hours.</p>
+      </div>
+      <div class="contact-grid">
+        <div class="contact-info reveal">
+          <div class="contact-item"><h4>Phone</h4><p>(305) 555-1100</p></div>
+          <div class="contact-item"><h4>Email</h4><p>hello@serenity-spa.com</p></div>
+          <div class="contact-item"><h4>Hours</h4><p>Mon - Sat: 9AM - 8PM<br>Sunday: 10AM - 6PM</p></div>
+          <div class="contact-item"><h4>Address</h4><p>1420 Collins Avenue, Suite 200<br>Miami Beach, FL 33139</p></div>
+        </div>
+        <form class="contact-form reveal" action="https://formsubmit.co/hello@serenity-spa.com" method="POST">
+          <input type="hidden" name="_captcha" value="false" /><input type="hidden" name="_template" value="table" />
+          <div class="form-row">
+            <div class="form-group"><label>Full Name</label><input type="text" name="name" required /><span class="error-msg">Please enter your name</span></div>
+            <div class="form-group"><label>Phone</label><input type="tel" name="phone" required /><span class="error-msg">Please enter your phone</span></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Email</label><input type="email" name="email" required /><span class="error-msg">Please enter a valid email</span></div>
+            <div class="form-group"><label>Service</label>
+              <select name="service" required>
+                <option value="" disabled selected>Select a treatment</option>
+                <option value="swedish">Swedish Massage</option>
+                <option value="deep-tissue">Deep Tissue Massage</option>
+                <option value="facial">Signature Facial</option>
+                <option value="hot-stone">Hot Stone Therapy</option>
+                <option value="body-wrap">Body Wrap & Scrub</option>
+                <option value="couples">Couples Retreat</option>
+              </select>
+              <span class="error-msg">Please select a service</span>
+            </div>
+          </div>
+          <div class="form-group"><label>Message (Optional)</label><textarea name="message" rows="3"></textarea></div>
+          <button type="submit" class="btn-dark" style="border:none;cursor:pointer;width:100%;justify-content:center;">Reserve Your Treatment <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <h2>You Deserve a Moment of <em>Peace</em></h2>
+    <p>Step away from the noise. Book a treatment at Serenity Spa and give yourself the care you deserve.</p>
+    <a href="tel:+13055551100" class="btn-dark">Call (305) 555-1100 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg></a>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="nav-logo">Serenity <em>Spa</em></div>
+        <p>A luxury wellness sanctuary in Miami Beach. Massage, facials, and body treatments designed to restore your balance since 2012.</p>
+      </div>
+      <div class="footer-col"><h4>Treatments</h4><a href="#services">Swedish Massage</a><a href="#services">Deep Tissue</a><a href="#services">Signature Facial</a><a href="#services">Hot Stone</a><a href="#services">Body Wrap</a><a href="#services">Couples Retreat</a></div>
+      <div class="footer-col"><h4>Company</h4><a href="#about">Our Story</a><a href="#process">Experience</a><a href="#reviews">Reviews</a><a href="#faq">FAQ</a><a href="#contact">Contact</a></div>
+      <div class="footer-col"><h4>Contact</h4><a href="tel:+13055551100">(305) 555-1100</a><a href="mailto:hello@serenity-spa.com">hello@serenity-spa.com</a><a>Miami Beach, FL 33139</a></div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2025 Serenity Spa. All rights reserved.</span>
+      <a href="https://webnari.io" class="webnari-badge" target="_blank"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Powered by Webnari</a>
+    </div>
+  </footer>
+
+  <script>
+    function toggleMobile(){document.querySelector('.hamburger').classList.toggle('open');document.getElementById('mobileOverlay').classList.toggle('open');document.body.style.overflow=document.getElementById('mobileOverlay').classList.contains('open')?'hidden':''}
+    function closeMobile(){document.querySelector('.hamburger').classList.remove('open');document.getElementById('mobileOverlay').classList.remove('open');document.body.style.overflow=''}
+    const observer=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}})},{threshold:0.1});
+    document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+    function toggleFaq(btn){const item=btn.parentElement;document.querySelectorAll('.faq-item').forEach(i=>{if(i!==item)i.classList.remove('open')});item.classList.toggle('open')}
+    function showSlide(n){document.querySelectorAll('.review-slide').forEach((s,i)=>{s.style.display=i===n?'block':'none'});document.querySelectorAll('.review-dot').forEach((d,i)=>{d.classList.toggle('active',i===n)})}
+    let currentSlide=0;setInterval(()=>{currentSlide=(currentSlide+1)%3;showSlide(currentSlide)},6000);
+    (function(){const form=document.querySelector('.contact-form');if(!form)return;const inputs=form.querySelectorAll('input[required], select[required]');inputs.forEach(input=>{input.addEventListener('blur',()=>{const g=input.closest('.form-group');if(!input.value.trim()||(input.type==='email'&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value))){g.classList.add('error')}else{g.classList.remove('error')}})});form.addEventListener('submit',e=>{let valid=true;inputs.forEach(input=>{const g=input.closest('.form-group');if(!input.value.trim()||(input.type==='email'&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value))){g.classList.add('error');valid=false}else{g.classList.remove('error')}});if(!valid)e.preventDefault()})})();
+  </script>
+</body>
+</html>
