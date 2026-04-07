@@ -39,7 +39,8 @@ create table if not exists products (
   id                 text primary key default gen_random_uuid()::text,
   store_id           text not null references stores(id) on delete cascade,
   name               text not null,
-  sku                text,                               -- e.g. PCH-CROSS-001
+  sku                text,                               -- e.g. PCH-CROSS-TIE-001
+  color              text,                               -- e.g. 'Tie-Dye', 'Pink', 'Black'
   slug               text,
   category           text,
   description        text,
@@ -54,6 +55,12 @@ create table if not exists products (
   rating             numeric(2,1),
   stripe_price_id    text,
   square_catalog_id  text,
+  weight_oz          numeric(8,2),                       -- shipping weight in ounces
+  length_in          numeric(6,2),                       -- package length in inches
+  width_in           numeric(6,2),                       -- package width in inches
+  height_in          numeric(6,2),                       -- package height in inches
+  meta_title         text,
+  meta_description   text,
   sort_order         integer not null default 0,
   created_at         timestamptz not null default now(),
   updated_at         timestamptz not null default now()
@@ -295,6 +302,99 @@ create table if not exists store_admins (
 create index if not exists idx_store_admins_user on store_admins(user_id);
 
 
+-- ── 17. Saved Carts (Abandoned Cart Recovery) ──────────────
+create table if not exists saved_carts (
+  id                    uuid primary key default gen_random_uuid(),
+  store_id              text not null references stores(id) on delete cascade,
+  session_id            text not null,
+  email                 text,                              -- captured at checkout start or email popup
+  items                 jsonb not null default '[]',       -- [{productId, variantId, quantity, name}]
+  total                 integer not null default 0,        -- cents
+  recovered             boolean not null default false,    -- true once checkout completes
+  recovery_email_sent_at timestamptz,                      -- null = not yet sent
+  created_at            timestamptz not null default now(),
+  updated_at            timestamptz not null default now()
+);
+
+create unique index if not exists idx_saved_carts_store_session
+  on saved_carts(store_id, session_id);
+create index if not exists idx_saved_carts_abandoned
+  on saved_carts(store_id, email, recovered, recovery_email_sent_at)
+  where email is not null and recovered = false and recovery_email_sent_at is null;
+
+
+-- ── 18. Customers (Auth & Accounts) ────────────────────────
+create table if not exists customers (
+  id                 uuid primary key default gen_random_uuid(),
+  store_id           text not null references stores(id) on delete cascade,
+  email              text not null,
+  password_hash      text not null,
+  name               text,
+  phone              text,
+  created_at         timestamptz not null default now(),
+  updated_at         timestamptz not null default now(),
+  last_login_at      timestamptz,
+  unique(store_id, email)
+);
+
+create index if not exists idx_customers_store_email on customers(store_id, email);
+
+
+-- ── 19. Customer Addresses ─────────────────────────────────
+create table if not exists customer_addresses (
+  id                 uuid primary key default gen_random_uuid(),
+  customer_id        uuid not null references customers(id) on delete cascade,
+  store_id           text not null references stores(id) on delete cascade,
+  label              text not null default 'Home',         -- 'Home', 'Work', 'Other'
+  name               text,                                  -- recipient name
+  street1            text not null,
+  street2            text,
+  city               text not null,
+  state              text not null,                         -- 2-letter code
+  zip                text not null,
+  country            text not null default 'US',
+  is_default         boolean not null default false,
+  created_at         timestamptz not null default now()
+);
+
+create index if not exists idx_customer_addresses_customer on customer_addresses(customer_id);
+
+
+-- ── 20. Password Reset Tokens ──────────────────────────────
+create table if not exists password_reset_tokens (
+  id                 uuid primary key default gen_random_uuid(),
+  customer_id        uuid not null references customers(id) on delete cascade,
+  store_id           text not null references stores(id) on delete cascade,
+  token_hash         text not null unique,                  -- SHA-256 of actual token
+  expires_at         timestamptz not null,                  -- 30 min from creation
+  used_at            timestamptz,                           -- null = not yet used
+  created_at         timestamptz not null default now()
+);
+
+create index if not exists idx_password_reset_tokens_hash on password_reset_tokens(token_hash);
+
+
+-- ── 21. Tax Rates by Zip Code ────────────────────────────────
+-- Universal tax rate table shared across all stores.
+-- Replaces per-store store_tax_rates for accurate municipal-level tax.
+create table if not exists tax_rates (
+  zip           text not null,                              -- 5-digit zip code
+  state         text not null,                              -- 2-letter state code
+  county        text,                                       -- county name
+  city          text,                                       -- city name (if city-level rate)
+  state_rate    numeric(6,5) not null default 0,            -- e.g. 0.06000 = 6%
+  county_rate   numeric(6,5) not null default 0,            -- e.g. 0.01000 = 1%
+  city_rate     numeric(6,5) not null default 0,            -- e.g. 0.00000 = 0%
+  special_rate  numeric(6,5) not null default 0,            -- special district
+  combined_rate numeric(6,5) not null,                      -- total of all rates
+  source        text not null default 'manual',             -- 'manual', 'avalara', 'sst', 'cron'
+  updated_at    timestamptz not null default now(),
+  primary key (zip)
+);
+
+create index if not exists idx_tax_rates_state on tax_rates(state);
+
+
 -- ═══════════════════════════════════════════════════════════
 --  ROW LEVEL SECURITY
 -- ═══════════════════════════════════════════════════════════
@@ -303,8 +403,12 @@ create index if not exists idx_store_admins_user on store_admins(user_id);
 alter table stores enable row level security;
 create policy "Public read stores" on stores for select using (true);
 
--- Tax rates: service role only (internal calculation)
+-- Tax rates (legacy per-store): service role only
 alter table store_tax_rates enable row level security;
+
+-- Tax rates (zip-level): public read, service role write
+alter table tax_rates enable row level security;
+create policy "Public read tax_rates" on tax_rates for select using (true);
 
 -- Products: public read
 alter table products enable row level security;

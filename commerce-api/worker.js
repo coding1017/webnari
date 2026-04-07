@@ -1,9 +1,12 @@
 // ═══════════════════════════════════════════════════════════════
 // Webnari Commerce API — Cloudflare Worker
 // Multi-tenant e-commerce backend: checkout, payments, inventory,
-// orders, shipping, tax — for all Webnari store templates.
+// orders, shipping, tax, SEO — for all Webnari store templates.
 //
 // Routes:
+//   GET  /api/products                — List all products (public)
+//   GET  /api/products/featured       — Featured products (public)
+//   GET  /api/products/:id            — Get single product (public)
 //   POST /api/checkout/create         — Create checkout session
 //   POST /api/checkout/webhook/stripe — Stripe webhook
 //   POST /api/checkout/webhook/square — Square webhook
@@ -16,6 +19,45 @@
 //   POST /api/shipping/calculate      — Calculate shipping cost
 //   POST /api/tax/calculate           — Calculate tax
 //   GET  /api/store/config            — Public store config
+//
+//  SEO (no X-Store-ID — resolve via Host / ?store= / header):
+//   GET  /robots.txt                  — Dynamic robots.txt
+//   GET  /sitemap.xml                 — Sitemap index
+//   GET  /sitemap-products.xml        — Product sitemap
+//   GET  /sitemap-categories.xml      — Category sitemap
+//   GET  /sitemap-blog.xml            — Blog sitemap
+//   GET  /sitemap-pages.xml           — Static pages sitemap
+//   GET  /sitemap-images.xml          — Image sitemap
+//   GET  /api/seo/meta                — Meta tags for any page
+//   GET  /api/seo/structured-data     — JSON-LD structured data
+//   GET  /api/admin/seo/health        — SEO health audit (admin)
+//
+//  Webhooks (admin):
+//   GET  /api/admin/webhooks           — List webhook endpoints
+//   POST /api/admin/webhooks           — Create webhook endpoint
+//   GET  /api/admin/webhooks/:id       — Get webhook endpoint
+//   PATCH /api/admin/webhooks/:id      — Update webhook endpoint
+//   DELETE /api/admin/webhooks/:id     — Delete webhook endpoint
+//   GET  /api/admin/webhooks/:id/deliveries — Delivery log
+//   POST /api/admin/webhooks/:id/test  — Send test event
+//   GET  /api/admin/webhook-events     — List available events
+//
+//  App Ecosystem (admin):
+//   GET  /api/admin/apps               — List apps + install status
+//   POST /api/admin/apps/install       — Install an app
+//   DELETE /api/admin/apps/:id/uninstall — Uninstall an app
+//   PATCH /api/admin/apps/:id/config   — Update app config
+//
+//  GA4 Integration (admin):
+//   POST /api/admin/integrations/ga4/configure   — Connect GA4
+//   DELETE /api/admin/integrations/ga4/disconnect — Disconnect GA4
+//   POST /api/admin/integrations/ga4/test        — Test GA4 event
+//
+//  Twilio SMS Integration (admin):
+//   POST /api/admin/integrations/twilio/configure   — Connect Twilio
+//   DELETE /api/admin/integrations/twilio/disconnect — Disconnect Twilio
+//   POST /api/admin/integrations/twilio/test        — Test SMS
+//   PATCH /api/admin/integrations/twilio/settings   — Update settings
 // ═══════════════════════════════════════════════════════════════
 
 export default {
@@ -55,6 +97,8 @@ export default {
         return json({ status: 'ok', service: 'webnari-commerce' }, 200, corsOrigin);
       }
 
+
+
       // Square OAuth callback — browser redirect from Square, no X-Store-ID
       if (method === 'GET' && path === '/api/admin/integrations/square/callback') {
         return await handleSquareOAuthCallback(request, sb, env, url, corsOrigin);
@@ -70,6 +114,29 @@ export default {
         return await handleStripeConnectCallback(request, sb, env, url, corsOrigin);
       }
 
+      // ── SEO Routes (no X-Store-ID required — crawlers use Host or ?store=) ──
+      if (method === 'GET' && path === '/robots.txt') {
+        return await handleRobotsTxt(request, sb);
+      }
+      if (method === 'GET' && path === '/sitemap.xml') {
+        return await handleSitemapIndex(request, sb);
+      }
+      if (method === 'GET' && path === '/sitemap-products.xml') {
+        return await handleProductSitemap(request, sb);
+      }
+      if (method === 'GET' && path === '/sitemap-categories.xml') {
+        return await handleCategorySitemap(request, sb);
+      }
+      if (method === 'GET' && path === '/sitemap-blog.xml') {
+        return await handleBlogSitemap(request, sb);
+      }
+      if (method === 'GET' && path === '/sitemap-pages.xml') {
+        return await handlePagesSitemap(request, sb);
+      }
+      if (method === 'GET' && path === '/sitemap-images.xml') {
+        return await handleImageSitemap(request, sb);
+      }
+
       // All other /api/ routes require X-Store-ID (except webhooks)
       if (!storeId && !isWebhook && !isInvoice && path.startsWith('/api/')) {
         return json({ error: 'Missing X-Store-ID header' }, 400, corsOrigin);
@@ -78,6 +145,18 @@ export default {
       // Store config
       if (method === 'GET' && path === '/api/store/config') {
         return await handleGetStoreConfig(sb, storeId, corsOrigin);
+      }
+
+      // ── Public Product Endpoints ───────────────────────────
+      if (method === 'GET' && path === '/api/products/featured') {
+        return await handlePublicFeaturedProducts(sb, storeId, url, corsOrigin);
+      }
+      if (method === 'GET' && path === '/api/products') {
+        return await handlePublicListProducts(sb, storeId, url, corsOrigin);
+      }
+      if (method === 'GET' && path.match(/^\/api\/products\/[^/]+$/)) {
+        const productId = path.split('/').pop();
+        return await handlePublicGetProduct(sb, storeId, productId, corsOrigin);
       }
 
       // Checkout
@@ -124,6 +203,9 @@ export default {
       // Shipping & Tax
       if (method === 'POST' && path === '/api/shipping/calculate') {
         return await handleCalculateShipping(request, sb, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/shipping/rates') {
+        return await handleShippingRates(request, sb, env, storeId, corsOrigin);
       }
       if (method === 'POST' && path === '/api/tax/calculate') {
         return await handleCalculateTax(request, sb, storeId, corsOrigin);
@@ -292,6 +374,9 @@ export default {
           single: true,
         });
         if (!card) return json({ error: 'Gift card not found' }, 404, corsOrigin);
+        if (card.expires_at && new Date(card.expires_at) < new Date()) {
+          return json({ error: 'Gift card has expired' }, 400, corsOrigin);
+        }
         return json({ balance: card.current_balance, code: card.code }, 200, corsOrigin);
       }
 
@@ -414,13 +499,156 @@ export default {
         return await handleAdminDeleteTaxRate(request, sb, env, storeId, rateId, corsOrigin);
       }
 
+      // ── Tax Rate Bulk Audit (admin) ─────────────────────────
+      if (method === 'POST' && path === '/api/admin/tax-audit') {
+        return await handleAdminTaxAudit(request, sb, env, storeId, corsOrigin);
+      }
+
+      // ── Abandoned Cart ──────────────────────────────────────
+      if (method === 'POST' && path === '/api/cart/save') {
+        return await handleSaveCart(request, sb, storeId, corsOrigin);
+      }
+
+      // ── Customer Auth ───────────────────────────────────────
+      if (method === 'POST' && path === '/api/auth/register') {
+        return await handleCustomerRegister(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/auth/login') {
+        return await handleCustomerLogin(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/auth/forgot-password') {
+        return await handleForgotPassword(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/auth/reset-password') {
+        return await handleResetPassword(request, sb, env, storeId, corsOrigin);
+      }
+
+      // ── Customer Account (requires auth token) ─────────────
+      if (method === 'GET' && path === '/api/account/profile') {
+        return await handleGetProfile(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'PATCH' && path === '/api/account/profile') {
+        return await handleUpdateProfile(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'GET' && path === '/api/account/orders') {
+        return await handleGetCustomerOrders(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'GET' && path === '/api/account/addresses') {
+        return await handleGetAddresses(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/account/addresses') {
+        return await handleAddAddress(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'DELETE' && path.match(/^\/api\/account\/addresses\/[^/]+$/)) {
+        return await handleDeleteAddress(request, sb, env, storeId, path.split('/').pop(), corsOrigin);
+      }
+
+      // ── SEO API (public — for frontend SDK) ──────────────────
+      if (method === 'GET' && path === '/api/seo/meta') {
+        return await handleSeoMeta(request, sb, storeId, url, corsOrigin);
+      }
+      if (method === 'GET' && path === '/api/seo/structured-data') {
+        return await handleStructuredData(request, sb, storeId, url, corsOrigin);
+      }
+      // Admin SEO health audit
+      if (method === 'GET' && path === '/api/admin/seo/health') {
+        return await handleSeoHealthAudit(request, sb, env, storeId, corsOrigin);
+      }
+
+      // ── Webhook Management (admin) ────────────────────────
+      if (method === 'GET' && path === '/api/admin/webhooks') {
+        return await handleAdminListWebhooks(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/admin/webhooks') {
+        return await handleAdminCreateWebhook(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'GET' && path === '/api/admin/webhook-events') {
+        return await handleAdminListWebhookEvents(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'GET' && path.match(/^\/api\/admin\/webhooks\/[^/]+\/deliveries$/)) {
+        const webhookId = path.split('/')[4];
+        return await handleAdminWebhookDeliveries(request, sb, env, storeId, webhookId, corsOrigin);
+      }
+      if (method === 'POST' && path.match(/^\/api\/admin\/webhooks\/[^/]+\/test$/)) {
+        const webhookId = path.split('/')[4];
+        return await handleAdminTestWebhook(request, sb, env, storeId, webhookId, corsOrigin);
+      }
+      if (method === 'GET' && path.match(/^\/api\/admin\/webhooks\/[^/]+$/)) {
+        const webhookId = path.split('/').pop();
+        return await handleAdminGetWebhook(request, sb, env, storeId, webhookId, corsOrigin);
+      }
+      if (method === 'PATCH' && path.match(/^\/api\/admin\/webhooks\/[^/]+$/)) {
+        const webhookId = path.split('/').pop();
+        return await handleAdminUpdateWebhook(request, sb, env, storeId, webhookId, corsOrigin);
+      }
+      if (method === 'DELETE' && path.match(/^\/api\/admin\/webhooks\/[^/]+$/)) {
+        const webhookId = path.split('/').pop();
+        return await handleAdminDeleteWebhook(request, sb, env, storeId, webhookId, corsOrigin);
+      }
+
+      // ── App Ecosystem (admin) ─────────────────────────────
+      if (method === 'GET' && path === '/api/admin/apps') {
+        return await handleAdminListApps(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/admin/apps/install') {
+        return await handleAdminInstallApp(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'DELETE' && path.match(/^\/api\/admin\/apps\/[^/]+\/uninstall$/)) {
+        const appId = path.split('/')[4];
+        return await handleAdminUninstallApp(request, sb, env, storeId, appId, corsOrigin);
+      }
+      if (method === 'PATCH' && path.match(/^\/api\/admin\/apps\/[^/]+\/config$/)) {
+        const appId = path.split('/')[4];
+        return await handleAdminUpdateAppConfig(request, sb, env, storeId, appId, corsOrigin);
+      }
+
+      // ── GA4 Integration ───────────────────────────────────
+      if (method === 'POST' && path === '/api/admin/integrations/ga4/configure') {
+        return await handleGA4Configure(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'DELETE' && path === '/api/admin/integrations/ga4/disconnect') {
+        return await handleGA4Disconnect(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/admin/integrations/ga4/test') {
+        return await handleGA4Test(request, sb, env, storeId, corsOrigin);
+      }
+
+      // ── Twilio SMS Integration ────────────────────────────
+      if (method === 'POST' && path === '/api/admin/integrations/twilio/configure') {
+        return await handleTwilioConfigure(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'DELETE' && path === '/api/admin/integrations/twilio/disconnect') {
+        return await handleTwilioDisconnect(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/admin/integrations/twilio/test') {
+        return await handleTwilioTest(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'PATCH' && path === '/api/admin/integrations/twilio/settings') {
+        return await handleTwilioUpdateSettings(request, sb, env, storeId, corsOrigin);
+      }
+
+      // Public discount validation
+      if (method === 'POST' && path === '/api/discount/validate') {
+        return await handleValidateDiscount(request, sb, storeId, corsOrigin);
+      }
+
       return json({ error: 'Not found' }, 404, corsOrigin);
 
     } catch (err) {
       console.error('Commerce API error:', err);
       return json({ error: 'Internal server error' }, 500, corsOrigin);
     }
-  }
+  },
+
+  async scheduled(event, env, ctx) {
+    if (event.cron === '0 3 1 * *') {
+      ctx.waitUntil(handleTaxRateAuditCron(env));
+    } else if (event.cron === '*/5 * * * *') {
+      ctx.waitUntil(handleWebhookRetryCron(env));
+    } else {
+      ctx.waitUntil(handleAbandonedCartCron(env));
+    }
+  },
 };
 
 
@@ -444,9 +672,278 @@ function json(data, status = 200, origin = '*') {
   });
 }
 
+function xml(content, status = 200, cacheMaxAge = 3600) {
+  return new Response(content, {
+    status,
+    headers: {
+      'Content-Type': 'application/xml; charset=utf-8',
+      'Cache-Control': `public, max-age=${cacheMaxAge}, s-maxage=${cacheMaxAge * 24}`,
+      'X-Robots-Tag': 'noindex',
+    },
+  });
+}
+
+async function resolveStoreFromRequest(request, sb) {
+  const url = new URL(request.url);
+
+  // 1. Check Host header — matches store domain
+  const host = request.headers.get('Host') || '';
+  if (host && !host.includes('webnari') && !host.includes('workers.dev')) {
+    const store = await sb.query('stores', {
+      filters: { domain: `eq.${host}` },
+      select: 'id',
+      single: true,
+    });
+    if (store) return store.id;
+  }
+
+  // 2. Check ?store= query param (for testing/crawlers)
+  const storeParam = url.searchParams.get('store');
+  if (storeParam) return storeParam;
+
+  // 3. Fall back to X-Store-ID header
+  const header = request.headers.get('X-Store-ID');
+  if (header) return header;
+
+  return null;
+}
+
+function escXml(str) {
+  if (!str) return '';
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
+}
+
 function esc(str) {
   if (!str) return '';
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  EMAIL — Resend integration for transactional emails
+// ═══════════════════════════════════════════════════════════════
+
+async function sendEmail(env, { to, subject, html, replyTo }) {
+  const apiKey = env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.warn('RESEND_API_KEY not set — skipping email to', to);
+    return null;
+  }
+  const from = env.RESEND_FROM || 'Webnari <orders@webnari.io>';
+  const body = { from, to: Array.isArray(to) ? to : [to], subject, html };
+  if (replyTo) body.reply_to = replyTo;
+
+  const res = await fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+  if (!res.ok) {
+    const err = await res.text();
+    console.error('Resend send failed:', res.status, err);
+    return null;
+  }
+  return await res.json();
+}
+
+function fmtCentsEmail(c) {
+  return `$${(Math.abs(c || 0) / 100).toFixed(2)}`;
+}
+
+function emailShell(storeName, content) {
+  return `<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f4f4f5;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f4f4f5;padding:32px 16px;">
+<tr><td align="center">
+<table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
+  <tr><td style="background:#111827;padding:24px 32px;">
+    <h1 style="margin:0;color:#ffffff;font-size:20px;font-weight:700;letter-spacing:-0.3px;">${esc(storeName)}</h1>
+  </td></tr>
+  <tr><td style="padding:32px;">
+    ${content}
+  </td></tr>
+  <tr><td style="padding:24px 32px;background:#f9fafb;border-top:1px solid #e5e7eb;text-align:center;">
+    <p style="margin:0;font-size:12px;color:#9ca3af;">Powered by Webnari</p>
+  </td></tr>
+</table>
+</td></tr></table>
+</body></html>`;
+}
+
+function buildOrderItemsTable(items) {
+  const rows = items.map(item => `
+    <tr>
+      <td style="padding:8px 0;border-bottom:1px solid #f3f4f6;font-size:14px;color:#111827;">
+        ${esc(item.product_name)}${item.variant_name ? `<br><span style="color:#6b7280;font-size:12px;">${esc(item.variant_name)}</span>` : ''}
+      </td>
+      <td style="padding:8px 0;border-bottom:1px solid #f3f4f6;text-align:center;font-size:14px;color:#374151;">${item.quantity}</td>
+      <td style="padding:8px 0;border-bottom:1px solid #f3f4f6;text-align:right;font-size:14px;color:#111827;">${fmtCentsEmail(item.price * item.quantity)}</td>
+    </tr>`).join('');
+
+  return `<table width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0;">
+    <tr>
+      <th style="padding:8px 0;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#6b7280;border-bottom:2px solid #e5e7eb;">Item</th>
+      <th style="padding:8px 0;text-align:center;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#6b7280;border-bottom:2px solid #e5e7eb;">Qty</th>
+      <th style="padding:8px 0;text-align:right;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#6b7280;border-bottom:2px solid #e5e7eb;">Total</th>
+    </tr>
+    ${rows}
+  </table>`;
+}
+
+function emailOrderConfirmation(storeName, order, items, invoiceUrl) {
+  const orderDate = new Date(order.created_at).toLocaleDateString('en-US', {
+    year: 'numeric', month: 'long', day: 'numeric',
+  });
+  const addr = order.shipping_address;
+  const shipTo = addr
+    ? `${esc(addr.line1 || '')}${addr.line2 ? ', ' + esc(addr.line2) : ''}<br>${esc(addr.city || '')}, ${esc(addr.state || '')} ${esc(addr.zip || '')}`
+    : '';
+
+  const content = `
+    <h2 style="margin:0 0 8px;font-size:22px;color:#111827;">Order Confirmed</h2>
+    <p style="margin:0 0 24px;font-size:14px;color:#6b7280;">Thanks for your order! We're getting it ready.</p>
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:24px;background:#f9fafb;border-radius:6px;padding:16px;">
+      <tr>
+        <td style="padding:8px 16px;">
+          <span style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#6b7280;">Order</span><br>
+          <strong style="font-size:14px;color:#111827;">${esc(order.order_number)}</strong>
+        </td>
+        <td style="padding:8px 16px;">
+          <span style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#6b7280;">Date</span><br>
+          <strong style="font-size:14px;color:#111827;">${esc(orderDate)}</strong>
+        </td>
+        <td style="padding:8px 16px;text-align:right;">
+          <span style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#6b7280;">Total</span><br>
+          <strong style="font-size:18px;color:#111827;">${fmtCentsEmail(order.total)}</strong>
+        </td>
+      </tr>
+    </table>
+
+    ${buildOrderItemsTable(items)}
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0 24px;">
+      <tr><td style="padding:4px 0;font-size:14px;color:#374151;">Subtotal</td><td style="text-align:right;font-size:14px;color:#374151;">${fmtCentsEmail(order.subtotal)}</td></tr>
+      <tr><td style="padding:4px 0;font-size:14px;color:#374151;">Shipping</td><td style="text-align:right;font-size:14px;color:#374151;">${order.shipping ? fmtCentsEmail(order.shipping) : 'Free'}</td></tr>
+      <tr><td style="padding:4px 0;font-size:14px;color:#374151;">Tax</td><td style="text-align:right;font-size:14px;color:#374151;">${fmtCentsEmail(order.tax)}</td></tr>
+      <tr><td style="padding:8px 0;font-size:16px;font-weight:800;color:#111827;border-top:2px solid #111827;">Total</td><td style="text-align:right;padding:8px 0;font-size:16px;font-weight:800;color:#111827;border-top:2px solid #111827;">${fmtCentsEmail(order.total)}</td></tr>
+    </table>
+
+    ${shipTo ? `
+    <div style="margin-bottom:24px;">
+      <span style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#6b7280;">Shipping To</span>
+      <p style="margin:4px 0 0;font-size:14px;color:#374151;">${order.customer_name ? esc(order.customer_name) + '<br>' : ''}${shipTo}</p>
+    </div>` : ''}
+
+    ${invoiceUrl ? `<p style="margin:0;"><a href="${esc(invoiceUrl)}" style="display:inline-block;padding:12px 24px;background:#111827;color:#ffffff;text-decoration:none;border-radius:6px;font-size:14px;font-weight:600;">View Invoice</a></p>` : ''}
+  `;
+  return emailShell(storeName, content);
+}
+
+function emailShippingUpdate(storeName, order, trackingNumber, trackingUrl) {
+  const content = `
+    <h2 style="margin:0 0 8px;font-size:22px;color:#111827;">Your Order Has Shipped</h2>
+    <p style="margin:0 0 24px;font-size:14px;color:#6b7280;">Great news! Order <strong>${esc(order.order_number)}</strong> is on its way.</p>
+
+    ${trackingNumber ? `
+    <div style="margin-bottom:24px;background:#f9fafb;border-radius:6px;padding:20px;">
+      <span style="font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#6b7280;">Tracking Number</span>
+      <p style="margin:4px 0 0;font-size:16px;font-weight:700;color:#111827;">${esc(trackingNumber)}</p>
+    </div>` : ''}
+
+    ${trackingUrl ? `<p style="margin:0;"><a href="${esc(trackingUrl)}" style="display:inline-block;padding:12px 24px;background:#111827;color:#ffffff;text-decoration:none;border-radius:6px;font-size:14px;font-weight:600;">Track Your Package</a></p>` : ''}
+  `;
+  return emailShell(storeName, content);
+}
+
+function emailDelivered(storeName, order) {
+  const content = `
+    <h2 style="margin:0 0 8px;font-size:22px;color:#111827;">Your Order Has Been Delivered</h2>
+    <p style="margin:0 0 16px;font-size:14px;color:#6b7280;">Order <strong>${esc(order.order_number)}</strong> has been delivered. We hope you love it!</p>
+    <p style="margin:0;font-size:14px;color:#6b7280;">If you have any questions or concerns, just reply to this email.</p>
+  `;
+  return emailShell(storeName, content);
+}
+
+function emailAbandonedCart(storeName, items, total, shopUrl) {
+  const itemRows = items.map(item => `
+    <tr>
+      <td style="padding:8px 0;border-bottom:1px solid #f3f4f6;font-size:14px;color:#111827;">
+        ${esc(item.name || 'Item')}
+      </td>
+      <td style="padding:8px 0;border-bottom:1px solid #f3f4f6;text-align:center;font-size:14px;color:#374151;">${item.quantity}</td>
+    </tr>`).join('');
+
+  const content = `
+    <h2 style="margin:0 0 8px;font-size:22px;color:#111827;">You left something behind!</h2>
+    <p style="margin:0 0 24px;font-size:14px;color:#6b7280;">Looks like you didn't finish checking out. Your items are still waiting for you.</p>
+
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin:16px 0;">
+      <tr>
+        <th style="padding:8px 0;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#6b7280;border-bottom:2px solid #e5e7eb;">Item</th>
+        <th style="padding:8px 0;text-align:center;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#6b7280;border-bottom:2px solid #e5e7eb;">Qty</th>
+      </tr>
+      ${itemRows}
+    </table>
+
+    ${total ? `<p style="margin:16px 0;font-size:16px;color:#111827;font-weight:600;">Cart Total: ${fmtCentsEmail(total)}</p>` : ''}
+
+    <p style="margin:24px 0 0;"><a href="${esc(shopUrl)}" style="display:inline-block;padding:14px 28px;background:#111827;color:#ffffff;text-decoration:none;border-radius:6px;font-size:14px;font-weight:600;">Complete Your Order</a></p>
+
+    <p style="margin:16px 0 0;font-size:12px;color:#9ca3af;">If you've already completed your purchase, please ignore this email.</p>
+  `;
+  return emailShell(storeName, content);
+}
+
+async function sendOrderConfirmationEmail(sb, env, storeId, order, items) {
+  if (!order.customer_email) return;
+  const store = await sb.query('stores', {
+    filters: { id: `eq.${storeId}` }, single: true, select: 'name,settings',
+  });
+  const storeName = store?.name || 'Store';
+  const storeEmail = store?.settings?.email || null;
+
+  // Build invoice URL
+  const secret = env.ADMIN_API_KEY || 'invoice-secret';
+  const token = await generateInvoiceToken(order.id, order.customer_email, secret);
+  const baseUrl = store?.settings?.domain
+    ? `https://${store.settings.domain}`
+    : (env.WORKER_URL || 'https://webnari.io/commerce');
+  const invoiceUrl = `${baseUrl}/api/orders/${order.id}/invoice?email=${encodeURIComponent(order.customer_email)}&token=${token}`;
+
+  const html = emailOrderConfirmation(storeName, order, items, invoiceUrl);
+  await sendEmail(env, {
+    to: order.customer_email,
+    subject: `Order Confirmed — ${order.order_number}`,
+    html,
+    replyTo: storeEmail,
+  });
+}
+
+async function sendOrderStatusEmail(sb, env, storeId, order, newStatus, trackingNumber, trackingUrl) {
+  if (!order.customer_email) return;
+  const store = await sb.query('stores', {
+    filters: { id: `eq.${storeId}` }, single: true, select: 'name,settings',
+  });
+  const storeName = store?.name || 'Store';
+  const storeEmail = store?.settings?.email || null;
+
+  let subject, html;
+  if (newStatus === 'shipped') {
+    subject = `Your Order Has Shipped — ${order.order_number}`;
+    html = emailShippingUpdate(storeName, order, trackingNumber, trackingUrl);
+  } else if (newStatus === 'delivered') {
+    subject = `Your Order Has Been Delivered — ${order.order_number}`;
+    html = emailDelivered(storeName, order);
+  } else {
+    return; // Only send emails for shipped + delivered
+  }
+
+  await sendEmail(env, { to: order.customer_email, subject, html, replyTo: storeEmail });
 }
 
 // HMAC-signed invoice tokens — prevents unauthorized access to customer PII
@@ -492,14 +989,15 @@ function supabase(url, serviceKey) {
     async insert(table, rows) {
       const res = await fetch(`${url}/rest/v1/${table}`, {
         method: 'POST',
-        headers,
+        headers: { ...headers, 'Prefer': 'return=representation' },
         body: JSON.stringify(Array.isArray(rows) ? rows : [rows]),
       });
       if (!res.ok) {
         const err = await res.text();
         throw new Error(`Supabase insert ${table} failed: ${res.status} ${err}`);
       }
-      return await res.json();
+      const data = await res.json();
+      return Array.isArray(data) ? data[0] : data;
     },
 
     async update(table, filters, data) {
@@ -542,6 +1040,10 @@ function supabase(url, serviceKey) {
       return true;
     },
   };
+}
+
+function createSupabaseClient(env) {
+  return supabase(env.SUPABASE_URL, env.SUPABASE_SERVICE_KEY);
 }
 
 // Get the secret for a specific store + provider
@@ -608,7 +1110,7 @@ async function handleGetStoreConfig(sb, storeId, corsOrigin) {
 
 async function handleCreateCheckout(request, sb, env, storeId, corsOrigin) {
   const body = await request.json();
-  const { items, customer, shippingState, successUrl, cancelUrl, provider } = body;
+  const { items, customer, shippingState, successUrl, cancelUrl, provider, discountCode, giftCardCode } = body;
 
   // items: [{ productId, variantId?, quantity }]
   // customer: { email, name, phone? }
@@ -687,8 +1189,50 @@ async function handleCreateCheckout(request, sb, env, storeId, corsOrigin) {
     });
   }
 
+  // ── 3b. Apply discount code ─────────────────────────────
+  let discountAmount = 0;
+  let discountId = null;
+  let discountLabel = '';
+  let freeShipping = false;
+
+  if (discountCode) {
+    try {
+      const discount = await sb.query('discounts', {
+        filters: { store_id: `eq.${storeId}`, code: `eq.${discountCode.toUpperCase().trim()}`, is_active: 'eq.true' },
+        single: true,
+      });
+
+      if (discount) {
+        const now = new Date();
+        const notStarted = discount.starts_at && new Date(discount.starts_at) > now;
+        const expired = discount.expires_at && new Date(discount.expires_at) < now;
+        const maxedOut = discount.max_uses && discount.used_count >= discount.max_uses;
+        const belowMin = discount.min_order && subtotal < discount.min_order;
+
+        if (!notStarted && !expired && !maxedOut && !belowMin) {
+          discountId = discount.id;
+          if (discount.type === 'percentage') {
+            discountAmount = Math.round(subtotal * parseFloat(discount.value) / 100);
+            discountLabel = `${discount.value}% off (${discount.code})`;
+          } else if (discount.type === 'fixed') {
+            discountAmount = Math.round(parseFloat(discount.value) * 100);
+            if (discountAmount > subtotal) discountAmount = subtotal;
+            discountLabel = `$${parseFloat(discount.value).toFixed(2)} off (${discount.code})`;
+          } else if (discount.type === 'free_shipping') {
+            freeShipping = true;
+            discountLabel = `Free shipping (${discount.code})`;
+          }
+        }
+      }
+    } catch (e) {
+      // discounts table may not exist — continue without discount
+    }
+  }
+
+  const discountedSubtotal = subtotal - discountAmount;
+
   // ── 4. Calculate shipping ───────────────────────────────
-  const shippingCost = calculateShippingFromRules(store.shipping_rules, subtotal);
+  const shippingCost = freeShipping ? 0 : calculateShippingFromRules(store.shipping_rules, discountedSubtotal);
 
   // ── 5. Calculate tax ────────────────────────────────────
   let taxAmount = 0;
@@ -698,26 +1242,52 @@ async function handleCreateCheckout(request, sb, env, storeId, corsOrigin) {
       single: true,
     });
     if (taxRate) {
-      taxAmount = Math.round(subtotal * parseFloat(taxRate.rate));
+      taxAmount = Math.round(discountedSubtotal * parseFloat(taxRate.rate));
     }
   }
 
-  const total = subtotal + shippingCost + taxAmount;
+  // ── 5b. Apply gift card ─────────────────────────────────
+  let giftCardAmount = 0;
+  let giftCardId = null;
+
+  if (giftCardCode) {
+    try {
+      const giftCard = await sb.query('gift_cards', {
+        filters: { store_id: `eq.${storeId}`, code: `eq.${giftCardCode.toUpperCase().trim()}`, is_active: 'eq.true' },
+        single: true,
+      });
+
+      if (giftCard && giftCard.current_balance > 0) {
+        // Check expiry
+        if (!giftCard.expires_at || new Date(giftCard.expires_at) > new Date()) {
+          const preGiftTotal = discountedSubtotal + shippingCost + taxAmount;
+          giftCardAmount = Math.min(giftCard.current_balance, preGiftTotal);
+          giftCardId = giftCard.id;
+        }
+      }
+    } catch (e) {
+      // gift_cards table may not exist — continue without gift card
+    }
+  }
+
+  const total = discountedSubtotal + shippingCost + taxAmount - giftCardAmount;
 
   // ── 6. Determine payment provider ───────────────────────
   const paymentProvider = provider || store.payment_provider;
 
   if (paymentProvider === 'stripe' || paymentProvider === 'both') {
     return await createStripeCheckout(sb, env, storeId, store, {
-      lineItems, customer, subtotal, shippingCost, taxAmount, total,
+      lineItems, customer, subtotal: discountedSubtotal, shippingCost, taxAmount, total,
       shippingState, reservations, successUrl, cancelUrl,
+      discountAmount, discountId, discountLabel, giftCardAmount, giftCardId,
     }, corsOrigin);
   }
 
   if (paymentProvider === 'square') {
     return await createSquareCheckout(sb, env, storeId, store, {
-      lineItems, customer, subtotal, shippingCost, taxAmount, total,
+      lineItems, customer, subtotal: discountedSubtotal, shippingCost, taxAmount, total,
       shippingState, reservations, successUrl, cancelUrl,
+      discountAmount, discountId, discountLabel, giftCardAmount, giftCardId,
     }, corsOrigin);
   }
 
@@ -772,6 +1342,11 @@ async function createStripeCheckout(sb, env, storeId, store, data, corsOrigin) {
   params.set('metadata[customer_name]', data.customer.name || '');
   params.set('metadata[customer_phone]', data.customer.phone || '');
   params.set('metadata[shipping_state]', data.shippingState || '');
+  if (data.discountId) params.set('metadata[discount_id]', data.discountId);
+  if (data.discountAmount) params.set('metadata[discount_amount]', data.discountAmount.toString());
+  if (data.discountLabel) params.set('metadata[discount_label]', data.discountLabel);
+  if (data.giftCardId) params.set('metadata[gift_card_id]', data.giftCardId);
+  if (data.giftCardAmount) params.set('metadata[gift_card_amount]', data.giftCardAmount.toString());
 
   // Encode line items
   data.lineItems.forEach((item, i) => {
@@ -797,6 +1372,30 @@ async function createStripeCheckout(sb, env, storeId, store, data, corsOrigin) {
     params.set(`line_items[${ti}][price_data][product_data][name]`, 'Sales Tax');
     params.set(`line_items[${ti}][price_data][unit_amount]`, data.taxAmount.toString());
     params.set(`line_items[${ti}][quantity]`, '1');
+  }
+
+  // Create Stripe coupon for discount + gift card combined
+  const totalReduction = (data.discountAmount || 0) + (data.giftCardAmount || 0);
+  if (totalReduction > 0) {
+    const couponParts = [];
+    if (data.discountLabel) couponParts.push(data.discountLabel);
+    if (data.giftCardAmount > 0) couponParts.push(`Gift Card -$${(data.giftCardAmount / 100).toFixed(2)}`);
+
+    const couponParams = new URLSearchParams();
+    couponParams.set('amount_off', totalReduction.toString());
+    couponParams.set('currency', store.currency);
+    couponParams.set('duration', 'once');
+    couponParams.set('name', couponParts.join(' + ') || 'Discount');
+
+    const couponRes = await fetch('https://api.stripe.com/v1/coupons', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${stripeKey}`, 'Content-Type': 'application/x-www-form-urlencoded', ...stripeAccountHeader },
+      body: couponParams.toString(),
+    });
+    const coupon = await couponRes.json();
+    if (couponRes.ok) {
+      params.set('discounts[0][coupon]', coupon.id);
+    }
   }
 
   // Shipping address collection
@@ -847,6 +1446,9 @@ async function createStripeCheckout(sb, env, storeId, store, data, corsOrigin) {
     subtotal: data.subtotal,
     shipping: data.shippingCost,
     tax: data.taxAmount,
+    discount: data.discountAmount || 0,
+    discountLabel: data.discountLabel || null,
+    giftCard: data.giftCardAmount || 0,
     total: data.total,
   }, 200, corsOrigin);
 }
@@ -1059,10 +1661,55 @@ async function handleStripeSessionCompleted(sb, env, storeId, session) {
 
     await sb.insert('order_items', orderItems);
 
+    // Increment discount used_count
+    const discountId = session.metadata?.discount_id;
+    if (discountId) {
+      try {
+        const disc = await sb.query('discounts', { filters: { id: `eq.${discountId}` }, single: true });
+        if (disc) {
+          await sb.update('discounts', { id: `eq.${discountId}` }, { used_count: (disc.used_count || 0) + 1 });
+        }
+      } catch (e) { /* ignore */ }
+    }
+
+    // Deduct gift card balance
+    const giftCardId = session.metadata?.gift_card_id;
+    const giftCardAmount = parseInt(session.metadata?.gift_card_amount || '0');
+    if (giftCardId && giftCardAmount > 0) {
+      try {
+        const gc = await sb.query('gift_cards', { filters: { id: `eq.${giftCardId}` }, single: true });
+        if (gc) {
+          const newBalance = Math.max(0, gc.current_balance - giftCardAmount);
+          await sb.update('gift_cards', { id: `eq.${giftCardId}` }, {
+            current_balance: newBalance,
+            is_active: newBalance > 0,
+          });
+        }
+      } catch (e) { /* ignore */ }
+    }
+
+    // Send order confirmation email (non-blocking)
+    sendOrderConfirmationEmail(sb, env, storeId, order, orderItems).catch(err =>
+      console.error('Order confirmation email failed:', err)
+    );
+
+    // Mark abandoned cart as recovered (non-blocking)
+    if (order.customer_email) {
+      sb.update('saved_carts', { recovered: true }, {
+        store_id: `eq.${storeId}`,
+        email: `eq.${order.customer_email}`,
+        recovered: 'eq.false',
+      }).catch(() => {});
+    }
+
     // Sync order to QuickBooks if connected
     syncOrderToQuickBooks(sb, env, storeId, order, orderItems).catch(err =>
       console.error('QB sync (Stripe) failed:', err)
     );
+
+    // Emit webhook event + dispatch to integrations
+    emitEvent(sb, env, storeId, 'order.created', order).catch(err => console.error('Webhook emit error:', err));
+    dispatchToIntegrations(sb, env, storeId, 'order.created', order).catch(err => console.error('Integration dispatch error:', err));
   }
 }
 
@@ -1167,12 +1814,28 @@ async function createSquareCheckout(sb, env, storeId, store, data, corsOrigin) {
       order: {
         location_id: locationId,
         line_items: orderLineItems,
+        ...((data.discountAmount || 0) + (data.giftCardAmount || 0) > 0 ? {
+          discounts: [{
+            name: [data.discountLabel, data.giftCardAmount > 0 ? `Gift Card -$${(data.giftCardAmount / 100).toFixed(2)}` : ''].filter(Boolean).join(' + ') || 'Discount',
+            type: 'FIXED_AMOUNT',
+            amount_money: {
+              amount: (data.discountAmount || 0) + (data.giftCardAmount || 0),
+              currency: store.currency.toUpperCase(),
+            },
+            scope: 'ORDER',
+          }],
+        } : {}),
         metadata: {
           store_id: storeId,
           customer_email: data.customer.email,
           customer_name: data.customer.name || '',
           customer_phone: data.customer.phone || '',
           shipping_state: data.shippingState || '',
+          ...(data.discountId ? { discount_id: data.discountId } : {}),
+          ...(data.discountAmount ? { discount_amount: data.discountAmount.toString() } : {}),
+          ...(data.discountLabel ? { discount_label: data.discountLabel } : {}),
+          ...(data.giftCardId ? { gift_card_id: data.giftCardId } : {}),
+          ...(data.giftCardAmount ? { gift_card_amount: data.giftCardAmount.toString() } : {}),
         },
       },
       checkout_options: {
@@ -1208,6 +1871,9 @@ async function createSquareCheckout(sb, env, storeId, store, data, corsOrigin) {
     subtotal: data.subtotal,
     shipping: data.shippingCost,
     tax: data.taxAmount,
+    discount: data.discountAmount || 0,
+    discountLabel: data.discountLabel || null,
+    giftCard: data.giftCardAmount || 0,
     total: data.total,
   }, 200, corsOrigin);
 }
@@ -1369,10 +2035,66 @@ async function handleSquareWebhook(request, sb, env, corsOrigin) {
       if (orderItems.length > 0) {
         await sb.insert('order_items', orderItems);
 
+        // Increment discount used_count (from Square order metadata)
+        const sqMetadata = payment.note ? {} : {}; // Square metadata comes from order
+        // Try to get metadata from the Square order
+        try {
+          const sqOrderRes = await fetch(`https://connect.squareup.com/v2/orders/${orderId}`, {
+            headers: {
+              'Square-Version': '2024-01-18',
+              Authorization: `Bearer ${getStoreSecret(env, store.id, 'SQUARE_ACCESS_TOKEN')}`,
+            },
+          });
+          const sqOrderData = await sqOrderRes.json();
+          const sqMeta = sqOrderData.order?.metadata || {};
+
+          if (sqMeta.discount_id) {
+            try {
+              const disc = await sb.query('discounts', { filters: { id: `eq.${sqMeta.discount_id}` }, single: true });
+              if (disc) {
+                await sb.update('discounts', { id: `eq.${sqMeta.discount_id}` }, { used_count: (disc.used_count || 0) + 1 });
+              }
+            } catch (e) { /* ignore */ }
+          }
+
+          const sqGiftCardId = sqMeta.gift_card_id;
+          const sqGiftCardAmount = parseInt(sqMeta.gift_card_amount || '0');
+          if (sqGiftCardId && sqGiftCardAmount > 0) {
+            try {
+              const gc = await sb.query('gift_cards', { filters: { id: `eq.${sqGiftCardId}` }, single: true });
+              if (gc) {
+                const newBalance = Math.max(0, gc.current_balance - sqGiftCardAmount);
+                await sb.update('gift_cards', { id: `eq.${sqGiftCardId}` }, {
+                  current_balance: newBalance,
+                  is_active: newBalance > 0,
+                });
+              }
+            } catch (e) { /* ignore */ }
+          }
+        } catch (e) { /* ignore — metadata fetch failed */ }
+
+        // Send order confirmation email (non-blocking)
+        sendOrderConfirmationEmail(sb, env, store.id, order, orderItems).catch(err =>
+          console.error('Order confirmation email (Square) failed:', err)
+        );
+
+        // Mark abandoned cart as recovered (non-blocking)
+        if (order.customer_email) {
+          sb.update('saved_carts', { recovered: true }, {
+            store_id: `eq.${store.id}`,
+            email: `eq.${order.customer_email}`,
+            recovered: 'eq.false',
+          }).catch(() => {});
+        }
+
         // Sync order to QuickBooks if connected
         syncOrderToQuickBooks(sb, env, store.id, order, orderItems).catch(err =>
           console.error('QB sync (Square) failed:', err)
         );
+
+        // Emit webhook event + dispatch to integrations
+        emitEvent(sb, env, store.id, 'order.created', order).catch(err => console.error('Webhook emit error:', err));
+        dispatchToIntegrations(sb, env, store.id, 'order.created', order).catch(err => console.error('Integration dispatch error:', err));
       }
     }
   }
@@ -1741,6 +2463,28 @@ async function handleUpdateOrder(request, sb, env, storeId, orderId, corsOrigin)
     updates
   );
 
+  // Send shipping/delivery email notifications (non-blocking)
+  if (updates.status === 'shipped' || updates.status === 'delivered') {
+    const updatedOrder = result[0] || await sb.query('orders', {
+      filters: { id: `eq.${orderId}`, store_id: `eq.${storeId}` }, single: true,
+    });
+    if (updatedOrder) {
+      sendOrderStatusEmail(
+        sb, env, storeId, updatedOrder, updates.status,
+        updates.tracking_number || updatedOrder.tracking_number,
+        updates.tracking_url || updatedOrder.tracking_url
+      ).catch(err => console.error('Order status email failed:', err));
+    }
+  }
+
+  // Emit webhook events for order updates
+  const orderData = result[0] || { id: orderId, ...updates };
+  emitEvent(sb, env, storeId, 'order.updated', orderData).catch(err => console.error('Webhook emit error:', err));
+  if (updates.status === 'shipped') emitEvent(sb, env, storeId, 'order.shipped', orderData).catch(() => {});
+  if (updates.status === 'delivered') emitEvent(sb, env, storeId, 'order.delivered', orderData).catch(() => {});
+  if (updates.status === 'cancelled') emitEvent(sb, env, storeId, 'order.cancelled', orderData).catch(() => {});
+  if (updates.status === 'refunded') emitEvent(sb, env, storeId, 'order.refunded', orderData).catch(() => {});
+
   return json(result[0] || { updated: true }, 200, corsOrigin);
 }
 
@@ -1812,6 +2556,18 @@ async function handleUpdateInventory(request, sb, env, storeId, productId, corsO
           }
         );
       }
+    }
+  }
+
+  // Emit inventory.updated webhook event
+  emitEvent(sb, env, storeId, 'inventory.updated', { productId, ...body }).catch(() => {});
+
+  // Check for low stock
+  if (body.stockQuantity !== undefined) {
+    const product = await sb.query('products', { filters: { id: `eq.${productId}`, store_id: `eq.${storeId}` }, single: true });
+    if (product && body.stockQuantity <= (product.low_stock_threshold || 5)) {
+      emitEvent(sb, env, storeId, 'inventory.low_stock', { productId, name: product.name, stock_quantity: body.stockQuantity, threshold: product.low_stock_threshold || 5 }).catch(() => {});
+      dispatchToIntegrations(sb, env, storeId, 'inventory.low_stock', { productId, name: product.name, stock_quantity: body.stockQuantity }).catch(() => {});
     }
   }
 
@@ -1898,31 +2654,317 @@ function calculateShippingFromRules(rules, subtotal) {
   return rules[0]?.cost || 0;
 }
 
-async function handleCalculateTax(request, sb, storeId, corsOrigin) {
-  const body = await request.json();
-  const { subtotal, state } = body;  // subtotal in cents, state as 2-letter code
 
-  if (!subtotal || !state) {
-    return json({ error: 'subtotal (cents) and state (2-letter code) required' }, 400, corsOrigin);
+// ═══════════════════════════════════════════════════════════
+//  SHIPPING RATES — EasyPost carrier-calculated rates
+// ═══════════════════════════════════════════════════════════
+
+async function handleShippingRates(request, sb, env, storeId, corsOrigin) {
+  const apiKey = env.SHIPPO_API_KEY;
+  if (!apiKey) {
+    return json({ error: 'Carrier rates not configured' }, 501, corsOrigin);
   }
 
-  const taxRate = await sb.query('store_tax_rates', {
-    filters: { store_id: `eq.${storeId}`, state: `eq.${state}` },
+  const body = await request.json();
+  const { toZip, items } = body;
+  // items: [{ productId, variantId?, quantity }]
+
+  if (!toZip || !items || !items.length) {
+    return json({ error: 'toZip and items required' }, 400, corsOrigin);
+  }
+
+  // Get store config (origin address + shipping rules for fallback)
+  const store = await sb.query('stores', {
+    filters: { id: `eq.${storeId}` },
     single: true,
+    select: 'settings,shipping_rules',
+  });
+  const settings = store?.settings || {};
+  const fromZip = settings.origin_zip || settings.zip || '33444';
+  const fromCity = settings.origin_city || settings.city || 'Delray Beach';
+  const fromState = settings.origin_state || settings.state || 'FL';
+
+  // Look up product weights/dimensions
+  const productIds = [...new Set(items.map(i => i.productId))];
+  const products = await sb.query('products', {
+    filters: { store_id: `eq.${storeId}`, id: `in.(${productIds.join(',')})` },
+    select: 'id,weight_oz,length_in,width_in,height_in',
   });
 
-  if (!taxRate) {
-    return json({ taxAmount: 0, rate: 0, label: 'No tax' }, 200, corsOrigin);
+  const productMap = {};
+  for (const p of products || []) productMap[p.id] = p;
+
+  // Calculate total weight and find largest dimensions
+  let totalWeightOz = 0;
+  let maxLength = 0, maxWidth = 0, totalHeight = 0;
+
+  for (const item of items) {
+    const p = productMap[item.productId];
+    const qty = item.quantity || 1;
+
+    // Default: 8oz per item if weight not set
+    const weight = parseFloat(p?.weight_oz) || 8;
+    totalWeightOz += weight * qty;
+
+    // Track dimensions — pack items stacked (heights add up)
+    const l = parseFloat(p?.length_in) || 10;
+    const w = parseFloat(p?.width_in) || 8;
+    const h = parseFloat(p?.height_in) || 3;
+    if (l > maxLength) maxLength = l;
+    if (w > maxWidth) maxWidth = w;
+    totalHeight += h * qty;
   }
 
-  const rate = parseFloat(taxRate.rate);
-  const taxAmount = Math.round(subtotal * rate);
+  // Cap total height at a reasonable max
+  if (totalHeight > 36) totalHeight = 36;
+
+  // Convert oz to lb for Shippo
+  const weightLb = (totalWeightOz / 16).toFixed(2);
+
+  // Call Shippo — create shipment with async: false to get rates immediately
+  const shippoRes = await fetch('https://api.goshippo.com/shipments/', {
+    method: 'POST',
+    headers: {
+      'Authorization': `ShippoToken ${apiKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      address_from: {
+        city: fromCity,
+        state: fromState,
+        zip: fromZip,
+        country: 'US',
+      },
+      address_to: {
+        zip: toZip,
+        country: 'US',
+      },
+      parcels: [{
+        length: String(Math.ceil(maxLength)),
+        width: String(Math.ceil(maxWidth)),
+        height: String(Math.ceil(totalHeight)),
+        distance_unit: 'in',
+        weight: weightLb,
+        mass_unit: 'lb',
+      }],
+      async: false,
+    }),
+  });
+
+  if (!shippoRes.ok) {
+    const err = await shippoRes.text();
+    console.error('Shippo error:', shippoRes.status, err);
+    // Fall back to rule-based shipping
+    const subtotal = items.reduce((sum, i) => sum + (i.price || 0) * (i.quantity || 1), 0);
+    const fallback = calculateShippingFromRules(store?.shipping_rules || [], subtotal);
+    return json({
+      rates: [{ carrier: 'Standard', service: 'Flat Rate', rate: fallback, deliveryDays: null }],
+      fallback: true,
+    }, 200, corsOrigin);
+  }
+
+  const shipment = await shippoRes.json();
+
+  // Format rates for the storefront
+  const rates = (shipment.rates || [])
+    .map(r => ({
+      id: r.object_id,
+      carrier: r.provider,
+      service: r.servicelevel?.name || r.servicelevel?.token || 'Standard',
+      rate: Math.round(parseFloat(r.amount) * 100), // convert dollars to cents
+      deliveryDays: r.estimated_days || r.duration_terms || null,
+    }))
+    .sort((a, b) => a.rate - b.rate); // cheapest first
+
+  return json({ rates, shipmentId: shipment.object_id }, 200, corsOrigin);
+}
+
+async function handleCalculateTax(request, sb, storeId, corsOrigin) {
+  const body = await request.json();
+  const { subtotal, state, zip } = body;  // subtotal in cents, state 2-letter, zip 5-digit
+
+  if (!subtotal) {
+    return json({ error: 'subtotal (cents) required' }, 400, corsOrigin);
+  }
+  if (!zip && !state) {
+    return json({ error: 'zip (5-digit) or state (2-letter code) required' }, 400, corsOrigin);
+  }
+
+  // ── Priority 1: Zip-code level (municipal accuracy) ──
+  // ── Priority 2: State-level sentinel (_FL, _CA, etc.) ──
+  // Both wrapped in try-catch: tax_rates table may not exist yet
+  try {
+    if (zip) {
+      const zipRate = await sb.query('tax_rates', {
+        filters: { zip: `eq.${zip}` },
+        single: true,
+      });
+
+      if (zipRate) {
+        const rate = parseFloat(zipRate.combined_rate);
+        const taxAmount = Math.round(subtotal * rate);
+        const county = zipRate.county ? ` (${zipRate.county})` : '';
+        return json({
+          taxAmount,
+          rate,
+          stateRate: parseFloat(zipRate.state_rate),
+          countyRate: parseFloat(zipRate.county_rate),
+          cityRate: parseFloat(zipRate.city_rate),
+          specialRate: parseFloat(zipRate.special_rate),
+          label: `${zipRate.state} Sales Tax${county}`,
+          state: zipRate.state,
+          zip,
+        }, 200, corsOrigin);
+      }
+    }
+
+    if (state) {
+      const stateRate = await sb.query('tax_rates', {
+        filters: { zip: `eq._${state}` },
+        single: true,
+      });
+
+      if (stateRate) {
+        const rate = parseFloat(stateRate.combined_rate);
+        const taxAmount = Math.round(subtotal * rate);
+        return json({
+          taxAmount,
+          rate,
+          stateRate: parseFloat(stateRate.state_rate),
+          countyRate: parseFloat(stateRate.county_rate),
+          cityRate: parseFloat(stateRate.city_rate),
+          specialRate: parseFloat(stateRate.special_rate),
+          label: `${stateRate.state} Sales Tax (state base)`,
+          state: stateRate.state,
+          zip: zip || null,
+        }, 200, corsOrigin);
+      }
+    }
+  } catch (e) {
+    console.error('tax_rates lookup failed (table may not exist yet):', e.message);
+    // Fall through to legacy store_tax_rates
+  }
+
+  // ── Priority 3: Fall back to state-level (legacy store_tax_rates) ──
+  const stateCode = state;
+  if (stateCode) {
+    const taxRate = await sb.query('store_tax_rates', {
+      filters: { store_id: `eq.${storeId}`, state: `eq.${stateCode}` },
+      single: true,
+    });
+
+    if (taxRate) {
+      const rate = parseFloat(taxRate.rate);
+      const taxAmount = Math.round(subtotal * rate);
+      return json({ taxAmount, rate, label: taxRate.label, state: stateCode, zip: zip || null }, 200, corsOrigin);
+    }
+  }
+
+  // ── No tax data found ──
+  return json({ taxAmount: 0, rate: 0, label: 'No tax', state: state || null, zip: zip || null }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  TAX RATE BULK AUDIT (Admin)
+// ═══════════════════════════════════════════════════════════════
+
+/**
+ * POST /api/admin/tax-audit
+ * Body: { states: ["TX","CA","NY"] }  — or omit for all states
+ * Fetches real combined rates from Avalara for one zip per county,
+ * then updates all zips in that county.
+ */
+async function handleAdminTaxAudit(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) {
+    return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  }
+
+  const body = await request.json().catch(() => ({}));
+  const targetStates = body.states || null; // null = process all
+
+  // Get all zips grouped by state+county
+  let allRates;
+  try {
+    const filters = {};
+    if (targetStates && targetStates.length) {
+      filters.state = `in.(${targetStates.join(',')})`;
+    }
+    allRates = await sb.query('tax_rates', {
+      select: 'zip,state,county,combined_rate',
+      filters,
+      limit: 50000,
+    });
+  } catch (err) {
+    return json({ error: 'Failed to query tax_rates: ' + err.message }, 500, corsOrigin);
+  }
+
+  if (!allRates || !allRates.length) {
+    return json({ error: 'No tax rates found' }, 404, corsOrigin);
+  }
+
+  // Group by state+county, pick one representative zip per county
+  const countyMap = {};
+  for (const row of allRates) {
+    const key = `${row.state}|${row.county || 'unknown'}`;
+    if (!countyMap[key]) {
+      countyMap[key] = { state: row.state, county: row.county, sampleZip: row.zip, zips: [] };
+    }
+    countyMap[key].zips.push(row.zip);
+  }
+
+  const counties = Object.values(countyMap);
+  let checked = 0;
+  let updated = 0;
+  let errors = 0;
+  const updates = [];
+
+  // Process each county — fetch rate for sample zip
+  for (const county of counties) {
+    // Skip sentinel rows (_FL, _CA, etc.)
+    if (county.sampleZip.startsWith('_')) continue;
+
+    try {
+      const avalaraRate = await fetchAvalaraRate(county.sampleZip);
+      checked++;
+
+      if (avalaraRate === null) continue;
+
+      const newRate = avalaraRate / 100; // Convert 7.5 → 0.075
+      const oldRate = parseFloat(
+        allRates.find(r => r.zip === county.sampleZip)?.combined_rate || 0
+      );
+
+      if (Math.abs(oldRate - newRate) > 0.0001) {
+        // Update all zips in this county
+        for (const zip of county.zips) {
+          if (zip.startsWith('_')) continue;
+          await sb.update('tax_rates', { zip: `eq.${zip}` }, {
+            combined_rate: newRate,
+            source: 'avalara-audit',
+            updated_at: new Date().toISOString(),
+          });
+        }
+        updates.push({
+          state: county.state,
+          county: county.county,
+          oldRate,
+          newRate,
+          zipsUpdated: county.zips.filter(z => !z.startsWith('_')).length,
+        });
+        updated += county.zips.filter(z => !z.startsWith('_')).length;
+      }
+    } catch (err) {
+      errors++;
+      console.warn(`Tax audit error for ${county.state}/${county.county}:`, err.message);
+    }
+  }
 
   return json({
-    taxAmount,
-    rate,
-    label: taxRate.label,
-    state,
+    countiesChecked: checked,
+    zipsUpdated: updated,
+    errors,
+    updates,
   }, 200, corsOrigin);
 }
 
@@ -2038,6 +3080,99 @@ async function handleAdminStats(request, sb, env, storeId, corsOrigin) {
 
 
 // ═══════════════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════
+//  PUBLIC — PRODUCTS (no auth required, read-only)
+// ═══════════════════════════════════════════════════════════════
+
+// Helper: enrich a product row with images, variants, and reviews for public API
+async function enrichProductForPublic(sb, product) {
+  const [images, variants, reviews] = await Promise.all([
+    sb.query('product_images', { filters: { product_id: `eq.${product.id}` }, order: 'sort_order.asc' }),
+    sb.query('variants', { filters: { product_id: `eq.${product.id}` }, order: 'sort_order.asc' }),
+    sb.query('reviews', { filters: { product_id: `eq.${product.id}`, approved: 'eq.true' }, order: 'created_at.desc' }),
+  ]);
+
+  const variantsWithImgs = await Promise.all(variants.map(async v => {
+    const vImages = await sb.query('variant_images', {
+      filters: { variant_id: `eq.${v.id}` },
+      order: 'sort_order.asc',
+    });
+    return {
+      id: v.id,
+      name: v.name,
+      color: v.color || '',
+      price: v.price || product.price,
+      inStock: v.in_stock ?? true,
+      imgs: vImages.map(i => i.url),
+    };
+  }));
+
+  const imgUrls = images.map(i => i.url);
+
+  return {
+    id: product.slug || product.id,
+    name: product.name,
+    category: product.category,
+    price: product.price,
+    badge: product.badge || null,
+    inStock: product.in_stock ?? true,
+    img: imgUrls[0] || '',
+    imgs: imgUrls,
+    desc: product.description || '',
+    rating: parseFloat(product.rating) || 0,
+    reviewCount: reviews.length,
+    isCollection: product.is_collection || false,
+    reviews: reviews.map(r => ({ name: r.name, text: r.text, rating: r.rating, date: r.created_at?.slice(0, 10) || '' })),
+    variants: variantsWithImgs.length > 0 ? variantsWithImgs : undefined,
+  };
+}
+
+async function handlePublicListProducts(sb, storeId, url, corsOrigin) {
+  const category = url.searchParams.get('category');
+  const filters = { store_id: `eq.${storeId}` };
+  if (category) filters.category = `eq.${category}`;
+
+  const products = await sb.query('products', {
+    filters,
+    order: 'sort_order.asc,created_at.desc',
+    limit: 100,
+  });
+
+  const enriched = await Promise.all(products.map(p => enrichProductForPublic(sb, p)));
+  return json(enriched, 200, corsOrigin);
+}
+
+async function handlePublicGetProduct(sb, storeId, productId, corsOrigin) {
+  // Try by ID first, then by slug
+  let product = await sb.query('products', {
+    filters: { id: `eq.${productId}`, store_id: `eq.${storeId}` },
+    single: true,
+  });
+  if (!product) {
+    product = await sb.query('products', {
+      filters: { slug: `eq.${productId}`, store_id: `eq.${storeId}` },
+      single: true,
+    });
+  }
+  if (!product) return json({ error: 'Product not found' }, 404, corsOrigin);
+
+  const enriched = await enrichProductForPublic(sb, product);
+  return json(enriched, 200, corsOrigin);
+}
+
+async function handlePublicFeaturedProducts(sb, storeId, url, corsOrigin) {
+  const limit = parseInt(url.searchParams.get('limit') || '4');
+  const products = await sb.query('products', {
+    filters: { store_id: `eq.${storeId}`, in_stock: 'eq.true' },
+    order: 'sort_order.asc',
+    limit,
+  });
+
+  const enriched = await Promise.all(products.map(p => enrichProductForPublic(sb, p)));
+  return json(enriched, 200, corsOrigin);
+}
+
+// ═══════════════════════════════════════════════════════════════
 //  ADMIN — PRODUCTS
 // ═══════════════════════════════════════════════════════════════
 
@@ -2145,6 +3280,9 @@ async function handleAdminCreateProduct(request, sb, env, storeId, corsOrigin) {
   // Auto-push to Square if connected (non-blocking)
   pushProductToSquare(sb, env, storeId, product).catch(() => {});
 
+  // Emit product.created webhook event
+  emitEvent(sb, env, storeId, 'product.created', product).catch(() => {});
+
   return json(product, 201, corsOrigin);
 }
 
@@ -2180,11 +3318,17 @@ async function handleAdminUpdateProduct(request, sb, env, storeId, productId, co
     }
   }
 
+  // Emit product.updated webhook event
+  emitEvent(sb, env, storeId, 'product.updated', { id: productId, ...updates }).catch(() => {});
+
   return json({ updated: true }, 200, corsOrigin);
 }
 
 async function handleAdminDeleteProduct(request, sb, env, storeId, productId, corsOrigin) {
   if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  // Emit product.deleted webhook event before deleting
+  emitEvent(sb, env, storeId, 'product.deleted', { id: productId }).catch(() => {});
 
   // Cascading delete handles images, variants, variant_images, reviews
   await sb.delete('products', { id: `eq.${productId}`, store_id: `eq.${storeId}` });
@@ -2311,6 +3455,11 @@ async function handleAdminUpdateReview(request, sb, env, storeId, reviewId, cors
   }
 
   await sb.update('reviews', { id: `eq.${reviewId}`, store_id: `eq.${storeId}` }, updates);
+
+  // Emit review.approved webhook event
+  if (body.approved === true) {
+    emitEvent(sb, env, storeId, 'review.approved', { id: reviewId, ...body }).catch(() => {});
+  }
 
   return json({ updated: true }, 200, corsOrigin);
 }
@@ -2533,7 +3682,7 @@ async function handleAdminCreateDiscount(request, sb, env, storeId, corsOrigin) 
   const body = await request.json();
   if (!body.code) return json({ error: 'Discount code required' }, 400, corsOrigin);
 
-  const [discount] = await sb.insert('discounts', {
+  const discount = await sb.insert('discounts', {
     store_id: storeId,
     code: body.code.toUpperCase().replace(/\s+/g, ''),
     type: body.type || 'percentage',
@@ -2831,6 +3980,11 @@ async function handleAdminCreateBlog(request, sb, env, storeId, corsOrigin) {
     published: body.published || false,
   });
 
+  // Emit blog.published webhook event
+  if (body.published) {
+    emitEvent(sb, env, storeId, 'blog.published', post).catch(() => {});
+  }
+
   return json(post, 201, corsOrigin);
 }
 
@@ -2849,6 +4003,11 @@ async function handleAdminUpdateBlog(request, sb, env, storeId, postId, corsOrig
   }
 
   await sb.update('blog_posts', { id: `eq.${postId}`, store_id: `eq.${storeId}` }, updates);
+
+  // Emit blog.published webhook event
+  if (updates.published === true) {
+    emitEvent(sb, env, storeId, 'blog.published', { id: postId, ...updates }).catch(() => {});
+  }
 
   return json({ updated: true }, 200, corsOrigin);
 }
@@ -5539,5 +6698,2419 @@ async function handleStripeSyncProducts(request, sb, env, storeId, corsOrigin) {
     });
 
     return json({ error: 'Sync failed', details: err.message }, 500, corsOrigin);
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════════
+//  ABANDONED CART — Save + Recovery
+// ═══════════════════════════════════════════════════════════
+
+async function handleSaveCart(request, sb, storeId, corsOrigin) {
+  const data = await request.json();
+  const { sessionId, email, items, total } = data;
+
+  if (!sessionId || !items || !items.length) {
+    return json({ error: 'sessionId and items required' }, 400, corsOrigin);
+  }
+
+  // Upsert by store_id + session_id
+  const existing = await sb.query('saved_carts', {
+    filters: { store_id: `eq.${storeId}`, session_id: `eq.${sessionId}` },
+    single: true,
+    select: 'id',
+  });
+
+  if (existing) {
+    await sb.update('saved_carts', {
+      items: JSON.stringify(items),
+      total: total || 0,
+      email: email || existing.email || null,
+      updated_at: new Date().toISOString(),
+    }, { id: `eq.${existing.id}` });
+  } else {
+    await sb.insert('saved_carts', {
+      store_id: storeId,
+      session_id: sessionId,
+      email: email || null,
+      items: JSON.stringify(items),
+      total: total || 0,
+    });
+  }
+
+  return json({ saved: true }, 200, corsOrigin);
+}
+
+async function handleAbandonedCartCron(env) {
+  const sb = createSupabaseClient(env);
+
+  // Find carts: have email, not recovered, no recovery email sent, older than 1 hour
+  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+  const carts = await sb.query('saved_carts', {
+    filters: {
+      email: 'not.is.null',
+      recovered: 'eq.false',
+      recovery_email_sent_at: 'is.null',
+      updated_at: `lt.${oneHourAgo}`,
+    },
+    select: 'id,store_id,email,items,total',
+    limit: 50,  // batch size per cron run
+  });
+
+  if (!carts || !carts.length) {
+    console.log('Abandoned cart cron: no carts to recover');
+    return;
+  }
+
+  // Group by store to look up store names once
+  const storeIds = [...new Set(carts.map(c => c.store_id))];
+  const stores = {};
+  for (const sid of storeIds) {
+    const store = await sb.query('stores', {
+      filters: { id: `eq.${sid}` }, single: true, select: 'name,domain,settings',
+    });
+    if (store) stores[sid] = store;
+  }
+
+  let sent = 0;
+  for (const cart of carts) {
+    const store = stores[cart.store_id];
+    if (!store) continue;
+
+    const storeName = store.name || 'Store';
+    const domain = store.domain || store.settings?.domain || 'webnari.io';
+    const shopUrl = `https://${domain}`;
+    const storeEmail = store.settings?.email || null;
+
+    const items = typeof cart.items === 'string' ? JSON.parse(cart.items) : cart.items;
+    const html = emailAbandonedCart(storeName, items, cart.total, shopUrl);
+
+    await sendEmail(env, {
+      to: cart.email,
+      subject: `${storeName} — You left items in your cart!`,
+      html,
+      replyTo: storeEmail,
+    });
+
+    // Mark as sent
+    await sb.update('saved_carts', {
+      recovery_email_sent_at: new Date().toISOString(),
+    }, { id: `eq.${cart.id}` });
+
+    sent++;
+  }
+
+  console.log(`Abandoned cart cron: sent ${sent} recovery emails`);
+}
+
+
+// ═══════════════════════════════════════════════════════════
+//  TAX RATE AUDIT — Monthly spot-check against Avalara
+// ═══════════════════════════════════════════════════════════
+
+async function handleTaxRateAuditCron(env) {
+  const sb = createSupabaseClient(env);
+
+  // Grab all zip codes from tax_rates, then sample 50 randomly
+  let allRates;
+  try {
+    allRates = await sb.query('tax_rates', { select: 'zip,combined_rate' });
+  } catch (err) {
+    console.error('Tax audit: failed to query tax_rates table', err.message);
+    return;
+  }
+
+  if (!allRates || !allRates.length) {
+    console.log('Tax audit: no tax rates in database — skipping');
+    return;
+  }
+
+  // Fisher-Yates shuffle and take first 50
+  const shuffled = [...allRates];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  const sample = shuffled.slice(0, 50);
+
+  let checked = 0;
+  let updated = 0;
+
+  for (const row of sample) {
+    try {
+      const avalaraRate = await fetchAvalaraRate(row.zip);
+      checked++;
+
+      if (avalaraRate === null) continue; // couldn't parse, skip
+
+      // Compare with 4 decimal places to avoid float noise
+      const dbRate = parseFloat(row.combined_rate);
+      const avalaraDecimal = avalaraRate / 100; // Avalara returns 7.0, we store 0.07
+      if (Math.abs(dbRate - avalaraDecimal) > 0.0001) {
+        await sb.update('tax_rates', { zip: `eq.${row.zip}` }, {
+          combined_rate: avalaraDecimal,
+          source: 'cron',
+          updated_at: new Date().toISOString(),
+        });
+        console.log(`Tax audit: updated zip ${row.zip} rate ${dbRate} → ${avalaraDecimal}`);
+        updated++;
+      }
+    } catch (err) {
+      console.warn(`Tax audit: error checking zip ${row.zip}:`, err.message);
+      // Continue to next zip — don't let one failure stop the whole audit
+    }
+  }
+
+  console.log(`Tax audit complete: checked ${checked}/${sample.length}, updated ${updated}`);
+}
+
+async function fetchAvalaraRate(zip) {
+  const url = `https://www.avalara.com/taxrates/en/state-rates/zip/${zip}.html`;
+  const res = await fetch(url, {
+    headers: { 'User-Agent': 'WebnariCommerceBot/1.0 (tax-rate-audit)' },
+  });
+
+  if (!res.ok) {
+    console.warn(`Tax audit: Avalara returned ${res.status} for zip ${zip}`);
+    return null;
+  }
+
+  const html = await res.text();
+
+  // Look for combined rate pattern — Avalara pages show "X.XX%" or "X.XXX%"
+  // Common patterns: "Combined Rate" ... "8.875%", or class-based markup
+  const patterns = [
+    /combined\s*(?:sales\s*)?(?:tax\s*)?rate[^%]*?(\d{1,2}\.\d{1,4})%/i,
+    /(\d{1,2}\.\d{1,4})%\s*combined/i,
+    /combined[^<]{0,200}?(\d{1,2}\.\d{1,4})\s*%/i,
+    /total\s*(?:sales\s*)?(?:tax\s*)?rate[^%]*?(\d{1,2}\.\d{1,4})%/i,
+  ];
+
+  for (const pattern of patterns) {
+    const match = html.match(pattern);
+    if (match) {
+      const rate = parseFloat(match[1]);
+      // Sanity check: US combined tax rates are 0-15%
+      if (rate >= 0 && rate <= 15) {
+        return rate;
+      }
+    }
+  }
+
+  console.warn(`Tax audit: could not parse rate for zip ${zip}`);
+  return null;
+}
+
+
+// ═══════════════════════════════════════════════════════════
+//  CUSTOMER AUTH — Registration, Login, Password Reset, JWT
+// ═══════════════════════════════════════════════════════════
+
+// ── Crypto helpers (Web Crypto API — works in Cloudflare Workers) ──
+
+async function hashPassword(password) {
+  const encoder = new TextEncoder();
+  const salt = crypto.getRandomValues(new Uint8Array(16));
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw', encoder.encode(password), 'PBKDF2', false, ['deriveBits']
+  );
+  const hash = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', salt, iterations: 100000, hash: 'SHA-256' },
+    keyMaterial, 256
+  );
+  const saltHex = Array.from(salt).map(b => b.toString(16).padStart(2, '0')).join('');
+  const hashHex = Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+  return `pbkdf2:100000:${saltHex}:${hashHex}`;
+}
+
+async function verifyPassword(password, stored) {
+  const [, iterations, saltHex, hashHex] = stored.split(':');
+  const encoder = new TextEncoder();
+  const salt = new Uint8Array(saltHex.match(/.{2}/g).map(b => parseInt(b, 16)));
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw', encoder.encode(password), 'PBKDF2', false, ['deriveBits']
+  );
+  const hash = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', salt, iterations: parseInt(iterations), hash: 'SHA-256' },
+    keyMaterial, 256
+  );
+  const computed = Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+  return computed === hashHex;
+}
+
+async function sha256(input) {
+  const encoder = new TextEncoder();
+  const hash = await crypto.subtle.digest('SHA-256', encoder.encode(input));
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function randomToken(bytes = 32) {
+  const arr = crypto.getRandomValues(new Uint8Array(bytes));
+  return Array.from(arr).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+async function createJWT(payload, secret) {
+  const header = { alg: 'HS256', typ: 'JWT' };
+  const enc = new TextEncoder();
+  const b64url = (obj) => btoa(JSON.stringify(obj)).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+  const headerB64 = b64url(header);
+  const payloadB64 = b64url(payload);
+  const data = `${headerB64}.${payloadB64}`;
+  const key = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const sig = await crypto.subtle.sign('HMAC', key, enc.encode(data));
+  const sigB64 = btoa(String.fromCharCode(...new Uint8Array(sig))).replace(/=/g, '').replace(/\+/g, '-').replace(/\//g, '_');
+  return `${data}.${sigB64}`;
+}
+
+async function verifyJWT(token, secret) {
+  try {
+    const [headerB64, payloadB64, sigB64] = token.split('.');
+    const enc = new TextEncoder();
+    const key = await crypto.subtle.importKey('raw', enc.encode(secret), { name: 'HMAC', hash: 'SHA-256' }, false, ['verify']);
+    const sigBytes = Uint8Array.from(atob(sigB64.replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
+    const valid = await crypto.subtle.verify('HMAC', key, sigBytes, enc.encode(`${headerB64}.${payloadB64}`));
+    if (!valid) return null;
+    const payload = JSON.parse(atob(payloadB64.replace(/-/g, '+').replace(/_/g, '/')));
+    if (payload.exp && Date.now() / 1000 > payload.exp) return null;
+    return payload;
+  } catch {
+    return null;
+  }
+}
+
+async function authenticateCustomer(request, env) {
+  const authHeader = request.headers.get('Authorization') || '';
+  const token = authHeader.replace(/^Bearer\s+/i, '');
+  if (!token) return null;
+  const secret = env.JWT_SECRET || env.ADMIN_API_KEY || 'webnari-jwt-secret';
+  return await verifyJWT(token, secret);
+}
+
+// ── Auth Handlers ──
+
+async function handleCustomerRegister(request, sb, env, storeId, corsOrigin) {
+  const { email, password, name, phone } = await request.json();
+
+  if (!email || !password) {
+    return json({ error: 'Email and password required' }, 400, corsOrigin);
+  }
+  if (password.length < 8) {
+    return json({ error: 'Password must be at least 8 characters' }, 400, corsOrigin);
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return json({ error: 'Invalid email address' }, 400, corsOrigin);
+  }
+
+  // Check if customer already exists
+  const existing = await sb.query('customers', {
+    filters: { store_id: `eq.${storeId}`, email: `eq.${email.toLowerCase().trim()}` },
+    single: true, select: 'id',
+  });
+  if (existing) {
+    return json({ error: 'An account with this email already exists' }, 409, corsOrigin);
+  }
+
+  // Hash password and create customer
+  const passwordHash = await hashPassword(password);
+  const customer = await sb.insert('customers', {
+    store_id: storeId,
+    email: email.toLowerCase().trim(),
+    password_hash: passwordHash,
+    name: name || null,
+    phone: phone || null,
+  });
+
+  // Emit customer.created webhook event
+  emitEvent(sb, env, storeId, 'customer.created', { id: customer.id, email: customer.email, name: customer.name }).catch(() => {});
+
+  // Generate JWT
+  const secret = env.JWT_SECRET || env.ADMIN_API_KEY || 'webnari-jwt-secret';
+  const token = await createJWT({
+    sub: customer.id,
+    email: customer.email,
+    store: storeId,
+    exp: Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60, // 30 days
+  }, secret);
+
+  return json({
+    token,
+    customer: { id: customer.id, email: customer.email, name: customer.name },
+  }, 201, corsOrigin);
+}
+
+async function handleCustomerLogin(request, sb, env, storeId, corsOrigin) {
+  const { email, password } = await request.json();
+
+  if (!email || !password) {
+    return json({ error: 'Email and password required' }, 400, corsOrigin);
+  }
+
+  const customer = await sb.query('customers', {
+    filters: { store_id: `eq.${storeId}`, email: `eq.${email.toLowerCase().trim()}` },
+    single: true,
+    select: 'id,email,name,phone,password_hash',
+  });
+
+  if (!customer) {
+    return json({ error: 'Invalid email or password' }, 401, corsOrigin);
+  }
+
+  const valid = await verifyPassword(password, customer.password_hash);
+  if (!valid) {
+    return json({ error: 'Invalid email or password' }, 401, corsOrigin);
+  }
+
+  // Update last login
+  sb.update('customers', { id: `eq.${customer.id}` }, { last_login_at: new Date().toISOString() }).catch(() => {});
+
+  // Generate JWT
+  const secret = env.JWT_SECRET || env.ADMIN_API_KEY || 'webnari-jwt-secret';
+  const token = await createJWT({
+    sub: customer.id,
+    email: customer.email,
+    store: storeId,
+    exp: Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60,
+  }, secret);
+
+  return json({
+    token,
+    customer: { id: customer.id, email: customer.email, name: customer.name, phone: customer.phone },
+  }, 200, corsOrigin);
+}
+
+async function handleForgotPassword(request, sb, env, storeId, corsOrigin) {
+  const { email } = await request.json();
+
+  // Always return ok to prevent email enumeration
+  if (!email) return json({ ok: true }, 200, corsOrigin);
+
+  const customer = await sb.query('customers', {
+    filters: { store_id: `eq.${storeId}`, email: `eq.${email.toLowerCase().trim()}` },
+    single: true, select: 'id,email',
+  });
+
+  if (customer) {
+    const token = randomToken(32);
+    const tokenHash = await sha256(token);
+
+    await sb.insert('password_reset_tokens', {
+      customer_id: customer.id,
+      store_id: storeId,
+      token_hash: tokenHash,
+      expires_at: new Date(Date.now() + 30 * 60 * 1000).toISOString(), // 30 min
+    });
+
+    // Get store info for email
+    const store = await sb.query('stores', {
+      filters: { id: `eq.${storeId}` }, single: true, select: 'name,domain,settings',
+    });
+    const storeName = store?.name || 'Store';
+    const domain = store?.domain || store?.settings?.domain || 'webnari.io';
+    const resetUrl = `https://${domain}/reset-password?token=${token}&store=${storeId}`;
+
+    const html = emailShell(storeName, `
+      <h2 style="margin:0 0 8px;font-size:22px;color:#111827;">Reset Your Password</h2>
+      <p style="margin:0 0 24px;font-size:14px;color:#6b7280;">We received a request to reset your password. Click the button below to set a new one.</p>
+      <p style="margin:0 0 24px;"><a href="${esc(resetUrl)}" style="display:inline-block;padding:14px 28px;background:#111827;color:#ffffff;text-decoration:none;border-radius:6px;font-size:14px;font-weight:600;">Reset Password</a></p>
+      <p style="margin:0;font-size:12px;color:#9ca3af;">This link expires in 30 minutes. If you didn't request this, ignore this email.</p>
+    `);
+
+    sendEmail(env, {
+      to: customer.email,
+      subject: `${storeName} — Reset Your Password`,
+      html,
+    }).catch(err => console.error('Password reset email failed:', err));
+  }
+
+  return json({ ok: true }, 200, corsOrigin);
+}
+
+async function handleResetPassword(request, sb, env, storeId, corsOrigin) {
+  const { token, newPassword } = await request.json();
+
+  if (!token || !newPassword) {
+    return json({ error: 'Token and new password required' }, 400, corsOrigin);
+  }
+  if (newPassword.length < 8) {
+    return json({ error: 'Password must be at least 8 characters' }, 400, corsOrigin);
+  }
+
+  const tokenHash = await sha256(token);
+  const resetToken = await sb.query('password_reset_tokens', {
+    filters: { token_hash: `eq.${tokenHash}`, store_id: `eq.${storeId}`, used_at: 'is.null' },
+    single: true,
+    select: 'id,customer_id,expires_at',
+  });
+
+  if (!resetToken || new Date(resetToken.expires_at) < new Date()) {
+    return json({ error: 'Invalid or expired reset link' }, 400, corsOrigin);
+  }
+
+  // Hash new password and update
+  const passwordHash = await hashPassword(newPassword);
+  await sb.update('customers', { id: `eq.${resetToken.customer_id}` }, { password_hash: passwordHash, updated_at: new Date().toISOString() });
+
+  // Mark token as used
+  await sb.update('password_reset_tokens', { id: `eq.${resetToken.id}` }, { used_at: new Date().toISOString() });
+
+  return json({ ok: true }, 200, corsOrigin);
+}
+
+// ── Account Handlers (require JWT) ──
+
+async function handleGetProfile(request, sb, env, storeId, corsOrigin) {
+  const auth = await authenticateCustomer(request, env);
+  if (!auth || auth.store !== storeId) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const customer = await sb.query('customers', {
+    filters: { id: `eq.${auth.sub}`, store_id: `eq.${storeId}` },
+    single: true,
+    select: 'id,email,name,phone,created_at',
+  });
+  if (!customer) return json({ error: 'Customer not found' }, 404, corsOrigin);
+
+  return json({ customer }, 200, corsOrigin);
+}
+
+async function handleUpdateProfile(request, sb, env, storeId, corsOrigin) {
+  const auth = await authenticateCustomer(request, env);
+  if (!auth || auth.store !== storeId) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const data = await request.json();
+  const updates = {};
+  if (data.name !== undefined) updates.name = data.name;
+  if (data.phone !== undefined) updates.phone = data.phone;
+
+  // Allow password change if current password provided
+  if (data.newPassword && data.currentPassword) {
+    const customer = await sb.query('customers', {
+      filters: { id: `eq.${auth.sub}` }, single: true, select: 'password_hash',
+    });
+    const valid = await verifyPassword(data.currentPassword, customer.password_hash);
+    if (!valid) return json({ error: 'Current password is incorrect' }, 401, corsOrigin);
+    if (data.newPassword.length < 8) return json({ error: 'New password must be at least 8 characters' }, 400, corsOrigin);
+    updates.password_hash = await hashPassword(data.newPassword);
+  }
+
+  if (Object.keys(updates).length === 0) {
+    return json({ error: 'No fields to update' }, 400, corsOrigin);
+  }
+
+  updates.updated_at = new Date().toISOString();
+  await sb.update('customers', { id: `eq.${auth.sub}`, store_id: `eq.${storeId}` }, updates);
+
+  return json({ ok: true }, 200, corsOrigin);
+}
+
+async function handleGetCustomerOrders(request, sb, env, storeId, corsOrigin) {
+  const auth = await authenticateCustomer(request, env);
+  if (!auth || auth.store !== storeId) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  try {
+    const orders = await sb.query('orders', {
+      filters: { store_id: `eq.${storeId}`, customer_email: `eq.${auth.email}` },
+      select: 'id,order_number,status,subtotal,shipping,tax,total,created_at,tracking_number,tracking_url',
+      order: 'created_at.desc',
+      limit: 25,
+    });
+
+    return json({ orders: orders || [] }, 200, corsOrigin);
+  } catch (err) {
+    console.error('Orders query error:', err.message);
+    return json({ orders: [], error: err.message }, 200, corsOrigin);
+  }
+}
+
+async function handleGetAddresses(request, sb, env, storeId, corsOrigin) {
+  const auth = await authenticateCustomer(request, env);
+  if (!auth || auth.store !== storeId) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const addresses = await sb.query('customer_addresses', {
+    filters: { customer_id: `eq.${auth.sub}`, store_id: `eq.${storeId}` },
+    select: 'id,label,name,street1,street2,city,state,zip,country,is_default',
+    order: 'is_default.desc,created_at.desc',
+  });
+
+  return json({ addresses: addresses || [] }, 200, corsOrigin);
+}
+
+async function handleAddAddress(request, sb, env, storeId, corsOrigin) {
+  const auth = await authenticateCustomer(request, env);
+  if (!auth || auth.store !== storeId) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const data = await request.json();
+  if (!data.street1 || !data.city || !data.state || !data.zip) {
+    return json({ error: 'street1, city, state, and zip required' }, 400, corsOrigin);
+  }
+
+  // If setting as default, unset other defaults first
+  if (data.is_default) {
+    await sb.update('customer_addresses', {
+      customer_id: `eq.${auth.sub}`, store_id: `eq.${storeId}`,
+    }, { is_default: false });
+  }
+
+  const address = await sb.insert('customer_addresses', {
+    customer_id: auth.sub,
+    store_id: storeId,
+    label: data.label || 'Home',
+    name: data.name || null,
+    street1: data.street1,
+    street2: data.street2 || null,
+    city: data.city,
+    state: data.state,
+    zip: data.zip,
+    country: data.country || 'US',
+    is_default: data.is_default || false,
+  });
+
+  return json({ address }, 201, corsOrigin);
+}
+
+async function handleDeleteAddress(request, sb, env, storeId, addressId, corsOrigin) {
+  const auth = await authenticateCustomer(request, env);
+  if (!auth || auth.store !== storeId) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  await sb.delete('customer_addresses', {
+    id: `eq.${addressId}`, customer_id: `eq.${auth.sub}`, store_id: `eq.${storeId}`,
+  });
+
+  return json({ ok: true }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  SEO — ROBOTS.TXT
+// ═══════════════════════════════════════════════════════════════
+
+async function handleRobotsTxt(request, sb) {
+  const storeId = await resolveStoreFromRequest(request, sb);
+  if (!storeId) {
+    return new Response('User-agent: *\nDisallow: /\n', {
+      headers: { 'Content-Type': 'text/plain', 'Cache-Control': 'public, max-age=86400' },
+    });
+  }
+
+  const store = await sb.query('stores', {
+    filters: { id: `eq.${storeId}` },
+    select: 'domain',
+    single: true,
+  });
+
+  const domain = store?.domain || request.headers.get('Host') || 'localhost';
+  const baseUrl = `https://${domain}`;
+
+  const txt = [
+    'User-agent: *',
+    'Allow: /',
+    '',
+    '# Disallow admin/API paths',
+    'Disallow: /api/',
+    'Disallow: /admin/',
+    'Disallow: /dashboard',
+    '',
+    '# Sitemaps',
+    `Sitemap: ${baseUrl}/sitemap.xml`,
+    '',
+    '# Crawl-delay (be polite)',
+    'Crawl-delay: 1',
+  ].join('\n');
+
+  return new Response(txt, {
+    headers: { 'Content-Type': 'text/plain', 'Cache-Control': 'public, max-age=86400' },
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SEO — SITEMAP INDEX
+// ═══════════════════════════════════════════════════════════════
+
+async function handleSitemapIndex(request, sb) {
+  const storeId = await resolveStoreFromRequest(request, sb);
+  if (!storeId) return xml('<error>Store not found</error>', 404);
+
+  const store = await sb.query('stores', {
+    filters: { id: `eq.${storeId}` },
+    select: 'domain',
+    single: true,
+  });
+  const domain = store?.domain || request.headers.get('Host') || 'localhost';
+  const baseUrl = `https://${domain}`;
+  const now = new Date().toISOString().split('T')[0];
+
+  const sitemaps = [
+    { loc: `${baseUrl}/sitemap-products.xml`, lastmod: now },
+    { loc: `${baseUrl}/sitemap-categories.xml`, lastmod: now },
+    { loc: `${baseUrl}/sitemap-blog.xml`, lastmod: now },
+    { loc: `${baseUrl}/sitemap-pages.xml`, lastmod: now },
+    { loc: `${baseUrl}/sitemap-images.xml`, lastmod: now },
+  ];
+
+  const xmlStr = `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${sitemaps.map(s => `  <sitemap>
+    <loc>${s.loc}</loc>
+    <lastmod>${s.lastmod}</lastmod>
+  </sitemap>`).join('\n')}
+</sitemapindex>`;
+
+  return xml(xmlStr, 200, 3600);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SEO — PRODUCT SITEMAP
+// ═══════════════════════════════════════════════════════════════
+
+async function handleProductSitemap(request, sb) {
+  const storeId = await resolveStoreFromRequest(request, sb);
+  if (!storeId) return xml('<error>Store not found</error>', 404);
+
+  const store = await sb.query('stores', {
+    filters: { id: `eq.${storeId}` },
+    select: 'domain',
+    single: true,
+  });
+  const domain = store?.domain || request.headers.get('Host') || 'localhost';
+  const baseUrl = `https://${domain}`;
+
+  const products = await sb.query('products', {
+    select: 'slug,updated_at,name',
+    filters: { store_id: `eq.${storeId}`, in_stock: 'eq.true' },
+    order: 'updated_at.desc',
+    limit: 50000,
+  });
+
+  // Get images for all products
+  const productIds = products.map(p => p.slug || p.id);
+
+  const xmlStr = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+${products.map(p => {
+    const slug = p.slug || p.id;
+    const lastmod = p.updated_at ? new Date(p.updated_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+    return `  <url>
+    <loc>${baseUrl}/products/${encodeURIComponent(slug)}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>`;
+  }).join('\n')}
+</urlset>`;
+
+  return xml(xmlStr, 200, 3600);
+}
+
+async function handleCategorySitemap(request, sb) {
+  const storeId = await resolveStoreFromRequest(request, sb);
+  if (!storeId) return xml('<error>Store not found</error>', 404);
+
+  const store = await sb.query('stores', {
+    filters: { id: `eq.${storeId}` },
+    select: 'domain',
+    single: true,
+  });
+  const domain = store?.domain || request.headers.get('Host') || 'localhost';
+  const baseUrl = `https://${domain}`;
+
+  const categories = await sb.query('categories', {
+    select: 'slug,name',
+    filters: { store_id: `eq.${storeId}` },
+    order: 'sort_order.asc',
+  });
+
+  const now = new Date().toISOString().split('T')[0];
+
+  const xmlStr = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${categories.map(c => `  <url>
+    <loc>${baseUrl}/collections/${encodeURIComponent(c.slug)}</loc>
+    <lastmod>${now}</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>`).join('\n')}
+</urlset>`;
+
+  return xml(xmlStr, 200, 3600);
+}
+
+async function handleBlogSitemap(request, sb) {
+  const storeId = await resolveStoreFromRequest(request, sb);
+  if (!storeId) return xml('<error>Store not found</error>', 404);
+
+  const store = await sb.query('stores', {
+    filters: { id: `eq.${storeId}` },
+    select: 'domain',
+    single: true,
+  });
+  const domain = store?.domain || request.headers.get('Host') || 'localhost';
+  const baseUrl = `https://${domain}`;
+
+  const posts = await sb.query('blog_posts', {
+    select: 'slug,updated_at,title',
+    filters: { store_id: `eq.${storeId}`, published: 'eq.true' },
+    order: 'updated_at.desc',
+    limit: 50000,
+  });
+
+  const xmlStr = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${posts.map(p => {
+    const lastmod = p.updated_at ? new Date(p.updated_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+    return `  <url>
+    <loc>${baseUrl}/blog/${encodeURIComponent(p.slug || p.id)}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>`;
+  }).join('\n')}
+</urlset>`;
+
+  return xml(xmlStr, 200, 3600);
+}
+
+async function handlePagesSitemap(request, sb) {
+  const storeId = await resolveStoreFromRequest(request, sb);
+  if (!storeId) return xml('<error>Store not found</error>', 404);
+
+  const store = await sb.query('stores', {
+    filters: { id: `eq.${storeId}` },
+    select: 'domain',
+    single: true,
+  });
+  const domain = store?.domain || request.headers.get('Host') || 'localhost';
+  const baseUrl = `https://${domain}`;
+
+  // Homepage always included
+  const urls = [`  <url>
+    <loc>${baseUrl}/</loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>`];
+
+  // Custom pages
+  try {
+    const pages = await sb.query('store_pages', {
+      select: 'slug,updated_at',
+      filters: { store_id: `eq.${storeId}`, published: 'eq.true' },
+      order: 'sort_order.asc',
+    });
+    for (const p of pages) {
+      const lastmod = p.updated_at ? new Date(p.updated_at).toISOString().split('T')[0] : new Date().toISOString().split('T')[0];
+      urls.push(`  <url>
+    <loc>${baseUrl}/${encodeURIComponent(p.slug)}</loc>
+    <lastmod>${lastmod}</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>`);
+    }
+  } catch (e) {
+    // store_pages table may not exist yet
+  }
+
+  const xmlStr = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${urls.join('\n')}
+</urlset>`;
+
+  return xml(xmlStr, 200, 3600);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SEO — IMAGE SITEMAP
+// ═══════════════════════════════════════════════════════════════
+
+async function handleImageSitemap(request, sb) {
+  const storeId = await resolveStoreFromRequest(request, sb);
+  if (!storeId) return xml('<error>Store not found</error>', 404);
+
+  const store = await sb.query('stores', {
+    filters: { id: `eq.${storeId}` },
+    select: 'domain',
+    single: true,
+  });
+  const domain = store?.domain || request.headers.get('Host') || 'localhost';
+  const baseUrl = `https://${domain}`;
+
+  // Get all products with images
+  const products = await sb.query('products', {
+    select: 'id,slug,name',
+    filters: { store_id: `eq.${storeId}`, in_stock: 'eq.true' },
+    order: 'updated_at.desc',
+    limit: 5000,
+  });
+
+  // Batch-fetch all product images
+  const entries = [];
+  for (const p of products) {
+    const images = await sb.query('product_images', {
+      select: 'url,alt',
+      filters: { product_id: `eq.${p.id}` },
+      order: 'sort_order.asc',
+      limit: 10,
+    });
+    if (images.length > 0) {
+      const slug = p.slug || p.id;
+      entries.push({ slug, name: p.name, images });
+    }
+  }
+
+  const xmlStr = `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+${entries.map(e => `  <url>
+    <loc>${baseUrl}/products/${encodeURIComponent(e.slug)}</loc>
+${e.images.map(img => `    <image:image>
+      <image:loc>${escXml(img.url)}</image:loc>
+      <image:title>${escXml(e.name)}</image:title>
+${img.alt ? `      <image:caption>${escXml(img.alt)}</image:caption>` : ''}
+    </image:image>`).join('\n')}
+  </url>`).join('\n')}
+</urlset>`;
+
+  return xml(xmlStr, 200, 3600);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SEO — META TAG GENERATION API
+// ═══════════════════════════════════════════════════════════════
+
+async function handleSeoMeta(request, sb, storeId, url, corsOrigin) {
+  const pageType = url.searchParams.get('type') || 'home'; // home, product, category, blog, page
+  const slug = url.searchParams.get('slug');
+
+  const store = await sb.query('stores', {
+    filters: { id: `eq.${storeId}` },
+    single: true,
+  });
+  if (!store) return json({ error: 'Store not found' }, 404, corsOrigin);
+
+  const domain = store.domain || `${storeId}.webnari.io`;
+  const baseUrl = `https://${domain}`;
+  const storeName = store.name;
+  const defaultImage = store.social_image_url || store.logo_url || '';
+
+  let meta = {};
+
+  if (pageType === 'home') {
+    meta = {
+      title: store.seo_title || `${storeName} — Official Store`,
+      description: store.seo_description || `Shop ${storeName}. Free shipping on qualifying orders.`,
+      canonical: baseUrl + '/',
+      og: {
+        type: 'website',
+        title: store.seo_title || storeName,
+        description: store.seo_description || `Shop ${storeName}`,
+        url: baseUrl + '/',
+        image: defaultImage,
+        site_name: storeName,
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: store.seo_title || storeName,
+        description: store.seo_description || `Shop ${storeName}`,
+        image: defaultImage,
+      },
+    };
+  } else if (pageType === 'product' && slug) {
+    let product = await sb.query('products', {
+      filters: { slug: `eq.${slug}`, store_id: `eq.${storeId}` },
+      single: true,
+    });
+    if (!product) {
+      product = await sb.query('products', {
+        filters: { id: `eq.${slug}`, store_id: `eq.${storeId}` },
+        single: true,
+      });
+    }
+    if (!product) return json({ error: 'Product not found' }, 404, corsOrigin);
+
+    const images = await sb.query('product_images', {
+      filters: { product_id: `eq.${product.id}` },
+      order: 'sort_order.asc',
+      limit: 1,
+    });
+    const productImage = images[0]?.url || defaultImage;
+    const price = (product.price / 100).toFixed(2);
+
+    meta = {
+      title: product.meta_title || `${product.name} — ${storeName}`,
+      description: product.meta_description || product.description?.slice(0, 160) || `Buy ${product.name} at ${storeName}`,
+      canonical: `${baseUrl}/products/${product.slug || product.id}`,
+      og: {
+        type: 'og:product',
+        title: product.meta_title || product.name,
+        description: product.meta_description || product.description?.slice(0, 160) || '',
+        url: `${baseUrl}/products/${product.slug || product.id}`,
+        image: productImage,
+        site_name: storeName,
+        'product:price:amount': price,
+        'product:price:currency': (store.currency || 'usd').toUpperCase(),
+        'product:availability': product.in_stock ? 'instock' : 'out of stock',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: product.meta_title || product.name,
+        description: product.meta_description || product.description?.slice(0, 160) || '',
+        image: productImage,
+      },
+    };
+  } else if (pageType === 'category' && slug) {
+    const category = await sb.query('categories', {
+      filters: { slug: `eq.${slug}`, store_id: `eq.${storeId}` },
+      single: true,
+    });
+    if (!category) return json({ error: 'Category not found' }, 404, corsOrigin);
+
+    meta = {
+      title: category.meta_title || `${category.name} — ${storeName}`,
+      description: category.meta_description || `Browse ${category.name} at ${storeName}`,
+      canonical: `${baseUrl}/collections/${category.slug}`,
+      og: {
+        type: 'website',
+        title: category.meta_title || category.name,
+        description: category.meta_description || `Browse ${category.name}`,
+        url: `${baseUrl}/collections/${category.slug}`,
+        image: category.image_url || defaultImage,
+        site_name: storeName,
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: category.meta_title || category.name,
+        description: category.meta_description || `Browse ${category.name}`,
+        image: category.image_url || defaultImage,
+      },
+    };
+  } else if (pageType === 'blog' && slug) {
+    const post = await sb.query('blog_posts', {
+      filters: { slug: `eq.${slug}`, store_id: `eq.${storeId}`, published: 'eq.true' },
+      single: true,
+    });
+    if (!post) return json({ error: 'Post not found' }, 404, corsOrigin);
+
+    meta = {
+      title: post.meta_title || `${post.title} — ${storeName} Blog`,
+      description: post.meta_description || post.excerpt?.slice(0, 160) || '',
+      canonical: `${baseUrl}/blog/${post.slug || post.id}`,
+      og: {
+        type: 'article',
+        title: post.meta_title || post.title,
+        description: post.meta_description || post.excerpt?.slice(0, 160) || '',
+        url: `${baseUrl}/blog/${post.slug || post.id}`,
+        image: post.image_url || defaultImage,
+        site_name: storeName,
+        'article:published_time': post.created_at,
+        'article:modified_time': post.updated_at,
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: post.meta_title || post.title,
+        description: post.meta_description || post.excerpt?.slice(0, 160) || '',
+        image: post.image_url || defaultImage,
+      },
+    };
+  } else if (pageType === 'page' && slug) {
+    try {
+      const page = await sb.query('store_pages', {
+        filters: { slug: `eq.${slug}`, store_id: `eq.${storeId}`, published: 'eq.true' },
+        single: true,
+      });
+      if (!page) return json({ error: 'Page not found' }, 404, corsOrigin);
+
+      meta = {
+        title: page.meta_title || `${page.title} — ${storeName}`,
+        description: page.meta_description || '',
+        canonical: `${baseUrl}/${page.slug}`,
+        og: {
+          type: 'website',
+          title: page.meta_title || page.title,
+          description: page.meta_description || '',
+          url: `${baseUrl}/${page.slug}`,
+          image: page.image_url || defaultImage,
+          site_name: storeName,
+        },
+        twitter: {
+          card: 'summary_large_image',
+          title: page.meta_title || page.title,
+          description: page.meta_description || '',
+          image: page.image_url || defaultImage,
+        },
+      };
+    } catch (e) {
+      return json({ error: 'Pages not available' }, 404, corsOrigin);
+    }
+  }
+
+  return json(meta, 200, corsOrigin);
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SEO — JSON-LD STRUCTURED DATA
+// ═══════════════════════════════════════════════════════════════
+
+async function handleStructuredData(request, sb, storeId, url, corsOrigin) {
+  const pageType = url.searchParams.get('type') || 'home';
+  const slug = url.searchParams.get('slug');
+
+  const store = await sb.query('stores', {
+    filters: { id: `eq.${storeId}` },
+    single: true,
+  });
+  if (!store) return json({ error: 'Store not found' }, 404, corsOrigin);
+
+  const domain = store.domain || `${storeId}.webnari.io`;
+  const baseUrl = `https://${domain}`;
+  const storeName = store.name;
+
+  const schemas = [];
+
+  // Always include Organization/Store schema
+  const orgSchema = {
+    '@context': 'https://schema.org',
+    '@type': store.business_type || 'Store',
+    name: storeName,
+    url: baseUrl,
+  };
+  if (store.logo_url) orgSchema.logo = store.logo_url;
+  if (store.business_phone) orgSchema.telephone = store.business_phone;
+  if (store.social_image_url) orgSchema.image = store.social_image_url;
+  if (store.business_address) {
+    const addr = store.business_address;
+    orgSchema.address = {
+      '@type': 'PostalAddress',
+      streetAddress: addr.street || '',
+      addressLocality: addr.city || '',
+      addressRegion: addr.state || '',
+      postalCode: addr.zip || '',
+      addressCountry: addr.country || 'US',
+    };
+  }
+  if (store.social_links) {
+    const links = store.social_links;
+    orgSchema.sameAs = [links.instagram, links.facebook, links.twitter, links.tiktok, links.youtube].filter(Boolean);
+  }
+  if (store.business_hours && Array.isArray(store.business_hours)) {
+    orgSchema.openingHoursSpecification = store.business_hours.map(h => ({
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: h.day,
+      opens: h.open,
+      closes: h.close,
+    }));
+  }
+  schemas.push(orgSchema);
+
+  // Website SearchAction schema
+  schemas.push({
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: storeName,
+    url: baseUrl,
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: `${baseUrl}/search?q={search_term_string}`,
+      'query-input': 'required name=search_term_string',
+    },
+  });
+
+  if (pageType === 'home') {
+    // BreadcrumbList for home
+    schemas.push({
+      '@context': 'https://schema.org',
+      '@type': 'BreadcrumbList',
+      itemListElement: [{
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: baseUrl,
+      }],
+    });
+  }
+
+  if (pageType === 'product' && slug) {
+    let product = await sb.query('products', {
+      filters: { slug: `eq.${slug}`, store_id: `eq.${storeId}` },
+      single: true,
+    });
+    if (!product) {
+      product = await sb.query('products', {
+        filters: { id: `eq.${slug}`, store_id: `eq.${storeId}` },
+        single: true,
+      });
+    }
+    if (product) {
+      const images = await sb.query('product_images', {
+        filters: { product_id: `eq.${product.id}` },
+        order: 'sort_order.asc',
+      });
+      const reviews = await sb.query('reviews', {
+        filters: { product_id: `eq.${product.id}`, approved: 'eq.true' },
+      });
+
+      const productSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: product.name,
+        description: product.description || '',
+        url: `${baseUrl}/products/${product.slug || product.id}`,
+        image: images.map(i => i.url),
+        sku: product.sku || product.id,
+        brand: { '@type': 'Brand', name: storeName },
+        offers: {
+          '@type': 'Offer',
+          price: (product.price / 100).toFixed(2),
+          priceCurrency: (store.currency || 'usd').toUpperCase(),
+          availability: product.in_stock
+            ? 'https://schema.org/InStock'
+            : 'https://schema.org/OutOfStock',
+          url: `${baseUrl}/products/${product.slug || product.id}`,
+          seller: { '@type': 'Organization', name: storeName },
+        },
+      };
+
+      if (product.compare_at_price) {
+        productSchema.offers.priceValidUntil = new Date(Date.now() + 365 * 86400000).toISOString().split('T')[0];
+      }
+
+      // Aggregate rating
+      if (reviews.length > 0) {
+        const avg = reviews.reduce((s, r) => s + r.rating, 0) / reviews.length;
+        productSchema.aggregateRating = {
+          '@type': 'AggregateRating',
+          ratingValue: avg.toFixed(1),
+          reviewCount: reviews.length,
+          bestRating: 5,
+          worstRating: 1,
+        };
+        productSchema.review = reviews.slice(0, 5).map(r => ({
+          '@type': 'Review',
+          author: { '@type': 'Person', name: r.name },
+          reviewRating: { '@type': 'Rating', ratingValue: r.rating, bestRating: 5 },
+          reviewBody: r.text,
+          datePublished: r.created_at?.split('T')[0] || '',
+        }));
+      }
+
+      schemas.push(productSchema);
+
+      // Breadcrumb for product
+      const breadcrumb = {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: baseUrl },
+        ],
+      };
+      if (product.category) {
+        breadcrumb.itemListElement.push({
+          '@type': 'ListItem', position: 2, name: product.category,
+          item: `${baseUrl}/collections/${encodeURIComponent(product.category.toLowerCase().replace(/[^a-z0-9]+/g, '-'))}`,
+        });
+        breadcrumb.itemListElement.push({
+          '@type': 'ListItem', position: 3, name: product.name,
+        });
+      } else {
+        breadcrumb.itemListElement.push({
+          '@type': 'ListItem', position: 2, name: product.name,
+        });
+      }
+      schemas.push(breadcrumb);
+    }
+  }
+
+  if (pageType === 'category' && slug) {
+    const category = await sb.query('categories', {
+      filters: { slug: `eq.${slug}`, store_id: `eq.${storeId}` },
+      single: true,
+    });
+    if (category) {
+      const products = await sb.query('products', {
+        select: 'name,slug,price',
+        filters: { store_id: `eq.${storeId}`, category: `eq.${category.slug}`, in_stock: 'eq.true' },
+        order: 'sort_order.asc',
+        limit: 50,
+      });
+
+      schemas.push({
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        name: category.name,
+        description: category.description || category.meta_description || `Browse ${category.name}`,
+        url: `${baseUrl}/collections/${category.slug}`,
+        mainEntity: {
+          '@type': 'ItemList',
+          itemListElement: products.map((p, i) => ({
+            '@type': 'ListItem',
+            position: i + 1,
+            url: `${baseUrl}/products/${p.slug || p.id}`,
+            name: p.name,
+          })),
+        },
+      });
+
+      schemas.push({
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: baseUrl },
+          { '@type': 'ListItem', position: 2, name: category.name },
+        ],
+      });
+    }
+  }
+
+  if (pageType === 'blog' && slug) {
+    const post = await sb.query('blog_posts', {
+      filters: { slug: `eq.${slug}`, store_id: `eq.${storeId}`, published: 'eq.true' },
+      single: true,
+    });
+    if (post) {
+      schemas.push({
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: post.title,
+        description: post.excerpt || '',
+        datePublished: post.created_at,
+        dateModified: post.updated_at,
+        author: { '@type': 'Organization', name: storeName },
+        publisher: {
+          '@type': 'Organization',
+          name: storeName,
+          logo: store.logo_url ? { '@type': 'ImageObject', url: store.logo_url } : undefined,
+        },
+        image: post.image_url || store.social_image_url || '',
+        url: `${baseUrl}/blog/${post.slug || post.id}`,
+        mainEntityOfPage: `${baseUrl}/blog/${post.slug || post.id}`,
+      });
+
+      schemas.push({
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: baseUrl },
+          { '@type': 'ListItem', position: 2, name: 'Blog', item: `${baseUrl}/blog` },
+          { '@type': 'ListItem', position: 3, name: post.title },
+        ],
+      });
+    }
+  }
+
+  if (pageType === 'faq') {
+    try {
+      const faqs = await sb.query('store_faqs', {
+        filters: { store_id: `eq.${storeId}`, published: 'eq.true' },
+        order: 'sort_order.asc',
+      });
+      if (faqs.length > 0) {
+        schemas.push({
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: faqs.map(f => ({
+            '@type': 'Question',
+            name: f.question,
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: f.answer,
+            },
+          })),
+        });
+      }
+    } catch (e) {
+      // store_faqs table may not exist yet
+    }
+  }
+
+  // Cache meta + structured data for 5 minutes
+  return new Response(JSON.stringify(schemas), {
+    status: 200,
+    headers: {
+      'Content-Type': 'application/json',
+      'Cache-Control': 'public, max-age=300, s-maxage=3600',
+      ...corsHeaders(corsOrigin),
+    },
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════
+//  SEO — ADMIN HEALTH AUDIT
+// ═══════════════════════════════════════════════════════════════
+
+async function handleSeoHealthAudit(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const [store, products, categories, blogPosts] = await Promise.all([
+    sb.query('stores', { filters: { id: `eq.${storeId}` }, single: true }),
+    sb.query('products', { filters: { store_id: `eq.${storeId}` } }),
+    sb.query('categories', { filters: { store_id: `eq.${storeId}` } }),
+    sb.query('blog_posts', { filters: { store_id: `eq.${storeId}` } }),
+  ]);
+
+  const issues = [];
+  const warnings = [];
+  let score = 100;
+
+  // Store-level checks
+  if (!store.seo_title) { issues.push('Missing store SEO title (homepage)'); score -= 5; }
+  if (!store.seo_description) { issues.push('Missing store SEO description (homepage)'); score -= 5; }
+  if (!store.logo_url) { warnings.push('No logo URL set — affects structured data'); score -= 3; }
+  if (!store.social_image_url) { warnings.push('No social/OG image — link previews will be blank'); score -= 3; }
+  if (!store.business_phone) { warnings.push('No business phone — reduces local SEO trust'); score -= 2; }
+  if (!store.business_address) { warnings.push('No business address — hurts local search visibility'); score -= 2; }
+  if (!store.social_links || Object.keys(store.social_links || {}).length === 0) {
+    warnings.push('No social links — missed schema.org sameAs signals');
+    score -= 2;
+  }
+
+  // Product-level checks
+  let productsWithoutMeta = 0;
+  let productsWithoutSlug = 0;
+  let productsWithoutDesc = 0;
+  let productsWithoutImages = 0;
+
+  for (const p of products) {
+    if (!p.meta_title && !p.meta_description) productsWithoutMeta++;
+    if (!p.slug) productsWithoutSlug++;
+    if (!p.description) productsWithoutDesc++;
+  }
+
+  // Check for products without images (batch check)
+  const productImagesCount = {};
+  for (const p of products) {
+    const imgs = await sb.query('product_images', {
+      select: 'id',
+      filters: { product_id: `eq.${p.id}` },
+      limit: 1,
+    });
+    if (imgs.length === 0) productsWithoutImages++;
+  }
+
+  if (productsWithoutMeta > 0) {
+    issues.push(`${productsWithoutMeta}/${products.length} products missing meta title/description`);
+    score -= Math.min(15, productsWithoutMeta * 2);
+  }
+  if (productsWithoutSlug > 0) {
+    issues.push(`${productsWithoutSlug}/${products.length} products missing URL slug`);
+    score -= Math.min(10, productsWithoutSlug * 2);
+  }
+  if (productsWithoutDesc > 0) {
+    warnings.push(`${productsWithoutDesc}/${products.length} products missing description`);
+    score -= Math.min(10, productsWithoutDesc);
+  }
+  if (productsWithoutImages > 0) {
+    warnings.push(`${productsWithoutImages}/${products.length} products have no images`);
+    score -= Math.min(10, productsWithoutImages);
+  }
+
+  // Category checks
+  const catsWithoutMeta = categories.filter(c => !c.meta_title && !c.meta_description).length;
+  if (catsWithoutMeta > 0) {
+    warnings.push(`${catsWithoutMeta}/${categories.length} categories missing meta title/description`);
+    score -= Math.min(5, catsWithoutMeta);
+  }
+
+  // Blog checks
+  const postsWithoutMeta = blogPosts.filter(p => !p.meta_title && !p.meta_description).length;
+  if (postsWithoutMeta > 0) {
+    warnings.push(`${postsWithoutMeta}/${blogPosts.length} blog posts missing meta title/description`);
+    score -= Math.min(5, postsWithoutMeta);
+  }
+
+  score = Math.max(0, score);
+
+  const grade = score >= 90 ? 'A' : score >= 80 ? 'B' : score >= 70 ? 'C' : score >= 60 ? 'D' : 'F';
+
+  return json({
+    score,
+    grade,
+    issues,
+    warnings,
+    summary: {
+      totalProducts: products.length,
+      productsWithMeta: products.length - productsWithoutMeta,
+      productsWithSlug: products.length - productsWithoutSlug,
+      productsWithImages: products.length - productsWithoutImages,
+      totalCategories: categories.length,
+      categoriesWithMeta: categories.length - catsWithoutMeta,
+      totalBlogPosts: blogPosts.length,
+      blogPostsWithMeta: blogPosts.length - postsWithoutMeta,
+      hasStoreTitle: !!store.seo_title,
+      hasStoreDescription: !!store.seo_description,
+      hasLogo: !!store.logo_url,
+      hasSocialImage: !!store.social_image_url,
+      hasBusinessInfo: !!(store.business_phone && store.business_address),
+    },
+    sitemaps: {
+      index: '/sitemap.xml',
+      products: '/sitemap-products.xml',
+      categories: '/sitemap-categories.xml',
+      blog: '/sitemap-blog.xml',
+      pages: '/sitemap-pages.xml',
+      images: '/sitemap-images.xml',
+    },
+  }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  WEBHOOK ENGINE — Core event emission & delivery
+// ═══════════════════════════════════════════════════════════════
+
+async function emitEvent(sb, env, storeId, eventType, data) {
+  try {
+    // Query all active webhook endpoints for this store
+    const endpoints = await sb.query('webhook_endpoints', {
+      filters: { store_id: `eq.${storeId}`, is_active: 'eq.true' },
+    });
+
+    // Filter endpoints that subscribe to this event or wildcard
+    const matching = endpoints.filter(ep =>
+      ep.events.includes('*') || ep.events.includes(eventType)
+    );
+
+    if (matching.length === 0) return;
+
+    // Build event payload envelope
+    const eventPayload = {
+      id: 'evt_' + crypto.randomUUID().replace(/-/g, '').slice(0, 16),
+      type: eventType,
+      store_id: storeId,
+      created_at: new Date().toISOString(),
+      data,
+    };
+
+    // Deliver to all matching endpoints concurrently
+    await Promise.allSettled(
+      matching.map(ep => deliverWebhook(sb, ep, eventPayload))
+    );
+  } catch (err) {
+    console.error('emitEvent error:', err);
+  }
+}
+
+async function deliverWebhook(sb, endpoint, eventPayload) {
+  const body = JSON.stringify(eventPayload);
+  const timestamp = Math.floor(Date.now() / 1000);
+  const startTime = Date.now();
+  let responseStatus = null;
+  let responseBody = null;
+  let error = null;
+
+  try {
+    // Sign the payload with HMAC-SHA256
+    const signature = await signWebhookPayload(endpoint.secret, timestamp, body);
+
+    // Deliver with 10-second timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+    const res = await fetch(endpoint.url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Agent': 'Webnari-Webhooks/1.0',
+        'X-Webnari-Event': eventPayload.type,
+        'X-Webnari-Delivery': eventPayload.id,
+        'X-Webnari-Signature': `t=${timestamp},v1=${signature}`,
+      },
+      body,
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+    responseStatus = res.status;
+    responseBody = (await res.text()).slice(0, 4096);
+
+    // Log successful delivery
+    await sb.insert('webhook_deliveries', {
+      webhook_id: endpoint.id,
+      store_id: endpoint.store_id,
+      event_type: eventPayload.type,
+      payload: eventPayload,
+      response_status: responseStatus,
+      response_body: responseBody,
+      response_ms: Date.now() - startTime,
+      attempt: 1,
+      status: responseStatus >= 200 && responseStatus < 300 ? 'success' : 'retrying',
+      next_retry_at: responseStatus >= 200 && responseStatus < 300 ? null : new Date(Date.now() + 60000).toISOString(),
+      error: responseStatus >= 200 && responseStatus < 300 ? null : `HTTP ${responseStatus}`,
+    });
+
+  } catch (err) {
+    error = err.name === 'AbortError' ? 'Timeout (10s)' : err.message;
+
+    // Log failed delivery — schedule retry
+    await sb.insert('webhook_deliveries', {
+      webhook_id: endpoint.id,
+      store_id: endpoint.store_id,
+      event_type: eventPayload.type,
+      payload: eventPayload,
+      response_status: null,
+      response_body: null,
+      response_ms: Date.now() - startTime,
+      attempt: 1,
+      status: 'retrying',
+      next_retry_at: new Date(Date.now() + 60000).toISOString(),
+      error,
+    });
+  }
+}
+
+async function signWebhookPayload(secret, timestamp, body) {
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(secret),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['sign']
+  );
+  const signed = await crypto.subtle.sign('HMAC', key, encoder.encode(`${timestamp}.${body}`));
+  return Array.from(new Uint8Array(signed)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function generateWebhookSecret() {
+  const bytes = new Uint8Array(32);
+  crypto.getRandomValues(bytes);
+  return 'whsec_' + Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  WEBHOOK RETRY CRON (every 5 minutes)
+// ═══════════════════════════════════════════════════════════════
+
+async function handleWebhookRetryCron(env) {
+  const sb = createSupabaseClient(env);
+
+  try {
+    // Find deliveries due for retry
+    const pending = await sb.query('webhook_deliveries', {
+      filters: { status: 'eq.retrying', next_retry_at: `lte.${new Date().toISOString()}` },
+      order: 'next_retry_at.asc',
+      limit: 50,
+    });
+
+    if (pending.length === 0) return;
+
+    for (const delivery of pending) {
+      // Get the endpoint
+      const endpoint = await sb.query('webhook_endpoints', {
+        filters: { id: `eq.${delivery.webhook_id}`, is_active: 'eq.true' },
+        single: true,
+      });
+
+      // If endpoint was deleted or deactivated, mark as failed
+      if (!endpoint) {
+        await sb.update('webhook_deliveries', { id: `eq.${delivery.id}` }, {
+          status: 'failed',
+          error: 'Endpoint deleted or deactivated',
+          next_retry_at: null,
+        });
+        continue;
+      }
+
+      const newAttempt = delivery.attempt + 1;
+      const body = JSON.stringify(delivery.payload);
+      const timestamp = Math.floor(Date.now() / 1000);
+      const startTime = Date.now();
+
+      try {
+        const signature = await signWebhookPayload(endpoint.secret, timestamp, body);
+
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+        const res = await fetch(endpoint.url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'User-Agent': 'Webnari-Webhooks/1.0',
+            'X-Webnari-Event': delivery.event_type,
+            'X-Webnari-Delivery': delivery.payload?.id || delivery.id,
+            'X-Webnari-Signature': `t=${timestamp},v1=${signature}`,
+            'X-Webnari-Retry': String(newAttempt),
+          },
+          body,
+          signal: controller.signal,
+        });
+
+        clearTimeout(timeoutId);
+        const responseStatus = res.status;
+        const responseBody = (await res.text()).slice(0, 4096);
+        const isSuccess = responseStatus >= 200 && responseStatus < 300;
+
+        // Calculate next retry with exponential backoff: 1m, 5m, 30m
+        const backoffMs = newAttempt === 2 ? 300000 : 1800000;
+
+        await sb.update('webhook_deliveries', { id: `eq.${delivery.id}` }, {
+          response_status: responseStatus,
+          response_body: responseBody,
+          response_ms: Date.now() - startTime,
+          attempt: newAttempt,
+          status: isSuccess ? 'success' : (newAttempt >= 3 ? 'failed' : 'retrying'),
+          next_retry_at: isSuccess || newAttempt >= 3 ? null : new Date(Date.now() + backoffMs).toISOString(),
+          error: isSuccess ? null : `HTTP ${responseStatus}`,
+        });
+      } catch (err) {
+        const backoffMs = newAttempt === 2 ? 300000 : 1800000;
+
+        await sb.update('webhook_deliveries', { id: `eq.${delivery.id}` }, {
+          response_ms: Date.now() - startTime,
+          attempt: newAttempt,
+          status: newAttempt >= 3 ? 'failed' : 'retrying',
+          next_retry_at: newAttempt >= 3 ? null : new Date(Date.now() + backoffMs).toISOString(),
+          error: err.name === 'AbortError' ? 'Timeout (10s)' : err.message,
+        });
+      }
+    }
+  } catch (err) {
+    console.error('Webhook retry cron error:', err);
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  WEBHOOK ADMIN CRUD
+// ═══════════════════════════════════════════════════════════════
+
+async function handleAdminListWebhooks(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const endpoints = await sb.query('webhook_endpoints', {
+    filters: { store_id: `eq.${storeId}` },
+    order: 'created_at.desc',
+  });
+
+  // Get recent delivery stats for each endpoint
+  const result = [];
+  for (const ep of endpoints) {
+    const deliveries = await sb.query('webhook_deliveries', {
+      select: 'status',
+      filters: { webhook_id: `eq.${ep.id}` },
+      order: 'created_at.desc',
+      limit: 20,
+    });
+
+    const stats = { total: deliveries.length, success: 0, failed: 0, retrying: 0 };
+    for (const d of deliveries) {
+      if (d.status === 'success') stats.success++;
+      else if (d.status === 'failed') stats.failed++;
+      else if (d.status === 'retrying') stats.retrying++;
+    }
+
+    result.push({
+      ...ep,
+      secret: ep.secret.slice(0, 10) + '...',  // mask secret
+      recentDeliveryStats: stats,
+    });
+  }
+
+  return json(result, 200, corsOrigin);
+}
+
+async function handleAdminCreateWebhook(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const body = await request.json();
+  if (!body.url) return json({ error: 'Webhook URL required' }, 400, corsOrigin);
+  if (!body.events || !Array.isArray(body.events) || body.events.length === 0) {
+    return json({ error: 'At least one event is required' }, 400, corsOrigin);
+  }
+
+  // Validate URL
+  try { new URL(body.url); } catch { return json({ error: 'Invalid URL' }, 400, corsOrigin); }
+
+  // Must be HTTPS
+  if (!body.url.startsWith('https://')) {
+    return json({ error: 'Webhook URL must use HTTPS' }, 400, corsOrigin);
+  }
+
+  const secret = generateWebhookSecret();
+
+  const endpoint = await sb.insert('webhook_endpoints', {
+    store_id: storeId,
+    url: body.url,
+    secret,
+    events: body.events,
+    description: body.description || null,
+    is_active: true,
+  });
+
+  return json({
+    ...endpoint,
+    secret,  // show full secret only on creation
+  }, 201, corsOrigin);
+}
+
+async function handleAdminGetWebhook(request, sb, env, storeId, webhookId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const endpoint = await sb.query('webhook_endpoints', {
+    filters: { id: `eq.${webhookId}`, store_id: `eq.${storeId}` },
+    single: true,
+  });
+
+  if (!endpoint) return json({ error: 'Webhook not found' }, 404, corsOrigin);
+
+  return json({
+    ...endpoint,
+    secret: endpoint.secret.slice(0, 10) + '...',
+  }, 200, corsOrigin);
+}
+
+async function handleAdminUpdateWebhook(request, sb, env, storeId, webhookId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const body = await request.json();
+  const allowed = ['url', 'events', 'description', 'is_active'];
+  const updates = {};
+  for (const key of allowed) {
+    if (body[key] !== undefined) updates[key] = body[key];
+  }
+
+  if (updates.url) {
+    try { new URL(updates.url); } catch { return json({ error: 'Invalid URL' }, 400, corsOrigin); }
+    if (!updates.url.startsWith('https://')) return json({ error: 'Must use HTTPS' }, 400, corsOrigin);
+  }
+
+  if (Object.keys(updates).length === 0) return json({ error: 'No valid fields' }, 400, corsOrigin);
+
+  await sb.update('webhook_endpoints', { id: `eq.${webhookId}`, store_id: `eq.${storeId}` }, updates);
+
+  return json({ updated: true }, 200, corsOrigin);
+}
+
+async function handleAdminDeleteWebhook(request, sb, env, storeId, webhookId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  await sb.delete('webhook_endpoints', { id: `eq.${webhookId}`, store_id: `eq.${storeId}` });
+
+  return json({ deleted: true }, 200, corsOrigin);
+}
+
+async function handleAdminWebhookDeliveries(request, sb, env, storeId, webhookId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const url = new URL(request.url);
+  const limit = parseInt(url.searchParams.get('limit') || '50');
+  const offset = parseInt(url.searchParams.get('offset') || '0');
+
+  const deliveries = await sb.query('webhook_deliveries', {
+    filters: { webhook_id: `eq.${webhookId}`, store_id: `eq.${storeId}` },
+    order: 'created_at.desc',
+    limit: Math.min(limit, 100),
+  });
+
+  return json(deliveries, 200, corsOrigin);
+}
+
+async function handleAdminTestWebhook(request, sb, env, storeId, webhookId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const endpoint = await sb.query('webhook_endpoints', {
+    filters: { id: `eq.${webhookId}`, store_id: `eq.${storeId}` },
+    single: true,
+  });
+
+  if (!endpoint) return json({ error: 'Webhook not found' }, 404, corsOrigin);
+
+  const testPayload = {
+    id: 'evt_test_' + crypto.randomUUID().replace(/-/g, '').slice(0, 12),
+    type: 'webhook.test',
+    store_id: storeId,
+    created_at: new Date().toISOString(),
+    data: {
+      message: 'This is a test webhook delivery from Webnari',
+      timestamp: new Date().toISOString(),
+    },
+  };
+
+  // Deliver synchronously so we can return the result
+  const body = JSON.stringify(testPayload);
+  const timestamp = Math.floor(Date.now() / 1000);
+  const startTime = Date.now();
+
+  try {
+    const signature = await signWebhookPayload(endpoint.secret, timestamp, body);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+
+    const res = await fetch(endpoint.url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'User-Agent': 'Webnari-Webhooks/1.0',
+        'X-Webnari-Event': 'webhook.test',
+        'X-Webnari-Delivery': testPayload.id,
+        'X-Webnari-Signature': `t=${timestamp},v1=${signature}`,
+      },
+      body,
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeoutId);
+    const responseStatus = res.status;
+    const responseBody = (await res.text()).slice(0, 4096);
+    const latency = Date.now() - startTime;
+
+    // Log the test delivery
+    await sb.insert('webhook_deliveries', {
+      webhook_id: endpoint.id,
+      store_id: storeId,
+      event_type: 'webhook.test',
+      payload: testPayload,
+      response_status: responseStatus,
+      response_body: responseBody,
+      response_ms: latency,
+      attempt: 1,
+      status: responseStatus >= 200 && responseStatus < 300 ? 'success' : 'failed',
+    });
+
+    return json({
+      success: responseStatus >= 200 && responseStatus < 300,
+      status: responseStatus,
+      latency_ms: latency,
+      response_preview: responseBody.slice(0, 200),
+    }, 200, corsOrigin);
+  } catch (err) {
+    return json({
+      success: false,
+      error: err.name === 'AbortError' ? 'Timeout (10s)' : err.message,
+      latency_ms: Date.now() - startTime,
+    }, 200, corsOrigin);
+  }
+}
+
+async function handleAdminListWebhookEvents(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  return json({
+    events: [
+      { type: 'order.created', description: 'Fired when a new order is placed' },
+      { type: 'order.updated', description: 'Fired when order details change' },
+      { type: 'order.shipped', description: 'Fired when order is marked as shipped' },
+      { type: 'order.delivered', description: 'Fired when order is marked as delivered' },
+      { type: 'order.cancelled', description: 'Fired when order is cancelled' },
+      { type: 'order.refunded', description: 'Fired when order is refunded' },
+      { type: 'product.created', description: 'Fired when a new product is added' },
+      { type: 'product.updated', description: 'Fired when a product is modified' },
+      { type: 'product.deleted', description: 'Fired when a product is removed' },
+      { type: 'inventory.updated', description: 'Fired when stock levels change' },
+      { type: 'inventory.low_stock', description: 'Fired when stock drops below threshold' },
+      { type: 'customer.created', description: 'Fired when a new customer registers' },
+      { type: 'customer.updated', description: 'Fired when customer profile changes' },
+      { type: 'review.submitted', description: 'Fired when a review is submitted' },
+      { type: 'review.approved', description: 'Fired when a review is approved' },
+      { type: 'blog.published', description: 'Fired when a blog post is published' },
+      { type: 'cart.abandoned', description: 'Fired when a cart is detected as abandoned' },
+      { type: 'webhook.test', description: 'Test event for verifying webhook delivery' },
+    ],
+  }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  APP ECOSYSTEM — Admin Management
+// ═══════════════════════════════════════════════════════════════
+
+async function handleAdminListApps(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  // Get all published apps
+  const apps = await sb.query('apps', {
+    filters: { is_published: 'eq.true' },
+    order: 'name.asc',
+  });
+
+  // Get this store's installations
+  const installations = await sb.query('app_installations', {
+    filters: { store_id: `eq.${storeId}` },
+  });
+
+  const installMap = {};
+  for (const inst of installations) {
+    installMap[inst.app_id] = inst;
+  }
+
+  // Also check legacy store_integrations for Square/QB/Stripe
+  let legacyIntegrations = [];
+  try {
+    legacyIntegrations = await sb.query('store_integrations', {
+      filters: { store_id: `eq.${storeId}` },
+    });
+  } catch (e) {
+    // store_integrations table may not exist
+  }
+
+  const legacyMap = {};
+  for (const li of legacyIntegrations) {
+    legacyMap[li.provider] = li;
+  }
+
+  return json(apps.map(app => ({
+    ...app,
+    installed: !!installMap[app.id] || !!legacyMap[app.id],
+    installation: installMap[app.id] ? {
+      id: installMap[app.id].id,
+      status: installMap[app.id].status,
+      installed_at: installMap[app.id].installed_at,
+      config: installMap[app.id].config,
+    } : legacyMap[app.id] ? {
+      id: legacyMap[app.id].id,
+      status: 'active',
+      installed_at: legacyMap[app.id].created_at,
+      legacy: true,
+    } : null,
+  })), 200, corsOrigin);
+}
+
+async function handleAdminInstallApp(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const body = await request.json();
+  if (!body.app_id) return json({ error: 'app_id required' }, 400, corsOrigin);
+
+  // Check app exists
+  const app = await sb.query('apps', {
+    filters: { id: `eq.${body.app_id}`, is_published: 'eq.true' },
+    single: true,
+  });
+  if (!app) return json({ error: 'App not found' }, 404, corsOrigin);
+
+  // Check not already installed
+  const existing = await sb.query('app_installations', {
+    filters: { store_id: `eq.${storeId}`, app_id: `eq.${body.app_id}` },
+    single: true,
+  });
+  if (existing && existing.status === 'active') {
+    return json({ error: 'App already installed' }, 400, corsOrigin);
+  }
+
+  if (existing) {
+    // Re-activate
+    await sb.update('app_installations', { id: `eq.${existing.id}` }, {
+      status: 'active',
+      config: body.config || existing.config,
+    });
+    return json({ ...existing, status: 'active' }, 200, corsOrigin);
+  }
+
+  const installation = await sb.insert('app_installations', {
+    store_id: storeId,
+    app_id: body.app_id,
+    status: 'active',
+    scopes: app.required_scopes || [],
+    config: body.config || {},
+  });
+
+  // Emit app.installed event
+  emitEvent(sb, env, storeId, 'app.installed', { app_id: body.app_id, app_name: app.name }).catch(() => {});
+
+  return json(installation, 201, corsOrigin);
+}
+
+async function handleAdminUninstallApp(request, sb, env, storeId, appId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  await sb.update('app_installations', {
+    store_id: `eq.${storeId}`, app_id: `eq.${appId}`,
+  }, { status: 'uninstalled' });
+
+  // Emit app.uninstalled event
+  emitEvent(sb, env, storeId, 'app.uninstalled', { app_id: appId }).catch(() => {});
+
+  return json({ uninstalled: true }, 200, corsOrigin);
+}
+
+async function handleAdminUpdateAppConfig(request, sb, env, storeId, appId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const body = await request.json();
+  if (!body.config) return json({ error: 'config object required' }, 400, corsOrigin);
+
+  const installation = await sb.query('app_installations', {
+    filters: { store_id: `eq.${storeId}`, app_id: `eq.${appId}`, status: 'eq.active' },
+    single: true,
+  });
+  if (!installation) return json({ error: 'App not installed' }, 404, corsOrigin);
+
+  // Merge config (don't replace, merge)
+  const merged = { ...installation.config, ...body.config };
+
+  await sb.update('app_installations', { id: `eq.${installation.id}` }, { config: merged });
+
+  return json({ config: merged }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  GA4 INTEGRATION — Server-side e-commerce tracking
+// ═══════════════════════════════════════════════════════════════
+
+async function handleGA4Configure(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const body = await request.json();
+  if (!body.measurement_id || !body.api_secret) {
+    return json({ error: 'measurement_id and api_secret required' }, 400, corsOrigin);
+  }
+
+  // Validate measurement_id format
+  if (!/^G-[A-Z0-9]+$/.test(body.measurement_id)) {
+    return json({ error: 'Invalid measurement_id format (expected G-XXXXXXXX)' }, 400, corsOrigin);
+  }
+
+  // Install or update the GA4 app
+  const existing = await sb.query('app_installations', {
+    filters: { store_id: `eq.${storeId}`, app_id: 'eq.ga4' },
+    single: true,
+  });
+
+  const config = {
+    measurement_id: body.measurement_id,
+    api_secret: body.api_secret,
+  };
+
+  if (existing) {
+    await sb.update('app_installations', { id: `eq.${existing.id}` }, {
+      status: 'active',
+      config,
+    });
+  } else {
+    await sb.insert('app_installations', {
+      store_id: storeId,
+      app_id: 'ga4',
+      status: 'active',
+      scopes: ['orders:read'],
+      config,
+    });
+  }
+
+  return json({ connected: true, measurement_id: body.measurement_id }, 200, corsOrigin);
+}
+
+async function handleGA4Disconnect(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  await sb.update('app_installations', {
+    store_id: `eq.${storeId}`, app_id: 'eq.ga4',
+  }, { status: 'uninstalled', config: {} });
+
+  return json({ disconnected: true }, 200, corsOrigin);
+}
+
+async function handleGA4Test(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const installation = await sb.query('app_installations', {
+    filters: { store_id: `eq.${storeId}`, app_id: 'eq.ga4', status: 'eq.active' },
+    single: true,
+  });
+
+  if (!installation) return json({ error: 'GA4 not configured' }, 400, corsOrigin);
+
+  const { measurement_id, api_secret } = installation.config;
+
+  // Send a test event to GA4
+  const res = await fetch(
+    `https://www.google-analytics.com/mp/collect?measurement_id=${measurement_id}&api_secret=${api_secret}`,
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        client_id: 'webnari_test_' + storeId,
+        events: [{
+          name: 'test_event',
+          params: { source: 'webnari', store_id: storeId },
+        }],
+      }),
+    }
+  );
+
+  return json({
+    success: res.status === 204 || res.status === 200,
+    status: res.status,
+    message: res.status === 204 ? 'Test event sent to GA4 successfully' : `GA4 responded with ${res.status}`,
+  }, 200, corsOrigin);
+}
+
+// Fire GA4 purchase event (called from emitEvent pipeline)
+async function sendGA4PurchaseEvent(sb, storeId, order) {
+  try {
+    const installation = await sb.query('app_installations', {
+      filters: { store_id: `eq.${storeId}`, app_id: 'eq.ga4', status: 'eq.active' },
+      single: true,
+    });
+
+    if (!installation) return;
+
+    const { measurement_id, api_secret } = installation.config;
+    if (!measurement_id || !api_secret) return;
+
+    // Get order items
+    const items = await sb.query('order_items', {
+      filters: { order_id: `eq.${order.id}` },
+    });
+
+    await fetch(
+      `https://www.google-analytics.com/mp/collect?measurement_id=${measurement_id}&api_secret=${api_secret}`,
+      {
+        method: 'POST',
+        body: JSON.stringify({
+          client_id: order.customer_email || 'anonymous',
+          events: [{
+            name: 'purchase',
+            params: {
+              transaction_id: order.order_number || order.id,
+              value: (order.total || 0) / 100,
+              currency: 'USD',
+              shipping: (order.shipping || 0) / 100,
+              tax: (order.tax || 0) / 100,
+              items: items.map(i => ({
+                item_id: i.product_id,
+                item_name: i.product_name,
+                quantity: i.quantity,
+                price: (i.price || 0) / 100,
+              })),
+            },
+          }],
+        }),
+      }
+    );
+  } catch (err) {
+    console.error('GA4 purchase event error:', err);
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  TWILIO SMS INTEGRATION
+// ═══════════════════════════════════════════════════════════════
+
+async function handleTwilioConfigure(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const body = await request.json();
+  if (!body.account_sid || !body.auth_token || !body.from_number || !body.owner_phone) {
+    return json({ error: 'account_sid, auth_token, from_number, and owner_phone required' }, 400, corsOrigin);
+  }
+
+  const config = {
+    account_sid: body.account_sid,
+    auth_token: body.auth_token,
+    from_number: body.from_number,
+    owner_phone: body.owner_phone,
+    notify_events: body.notify_events || ['order.created', 'inventory.low_stock'],
+  };
+
+  const existing = await sb.query('app_installations', {
+    filters: { store_id: `eq.${storeId}`, app_id: 'eq.twilio-sms' },
+    single: true,
+  });
+
+  if (existing) {
+    await sb.update('app_installations', { id: `eq.${existing.id}` }, {
+      status: 'active',
+      config,
+    });
+  } else {
+    await sb.insert('app_installations', {
+      store_id: storeId,
+      app_id: 'twilio-sms',
+      status: 'active',
+      scopes: ['orders:read', 'inventory:read', 'reviews:read'],
+      config,
+    });
+  }
+
+  return json({ connected: true }, 200, corsOrigin);
+}
+
+async function handleTwilioDisconnect(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  await sb.update('app_installations', {
+    store_id: `eq.${storeId}`, app_id: 'eq.twilio-sms',
+  }, { status: 'uninstalled', config: {} });
+
+  return json({ disconnected: true }, 200, corsOrigin);
+}
+
+async function handleTwilioTest(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const installation = await sb.query('app_installations', {
+    filters: { store_id: `eq.${storeId}`, app_id: 'eq.twilio-sms', status: 'eq.active' },
+    single: true,
+  });
+  if (!installation) return json({ error: 'Twilio not configured' }, 400, corsOrigin);
+
+  const { account_sid, auth_token, from_number, owner_phone } = installation.config;
+
+  const result = await sendTwilioSMS(account_sid, auth_token, from_number, owner_phone,
+    `[Webnari] Test notification from your store. SMS alerts are working!`
+  );
+
+  return json(result, 200, corsOrigin);
+}
+
+async function handleTwilioUpdateSettings(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const body = await request.json();
+  const installation = await sb.query('app_installations', {
+    filters: { store_id: `eq.${storeId}`, app_id: 'eq.twilio-sms', status: 'eq.active' },
+    single: true,
+  });
+  if (!installation) return json({ error: 'Twilio not configured' }, 400, corsOrigin);
+
+  const config = { ...installation.config };
+  if (body.notify_events) config.notify_events = body.notify_events;
+  if (body.owner_phone) config.owner_phone = body.owner_phone;
+
+  await sb.update('app_installations', { id: `eq.${installation.id}` }, { config });
+
+  return json({ config }, 200, corsOrigin);
+}
+
+async function sendTwilioSMS(accountSid, authToken, from, to, body) {
+  try {
+    const res = await fetch(
+      `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
+      {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Basic ' + btoa(`${accountSid}:${authToken}`),
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({ From: from, To: to, Body: body }).toString(),
+      }
+    );
+
+    const data = await res.json();
+
+    if (res.ok) {
+      return { success: true, sid: data.sid, status: data.status };
+    } else {
+      return { success: false, error: data.message || `Twilio error ${res.status}` };
+    }
+  } catch (err) {
+    return { success: false, error: err.message };
+  }
+}
+
+// Send SMS notification for an event (called from integration dispatch)
+async function sendTwilioEventNotification(sb, storeId, eventType, data) {
+  try {
+    const installation = await sb.query('app_installations', {
+      filters: { store_id: `eq.${storeId}`, app_id: 'eq.twilio-sms', status: 'eq.active' },
+      single: true,
+    });
+
+    if (!installation) return;
+
+    const config = installation.config;
+    if (!config.notify_events?.includes(eventType)) return;
+
+    let message = '';
+    if (eventType === 'order.created') {
+      const total = ((data.total || 0) / 100).toFixed(2);
+      message = `New order! #${data.order_number || 'N/A'} — $${total} from ${data.customer_email || 'unknown'}`;
+    } else if (eventType === 'inventory.low_stock') {
+      message = `Low stock alert: ${data.name || 'Unknown product'} — ${data.stock_quantity || 0} left`;
+    } else if (eventType === 'review.submitted') {
+      message = `New ${data.rating}-star review from ${data.name || 'anonymous'}`;
+    } else {
+      message = `Store event: ${eventType}`;
+    }
+
+    await sendTwilioSMS(config.account_sid, config.auth_token, config.from_number, config.owner_phone, `[Webnari] ${message}`);
+  } catch (err) {
+    console.error('Twilio notification error:', err);
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  INTEGRATION DISPATCH — Route events to first-party integrations
+// ═══════════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════════
+//  DISCOUNT VALIDATION (Public)
+// ═══════════════════════════════════════════════════════════════
+
+async function handleValidateDiscount(request, sb, storeId, corsOrigin) {
+  const body = await request.json();
+  const { code, subtotal } = body;
+  if (!code) return json({ error: 'Discount code required' }, 400, corsOrigin);
+
+  const discount = await sb.query('discounts', {
+    filters: { store_id: `eq.${storeId}`, code: `eq.${code.toUpperCase().trim()}`, is_active: 'eq.true' },
+    single: true,
+  });
+
+  if (!discount) return json({ error: 'Invalid discount code' }, 400, corsOrigin);
+
+  // Check expiry
+  const now = new Date();
+  if (discount.starts_at && new Date(discount.starts_at) > now) {
+    return json({ error: 'This discount is not yet active' }, 400, corsOrigin);
+  }
+  if (discount.expires_at && new Date(discount.expires_at) < now) {
+    return json({ error: 'This discount has expired' }, 400, corsOrigin);
+  }
+
+  // Check max uses
+  if (discount.max_uses && discount.used_count >= discount.max_uses) {
+    return json({ error: 'This discount has reached its usage limit' }, 400, corsOrigin);
+  }
+
+  // Check minimum order
+  if (discount.min_order && subtotal < discount.min_order) {
+    const minDisplay = (discount.min_order / 100).toFixed(2);
+    return json({ error: `Minimum order of $${minDisplay} required for this discount` }, 400, corsOrigin);
+  }
+
+  // Calculate discount amount
+  let discountAmount = 0;
+  let label = '';
+
+  if (discount.type === 'percentage') {
+    discountAmount = Math.round((subtotal || 0) * parseFloat(discount.value) / 100);
+    label = `${discount.value}% off`;
+  } else if (discount.type === 'fixed') {
+    discountAmount = Math.round(parseFloat(discount.value) * 100); // value is in dollars, convert to cents
+    if (discountAmount > (subtotal || 0)) discountAmount = subtotal || 0; // Can't discount more than subtotal
+    label = `$${parseFloat(discount.value).toFixed(2)} off`;
+  } else if (discount.type === 'free_shipping') {
+    discountAmount = 0; // Applied to shipping, not subtotal
+    label = 'Free shipping';
+  }
+
+  return json({
+    valid: true,
+    code: discount.code,
+    type: discount.type,
+    value: parseFloat(discount.value),
+    discountAmount,
+    label,
+    id: discount.id,
+  }, 200, corsOrigin);
+}
+
+
+async function dispatchToIntegrations(sb, env, storeId, eventType, data) {
+  try {
+    // GA4: send purchase event on order.created
+    if (eventType === 'order.created') {
+      sendGA4PurchaseEvent(sb, storeId, data).catch(err =>
+        console.error('GA4 dispatch error:', err)
+      );
+    }
+
+    // Twilio: send SMS for configured events
+    sendTwilioEventNotification(sb, storeId, eventType, data).catch(err =>
+      console.error('Twilio dispatch error:', err)
+    );
+  } catch (err) {
+    console.error('Integration dispatch error:', err);
   }
 }

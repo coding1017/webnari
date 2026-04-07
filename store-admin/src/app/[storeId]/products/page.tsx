@@ -18,6 +18,43 @@ function formatCents(cents: number) {
   return `$${(cents / 100).toFixed(2)}`;
 }
 
+// SKU helpers (shared with ProductForm)
+const STYLE_PRESETS = ["CROSS", "MINI", "LRG", "DISP", "SET", "CSTM"];
+const COLOR_PRESETS = ["BLK", "WHT", "PNK", "RED", "BLU", "GRN", "TIE", "RNB", "ORG", "PRP"];
+const COLOR_NAME_TO_CODE: Record<string, string> = {
+  black: "BLK", white: "WHT", pink: "PNK", red: "RED", blue: "BLU",
+  green: "GRN", "tie-dye": "TIE", tiedye: "TIE", rainbow: "RNB",
+  orange: "ORG", purple: "PRP", yellow: "YLW", brown: "BRN",
+  gray: "GRY", grey: "GRY", gold: "GLD", silver: "SLV",
+  teal: "TEL", coral: "CRL", maroon: "MRN", navy: "NVY",
+};
+const COLOR_CODE_TO_NAME: Record<string, string> = {
+  BLK: "Black", WHT: "White", PNK: "Pink", RED: "Red", BLU: "Blue",
+  GRN: "Green", TIE: "Tie-Dye", RNB: "Rainbow", ORG: "Orange", PRP: "Purple",
+  YLW: "Yellow", BRN: "Brown", GRY: "Gray", GLD: "Gold", SLV: "Silver",
+  TEL: "Teal", CRL: "Coral", MRN: "Maroon", NVY: "Navy",
+};
+function categoryCode(cat: string): string {
+  const map: Record<string, string> = {
+    pouches: "PCH", bags: "BAG", mats: "MAT", buddy: "BDY",
+    shoes: "SHO", sneakers: "SNK", clothing: "CLO", accessories: "ACC",
+    hats: "HAT", shirts: "SHR", pants: "PNT", jackets: "JKT", socks: "SOX",
+  };
+  const slug = cat.toLowerCase().replace(/[^a-z]/g, "");
+  return map[slug] || slug.slice(0, 3).toUpperCase() || "GEN";
+}
+function colorToCode(name: string): string {
+  const key = name.toLowerCase().trim().replace(/\s+/g, "");
+  return COLOR_NAME_TO_CODE[key] || name.slice(0, 3).toUpperCase();
+}
+function buildSku(cat: string, style: string, color: string, num: string): string {
+  const parts = [categoryCode(cat)];
+  if (style.trim()) parts.push(style.trim().toUpperCase());
+  if (color.trim()) parts.push(color.trim().toUpperCase());
+  parts.push(num.padStart(3, "0"));
+  return parts.join("-");
+}
+
 interface Product {
   id: string;
   name: string;
@@ -71,6 +108,14 @@ export default function ProductsPage() {
   const [editStockQty, setEditStockQty] = useState(0);
   const [editLowThreshold, setEditLowThreshold] = useState(5);
   const [editImages, setEditImages] = useState<string[]>([]);
+  const [editSku, setEditSku] = useState("");
+  const [editSkuStyle, setEditSkuStyle] = useState("");
+  const [editSkuColor, setEditSkuColor] = useState("");
+  const [editSkuNumber, setEditSkuNumber] = useState("001");
+  const [editSkuMode, setEditSkuMode] = useState<"auto" | "manual">("manual");
+  const editGeneratedSku = editSkuMode === "auto" ? buildSku(editCategory, editSkuStyle, editSkuColor, editSkuNumber) : editSku;
+  const [editColor, setEditColor] = useState("");
+  const [editComparePrice, setEditComparePrice] = useState("");
   const [editVariants, setEditVariants] = useState<{ id?: string; name: string; color: string; price: string; stock_quantity: number; in_stock: boolean; images: string[] }[]>([]);
   const [expandedVariantImg, setExpandedVariantImg] = useState<number | null>(null);
 
@@ -96,11 +141,34 @@ export default function ProductsPage() {
     }
     setExpandedId(p.id);
     setEditName(p.name);
+    const sku = p.sku || "";
+    setEditSku(sku);
+    // Parse SKU into segments for the builder
+    const skuParts = sku.split("-");
+    if (skuParts.length >= 4) {
+      setEditSkuStyle(skuParts[1]);
+      setEditSkuColor(skuParts[2]);
+      setEditSkuNumber(skuParts[skuParts.length - 1]);
+      setEditSkuMode("auto");
+    } else if (skuParts.length === 3) {
+      setEditSkuStyle("");
+      setEditSkuColor(skuParts[1]);
+      setEditSkuNumber(skuParts[2]);
+      setEditSkuMode("auto");
+    } else {
+      setEditSkuStyle("");
+      setEditSkuColor("");
+      setEditSkuNumber("001");
+      setEditSkuMode(sku ? "manual" : "auto");
+    }
+    setEditColor((p as any).color || "");
     setEditPrice((p.price / 100).toFixed(2));
+    setEditComparePrice((p as any).compare_at_price ? ((p as any).compare_at_price / 100).toFixed(2) : "");
     setEditCategory(p.category || "");
     setEditDescription(p.description || "");
-    setEditMetaTitle(p.meta_title || "");
-    setEditMetaDesc(p.meta_description || "");
+    // Auto-fill SEO from product data if not already set
+    setEditMetaTitle(p.meta_title || p.name || "");
+    setEditMetaDesc(p.meta_description || (p.description ? p.description.slice(0, 160) : ""));
     setEditBadge(p.badge || "");
     setEditInStock(p.in_stock);
     setEditStockQty(p.stock_quantity);
@@ -116,9 +184,10 @@ export default function ProductsPage() {
         setEditImages(full.images.map((i: { url: string }) => i.url));
       }
       if (full?.variants?.length) {
-        setEditVariants(full.variants.map((v: { id: string; name: string; color: string; price: number; stock_quantity: number; in_stock: boolean; images?: { url: string }[]; imgs?: string[] }) => ({
+        setEditVariants(full.variants.map((v: { id: string; name: string; sku?: string; color: string; price: number; stock_quantity: number; in_stock: boolean; images?: { url: string }[]; imgs?: string[] }) => ({
           id: v.id,
           name: v.name,
+          sku: v.sku || "",
           color: v.color || "",
           price: v.price ? (v.price / 100).toFixed(2) : "",
           stock_quantity: v.stock_quantity || 0,
@@ -137,7 +206,10 @@ export default function ProductsPage() {
     try {
       await updateProduct(storeId, productId, {
         name: editName,
+        sku: editGeneratedSku || null,
+        color: editColor || null,
         price: Math.round(parseFloat(editPrice || "0") * 100),
+        compare_at_price: editComparePrice ? Math.round(parseFloat(editComparePrice) * 100) : null,
         category: editCategory || null,
         description: editDescription,
         meta_title: editMetaTitle || null,
@@ -149,6 +221,7 @@ export default function ProductsPage() {
         images: editImages.map((url) => ({ url, alt: editName })),
         variants: editVariants.map((v) => ({
           name: v.name,
+          sku: (v as any).sku || null,
           color: v.color || null,
           price: v.price ? Math.round(parseFloat(v.price) * 100) : null,
           stock_quantity: v.stock_quantity,
@@ -295,9 +368,9 @@ export default function ProductsPage() {
               className="hide-mobile"
               style={{
                 display: "grid",
-                gridTemplateColumns: "1fr 130px 120px 100px 80px 90px 50px",
-                gap: "12px",
-                padding: "12px 24px",
+                gridTemplateColumns: "2fr 110px 90px 80px 60px 70px 40px",
+                gap: "8px",
+                padding: "10px 20px",
                 background: "var(--bg-grouped)",
                 borderBottom: "1px solid var(--border)",
               }}
@@ -321,9 +394,9 @@ export default function ProductsPage() {
                     className="transition-all"
                     style={{
                       display: "grid",
-                      gridTemplateColumns: "1fr 130px 120px 100px 80px 90px 50px",
-                      gap: "12px",
-                      padding: "16px 24px",
+                      gridTemplateColumns: "2fr 110px 90px 80px 60px 70px 40px",
+                      gap: "8px",
+                      padding: "10px 20px",
                       alignItems: "center",
                       cursor: "pointer",
                       background: isExpanded ? "var(--bg-hover)" : "transparent",
@@ -332,14 +405,14 @@ export default function ProductsPage() {
                     {/* Product name + thumb */}
                     <div className="flex items-center gap-3">
                       <div
-                        className="w-10 h-10 rounded-xl shrink-0 overflow-hidden"
+                        className="w-8 h-8 rounded-lg shrink-0 overflow-hidden"
                         style={{ background: "var(--bg-grouped)", border: "1px solid var(--border)" }}
                       >
                         {p.thumbnail ? (
-                          <img src={p.thumbnail} alt="" className="w-10 h-10 object-cover" />
+                          <img src={p.thumbnail} alt="" className="w-8 h-8 object-cover" />
                         ) : (
-                          <div className="w-10 h-10 flex items-center justify-center">
-                            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="var(--text-tertiary)" strokeWidth={1}>
+                          <div className="w-8 h-8 flex items-center justify-center">
+                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="var(--text-tertiary)" strokeWidth={1}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                             </svg>
                           </div>
@@ -406,15 +479,11 @@ export default function ProductsPage() {
                         borderTop: "1px solid var(--border)",
                       }}
                     >
-                      {/* Fields */}
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" style={{ marginBottom: "20px" }}>
+                      {/* Row 1: Name, Category, Color */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" style={{ marginBottom: "16px" }}>
                         <div>
                           <label>Name</label>
                           <input value={editName} onChange={(e) => setEditName(e.target.value)} />
-                        </div>
-                        <div>
-                          <label>Price ($)</label>
-                          <input type="number" step="0.01" min="0" value={editPrice} onChange={(e) => setEditPrice(e.target.value)} />
                         </div>
                         <div>
                           <label>Category</label>
@@ -426,6 +495,40 @@ export default function ProductsPage() {
                           </select>
                         </div>
                         <div>
+                          <label>Color</label>
+                          <input value={editColor} onChange={(e) => { setEditColor(e.target.value); if (editSkuMode === "auto" && e.target.value.trim()) { setEditSkuColor(colorToCode(e.target.value)); } }} placeholder="e.g. Tie-Dye, Pink" />
+                        </div>
+                      </div>
+
+                      {/* Row 2: SKU, Price, Badge */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" style={{ marginBottom: "0" }}>
+                        <div>
+                          <label>SKU {editSkuMode === "auto" && <span style={{ fontFamily: "monospace", fontWeight: 700, color: "var(--blue)", marginLeft: "6px", letterSpacing: "0.05em" }}>{editGeneratedSku}</span>}</label>
+                          {editSkuMode === "auto" ? (
+                            <div className="grid grid-cols-3 gap-2">
+                              <input value={editSkuStyle} onChange={(e) => setEditSkuStyle(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ""))} placeholder="Style" maxLength={5} style={{ fontFamily: "monospace", fontWeight: 600, textTransform: "uppercase", fontSize: "12px" }} />
+                              <input value={editSkuColor} onChange={(e) => { const v = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, ""); setEditSkuColor(v); const n = COLOR_CODE_TO_NAME[v]; if (n) setEditColor(n); }} placeholder="Color" maxLength={4} style={{ fontFamily: "monospace", fontWeight: 600, textTransform: "uppercase", fontSize: "12px" }} />
+                              <div className="flex gap-1">
+                                <input value={editSkuNumber} onChange={(e) => setEditSkuNumber(e.target.value.replace(/[^0-9]/g, "").slice(0, 4))} placeholder="001" maxLength={4} style={{ fontFamily: "monospace", fontWeight: 600, fontSize: "12px", flex: 1 }} />
+                                <button type="button" onClick={() => { setEditSku(editGeneratedSku); setEditSkuMode("manual"); }} className="px-1.5 shrink-0" style={{ color: "var(--blue)" }} title="Edit manually">
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>
+                                </button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div className="flex gap-2">
+                              <input value={editSku} onChange={(e) => setEditSku(e.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, ""))} placeholder="PCH-CROSS-TIE-001" style={{ fontFamily: "monospace", fontWeight: 600, letterSpacing: "0.05em", textTransform: "uppercase", flex: 1 }} />
+                              <button type="button" onClick={() => setEditSkuMode("auto")} className="px-1.5 shrink-0" style={{ color: "var(--blue)" }} title="Use auto-generator">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" /></svg>
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                        <div>
+                          <label>Price ($)</label>
+                          <input type="number" step="0.01" min="0" value={editPrice} onChange={(e) => setEditPrice(e.target.value)} />
+                        </div>
+                        <div>
                           <label>Badge</label>
                           <select value={editBadge} onChange={(e) => setEditBadge(e.target.value)}>
                             <option value="">None</option>
@@ -435,9 +538,37 @@ export default function ProductsPage() {
                             <option value="SALE">Sale</option>
                           </select>
                         </div>
+                      </div>
+
+                      {/* Quick-pick chips (right under SKU) */}
+                      {editSkuMode === "auto" && (
+                        <div style={{ marginBottom: "16px", marginTop: "8px", display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "center" }}>
+                          <span className="text-xs font-medium" style={{ color: "var(--text-tertiary)" }}>Style:</span>
+                          {STYLE_PRESETS.map((p) => (
+                            <button key={p} type="button" onClick={() => setEditSkuStyle(editSkuStyle === p ? "" : p)}
+                              className="px-2 py-0.5 text-xs font-mono rounded"
+                              style={{ background: editSkuStyle === p ? "rgba(59,130,246,0.12)" : "transparent", border: `1px solid ${editSkuStyle === p ? "var(--blue)" : "var(--border)"}`, color: editSkuStyle === p ? "var(--blue)" : "var(--text-tertiary)" }}
+                            >{p}</button>
+                          ))}
+                          <span className="text-xs font-medium" style={{ color: "var(--text-tertiary)", marginLeft: "4px" }}>Color:</span>
+                          {COLOR_PRESETS.map((c) => (
+                            <button key={c} type="button" onClick={() => { const nv = editSkuColor === c ? "" : c; setEditSkuColor(nv); const n = COLOR_CODE_TO_NAME[nv]; if (n) setEditColor(n); else if (!nv) setEditColor(""); }}
+                              className="px-2 py-0.5 text-xs font-mono rounded"
+                              style={{ background: editSkuColor === c ? "rgba(59,130,246,0.12)" : "transparent", border: `1px solid ${editSkuColor === c ? "var(--blue)" : "var(--border)"}`, color: editSkuColor === c ? "var(--blue)" : "var(--text-tertiary)" }}
+                            >{c}</button>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Row 3: Stock, Compare, Low Stock */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" style={{ marginBottom: "20px" }}>
                         <div>
                           <label>Stock Quantity</label>
                           <input type="number" min="0" value={editStockQty} onChange={(e) => setEditStockQty(parseInt(e.target.value) || 0)} />
+                        </div>
+                        <div>
+                          <label>Compare at ($)</label>
+                          <input type="number" step="0.01" min="0" value={editComparePrice} onChange={(e) => setEditComparePrice(e.target.value)} placeholder="Was price" />
                         </div>
                         <div>
                           <label>Low Stock Alert</label>
@@ -494,12 +625,12 @@ export default function ProductsPage() {
                           <label style={{ marginBottom: 0, fontSize: "14px", fontWeight: 600 }}>Variants</label>
                           <button
                             type="button"
-                            onClick={() => setEditVariants([...editVariants, { name: "", color: "", price: "", stock_quantity: 0, in_stock: true, images: [] }])}
+                            onClick={() => setEditVariants([...editVariants, { name: "", sku: "", color: "", price: "", stock_quantity: 0, in_stock: true, images: [] } as any])}
                             style={{
                               fontSize: "12px",
                               fontWeight: 600,
-                              color: "var(--gold)",
-                              background: "var(--gold-light)",
+                              color: "var(--blue)",
+                              background: "var(--bg-elevated)",
                               border: "1px solid var(--border)",
                               borderRadius: "var(--radius-sm)",
                               padding: "6px 12px",
@@ -511,140 +642,32 @@ export default function ProductsPage() {
                         </div>
 
                         {editVariants.length > 0 ? (
-                          <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
-                            {editVariants.map((v, vi) => {
-                              const imgExpanded = expandedVariantImg === vi;
-                              const hasImg = v.images && v.images.length > 0;
-                              return (
-                                <div
-                                  key={vi}
-                                  style={{
-                                    background: "var(--bg-elevated)",
-                                    borderRadius: "var(--radius-sm)",
-                                    border: "1px solid var(--border)",
-                                    overflow: "hidden",
-                                  }}
-                                >
-                                  {/* Compact row: thumbnail + fields */}
-                                  <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "8px 12px" }}>
-                                    {/* Thumbnail / image toggle */}
-                                    <button
-                                      type="button"
-                                      onClick={() => setExpandedVariantImg(imgExpanded ? null : vi)}
-                                      style={{
-                                        width: "40px",
-                                        height: "40px",
-                                        borderRadius: "8px",
-                                        border: `1px solid ${imgExpanded ? "var(--gold)" : "var(--border)"}`,
-                                        overflow: "hidden",
-                                        cursor: "pointer",
-                                        background: "var(--bg-grouped)",
-                                        flexShrink: 0,
-                                        padding: 0,
-                                        position: "relative",
-                                      }}
-                                      title={imgExpanded ? "Hide images" : "Add/edit image"}
-                                    >
-                                      {hasImg ? (
-                                        <img src={v.images[0]} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                                      ) : (
-                                        <svg style={{ width: "16px", height: "16px", margin: "auto", display: "block" }} fill="none" viewBox="0 0 24 24" stroke="var(--text-tertiary)" strokeWidth={1.5}>
-                                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                                        </svg>
-                                      )}
-                                      {/* Small expand indicator */}
-                                      <div style={{
-                                        position: "absolute",
-                                        bottom: "1px",
-                                        right: "1px",
-                                        width: "12px",
-                                        height: "12px",
-                                        borderRadius: "3px",
-                                        background: "rgba(0,0,0,0.5)",
-                                        display: "flex",
-                                        alignItems: "center",
-                                        justifyContent: "center",
-                                      }}>
-                                        <svg style={{ width: "8px", height: "8px", transform: imgExpanded ? "rotate(180deg)" : "rotate(0deg)" }} fill="white" viewBox="0 0 10 6">
-                                          <path d="M1 1l4 4 4-4" stroke="white" strokeWidth="1.5" fill="none" strokeLinecap="round" />
-                                        </svg>
-                                      </div>
-                                    </button>
-
-                                    {/* Color swatch */}
-                                    {v.color && (
-                                      <div style={{ width: "16px", height: "16px", borderRadius: "50%", background: v.color, border: "1px solid var(--border)", flexShrink: 0 }} />
-                                    )}
-
-                                    {/* Name */}
-                                    <input
-                                      value={v.name}
-                                      onChange={(e) => { const u = [...editVariants]; u[vi] = { ...u[vi], name: e.target.value }; setEditVariants(u); }}
-                                      placeholder="Variant name"
-                                      style={{ fontSize: "13px", padding: "6px 8px", minHeight: "32px", flex: 1 }}
-                                    />
-
-                                    {/* Color hex */}
-                                    <input
-                                      value={v.color}
-                                      onChange={(e) => { const u = [...editVariants]; u[vi] = { ...u[vi], color: e.target.value }; setEditVariants(u); }}
-                                      placeholder="#hex"
-                                      style={{ fontSize: "12px", padding: "6px 8px", minHeight: "32px", width: "70px", flexShrink: 0 }}
-                                    />
-
-                                    {/* Price */}
-                                    <input
-                                      type="number"
-                                      step="0.01"
-                                      value={v.price}
-                                      onChange={(e) => { const u = [...editVariants]; u[vi] = { ...u[vi], price: e.target.value }; setEditVariants(u); }}
-                                      placeholder="$"
-                                      style={{ fontSize: "12px", padding: "6px 8px", minHeight: "32px", width: "75px", flexShrink: 0 }}
-                                    />
-
-                                    {/* Stock */}
-                                    <input
-                                      type="number"
-                                      min="0"
-                                      value={v.stock_quantity}
-                                      onChange={(e) => { const u = [...editVariants]; u[vi] = { ...u[vi], stock_quantity: parseInt(e.target.value) || 0 }; setEditVariants(u); }}
-                                      style={{ fontSize: "12px", padding: "6px 8px", minHeight: "32px", width: "55px", flexShrink: 0 }}
-                                    />
-
-                                    {/* Remove */}
-                                    <button
-                                      type="button"
-                                      onClick={() => { setEditVariants(editVariants.filter((_, i) => i !== vi)); if (expandedVariantImg === vi) setExpandedVariantImg(null); }}
-                                      style={{ color: "var(--red)", fontSize: "14px", cursor: "pointer", background: "none", border: "none", padding: "4px", flexShrink: 0 }}
-                                    >
-                                      x
-                                    </button>
-                                  </div>
-
-                                  {/* Expandable image uploader */}
-                                  {imgExpanded && (
-                                    <div className="fade-in" style={{ padding: "10px 12px", borderTop: "1px solid var(--border)", background: "var(--bg-grouped)" }}>
-                                      <ImageUploader
-                                        storeId={storeId}
-                                        images={v.images || []}
-                                        onChange={(newImages) => {
-                                          const u = [...editVariants];
-                                          u[vi] = { ...u[vi], images: newImages };
-                                          setEditVariants(u);
-                                        }}
-                                        folder={`variants/${p.slug || p.id}/${v.name || `v${vi}`}`}
-                                        maxImages={3}
-                                      />
-                                    </div>
-                                  )}
+                          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+                            {editVariants.map((v, vi) => (
+                              <div key={vi} className="p-4 rounded-lg space-y-3" style={{ background: "rgba(0,0,0,0.02)", border: "1px solid var(--border)" }}>
+                                <div className="flex items-center justify-between">
+                                  <span className="text-xs font-medium" style={{ color: "var(--text-tertiary)" }}>Variant {vi + 1}</span>
+                                  <button type="button" onClick={() => setEditVariants(editVariants.filter((_, i) => i !== vi))} className="text-xs" style={{ color: "var(--red)" }}>Remove</button>
                                 </div>
-                              );
-                            })}
+                                <div className="grid grid-cols-3 gap-3">
+                                  <div><label>Name</label><input value={v.name} onChange={(e) => { const u = [...editVariants]; u[vi] = { ...u[vi], name: e.target.value }; setEditVariants(u); }} placeholder="e.g. Red / Large" /></div>
+                                  <div><label>SKU</label><input value={(v as any).sku || ""} onChange={(e) => { const u = [...editVariants]; u[vi] = { ...u[vi], sku: e.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, "") } as any; setEditVariants(u); }} placeholder="Auto-generated" style={{ fontFamily: "monospace", textTransform: "uppercase" }} /></div>
+                                  <div><label>Price ($)</label><input type="number" step="0.01" value={v.price} onChange={(e) => { const u = [...editVariants]; u[vi] = { ...u[vi], price: e.target.value }; setEditVariants(u); }} placeholder="Override" /></div>
+                                </div>
+                                <div className="grid grid-cols-3 gap-3">
+                                  <div><label>Color</label><input value={v.color} onChange={(e) => { const u = [...editVariants]; u[vi] = { ...u[vi], color: e.target.value }; setEditVariants(u); }} placeholder="Optional" /></div>
+                                  <div><label>Size</label><input value={(v as any).size || ""} onChange={(e) => { const u = [...editVariants]; u[vi] = { ...u[vi], size: e.target.value } as any; setEditVariants(u); }} placeholder="Optional" /></div>
+                                  <div><label>Stock</label><input type="number" min="0" value={v.stock_quantity} onChange={(e) => { const u = [...editVariants]; u[vi] = { ...u[vi], stock_quantity: parseInt(e.target.value) || 0 }; setEditVariants(u); }} /></div>
+                                </div>
+                                <div>
+                                  <label>Variant Images</label>
+                                  <ImageUploader storeId={storeId} images={v.images || []} onChange={(newImages) => { const u = [...editVariants]; u[vi] = { ...u[vi], images: newImages }; setEditVariants(u); }} folder={`variants/${p.slug || p.id}/${v.name || `v${vi}`}`} maxImages={5} />
+                                </div>
+                              </div>
+                            ))}
                           </div>
                         ) : (
-                          <div style={{ fontSize: "12px", color: "var(--text-tertiary)", padding: "8px 0" }}>
-                            No variants. Add variants for different sizes, colors, or styles.
-                          </div>
+                          <p className="text-xs text-center py-3" style={{ color: "var(--text-tertiary)" }}>No variants yet</p>
                         )}
                       </div>
 

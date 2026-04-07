@@ -62,6 +62,10 @@ class WebnariCommerce {
   saveCart(items) {
     localStorage.setItem(this.cartKey, JSON.stringify(items));
     this._dispatchCartEvent(items);
+    // Auto-sync cart to server for abandoned cart recovery
+    if (items.length) {
+      this.saveCartForRecovery().catch(() => {});
+    }
   }
 
   addToCart(productId, variantId = null, quantity = 1) {
@@ -143,6 +147,43 @@ class WebnariCommerce {
         total: items.reduce((sum, i) => sum + (i.price || 0) * i.quantity, 0),
       }),
     });
+  }
+
+  /**
+   * Auto-attach abandoned cart tracking to a checkout email input.
+   * Saves the cart with the customer's email on blur + before unload.
+   *
+   * Usage: shop.attachCartRecovery('#checkout-email')
+   *        shop.attachCartRecovery(document.getElementById('email'))
+   *
+   * @param {string|HTMLElement} emailInput - CSS selector or DOM element
+   */
+  attachCartRecovery(emailInput) {
+    const el = typeof emailInput === 'string'
+      ? document.querySelector(emailInput)
+      : emailInput;
+    if (!el) return;
+
+    let lastEmail = '';
+
+    const save = () => {
+      const email = (el.value || '').trim();
+      if (!email || email === lastEmail) return;
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return;
+      lastEmail = email;
+      this.saveCartForRecovery(email).catch(() => {});
+    };
+
+    // Save when they tab/click out of the email field
+    el.addEventListener('blur', save);
+
+    // Save when they start typing in other fields (they've committed the email)
+    el.form?.addEventListener('focusin', (e) => {
+      if (e.target !== el) save();
+    });
+
+    // Last chance — save if they leave the page
+    window.addEventListener('beforeunload', save);
   }
 
   _getSessionId() {
@@ -237,6 +278,8 @@ class WebnariCommerce {
         customer,
         shippingState,
         provider: options.provider,
+        discountCode: options.discountCode || null,
+        giftCardCode: options.giftCardCode || null,
         successUrl: options.successUrl || `${window.location.origin}?checkout=success`,
         cancelUrl: options.cancelUrl || `${window.location.origin}?checkout=cancelled`,
       }),
@@ -252,6 +295,33 @@ class WebnariCommerce {
 
 
   // ═════════════════════════════════════════════════════════
+  //  DISCOUNTS & GIFT CARDS
+  // ═════════════════════════════════════════════════════════
+
+  /**
+   * Validate a discount code before checkout.
+   * @param {string} code - Discount code
+   * @param {number} subtotal - Cart subtotal in cents
+   * @returns {Promise<{valid, code, type, value, discountAmount, label, id}>}
+   */
+  async validateDiscount(code, subtotal) {
+    return this._fetch('/api/discount/validate', {
+      method: 'POST',
+      body: JSON.stringify({ code, subtotal }),
+    });
+  }
+
+  /**
+   * Check gift card balance.
+   * @param {string} code - Gift card code
+   * @returns {Promise<{balance, code}>}
+   */
+  async checkGiftCard(code) {
+    return this._fetch(`/api/gift-cards/check?code=${encodeURIComponent(code)}`);
+  }
+
+
+  // ═════════════════════════════════════════════════════════
   //  SHIPPING & TAX
   // ═════════════════════════════════════════════════════════
 
@@ -262,22 +332,49 @@ class WebnariCommerce {
     });
   }
 
-  async calculateTax(subtotal, state) {
+  /**
+   * Get carrier-calculated shipping rates from EasyPost.
+   * @param {string} toZip - destination zip code
+   * @returns {Promise<{rates: Array<{carrier, service, rate, deliveryDays}>, shipmentId?}>}
+   */
+  async getShippingRates(toZip) {
+    const items = this.getCart();
+    if (!items.length) return { rates: [] };
+    return this._fetch('/api/shipping/rates', {
+      method: 'POST',
+      body: JSON.stringify({
+        toZip,
+        items: items.map(i => ({ productId: i.productId, variantId: i.variantId, quantity: i.quantity, price: i.price })),
+      }),
+    });
+  }
+
+  /**
+   * Calculate tax for the given subtotal.
+   * Pass zip for municipal-level accuracy, or state as fallback.
+   * @param {number} subtotal - in cents
+   * @param {string} stateOrZip - 2-letter state code OR 5-digit zip
+   */
+  async calculateTax(subtotal, stateOrZip) {
+    const isZip = /^\d{5}$/.test(stateOrZip);
     return this._fetch('/api/tax/calculate', {
       method: 'POST',
-      body: JSON.stringify({ subtotal, state }),
+      body: JSON.stringify({
+        subtotal,
+        ...(isZip ? { zip: stateOrZip } : { state: stateOrZip }),
+      }),
     });
   }
 
   /**
    * Calculate full order totals (subtotal + shipping + tax).
    * @param {number} subtotal - in cents
-   * @param {string} state - 2-letter state code
+   * @param {string} stateOrZip - 2-letter state code OR 5-digit zip
    */
-  async calculateTotals(subtotal, state) {
+  async calculateTotals(subtotal, stateOrZip) {
     const [shipping, tax] = await Promise.all([
       this.calculateShipping(subtotal),
-      this.calculateTax(subtotal, state),
+      this.calculateTax(subtotal, stateOrZip),
     ]);
 
     return {
@@ -332,6 +429,221 @@ class WebnariCommerce {
       return false;
     }
     return null;
+  }
+
+
+  // ═════════════════════════════════════════════════════════
+  //  CUSTOMER AUTH
+  // ═════════════════════════════════════════════════════════
+
+  _getToken() {
+    return localStorage.getItem(`${this.storeId}_auth_token`);
+  }
+
+  _setToken(token) {
+    localStorage.setItem(`${this.storeId}_auth_token`, token);
+  }
+
+  _clearToken() {
+    localStorage.removeItem(`${this.storeId}_auth_token`);
+  }
+
+  isLoggedIn() {
+    return !!this._getToken();
+  }
+
+  async _authFetch(path, options = {}) {
+    const token = this._getToken();
+    if (!token) throw new Error('Not logged in');
+    return this._fetch(path, {
+      ...options,
+      headers: { ...options.headers, Authorization: `Bearer ${token}` },
+    });
+  }
+
+  /**
+   * Register a new customer account.
+   * @returns {{ token, customer: { id, email, name } }}
+   */
+  async register({ email, password, name, phone }) {
+    const result = await this._fetch('/api/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({ email, password, name, phone }),
+    });
+    if (result.token) this._setToken(result.token);
+    return result;
+  }
+
+  /**
+   * Log in with email and password.
+   * @returns {{ token, customer: { id, email, name, phone } }}
+   */
+  async login(email, password) {
+    const result = await this._fetch('/api/auth/login', {
+      method: 'POST',
+      body: JSON.stringify({ email, password }),
+    });
+    if (result.token) this._setToken(result.token);
+    return result;
+  }
+
+  logout() {
+    this._clearToken();
+  }
+
+  async forgotPassword(email) {
+    return this._fetch('/api/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+    });
+  }
+
+  async resetPassword(token, newPassword) {
+    return this._fetch('/api/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ token, newPassword }),
+    });
+  }
+
+  // ═════════════════════════════════════════════════════════
+  //  CUSTOMER ACCOUNT
+  // ═════════════════════════════════════════════════════════
+
+  async getProfile() {
+    return this._authFetch('/api/account/profile');
+  }
+
+  async updateProfile(data) {
+    return this._authFetch('/api/account/profile', {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async getMyOrders() {
+    return this._authFetch('/api/account/orders');
+  }
+
+  async getAddresses() {
+    return this._authFetch('/api/account/addresses');
+  }
+
+  async addAddress(address) {
+    return this._authFetch('/api/account/addresses', {
+      method: 'POST',
+      body: JSON.stringify(address),
+    });
+  }
+
+  async deleteAddress(addressId) {
+    return this._authFetch(`/api/account/addresses/${addressId}`, {
+      method: 'DELETE',
+    });
+  }
+
+
+  // ═════════════════════════════════════════════════════════
+  //  SEO — Meta Tags, Structured Data, Auto-Apply
+  // ═════════════════════════════════════════════════════════
+
+  /**
+   * Get meta tags for a page.
+   * @param {'home'|'product'|'category'|'blog'|'page'} type - Page type
+   * @param {string} [slug] - Product/category/blog/page slug (not needed for home)
+   * @returns {Promise<{title, description, canonical, og, twitter}>}
+   */
+  async getMetaTags(type = 'home', slug = null) {
+    const params = new URLSearchParams({ type });
+    if (slug) params.set('slug', slug);
+    return this._fetch(`/api/seo/meta?${params}`);
+  }
+
+  /**
+   * Get JSON-LD structured data schemas for a page.
+   * @param {'home'|'product'|'category'|'blog'|'faq'} type
+   * @param {string} [slug]
+   * @returns {Promise<Array>} Array of schema.org JSON-LD objects
+   */
+  async getStructuredData(type = 'home', slug = null) {
+    const params = new URLSearchParams({ type });
+    if (slug) params.set('slug', slug);
+    return this._fetch(`/api/seo/structured-data?${params}`);
+  }
+
+  /**
+   * Auto-apply meta tags and structured data to the current page.
+   * Call this on page load — it sets <title>, meta tags, OG tags, and injects JSON-LD.
+   * @param {'home'|'product'|'category'|'blog'|'page'|'faq'} type
+   * @param {string} [slug]
+   */
+  async applySeo(type = 'home', slug = null) {
+    try {
+      const [meta, schemas] = await Promise.all([
+        this.getMetaTags(type, slug),
+        this.getStructuredData(type, slug),
+      ]);
+
+      // Set document title
+      if (meta.title) document.title = meta.title;
+
+      // Helper to set/create a meta tag
+      const setMeta = (attr, key, value) => {
+        if (!value) return;
+        let el = document.querySelector(`meta[${attr}="${key}"]`);
+        if (!el) {
+          el = document.createElement('meta');
+          el.setAttribute(attr, key);
+          document.head.appendChild(el);
+        }
+        el.setAttribute('content', value);
+      };
+
+      // Standard meta
+      setMeta('name', 'description', meta.description);
+
+      // Canonical
+      if (meta.canonical) {
+        let link = document.querySelector('link[rel="canonical"]');
+        if (!link) {
+          link = document.createElement('link');
+          link.setAttribute('rel', 'canonical');
+          document.head.appendChild(link);
+        }
+        link.setAttribute('href', meta.canonical);
+      }
+
+      // Open Graph
+      if (meta.og) {
+        for (const [key, value] of Object.entries(meta.og)) {
+          if (value) setMeta('property', `og:${key}`, value);
+        }
+      }
+
+      // Twitter Cards
+      if (meta.twitter) {
+        for (const [key, value] of Object.entries(meta.twitter)) {
+          if (value) setMeta('name', `twitter:${key}`, value);
+        }
+      }
+
+      // Inject JSON-LD structured data
+      if (schemas && schemas.length > 0) {
+        // Remove any existing auto-injected LD+JSON
+        document.querySelectorAll('script[data-seo="webnari"]').forEach(el => el.remove());
+        for (const schema of schemas) {
+          const script = document.createElement('script');
+          script.type = 'application/ld+json';
+          script.setAttribute('data-seo', 'webnari');
+          script.textContent = JSON.stringify(schema);
+          document.head.appendChild(script);
+        }
+      }
+
+      return { meta, schemas };
+    } catch (err) {
+      console.warn('WebnariCommerce: SEO auto-apply failed:', err.message);
+      return null;
+    }
   }
 }
 

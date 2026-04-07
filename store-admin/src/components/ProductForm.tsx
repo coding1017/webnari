@@ -368,12 +368,29 @@ export default function ProductForm({ storeId, product }: ProductFormProps) {
 
       <div className="rounded-xl" style={{ background: "var(--bg-grouped)", border: "1px solid var(--border)", overflow: "hidden" }}>
 
-        {/* Row 1: Name, SKU, Price */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" style={{ padding: "24px 24px 0" }}>
+        {/* Row 1: Name, Category, Color */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" style={{ padding: "24px 24px 16px" }}>
           <div>
             <label>Name</label>
             <input value={name} onChange={(e) => { setName(e.target.value); if (!isEdit) setSlug(autoSlug(e.target.value)); }} required placeholder="Product name" />
           </div>
+          <div>
+            <label>Category</label>
+            <select value={category} onChange={(e) => setCategory(e.target.value)}>
+              <option value="">Select category</option>
+              {dbCategories.map((cat) => (
+                <option key={cat.id} value={cat.slug}>{cat.name}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label>Color</label>
+            <input value={color} onChange={(e) => handleColorChange(e.target.value)} placeholder="e.g. Tie-Dye, Pink" />
+          </div>
+        </div>
+
+        {/* Row 2: SKU */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" style={{ padding: "0 24px 0" }}>
           <div>
             <label>SKU {skuMode === "auto" && <span style={{ fontFamily: "monospace", fontWeight: 700, color: "var(--blue)", marginLeft: "6px", letterSpacing: "0.05em" }}>{generatedSku}</span>}</label>
             {skuMode === "auto" ? (
@@ -400,11 +417,21 @@ export default function ProductForm({ storeId, product }: ProductFormProps) {
             <label>Price ($)</label>
             <input type="number" step="0.01" min="0" value={price} onChange={(e) => setPrice(e.target.value)} required placeholder="0.00" />
           </div>
+          <div>
+            <label>Badge</label>
+            <select value={badge} onChange={(e) => setBadge(e.target.value)}>
+              <option value="">None</option>
+              <option value="NEW">New</option>
+              <option value="SOLD OUT">Sold Out</option>
+              <option value="LIMITED">Limited</option>
+              <option value="SALE">Sale</option>
+            </select>
+          </div>
         </div>
 
-        {/* Row 2: Quick-pick chips (right under SKU) */}
+        {/* Quick-pick chips (right under SKU) */}
         {skuMode === "auto" && (
-          <div style={{ padding: "8px 24px 16px", display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "center", justifyContent: "flex-end" }}>
+          <div style={{ padding: "8px 24px 16px", display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "center" }}>
             <span className="text-xs font-medium" style={{ color: "var(--text-tertiary)" }}>Style:</span>
             {STYLE_PRESETS.map((p) => (
               <button key={p} type="button" onClick={() => setSkuStyle(skuStyle === p ? "" : p)}
@@ -422,34 +449,7 @@ export default function ProductForm({ storeId, product }: ProductFormProps) {
           </div>
         )}
 
-        {/* Row 3: Category, Badge, Color */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" style={{ padding: skuMode === "auto" ? "0 24px 16px" : "16px 24px" }}>
-          <div>
-            <label>Category</label>
-            <select value={category} onChange={(e) => setCategory(e.target.value)}>
-              <option value="">Select category</option>
-              {dbCategories.map((cat) => (
-                <option key={cat.id} value={cat.slug}>{cat.name}</option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <label>Badge</label>
-            <select value={badge} onChange={(e) => setBadge(e.target.value)}>
-              <option value="">None</option>
-              <option value="NEW">New</option>
-              <option value="SOLD OUT">Sold Out</option>
-              <option value="LIMITED">Limited</option>
-              <option value="SALE">Sale</option>
-            </select>
-          </div>
-          <div>
-            <label>Color</label>
-            <input value={color} onChange={(e) => handleColorChange(e.target.value)} placeholder="e.g. Tie-Dye, Pink" />
-          </div>
-        </div>
-
-        {/* Row 4: Stock, Compare, Low Stock */}
+        {/* Row 3: Stock, Compare, Low Stock */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" style={{ padding: "0 24px 24px", borderBottom: "1px solid var(--border)" }}>
           <div>
             <label>Stock Quantity</label>

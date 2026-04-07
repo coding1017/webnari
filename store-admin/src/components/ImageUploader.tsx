@@ -231,7 +231,7 @@ export default function ImageUploader({
             padding: "16px",
             textAlign: "center",
             cursor: "pointer",
-            background: dragActive ? "var(--gold-light)" : "var(--bg-grouped)",
+            background: dragActive ? "var(--gold-light)" : "var(--bg-elevated)",
             transition: "all 0.2s",
           }}
         >
