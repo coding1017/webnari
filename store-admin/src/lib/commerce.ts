@@ -660,6 +660,51 @@ export class CommerceClient {
   async removeSegmentMember(segmentId: string, customerId: string) {
     return this.fetch(`/api/admin/segments/${segmentId}/members/${customerId}`, { method: 'DELETE' });
   }
+
+  // ── Subscriptions ─────────────────────────────────────
+  async getSubscriptions(params?: { status?: string }) {
+    const qs = params?.status ? `?status=${params.status}` : '';
+    return this.fetch(`/api/admin/subscriptions${qs}`);
+  }
+  async createSubscription(data: Record<string, unknown>) {
+    return this.fetch('/api/admin/subscriptions', { method: 'POST', body: JSON.stringify(data) });
+  }
+  async updateSubscription(id: string, data: Record<string, unknown>) {
+    return this.fetch(`/api/admin/subscriptions/${id}`, { method: 'PATCH', body: JSON.stringify(data) });
+  }
+
+  // ── Inventory Locations ───────────────────────────────
+  async getLocations() {
+    return this.fetch('/api/admin/locations');
+  }
+  async createLocation(data: { name: string; address?: string; type?: string; is_default?: boolean }) {
+    return this.fetch('/api/admin/locations', { method: 'POST', body: JSON.stringify(data) });
+  }
+  async updateLocation(id: string, data: Record<string, unknown>) {
+    return this.fetch(`/api/admin/locations/${id}`, { method: 'PATCH', body: JSON.stringify(data) });
+  }
+  async deleteLocation(id: string) {
+    return this.fetch(`/api/admin/locations/${id}`, { method: 'DELETE' });
+  }
+  async getLocationStock(params?: { product_id?: string; location_id?: string }) {
+    const qs = new URLSearchParams();
+    if (params?.product_id) qs.set('product_id', params.product_id);
+    if (params?.location_id) qs.set('location_id', params.location_id);
+    const q = qs.toString();
+    return this.fetch(`/api/admin/location-stock${q ? `?${q}` : ''}`);
+  }
+  async updateLocationStock(data: { location_id: string; product_id: string; variant_id?: string; stock_quantity: number; reorder_point?: number }) {
+    return this.fetch('/api/admin/location-stock', { method: 'PATCH', body: JSON.stringify(data) });
+  }
+  async createTransfer(data: { from_location_id: string; to_location_id: string; product_id: string; variant_id?: string; quantity: number; notes?: string }) {
+    return this.fetch('/api/admin/inventory-transfers', { method: 'POST', body: JSON.stringify(data) });
+  }
+  async getTransfers() {
+    return this.fetch('/api/admin/inventory-transfers');
+  }
+  async updateTransfer(id: string, data: { status: string }) {
+    return this.fetch(`/api/admin/inventory-transfers/${id}`, { method: 'PATCH', body: JSON.stringify(data) });
+  }
 }
 
 export function getCommerceClient(storeId: string) {

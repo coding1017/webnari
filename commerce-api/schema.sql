@@ -543,6 +543,78 @@ create table if not exists customer_segment_members (
 );
 
 
+-- ── 25. Subscriptions ─────────────────────────────────────
+create table if not exists subscriptions (
+  id                  uuid primary key default gen_random_uuid(),
+  store_id            text not null references stores(id) on delete cascade,
+  customer_id         uuid not null references customers(id) on delete cascade,
+  product_id          text not null references products(id) on delete cascade,
+  variant_id          uuid references variants(id),
+  status              text not null default 'active',         -- 'active', 'paused', 'cancelled', 'past_due', 'trialing'
+  billing_interval    text not null default 'monthly',        -- 'weekly', 'monthly', 'quarterly', 'yearly'
+  price_cents         integer not null,                       -- recurring price per interval
+  quantity            integer not null default 1,
+  stripe_subscription_id text,
+  stripe_price_id     text,
+  trial_ends_at       timestamptz,
+  current_period_start timestamptz not null default now(),
+  current_period_end  timestamptz not null,
+  cancelled_at        timestamptz,
+  cancel_at_period_end boolean not null default false,
+  created_at          timestamptz not null default now(),
+  updated_at          timestamptz not null default now()
+);
+
+create index if not exists idx_subscriptions_store on subscriptions(store_id);
+create index if not exists idx_subscriptions_customer on subscriptions(customer_id);
+create index if not exists idx_subscriptions_status on subscriptions(store_id, status);
+
+
+-- ── 26. Inventory Locations ───────────────────────────────
+create table if not exists inventory_locations (
+  id          uuid primary key default gen_random_uuid(),
+  store_id    text not null references stores(id) on delete cascade,
+  name        text not null,                              -- 'Main Warehouse', 'Retail Store'
+  address     text,
+  type        text not null default 'warehouse',          -- 'warehouse', 'retail', 'dropship'
+  is_default  boolean not null default false,
+  is_active   boolean not null default true,
+  created_at  timestamptz not null default now()
+);
+
+create index if not exists idx_inventory_locations_store on inventory_locations(store_id);
+
+create table if not exists location_stock (
+  id              uuid primary key default gen_random_uuid(),
+  location_id     uuid not null references inventory_locations(id) on delete cascade,
+  product_id      text not null references products(id) on delete cascade,
+  variant_id      uuid references variants(id),
+  stock_quantity  integer not null default 0,
+  reorder_point   integer not null default 5,
+  updated_at      timestamptz not null default now(),
+  unique(location_id, product_id, variant_id)
+);
+
+create index if not exists idx_location_stock_product on location_stock(product_id);
+create index if not exists idx_location_stock_location on location_stock(location_id);
+
+create table if not exists inventory_transfers (
+  id                uuid primary key default gen_random_uuid(),
+  store_id          text not null references stores(id) on delete cascade,
+  from_location_id  uuid not null references inventory_locations(id),
+  to_location_id    uuid not null references inventory_locations(id),
+  product_id        text not null references products(id) on delete cascade,
+  variant_id        uuid references variants(id),
+  quantity          integer not null,
+  status            text not null default 'pending',      -- 'pending', 'in_transit', 'received', 'cancelled'
+  notes             text,
+  created_at        timestamptz not null default now(),
+  received_at       timestamptz
+);
+
+create index if not exists idx_inventory_transfers_store on inventory_transfers(store_id);
+
+
 -- ═══════════════════════════════════════════════════════════
 --  ROW LEVEL SECURITY
 -- ═══════════════════════════════════════════════════════════

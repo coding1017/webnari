@@ -670,3 +670,65 @@ export async function removeSegmentMember(storeId: string, segmentId: string, cu
   const client = new CommerceClient(storeId);
   return client.removeSegmentMember(segmentId, customerId);
 }
+
+// ── Subscriptions ─────────────────────────────────────────
+export async function getSubscriptions(storeId: string, status?: string) {
+  const client = new CommerceClient(storeId);
+  return client.getSubscriptions(status ? { status } : undefined);
+}
+
+export async function createSubscription(storeId: string, data: Record<string, unknown>) {
+  const client = new CommerceClient(storeId);
+  return client.createSubscription(data);
+}
+
+export async function updateSubscription(storeId: string, subId: string, data: Record<string, unknown>) {
+  const client = new CommerceClient(storeId);
+  return client.updateSubscription(subId, data);
+}
+
+// ── Inventory Locations ───────────────────────────────────
+export async function getLocations(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.getLocations();
+}
+
+export async function createLocation(storeId: string, data: { name: string; address?: string; type?: string; is_default?: boolean }) {
+  const client = new CommerceClient(storeId);
+  return client.createLocation(data);
+}
+
+export async function updateLocation(storeId: string, locationId: string, data: Record<string, unknown>) {
+  const client = new CommerceClient(storeId);
+  return client.updateLocation(locationId, data);
+}
+
+export async function deleteLocation(storeId: string, locationId: string) {
+  const client = new CommerceClient(storeId);
+  return client.deleteLocation(locationId);
+}
+
+export async function getLocationStock(storeId: string, params?: { product_id?: string; location_id?: string }) {
+  const client = new CommerceClient(storeId);
+  return client.getLocationStock(params);
+}
+
+export async function updateLocationStock(storeId: string, data: { location_id: string; product_id: string; variant_id?: string; stock_quantity: number; reorder_point?: number }) {
+  const client = new CommerceClient(storeId);
+  return client.updateLocationStock(data);
+}
+
+export async function createTransfer(storeId: string, data: { from_location_id: string; to_location_id: string; product_id: string; variant_id?: string; quantity: number; notes?: string }) {
+  const client = new CommerceClient(storeId);
+  return client.createTransfer(data);
+}
+
+export async function getTransfers(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.getTransfers();
+}
+
+export async function updateTransfer(storeId: string, transferId: string, data: { status: string }) {
+  const client = new CommerceClient(storeId);
+  return client.updateTransfer(transferId, data);
+}

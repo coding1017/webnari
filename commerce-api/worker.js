@@ -621,6 +621,50 @@ export default {
         return await handleAdminRemoveSegmentMember(request, sb, env, storeId, parts[4], parts[6], corsOrigin);
       }
 
+      // ── Admin Subscriptions ─────────────────────────────────
+      if (method === 'GET' && path === '/api/admin/subscriptions') {
+        return await handleAdminListSubscriptions(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/admin/subscriptions') {
+        return await handleAdminCreateSubscription(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'PATCH' && path.match(/^\/api\/admin\/subscriptions\/[^/]+$/)) {
+        const subId = path.split('/').pop();
+        return await handleAdminUpdateSubscription(request, sb, env, storeId, subId, corsOrigin);
+      }
+
+      // ── Admin Inventory Locations ─────────────────────────
+      if (method === 'GET' && path === '/api/admin/locations') {
+        return await handleAdminListLocations(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/admin/locations') {
+        return await handleAdminCreateLocation(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'PATCH' && path.match(/^\/api\/admin\/locations\/[^/]+$/)) {
+        const locId = path.split('/').pop();
+        return await handleAdminUpdateLocation(request, sb, env, storeId, locId, corsOrigin);
+      }
+      if (method === 'DELETE' && path.match(/^\/api\/admin\/locations\/[^/]+$/)) {
+        const locId = path.split('/').pop();
+        return await handleAdminDeleteLocation(request, sb, env, storeId, locId, corsOrigin);
+      }
+      if (method === 'GET' && path === '/api/admin/location-stock') {
+        return await handleAdminGetLocationStock(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'PATCH' && path === '/api/admin/location-stock') {
+        return await handleAdminUpdateLocationStock(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/admin/inventory-transfers') {
+        return await handleAdminCreateTransfer(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'GET' && path === '/api/admin/inventory-transfers') {
+        return await handleAdminListTransfers(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'PATCH' && path.match(/^\/api\/admin\/inventory-transfers\/[^/]+$/)) {
+        const transferId = path.split('/').pop();
+        return await handleAdminUpdateTransfer(request, sb, env, storeId, transferId, corsOrigin);
+      }
+
       // ── Abandoned Cart ──────────────────────────────────────
       if (method === 'POST' && path === '/api/cart/save') {
         return await handleSaveCart(request, sb, storeId, corsOrigin);
@@ -11015,4 +11059,370 @@ async function handleAdminRemoveSegmentMember(request, sb, env, storeId, segment
   await requireAdmin(request, env, storeId);
   await sb.delete('customer_segment_members', { customer_id: `eq.${customerId}`, segment_id: `eq.${segmentId}` });
   return json({ ok: true }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  SUBSCRIPTIONS — Recurring Billing
+// ═══════════════════════════════════════════════════════════════
+
+function getIntervalDays(interval) {
+  const map = { weekly: 7, monthly: 30, quarterly: 90, yearly: 365 };
+  return map[interval] || 30;
+}
+
+function nextPeriodEnd(interval) {
+  const days = getIntervalDays(interval);
+  return new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
+}
+
+async function handleAdminListSubscriptions(request, sb, env, storeId, corsOrigin) {
+  await requireAdmin(request, env, storeId);
+  const url = new URL(request.url);
+  const status = url.searchParams.get('status');
+
+  const filters = { store_id: `eq.${storeId}` };
+  if (status) filters.status = `eq.${status}`;
+
+  const subs = await sb.query('subscriptions', {
+    filters,
+    select: 'id,customer_id,product_id,variant_id,status,billing_interval,price_cents,quantity,stripe_subscription_id,trial_ends_at,current_period_start,current_period_end,cancelled_at,cancel_at_period_end,created_at',
+    order: 'created_at.desc',
+  });
+
+  // Enrich with customer email and product name
+  for (const sub of (subs || [])) {
+    const customer = await sb.query('customers', { filters: { id: `eq.${sub.customer_id}` }, single: true, select: 'email,name' });
+    sub.customer_email = customer?.email;
+    sub.customer_name = customer?.name;
+    const product = await sb.query('products', { filters: { id: `eq.${sub.product_id}` }, single: true, select: 'name' });
+    sub.product_name = product?.name;
+  }
+
+  return json(subs || [], 200, corsOrigin);
+}
+
+async function handleAdminCreateSubscription(request, sb, env, storeId, corsOrigin) {
+  await requireAdmin(request, env, storeId);
+  const { customer_id, product_id, variant_id, billing_interval, price_cents, quantity, trial_days } = await request.json();
+
+  if (!customer_id || !product_id) {
+    return json({ error: 'customer_id and product_id required' }, 400, corsOrigin);
+  }
+
+  const interval = billing_interval || 'monthly';
+  const now = new Date();
+  const trialEnd = trial_days ? new Date(now.getTime() + trial_days * 24 * 60 * 60 * 1000) : null;
+
+  const sub = await sb.insert('subscriptions', {
+    store_id: storeId,
+    customer_id,
+    product_id,
+    variant_id: variant_id || null,
+    status: trialEnd ? 'trialing' : 'active',
+    billing_interval: interval,
+    price_cents: price_cents || 0,
+    quantity: quantity || 1,
+    trial_ends_at: trialEnd?.toISOString() || null,
+    current_period_start: now.toISOString(),
+    current_period_end: trialEnd?.toISOString() || nextPeriodEnd(interval),
+  });
+
+  return json(sub, 201, corsOrigin);
+}
+
+async function handleAdminUpdateSubscription(request, sb, env, storeId, subId, corsOrigin) {
+  await requireAdmin(request, env, storeId);
+  const body = await request.json();
+  const updates = { updated_at: new Date().toISOString() };
+
+  if (body.status !== undefined) {
+    updates.status = body.status;
+    if (body.status === 'cancelled') {
+      updates.cancelled_at = new Date().toISOString();
+    }
+  }
+  if (body.cancel_at_period_end !== undefined) updates.cancel_at_period_end = body.cancel_at_period_end;
+  if (body.billing_interval) updates.billing_interval = body.billing_interval;
+  if (body.price_cents !== undefined) updates.price_cents = body.price_cents;
+  if (body.quantity !== undefined) updates.quantity = body.quantity;
+  if (body.stripe_subscription_id) updates.stripe_subscription_id = body.stripe_subscription_id;
+
+  const result = await sb.update('subscriptions', { id: `eq.${subId}`, store_id: `eq.${storeId}` }, updates);
+  return json(result, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  MULTI-LOCATION INVENTORY
+// ═══════════════════════════════════════════════════════════════
+
+async function handleAdminListLocations(request, sb, env, storeId, corsOrigin) {
+  await requireAdmin(request, env, storeId);
+  const locations = await sb.query('inventory_locations', {
+    filters: { store_id: `eq.${storeId}` },
+    select: 'id,name,address,type,is_default,is_active,created_at',
+    order: 'is_default.desc,name.asc',
+  });
+
+  // Enrich with total stock items count
+  for (const loc of (locations || [])) {
+    const stock = await sb.query('location_stock', {
+      filters: { location_id: `eq.${loc.id}` },
+      select: 'stock_quantity',
+    });
+    loc.total_units = (stock || []).reduce((sum, s) => sum + (s.stock_quantity || 0), 0);
+    loc.product_count = (stock || []).length;
+  }
+
+  return json(locations || [], 200, corsOrigin);
+}
+
+async function handleAdminCreateLocation(request, sb, env, storeId, corsOrigin) {
+  await requireAdmin(request, env, storeId);
+  const { name, address, type, is_default } = await request.json();
+  if (!name) return json({ error: 'Location name required' }, 400, corsOrigin);
+
+  // If setting as default, unset all others
+  if (is_default) {
+    const existing = await sb.query('inventory_locations', {
+      filters: { store_id: `eq.${storeId}`, is_default: 'eq.true' },
+      select: 'id',
+    });
+    for (const loc of (existing || [])) {
+      await sb.update('inventory_locations', { id: `eq.${loc.id}` }, { is_default: false });
+    }
+  }
+
+  const location = await sb.insert('inventory_locations', {
+    store_id: storeId,
+    name,
+    address: address || null,
+    type: type || 'warehouse',
+    is_default: is_default || false,
+  });
+  return json(location, 201, corsOrigin);
+}
+
+async function handleAdminUpdateLocation(request, sb, env, storeId, locId, corsOrigin) {
+  await requireAdmin(request, env, storeId);
+  const body = await request.json();
+  const updates = {};
+  if (body.name !== undefined) updates.name = body.name;
+  if (body.address !== undefined) updates.address = body.address;
+  if (body.type !== undefined) updates.type = body.type;
+  if (body.is_active !== undefined) updates.is_active = body.is_active;
+  if (body.is_default !== undefined) {
+    updates.is_default = body.is_default;
+    if (body.is_default) {
+      const existing = await sb.query('inventory_locations', {
+        filters: { store_id: `eq.${storeId}`, is_default: 'eq.true' },
+        select: 'id',
+      });
+      for (const loc of (existing || [])) {
+        if (loc.id !== locId) await sb.update('inventory_locations', { id: `eq.${loc.id}` }, { is_default: false });
+      }
+    }
+  }
+
+  const result = await sb.update('inventory_locations', { id: `eq.${locId}`, store_id: `eq.${storeId}` }, updates);
+  return json(result, 200, corsOrigin);
+}
+
+async function handleAdminDeleteLocation(request, sb, env, storeId, locId, corsOrigin) {
+  await requireAdmin(request, env, storeId);
+  await sb.delete('location_stock', { location_id: `eq.${locId}` });
+  await sb.delete('inventory_locations', { id: `eq.${locId}`, store_id: `eq.${storeId}` });
+  return json({ ok: true }, 200, corsOrigin);
+}
+
+async function handleAdminGetLocationStock(request, sb, env, storeId, corsOrigin) {
+  await requireAdmin(request, env, storeId);
+  const url = new URL(request.url);
+  const productId = url.searchParams.get('product_id');
+  const locationId = url.searchParams.get('location_id');
+
+  const filters = {};
+  if (locationId) filters.location_id = `eq.${locationId}`;
+  if (productId) filters.product_id = `eq.${productId}`;
+
+  // Need to join through locations to filter by store
+  const locations = await sb.query('inventory_locations', {
+    filters: { store_id: `eq.${storeId}` },
+    select: 'id,name',
+  });
+  const locIds = (locations || []).map(l => l.id);
+  const locMap = {};
+  for (const l of (locations || [])) locMap[l.id] = l.name;
+
+  if (!locIds.length) return json([], 200, corsOrigin);
+
+  // Get all stock entries for these locations
+  let stock = [];
+  for (const lid of locIds) {
+    if (locationId && lid !== locationId) continue;
+    const f = { location_id: `eq.${lid}` };
+    if (productId) f.product_id = `eq.${productId}`;
+    const rows = await sb.query('location_stock', { filters: f, select: 'id,location_id,product_id,variant_id,stock_quantity,reorder_point,updated_at' });
+    stock = stock.concat(rows || []);
+  }
+
+  // Enrich with location name and product name
+  for (const s of stock) {
+    s.location_name = locMap[s.location_id] || 'Unknown';
+    const product = await sb.query('products', { filters: { id: `eq.${s.product_id}` }, single: true, select: 'name' });
+    s.product_name = product?.name;
+  }
+
+  return json(stock, 200, corsOrigin);
+}
+
+async function handleAdminUpdateLocationStock(request, sb, env, storeId, corsOrigin) {
+  await requireAdmin(request, env, storeId);
+  const { location_id, product_id, variant_id, stock_quantity, reorder_point } = await request.json();
+
+  if (!location_id || !product_id) return json({ error: 'location_id and product_id required' }, 400, corsOrigin);
+
+  // Upsert location stock
+  const existing = await sb.query('location_stock', {
+    filters: {
+      location_id: `eq.${location_id}`,
+      product_id: `eq.${product_id}`,
+      ...(variant_id ? { variant_id: `eq.${variant_id}` } : { variant_id: 'is.null' }),
+    },
+    single: true,
+    select: 'id',
+  });
+
+  let result;
+  if (existing) {
+    const updates = { updated_at: new Date().toISOString() };
+    if (stock_quantity !== undefined) updates.stock_quantity = stock_quantity;
+    if (reorder_point !== undefined) updates.reorder_point = reorder_point;
+    result = await sb.update('location_stock', { id: `eq.${existing.id}` }, updates);
+  } else {
+    result = await sb.insert('location_stock', {
+      location_id,
+      product_id,
+      variant_id: variant_id || null,
+      stock_quantity: stock_quantity || 0,
+      reorder_point: reorder_point || 5,
+    });
+  }
+
+  // Update aggregate product stock = sum of all location stocks
+  const allStock = await sb.query('location_stock', {
+    filters: { product_id: `eq.${product_id}`, ...(variant_id ? { variant_id: `eq.${variant_id}` } : { variant_id: 'is.null' }) },
+    select: 'stock_quantity',
+  });
+  const totalStock = (allStock || []).reduce((sum, s) => sum + (s.stock_quantity || 0), 0);
+
+  if (variant_id) {
+    await sb.update('variants', { id: `eq.${variant_id}` }, { stock_quantity: totalStock, in_stock: totalStock > 0 });
+  } else {
+    await sb.update('products', { id: `eq.${product_id}` }, { stock_quantity: totalStock, in_stock: totalStock > 0 });
+  }
+
+  return json(result, 200, corsOrigin);
+}
+
+async function handleAdminCreateTransfer(request, sb, env, storeId, corsOrigin) {
+  await requireAdmin(request, env, storeId);
+  const { from_location_id, to_location_id, product_id, variant_id, quantity, notes } = await request.json();
+
+  if (!from_location_id || !to_location_id || !product_id || !quantity) {
+    return json({ error: 'from_location_id, to_location_id, product_id, and quantity required' }, 400, corsOrigin);
+  }
+  if (from_location_id === to_location_id) {
+    return json({ error: 'Cannot transfer to the same location' }, 400, corsOrigin);
+  }
+
+  const transfer = await sb.insert('inventory_transfers', {
+    store_id: storeId,
+    from_location_id,
+    to_location_id,
+    product_id,
+    variant_id: variant_id || null,
+    quantity,
+    notes: notes || null,
+    status: 'pending',
+  });
+  return json(transfer, 201, corsOrigin);
+}
+
+async function handleAdminListTransfers(request, sb, env, storeId, corsOrigin) {
+  await requireAdmin(request, env, storeId);
+  const transfers = await sb.query('inventory_transfers', {
+    filters: { store_id: `eq.${storeId}` },
+    select: 'id,from_location_id,to_location_id,product_id,variant_id,quantity,status,notes,created_at,received_at',
+    order: 'created_at.desc',
+  });
+
+  // Enrich
+  const locations = await sb.query('inventory_locations', { filters: { store_id: `eq.${storeId}` }, select: 'id,name' });
+  const locMap = {};
+  for (const l of (locations || [])) locMap[l.id] = l.name;
+
+  for (const t of (transfers || [])) {
+    t.from_location_name = locMap[t.from_location_id] || 'Unknown';
+    t.to_location_name = locMap[t.to_location_id] || 'Unknown';
+    const product = await sb.query('products', { filters: { id: `eq.${t.product_id}` }, single: true, select: 'name' });
+    t.product_name = product?.name;
+  }
+
+  return json(transfers || [], 200, corsOrigin);
+}
+
+async function handleAdminUpdateTransfer(request, sb, env, storeId, transferId, corsOrigin) {
+  await requireAdmin(request, env, storeId);
+  const { status } = await request.json();
+
+  const transfer = await sb.query('inventory_transfers', {
+    filters: { id: `eq.${transferId}`, store_id: `eq.${storeId}` },
+    single: true,
+  });
+  if (!transfer) return json({ error: 'Transfer not found' }, 404, corsOrigin);
+
+  const updates = { status };
+
+  // When receiving a transfer, adjust stock at both locations
+  if (status === 'received' && transfer.status === 'pending') {
+    updates.received_at = new Date().toISOString();
+
+    const variantFilter = transfer.variant_id ? { variant_id: `eq.${transfer.variant_id}` } : { variant_id: 'is.null' };
+
+    // Deduct from source location
+    const fromStock = await sb.query('location_stock', {
+      filters: { location_id: `eq.${transfer.from_location_id}`, product_id: `eq.${transfer.product_id}`, ...variantFilter },
+      single: true,
+    });
+    if (fromStock) {
+      await sb.update('location_stock', { id: `eq.${fromStock.id}` }, {
+        stock_quantity: Math.max(0, (fromStock.stock_quantity || 0) - transfer.quantity),
+        updated_at: new Date().toISOString(),
+      });
+    }
+
+    // Add to destination location (upsert)
+    const toStock = await sb.query('location_stock', {
+      filters: { location_id: `eq.${transfer.to_location_id}`, product_id: `eq.${transfer.product_id}`, ...variantFilter },
+      single: true,
+    });
+    if (toStock) {
+      await sb.update('location_stock', { id: `eq.${toStock.id}` }, {
+        stock_quantity: (toStock.stock_quantity || 0) + transfer.quantity,
+        updated_at: new Date().toISOString(),
+      });
+    } else {
+      await sb.insert('location_stock', {
+        location_id: transfer.to_location_id,
+        product_id: transfer.product_id,
+        variant_id: transfer.variant_id || null,
+        stock_quantity: transfer.quantity,
+      });
+    }
+  }
+
+  const result = await sb.update('inventory_transfers', { id: `eq.${transferId}` }, updates);
+  return json(result, 200, corsOrigin);
 }
