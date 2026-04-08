@@ -530,7 +530,7 @@ export class CommerceClient {
   async calculateTax(subtotal: number, toZip: string) {
     return this.fetch('/api/tax/calculate', {
       method: 'POST',
-      body: JSON.stringify({ subtotal, toZip }),
+      body: JSON.stringify({ subtotal, zip: toZip }),
     });
   }
 
