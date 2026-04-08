@@ -51,6 +51,9 @@ create table if not exists products (
   track_inventory    boolean not null default true,
   stock_quantity     integer not null default 0,
   low_stock_threshold integer not null default 5,
+  product_type       text not null default 'physical',  -- 'physical' | 'digital'
+  file_url           text,                              -- download URL for digital products
+  max_downloads      integer default 3,                 -- download limit per purchase
   is_collection      boolean not null default false,
   rating             numeric(2,1),
   stripe_price_id    text,
@@ -130,6 +133,8 @@ create table if not exists orders (
   square_payment_id      text,
   status                 text not null default 'pending',  -- draft | pending | confirmed | processing | shipped | delivered | cancelled | refunded | partially_refunded
   is_manual              boolean not null default false,
+  fulfillment_type       text not null default 'shipping', -- 'shipping' | 'pickup'
+  pickup_location        text,                             -- store address or pickup point name
   customer_email         text not null,
   customer_name          text,
   customer_phone         text,
@@ -167,6 +172,48 @@ create table if not exists order_items (
   refunded_quantity  integer not null default 0,
   image_url          text
 );
+
+
+-- ── 8b. Digital Download Tokens ─────────────────────────────
+create table if not exists download_tokens (
+  id              uuid primary key default gen_random_uuid(),
+  store_id        text not null references stores(id) on delete cascade,
+  order_id        uuid not null references orders(id) on delete cascade,
+  order_item_id   uuid not null references order_items(id) on delete cascade,
+  product_id      text not null references products(id) on delete cascade,
+  token           text not null unique,
+  downloads_used  integer not null default 0,
+  max_downloads   integer not null default 3,
+  expires_at      timestamptz,            -- optional expiry
+  created_at      timestamptz not null default now()
+);
+
+create index if not exists idx_download_tokens_token on download_tokens(token);
+
+
+-- ── 8c. Fulfillments (split fulfillment) ───────────────────
+create table if not exists fulfillments (
+  id               uuid primary key default gen_random_uuid(),
+  order_id         uuid not null references orders(id) on delete cascade,
+  store_id         text not null references stores(id) on delete cascade,
+  tracking_number  text,
+  tracking_url     text,
+  carrier          text,
+  label_url        text,
+  status           text not null default 'pending',  -- pending | shipped | delivered
+  shipped_at       timestamptz,
+  delivered_at     timestamptz,
+  created_at       timestamptz not null default now()
+);
+
+create table if not exists fulfillment_items (
+  id              uuid primary key default gen_random_uuid(),
+  fulfillment_id  uuid not null references fulfillments(id) on delete cascade,
+  order_item_id   uuid not null references order_items(id) on delete cascade,
+  quantity        integer not null default 1
+);
+
+create index if not exists idx_fulfillments_order on fulfillments(order_id);
 
 
 -- ── 9. Inventory Reservations ───────────────────────────────

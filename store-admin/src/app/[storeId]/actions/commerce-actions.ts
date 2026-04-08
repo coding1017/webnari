@@ -590,3 +590,20 @@ export async function getShippingRates(storeId: string, data: { toZip: string; i
   const client = new CommerceClient(storeId);
   return client.getShippingRates(data);
 }
+
+// ── Fulfillments ────────────────────────────────────────────
+
+export async function getFulfillments(storeId: string, orderId: string) {
+  const client = new CommerceClient(storeId);
+  return client.getFulfillments(orderId);
+}
+
+export async function createFulfillment(storeId: string, orderId: string, data: { items: Array<{ order_item_id: string; quantity: number }>; tracking_number?: string; tracking_url?: string; carrier?: string }) {
+  const client = new CommerceClient(storeId);
+  return client.createFulfillment(orderId, data);
+}
+
+export async function updateFulfillment(storeId: string, fulfillmentId: string, data: Record<string, unknown>) {
+  const client = new CommerceClient(storeId);
+  return client.updateFulfillment(fulfillmentId, data);
+}

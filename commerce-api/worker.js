@@ -159,6 +159,20 @@ export default {
         return await handlePublicGetProduct(sb, storeId, productId, corsOrigin);
       }
 
+      // Digital downloads
+      if (method === 'GET' && path.match(/^\/api\/download\/[^/]+$/)) {
+        const token = path.split('/').pop();
+        return await handleDigitalDownload(sb, env, storeId, token, corsOrigin);
+      }
+
+      // Product feeds (Google Merchant / Meta)
+      if (method === 'GET' && path === '/api/feeds/google-merchant') {
+        return await handleGoogleMerchantFeed(sb, storeId, url, corsOrigin);
+      }
+      if (method === 'GET' && path === '/api/feeds/meta-catalog') {
+        return await handleMetaCatalogFeed(sb, storeId, url, corsOrigin);
+      }
+
       // Checkout
       if (method === 'POST' && path === '/api/checkout/create') {
         return await handleCreateCheckout(request, sb, env, storeId, corsOrigin);
@@ -198,6 +212,20 @@ export default {
       if (method === 'POST' && path.match(/^\/api\/orders\/[^/]+\/label$/)) {
         const orderId = path.split('/')[3];
         return await handlePurchaseLabel(request, sb, env, storeId, orderId, corsOrigin);
+      }
+
+      // Fulfillments (split fulfillment)
+      if (method === 'GET' && path.match(/^\/api\/orders\/[^/]+\/fulfillments$/)) {
+        const orderId = path.split('/')[3];
+        return await handleListFulfillments(request, sb, env, storeId, orderId, corsOrigin);
+      }
+      if (method === 'POST' && path.match(/^\/api\/orders\/[^/]+\/fulfillments$/)) {
+        const orderId = path.split('/')[3];
+        return await handleCreateFulfillment(request, sb, env, storeId, orderId, corsOrigin);
+      }
+      if (method === 'PATCH' && path.match(/^\/api\/fulfillments\/[^/]+$/)) {
+        const fulfillmentId = path.split('/').pop();
+        return await handleUpdateFulfillment(request, sb, env, storeId, fulfillmentId, corsOrigin);
       }
 
       // Inventory
@@ -1215,7 +1243,8 @@ async function handleGetStoreConfig(sb, storeId, corsOrigin) {
 
 async function handleCreateCheckout(request, sb, env, storeId, corsOrigin) {
   const body = await request.json();
-  const { items, customer, shippingState, successUrl, cancelUrl, provider, discountCode, giftCardCode } = body;
+  const { items, customer, shippingState, successUrl, cancelUrl, provider, discountCode, giftCardCode, fulfillmentType } = body;
+  const isPickup = fulfillmentType === 'pickup';
 
   // items: [{ productId, variantId?, quantity }]
   // customer: { email, name, phone? }
@@ -1400,8 +1429,8 @@ async function handleCreateCheckout(request, sb, env, storeId, corsOrigin) {
 
   const discountedSubtotal = subtotal - discountAmount;
 
-  // ── 4. Calculate shipping ───────────────────────────────
-  const shippingCost = freeShipping ? 0 : calculateShippingFromRules(store.shipping_rules, discountedSubtotal);
+  // ── 4. Calculate shipping (skip for local pickup) ────────
+  const shippingCost = (isPickup || freeShipping) ? 0 : calculateShippingFromRules(store.shipping_rules, discountedSubtotal);
 
   // ── 5. Calculate tax ────────────────────────────────────
   let taxAmount = 0;
@@ -1448,6 +1477,7 @@ async function handleCreateCheckout(request, sb, env, storeId, corsOrigin) {
     lineItems, customer, subtotal: discountedSubtotal, shippingCost, taxAmount, total,
     shippingState, reservations, successUrl, cancelUrl,
     discountAmount, discountId, discountLabel, giftCardAmount, giftCardId,
+    fulfillmentType: isPickup ? 'pickup' : 'shipping',
   };
 
   if (paymentProvider === 'stripe' || paymentProvider === 'both') {
@@ -1518,6 +1548,7 @@ async function createStripeCheckout(sb, env, storeId, store, data, corsOrigin) {
   if (data.discountLabel) params.set('metadata[discount_label]', data.discountLabel);
   if (data.giftCardId) params.set('metadata[gift_card_id]', data.giftCardId);
   if (data.giftCardAmount) params.set('metadata[gift_card_amount]', data.giftCardAmount.toString());
+  if (data.fulfillmentType) params.set('metadata[fulfillment_type]', data.fulfillmentType);
 
   // Encode line items
   data.lineItems.forEach((item, i) => {
@@ -1762,9 +1793,10 @@ async function handleStripeSessionCompleted(sb, env, storeId, session) {
     shipping: 0,  // Extracted from line items below
     tax: 0,       // Extracted from line items below
     total: total || 0,
+    fulfillment_type: session.metadata?.fulfillment_type || 'shipping',
   });
 
-  // Create order items from reservations + line items
+  // Create order items from reservations + line items — generate download tokens for digital products
   if (reservations.length > 0) {
     const orderItems = [];
     for (const res of reservations) {
@@ -1877,6 +1909,10 @@ async function handleStripeSessionCompleted(sb, env, storeId, session) {
     syncOrderToQuickBooks(sb, env, storeId, order, orderItems).catch(err =>
       console.error('QB sync (Stripe) failed:', err)
     );
+
+    // Generate download tokens for digital products
+    const allOrderItems = await sb.query('order_items', { filters: { order_id: `eq.${order.id}` } });
+    generateDownloadTokens(sb, env, storeId, order, allOrderItems).catch(err => console.error('Download token gen failed:', err));
 
     // Emit webhook event + dispatch to integrations
     emitEvent(sb, env, storeId, 'order.created', order).catch(err => console.error('Webhook emit error:', err));
@@ -2263,6 +2299,9 @@ async function handleSquareWebhook(request, sb, env, corsOrigin) {
           console.error('QB sync (Square) failed:', err)
         );
 
+        // Generate download tokens for digital products
+        generateDownloadTokens(sb, env, store.id, order, orderItems).catch(err => console.error('Download token gen (Square) failed:', err));
+
         // Emit webhook event + dispatch to integrations
         emitEvent(sb, env, store.id, 'order.created', order).catch(err => console.error('Webhook emit error:', err));
         dispatchToIntegrations(sb, env, store.id, 'order.created', order).catch(err => console.error('Integration dispatch error:', err));
@@ -2533,9 +2572,10 @@ async function handlePayPalCapture(request, sb, env, storeId, corsOrigin) {
       } catch {}
     }
 
-    // Send email, sync QB, emit webhooks (non-blocking)
+    // Send email, sync QB, emit webhooks, digital downloads (non-blocking)
     sendOrderConfirmationEmail(sb, env, storeId, order, orderItems).catch(err => console.error('Order email (PayPal) failed:', err));
     syncOrderToQuickBooks(sb, env, storeId, order, orderItems).catch(err => console.error('QB sync (PayPal) failed:', err));
+    generateDownloadTokens(sb, env, storeId, order, orderItems).catch(err => console.error('Download token gen (PayPal) failed:', err));
     emitEvent(sb, env, storeId, 'order.created', order).catch(err => console.error('Webhook emit error:', err));
     dispatchToIntegrations(sb, env, storeId, 'order.created', order).catch(err => console.error('Integration dispatch error:', err));
 
@@ -2867,6 +2907,278 @@ async function handlePurchaseLabel(request, sb, env, storeId, orderId, corsOrigi
     tracking_url: txn.tracking_url_provider,
     transaction_id: txn.object_id,
   }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  FULFILLMENTS (Split Fulfillment)
+// ═══════════════════════════════════════════════════════════════
+
+async function handleListFulfillments(request, sb, env, storeId, orderId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const fulfillments = await sb.query('fulfillments', {
+    filters: { order_id: `eq.${orderId}`, store_id: `eq.${storeId}` },
+    order: 'created_at.asc',
+  });
+
+  // Enrich with items
+  const enriched = await Promise.all(fulfillments.map(async f => {
+    const items = await sb.query('fulfillment_items', { filters: { fulfillment_id: `eq.${f.id}` } });
+    return { ...f, items };
+  }));
+
+  return json(enriched, 200, corsOrigin);
+}
+
+async function handleCreateFulfillment(request, sb, env, storeId, orderId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const body = await request.json();
+  const { items, tracking_number, tracking_url, carrier } = body;
+  // items: [{ order_item_id, quantity }]
+
+  if (!items?.length) return json({ error: 'At least one item required' }, 400, corsOrigin);
+
+  // Verify order belongs to store
+  const order = await sb.query('orders', { filters: { id: `eq.${orderId}`, store_id: `eq.${storeId}` }, single: true });
+  if (!order) return json({ error: 'Order not found' }, 404, corsOrigin);
+
+  // Create fulfillment
+  const [fulfillment] = await sb.insert('fulfillments', {
+    order_id: orderId,
+    store_id: storeId,
+    tracking_number: tracking_number || null,
+    tracking_url: tracking_url || null,
+    carrier: carrier || null,
+    status: tracking_number ? 'shipped' : 'pending',
+    shipped_at: tracking_number ? new Date().toISOString() : null,
+  });
+
+  // Create fulfillment items
+  for (const item of items) {
+    await sb.insert('fulfillment_items', {
+      fulfillment_id: fulfillment.id,
+      order_item_id: item.order_item_id,
+      quantity: item.quantity || 1,
+    });
+  }
+
+  // Check if all items are now fulfilled — auto-update order status
+  const allFulfillments = await sb.query('fulfillments', { filters: { order_id: `eq.${orderId}` } });
+  const allFItems = [];
+  for (const f of allFulfillments) {
+    const fi = await sb.query('fulfillment_items', { filters: { fulfillment_id: `eq.${f.id}` } });
+    allFItems.push(...fi);
+  }
+  const orderItems = await sb.query('order_items', { filters: { order_id: `eq.${orderId}` } });
+
+  // Sum fulfilled quantities per order_item
+  const fulfilledMap = {};
+  for (const fi of allFItems) {
+    fulfilledMap[fi.order_item_id] = (fulfilledMap[fi.order_item_id] || 0) + fi.quantity;
+  }
+  const allFulfilled = orderItems.every(oi => (fulfilledMap[oi.id] || 0) >= oi.quantity);
+  if (allFulfilled && order.status !== 'shipped' && order.status !== 'delivered') {
+    await sb.update('orders', { id: `eq.${orderId}` }, { status: 'shipped', updated_at: new Date().toISOString() });
+  }
+
+  // Send shipping notification if tracking provided
+  if (tracking_number) {
+    sendOrderStatusEmail(sb, env, storeId, order, 'shipped', tracking_number, tracking_url).catch(() => {});
+    emitEvent(sb, env, storeId, 'order.shipped', { ...order, tracking_number, tracking_url }).catch(() => {});
+  }
+
+  return json({ ...fulfillment, items }, 201, corsOrigin);
+}
+
+async function handleUpdateFulfillment(request, sb, env, storeId, fulfillmentId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const body = await request.json();
+  const updates = {};
+  if (body.tracking_number !== undefined) updates.tracking_number = body.tracking_number;
+  if (body.tracking_url !== undefined) updates.tracking_url = body.tracking_url;
+  if (body.carrier !== undefined) updates.carrier = body.carrier;
+  if (body.status !== undefined) {
+    updates.status = body.status;
+    if (body.status === 'shipped') updates.shipped_at = new Date().toISOString();
+    if (body.status === 'delivered') updates.delivered_at = new Date().toISOString();
+  }
+
+  if (Object.keys(updates).length === 0) return json({ error: 'No fields to update' }, 400, corsOrigin);
+
+  await sb.update('fulfillments', { id: `eq.${fulfillmentId}`, store_id: `eq.${storeId}` }, updates);
+  return json({ updated: true }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  DIGITAL DOWNLOADS
+// ═══════════════════════════════════════════════════════════════
+
+async function handleDigitalDownload(sb, env, storeId, token, corsOrigin) {
+  const dl = await sb.query('download_tokens', {
+    filters: { store_id: `eq.${storeId}`, token: `eq.${token}` },
+    single: true,
+  });
+
+  if (!dl) return json({ error: 'Invalid download link' }, 404, corsOrigin);
+  if (dl.expires_at && new Date(dl.expires_at) < new Date()) {
+    return json({ error: 'Download link has expired' }, 410, corsOrigin);
+  }
+  if (dl.downloads_used >= dl.max_downloads) {
+    return json({ error: `Download limit reached (${dl.max_downloads} downloads)` }, 403, corsOrigin);
+  }
+
+  // Get file URL from product
+  const product = await sb.query('products', { filters: { id: `eq.${dl.product_id}` }, single: true, select: 'file_url,name' });
+  if (!product?.file_url) return json({ error: 'File not available' }, 404, corsOrigin);
+
+  // Increment download count
+  await sb.update('download_tokens', { id: `eq.${dl.id}` }, { downloads_used: dl.downloads_used + 1 });
+
+  // Redirect to the file URL
+  return new Response(null, {
+    status: 302,
+    headers: { Location: product.file_url, 'Cache-Control': 'no-store' },
+  });
+}
+
+// Generate download tokens for digital products in an order
+async function generateDownloadTokens(sb, env, storeId, order, orderItems) {
+  const store = await sb.query('stores', { filters: { id: `eq.${storeId}` }, single: true, select: 'name,domain,settings' });
+  const domain = store?.domain || store?.settings?.domain || 'webnari.io';
+  const storeName = store?.name || 'Store';
+  const downloads = [];
+
+  for (const item of orderItems) {
+    const product = await sb.query('products', { filters: { id: `eq.${item.product_id}` }, single: true, select: 'product_type,file_url,max_downloads,name' });
+    if (!product || product.product_type !== 'digital' || !product.file_url) continue;
+
+    const token = randomToken(32);
+    await sb.insert('download_tokens', {
+      store_id: storeId,
+      order_id: order.id,
+      order_item_id: item.id,
+      product_id: item.product_id,
+      token,
+      max_downloads: product.max_downloads || 3,
+      expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days
+    });
+
+    downloads.push({
+      product_name: product.name,
+      download_url: `https://${domain}/api/download/${token}?store=${storeId}`,
+    });
+  }
+
+  // Send download email if there are digital items
+  if (downloads.length > 0 && order.customer_email) {
+    const downloadLinks = downloads.map(d =>
+      `<li style="margin:0 0 8px;"><strong>${esc(d.product_name)}</strong><br><a href="${esc(d.download_url)}" style="color:#2563EB;">Download</a></li>`
+    ).join('');
+
+    sendEmail(env, {
+      to: order.customer_email,
+      subject: `${storeName} — Your Digital Downloads`,
+      html: emailShell(storeName, `
+        <h2 style="margin:0 0 8px;font-size:22px;color:#111827;">Your Downloads Are Ready</h2>
+        <p style="margin:0 0 16px;font-size:14px;color:#6b7280;">Order ${esc(order.order_number)} — here are your download links:</p>
+        <ul style="margin:0 0 24px;padding-left:20px;">${downloadLinks}</ul>
+        <p style="margin:0;font-size:12px;color:#9ca3af;">Each link allows up to 3 downloads and expires in 30 days.</p>
+      `),
+      storeSettings: store?.settings,
+    }).catch(err => console.error('Download email failed:', err));
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  PRODUCT FEEDS (Google Merchant / Meta)
+// ═══════════════════════════════════════════════════════════════
+
+async function handleGoogleMerchantFeed(sb, storeId, url, corsOrigin) {
+  const store = await sb.query('stores', { filters: { id: `eq.${storeId}` }, single: true });
+  if (!store) return json({ error: 'Store not found' }, 404, corsOrigin);
+  const domain = store.domain || store.settings?.domain || 'webnari.io';
+  const currency = (store.currency || 'USD').toUpperCase();
+
+  const products = await sb.query('products', {
+    filters: { store_id: `eq.${storeId}`, in_stock: 'eq.true' },
+    order: 'sort_order.asc',
+    limit: 500,
+  });
+
+  // Build each product with images
+  const items = await Promise.all(products.map(async p => {
+    const images = await sb.query('product_images', { filters: { product_id: `eq.${p.id}` }, order: 'sort_order.asc', limit: 1 });
+    const imageUrl = images[0]?.url || '';
+    const link = `https://${domain}/products/${p.slug || p.id}`;
+    const availability = p.in_stock ? 'in_stock' : 'out_of_stock';
+    const condition = 'new';
+    const price = `${(p.price / 100).toFixed(2)} ${currency}`;
+    const salePrice = p.compare_at_price ? `${(p.price / 100).toFixed(2)} ${currency}` : '';
+
+    return `    <item>
+      <g:id>${esc(p.id)}</g:id>
+      <title>${esc(p.name)}</title>
+      <description>${esc((p.description || p.name).slice(0, 5000))}</description>
+      <link>${esc(link)}</link>
+      <g:image_link>${esc(imageUrl)}</g:image_link>
+      <g:availability>${availability}</g:availability>
+      <g:price>${price}</g:price>${salePrice ? `\n      <g:sale_price>${salePrice}</g:sale_price>` : ''}
+      <g:condition>${condition}</g:condition>
+      <g:brand>${esc(store.name || 'Store')}</g:brand>${p.sku ? `\n      <g:gtin>${esc(p.sku)}</g:gtin>` : ''}${p.category ? `\n      <g:product_type>${esc(p.category)}</g:product_type>` : ''}
+    </item>`;
+  }));
+
+  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:g="http://base.google.com/ns/1.0" version="2.0">
+  <channel>
+    <title>${esc(store.name || 'Store')}</title>
+    <link>https://${esc(domain)}</link>
+    <description>${esc(store.seo_description || store.name || 'Products')}</description>
+${items.join('\n')}
+  </channel>
+</rss>`;
+
+  return new Response(xml, {
+    status: 200,
+    headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=3600' },
+  });
+}
+
+async function handleMetaCatalogFeed(sb, storeId, url, corsOrigin) {
+  const store = await sb.query('stores', { filters: { id: `eq.${storeId}` }, single: true });
+  if (!store) return json({ error: 'Store not found' }, 404, corsOrigin);
+  const domain = store.domain || store.settings?.domain || 'webnari.io';
+  const currency = (store.currency || 'USD').toUpperCase();
+
+  const products = await sb.query('products', {
+    filters: { store_id: `eq.${storeId}`, in_stock: 'eq.true' },
+    order: 'sort_order.asc',
+    limit: 500,
+  });
+
+  // Meta requires TSV (tab-separated values) format
+  const header = 'id\ttitle\tdescription\tavailability\tcondition\tprice\tlink\timage_link\tbrand';
+  const rows = await Promise.all(products.map(async p => {
+    const images = await sb.query('product_images', { filters: { product_id: `eq.${p.id}` }, order: 'sort_order.asc', limit: 1 });
+    const imageUrl = images[0]?.url || '';
+    const link = `https://${domain}/products/${p.slug || p.id}`;
+    const price = `${(p.price / 100).toFixed(2)} ${currency}`;
+    const desc = (p.description || p.name || '').replace(/[\t\n\r]/g, ' ').slice(0, 5000);
+
+    return [p.id, p.name, desc, p.in_stock ? 'in stock' : 'out of stock', 'new', price, link, imageUrl, store.name || 'Store'].join('\t');
+  }));
+
+  const tsv = [header, ...rows].join('\n');
+
+  return new Response(tsv, {
+    status: 200,
+    headers: { 'Content-Type': 'text/tab-separated-values; charset=utf-8', 'Cache-Control': 'public, max-age=3600' },
+  });
 }
 
 

@@ -599,6 +599,25 @@ export class CommerceClient {
       body: JSON.stringify({ status: data.refund_amount ? undefined : 'refunded', ...data }),
     });
   }
+
+  // ── Fulfillments (split fulfillment) ─────────────────
+  async getFulfillments(orderId: string) {
+    return this.fetch(`/api/orders/${orderId}/fulfillments`);
+  }
+
+  async createFulfillment(orderId: string, data: { items: Array<{ order_item_id: string; quantity: number }>; tracking_number?: string; tracking_url?: string; carrier?: string }) {
+    return this.fetch(`/api/orders/${orderId}/fulfillments`, {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateFulfillment(fulfillmentId: string, data: Record<string, unknown>) {
+    return this.fetch(`/api/fulfillments/${fulfillmentId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
 }
 
 export function getCommerceClient(storeId: string) {
