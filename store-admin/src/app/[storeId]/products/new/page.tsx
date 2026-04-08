@@ -1,4 +1,5 @@
 import ProductForm from "@/components/ProductForm";
+import { CommerceClient } from "@/lib/commerce";
 
 export default async function NewProductPage({
   params,
@@ -6,6 +7,14 @@ export default async function NewProductPage({
   params: Promise<{ storeId: string }>;
 }) {
   const { storeId } = await params;
+
+  // Load store config to get custom field definitions (e.g. hemp fields for Leaflyx)
+  const client = new CommerceClient(storeId);
+  let customFieldDefs: { key: string; label: string; type: "text" | "number" | "url" | "textarea" | "select" | "multiselect" | "checkbox"; required?: boolean; options?: string[]; placeholder?: string; group?: string }[] = [];
+  try {
+    const store = await client.getStore();
+    customFieldDefs = store?.settings?.custom_product_fields || [];
+  } catch {}
 
   return (
     <div className="fade-in">
@@ -15,7 +24,7 @@ export default async function NewProductPage({
           Create a new product for your store
         </p>
       </div>
-      <ProductForm storeId={storeId} />
+      <ProductForm storeId={storeId} customFieldDefs={customFieldDefs} />
     </div>
   );
 }

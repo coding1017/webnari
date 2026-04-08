@@ -9,9 +9,17 @@ export default async function EditProductPage({
   const { storeId, id } = await params;
   const client = new CommerceClient(storeId);
 
+  // Load store config + product in parallel
   let product;
+  let customFieldDefs: { key: string; label: string; type: "text" | "number" | "url" | "textarea" | "select" | "multiselect" | "checkbox"; required?: boolean; options?: string[]; placeholder?: string; group?: string }[] = [];
+
   try {
-    product = await client.getProduct(id);
+    const [productData, store] = await Promise.all([
+      client.getProduct(id),
+      client.getStore().catch(() => null),
+    ]);
+    product = productData;
+    customFieldDefs = store?.settings?.custom_product_fields || [];
   } catch {
     return (
       <div className="fade-in" style={{ textAlign: "center", padding: "60px" }}>
@@ -32,7 +40,7 @@ export default async function EditProductPage({
           Update product details, pricing, and variants
         </p>
       </div>
-      <ProductForm storeId={storeId} product={product} />
+      <ProductForm storeId={storeId} product={product} customFieldDefs={customFieldDefs} />
     </div>
   );
 }

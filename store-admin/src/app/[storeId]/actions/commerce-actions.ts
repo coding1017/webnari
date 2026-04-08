@@ -607,3 +607,66 @@ export async function updateFulfillment(storeId: string, fulfillmentId: string, 
   const client = new CommerceClient(storeId);
   return client.updateFulfillment(fulfillmentId, data);
 }
+
+// ── URL Redirects ─────────────────────────────────────────
+export async function getRedirects(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.getRedirects();
+}
+
+export async function createRedirect(storeId: string, data: { from_path: string; to_path: string; status_code?: number }) {
+  const client = new CommerceClient(storeId);
+  return client.createRedirect(data);
+}
+
+export async function deleteRedirect(storeId: string, redirectId: string) {
+  const client = new CommerceClient(storeId);
+  return client.deleteRedirect(redirectId);
+}
+
+// ── Email Templates ───────────────────────────────────────
+export async function getEmailTemplates(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.getEmailTemplates();
+}
+
+export async function upsertEmailTemplate(storeId: string, data: { template_key: string; subject: string; html_body: string; active?: boolean }) {
+  const client = new CommerceClient(storeId);
+  return client.upsertEmailTemplate(data);
+}
+
+export async function deleteEmailTemplate(storeId: string, templateId: string) {
+  const client = new CommerceClient(storeId);
+  return client.deleteEmailTemplate(templateId);
+}
+
+// ── Customer Segments ─────────────────────────────────────
+export async function getSegments(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.getSegments();
+}
+
+export async function createSegment(storeId: string, data: { name: string; color?: string }) {
+  const client = new CommerceClient(storeId);
+  return client.createSegment(data);
+}
+
+export async function updateSegment(storeId: string, segmentId: string, data: Record<string, unknown>) {
+  const client = new CommerceClient(storeId);
+  return client.updateSegment(segmentId, data);
+}
+
+export async function deleteSegment(storeId: string, segmentId: string) {
+  const client = new CommerceClient(storeId);
+  return client.deleteSegment(segmentId);
+}
+
+export async function addSegmentMember(storeId: string, segmentId: string, customerId: string) {
+  const client = new CommerceClient(storeId);
+  return client.addSegmentMember(segmentId, customerId);
+}
+
+export async function removeSegmentMember(storeId: string, segmentId: string, customerId: string) {
+  const client = new CommerceClient(storeId);
+  return client.removeSegmentMember(segmentId, customerId);
+}

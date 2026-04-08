@@ -618,6 +618,48 @@ export class CommerceClient {
       body: JSON.stringify(data),
     });
   }
+
+  // ── URL Redirects ─────────────────────────────────────
+  async getRedirects() {
+    return this.fetch('/api/admin/redirects');
+  }
+  async createRedirect(data: { from_path: string; to_path: string; status_code?: number }) {
+    return this.fetch('/api/admin/redirects', { method: 'POST', body: JSON.stringify(data) });
+  }
+  async deleteRedirect(id: string) {
+    return this.fetch(`/api/admin/redirects/${id}`, { method: 'DELETE' });
+  }
+
+  // ── Email Templates ───────────────────────────────────
+  async getEmailTemplates() {
+    return this.fetch('/api/admin/email-templates');
+  }
+  async upsertEmailTemplate(data: { template_key: string; subject: string; html_body: string; active?: boolean }) {
+    return this.fetch('/api/admin/email-templates', { method: 'POST', body: JSON.stringify(data) });
+  }
+  async deleteEmailTemplate(id: string) {
+    return this.fetch(`/api/admin/email-templates/${id}`, { method: 'DELETE' });
+  }
+
+  // ── Customer Segments ─────────────────────────────────
+  async getSegments() {
+    return this.fetch('/api/admin/segments');
+  }
+  async createSegment(data: { name: string; color?: string }) {
+    return this.fetch('/api/admin/segments', { method: 'POST', body: JSON.stringify(data) });
+  }
+  async updateSegment(id: string, data: Record<string, unknown>) {
+    return this.fetch(`/api/admin/segments/${id}`, { method: 'PATCH', body: JSON.stringify(data) });
+  }
+  async deleteSegment(id: string) {
+    return this.fetch(`/api/admin/segments/${id}`, { method: 'DELETE' });
+  }
+  async addSegmentMember(segmentId: string, customerId: string) {
+    return this.fetch(`/api/admin/segments/${segmentId}/members`, { method: 'POST', body: JSON.stringify({ customer_id: customerId }) });
+  }
+  async removeSegmentMember(segmentId: string, customerId: string) {
+    return this.fetch(`/api/admin/segments/${segmentId}/members/${customerId}`, { method: 'DELETE' });
+  }
 }
 
 export function getCommerceClient(storeId: string) {

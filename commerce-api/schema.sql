@@ -355,6 +355,26 @@ create index if not exists idx_glossary_store on glossary_terms(store_id);
 create index if not exists idx_glossary_slug on glossary_terms(store_id, slug);
 
 
+-- ── 15b. Product Custom Field Values ────────────────────────
+-- Per-store custom metadata for products (e.g. hemp fields: terpenes, THC%, COA URL).
+-- Field definitions live in stores.settings.custom_product_fields — this table stores the values.
+create table if not exists product_custom_values (
+  id          uuid primary key default gen_random_uuid(),
+  product_id  text not null references products(id) on delete cascade,
+  field_key   text not null,              -- matches key in stores.settings.custom_product_fields
+  value       jsonb,                      -- flexible: string, number, array, object
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now(),
+  unique(product_id, field_key)
+);
+
+create index if not exists idx_product_custom_values_product on product_custom_values(product_id);
+
+-- Public read (storefront needs these), service role write
+alter table product_custom_values enable row level security;
+create policy "Public read product_custom_values" on product_custom_values for select using (true);
+
+
 -- ── 16. Store Admins ────────────────────────────────────────
 -- Maps Supabase Auth users to stores they can manage
 create table if not exists store_admins (
@@ -469,6 +489,58 @@ create table if not exists tax_rates (
 );
 
 create index if not exists idx_tax_rates_state on tax_rates(state);
+
+
+-- ── 22. URL Redirects ──────────────────────────────────────
+create table if not exists redirects (
+  id          uuid primary key default gen_random_uuid(),
+  store_id    text not null references stores(id) on delete cascade,
+  from_path   text not null,                   -- e.g. '/old-product'
+  to_path     text not null,                   -- e.g. '/new-product' or full URL
+  status_code integer not null default 301,    -- 301 permanent, 302 temporary
+  active      boolean not null default true,
+  created_at  timestamptz not null default now(),
+  unique(store_id, from_path)
+);
+
+create index if not exists idx_redirects_store on redirects(store_id);
+create index if not exists idx_redirects_lookup on redirects(store_id, from_path) where active = true;
+
+
+-- ── 23. Email Templates ───────────────────────────────────
+create table if not exists email_templates (
+  id            uuid primary key default gen_random_uuid(),
+  store_id      text not null references stores(id) on delete cascade,
+  template_key  text not null,                 -- 'order_confirmation', 'shipping_update', 'delivery', 'abandoned_cart', 'welcome', 'reset_password'
+  subject       text not null,
+  html_body     text not null,                 -- HTML with {{variable}} placeholders
+  active        boolean not null default true,
+  created_at    timestamptz not null default now(),
+  updated_at    timestamptz not null default now(),
+  unique(store_id, template_key)
+);
+
+create index if not exists idx_email_templates_store on email_templates(store_id, template_key);
+
+
+-- ── 24. Customer Segments ─────────────────────────────────
+create table if not exists customer_segments (
+  id          uuid primary key default gen_random_uuid(),
+  store_id    text not null references stores(id) on delete cascade,
+  name        text not null,                   -- 'VIP', 'Wholesale', 'First-time'
+  color       text not null default '#6366f1', -- badge color
+  auto_rules  jsonb,                           -- automatic rules: {min_orders: 3, min_spent: 500}
+  created_at  timestamptz not null default now()
+);
+
+create index if not exists idx_customer_segments_store on customer_segments(store_id);
+
+create table if not exists customer_segment_members (
+  customer_id  uuid not null references customers(id) on delete cascade,
+  segment_id   uuid not null references customer_segments(id) on delete cascade,
+  added_at     timestamptz not null default now(),
+  primary key (customer_id, segment_id)
+);
 
 
 -- ═══════════════════════════════════════════════════════════

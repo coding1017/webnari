@@ -573,6 +573,54 @@ export default {
         return await handleAdminTaxAudit(request, sb, env, storeId, corsOrigin);
       }
 
+      // ── Admin URL Redirects ─────────────────────────────────
+      if (method === 'GET' && path === '/api/admin/redirects') {
+        return await handleAdminListRedirects(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/admin/redirects') {
+        return await handleAdminCreateRedirect(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'DELETE' && path.match(/^\/api\/admin\/redirects\/[^/]+$/)) {
+        const redirectId = path.split('/').pop();
+        return await handleAdminDeleteRedirect(request, sb, env, storeId, redirectId, corsOrigin);
+      }
+
+      // ── Admin Email Templates ─────────────────────────────
+      if (method === 'GET' && path === '/api/admin/email-templates') {
+        return await handleAdminListEmailTemplates(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/admin/email-templates') {
+        return await handleAdminUpsertEmailTemplate(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'DELETE' && path.match(/^\/api\/admin\/email-templates\/[^/]+$/)) {
+        const templateId = path.split('/').pop();
+        return await handleAdminDeleteEmailTemplate(request, sb, env, storeId, templateId, corsOrigin);
+      }
+
+      // ── Admin Customer Segments ───────────────────────────
+      if (method === 'GET' && path === '/api/admin/segments') {
+        return await handleAdminListSegments(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/admin/segments') {
+        return await handleAdminCreateSegment(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'PATCH' && path.match(/^\/api\/admin\/segments\/[^/]+$/)) {
+        const segmentId = path.split('/').pop();
+        return await handleAdminUpdateSegment(request, sb, env, storeId, segmentId, corsOrigin);
+      }
+      if (method === 'DELETE' && path.match(/^\/api\/admin\/segments\/[^/]+$/)) {
+        const segmentId = path.split('/').pop();
+        return await handleAdminDeleteSegment(request, sb, env, storeId, segmentId, corsOrigin);
+      }
+      if (method === 'POST' && path.match(/^\/api\/admin\/segments\/[^/]+\/members$/)) {
+        const segmentId = path.split('/')[4];
+        return await handleAdminAddSegmentMember(request, sb, env, storeId, segmentId, corsOrigin);
+      }
+      if (method === 'DELETE' && path.match(/^\/api\/admin\/segments\/[^/]+\/members\/[^/]+$/)) {
+        const parts = path.split('/');
+        return await handleAdminRemoveSegmentMember(request, sb, env, storeId, parts[4], parts[6], corsOrigin);
+      }
+
       // ── Abandoned Cart ──────────────────────────────────────
       if (method === 'POST' && path === '/api/cart/save') {
         return await handleSaveCart(request, sb, storeId, corsOrigin);
@@ -810,6 +858,20 @@ function esc(str) {
 // ═══════════════════════════════════════════════════════════════
 //  EMAIL — Resend integration for transactional emails
 // ═══════════════════════════════════════════════════════════════
+
+async function getCustomEmailTemplate(sb, storeId, templateKey) {
+  try {
+    return await sb.query('email_templates', {
+      filters: { store_id: `eq.${storeId}`, template_key: `eq.${templateKey}`, active: `eq.true` },
+      single: true,
+      select: 'subject,html_body',
+    });
+  } catch { return null; }
+}
+
+function renderTemplateVars(html, vars) {
+  return html.replace(/\{\{(\w+)\}\}/g, (_, key) => vars[key] !== undefined ? String(vars[key]) : '');
+}
 
 async function sendEmail(env, { to, subject, html, replyTo, storeSettings }) {
   // Try per-store Resend key first, fall back to master
@@ -4158,11 +4220,12 @@ async function handleAdminStats(request, sb, env, storeId, corsOrigin) {
 
 // Helper: enrich a product row with images, variants, and reviews for public API
 async function enrichProductForPublic(sb, product) {
-  const [images, variants, reviews, tagRows] = await Promise.all([
+  const [images, variants, reviews, tagRows, customValues] = await Promise.all([
     sb.query('product_images', { filters: { product_id: `eq.${product.id}` }, order: 'sort_order.asc' }),
     sb.query('variants', { filters: { product_id: `eq.${product.id}` }, order: 'sort_order.asc' }),
     sb.query('reviews', { filters: { product_id: `eq.${product.id}`, approved: 'eq.true' }, order: 'created_at.desc' }),
     sb.query('product_tags', { filters: { product_id: `eq.${product.id}` }, select: 'tag' }).catch(() => []),
+    sb.query('product_custom_values', { filters: { product_id: `eq.${product.id}` } }).catch(() => []),
   ]);
 
   const variantsWithImgs = await Promise.all(variants.map(async v => {
@@ -4182,6 +4245,12 @@ async function enrichProductForPublic(sb, product) {
 
   const imgUrls = images.map(i => i.url);
 
+  // Build custom_fields map for storefront consumption
+  const custom_fields = {};
+  for (const cv of customValues) {
+    custom_fields[cv.field_key] = cv.value;
+  }
+
   return {
     id: product.slug || product.id,
     name: product.name,
@@ -4198,6 +4267,7 @@ async function enrichProductForPublic(sb, product) {
     reviews: reviews.map(r => ({ name: r.name, text: r.text, rating: r.rating, date: r.created_at?.slice(0, 10) || '' })),
     variants: variantsWithImgs.length > 0 ? variantsWithImgs : undefined,
     tags: tagRows.map(t => t.tag),
+    custom_fields: Object.keys(custom_fields).length > 0 ? custom_fields : undefined,
   };
 }
 
@@ -4304,10 +4374,11 @@ async function handleAdminGetProduct(request, sb, env, storeId, productId, corsO
   });
   if (!product) return json({ error: 'Product not found' }, 404, corsOrigin);
 
-  const [images, variants, reviews] = await Promise.all([
+  const [images, variants, reviews, customValues] = await Promise.all([
     sb.query('product_images', { filters: { product_id: `eq.${productId}` }, order: 'sort_order.asc' }),
     sb.query('variants', { filters: { product_id: `eq.${productId}` }, order: 'sort_order.asc' }),
     sb.query('reviews', { filters: { product_id: `eq.${productId}` }, order: 'created_at.desc' }),
+    sb.query('product_custom_values', { filters: { product_id: `eq.${productId}` } }).catch(() => []),
   ]);
 
   // Get variant images
@@ -4319,14 +4390,20 @@ async function handleAdminGetProduct(request, sb, env, storeId, productId, corsO
     return { ...v, images: vImages };
   }));
 
-  return json({ ...product, images, variants: variantsWithImages, reviews }, 200, corsOrigin);
+  // Build custom_fields as { key: value } map
+  const custom_fields = {};
+  for (const cv of customValues) {
+    custom_fields[cv.field_key] = cv.value;
+  }
+
+  return json({ ...product, images, variants: variantsWithImages, reviews, custom_fields }, 200, corsOrigin);
 }
 
 async function handleAdminCreateProduct(request, sb, env, storeId, corsOrigin) {
   if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const body = await request.json();
-  const { images, variants, ...productData } = body;
+  const { images, variants, custom_fields, ...productData } = body;
 
   // Create product
   const [product] = await sb.insert('products', {
@@ -4363,6 +4440,20 @@ async function handleAdminCreateProduct(request, sb, env, storeId, corsOrigin) {
     }
   }
 
+  // Save custom field values (per-store metadata like terpenes, THC%, COA URL)
+  if (custom_fields && typeof custom_fields === 'object') {
+    const rows = Object.entries(custom_fields)
+      .filter(([, v]) => v !== null && v !== undefined && v !== '')
+      .map(([key, value]) => ({
+        product_id: product.id,
+        field_key: key,
+        value: JSON.stringify(value),
+      }));
+    if (rows.length) {
+      await sb.insert('product_custom_values', rows);
+    }
+  }
+
   // Auto-push to Square if connected (non-blocking)
   pushProductToSquare(sb, env, storeId, product).catch(() => {});
 
@@ -4376,7 +4467,7 @@ async function handleAdminUpdateProduct(request, sb, env, storeId, productId, co
   if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const body = await request.json();
-  const { images, ...productData } = body;
+  const { images, custom_fields, ...productData } = body;
 
   // Update product fields
   const allowed = ['name', 'sku', 'color', 'slug', 'category', 'description', 'price', 'compare_at_price',
@@ -4401,6 +4492,22 @@ async function handleAdminUpdateProduct(request, sb, env, storeId, productId, co
         alt: img.alt || null,
         sort_order: i,
       })));
+    }
+  }
+
+  // Upsert custom field values
+  if (custom_fields && typeof custom_fields === 'object') {
+    // Delete existing then re-insert (simple upsert for JSONB values)
+    await sb.delete('product_custom_values', { product_id: `eq.${productId}` });
+    const rows = Object.entries(custom_fields)
+      .filter(([, v]) => v !== null && v !== undefined && v !== '')
+      .map(([key, value]) => ({
+        product_id: productId,
+        field_key: key,
+        value: JSON.stringify(value),
+      }));
+    if (rows.length) {
+      await sb.insert('product_custom_values', rows);
     }
   }
 
@@ -10747,4 +10854,165 @@ async function trackKlaviyoEvent(sb, storeId, eventType, order) {
     const err = await res.text();
     console.error('Klaviyo track failed:', res.status, err);
   }
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  URL REDIRECTS — Admin CRUD
+// ═══════════════════════════════════════════════════════════════
+
+async function handleAdminListRedirects(request, sb, env, storeId, corsOrigin) {
+  await requireAdmin(request, env, storeId);
+  const rows = await sb.query('redirects', {
+    filters: { store_id: `eq.${storeId}` },
+    select: 'id,from_path,to_path,status_code,active,created_at',
+    order: 'created_at.desc',
+  });
+  return json(rows || [], 200, corsOrigin);
+}
+
+async function handleAdminCreateRedirect(request, sb, env, storeId, corsOrigin) {
+  await requireAdmin(request, env, storeId);
+  const { from_path, to_path, status_code } = await request.json();
+  if (!from_path || !to_path) return json({ error: 'from_path and to_path required' }, 400, corsOrigin);
+
+  const redirect = await sb.insert('redirects', {
+    store_id: storeId,
+    from_path: from_path.startsWith('/') ? from_path : '/' + from_path,
+    to_path,
+    status_code: status_code === 302 ? 302 : 301,
+  });
+  return json(redirect, 201, corsOrigin);
+}
+
+async function handleAdminDeleteRedirect(request, sb, env, storeId, redirectId, corsOrigin) {
+  await requireAdmin(request, env, storeId);
+  await sb.delete('redirects', { id: `eq.${redirectId}`, store_id: `eq.${storeId}` });
+  return json({ ok: true }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  EMAIL TEMPLATES — Admin CRUD
+// ═══════════════════════════════════════════════════════════════
+
+async function handleAdminListEmailTemplates(request, sb, env, storeId, corsOrigin) {
+  await requireAdmin(request, env, storeId);
+  const rows = await sb.query('email_templates', {
+    filters: { store_id: `eq.${storeId}` },
+    select: 'id,template_key,subject,html_body,active,created_at,updated_at',
+    order: 'template_key.asc',
+  });
+  return json(rows || [], 200, corsOrigin);
+}
+
+async function handleAdminUpsertEmailTemplate(request, sb, env, storeId, corsOrigin) {
+  await requireAdmin(request, env, storeId);
+  const { template_key, subject, html_body, active } = await request.json();
+
+  const validKeys = ['order_confirmation', 'shipping_update', 'delivery', 'abandoned_cart', 'welcome', 'reset_password', 'verification'];
+  if (!template_key || !validKeys.includes(template_key)) {
+    return json({ error: `template_key must be one of: ${validKeys.join(', ')}` }, 400, corsOrigin);
+  }
+  if (!subject || !html_body) return json({ error: 'subject and html_body required' }, 400, corsOrigin);
+
+  // Upsert: check if exists
+  const existing = await sb.query('email_templates', {
+    filters: { store_id: `eq.${storeId}`, template_key: `eq.${template_key}` },
+    single: true, select: 'id',
+  });
+
+  let result;
+  if (existing) {
+    result = await sb.update('email_templates', { id: `eq.${existing.id}` }, {
+      subject, html_body, active: active !== false, updated_at: new Date().toISOString(),
+    });
+  } else {
+    result = await sb.insert('email_templates', {
+      store_id: storeId, template_key, subject, html_body, active: active !== false,
+    });
+  }
+  return json(result, existing ? 200 : 201, corsOrigin);
+}
+
+async function handleAdminDeleteEmailTemplate(request, sb, env, storeId, templateId, corsOrigin) {
+  await requireAdmin(request, env, storeId);
+  await sb.delete('email_templates', { id: `eq.${templateId}`, store_id: `eq.${storeId}` });
+  return json({ ok: true }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  CUSTOMER SEGMENTS — Admin CRUD
+// ═══════════════════════════════════════════════════════════════
+
+async function handleAdminListSegments(request, sb, env, storeId, corsOrigin) {
+  await requireAdmin(request, env, storeId);
+  const segments = await sb.query('customer_segments', {
+    filters: { store_id: `eq.${storeId}` },
+    select: 'id,name,color,auto_rules,created_at',
+    order: 'name.asc',
+  });
+
+  // Enrich with member count
+  for (const seg of (segments || [])) {
+    const members = await sb.query('customer_segment_members', {
+      filters: { segment_id: `eq.${seg.id}` },
+      select: 'customer_id',
+    });
+    seg.member_count = members?.length || 0;
+  }
+
+  return json(segments || [], 200, corsOrigin);
+}
+
+async function handleAdminCreateSegment(request, sb, env, storeId, corsOrigin) {
+  await requireAdmin(request, env, storeId);
+  const { name, color, auto_rules } = await request.json();
+  if (!name) return json({ error: 'Segment name required' }, 400, corsOrigin);
+
+  const segment = await sb.insert('customer_segments', {
+    store_id: storeId,
+    name,
+    color: color || '#6366f1',
+    auto_rules: auto_rules || null,
+  });
+  return json(segment, 201, corsOrigin);
+}
+
+async function handleAdminUpdateSegment(request, sb, env, storeId, segmentId, corsOrigin) {
+  await requireAdmin(request, env, storeId);
+  const body = await request.json();
+  const updates = {};
+  if (body.name !== undefined) updates.name = body.name;
+  if (body.color !== undefined) updates.color = body.color;
+  if (body.auto_rules !== undefined) updates.auto_rules = body.auto_rules;
+
+  const result = await sb.update('customer_segments', { id: `eq.${segmentId}`, store_id: `eq.${storeId}` }, updates);
+  return json(result, 200, corsOrigin);
+}
+
+async function handleAdminDeleteSegment(request, sb, env, storeId, segmentId, corsOrigin) {
+  await requireAdmin(request, env, storeId);
+  await sb.delete('customer_segment_members', { segment_id: `eq.${segmentId}` });
+  await sb.delete('customer_segments', { id: `eq.${segmentId}`, store_id: `eq.${storeId}` });
+  return json({ ok: true }, 200, corsOrigin);
+}
+
+async function handleAdminAddSegmentMember(request, sb, env, storeId, segmentId, corsOrigin) {
+  await requireAdmin(request, env, storeId);
+  const { customer_id } = await request.json();
+  if (!customer_id) return json({ error: 'customer_id required' }, 400, corsOrigin);
+
+  const member = await sb.insert('customer_segment_members', {
+    customer_id,
+    segment_id: segmentId,
+  });
+  return json(member, 201, corsOrigin);
+}
+
+async function handleAdminRemoveSegmentMember(request, sb, env, storeId, segmentId, customerId, corsOrigin) {
+  await requireAdmin(request, env, storeId);
+  await sb.delete('customer_segment_members', { customer_id: `eq.${customerId}`, segment_id: `eq.${segmentId}` });
+  return json({ ok: true }, 200, corsOrigin);
 }
