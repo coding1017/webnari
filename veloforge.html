@@ -1,0 +1,2416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VeloForge | Custom Bicycle Builds & Expert Repair — Miami, FL</title>
+<meta name="description" content="VeloForge crafts custom bicycle builds and provides expert repair for road, gravel, MTB, and urban bikes across Miami and South Florida. Your vision, precisely built.">
+<meta property="og:title" content="VeloForge | Custom Bike Builds & Repair — Miami, FL">
+<meta property="og:description" content="Miami's premier custom bicycle workshop. Precision builds, expert repair, all disciplines. Book your build consultation today.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,700;0,900;1,900&family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #E63329;
+    --red2: #C8281F;
+    --yellow: #F7D117;
+    --yellow2: #E8C205;
+    --cobalt: #1B4FD8;
+    --cobalt2: #1540B8;
+    --black: #111111;
+    --black2: #1A1A1A;
+    --gray: #333333;
+    --gray2: #555555;
+    --lightgray: #E8E8E8;
+    --white: #F8F8F5;
+    --offwhite: #EFEFEB;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Roboto Mono', monospace;
+    background: var(--white);
+    color: var(--black);
+    overflow-x: hidden;
+  }
+
+  /* Alert Bar */
+  .alert-bar {
+    background: var(--red);
+    color: var(--white);
+    text-align: center;
+    padding: 10px 20px;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+  }
+
+  .alert-bar strong { color: var(--yellow); }
+  .alert-bar a { color: var(--yellow); font-weight: 700; text-decoration: none; }
+
+  /* Navigation */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    background: var(--black);
+    border-bottom: 4px solid var(--yellow);
+    padding: 0 48px;
+    height: 68px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+
+  .logo-hex {
+    width: 40px;
+    height: 40px;
+    background: var(--red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    clip-path: polygon(50% 0%, 93% 25%, 93% 75%, 50% 100%, 7% 75%, 7% 25%);
+  }
+
+  .logo-hex svg { width: 20px; height: 20px; }
+
+  .logo-text {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: var(--white);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .logo-text span { color: var(--yellow); }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    color: rgba(248,248,245,0.6);
+    text-decoration: none;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--yellow); }
+
+  .nav-cta {
+    background: var(--red);
+    color: var(--white) !important;
+    padding: 10px 22px;
+    font-weight: 700 !important;
+    border: 2px solid var(--red);
+    transition: all 0.2s !important;
+  }
+
+  .nav-cta:hover {
+    background: transparent !important;
+    color: var(--red) !important;
+    border-color: var(--red) !important;
+  }
+
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 4px;
+  }
+
+  .hamburger span {
+    display: block;
+    width: 24px;
+    height: 3px;
+    background: var(--yellow);
+    transition: all 0.3s;
+  }
+
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    background: var(--black);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 60px 48px;
+    gap: 24px;
+    transform: translateX(100%);
+    transition: transform 0.4s ease;
+  }
+
+  .mobile-menu.open { transform: translateX(0); }
+
+  .mobile-menu a {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: var(--white);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: color 0.2s;
+    border-bottom: 2px solid var(--gray);
+    padding-bottom: 12px;
+    width: 100%;
+  }
+
+  .mobile-menu a:hover { color: var(--yellow); border-color: var(--yellow); }
+
+  .mobile-close {
+    position: absolute;
+    top: 20px;
+    right: 28px;
+    background: none;
+    border: none;
+    color: var(--yellow);
+    font-size: 2rem;
+    cursor: pointer;
+    font-family: 'Roboto Mono', monospace;
+  }
+
+  /* Hero */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: calc(100vh - 108px);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Left yellow panel */
+  .hero-left {
+    background: var(--yellow);
+    padding: 72px 60px 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Diagonal stripe accent on left panel */
+  .hero-left::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: -40px;
+    width: 80px;
+    height: 100%;
+    background: var(--yellow);
+    clip-path: polygon(40px 0, 100% 0, 60px 100%, 0 100%);
+    z-index: 2;
+  }
+
+  .hero-label {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--black2);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .hero-label::before {
+    content: '//';
+    color: var(--red);
+    font-weight: 700;
+  }
+
+  .hero-headline {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(4rem, 7vw, 7.5rem);
+    font-weight: 900;
+    line-height: 0.9;
+    color: var(--black);
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    margin-bottom: 24px;
+  }
+
+  .hero-headline .outline {
+    -webkit-text-stroke: 3px var(--black);
+    color: transparent;
+  }
+
+  .hero-headline .red-word { color: var(--red); }
+
+  .hero-desc {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--black2);
+    line-height: 1.7;
+    max-width: 380px;
+    margin-bottom: 32px;
+    font-weight: 400;
+  }
+
+  .hero-ctas {
+    display: flex;
+    gap: 0;
+    margin-bottom: 40px;
+  }
+
+  .btn-black {
+    background: var(--black);
+    color: var(--yellow);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 16px 28px;
+    border: 3px solid var(--black);
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+
+  .btn-black:hover {
+    background: transparent;
+    color: var(--black);
+  }
+
+  .btn-red {
+    background: var(--red);
+    color: var(--white);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 16px 28px;
+    border: 3px solid var(--red);
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+
+  .btn-red:hover {
+    background: transparent;
+    color: var(--red);
+  }
+
+  .btn-cobalt {
+    background: var(--cobalt);
+    color: var(--white);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 16px 28px;
+    border: 3px solid var(--cobalt);
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+
+  .btn-cobalt:hover {
+    background: transparent;
+    color: var(--cobalt);
+  }
+
+  .btn-outline-black {
+    background: transparent;
+    color: var(--black);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 16px 28px;
+    border: 3px solid var(--black);
+    text-decoration: none;
+    display: inline-block;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+
+  .btn-outline-black:hover {
+    background: var(--black);
+    color: var(--yellow);
+  }
+
+  .hero-stats-bar {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border: 3px solid var(--black);
+    background: var(--black);
+  }
+
+  .hero-stat {
+    background: var(--white);
+    padding: 16px 20px;
+    border-right: 3px solid var(--black);
+    text-align: center;
+  }
+
+  .hero-stat:last-child { border-right: none; }
+
+  .hero-stat-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: var(--red);
+    display: block;
+    line-height: 1;
+  }
+
+  .hero-stat-label {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--gray2);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 4px;
+    display: block;
+  }
+
+  /* Hero Right — black panel with bike SVG */
+  .hero-right {
+    background: var(--black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    padding: 60px 40px 60px 80px;
+  }
+
+  /* Diagonal stripes background */
+  .hero-right::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 20px,
+      rgba(231,51,41,0.05) 20px,
+      rgba(231,51,41,0.05) 21px
+    );
+    pointer-events: none;
+  }
+
+  /* Large decorative letter */
+  .hero-right::after {
+    content: 'V';
+    position: absolute;
+    bottom: -40px;
+    right: -20px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18rem;
+    font-weight: 900;
+    color: rgba(247,209,23,0.04);
+    line-height: 1;
+    pointer-events: none;
+    letter-spacing: -0.05em;
+  }
+
+  .hero-bike-wrap {
+    width: 100%;
+    max-width: 480px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Marquee */
+  .marquee-section {
+    background: var(--black);
+    border-top: 4px solid var(--red);
+    border-bottom: 4px solid var(--red);
+    overflow: hidden;
+    padding: 14px 0;
+  }
+
+  .marquee-track {
+    display: flex;
+    gap: 0;
+    animation: marqueeScroll 25s linear infinite;
+    width: max-content;
+  }
+
+  @keyframes marqueeScroll {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  .marquee-item {
+    display: flex;
+    align-items: center;
+    padding: 0 32px;
+    white-space: nowrap;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    color: var(--white);
+    text-transform: uppercase;
+    border-right: 4px solid var(--red);
+    height: 32px;
+  }
+
+  .marquee-item.yellow { color: var(--yellow); }
+  .marquee-item.red { color: var(--red); }
+
+  /* Sections */
+  .section {
+    padding: 100px 80px;
+    position: relative;
+  }
+
+  .section-black { background: var(--black); }
+  .section-offwhite { background: var(--offwhite); }
+  .section-red { background: var(--red); }
+  .section-cobalt { background: var(--cobalt); }
+  .section-yellow { background: var(--yellow); }
+
+  .section-tag {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-tag::before { content: '//'; }
+  .section-tag.light { color: var(--yellow); }
+  .section-tag.light::before { color: var(--red); }
+
+  .section-title {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: clamp(2.5rem, 4vw, 4.5rem);
+    font-weight: 900;
+    color: var(--black);
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    line-height: 0.95;
+    margin-bottom: 20px;
+  }
+
+  .section-title.light { color: var(--white); }
+  .section-title.yellow-text { color: var(--yellow); }
+
+  .section-title span.outline {
+    -webkit-text-stroke: 3px currentColor;
+    color: transparent;
+  }
+
+  .section-title span.red { color: var(--red); }
+
+  .section-sub {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--gray2);
+    line-height: 1.7;
+    max-width: 560px;
+    margin-bottom: 60px;
+  }
+
+  .section-sub.light { color: rgba(248,248,245,0.65); }
+
+  /* Services / Spec Cards */
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    background: var(--black);
+    border: 3px solid var(--black);
+  }
+
+  .service-card {
+    background: var(--white);
+    padding: 32px 28px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.2s;
+  }
+
+  /* Data number watermark */
+  .service-card::before {
+    content: attr(data-num);
+    position: absolute;
+    bottom: -10px;
+    right: -5px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 6rem;
+    font-weight: 900;
+    color: rgba(0,0,0,0.04);
+    line-height: 1;
+    pointer-events: none;
+  }
+
+  .service-card:hover { background: var(--offwhite); }
+
+  .service-card-tag {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--red);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .service-card-tag::before {
+    content: '';
+    width: 20px;
+    height: 3px;
+    background: var(--red);
+  }
+
+  .service-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--black);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 12px;
+  }
+
+  .service-desc {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--gray2);
+    line-height: 1.65;
+    margin-bottom: 20px;
+  }
+
+  .spec-list {
+    list-style: none;
+    border-top: 1px solid var(--lightgray);
+    padding-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .spec-list li {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--gray2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .spec-list li::before {
+    content: '→';
+    color: var(--red);
+    font-weight: 700;
+  }
+
+  .service-price-tag {
+    display: inline-block;
+    background: var(--yellow);
+    color: var(--black);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border: 2px solid var(--black);
+  }
+
+  /* Why Us */
+  .why-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    background: var(--black);
+  }
+
+  .why-left {
+    background: var(--red);
+    padding: 60px 56px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative;
+  }
+
+  .why-big-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 9rem;
+    font-weight: 900;
+    color: var(--black);
+    line-height: 1;
+    display: block;
+    margin-bottom: 4px;
+    letter-spacing: -0.02em;
+  }
+
+  .why-big-label {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 900;
+    color: var(--yellow);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 20px;
+  }
+
+  .why-desc {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.82rem;
+    color: rgba(0,0,0,0.7);
+    line-height: 1.7;
+    max-width: 380px;
+    margin-bottom: 28px;
+  }
+
+  .why-right {
+    background: var(--black);
+    padding: 60px 56px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .why-feature {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--gray);
+  }
+
+  .why-feature:last-child { border-bottom: none; }
+
+  .why-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 3rem;
+    font-weight: 900;
+    color: var(--red);
+    opacity: 0.4;
+    line-height: 1;
+    flex-shrink: 0;
+    width: 40px;
+  }
+
+  .why-feature h4 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: var(--yellow);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+
+  .why-feature p {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.78rem;
+    color: rgba(248,248,245,0.55);
+    line-height: 1.6;
+  }
+
+  /* Custom Builds Showcase */
+  .builds-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    background: var(--black);
+    border: 3px solid var(--black);
+  }
+
+  .build-card {
+    position: relative;
+    overflow: hidden;
+    background: var(--offwhite);
+  }
+
+  .build-category {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--white);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    background: var(--cobalt);
+    padding: 8px 16px;
+    display: inline-block;
+  }
+
+  .build-visual {
+    padding: 32px 28px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 200px;
+    position: relative;
+    background: var(--black2);
+    overflow: hidden;
+  }
+
+  .build-visual::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 10px,
+      rgba(247,209,23,0.03) 10px,
+      rgba(247,209,23,0.03) 11px
+    );
+  }
+
+  .build-info {
+    padding: 24px 28px;
+  }
+
+  .build-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--black);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 8px;
+  }
+
+  .build-spec-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--lightgray);
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.72rem;
+  }
+
+  .build-spec-key { color: var(--gray2); }
+  .build-spec-val { color: var(--black); font-weight: 700; }
+
+  .build-price {
+    margin-top: 16px;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: var(--red);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .build-cta {
+    font-size: 0.75rem;
+    color: var(--cobalt);
+    cursor: pointer;
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 700;
+    transition: color 0.2s;
+  }
+
+  .build-cta:hover { color: var(--red); }
+
+  /* Process */
+  .process-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    background: var(--black);
+    border: 3px solid var(--black);
+  }
+
+  .process-cell {
+    background: var(--white);
+    padding: 36px 28px;
+    border-right: 3px solid var(--black);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .process-cell:last-child { border-right: none; }
+
+  .process-step-num {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 5rem;
+    font-weight: 900;
+    color: var(--yellow);
+    line-height: 1;
+    display: block;
+    -webkit-text-stroke: 3px var(--black);
+    color: var(--yellow);
+    margin-bottom: 20px;
+  }
+
+  .process-cell h4 {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: var(--black);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 10px;
+  }
+
+  .process-cell p {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--gray2);
+    line-height: 1.65;
+  }
+
+  /* Pricing */
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    background: var(--black);
+    border: 3px solid var(--black);
+  }
+
+  .pricing-card {
+    background: var(--white);
+    padding: 40px 32px;
+    border-right: 3px solid var(--black);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .pricing-card:last-child { border-right: none; }
+
+  .pricing-card.featured { background: var(--yellow); }
+
+  .pricing-tier {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .pricing-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 2rem;
+    font-weight: 900;
+    color: var(--black);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 8px;
+  }
+
+  .pricing-price {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 900;
+    color: var(--black);
+    line-height: 1;
+    margin-bottom: 4px;
+    display: block;
+  }
+
+  .pricing-freq {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--gray2);
+    letter-spacing: 0.08em;
+    display: block;
+    margin-bottom: 28px;
+  }
+
+  .pricing-features {
+    list-style: none;
+    margin-bottom: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .pricing-features li {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--black);
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.4;
+  }
+
+  .pricing-features li::before {
+    content: '✓';
+    color: var(--red);
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* Testimonials */
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    background: var(--black);
+    border: 3px solid var(--black);
+  }
+
+  .testimonial-card {
+    background: var(--offwhite);
+    padding: 32px 28px;
+    position: relative;
+  }
+
+  .t-rating {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 900;
+    color: var(--yellow);
+    margin-bottom: 16px;
+    display: flex;
+    gap: 2px;
+  }
+
+  .t-text {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--gray);
+    line-height: 1.7;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--black);
+  }
+
+  .t-author {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .t-avatar {
+    width: 40px;
+    height: 40px;
+    background: var(--red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem;
+    font-weight: 900;
+    color: var(--white);
+    flex-shrink: 0;
+  }
+
+  .t-name {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem;
+    font-weight: 900;
+    color: var(--black);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    display: block;
+  }
+
+  .t-type {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--gray2);
+    display: block;
+    margin-top: 2px;
+  }
+
+  /* FAQ */
+  .faq-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    background: var(--black);
+    border: 3px solid var(--black);
+  }
+
+  .faq-item {
+    background: var(--white);
+    border-bottom: 3px solid var(--black);
+    border-right: 3px solid var(--black);
+  }
+
+  .faq-item:nth-child(even) { border-right: none; }
+  .faq-item:nth-last-child(1), .faq-item:nth-last-child(2) { border-bottom: none; }
+
+  .faq-q {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 22px 24px;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    transition: background 0.2s;
+  }
+
+  .faq-q:hover { background: var(--offwhite); }
+
+  .faq-q span {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 900;
+    color: var(--black);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    text-align: left;
+    line-height: 1.2;
+  }
+
+  .faq-toggle-btn {
+    width: 28px;
+    height: 28px;
+    background: var(--black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: var(--yellow);
+    transition: all 0.2s;
+  }
+
+  .faq-item.open .faq-toggle-btn {
+    background: var(--red);
+    color: var(--white);
+  }
+
+  .faq-a {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    padding: 0 24px;
+    background: var(--offwhite);
+  }
+
+  .faq-a.open {
+    max-height: 200px;
+    padding: 0 24px 20px;
+  }
+
+  .faq-a p {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--gray2);
+    line-height: 1.7;
+    padding-top: 16px;
+    border-top: 1px solid var(--lightgray);
+  }
+
+  /* Areas */
+  .areas-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 3px;
+    background: var(--black);
+    border: 3px solid var(--black);
+  }
+
+  .area-cell {
+    background: var(--white);
+    padding: 16px 14px;
+    text-align: center;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--black);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+    transition: background 0.2s, color 0.2s;
+    cursor: default;
+  }
+
+  .area-cell:hover {
+    background: var(--red);
+    color: var(--white);
+  }
+
+  /* Contact */
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 0;
+    background: var(--black);
+    border: 3px solid var(--black);
+  }
+
+  .contact-info-panel {
+    background: var(--black);
+    padding: 56px 48px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .contact-info-row {
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+    padding-bottom: 28px;
+    border-bottom: 1px solid var(--gray);
+  }
+
+  .contact-info-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+  .contact-icon-box {
+    width: 40px;
+    height: 40px;
+    background: var(--red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .contact-icon-box svg { width: 18px; height: 18px; }
+
+  .contact-info-lbl {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.62rem;
+    color: var(--gray2);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .contact-info-val {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--white);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .contact-form-panel {
+    background: var(--white);
+    padding: 56px 48px;
+  }
+
+  .form-group { margin-bottom: 18px; }
+
+  .form-label {
+    display: block;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--gray2);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 7px;
+  }
+
+  .form-control {
+    width: 100%;
+    background: var(--offwhite);
+    border: 2px solid var(--lightgray);
+    border-radius: 0;
+    padding: 12px 16px;
+    color: var(--black);
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.82rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .form-control:focus { border-color: var(--red); }
+  .form-control::placeholder { color: var(--gray2); }
+  select.form-control option { background: var(--white); }
+  textarea.form-control { resize: vertical; min-height: 100px; }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+
+  .form-submit {
+    width: 100%;
+    padding: 16px;
+    background: var(--black);
+    color: var(--yellow);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: 3px solid var(--black);
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+  }
+
+  .form-submit:hover {
+    background: var(--red);
+    border-color: var(--red);
+    color: var(--white);
+  }
+
+  /* CTA */
+  .cta-section {
+    background: var(--yellow);
+    padding: 80px;
+    text-align: center;
+    position: relative;
+    border-top: 4px solid var(--black);
+    border-bottom: 4px solid var(--black);
+    overflow: hidden;
+  }
+
+  .cta-section::before {
+    content: 'RIDE';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 18rem;
+    font-weight: 900;
+    color: rgba(0,0,0,0.04);
+    white-space: nowrap;
+    letter-spacing: -0.02em;
+    pointer-events: none;
+  }
+
+  .cta-section .section-tag { justify-content: center; }
+
+  .cta-section .section-title { text-align: center; }
+
+  .cta-sub {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--black2);
+    margin-bottom: 36px;
+    line-height: 1.7;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cta-ctas {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Footer */
+  footer {
+    background: var(--black);
+    padding: 60px 80px 36px;
+    border-top: 4px solid var(--red);
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    gap: 60px;
+    margin-bottom: 48px;
+  }
+
+  .footer-brand-desc {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.78rem;
+    color: rgba(248,248,245,0.45);
+    line-height: 1.7;
+    margin-top: 16px;
+    margin-bottom: 16px;
+  }
+
+  .footer-license {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.65rem;
+    color: rgba(248,248,245,0.2);
+    letter-spacing: 0.06em;
+  }
+
+  .footer-heading {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 1rem;
+    font-weight: 900;
+    color: var(--yellow);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 18px;
+  }
+
+  .footer-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .footer-links a {
+    color: rgba(248,248,245,0.45);
+    text-decoration: none;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.78rem;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--red); }
+
+  .footer-bottom {
+    border-top: 1px solid var(--gray);
+    padding-top: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+
+  .footer-copy {
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.72rem;
+    color: rgba(248,248,245,0.25);
+  }
+
+  .webnari-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(248,248,245,0.04);
+    border: 1px solid var(--gray);
+    padding: 7px 16px;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 0.68rem;
+    color: rgba(248,248,245,0.35);
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .webnari-badge:hover {
+    border-color: var(--red);
+    color: var(--red);
+  }
+
+  .webnari-badge span { color: var(--yellow); font-weight: 700; }
+
+  /* Reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .hero { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+    .services-grid { grid-template-columns: 1fr 1fr; }
+    .builds-grid { grid-template-columns: 1fr; }
+    .why-grid { grid-template-columns: 1fr; }
+    .process-strip { grid-template-columns: 1fr 1fr; }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .faq-grid { grid-template-columns: 1fr; }
+    .areas-grid { grid-template-columns: repeat(4, 1fr); }
+    .contact-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .section { padding: 80px 48px; }
+    .cta-section { padding: 60px 48px; }
+    footer { padding: 60px 48px 36px; }
+    nav { padding: 0 24px; }
+  }
+
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .hero-left { padding: 60px 24px; }
+    .services-grid { grid-template-columns: 1fr; }
+    .process-strip { grid-template-columns: 1fr; }
+    .areas-grid { grid-template-columns: repeat(3, 1fr); }
+    .footer-grid { grid-template-columns: 1fr; gap: 36px; }
+    .form-row { grid-template-columns: 1fr; }
+    .faq-grid { grid-template-columns: 1fr; }
+    .faq-item:nth-child(even) { border-right: 3px solid var(--black); }
+    .faq-item { border-bottom: 3px solid var(--black) !important; }
+    .faq-item:last-child { border-bottom: none !important; }
+    .section { padding: 60px 24px; }
+    .cta-section { padding: 60px 24px; }
+    footer { padding: 60px 24px 36px; }
+    nav { padding: 0 20px; }
+    .footer-bottom { flex-direction: column; text-align: center; }
+    .contact-info-panel { padding: 36px 28px; }
+    .contact-form-panel { padding: 36px 28px; }
+    .hero-stats-bar { grid-template-columns: 1fr; gap: 0; }
+    .hero-stat { border-right: none; border-bottom: 3px solid var(--black); }
+    .hero-stat:last-child { border-bottom: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Alert Bar -->
+<div class="alert-bar">
+  Same-week repair turnaround available — <strong>Drop off Mon–Sat</strong> &bull; Call <a href="tel:7865551200">(786) 555-1200</a>
+</div>
+
+<!-- Nav -->
+<nav id="navbar">
+  <a href="veloforge.html" class="nav-logo" aria-label="VeloForge Home">
+    <div class="logo-hex">
+      <svg viewBox="0 0 20 20" fill="white"><path d="M10 2a8 8 0 100 16A8 8 0 0010 2zm0 2a6 6 0 110 12A6 6 0 0110 4zm0 2a4 4 0 100 8 4 4 0 000-8z"/></svg>
+    </div>
+    <span class="logo-text">Velo<span>Forge</span></span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#builds">Custom Builds</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#contact" class="nav-cta">Book a Build</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="mobileClose" aria-label="Close">&#x2715;</button>
+  <a href="#services">Services</a>
+  <a href="#builds">Custom Builds</a>
+  <a href="#why">Why VeloForge</a>
+  <a href="#process">Process</a>
+  <a href="#pricing">Pricing</a>
+  <a href="#contact">Book a Build</a>
+</div>
+
+<!-- Hero -->
+<section class="hero" id="home">
+  <div class="hero-left">
+    <div class="hero-label">Miami's Custom Bicycle Workshop</div>
+    <h1 class="hero-headline">
+      YOUR<br>
+      <span class="outline">PERFECT</span><br>
+      <span class="red-word">RIDE.</span><br>
+      FORGED.
+    </h1>
+    <p class="hero-desc">Custom bicycle builds, precision fitting, and expert repair for road, gravel, MTB, and urban riders across South Florida. Every component. Every weld. Every detail.</p>
+    <div class="hero-ctas">
+      <a href="#contact" class="btn-black">Book Build Consultation</a>
+      <a href="#services" class="btn-outline-black">View Services</a>
+    </div>
+    <div class="hero-stats-bar">
+      <div class="hero-stat">
+        <span class="hero-stat-num">350+</span>
+        <span class="hero-stat-label">Custom Builds</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">12yr</span>
+        <span class="hero-stat-label">In Miami</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">100%</span>
+        <span class="hero-stat-label">Hand Built</span>
+      </div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-bike-wrap">
+      <!-- Detailed SVG Bicycle Illustration -->
+      <svg viewBox="0 0 500 320" xmlns="http://www.w3.org/2000/svg" width="100%">
+        <defs>
+          <radialGradient id="wheelGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" style="stop-color:#E63329;stop-opacity:0.15"/>
+            <stop offset="100%" style="stop-color:#E63329;stop-opacity:0"/>
+          </radialGradient>
+        </defs>
+        <!-- Rear wheel glow -->
+        <circle cx="110" cy="200" r="90" fill="url(#wheelGlow)"/>
+        <!-- Front wheel glow -->
+        <circle cx="390" cy="200" r="90" fill="url(#wheelGlow)"/>
+
+        <!-- Rear Wheel -->
+        <circle cx="110" cy="200" r="88" fill="none" stroke="rgba(248,248,245,0.1)" stroke-width="2"/>
+        <circle cx="110" cy="200" r="88" fill="none" stroke="#E63329" stroke-width="3" stroke-dasharray="6 4"/>
+        <circle cx="110" cy="200" r="18" fill="none" stroke="rgba(248,248,245,0.4)" stroke-width="2"/>
+        <!-- Rear spokes -->
+        <line x1="110" y1="112" x2="110" y2="182" stroke="rgba(248,248,245,0.25)" stroke-width="1.5"/>
+        <line x1="110" y1="218" x2="110" y2="288" stroke="rgba(248,248,245,0.25)" stroke-width="1.5"/>
+        <line x1="22" y1="200" x2="92" y2="200" stroke="rgba(248,248,245,0.25)" stroke-width="1.5"/>
+        <line x1="128" y1="200" x2="198" y2="200" stroke="rgba(248,248,245,0.25)" stroke-width="1.5"/>
+        <line x1="48" y1="138" x2="97" y2="187" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+        <line x1="123" y1="213" x2="172" y2="262" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+        <line x1="172" y1="138" x2="123" y2="187" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+        <line x1="97" y1="213" x2="48" y2="262" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+
+        <!-- Front Wheel -->
+        <circle cx="390" cy="200" r="88" fill="none" stroke="rgba(248,248,245,0.1)" stroke-width="2"/>
+        <circle cx="390" cy="200" r="88" fill="none" stroke="#F7D117" stroke-width="3" stroke-dasharray="6 4"/>
+        <circle cx="390" cy="200" r="18" fill="none" stroke="rgba(248,248,245,0.4)" stroke-width="2"/>
+        <!-- Front spokes -->
+        <line x1="390" y1="112" x2="390" y2="182" stroke="rgba(248,248,245,0.25)" stroke-width="1.5"/>
+        <line x1="390" y1="218" x2="390" y2="288" stroke="rgba(248,248,245,0.25)" stroke-width="1.5"/>
+        <line x1="302" y1="200" x2="372" y2="200" stroke="rgba(248,248,245,0.25)" stroke-width="1.5"/>
+        <line x1="408" y1="200" x2="478" y2="200" stroke="rgba(248,248,245,0.25)" stroke-width="1.5"/>
+        <line x1="328" y1="138" x2="377" y2="187" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+        <line x1="403" y1="213" x2="452" y2="262" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+        <line x1="452" y1="138" x2="403" y2="187" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+        <line x1="377" y1="213" x2="328" y2="262" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+
+        <!-- Frame: Chain stay -->
+        <line x1="110" y1="200" x2="250" y2="170" stroke="#E63329" stroke-width="4" stroke-linecap="round"/>
+        <!-- Seat stay -->
+        <line x1="110" y1="200" x2="235" y2="110" stroke="#E63329" stroke-width="3" stroke-linecap="round"/>
+        <!-- Seat tube -->
+        <line x1="250" y1="170" x2="235" y2="110" stroke="#E63329" stroke-width="4.5" stroke-linecap="round"/>
+        <!-- Down tube -->
+        <line x1="235" y1="110" x2="390" y2="180" stroke="#E63329" stroke-width="5" stroke-linecap="round"/>
+        <!-- Top tube -->
+        <line x1="235" y1="110" x2="355" y2="110" stroke="#E63329" stroke-width="4" stroke-linecap="round"/>
+        <!-- Fork -->
+        <line x1="355" y1="110" x2="390" y2="200" stroke="#F7D117" stroke-width="4" stroke-linecap="round"/>
+        <line x1="365" y1="120" x2="390" y2="200" stroke="#F7D117" stroke-width="3.5" stroke-linecap="round"/>
+        <!-- Head tube -->
+        <line x1="355" y1="110" x2="370" y2="135" stroke="rgba(248,248,245,0.6)" stroke-width="6" stroke-linecap="round"/>
+
+        <!-- Bottom bracket -->
+        <circle cx="250" cy="170" r="12" fill="none" stroke="#F7D117" stroke-width="3"/>
+        <circle cx="250" cy="170" r="5" fill="#F7D117"/>
+
+        <!-- Crank + chainring -->
+        <circle cx="250" cy="170" r="30" fill="none" stroke="rgba(248,248,245,0.2)" stroke-width="1.5" stroke-dasharray="4 3"/>
+        <line x1="250" y1="170" x2="278" y2="158" stroke="rgba(248,248,245,0.5)" stroke-width="3" stroke-linecap="round"/>
+        <line x1="250" y1="170" x2="222" y2="182" stroke="rgba(248,248,245,0.5)" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="280" cy="156" r="5" fill="#E63329"/>
+        <circle cx="220" cy="184" r="5" fill="#E63329"/>
+
+        <!-- Chain (simplified) -->
+        <path d="M280 160 Q330 165 340 180 Q355 195 360 195 Q150 195 150 195 Q130 195 110 200" fill="none" stroke="rgba(248,248,245,0.2)" stroke-width="2" stroke-dasharray="3 2"/>
+
+        <!-- Rear cassette -->
+        <circle cx="110" cy="200" r="22" fill="none" stroke="rgba(248,248,245,0.3)" stroke-width="2"/>
+        <circle cx="110" cy="200" r="28" fill="none" stroke="rgba(248,248,245,0.15)" stroke-width="1.5"/>
+
+        <!-- Saddle -->
+        <path d="M220 90 Q235 84 252 88 Q268 86 260 94 Q247 98 235 97 Q220 98 220 90Z" fill="rgba(248,248,245,0.3)" stroke="rgba(248,248,245,0.5)" stroke-width="1.5"/>
+        <line x1="236" y1="97" x2="235" y2="110" stroke="rgba(248,248,245,0.5)" stroke-width="2.5"/>
+
+        <!-- Handlebar -->
+        <line x1="355" y1="110" x2="355" y2="90" stroke="rgba(248,248,245,0.6)" stroke-width="3.5" stroke-linecap="round"/>
+        <path d="M340 88 Q355 82 370 88 Q375 95 370 100 Q365 92 355 90 Q345 92 340 100 Q335 95 340 88Z" fill="none" stroke="rgba(248,248,245,0.6)" stroke-width="2.5"/>
+
+        <!-- Brand text on frame -->
+        <text x="290" y="152" font-family="'Barlow Condensed', sans-serif" font-size="11" font-weight="900" fill="rgba(248,248,245,0.15)" letter-spacing="3" transform="rotate(-12, 290, 152)">VELOFORGE</text>
+
+        <!-- VF Logo on chainring -->
+        <text x="243" y="173" font-family="'Barlow Condensed', sans-serif" font-size="10" font-weight="900" fill="rgba(248,248,245,0.5)" letter-spacing="1">VF</text>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- Marquee -->
+<div class="marquee-section">
+  <div class="marquee-track" aria-hidden="true">
+    <span class="marquee-item">Custom Road Builds</span>
+    <span class="marquee-item yellow">Gravel Rigs</span>
+    <span class="marquee-item">MTB Builds</span>
+    <span class="marquee-item red">Expert Repair</span>
+    <span class="marquee-item">Precision Fitting</span>
+    <span class="marquee-item yellow">Component Upgrades</span>
+    <span class="marquee-item">Wheel Building</span>
+    <span class="marquee-item red">Custom Paint</span>
+    <span class="marquee-item">Custom Road Builds</span>
+    <span class="marquee-item yellow">Gravel Rigs</span>
+    <span class="marquee-item">MTB Builds</span>
+    <span class="marquee-item red">Expert Repair</span>
+    <span class="marquee-item">Precision Fitting</span>
+    <span class="marquee-item yellow">Component Upgrades</span>
+    <span class="marquee-item">Wheel Building</span>
+    <span class="marquee-item red">Custom Paint</span>
+  </div>
+</div>
+
+<!-- Services -->
+<section class="section section-offwhite" id="services">
+  <div class="section-tag">// Services</div>
+  <h2 class="section-title reveal">WHAT WE<br><span class="outline">BUILD</span> &amp; <span class="red">FIX</span></h2>
+  <p class="section-sub reveal reveal-delay-1">Every service at VeloForge starts with listening. We work with your goals, your budget, and your riding style to deliver results you'll feel on every ride.</p>
+
+  <div class="services-grid reveal">
+    <div class="service-card" data-num="01">
+      <div class="service-card-tag">01 / Custom Build</div>
+      <h3 class="service-name">Custom Road Builds</h3>
+      <p class="service-desc">Full custom road bike builds from frame to first ride. You choose frame, groupset, wheels, bars, and finishing kit. We build it perfectly.</p>
+      <ul class="spec-list">
+        <li>Frame & fork selection support</li>
+        <li>Shimano / SRAM / Campagnolo</li>
+        <li>Electronic or mechanical groupsets</li>
+        <li>Cable routing &amp; bar tape finishing</li>
+      </ul>
+      <span class="service-price-tag">From $450 Labor</span>
+    </div>
+    <div class="service-card" data-num="02">
+      <div class="service-card-tag">02 / Custom Build</div>
+      <h3 class="service-name">Gravel & Adventure Builds</h3>
+      <p class="service-desc">Purpose-built gravel rigs designed for Florida's trails and beyond. Wide clearances, dropper posts, mixed-terrain setups with bikepacking mounts.</p>
+      <ul class="spec-list">
+        <li>Tire clearance optimization</li>
+        <li>1x and 2x drivetrain builds</li>
+        <li>Bikepacking rack &amp; bag integration</li>
+        <li>Dynamo hub &amp; lighting installs</li>
+      </ul>
+      <span class="service-price-tag">From $400 Labor</span>
+    </div>
+    <div class="service-card" data-num="03">
+      <div class="service-card-tag">03 / Repair</div>
+      <h3 class="service-name">Expert Bike Repair</h3>
+      <p class="service-desc">Full-service repair shop. Shifting, braking, bearing overhauls, crash damage — anything mechanical or electronic, we diagnose and fix it right.</p>
+      <ul class="spec-list">
+        <li>Shimano Di2 &amp; SRAM eTap</li>
+        <li>Hydraulic brake bleeding</li>
+        <li>Bottom bracket &amp; bearing service</li>
+        <li>Same-week turnaround</li>
+      </ul>
+      <span class="service-price-tag">From $65</span>
+    </div>
+    <div class="service-card" data-num="04">
+      <div class="service-card-tag">04 / Fitting</div>
+      <h3 class="service-name">Professional Bike Fitting</h3>
+      <p class="service-desc">Two-hour precision fitting using 3D motion capture and Retül technology. Eliminate pain, improve power output, and ride longer comfortably.</p>
+      <ul class="spec-list">
+        <li>Saddle height, fore-aft, tilt</li>
+        <li>Cleat alignment &amp; float</li>
+        <li>Stem length &amp; handlebar width</li>
+        <li>Full fit report provided</li>
+      </ul>
+      <span class="service-price-tag">$220</span>
+    </div>
+    <div class="service-card" data-num="05">
+      <div class="service-card-tag">05 / Upgrade</div>
+      <h3 class="service-name">Component Upgrades</h3>
+      <p class="service-desc">Upgrade your drivetrain, wheels, brakes, or handlebars. We help you choose the best components for your riding style and budget, then install them perfectly.</p>
+      <ul class="spec-list">
+        <li>Wheelset swaps &amp; wheel builds</li>
+        <li>Groupset upgrades &amp; swaps</li>
+        <li>Cockpit upgrades &amp; cable routing</li>
+        <li>Power meter installation</li>
+      </ul>
+      <span class="service-price-tag">From $85 Labor</span>
+    </div>
+    <div class="service-card" data-num="06">
+      <div class="service-card-tag">06 / Maintenance</div>
+      <h3 class="service-name">Tune-Up & Overhaul</h3>
+      <p class="service-desc">Full service tune-up: drivetrain clean &amp; lube, brake adjustment, cable tension, bearing check, and full safety inspection. Your bike, restored.</p>
+      <ul class="spec-list">
+        <li>Drivetrain degreasing &amp; lube</li>
+        <li>Brake &amp; derailleur adjustment</li>
+        <li>Safety &amp; bearing inspection</li>
+        <li>Tire &amp; pressure check</li>
+      </ul>
+      <span class="service-price-tag">From $95</span>
+    </div>
+  </div>
+</section>
+
+<!-- Why Us -->
+<section class="section" id="why">
+  <div class="why-grid">
+    <div class="why-left">
+      <div class="section-tag light">// Why VeloForge</div>
+      <span class="why-big-num">350+</span>
+      <div class="why-big-label">Custom Builds Completed</div>
+      <p class="why-desc">Over a decade building custom bikes in Miami. Every build is a collaboration — your vision, our precision. From sub-16lb race rigs to tank-tough trail bikes.</p>
+      <a href="#contact" class="btn-black">Start Your Build</a>
+    </div>
+    <div class="why-right">
+      <div class="why-feature">
+        <span class="why-num">01</span>
+        <div>
+          <h4>Master Mechanics, Not Just Technicians</h4>
+          <p>Our builders are cyclists first. Every mechanic at VeloForge has thousands of hours of riding and racing experience — we build bikes we'd ride ourselves.</p>
+        </div>
+      </div>
+      <div class="why-feature">
+        <span class="why-num">02</span>
+        <div>
+          <h4>No Shortcuts, No Compromises</h4>
+          <p>We use proper workshop tools — Park Tool, Silca, Shimano TL series — and follow manufacturer torque specs on every fastener. Your build is done right.</p>
+        </div>
+      </div>
+      <div class="why-feature">
+        <span class="why-num">03</span>
+        <div>
+          <h4>Transparent Pricing & Timelines</h4>
+          <p>Upfront quotes before any work begins. No hidden fees. We give you a realistic timeline and stick to it — with daily updates on build progress.</p>
+        </div>
+      </div>
+      <div class="why-feature">
+        <span class="why-num">04</span>
+        <div>
+          <h4>Component Sourcing Partnership</h4>
+          <p>Dealer relationships with Specialized, Trek, SRAM, Shimano, and Campagnolo. We can source components often faster and at better prices than retail.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Custom Builds Showcase -->
+<section class="section section-offwhite" id="builds">
+  <div class="section-tag">// Custom Builds</div>
+  <h2 class="section-title reveal">RECENT<br><span class="red">BUILD</span> LOG</h2>
+  <p class="section-sub reveal reveal-delay-1">Three recent builds from the VeloForge workshop — each one uniquely spec'd and hand built to the rider's exact requirements.</p>
+  <div class="builds-grid reveal">
+    <div class="build-card">
+      <span class="build-category">Road / Race</span>
+      <div class="build-visual">
+        <!-- Inline Road Bike SVG -->
+        <svg viewBox="0 0 300 180" width="85%">
+          <circle cx="65" cy="125" r="50" fill="none" stroke="#E63329" stroke-width="2.5"/>
+          <circle cx="235" cy="125" r="50" fill="none" stroke="#E63329" stroke-width="2.5"/>
+          <circle cx="65" cy="125" r="12" fill="none" stroke="rgba(248,248,245,0.4)" stroke-width="2"/>
+          <circle cx="235" cy="125" r="12" fill="none" stroke="rgba(248,248,245,0.4)" stroke-width="2"/>
+          <line x1="65" y1="75" x2="65" y2="113" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+          <line x1="65" y1="137" x2="65" y2="175" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+          <line x1="15" y1="125" x2="53" y2="125" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+          <line x1="77" y1="125" x2="115" y2="125" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+          <line x1="235" y1="75" x2="235" y2="113" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+          <line x1="235" y1="137" x2="235" y2="175" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+          <line x1="185" y1="125" x2="223" y2="125" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+          <line x1="247" y1="125" x2="285" y2="125" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+          <!-- Frame -->
+          <line x1="65" y1="125" x2="148" y2="108" stroke="#E63329" stroke-width="3" stroke-linecap="round"/>
+          <line x1="65" y1="125" x2="138" y2="72" stroke="#E63329" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="148" y1="108" x2="138" y2="72" stroke="#E63329" stroke-width="3.5" stroke-linecap="round"/>
+          <line x1="138" y1="72" x2="235" y2="115" stroke="#F7D117" stroke-width="4" stroke-linecap="round"/>
+          <line x1="138" y1="72" x2="215" y2="72" stroke="#E63329" stroke-width="3" stroke-linecap="round"/>
+          <line x1="215" y1="72" x2="235" y2="125" stroke="#F7D117" stroke-width="3" stroke-linecap="round"/>
+          <line x1="215" y1="72" x2="222" y2="85" stroke="rgba(248,248,245,0.5)" stroke-width="4" stroke-linecap="round"/>
+          <line x1="215" y1="72" x2="215" y2="56" stroke="rgba(248,248,245,0.5)" stroke-width="3" stroke-linecap="round"/>
+          <path d="M204 54 Q215 50 226 54 Q219 62 215 60 Q211 62 204 54Z" fill="rgba(248,248,245,0.3)"/>
+          <line x1="138" y1="72" x2="136" y2="56" stroke="rgba(248,248,245,0.4)" stroke-width="2.5"/>
+          <path d="M126 50 Q137 46 148 50 Q148 58 136 56 Q136 56 126 50Z" fill="rgba(248,248,245,0.2)"/>
+          <circle cx="148" cy="108" r="10" fill="none" stroke="#F7D117" stroke-width="2.5"/>
+        </svg>
+      </div>
+      <div class="build-info">
+        <div class="build-name">Project Crimson</div>
+        <div class="build-spec-row">
+          <span class="build-spec-key">Frame</span>
+          <span class="build-spec-val">Colnago V4Rs 54cm</span>
+        </div>
+        <div class="build-spec-row">
+          <span class="build-spec-key">Groupset</span>
+          <span class="build-spec-val">SRAM RED eTap AXS</span>
+        </div>
+        <div class="build-spec-row">
+          <span class="build-spec-key">Wheels</span>
+          <span class="build-spec-val">Zipp 404 Firecrest</span>
+        </div>
+        <div class="build-spec-row">
+          <span class="build-spec-key">Weight</span>
+          <span class="build-spec-val">7.2 kg</span>
+        </div>
+        <div class="build-price">
+          $14,850
+          <a href="#contact" class="build-cta">Build Yours →</a>
+        </div>
+      </div>
+    </div>
+    <div class="build-card">
+      <span class="build-category">Gravel / Adventure</span>
+      <div class="build-visual">
+        <svg viewBox="0 0 300 180" width="85%">
+          <circle cx="65" cy="125" r="50" fill="none" stroke="#F7D117" stroke-width="2.5"/>
+          <circle cx="235" cy="125" r="50" fill="none" stroke="#F7D117" stroke-width="2.5"/>
+          <circle cx="65" cy="125" r="12" fill="none" stroke="rgba(248,248,245,0.4)" stroke-width="2"/>
+          <circle cx="235" cy="125" r="12" fill="none" stroke="rgba(248,248,245,0.4)" stroke-width="2"/>
+          <line x1="65" y1="75" x2="65" y2="113" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+          <line x1="65" y1="137" x2="65" y2="175" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+          <line x1="15" y1="125" x2="53" y2="125" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+          <line x1="77" y1="125" x2="115" y2="125" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+          <line x1="235" y1="75" x2="235" y2="113" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+          <line x1="235" y1="137" x2="235" y2="175" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+          <line x1="185" y1="125" x2="223" y2="125" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+          <line x1="247" y1="125" x2="285" y2="125" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+          <line x1="65" y1="125" x2="148" y2="108" stroke="#1B4FD8" stroke-width="3.5" stroke-linecap="round"/>
+          <line x1="65" y1="125" x2="138" y2="72" stroke="#1B4FD8" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="148" y1="108" x2="138" y2="72" stroke="#1B4FD8" stroke-width="4" stroke-linecap="round"/>
+          <line x1="138" y1="72" x2="235" y2="115" stroke="#F7D117" stroke-width="4.5" stroke-linecap="round"/>
+          <line x1="138" y1="72" x2="215" y2="72" stroke="#1B4FD8" stroke-width="3.5" stroke-linecap="round"/>
+          <line x1="215" y1="72" x2="235" y2="125" stroke="#F7D117" stroke-width="3.5" stroke-linecap="round"/>
+          <line x1="215" y1="72" x2="222" y2="85" stroke="rgba(248,248,245,0.5)" stroke-width="4.5" stroke-linecap="round"/>
+          <line x1="215" y1="72" x2="215" y2="56" stroke="rgba(248,248,245,0.5)" stroke-width="3.5" stroke-linecap="round"/>
+          <path d="M204 54 Q215 50 226 54 Q219 62 215 60 Q211 62 204 54Z" fill="rgba(248,248,245,0.3)"/>
+          <line x1="138" y1="72" x2="136" y2="56" stroke="rgba(248,248,245,0.4)" stroke-width="2.5"/>
+          <path d="M126 50 Q137 46 148 50 Q148 58 136 56 Q136 56 126 50Z" fill="rgba(248,248,245,0.2)"/>
+          <circle cx="148" cy="108" r="10" fill="none" stroke="#F7D117" stroke-width="2.5"/>
+          <!-- Rack mounts indicator -->
+          <rect x="90" y="68" width="30" height="6" fill="rgba(248,248,245,0.2)" stroke="rgba(248,248,245,0.3)" stroke-width="1"/>
+        </svg>
+      </div>
+      <div class="build-info">
+        <div class="build-name">Project Ultrax</div>
+        <div class="build-spec-row">
+          <span class="build-spec-key">Frame</span>
+          <span class="build-spec-val">Allied Able 54cm</span>
+        </div>
+        <div class="build-spec-row">
+          <span class="build-spec-key">Groupset</span>
+          <span class="build-spec-val">SRAM Force AXS 1x</span>
+        </div>
+        <div class="build-spec-row">
+          <span class="build-spec-key">Tires</span>
+          <span class="build-spec-val">Panaracer Gravelking 40c</span>
+        </div>
+        <div class="build-spec-row">
+          <span class="build-spec-key">Features</span>
+          <span class="build-spec-val">Full bikepacking mounts</span>
+        </div>
+        <div class="build-price">
+          $9,200
+          <a href="#contact" class="build-cta">Build Yours →</a>
+        </div>
+      </div>
+    </div>
+    <div class="build-card">
+      <span class="build-category" style="background:var(--black);">Urban / Commuter</span>
+      <div class="build-visual">
+        <svg viewBox="0 0 300 180" width="85%">
+          <circle cx="65" cy="125" r="50" fill="none" stroke="rgba(248,248,245,0.4)" stroke-width="2.5"/>
+          <circle cx="235" cy="125" r="50" fill="none" stroke="rgba(248,248,245,0.4)" stroke-width="2.5"/>
+          <circle cx="65" cy="125" r="12" fill="none" stroke="rgba(248,248,245,0.4)" stroke-width="2"/>
+          <circle cx="235" cy="125" r="12" fill="none" stroke="rgba(248,248,245,0.4)" stroke-width="2"/>
+          <line x1="65" y1="75" x2="65" y2="113" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+          <line x1="65" y1="137" x2="65" y2="175" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+          <line x1="15" y1="125" x2="53" y2="125" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+          <line x1="77" y1="125" x2="115" y2="125" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+          <line x1="235" y1="75" x2="235" y2="113" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+          <line x1="235" y1="137" x2="235" y2="175" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+          <line x1="185" y1="125" x2="223" y2="125" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+          <line x1="247" y1="125" x2="285" y2="125" stroke="rgba(248,248,245,0.2)" stroke-width="1.5"/>
+          <line x1="65" y1="125" x2="148" y2="105" stroke="rgba(248,248,245,0.6)" stroke-width="3.5" stroke-linecap="round"/>
+          <line x1="65" y1="125" x2="140" y2="65" stroke="rgba(248,248,245,0.6)" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="148" y1="105" x2="140" y2="65" stroke="rgba(248,248,245,0.7)" stroke-width="4" stroke-linecap="round"/>
+          <line x1="140" y1="65" x2="235" y2="115" stroke="#E63329" stroke-width="5" stroke-linecap="round"/>
+          <line x1="140" y1="65" x2="215" y2="68" stroke="rgba(248,248,245,0.7)" stroke-width="3.5" stroke-linecap="round"/>
+          <line x1="215" y1="68" x2="235" y2="125" stroke="#E63329" stroke-width="4" stroke-linecap="round"/>
+          <line x1="215" y1="68" x2="222" y2="85" stroke="rgba(248,248,245,0.5)" stroke-width="4.5" stroke-linecap="round"/>
+          <line x1="215" y1="68" x2="215" y2="50" stroke="rgba(248,248,245,0.6)" stroke-width="3.5" stroke-linecap="round"/>
+          <line x1="200" y1="48" x2="230" y2="48" stroke="rgba(248,248,245,0.6)" stroke-width="4" stroke-linecap="round"/>
+          <line x1="140" y1="65" x2="138" y2="49" stroke="rgba(248,248,245,0.4)" stroke-width="2.5"/>
+          <path d="M125 45 Q138 40 152 45 Q152 53 138 51 Q138 51 125 45Z" fill="rgba(248,248,245,0.25)"/>
+          <circle cx="148" cy="105" r="10" fill="none" stroke="#E63329" stroke-width="2.5"/>
+        </svg>
+      </div>
+      <div class="build-info">
+        <div class="build-name">Project Brickell</div>
+        <div class="build-spec-row">
+          <span class="build-spec-key">Frame</span>
+          <span class="build-spec-val">Surly Straggler 52cm</span>
+        </div>
+        <div class="build-spec-row">
+          <span class="build-spec-key">Drivetrain</span>
+          <span class="build-spec-val">Shimano GRX 1x11</span>
+        </div>
+        <div class="build-spec-row">
+          <span class="build-spec-key">Brakes</span>
+          <span class="build-spec-val">Hydraulic discs</span>
+        </div>
+        <div class="build-spec-row">
+          <span class="build-spec-key">Features</span>
+          <span class="build-spec-val">Fenders + rear rack</span>
+        </div>
+        <div class="build-price">
+          $3,850
+          <a href="#contact" class="build-cta">Build Yours →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Process -->
+<section class="section" id="process">
+  <div class="section-tag">// Build Process</div>
+  <h2 class="section-title reveal">FROM<br>IDEA TO <span class="red">RIDE</span></h2>
+  <p class="section-sub reveal reveal-delay-1">A structured build process that keeps you informed and in control from first conversation to first pedal stroke.</p>
+  <div class="process-strip reveal">
+    <div class="process-cell">
+      <span class="process-step-num">01</span>
+      <h4>Consultation</h4>
+      <p>Tell us about your riding style, goals, and budget. We listen, ask the right questions, and map out a build or service plan that fits you perfectly.</p>
+    </div>
+    <div class="process-cell">
+      <span class="process-step-num">02</span>
+      <h4>Spec & Quote</h4>
+      <p>We draft a full component spec sheet with options at different price points. Transparent line-item quotes — no surprises, no hidden costs anywhere.</p>
+    </div>
+    <div class="process-cell">
+      <span class="process-step-num">03</span>
+      <h4>Build Day</h4>
+      <p>Our mechanics build your bike using proper workshop tools and torque specs. We document every step and send you photos from the workshop as it comes together.</p>
+    </div>
+    <div class="process-cell">
+      <span class="process-step-num">04</span>
+      <h4>Shake & Handoff</h4>
+      <p>A final road test and quality check before handoff. We walk you through the bike together, dial any remaining adjustments, and you ride away with a smile.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section class="section section-offwhite" id="pricing">
+  <div class="section-tag">// Service Pricing</div>
+  <h2 class="section-title reveal">TRANSPARENT<br><span class="red">FLAT RATES</span></h2>
+  <p class="section-sub reveal reveal-delay-1">Simple, all-inclusive service packages. No hidden labor charges. Components billed separately at cost + 10% sourcing fee.</p>
+  <div class="pricing-grid reveal">
+    <div class="pricing-card">
+      <span class="pricing-tier">Basic</span>
+      <div class="pricing-name">Safety Check</div>
+      <span class="pricing-price">$45</span>
+      <span class="pricing-freq">One-time</span>
+      <ul class="pricing-features">
+        <li>Brake function check &amp; adjustment</li>
+        <li>Shifting check (no cable replacement)</li>
+        <li>Tire condition &amp; pressure</li>
+        <li>Quick release / thru-axle check</li>
+        <li>Safety report included</li>
+      </ul>
+      <a href="#contact" class="btn-outline-black" style="width:100%;text-align:center;display:block;">Book Now</a>
+    </div>
+    <div class="pricing-card featured">
+      <span class="pricing-tier" style="color:var(--red);">Most Popular</span>
+      <div class="pricing-name">Full Tune-Up</div>
+      <span class="pricing-price">$95</span>
+      <span class="pricing-freq">One-time</span>
+      <ul class="pricing-features">
+        <li>Everything in Safety Check</li>
+        <li>Drivetrain degreasing &amp; lube</li>
+        <li>Cable tension adjustment</li>
+        <li>Bearing inspection</li>
+        <li>Spoke tension &amp; wheel true</li>
+        <li>Test ride &amp; final sign-off</li>
+      </ul>
+      <a href="#contact" class="btn-black" style="width:100%;text-align:center;display:block;">Book Now</a>
+    </div>
+    <div class="pricing-card">
+      <span class="pricing-tier">Complete</span>
+      <div class="pricing-name">Major Overhaul</div>
+      <span class="pricing-price">$195</span>
+      <span class="pricing-freq">One-time (labor only)</span>
+      <ul class="pricing-features">
+        <li>Everything in Full Tune-Up</li>
+        <li>Full drivetrain deep clean</li>
+        <li>Bottom bracket service / replace</li>
+        <li>Headset &amp; hub inspection</li>
+        <li>Cable &amp; housing replacement</li>
+        <li>Brake bleed (hydraulic)</li>
+      </ul>
+      <a href="#contact" class="btn-outline-black" style="width:100%;text-align:center;display:block;">Book Now</a>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="section section-black" id="reviews">
+  <div class="section-tag light">// Rider Reviews</div>
+  <h2 class="section-title light reveal">WHAT <span class="outline" style="-webkit-text-stroke-color:rgba(248,248,245,0.5);">RIDERS</span><br>SAY</h2>
+  <div class="testimonials-grid reveal">
+    <div class="testimonial-card">
+      <div class="t-rating">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="t-text">"VeloForge built my custom Colnago and it is absolutely perfect. The attention to detail is insane — cable routing, bar tape, even the torque marks on the stem. These guys are artisans."</p>
+      <div class="t-author">
+        <div class="t-avatar">MA</div>
+        <div>
+          <span class="t-name">Marco A.</span>
+          <span class="t-type">Road Cyclist — Coral Gables</span>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="t-rating">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="t-text">"Brought in my Cervelo with Di2 shifting issues that two other shops couldn't figure out. VeloForge diagnosed it in 20 minutes and had it shifting perfectly the same day. Worth every dollar."</p>
+      <div class="t-author">
+        <div class="t-avatar">KT</div>
+        <div>
+          <span class="t-name">Kayla T.</span>
+          <span class="t-type">Triathlete — Miami Beach</span>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card">
+      <div class="t-rating">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="t-text">"Got a full bikepacking gravel build done here. The consultation process was super thorough — they knew every component option and helped me stay on budget. Bike is incredible on the trails."</p>
+      <div class="t-author">
+        <div class="t-avatar">DL</div>
+        <div>
+          <span class="t-name">Diego L.</span>
+          <span class="t-type">Gravel Rider — Kendall</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" id="faq">
+  <div class="section-tag">// FAQ</div>
+  <h2 class="section-title reveal">COMMON<br><span class="red">QUESTIONS</span></h2>
+  <div class="faq-grid reveal">
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false">
+        <span>How long does a custom build take?</span>
+        <span class="faq-toggle-btn">+</span>
+      </button>
+      <div class="faq-a"><p>Build timelines depend on component sourcing. If you have all parts in hand, assembly takes 2–3 business days. Sourcing components typically adds 1–3 weeks. Rush builds can sometimes be accommodated — contact us to discuss your timeline.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false">
+        <span>Do I need to bring my own parts?</span>
+        <span class="faq-toggle-btn">+</span>
+      </button>
+      <div class="faq-a"><p>No — we can source everything through our dealer partnerships. Many clients bring their own frames and we source the components, or clients can source components themselves for labor-only builds. We're flexible and work with what you have.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false">
+        <span>What's your repair turnaround time?</span>
+        <span class="faq-toggle-btn">+</span>
+      </button>
+      <div class="faq-a"><p>Standard service and repairs are typically completed within 3–5 business days. Simple tune-ups and safety checks can often be done same-day or next-day. We'll give you an accurate estimate when you drop off.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false">
+        <span>Do you work on all brands and types of bikes?</span>
+        <span class="faq-toggle-btn">+</span>
+      </button>
+      <div class="faq-a"><p>Yes — road, gravel, MTB, urban, triathlon, and cyclocross. We work on all major brands including Specialized, Trek, Cannondale, Colnago, Pinarello, Canyon, Cervelo, Surly, and more. We specialize in high-end bikes but service all quality levels.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false">
+        <span>Do you offer bike fitting?</span>
+        <span class="faq-toggle-btn">+</span>
+      </button>
+      <div class="faq-a"><p>Yes. We offer professional bike fitting using Retül 3D motion capture technology for $220. The session lasts approximately 2 hours and includes a full fit report. All custom builds include a complimentary basic fit check with the bike handoff.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false">
+        <span>Do you work on e-bikes?</span>
+        <span class="faq-toggle-btn">+</span>
+      </button>
+      <div class="faq-a"><p>We service Shimano STEPS e-bike systems and Bosch-based platforms. We can perform general maintenance and component work on most e-bikes. For motor or battery diagnostics beyond our tools, we'll recommend the appropriate dealer service center.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Areas -->
+<section class="section section-offwhite" id="areas">
+  <div class="section-tag">// Coverage</div>
+  <h2 class="section-title reveal">SOUTH FLORIDA<br><span class="red">RIDERS</span> WELCOME</h2>
+  <div class="areas-grid reveal">
+    <div class="area-cell">Miami</div>
+    <div class="area-cell">Coral Gables</div>
+    <div class="area-cell">Doral</div>
+    <div class="area-cell">Hialeah</div>
+    <div class="area-cell">Kendall</div>
+    <div class="area-cell">Miami Beach</div>
+    <div class="area-cell">Brickell</div>
+    <div class="area-cell">Westchester</div>
+    <div class="area-cell">South Miami</div>
+    <div class="area-cell">Homestead</div>
+    <div class="area-cell">Miami Gardens</div>
+    <div class="area-cell">North Miami</div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section class="section" id="contact">
+  <div class="section-tag">// Contact</div>
+  <h2 class="section-title reveal">LET'S BUILD<br>SOMETHING <span class="red">GREAT</span></h2>
+  <div class="contact-grid reveal">
+    <div class="contact-info-panel">
+      <div class="contact-info-row">
+        <div class="contact-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+        </div>
+        <div>
+          <span class="contact-info-lbl">Phone</span>
+          <span class="contact-info-val">(786) 555-1200</span>
+        </div>
+      </div>
+      <div class="contact-info-row">
+        <div class="contact-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        </div>
+        <div>
+          <span class="contact-info-lbl">Email</span>
+          <span class="contact-info-val">builds@veloforge.com</span>
+        </div>
+      </div>
+      <div class="contact-info-row">
+        <div class="contact-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+        </div>
+        <div>
+          <span class="contact-info-lbl">Workshop</span>
+          <span class="contact-info-val">2240 SW 8th St<br>Miami, FL 33135</span>
+        </div>
+      </div>
+      <div class="contact-info-row">
+        <div class="contact-icon-box">
+          <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <div>
+          <span class="contact-info-lbl">Hours</span>
+          <span class="contact-info-val">Mon–Sat 9AM–7PM<br>Sun 10AM–4PM</span>
+        </div>
+      </div>
+    </div>
+    <div class="contact-form-panel">
+      <form action="https://formsubmit.co/builds@veloforge.com" method="POST" id="contactForm">
+        <input type="hidden" name="_subject" value="New Build / Repair Inquiry — VeloForge">
+        <input type="hidden" name="_captcha" value="false">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">First Name</label>
+            <input type="text" name="first_name" class="form-control" placeholder="Diego" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Last Name</label>
+            <input type="text" name="last_name" class="form-control" placeholder="Martinez" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Phone</label>
+            <input type="tel" name="phone" class="form-control" placeholder="(786) 555-0000" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" name="email" class="form-control" placeholder="you@email.com" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">What Are You Looking For?</label>
+          <select name="service" class="form-control" required>
+            <option value="">Select a service...</option>
+            <option>Custom Build — Road</option>
+            <option>Custom Build — Gravel / Adventure</option>
+            <option>Custom Build — MTB</option>
+            <option>Custom Build — Urban / Commuter</option>
+            <option>Expert Repair / Diagnostic</option>
+            <option>Tune-Up / Overhaul</option>
+            <option>Professional Bike Fit</option>
+            <option>Component Upgrade</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Your Bike (Brand, Model, Year)</label>
+          <input type="text" name="bike" class="form-control" placeholder="e.g., 2022 Trek Émonda SL 6, or 'starting from scratch'">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Budget Range (if applicable)</label>
+          <select name="budget" class="form-control">
+            <option value="">Select budget range...</option>
+            <option>Under $500</option>
+            <option>$500 – $1,500</option>
+            <option>$1,500 – $5,000</option>
+            <option>$5,000 – $10,000</option>
+            <option>$10,000+</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Project Details</label>
+          <textarea name="message" class="form-control" placeholder="Tell us about your project, riding style, any specific components you have in mind..."></textarea>
+        </div>
+        <button type="submit" class="form-submit">Send Build Inquiry</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="section-tag" style="color:var(--red);">// Get Started</div>
+  <h2 class="section-title">YOUR DREAM<br><span class="outline">BIKE</span> AWAITS</h2>
+  <p class="cta-sub">Every great build starts with a conversation. Drop by the workshop or book a consultation — we're ready to build something remarkable with you.</p>
+  <div class="cta-ctas">
+    <a href="#contact" class="btn-black">Book a Consultation</a>
+    <a href="tel:7865551200" class="btn-red">Call (786) 555-1200</a>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <a href="veloforge.html" class="nav-logo" style="text-decoration:none;display:inline-flex;align-items:center;gap:12px;">
+        <div class="logo-hex"><svg viewBox="0 0 20 20" fill="white" width="20" height="20"><path d="M10 2a8 8 0 100 16A8 8 0 0010 2zm0 2a6 6 0 110 12A6 6 0 0110 4zm0 2a4 4 0 100 8 4 4 0 000-8z"/></svg></div>
+        <span class="logo-text" style="font-size:1.4rem;">Velo<span>Forge</span></span>
+      </a>
+      <p class="footer-brand-desc">Miami's custom bicycle workshop. Precision builds, expert repair, professional fitting for road, gravel, MTB, and urban riders across South Florida.</p>
+      <p class="footer-license">FL Business #BK2012-0334 &bull; 2240 SW 8th St, Miami, FL 33135</p>
+    </div>
+    <div>
+      <h4 class="footer-heading">Services</h4>
+      <ul class="footer-links">
+        <li><a href="#services">Custom Road Builds</a></li>
+        <li><a href="#services">Gravel Builds</a></li>
+        <li><a href="#services">Expert Repair</a></li>
+        <li><a href="#services">Bike Fitting</a></li>
+        <li><a href="#services">Component Upgrades</a></li>
+        <li><a href="#pricing">Tune-Up Packages</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="footer-heading">Workshop</h4>
+      <ul class="footer-links">
+        <li><a href="#why">About VeloForge</a></li>
+        <li><a href="#builds">Build Gallery</a></li>
+        <li><a href="#process">Build Process</a></li>
+        <li><a href="#reviews">Rider Reviews</a></li>
+        <li><a href="#areas">Service Area</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4 class="footer-heading">Contact</h4>
+      <ul class="footer-links">
+        <li><a href="tel:7865551200">(786) 555-1200</a></li>
+        <li><a href="mailto:builds@veloforge.com">builds@veloforge.com</a></li>
+        <li><a href="#contact">2240 SW 8th St, Miami</a></li>
+        <li><a href="#contact">Mon–Sat 9AM–7PM</a></li>
+        <li><a href="#contact">Sun 10AM–4PM</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">&copy; 2025 VeloForge LLC. All rights reserved.</span>
+    <a href="https://webnari.io" class="webnari-badge" target="_blank" rel="noopener">Powered by <span>Webnari</span></a>
+  </div>
+</footer>
+
+<script>
+  // Mobile menu
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const mobileClose = document.getElementById('mobileClose');
+
+  hamburger.addEventListener('click', () => {
+    mobileMenu.classList.add('open');
+    document.body.style.overflow = 'hidden';
+  });
+
+  function closeMenu() {
+    mobileMenu.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  mobileClose.addEventListener('click', closeMenu);
+  mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
+
+  // Intersection Observer for reveals
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1 });
+  reveals.forEach(el => observer.observe(el));
+
+  // FAQ Accordion
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const answer = item.querySelector('.faq-a');
+      const isOpen = item.classList.contains('open');
+
+      document.querySelectorAll('.faq-item').forEach(i => {
+        i.classList.remove('open');
+        i.querySelector('.faq-a').classList.remove('open');
+        i.querySelector('.faq-q').setAttribute('aria-expanded', 'false');
+      });
+
+      if (!isOpen) {
+        item.classList.add('open');
+        answer.classList.add('open');
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+
+  // Form validation
+  const form = document.getElementById('contactForm');
+  form.addEventListener('submit', (e) => {
+    let valid = true;
+    form.querySelectorAll('[required]').forEach(field => {
+      if (!field.value.trim()) {
+        field.style.borderColor = 'var(--red)';
+        valid = false;
+      } else {
+        field.style.borderColor = '';
+      }
+    });
+    if (!valid) {
+      e.preventDefault();
+    }
+  });
+
+  form.querySelectorAll('[required]').forEach(field => {
+    field.addEventListener('blur', () => {
+      field.style.borderColor = field.value.trim() ? '' : 'var(--red)';
+    });
+  });
+</script>
+</body>
+</html>

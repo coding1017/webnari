@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="ClearView Pro Home Inspections — Certified home inspectors serving South Florida. Systematic, thorough inspections with same-day digital reports. (305) 555-1300">
+<meta property="og:title" content="ClearView Pro | Certified Home Inspections South Florida">
+<meta property="og:description" content="Precision home inspections with same-day digital reports. Licensed, certified, and methodical.">
+<meta property="og:type" content="website">
+<title>ClearView Pro | Certified Home Inspections — South Florida</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=DM+Mono:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --white: #FFFFFF;
+    --off-white: #F7F7F5;
+    --light: #F0F0ED;
+    --charcoal: #141414;
+    --dark: #1E1E1E;
+    --mid: #3A3A3A;
+    --gray: #6B6B6B;
+    --light-gray: #B0B0B0;
+    --border: #D8D8D4;
+    --border2: #EBEBEA;
+    --orange: #D94F00;
+    --orange2: #FF5F00;
+    --orange3: #FF8340;
+    --orange-bg: #FFF3ED;
+    --orange-border: #FFCDB3;
+    --bg-dark: #141414;
+    --text-dark: #A8A8A0;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--white);
+    color: var(--mid);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ===== NAV ===== */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 1000;
+    background: var(--white);
+    border-bottom: 1px solid var(--border);
+    transition: all 0.3s;
+  }
+  nav.scrolled { box-shadow: 0 1px 12px rgba(0,0,0,0.06); }
+  .nav-inner {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    height: 64px;
+  }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+  .nav-logo-mark {
+    width: 32px;
+    height: 32px;
+    border: 2px solid var(--charcoal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .nav-logo-mark span {
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--charcoal);
+    line-height: 1;
+  }
+  .nav-logo-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+  }
+  .nav-logo-text .brand {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--charcoal);
+    letter-spacing: -0.3px;
+  }
+  .nav-logo-text .tagline {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--gray);
+    margin-top: 2px;
+    letter-spacing: 0.5px;
+  }
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    list-style: none;
+    margin-left: auto;
+  }
+  .nav-links a {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 18px;
+    height: 64px;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--gray);
+    border-right: 1px solid var(--border);
+    transition: color 0.2s, background 0.2s;
+    white-space: nowrap;
+  }
+  .nav-links a:first-child { border-left: 1px solid var(--border); }
+  .nav-links a:hover { color: var(--charcoal); background: var(--off-white); }
+  .nav-links .link-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--orange);
+  }
+  .nav-cta {
+    background: var(--charcoal);
+    color: var(--white) !important;
+    padding: 0 20px !important;
+    border: none !important;
+    border-left: 1px solid var(--charcoal) !important;
+    font-weight: 600 !important;
+  }
+  .nav-cta:hover { background: var(--orange) !important; }
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 4px;
+    background: none;
+    border: none;
+    margin-left: auto;
+  }
+  .hamburger span { display: block; width: 22px; height: 2px; background: var(--charcoal); }
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--white);
+    z-index: 999;
+    flex-direction: column;
+    padding: 80px 40px 40px;
+    border-top: 4px solid var(--orange);
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--charcoal);
+    text-decoration: none;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .mobile-close {
+    position: absolute;
+    top: 18px; right: 24px;
+    background: none;
+    border: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: var(--charcoal);
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    padding: 110px 40px 80px;
+    max-width: 1240px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    min-height: 100vh;
+  }
+  .hero-left { position: relative; }
+  .hero-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 120px;
+    font-weight: 500;
+    color: var(--border2);
+    position: absolute;
+    top: -30px;
+    left: -20px;
+    line-height: 1;
+    z-index: 0;
+    user-select: none;
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-eyebrow-code {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--orange);
+    letter-spacing: 0.5px;
+  }
+  .hero-eyebrow-line { width: 24px; height: 1px; background: var(--border); }
+  .hero-eyebrow span { font-size: 11px; color: var(--gray); letter-spacing: 0.5px; text-transform: uppercase; }
+  .hero h1 {
+    font-size: clamp(36px, 4.5vw, 62px);
+    font-weight: 700;
+    color: var(--charcoal);
+    line-height: 1.1;
+    letter-spacing: -1.5px;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero h1 .orange { color: var(--orange); }
+  .hero-sub {
+    font-size: 16px;
+    color: var(--gray);
+    line-height: 1.7;
+    max-width: 440px;
+    margin-bottom: 36px;
+    font-weight: 400;
+  }
+  .hero-btns {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 48px;
+  }
+  .btn-primary {
+    background: var(--charcoal);
+    color: var(--white);
+    padding: 12px 24px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 13px;
+    letter-spacing: 0.3px;
+    border: 2px solid var(--charcoal);
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .btn-primary:hover { background: var(--orange); border-color: var(--orange); }
+  .btn-outline {
+    background: transparent;
+    color: var(--charcoal);
+    padding: 12px 24px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 13px;
+    border: 2px solid var(--charcoal);
+    transition: all 0.2s;
+  }
+  .btn-outline:hover { background: var(--charcoal); color: var(--white); }
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border: 1px solid var(--border);
+  }
+  .hero-stat {
+    padding: 16px 20px;
+    border-right: 1px solid var(--border);
+  }
+  .hero-stat:last-child { border-right: none; }
+  .hero-stat-num {
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--charcoal);
+    letter-spacing: -1px;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .hero-stat-num .accent { color: var(--orange); }
+  .hero-stat p { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; }
+
+  /* Hero right: mock report card */
+  .hero-right { position: relative; }
+  .report-card {
+    border: 1px solid var(--border);
+    background: var(--white);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.06);
+    overflow: hidden;
+  }
+  .report-header {
+    background: var(--charcoal);
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .report-header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .report-header-left span {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--text-dark);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .report-header-left strong {
+    font-size: 14px;
+    color: var(--white);
+    font-weight: 600;
+  }
+  .report-badge {
+    background: var(--orange);
+    color: var(--white);
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 4px 10px;
+    letter-spacing: 0.5px;
+  }
+  .report-address {
+    background: var(--off-white);
+    padding: 12px 20px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .report-address svg { width: 14px; height: 14px; color: var(--orange); flex-shrink: 0; }
+  .report-address span { font-size: 12px; color: var(--mid); }
+  .report-sections { padding: 4px 0; }
+  .report-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 20px;
+    border-bottom: 1px solid var(--border2);
+    transition: background 0.15s;
+  }
+  .report-row:last-child { border-bottom: none; }
+  .report-row:hover { background: var(--off-white); }
+  .report-status {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .status-pass { background: #22C55E; }
+  .status-warn { background: #F59E0B; }
+  .status-flag { background: var(--orange); }
+  .report-row-name { font-size: 12px; font-weight: 500; color: var(--charcoal); flex: 1; }
+  .report-row-code { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--light-gray); }
+  .report-row-check { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); }
+  .report-footer {
+    background: var(--off-white);
+    border-top: 1px solid var(--border);
+    padding: 12px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .report-footer span { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); }
+  .report-footer strong { font-size: 12px; color: var(--charcoal); font-weight: 600; }
+
+  /* ===== SYSTEM BAR ===== */
+  .system-bar {
+    background: var(--charcoal);
+    padding: 14px 40px;
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+    flex-wrap: wrap;
+  }
+  .system-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .system-item-dot { width: 6px; height: 6px; background: var(--orange); flex-shrink: 0; }
+  .system-item span { color: var(--white); }
+
+  /* ===== SECTION SHARED ===== */
+  section { padding: 90px 40px; }
+  .section-inner { max-width: 1240px; margin: 0 auto; }
+  .section-meta {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 48px;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+  .section-meta-left {}
+  .section-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--orange);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 10px;
+  }
+  .section-title {
+    font-size: clamp(24px, 3vw, 40px);
+    font-weight: 700;
+    color: var(--charcoal);
+    letter-spacing: -0.8px;
+    line-height: 1.15;
+  }
+  .section-sub {
+    font-size: 14px;
+    color: var(--gray);
+    max-width: 380px;
+    line-height: 1.7;
+    margin-top: 12px;
+  }
+
+  /* ===== SERVICES ===== */
+  .services { background: var(--off-white); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border: 1px solid var(--border);
+    background: var(--border);
+  }
+  .service-card {
+    background: var(--white);
+    padding: 36px 28px;
+    position: relative;
+    transition: background 0.2s;
+  }
+  .service-card:hover { background: var(--charcoal); }
+  .service-card:hover .service-num,
+  .service-card:hover .service-card-title,
+  .service-card:hover p { color: var(--white); }
+  .service-card:hover .service-num { color: var(--orange); }
+  .service-card:hover .service-card-bar { background: var(--orange); }
+  .service-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--orange);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: block;
+    transition: color 0.2s;
+  }
+  .service-card-bar {
+    width: 100%;
+    height: 2px;
+    background: var(--border);
+    margin-bottom: 20px;
+    transition: background 0.2s;
+  }
+  .service-card-bar-fill {
+    height: 100%;
+    background: var(--orange);
+    width: 0;
+    transition: width 0.8s ease;
+  }
+  .service-card.in-view .service-card-bar-fill { width: 100%; }
+  .service-card-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--charcoal);
+    margin-bottom: 12px;
+    letter-spacing: -0.3px;
+    transition: color 0.2s;
+  }
+  .service-card p { font-size: 13px; color: var(--gray); line-height: 1.7; transition: color 0.2s; }
+
+  /* ===== CHECKLIST / WHY US ===== */
+  .why-us { background: var(--white); }
+  .why-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 80px; align-items: start; }
+  .checklist { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); }
+  .check-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.2s;
+  }
+  .check-item:last-child { border-bottom: none; }
+  .check-item:hover { background: var(--off-white); }
+  .check-box {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .check-box svg { width: 12px; height: 12px; color: var(--orange); }
+  .check-item-title { font-size: 14px; font-weight: 600; color: var(--charcoal); margin-bottom: 4px; }
+  .check-item-desc { font-size: 12px; color: var(--gray); line-height: 1.6; }
+  .why-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); margin-bottom: 24px; }
+  .why-stat {
+    background: var(--white);
+    padding: 24px 20px;
+    text-align: center;
+  }
+  .why-stat-num {
+    font-size: 40px;
+    font-weight: 700;
+    color: var(--charcoal);
+    letter-spacing: -2px;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .why-stat-num .accent { color: var(--orange); }
+  .why-stat p { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--gray); text-transform: uppercase; letter-spacing: 0.5px; }
+  .badge-grid { display: flex; flex-direction: column; gap: 10px; }
+  .cred-badge {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    background: var(--off-white);
+  }
+  .cred-badge-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--charcoal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .cred-badge-icon svg { width: 16px; height: 16px; color: var(--white); }
+  .cred-badge strong { display: block; font-size: 12px; color: var(--charcoal); font-weight: 600; }
+  .cred-badge span { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); }
+
+  /* ===== PROCESS ===== */
+  .process { background: var(--bg-dark); }
+  .process .section-eyebrow { color: var(--orange3); }
+  .process .section-title { color: var(--white); }
+  .process .section-sub { color: var(--text-dark); }
+  .process-table {
+    border: 1px solid rgba(255,255,255,0.08);
+    margin-top: 48px;
+    overflow: hidden;
+  }
+  .process-table-header {
+    display: grid;
+    grid-template-columns: 80px 1fr 1fr 120px;
+    background: rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .process-th {
+    padding: 12px 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--text-dark);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-right: 1px solid rgba(255,255,255,0.06);
+  }
+  .process-th:last-child { border-right: none; }
+  .process-row {
+    display: grid;
+    grid-template-columns: 80px 1fr 1fr 120px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    transition: background 0.2s;
+  }
+  .process-row:last-child { border-bottom: none; }
+  .process-row:hover { background: rgba(255,255,255,0.02); }
+  .process-td {
+    padding: 24px 20px;
+    border-right: 1px solid rgba(255,255,255,0.04);
+    vertical-align: top;
+  }
+  .process-td:last-child { border-right: none; }
+  .process-step-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 28px;
+    color: rgba(255,255,255,0.1);
+    font-weight: 500;
+    line-height: 1;
+  }
+  .process-td h4 { font-size: 14px; font-weight: 600; color: var(--white); margin-bottom: 8px; }
+  .process-td p { font-size: 12px; color: var(--text-dark); line-height: 1.7; }
+  .process-duration {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--orange3);
+    padding: 3px 8px;
+    border: 1px solid rgba(255,95,0,0.3);
+    display: inline-block;
+  }
+
+  /* ===== SAMPLE REPORT (dark section) ===== */
+  .sample-report { background: var(--off-white); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .sample-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 80px; align-items: center; }
+  .sample-report-card {
+    border: 1px solid var(--border);
+    background: var(--white);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    font-size: 12px;
+  }
+  .sample-rh {
+    background: var(--charcoal);
+    padding: 14px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .sample-rh-title { font-weight: 600; color: var(--white); font-size: 12px; }
+  .sample-rh-id { font-family: 'DM Mono', monospace; font-size: 10px; color: #888; }
+  .sample-info {
+    background: var(--off-white);
+    padding: 10px 18px;
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .sample-info-item { }
+  .sample-info-item label { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--light-gray); text-transform: uppercase; letter-spacing: 0.5px; display: block; }
+  .sample-info-item span { font-size: 11px; color: var(--mid); font-weight: 500; }
+  .sample-categories { display: flex; flex-direction: column; }
+  .sample-cat {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 18px;
+    border-bottom: 1px solid var(--border2);
+  }
+  .sample-cat:last-child { border-bottom: none; }
+  .sample-cat-name { font-weight: 500; color: var(--charcoal); font-size: 11px; flex: 1; }
+  .sample-cat-count {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 2px 8px;
+    border: 1px solid var(--border);
+  }
+  .count-ok { color: #22C55E; border-color: #D1FAE5; background: #F0FFF4; }
+  .count-warn { color: #D97706; border-color: #FDE68A; background: #FFFBEB; }
+  .count-flag { color: var(--orange); border-color: var(--orange-border); background: var(--orange-bg); }
+  .sample-rfoot {
+    background: var(--off-white);
+    padding: 10px 18px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .sample-rfoot span { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--gray); }
+  .sample-rfoot strong { font-size: 11px; color: var(--charcoal); }
+
+  /* ===== TESTIMONIALS ===== */
+  .testimonials { background: var(--white); }
+  .testimonials-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; background: var(--border); border: 1px solid var(--border); margin-top: 48px; }
+  .testimonial-card { background: var(--white); padding: 32px 28px; }
+  .stars { display: flex; gap: 3px; margin-bottom: 16px; }
+  .stars svg { width: 13px; height: 13px; fill: var(--orange); }
+  .testimonial-card blockquote {
+    font-size: 14px;
+    color: var(--mid);
+    line-height: 1.7;
+    margin-bottom: 24px;
+    font-weight: 400;
+  }
+  .testimonial-author { display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--border); padding-top: 20px; }
+  .author-init {
+    width: 40px;
+    height: 40px;
+    background: var(--charcoal);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--white);
+    flex-shrink: 0;
+  }
+  .author-info strong { display: block; font-size: 13px; color: var(--charcoal); font-weight: 600; }
+  .author-info span { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); }
+
+  /* ===== FAQ ===== */
+  .faq { background: var(--off-white); border-top: 1px solid var(--border); }
+  .faq-grid { display: grid; grid-template-columns: 1fr 1.6fr; gap: 80px; }
+  .faq-list { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); margin-top: 48px; }
+  .faq-item { border-bottom: 1px solid var(--border); }
+  .faq-item:last-child { border-bottom: none; }
+  .faq-q {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    cursor: pointer;
+    gap: 20px;
+    background: var(--white);
+    transition: background 0.15s;
+  }
+  .faq-q:hover { background: var(--off-white); }
+  .faq-item.open .faq-q { background: var(--charcoal); }
+  .faq-q-text { font-size: 13px; font-weight: 600; color: var(--charcoal); line-height: 1.4; }
+  .faq-item.open .faq-q-text { color: var(--white); }
+  .faq-icon {
+    width: 24px;
+    height: 24px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 16px;
+    color: var(--gray);
+    transition: all 0.2s;
+    background: var(--off-white);
+  }
+  .faq-item.open .faq-icon { background: var(--orange); border-color: var(--orange); color: var(--white); }
+  .faq-a {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    background: var(--white);
+  }
+  .faq-a-inner { padding: 16px 24px 20px; font-size: 13px; color: var(--gray); line-height: 1.7; border-top: 1px solid var(--border); }
+  .faq-item.open .faq-a { max-height: 250px; }
+  .faq-sidebar { padding-top: 48px; }
+  .faq-cta {
+    border: 1px solid var(--border);
+    background: var(--white);
+    padding: 28px 24px;
+    margin-top: 24px;
+  }
+  .faq-cta h4 { font-size: 16px; font-weight: 700; color: var(--charcoal); margin-bottom: 8px; }
+  .faq-cta p { font-size: 13px; color: var(--gray); margin-bottom: 20px; line-height: 1.6; }
+  .faq-cta .btn-primary { width: 100%; justify-content: center; }
+
+  /* ===== AREAS ===== */
+  .areas { background: var(--white); padding: 80px 40px; border-top: 1px solid var(--border); }
+  .areas-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-top: 40px;
+  }
+  .area-cell {
+    background: var(--white);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: background 0.15s;
+    cursor: default;
+  }
+  .area-cell:hover { background: var(--charcoal); }
+  .area-cell:hover .area-name { color: var(--white); }
+  .area-cell:hover .area-num { color: var(--orange); }
+  .area-num { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--light-gray); transition: color 0.15s; }
+  .area-name { font-size: 13px; font-weight: 500; color: var(--charcoal); transition: color 0.15s; }
+
+  /* ===== CONTACT ===== */
+  .contact { background: var(--off-white); border-top: 1px solid var(--border); }
+  .contact-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 80px; margin-top: 48px; }
+  .contact-info {}
+  .contact-info h3 { font-size: 20px; font-weight: 700; color: var(--charcoal); margin-bottom: 12px; letter-spacing: -0.3px; }
+  .contact-info p { font-size: 13px; color: var(--gray); line-height: 1.7; margin-bottom: 32px; }
+  .contact-detail {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .contact-detail:first-of-type { border-top: 1px solid var(--border); }
+  .contact-detail-label { font-family: 'DM Mono', monospace; font-size: 9px; color: var(--light-gray); text-transform: uppercase; letter-spacing: 1px; width: 60px; flex-shrink: 0; }
+  .contact-detail-val { font-size: 13px; color: var(--charcoal); font-weight: 500; }
+  .contact-form form { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); background: var(--white); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  .form-group { display: flex; flex-direction: column; gap: 0; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border); }
+  .form-group:last-child { border-right: none; }
+  .form-group.full { grid-column: 1 / -1; border-right: none; }
+  .form-group label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--gray);
+    padding: 10px 16px 0;
+  }
+  .form-group input,
+  .form-group select,
+  .form-group textarea {
+    background: transparent;
+    border: none;
+    padding: 6px 16px 12px;
+    color: var(--charcoal);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    outline: none;
+    font-weight: 500;
+  }
+  .form-group select option { background: var(--white); }
+  .form-group textarea { min-height: 100px; resize: vertical; }
+  .form-group input::placeholder, .form-group textarea::placeholder { color: var(--light-gray); font-weight: 400; }
+  .form-group input.error, .form-group select.error { outline: 2px solid var(--orange); outline-offset: -2px; }
+  .form-submit-row { padding: 16px; background: var(--off-white); border-top: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .form-submit {
+    background: var(--charcoal);
+    color: var(--white);
+    padding: 11px 24px;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    border: 2px solid var(--charcoal);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .form-submit:hover { background: var(--orange); border-color: var(--orange); }
+  .form-note { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); }
+
+  /* ===== CTA BANNER ===== */
+  .cta-banner { background: var(--charcoal); padding: 80px 40px; }
+  .cta-inner { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+  .cta-text h2 { font-size: clamp(26px, 3vw, 42px); font-weight: 700; color: var(--white); letter-spacing: -1px; margin-bottom: 12px; line-height: 1.2; }
+  .cta-text p { font-size: 14px; color: var(--text-dark); line-height: 1.7; }
+  .cta-actions { display: flex; flex-direction: column; gap: 16px; }
+  .cta-phone {
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--orange);
+    letter-spacing: -1px;
+    text-decoration: none;
+    display: block;
+  }
+  .cta-phone:hover { color: var(--orange3); }
+  .cta-sub { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-dark); text-transform: uppercase; letter-spacing: 1px; }
+  .cta-btn { background: var(--orange); color: var(--white); padding: 14px 28px; text-decoration: none; font-weight: 700; font-size: 13px; border: 2px solid var(--orange); transition: all 0.2s; display: inline-block; }
+  .cta-btn:hover { background: transparent; }
+
+  /* ===== FOOTER ===== */
+  footer { background: var(--off-white); border-top: 1px solid var(--border); padding: 60px 40px 28px; }
+  .footer-grid { max-width: 1240px; margin: 0 auto; display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 40px; }
+  .footer-brand .logo { font-size: 20px; font-weight: 700; color: var(--charcoal); letter-spacing: -0.5px; display: block; margin-bottom: 4px; }
+  .footer-brand .mono { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); display: block; margin-bottom: 16px; }
+  .footer-brand p { font-size: 12px; color: var(--gray); line-height: 1.7; margin-bottom: 12px; }
+  .footer-brand .lic { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--light-gray); }
+  .footer-col h4 { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-col a { font-size: 13px; color: var(--mid); text-decoration: none; transition: color 0.2s; }
+  .footer-col a:hover { color: var(--charcoal); }
+  .footer-bottom { max-width: 1240px; margin: 0 auto; padding-top: 24px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-family: 'DM Mono', monospace; font-size: 10px; color: var(--gray); flex-wrap: wrap; gap: 12px; }
+  .webnari-badge { text-decoration: none; color: var(--gray); transition: color 0.2s; display: flex; align-items: center; gap: 6px; }
+  .webnari-badge:hover { color: var(--charcoal); }
+
+  /* ===== SCROLL REVEAL ===== */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .reveal-delay-1 { transition-delay: 0.08s; }
+  .reveal-delay-2 { transition-delay: 0.16s; }
+  .reveal-delay-3 { transition-delay: 0.24s; }
+  .reveal-delay-4 { transition-delay: 0.32s; }
+  .reveal-delay-5 { transition-delay: 0.40s; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 1024px) {
+    .hero { grid-template-columns: 1fr; min-height: auto; padding: 100px 40px 60px; gap: 48px; }
+    .hero-num { font-size: 80px; }
+    .services-grid { grid-template-columns: repeat(2, 1fr); }
+    .why-grid { grid-template-columns: 1fr; gap: 48px; }
+    .sample-grid { grid-template-columns: 1fr; gap: 48px; }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+    .cta-inner { grid-template-columns: 1fr; gap: 32px; }
+  }
+  @media (max-width: 768px) {
+    section { padding: 70px 24px; }
+    .hero { padding: 90px 24px 60px; }
+    nav .nav-inner { padding: 0 24px; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .services-grid { grid-template-columns: 1fr; }
+    .faq-grid { grid-template-columns: 1fr; }
+    .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+    .form-row { grid-template-columns: 1fr; }
+    .areas-grid { grid-template-columns: repeat(2, 1fr); }
+    .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+    .process-table-header, .process-row { grid-template-columns: 60px 1fr 1fr; }
+    .process-table-header .process-th:last-child, .process-row .process-td:last-child { display: none; }
+    .system-bar { gap: 24px; flex-wrap: wrap; justify-content: flex-start; }
+  }
+  @media (max-width: 480px) {
+    .areas-grid { grid-template-columns: 1fr 1fr; }
+    .hero-stats { grid-template-columns: 1fr 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <div class="nav-inner">
+    <a href="clearview.html" class="nav-logo">
+      <div class="nav-logo-mark"><span>CV</span></div>
+      <div class="nav-logo-text">
+        <span class="brand">ClearView Pro</span>
+        <span class="tagline">Home Inspections</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#services"><span class="link-num">01</span> Services</a></li>
+      <li><a href="#why-us"><span class="link-num">02</span> Why Us</a></li>
+      <li><a href="#process"><span class="link-num">03</span> Process</a></li>
+      <li><a href="#testimonials"><span class="link-num">04</span> Reviews</a></li>
+      <li><a href="#contact"><span class="link-num">05</span> Contact</a></li>
+      <li><a href="tel:3055551300" class="nav-cta">Schedule Inspection</a></li>
+    </ul>
+    <button class="hamburger" id="hamburgerBtn" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="mobileClose">&#215;</button>
+  <a href="#services" class="mobile-link">Services</a>
+  <a href="#why-us" class="mobile-link">Why ClearView</a>
+  <a href="#process" class="mobile-link">Our Process</a>
+  <a href="#testimonials" class="mobile-link">Reviews</a>
+  <a href="#contact" class="mobile-link">Contact</a>
+  <a href="tel:3055551300" class="btn-primary" style="margin-top:20px; width:100%; justify-content:center;">Schedule an Inspection</a>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="home">
+  <div class="hero-left">
+    <div class="hero-num">01</div>
+    <div class="hero-eyebrow">
+      <span class="hero-eyebrow-code">// inspect.init()</span>
+      <div class="hero-eyebrow-line"></div>
+      <span>Licensed · Certified · Systematic</span>
+    </div>
+    <h1>Know Every<br><span class="orange">Defect</span><br>Before You Close</h1>
+    <p class="hero-sub">ClearView Pro delivers methodical, room-by-room inspections backed by same-day digital reports. We've helped over 3,200 South Florida homebuyers make informed decisions.</p>
+    <div class="hero-btns">
+      <a href="#contact" class="btn-primary">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Schedule Inspection
+      </a>
+      <a href="#process" class="btn-outline">How It Works</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num">3,200<span class="accent">+</span></div>
+        <p>Inspections Done</p>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num"><span class="accent">&lt;</span>24h</div>
+        <p>Report Delivery</p>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">15<span class="accent">yr</span></div>
+        <p>Experience</p>
+      </div>
+    </div>
+  </div>
+  <div class="hero-right reveal">
+    <!-- Mock Inspection Report Card -->
+    <div class="report-card">
+      <div class="report-header">
+        <div class="report-header-left">
+          <span>Inspection Report</span>
+          <strong>4817 Brickell Ave, Miami FL</strong>
+        </div>
+        <div class="report-badge">COMPLETE</div>
+      </div>
+      <div class="report-address">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        <span>Inspected: April 7, 2025 — 9:00AM — Insp. #CV-2025-0892</span>
+      </div>
+      <div class="report-sections">
+        <div class="report-row">
+          <div class="report-status status-pass"></div>
+          <div class="report-row-name">Foundation &amp; Structure</div>
+          <div class="report-row-code">[SEC-01]</div>
+          <div class="report-row-check">✓ No deficiencies</div>
+        </div>
+        <div class="report-row">
+          <div class="report-status status-pass"></div>
+          <div class="report-row-name">Roof &amp; Attic</div>
+          <div class="report-row-code">[SEC-02]</div>
+          <div class="report-row-check">✓ No deficiencies</div>
+        </div>
+        <div class="report-row">
+          <div class="report-status status-warn"></div>
+          <div class="report-row-name">Electrical Systems</div>
+          <div class="report-row-code">[SEC-03]</div>
+          <div class="report-row-check">⚠ 2 items noted</div>
+        </div>
+        <div class="report-row">
+          <div class="report-status status-pass"></div>
+          <div class="report-row-name">HVAC Systems</div>
+          <div class="report-row-code">[SEC-04]</div>
+          <div class="report-row-check">✓ No deficiencies</div>
+        </div>
+        <div class="report-row">
+          <div class="report-status status-flag"></div>
+          <div class="report-row-name">Plumbing</div>
+          <div class="report-row-code">[SEC-05]</div>
+          <div class="report-row-check">⛿ 1 item flagged</div>
+        </div>
+        <div class="report-row">
+          <div class="report-status status-pass"></div>
+          <div class="report-row-name">Exterior &amp; Drainage</div>
+          <div class="report-row-code">[SEC-06]</div>
+          <div class="report-row-check">✓ No deficiencies</div>
+        </div>
+        <div class="report-row">
+          <div class="report-status status-pass"></div>
+          <div class="report-row-name">Interior &amp; Finishes</div>
+          <div class="report-row-code">[SEC-07]</div>
+          <div class="report-row-check">✓ No deficiencies</div>
+        </div>
+        <div class="report-row">
+          <div class="report-status status-warn"></div>
+          <div class="report-row-name">Windows &amp; Doors</div>
+          <div class="report-row-code">[SEC-08]</div>
+          <div class="report-row-check">⚠ 1 item noted</div>
+        </div>
+      </div>
+      <div class="report-footer">
+        <span>Inspector: M. Torres, InterNACHI #24011890</span>
+        <strong>Delivered in 3 hrs 12 min</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SYSTEM BAR -->
+<div class="system-bar">
+  <div class="system-item"><div class="system-item-dot"></div><span>Certified InterNACHI Inspector</span></div>
+  <div class="system-item"><div class="system-item-dot"></div><span>State Licensed #HI9274</span></div>
+  <div class="system-item"><div class="system-item-dot"></div><span>Same-Day Digital Reports</span></div>
+  <div class="system-item"><div class="system-item-dot"></div><span>200+ Point Checklist</span></div>
+  <div class="system-item"><div class="system-item-dot"></div><span>Available 7 Days/Week</span></div>
+</div>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <div class="section-inner">
+    <div class="section-meta reveal">
+      <div class="section-meta-left">
+        <div class="section-eyebrow">// Services.list()</div>
+        <h2 class="section-title">Comprehensive<br>Inspection Services</h2>
+      </div>
+      <p class="section-sub" style="max-width:320px">Every inspection type follows our standardized 200+ point systematic evaluation protocol.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <span class="service-num">SEC-01</span>
+        <div class="service-card-bar"><div class="service-card-bar-fill"></div></div>
+        <div class="service-card-title">Full Home Inspection</div>
+        <p>Our flagship 200+ point evaluation covers structure, roof, electrical, HVAC, plumbing, interior, and all major systems. Delivered as a comprehensive digital report with photos, severity ratings, and contractor referrals.</p>
+      </div>
+      <div class="service-card reveal reveal-delay-1">
+        <span class="service-num">SEC-02</span>
+        <div class="service-card-bar"><div class="service-card-bar-fill"></div></div>
+        <div class="service-card-title">Pre-Listing Inspection</div>
+        <p>Sell with confidence. We inspect your property before you list it, identifying issues that buyers' inspectors will flag. Gives you time to repair or disclose — and maximize your sale price.</p>
+      </div>
+      <div class="service-card reveal reveal-delay-2">
+        <span class="service-num">SEC-03</span>
+        <div class="service-card-bar"><div class="service-card-bar-fill"></div></div>
+        <div class="service-card-title">New Construction Inspection</div>
+        <p>Builders make mistakes. We perform independent inspections at three phases: foundation, pre-drywall, and final walkthrough — ensuring quality before you take ownership of your new home.</p>
+      </div>
+      <div class="service-card reveal reveal-delay-3">
+        <span class="service-num">SEC-04</span>
+        <div class="service-card-bar"><div class="service-card-bar-fill"></div></div>
+        <div class="service-card-title">4-Point Inspection</div>
+        <p>Insurance-required 4-point inspections covering roof, electrical, HVAC, and plumbing for older homes. Fast turnaround — typically same business day. Accepted by all major insurers in Florida.</p>
+      </div>
+      <div class="service-card reveal reveal-delay-4">
+        <span class="service-num">SEC-05</span>
+        <div class="service-card-bar"><div class="service-card-bar-fill"></div></div>
+        <div class="service-card-title">Wind Mitigation Inspection</div>
+        <p>Qualify for significant insurance discounts. We document your home's wind-resistant features — roof covering, roof deck attachment, opening protection, and roof-to-wall connections — per Florida OIR requirements.</p>
+      </div>
+      <div class="service-card reveal reveal-delay-5">
+        <span class="service-num">SEC-06</span>
+        <div class="service-card-bar"><div class="service-card-bar-fill"></div></div>
+        <div class="service-card-title">Re-Inspection & Follow-Up</div>
+        <p>After sellers complete requested repairs, we return to verify all items were addressed correctly. Gives you documented confirmation before closing that deficiencies have been properly remediated.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section class="why-us" id="why-us">
+  <div class="section-inner">
+    <div class="section-meta reveal">
+      <div class="section-meta-left">
+        <div class="section-eyebrow">// ClearView.advantages()</div>
+        <h2 class="section-title">Systematic.<br>Reliable. Clear.</h2>
+      </div>
+    </div>
+    <div class="why-grid">
+      <div>
+        <div class="checklist">
+          <div class="check-item reveal">
+            <div class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div>
+              <div class="check-item-title">InterNACHI Certified — Florida Licensed #HI9274</div>
+              <div class="check-item-desc">Every inspection is conducted by a licensed Florida Home Inspector holding active InterNACHI certification — the most rigorous certification program in the industry, requiring ongoing education and ethics standards.</div>
+            </div>
+          </div>
+          <div class="check-item reveal reveal-delay-1">
+            <div class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div>
+              <div class="check-item-title">200+ Point Systematic Evaluation Protocol</div>
+              <div class="check-item-desc">We don't wing it. Every inspection follows our proprietary 200+ point digital checklist, ensuring nothing is skipped. From foundation to ridge cap, we document the condition of every accessible component.</div>
+            </div>
+          </div>
+          <div class="check-item reveal reveal-delay-2">
+            <div class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div>
+              <div class="check-item-title">Same-Day Digital Reports with Photos</div>
+              <div class="check-item-desc">Your report is delivered digitally within hours of the inspection — often the same afternoon. Each finding is documented with photos, severity classification (Monitor / Repair / Safety Hazard), and estimated repair urgency.</div>
+            </div>
+          </div>
+          <div class="check-item reveal reveal-delay-3">
+            <div class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div>
+              <div class="check-item-title">Inspector Walks the Property With You</div>
+              <div class="check-item-desc">We don't just hand you a report. Our inspectors walk you through every room during the inspection, explaining findings in plain language so you understand what matters — and what doesn't.</div>
+            </div>
+          </div>
+          <div class="check-item reveal reveal-delay-4">
+            <div class="check-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></div>
+            <div>
+              <div class="check-item-title">Completely Objective — Never on Realtor Referral Lists</div>
+              <div class="check-item-desc">We market directly to buyers, not real estate agents. That means no conflicts of interest — we have zero incentive to underreport findings to keep agents happy. Our only client is you.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="why-stats-grid reveal">
+          <div class="why-stat">
+            <div class="why-stat-num">3,200<span class="accent">+</span></div>
+            <p>Inspections Completed</p>
+          </div>
+          <div class="why-stat">
+            <div class="why-stat-num">15<span class="accent">yr</span></div>
+            <p>In Business</p>
+          </div>
+          <div class="why-stat">
+            <div class="why-stat-num">98<span class="accent">%</span></div>
+            <p>5-Star Reviews</p>
+          </div>
+          <div class="why-stat">
+            <div class="why-stat-num"><span class="accent">&lt;</span>4h</div>
+            <p>Avg Report Delivery</p>
+          </div>
+        </div>
+        <div class="badge-grid reveal reveal-delay-2">
+          <div class="cred-badge">
+            <div class="cred-badge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+            <div><strong>InterNACHI Certified</strong><span>Member #24011890</span></div>
+          </div>
+          <div class="cred-badge">
+            <div class="cred-badge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+            <div><strong>Florida Licensed Inspector</strong><span>License #HI9274</span></div>
+          </div>
+          <div class="cred-badge">
+            <div class="cred-badge-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg></div>
+            <div><strong>E&amp;O Insured — $1M Coverage</strong><span>Active policy on all inspections</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS (table layout) -->
+<section class="process" id="process">
+  <div class="section-inner">
+    <div class="section-meta reveal">
+      <div class="section-meta-left">
+        <div class="section-eyebrow">// Inspection.workflow()</div>
+        <h2 class="section-title" style="color:#fff">Four-Step<br>Protocol</h2>
+        <p class="section-sub">Systematic, every time. No shortcuts, no guesswork.</p>
+      </div>
+    </div>
+    <div class="process-table reveal">
+      <div class="process-table-header">
+        <div class="process-th">Step</div>
+        <div class="process-th">Action</div>
+        <div class="process-th">Output</div>
+        <div class="process-th">Timeline</div>
+      </div>
+      <div class="process-row">
+        <div class="process-td"><div class="process-step-num">01</div></div>
+        <div class="process-td"><h4>Schedule &amp; Confirm</h4><p>Book online or by phone. We confirm your inspection within 1 hour and coordinate access with seller/agent. Available 7 days a week including evenings.</p></div>
+        <div class="process-td"><p>Confirmation email with inspector details, what to expect, and how to prepare the property for inspection.</p></div>
+        <div class="process-td"><div class="process-duration">Within 1hr</div></div>
+      </div>
+      <div class="process-row">
+        <div class="process-td"><div class="process-step-num">02</div></div>
+        <div class="process-td"><h4>On-Site Inspection</h4><p>Inspector arrives and conducts systematic 200+ point evaluation of all accessible areas — exterior, roof, attic, all rooms, garage, and mechanical systems. You're encouraged to attend.</p></div>
+        <div class="process-td"><p>Real-time digital checklist completed on-site. Inspector walks you through every significant finding before leaving the property.</p></div>
+        <div class="process-td"><div class="process-duration">2–4 hrs</div></div>
+      </div>
+      <div class="process-row">
+        <div class="process-td"><div class="process-step-num">03</div></div>
+        <div class="process-td"><h4>Report Compilation</h4><p>Inspector organizes all findings, attaches photos to each item, classifies severity, and adds narrative descriptions. Report reviewed for completeness before delivery.</p></div>
+        <div class="process-td"><p>Full color PDF + interactive web report delivered to your email. Each finding includes photo, description, severity level, and recommended action.</p></div>
+        <div class="process-td"><div class="process-duration">Same day</div></div>
+      </div>
+      <div class="process-row">
+        <div class="process-td"><div class="process-step-num">04</div></div>
+        <div class="process-td"><h4>Report Review Call</h4><p>Inspector schedules a 30-minute call to walk you through findings, answer questions, and help prioritize items. We translate inspector language into clear next steps for negotiations or repairs.</p></div>
+        <div class="process-td"><p>Prioritized repair list ready for negotiations. Optional re-inspection service available after repairs are completed by sellers.</p></div>
+        <div class="process-td"><div class="process-duration">Day of or next day</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SAMPLE REPORT -->
+<section class="sample-report" id="report">
+  <div class="section-inner">
+    <div class="sample-grid">
+      <div class="reveal">
+        <div class="section-eyebrow">// Report.preview()</div>
+        <h2 class="section-title">Your Report.<br>Crystal Clear.</h2>
+        <p class="section-sub" style="margin-top:12px">Every finding is organized by system, rated by severity, and supported with photos. No jargon. No filler. Just what you need to make a confident decision.</p>
+        <div style="margin-top:32px; display:flex; flex-direction:column; gap:12px;">
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="width:10px; height:10px; border-radius:50%; background:#22C55E; flex-shrink:0;"></div>
+            <span style="font-size:13px; color:var(--mid);"><strong style="color:var(--charcoal)">Pass</strong> — Component is functioning as intended, no action needed</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="width:10px; height:10px; border-radius:50%; background:#F59E0B; flex-shrink:0;"></div>
+            <span style="font-size:13px; color:var(--mid);"><strong style="color:var(--charcoal)">Monitor</strong> — Minor issue, schedule routine maintenance within 6–12 months</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:12px;">
+            <div style="width:10px; height:10px; border-radius:50%; background:var(--orange); flex-shrink:0;"></div>
+            <span style="font-size:13px; color:var(--mid);"><strong style="color:var(--charcoal)">Action Required</strong> — Significant deficiency, address before closing or adjust offer</span>
+          </div>
+        </div>
+      </div>
+      <div class="sample-report-card reveal reveal-delay-2">
+        <div class="sample-rh">
+          <span class="sample-rh-title">ClearView Pro — Inspection Summary</span>
+          <span class="sample-rh-id">#CV-2025-0892</span>
+        </div>
+        <div class="sample-info">
+          <div class="sample-info-item"><label>Property</label><span>4817 Brickell Ave, Miami</span></div>
+          <div class="sample-info-item"><label>Type</label><span>Single Family — 2,340 sq ft</span></div>
+          <div class="sample-info-item"><label>Built</label><span>1994</span></div>
+          <div class="sample-info-item"><label>Inspector</label><span>M. Torres — #HI9274</span></div>
+        </div>
+        <div class="sample-categories">
+          <div class="sample-cat">
+            <div class="report-status status-pass" style="width:8px;height:8px;border-radius:50%;background:#22C55E;flex-shrink:0;"></div>
+            <div class="sample-cat-name">Foundation &amp; Structure</div>
+            <div class="sample-cat-count count-ok">8 / 8 Pass</div>
+          </div>
+          <div class="sample-cat">
+            <div class="report-status status-pass" style="width:8px;height:8px;border-radius:50%;background:#22C55E;flex-shrink:0;"></div>
+            <div class="sample-cat-name">Roof System</div>
+            <div class="sample-cat-count count-ok">12 / 12 Pass</div>
+          </div>
+          <div class="sample-cat">
+            <div class="report-status status-warn" style="width:8px;height:8px;border-radius:50%;background:#F59E0B;flex-shrink:0;"></div>
+            <div class="sample-cat-name">Electrical</div>
+            <div class="sample-cat-count count-warn">2 Monitor</div>
+          </div>
+          <div class="sample-cat">
+            <div class="report-status status-pass" style="width:8px;height:8px;border-radius:50%;background:#22C55E;flex-shrink:0;"></div>
+            <div class="sample-cat-name">HVAC Systems</div>
+            <div class="sample-cat-count count-ok">9 / 9 Pass</div>
+          </div>
+          <div class="sample-cat">
+            <div class="report-status status-flag" style="width:8px;height:8px;border-radius:50%;background:var(--orange);flex-shrink:0;"></div>
+            <div class="sample-cat-name">Plumbing</div>
+            <div class="sample-cat-count count-flag">1 Action Required</div>
+          </div>
+          <div class="sample-cat">
+            <div class="report-status status-warn" style="width:8px;height:8px;border-radius:50%;background:#F59E0B;flex-shrink:0;"></div>
+            <div class="sample-cat-name">Windows &amp; Doors</div>
+            <div class="sample-cat-count count-warn">1 Monitor</div>
+          </div>
+          <div class="sample-cat">
+            <div class="report-status status-pass" style="width:8px;height:8px;border-radius:50%;background:#22C55E;flex-shrink:0;"></div>
+            <div class="sample-cat-name">Exterior &amp; Drainage</div>
+            <div class="sample-cat-count count-ok">11 / 11 Pass</div>
+          </div>
+        </div>
+        <div class="sample-rfoot">
+          <span>Report generated 3:41 PM — 3h 12m after arrival</span>
+          <strong>217 Items Evaluated</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials" id="testimonials">
+  <div class="section-inner">
+    <div class="section-meta reveal">
+      <div class="section-meta-left">
+        <div class="section-eyebrow">// Client.reviews()</div>
+        <h2 class="section-title">What Buyers<br>Are Saying</h2>
+      </div>
+      <a href="#contact" class="btn-primary">Get Your Inspection</a>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card reveal">
+        <div class="stars"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+        <blockquote>"The report they delivered was unlike anything I'd seen before. Every item had a photo, a clear explanation, and a severity rating. They flagged a failing AC compressor that saved me $8,000 in negotiations. Best $400 I ever spent."</blockquote>
+        <div class="testimonial-author"><div class="author-init">AV</div><div class="author-info"><strong>Ana V.</strong><span>Coral Gables buyer · April 2025</span></div></div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-1">
+        <div class="stars"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+        <blockquote>"I'm a first-time buyer and was completely lost. Miguel walked through every single room with me, explained things in plain language, and called me the next morning to make sure I understood the report. Truly above and beyond."</blockquote>
+        <div class="testimonial-author"><div class="author-init">JM</div><div class="author-info"><strong>James M.</strong><span>Kendall buyer · March 2025</span></div></div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-2">
+        <div class="stars"><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg><svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+        <blockquote>"I've used ClearView for three purchases now. Consistently thorough, always on time, and the reports are incredibly detailed. They found active roof leaks that the previous inspector had missed entirely. Will never use anyone else."</blockquote>
+        <div class="testimonial-author"><div class="author-init">DP</div><div class="author-info"><strong>Diana P.</strong><span>Doral buyer · Repeat client</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="section-inner">
+    <div class="faq-grid">
+      <div class="faq-sidebar reveal">
+        <div class="section-eyebrow">// FAQ.getAnswers()</div>
+        <h2 class="section-title">Common<br>Questions</h2>
+        <div class="faq-cta">
+          <h4>Still Unsure?</h4>
+          <p>Call us — we're happy to explain the process and what to expect before you book.</p>
+          <a href="tel:3055551300" class="btn-primary">Call (305) 555-1300</a>
+        </div>
+      </div>
+      <div class="faq-list reveal reveal-delay-1">
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-q-text">How long does a home inspection take?</span>
+            <div class="faq-icon">+</div>
+          </div>
+          <div class="faq-a"><div class="faq-a-inner">Most single-family home inspections take 2–3.5 hours depending on size and age. A 1,500 sq ft home typically takes about 2 hours; a 4,000 sq ft older home may take 4+ hours. We never rush — we take as long as the property requires.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-q-text">Should I attend the inspection?</span>
+            <div class="faq-icon">+</div>
+          </div>
+          <div class="faq-a"><div class="faq-a-inner">Absolutely, and we strongly encourage it. Attending allows the inspector to show you findings in person and explain maintenance tips specific to your home. You'll understand the report far better — and we always take time to answer your questions during the inspection.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-q-text">What if the report reveals serious problems?</span>
+            <div class="faq-icon">+</div>
+          </div>
+          <div class="faq-a"><div class="faq-a-inner">That's exactly what the inspection is for. A clear report with significant findings gives you leverage to negotiate repairs, a price reduction, or seller credits — or to walk away if the issues are too severe. We help you understand which findings are deal-breakers and which are routine maintenance.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-q-text">How soon can I book an inspection?</span>
+            <div class="faq-icon">+</div>
+          </div>
+          <div class="faq-a"><div class="faq-a-inner">We're typically available within 24–48 hours. During peak real estate season (January–May) in South Florida, we recommend booking as soon as possible after your offer is accepted to stay within your inspection contingency window.</div></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span class="faq-q-text">Do you inspect condos and townhomes?</span>
+            <div class="faq-icon">+</div>
+          </div>
+          <div class="faq-a"><div class="faq-a-inner">Yes. We inspect all property types — single-family homes, condos, townhomes, duplexes, and small multi-family properties. For condos, we focus on the unit's interior systems, including HVAC, electrical panel, plumbing, windows, and all accessible components within the unit boundary.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AREAS -->
+<section class="areas" id="areas">
+  <div class="section-inner">
+    <div class="section-meta reveal">
+      <div class="section-meta-left">
+        <div class="section-eyebrow">// areas.getAll()</div>
+        <h2 class="section-title">Service Coverage</h2>
+      </div>
+      <p class="section-sub">All of Miami-Dade and Broward County</p>
+    </div>
+    <div class="areas-grid">
+      <div class="area-cell"><span class="area-num">01</span><span class="area-name">Miami</span></div>
+      <div class="area-cell"><span class="area-num">02</span><span class="area-name">Coral Gables</span></div>
+      <div class="area-cell"><span class="area-num">03</span><span class="area-name">Doral</span></div>
+      <div class="area-cell"><span class="area-num">04</span><span class="area-name">Hialeah</span></div>
+      <div class="area-cell"><span class="area-num">05</span><span class="area-name">Kendall</span></div>
+      <div class="area-cell"><span class="area-num">06</span><span class="area-name">Miami Beach</span></div>
+      <div class="area-cell"><span class="area-num">07</span><span class="area-name">Brickell</span></div>
+      <div class="area-cell"><span class="area-num">08</span><span class="area-name">Westchester</span></div>
+      <div class="area-cell"><span class="area-num">09</span><span class="area-name">South Miami</span></div>
+      <div class="area-cell"><span class="area-num">10</span><span class="area-name">Homestead</span></div>
+      <div class="area-cell"><span class="area-num">11</span><span class="area-name">Miami Gardens</span></div>
+      <div class="area-cell"><span class="area-num">12</span><span class="area-name">North Miami</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="section-inner">
+    <div class="section-meta reveal">
+      <div class="section-meta-left">
+        <div class="section-eyebrow">// Inspection.schedule()</div>
+        <h2 class="section-title">Book Your<br>Inspection</h2>
+      </div>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <h3>Let's Get Started</h3>
+        <p>Fill out the form and we'll confirm your inspection within one hour. We work around your schedule — including weekends and evenings.</p>
+        <div class="contact-detail"><div class="contact-detail-label">Phone</div><div class="contact-detail-val">(305) 555-1300</div></div>
+        <div class="contact-detail"><div class="contact-detail-label">Email</div><div class="contact-detail-val">inspect@clearviewpro.com</div></div>
+        <div class="contact-detail"><div class="contact-detail-label">Hours</div><div class="contact-detail-val">Mon–Sun 7AM–7PM</div></div>
+        <div class="contact-detail"><div class="contact-detail-label">License</div><div class="contact-detail-val">FL #HI9274 · InterNACHI #24011890</div></div>
+      </div>
+      <div class="contact-form reveal reveal-delay-2">
+        <form action="https://formsubmit.co/inspect@clearviewpro.com" method="POST" novalidate id="contactForm">
+          <input type="hidden" name="_subject" value="New ClearView Pro Inspection Request">
+          <input type="hidden" name="_captcha" value="false">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="name">Name *</label>
+              <input type="text" id="name" name="name" placeholder="Jane Smith">
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone *</label>
+              <input type="tel" id="phone" name="phone" placeholder="(305) 000-0000">
+            </div>
+          </div>
+          <div class="form-group full" style="border-right:none;">
+            <label for="email">Email *</label>
+            <input type="email" id="email" name="email" placeholder="jane@example.com">
+          </div>
+          <div class="form-group full" style="border-right:none;">
+            <label for="address">Property Address</label>
+            <input type="text" id="address" name="property_address" placeholder="4817 Brickell Ave, Miami FL">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="type">Inspection Type</label>
+              <select id="type" name="inspection_type">
+                <option value="">Select...</option>
+                <option>Full Home Inspection</option>
+                <option>Pre-Listing Inspection</option>
+                <option>New Construction</option>
+                <option>4-Point Inspection</option>
+                <option>Wind Mitigation</option>
+                <option>Re-Inspection</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="sqft">Approx. Square Footage</label>
+              <input type="text" id="sqft" name="square_footage" placeholder="e.g. 2,400">
+            </div>
+          </div>
+          <div class="form-group full" style="border-right:none;">
+            <label for="message">Preferred Dates &amp; Notes</label>
+            <textarea id="message" name="message" placeholder="Preferred dates/times, property type, anything else we should know..."></textarea>
+          </div>
+          <div class="form-submit-row">
+            <span class="form-note">Response within 1 hour</span>
+            <button type="submit" class="form-submit">Schedule Inspection</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner">
+  <div class="cta-inner">
+    <div class="cta-text">
+      <h2>Inspect Before You Invest.</h2>
+      <p>The cost of a professional home inspection is a fraction of the cost of a single undiscovered defect. Know what you're buying before you close.</p>
+    </div>
+    <div class="cta-actions">
+      <div>
+        <a href="tel:3055551300" class="cta-phone">(305) 555-1300</a>
+        <span class="cta-sub">Call or text — 7 days a week</span>
+      </div>
+      <a href="#contact" class="cta-btn">Schedule Online →</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <span class="logo">ClearView Pro</span>
+      <span class="mono">// Home Inspections · Est. 2010</span>
+      <p>South Florida's most systematic home inspectors. Licensed, certified, and committed to giving you the full picture before you buy.</p>
+      <div class="lic">FL License #HI9274 · InterNACHI #24011890</div>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <ul>
+        <li><a href="#services">Full Home Inspection</a></li>
+        <li><a href="#services">Pre-Listing Inspection</a></li>
+        <li><a href="#services">New Construction</a></li>
+        <li><a href="#services">4-Point Inspection</a></li>
+        <li><a href="#services">Wind Mitigation</a></li>
+        <li><a href="#services">Re-Inspection</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#why-us">About ClearView</a></li>
+        <li><a href="#process">Our Process</a></li>
+        <li><a href="#report">Sample Report</a></li>
+        <li><a href="#testimonials">Reviews</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#areas">Service Areas</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a href="tel:3055551300">(305) 555-1300</a></li>
+        <li><a href="mailto:inspect@clearviewpro.com">inspect@clearviewpro.com</a></li>
+        <li><a href="#">Miami, FL 33131</a></li>
+        <li><a href="#">Mon–Sun 7AM–7PM</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2025 ClearView Pro Home Inspections. All rights reserved.</span>
+    <a href="https://webnari.io" class="webnari-badge" target="_blank" rel="noopener">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/></svg>
+      Powered by Webnari
+    </a>
+  </div>
+</footer>
+
+<script>
+  // Nav scroll
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 20));
+
+  // Mobile menu
+  document.getElementById('hamburgerBtn').addEventListener('click', () => document.getElementById('mobileMenu').classList.add('open'));
+  document.getElementById('mobileClose').addEventListener('click', () => document.getElementById('mobileMenu').classList.remove('open'));
+  document.querySelectorAll('.mobile-link').forEach(l => l.addEventListener('click', () => document.getElementById('mobileMenu').classList.remove('open')));
+
+  // FAQ
+  function toggleFaq(el) {
+    const item = el.parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+
+  // Scroll reveal + service bar fill
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        if (entry.target.classList.contains('service-card')) entry.target.classList.add('in-view');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  document.querySelectorAll('.reveal, .service-card').forEach(el => revealObserver.observe(el));
+
+  // Form validation
+  document.getElementById('contactForm').addEventListener('submit', function(e) {
+    let valid = true;
+    const name = document.getElementById('name');
+    const phone = document.getElementById('phone');
+    const email = document.getElementById('email');
+    [name, phone, email].forEach(f => f.classList.remove('error'));
+    if (!name.value.trim()) { name.classList.add('error'); valid = false; }
+    if (!phone.value.trim()) { phone.classList.add('error'); valid = false; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) { email.classList.add('error'); valid = false; }
+    if (!valid) e.preventDefault();
+  });
+</script>
+</body>
+</html>

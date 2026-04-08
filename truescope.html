@@ -1,0 +1,1962 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="TrueScope Home Inspections — South Florida's most meticulous home inspection service. Certified, unbiased, comprehensive. Serving Miami, Doral, Coral Gables, and all of South Florida.">
+<meta property="og:title" content="TrueScope Home Inspections | South Florida">
+<meta property="og:description" content="South Florida's most meticulous home inspection service. Certified inspectors, same-day reports, unbiased findings.">
+<meta property="og:type" content="website">
+<title>TrueScope Home Inspections | South Florida</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --ink: #141414;
+    --ink2: #2A2A2A;
+    --ink3: #444444;
+    --parchment: #F8F5F0;
+    --white: #FFFFFF;
+    --grey: #E8E4DE;
+    --grey2: #D0CAC0;
+    --grey3: #9A9080;
+    --red: #B5001E;
+    --red2: #D9002C;
+    --line: 1px solid var(--ink);
+    --line-light: 1px solid var(--grey2);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Manrope', sans-serif;
+    background: var(--parchment);
+    color: var(--ink);
+    overflow-x: hidden;
+  }
+
+  /* ===== SIDEBAR NAV ===== */
+  .sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 72px;
+    background: var(--ink);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 28px 0;
+    border-right: var(--line);
+  }
+
+  .sidebar-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+  }
+
+  .sidebar-logo-mark {
+    width: 36px;
+    height: 36px;
+    border: 2px solid var(--red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sidebar-logo-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--grey3);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+  }
+
+  .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+  }
+
+  .sidebar-nav a {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--grey3);
+    text-decoration: none;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    transition: color 0.2s;
+    padding: 4px;
+  }
+
+  .sidebar-nav a:hover { color: var(--white); }
+
+  .sidebar-cta {
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    background: var(--red);
+    color: var(--white);
+    padding: 14px 8px;
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+
+  .sidebar-cta:hover { background: var(--red2); }
+
+  /* MOBILE NAV */
+  .top-bar {
+    display: none;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--ink);
+    padding: 0 24px;
+    height: 60px;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: var(--line);
+  }
+
+  .top-bar-logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+
+  .top-bar-logo-mark {
+    width: 28px;
+    height: 28px;
+    border: 2px solid var(--red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .top-bar-brand {
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    color: var(--white);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .top-hamburger {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .top-hamburger span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: var(--white);
+    transition: all 0.3s;
+  }
+
+  .mobile-drawer {
+    position: fixed;
+    inset: 0;
+    background: var(--ink);
+    z-index: 2000;
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 60px;
+    gap: 32px;
+    transform: translateY(-100%);
+    transition: transform 0.4s ease;
+  }
+
+  .mobile-drawer.open { transform: translateY(0); display: flex; }
+
+  .mobile-drawer a {
+    font-family: 'DM Mono', monospace;
+    font-size: 22px;
+    color: var(--white);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .mobile-drawer a:hover { color: var(--red); }
+
+  .drawer-close {
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    background: none;
+    border: none;
+    color: var(--grey3);
+    font-size: 28px;
+    cursor: pointer;
+  }
+
+  /* ===== MAIN LAYOUT ===== */
+  .main-content {
+    margin-left: 72px;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr;
+    position: relative;
+    overflow: hidden;
+    border-bottom: var(--line);
+  }
+
+  .hero-inner {
+    padding: 80px 80px 80px 100px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 100vh;
+    position: relative;
+  }
+
+  /* Grid overlay */
+  .hero-inner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--grey2) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grey2) 1px, transparent 1px);
+    background-size: 80px 80px;
+    opacity: 0.35;
+    pointer-events: none;
+  }
+
+  .hero-issue {
+    position: absolute;
+    top: 40px;
+    right: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 4px;
+  }
+
+  .hero-issue-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--grey3);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .hero-issue-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 64px;
+    color: var(--grey);
+    line-height: 1;
+    letter-spacing: -0.04em;
+    font-weight: 500;
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--red);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: var(--red);
+  }
+
+  .hero-title {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: clamp(52px, 8vw, 120px);
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    color: var(--ink);
+    margin-bottom: 40px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-title em {
+    font-style: italic;
+    color: var(--red);
+    font-weight: 300;
+  }
+
+  /* Decorative large text behind hero title */
+  .hero-watermark {
+    position: absolute;
+    top: 50%;
+    left: 80px;
+    transform: translateY(-50%);
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: clamp(120px, 18vw, 240px);
+    color: var(--ink);
+    opacity: 0.04;
+    letter-spacing: -0.06em;
+    line-height: 1;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+
+  .hero-bottom {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: end;
+    border-top: var(--line);
+    padding-top: 32px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .hero-desc {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--ink3);
+    line-height: 1.7;
+    max-width: 440px;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: flex-end;
+  }
+
+  .hero-stats-row {
+    display: flex;
+    gap: 0;
+    border: var(--line);
+    width: 100%;
+  }
+
+  .hero-stat {
+    flex: 1;
+    padding: 20px 16px;
+    border-right: var(--line);
+    text-align: left;
+  }
+
+  .hero-stat:last-child { border-right: none; }
+
+  .hero-stat-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--ink);
+    display: block;
+    letter-spacing: -0.03em;
+  }
+
+  .hero-stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--grey3);
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    margin-top: 2px;
+  }
+
+  /* ===== BUTTONS ===== */
+  .btn-primary {
+    background: var(--ink);
+    color: var(--white);
+    padding: 14px 32px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    border: var(--line);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+  }
+
+  .btn-primary:hover {
+    background: var(--red);
+    border-color: var(--red);
+  }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--ink);
+    padding: 14px 32px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    border: var(--line);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s, color 0.2s;
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+  }
+
+  .btn-outline:hover {
+    background: var(--ink);
+    color: var(--white);
+  }
+
+  /* ===== SECTION STRUCTURE ===== */
+  .container {
+    padding: 0 80px;
+  }
+
+  .section-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--grey3);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 48px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--grey2);
+  }
+
+  .section-title {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: clamp(36px, 5vw, 72px);
+    letter-spacing: -0.04em;
+    line-height: 0.95;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+
+  .section-sub {
+    font-size: 16px;
+    font-weight: 400;
+    color: var(--ink3);
+    line-height: 1.7;
+    max-width: 520px;
+  }
+
+  /* ===== SERVICES ===== */
+  .services {
+    padding: 100px 0;
+    border-bottom: var(--line);
+  }
+
+  .services-row {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 80px;
+    align-items: start;
+    margin-top: 60px;
+  }
+
+  .services-sidebar {
+    position: sticky;
+    top: 100px;
+  }
+
+  .services-intro {
+    font-size: 15px;
+    color: var(--ink3);
+    line-height: 1.7;
+    margin-bottom: 32px;
+    border-left: 3px solid var(--red);
+    padding-left: 16px;
+  }
+
+  .services-list {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .service-row {
+    display: grid;
+    grid-template-columns: 48px 1fr auto;
+    gap: 24px;
+    align-items: center;
+    padding: 28px 0;
+    border-bottom: var(--line-light);
+    transition: background 0.2s;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+    cursor: default;
+  }
+
+  .service-row.reveal-visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .service-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--grey3);
+    letter-spacing: 0.1em;
+  }
+
+  .service-content {}
+
+  .service-name {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--ink);
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+
+  .service-detail {
+    font-size: 13px;
+    color: var(--grey3);
+    line-height: 1.5;
+  }
+
+  .service-time {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--red);
+    letter-spacing: 0.1em;
+    white-space: nowrap;
+    text-align: right;
+  }
+
+  /* ===== WHY US ===== */
+  .why {
+    padding: 100px 0;
+    background: var(--ink);
+    border-bottom: var(--line);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .why .section-label { color: var(--grey3); }
+  .why .section-label::after { background: var(--ink3); }
+  .why .section-title { color: var(--white); }
+  .why .section-sub { color: var(--grey3); }
+
+  .why-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    border-top: 1px solid var(--ink2);
+    margin-top: 60px;
+  }
+
+  .why-col {
+    padding: 40px 32px;
+    border-right: 1px solid var(--ink2);
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .why-col:last-child { border-right: none; }
+
+  .why-col.reveal-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .why-col-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--ink3);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 40px;
+    display: block;
+  }
+
+  .why-col-big {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: 48px;
+    color: var(--white);
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .why-col-big span {
+    font-size: 20px;
+    font-weight: 300;
+    color: var(--red);
+  }
+
+  .why-col-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--grey3);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 24px;
+  }
+
+  .why-col-desc {
+    font-size: 14px;
+    color: var(--grey3);
+    line-height: 1.6;
+  }
+
+  /* ===== PROCESS ===== */
+  .process {
+    padding: 100px 0;
+    border-bottom: var(--line);
+  }
+
+  .process-timeline {
+    margin-top: 60px;
+    position: relative;
+  }
+
+  .process-timeline::before {
+    content: '';
+    position: absolute;
+    left: 48px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--grey2);
+  }
+
+  .process-step {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    gap: 0;
+    padding: 0 0 48px;
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .process-step.reveal-visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .process-step-num-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 4px;
+  }
+
+  .process-dot {
+    width: 14px;
+    height: 14px;
+    border: 2px solid var(--red);
+    background: var(--parchment);
+    position: relative;
+    z-index: 2;
+    transition: background 0.3s;
+  }
+
+  .process-step:hover .process-dot {
+    background: var(--red);
+  }
+
+  .process-step-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--grey3);
+    letter-spacing: 0.1em;
+    margin-top: 8px;
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+  }
+
+  .process-content {
+    padding: 0 0 0 40px;
+    border-left: none;
+  }
+
+  .process-title {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  .process-desc {
+    font-size: 15px;
+    color: var(--ink3);
+    line-height: 1.7;
+    max-width: 560px;
+  }
+
+  .process-duration {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--grey3);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border: 1px solid var(--grey2);
+    margin-top: 12px;
+  }
+
+  /* ===== TESTIMONIALS ===== */
+  .testimonials {
+    padding: 100px 0;
+    background: var(--grey);
+    border-bottom: var(--line);
+  }
+
+  .testimonials .section-label::after { background: var(--grey2); }
+
+  .review-list {
+    margin-top: 60px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .review-item {
+    display: grid;
+    grid-template-columns: 80px 1fr auto;
+    gap: 40px;
+    align-items: start;
+    padding: 40px 0;
+    border-bottom: var(--line-light);
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .review-item.reveal-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .review-item:last-child { border-bottom: none; }
+
+  .review-index {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--grey3);
+    letter-spacing: 0.1em;
+    padding-top: 6px;
+  }
+
+  .review-text {
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--ink);
+    line-height: 1.6;
+    font-style: italic;
+    margin-bottom: 16px;
+  }
+
+  .review-meta {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .review-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .review-loc {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--grey3);
+    letter-spacing: 0.1em;
+  }
+
+  .review-stars {
+    font-size: 12px;
+    color: var(--red);
+    letter-spacing: 2px;
+    padding-top: 6px;
+    white-space: nowrap;
+  }
+
+  /* ===== FAQ ===== */
+  .faq {
+    padding: 100px 0;
+    border-bottom: var(--line);
+  }
+
+  .faq-cols {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 80px;
+    margin-top: 60px;
+  }
+
+  .faq-left {
+    position: sticky;
+    top: 100px;
+  }
+
+  .faq-left p {
+    font-size: 15px;
+    color: var(--ink3);
+    line-height: 1.7;
+    margin-top: 16px;
+  }
+
+  .faq-accordion {}
+
+  .faq-item {
+    border-top: var(--line);
+  }
+
+  .faq-item:last-child { border-bottom: var(--line); }
+
+  .faq-btn {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 24px 0;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 24px;
+    cursor: pointer;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 600;
+    font-size: 17px;
+    color: var(--ink);
+    transition: color 0.2s;
+  }
+
+  .faq-btn:hover { color: var(--red); }
+
+  .faq-icon {
+    font-family: 'DM Mono', monospace;
+    font-size: 20px;
+    color: var(--grey3);
+    flex-shrink: 0;
+    width: 20px;
+    text-align: center;
+    transition: transform 0.3s, color 0.2s;
+  }
+
+  .faq-item.open .faq-icon {
+    transform: rotate(45deg);
+    color: var(--red);
+  }
+
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+
+  .faq-answer-inner {
+    padding: 0 0 28px;
+    font-size: 15px;
+    color: var(--ink3);
+    line-height: 1.7;
+    max-width: 580px;
+  }
+
+  /* ===== AREAS ===== */
+  .areas {
+    padding: 80px 0;
+    border-bottom: var(--line);
+  }
+
+  .areas-data {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 0;
+    border: var(--line);
+    margin-top: 48px;
+  }
+
+  .area-cell {
+    padding: 20px 16px;
+    border-right: var(--line);
+    border-bottom: var(--line);
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--ink);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: background 0.2s, color 0.2s;
+    cursor: default;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .area-cell:nth-child(6n) { border-right: none; }
+  .area-cell:nth-last-child(-n+6) { border-bottom: none; }
+
+  .area-cell:hover {
+    background: var(--ink);
+    color: var(--white);
+  }
+
+  .area-cell::before {
+    content: '→';
+    color: var(--red);
+    font-size: 10px;
+  }
+
+  /* ===== CONTACT ===== */
+  .contact {
+    padding: 100px 0;
+    background: var(--white);
+    border-bottom: var(--line);
+  }
+
+  .contact-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 80px;
+    margin-top: 60px;
+  }
+
+  .contact-data {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .contact-data-row {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 20px;
+    padding: 20px 0;
+    border-bottom: var(--line-light);
+    align-items: start;
+    opacity: 0;
+    transform: translateX(-16px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .contact-data-row.reveal-visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .contact-data-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--grey3);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    padding-top: 3px;
+  }
+
+  .contact-data-val {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--ink);
+  }
+
+  .contact-data-val a {
+    color: var(--ink);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .contact-data-val a:hover { color: var(--red); }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .cform-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+
+  .cform-group {
+    display: flex;
+    flex-direction: column;
+    border-bottom: var(--line);
+    border-right: var(--line);
+    padding: 24px 20px;
+    position: relative;
+  }
+
+  .cform-group:last-child { border-right: none; }
+  .cform-row.full .cform-group { border-right: var(--line); }
+
+  .cform-group label {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--grey3);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .cform-group input,
+  .cform-group select,
+  .cform-group textarea {
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: 'Manrope', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    color: var(--ink);
+    width: 100%;
+    resize: none;
+    appearance: none;
+  }
+
+  .cform-group input::placeholder,
+  .cform-group textarea::placeholder {
+    color: var(--grey2);
+  }
+
+  .cform-group textarea { min-height: 100px; }
+
+  .cform-group.error { background: #FFF0F2; }
+  .cform-error {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--red);
+    letter-spacing: 0.1em;
+    display: none;
+    margin-top: 4px;
+  }
+
+  .cform-group.error .cform-error { display: block; }
+
+  .cform-submit-row {
+    border: var(--line);
+    border-top: none;
+  }
+
+  .cform-submit {
+    width: 100%;
+    background: var(--ink);
+    color: var(--white);
+    border: none;
+    padding: 20px 40px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .cform-submit:hover { background: var(--red); }
+
+  /* ===== CTA ===== */
+  .cta-bar {
+    padding: 80px 0;
+    background: var(--red);
+    border-bottom: var(--line);
+  }
+
+  .cta-inner {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 60px;
+  }
+
+  .cta-title {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800;
+    font-size: clamp(28px, 4vw, 52px);
+    color: var(--white);
+    letter-spacing: -0.03em;
+    line-height: 1;
+  }
+
+  .cta-title em {
+    font-style: italic;
+    font-weight: 300;
+  }
+
+  .cta-btn {
+    background: var(--white);
+    color: var(--red);
+    padding: 16px 36px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background 0.2s, color 0.2s;
+    border: 2px solid var(--white);
+  }
+
+  .cta-btn:hover {
+    background: transparent;
+    color: var(--white);
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    padding: 60px 0 0;
+    background: var(--parchment);
+    border-top: var(--line);
+  }
+
+  .footer-top {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px;
+    padding-bottom: 60px;
+    border-bottom: var(--line);
+  }
+
+  .footer-brand-name {
+    font-family: 'DM Mono', monospace;
+    font-weight: 500;
+    font-size: 18px;
+    color: var(--ink);
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .footer-brand-mark {
+    width: 24px;
+    height: 24px;
+    border: 2px solid var(--red);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  footer p {
+    font-size: 13px;
+    color: var(--grey3);
+    line-height: 1.7;
+    max-width: 280px;
+    margin-bottom: 20px;
+  }
+
+  .footer-lic {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--grey3);
+    letter-spacing: 0.1em;
+    padding: 6px 10px;
+    border: 1px solid var(--grey2);
+    display: inline-block;
+  }
+
+  .footer-col-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 9px;
+    color: var(--grey3);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .footer-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .footer-links a {
+    font-size: 14px;
+    color: var(--ink3);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--ink); }
+
+  .footer-bottom {
+    padding: 20px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .footer-copy {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--grey3);
+    letter-spacing: 0.1em;
+  }
+
+  .webnari-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--grey3);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .webnari-link:hover { color: var(--ink); }
+
+  /* ===== REVEAL ===== */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .reveal.reveal-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 1100px) {
+    .why-grid { grid-template-columns: repeat(2, 1fr); }
+    .areas-data { grid-template-columns: repeat(3, 1fr); }
+    .area-cell:nth-child(6n) { border-right: var(--line); }
+    .area-cell:nth-child(3n) { border-right: none; }
+  }
+
+  @media (max-width: 900px) {
+    .sidebar { display: none; }
+    .main-content { margin-left: 0; }
+    .top-bar { display: flex; }
+    .hero-inner { padding: 60px 32px; min-height: calc(100vh - 60px); }
+    .container { padding: 0 32px; }
+    .hero-watermark { left: 32px; font-size: 100px; }
+    .hero-bottom { grid-template-columns: 1fr; gap: 28px; }
+    .hero-actions { align-items: flex-start; width: 100%; }
+    .btn-primary, .btn-outline { width: auto; }
+    .services-row { grid-template-columns: 1fr; gap: 40px; }
+    .services-sidebar { position: static; }
+    .faq-cols { grid-template-columns: 1fr; gap: 40px; }
+    .faq-left { position: static; }
+    .contact-layout { grid-template-columns: 1fr; gap: 48px; }
+    .footer-top { grid-template-columns: 1fr 1fr; gap: 40px; }
+    .cta-inner { grid-template-columns: 1fr; gap: 32px; }
+    .review-item { grid-template-columns: 1fr; gap: 12px; }
+    .review-index { display: none; }
+    .areas-data { grid-template-columns: repeat(2, 1fr); }
+    .area-cell:nth-child(3n) { border-right: var(--line); }
+    .area-cell:nth-child(2n) { border-right: none; }
+    .why-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 600px) {
+    .cform-row { grid-template-columns: 1fr; }
+    .cform-group { border-right: var(--line); }
+    .why-grid { grid-template-columns: 1fr; }
+    .footer-top { grid-template-columns: 1fr; }
+    .areas-data { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR NAV (desktop) -->
+<nav class="sidebar" aria-label="Site navigation">
+  <a href="truescope.html" class="sidebar-logo">
+    <div class="sidebar-logo-mark">
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <circle cx="9" cy="9" r="4" fill="none" stroke="#B5001E" stroke-width="2"/>
+        <line x1="12" y1="12" x2="17" y2="17" stroke="#B5001E" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <span class="sidebar-logo-text">TrueScope</span>
+  </a>
+
+  <div class="sidebar-nav">
+    <a href="#services">Services</a>
+    <a href="#why">Standards</a>
+    <a href="#process">Process</a>
+    <a href="#reviews">Reviews</a>
+    <a href="#faq">FAQ</a>
+    <a href="#contact">Contact</a>
+  </div>
+
+  <a href="tel:7865550160" class="sidebar-cta">Book Now</a>
+</nav>
+
+<!-- TOP BAR (mobile) -->
+<div class="top-bar">
+  <a href="truescope.html" class="top-bar-logo">
+    <div class="top-bar-logo-mark">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <circle cx="7" cy="7" r="3" fill="none" stroke="#B5001E" stroke-width="1.5"/>
+        <line x1="9.5" y1="9.5" x2="13" y2="13" stroke="#B5001E" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <span class="top-bar-brand">TRUESCOPE</span>
+  </a>
+  <button class="top-hamburger" id="hamburger" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+</div>
+
+<!-- MOBILE DRAWER -->
+<div class="mobile-drawer" id="drawer">
+  <button class="drawer-close" id="drawer-close">&times;</button>
+  <a href="#services" class="drawer-link">Services</a>
+  <a href="#why" class="drawer-link">Standards</a>
+  <a href="#process" class="drawer-link">Process</a>
+  <a href="#reviews" class="drawer-link">Reviews</a>
+  <a href="#faq" class="drawer-link">FAQ</a>
+  <a href="#contact" class="drawer-link">Contact</a>
+  <a href="tel:7865550160" style="color:var(--red);margin-top:16px;font-size:18px;">(786) 555-0160</a>
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="main-content">
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-inner">
+      <div class="hero-watermark" aria-hidden="true">INSPECT</div>
+
+      <div class="hero-issue" aria-hidden="true">
+        <span class="hero-issue-label">Report No.</span>
+        <span class="hero-issue-num">001</span>
+      </div>
+
+      <div class="hero-eyebrow">Certified Home Inspectors</div>
+
+      <h1 class="hero-title">
+        KNOW<br>
+        EVERY<br>
+        <em>flaw.</em>
+      </h1>
+
+      <div class="hero-bottom">
+        <p class="hero-desc">
+          TrueScope delivers the most meticulous home inspections in South Florida. 400-point assessments. Same-day digital reports. Zero conflicts of interest — ever.
+        </p>
+        <div class="hero-actions">
+          <div class="hero-stats-row">
+            <div class="hero-stat">
+              <span class="hero-stat-num">400<span style="font-size:14px;font-weight:300;"> pt</span></span>
+              <span class="hero-stat-label">Checklist</span>
+            </div>
+            <div class="hero-stat">
+              <span class="hero-stat-num">24<span style="font-size:14px;font-weight:300;"> hr</span></span>
+              <span class="hero-stat-label">Report</span>
+            </div>
+            <div class="hero-stat">
+              <span class="hero-stat-num">1,800<span style="font-size:14px;font-weight:300;">+</span></span>
+              <span class="hero-stat-label">Inspections</span>
+            </div>
+          </div>
+          <a href="#contact" class="btn-primary">Schedule Inspection</a>
+          <a href="tel:7865550160" class="btn-outline">(786) 555-0160</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="services" id="services">
+    <div class="container">
+      <div class="section-label reveal">01 — Inspection Services</div>
+
+      <div class="services-row">
+        <div class="services-sidebar">
+          <h2 class="section-title reveal">Every<br>angle,<br><em style="color:var(--red);font-style:italic;font-weight:300;">covered.</em></h2>
+          <p class="services-intro reveal reveal-delay-1">
+            Our inspectors are InterNACHI certified with no affiliations to real estate agents or contractors. You get unbiased findings, every time.
+          </p>
+          <a href="#contact" class="btn-primary reveal reveal-delay-2" style="width:auto;display:inline-block;">Book Inspection →</a>
+        </div>
+
+        <div class="services-list">
+          <div class="service-row reveal">
+            <span class="service-num">01</span>
+            <div class="service-content">
+              <div class="service-name">Full Home Inspection</div>
+              <div class="service-detail">Roof, structure, foundation, electrical, HVAC, plumbing, interior, exterior — all 400 checkpoints in one comprehensive visit.</div>
+            </div>
+            <div class="service-time">3–4 hrs</div>
+          </div>
+
+          <div class="service-row reveal reveal-delay-1">
+            <span class="service-num">02</span>
+            <div class="service-content">
+              <div class="service-name">Pre-Listing Inspection</div>
+              <div class="service-detail">Sellers: know exactly what buyers will find before they find it. Fix what matters, price with confidence, and avoid last-minute deal killers.</div>
+            </div>
+            <div class="service-time">2–3 hrs</div>
+          </div>
+
+          <div class="service-row reveal reveal-delay-2">
+            <span class="service-num">03</span>
+            <div class="service-content">
+              <div class="service-name">New Construction Inspection</div>
+              <div class="service-detail">Builders make mistakes. We catch them at the phase inspection and final walkthrough — before your builder's warranty expires.</div>
+            </div>
+            <div class="service-time">2–3 hrs</div>
+          </div>
+
+          <div class="service-row reveal reveal-delay-3">
+            <span class="service-num">04</span>
+            <div class="service-content">
+              <div class="service-name">4-Point Insurance Inspection</div>
+              <div class="service-detail">Required by many Florida insurers for homes over 25 years old. Covers roof, electrical, plumbing, and HVAC systems.</div>
+            </div>
+            <div class="service-time">1 hr</div>
+          </div>
+
+          <div class="service-row reveal reveal-delay-4">
+            <span class="service-num">05</span>
+            <div class="service-content">
+              <div class="service-name">Wind Mitigation Inspection</div>
+              <div class="service-detail">Could save you hundreds per year on homeowner's insurance. We document your home's hurricane-resistant features for your insurer.</div>
+            </div>
+            <div class="service-time">45 min</div>
+          </div>
+
+          <div class="service-row reveal">
+            <span class="service-num">06</span>
+            <div class="service-content">
+              <div class="service-name">Pool & Spa Inspection</div>
+              <div class="service-detail">Equipment, plumbing, safety barriers, surface condition, drainage — full pool and spa evaluation as a standalone or add-on service.</div>
+            </div>
+            <div class="service-time">1 hr</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY US -->
+  <section class="why" id="why">
+    <div class="container">
+      <div class="section-label reveal">02 — Our Standards</div>
+      <h2 class="section-title reveal reveal-delay-1">We answer<br>to the buyer.<br><em style="color:var(--red);font-weight:300;font-style:italic;">No one else.</em></h2>
+
+      <div class="why-grid">
+        <div class="why-col reveal">
+          <span class="why-col-num">Metric 01</span>
+          <div class="why-col-big">400<span> pt</span></div>
+          <div class="why-col-label">Inspection Checklist</div>
+          <p class="why-col-desc">Every inspection follows our 400-point InterNACHI-certified checklist — no shortcuts, no skipped systems, no exceptions.</p>
+        </div>
+        <div class="why-col reveal reveal-delay-1">
+          <span class="why-col-num">Metric 02</span>
+          <div class="why-col-big">24<span> hr</span></div>
+          <div class="why-col-label">Report Delivery</div>
+          <p class="why-col-desc">Full digital report with photos, categorized findings, and repair recommendations — delivered within 24 hours of your inspection.</p>
+        </div>
+        <div class="why-col reveal reveal-delay-2">
+          <span class="why-col-num">Metric 03</span>
+          <div class="why-col-big">0%<span></span></div>
+          <div class="why-col-label">Contractor Referrals</div>
+          <p class="why-col-desc">We never refer contractors or accept referral fees. No conflicts of interest, ever. Your inspector works for you and only you.</p>
+        </div>
+        <div class="why-col reveal reveal-delay-3">
+          <span class="why-col-num">Metric 04</span>
+          <div class="why-col-big">4.9<span>/5</span></div>
+          <div class="why-col-label">Average Review Score</div>
+          <p class="why-col-desc">1,800+ inspections completed with a near-perfect review rating. Our clients trust us with the biggest purchase of their lives.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process" id="process">
+    <div class="container">
+      <div class="section-label reveal">03 — How It Works</div>
+      <h2 class="section-title reveal reveal-delay-1">Precision.<br>Every step.</h2>
+      <p class="section-sub reveal reveal-delay-2">From booking to final report — a documented, repeatable process that never cuts corners.</p>
+
+      <div class="process-timeline">
+        <div class="process-step reveal">
+          <div class="process-step-num-wrap">
+            <div class="process-dot"></div>
+            <span class="process-step-num">step 01</span>
+          </div>
+          <div class="process-content">
+            <h3 class="process-title">Schedule Online or By Phone</h3>
+            <p class="process-desc">Book in under 3 minutes. Select your inspection type, preferred date, and time window. We confirm within 2 hours with your assigned inspector's credentials and license number.</p>
+            <span class="process-duration">5 min</span>
+          </div>
+        </div>
+
+        <div class="process-step reveal reveal-delay-1">
+          <div class="process-step-num-wrap">
+            <div class="process-dot"></div>
+            <span class="process-step-num">step 02</span>
+          </div>
+          <div class="process-content">
+            <h3 class="process-title">On-Site Inspection</h3>
+            <p class="process-desc">Your certified inspector arrives on time and performs a systematic evaluation of all accessible areas. You're encouraged to attend and ask questions throughout. The inspector explains findings in plain language as they go.</p>
+            <span class="process-duration">2–4 hours</span>
+          </div>
+        </div>
+
+        <div class="process-step reveal reveal-delay-2">
+          <div class="process-step-num-wrap">
+            <div class="process-dot"></div>
+            <span class="process-step-num">step 03</span>
+          </div>
+          <div class="process-content">
+            <h3 class="process-title">Digital Report Delivered</h3>
+            <p class="process-desc">Within 24 hours you receive a comprehensive digital report with labeled photos, severity ratings (Safety Hazard / Major / Minor / Maintenance), and actionable repair notes for every finding.</p>
+            <span class="process-duration">Within 24 hrs</span>
+          </div>
+        </div>
+
+        <div class="process-step reveal reveal-delay-3">
+          <div class="process-step-num-wrap">
+            <div class="process-dot"></div>
+            <span class="process-step-num">step 04</span>
+          </div>
+          <div class="process-content">
+            <h3 class="process-title">Post-Report Consultation</h3>
+            <p class="process-desc">Your inspector is available for a 30-minute call to walk through findings, help you prioritize repairs, and answer any questions your agent or attorney may have. Included at no extra charge.</p>
+            <span class="process-duration">30 min complimentary</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials" id="reviews">
+    <div class="container">
+      <div class="section-label reveal">04 — Client Reviews</div>
+      <h2 class="section-title reveal reveal-delay-1">Trusted by<br>South Florida<br>homebuyers.</h2>
+
+      <div class="review-list">
+        <div class="review-item reveal">
+          <div class="review-index">RV_001</div>
+          <div>
+            <p class="review-text">"Our inspector found a hidden roof leak the seller's agent swore didn't exist. TrueScope saved us from buying a $680,000 problem. The report was incredibly detailed — our lawyer used it directly in negotiations."</p>
+            <div class="review-meta">
+              <span class="review-name">Jennifer M.</span>
+              <span class="review-loc">Coral Gables, FL</span>
+            </div>
+          </div>
+          <div class="review-stars">★★★★★</div>
+        </div>
+
+        <div class="review-item reveal reveal-delay-1">
+          <div class="review-index">RV_002</div>
+          <div>
+            <p class="review-text">"I've used three different inspectors across three home purchases in Miami. TrueScope's report was twice as thorough as anyone else. The photo documentation alone would have cost extra elsewhere. Outstanding."</p>
+            <div class="review-meta">
+              <span class="review-name">David L.</span>
+              <span class="review-loc">Brickell, FL</span>
+            </div>
+          </div>
+          <div class="review-stars">★★★★★</div>
+        </div>
+
+        <div class="review-item reveal reveal-delay-2">
+          <div class="review-index">RV_003</div>
+          <div>
+            <p class="review-text">"First-time buyer here. The inspector walked me through every single finding and explained what was urgent vs. what could wait. I didn't feel talked down to. I felt informed. That's exactly what I needed."</p>
+            <div class="review-meta">
+              <span class="review-name">Ana R.</span>
+              <span class="review-loc">Kendall, FL</span>
+            </div>
+          </div>
+          <div class="review-stars">★★★★★</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq" id="faq">
+    <div class="container">
+      <div class="section-label reveal">05 — FAQ</div>
+
+      <div class="faq-cols">
+        <div class="faq-left">
+          <h2 class="section-title reveal">Common<br>questions.</h2>
+          <p class="reveal reveal-delay-1">If your question isn't here, call us. We pick up.</p>
+          <a href="tel:7865550160" class="btn-outline" style="margin-top:28px;display:inline-block;width:auto;">Call (786) 555-0160</a>
+        </div>
+
+        <div class="faq-accordion">
+          <div class="faq-item">
+            <button class="faq-btn">How long does a home inspection take? <span class="faq-icon">+</span></button>
+            <div class="faq-answer"><div class="faq-answer-inner">A standard single-family home inspection takes 3–4 hours for a 2,000 sq ft home. Larger properties, crawl spaces, and older homes may take longer. We never rush — if it takes 5 hours to do it right, it takes 5 hours.</div></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-btn">Should I be present during the inspection? <span class="faq-icon">+</span></button>
+            <div class="faq-answer"><div class="faq-answer-inner">Yes — we strongly encourage it. Attending your inspection lets you see issues firsthand, ask questions in real time, and understand the context of each finding. It's your biggest purchase; you should understand it completely.</div></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-btn">What if the inspector finds major problems? <span class="faq-icon">+</span></button>
+            <div class="faq-answer"><div class="faq-answer-inner">That's exactly why you hired us. Major findings give you leverage to negotiate repairs, price reductions, or walk away with your earnest money. Our detailed reports are written specifically to support negotiations and legal proceedings if needed.</div></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-btn">Do you inspect condos and townhomes? <span class="faq-icon">+</span></button>
+            <div class="faq-answer"><div class="faq-answer-inner">Yes. Condo and townhome inspections cover everything within the unit — HVAC, plumbing, electrical, appliances, doors, windows, balcony, and interior structure. Common areas are noted but not inspected (that's the HOA's responsibility).</div></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-btn">How much does a home inspection cost? <span class="faq-icon">+</span></button>
+            <div class="faq-answer"><div class="faq-answer-inner">Pricing starts at $395 for homes up to 1,500 sq ft and scales based on size and services. Wind mitigation, 4-point, and pool inspections can be added. Get an instant quote at booking — no hidden fees.</div></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-btn">Are you licensed in Florida? <span class="faq-icon">+</span></button>
+            <div class="faq-answer"><div class="faq-answer-inner">Yes — all TrueScope inspectors hold active Florida Licensed Home Inspector (HI) licenses through the DBPR. We carry full E&O and general liability insurance. License numbers are always provided at booking confirmation.</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AREAS -->
+  <section class="areas" id="areas">
+    <div class="container">
+      <div class="section-label reveal">Service Coverage</div>
+      <h2 class="section-title reveal reveal-delay-1">South Florida,<br>fully covered.</h2>
+      <div class="areas-data reveal reveal-delay-2">
+        <div class="area-cell">Miami</div>
+        <div class="area-cell">Coral Gables</div>
+        <div class="area-cell">Doral</div>
+        <div class="area-cell">Hialeah</div>
+        <div class="area-cell">Kendall</div>
+        <div class="area-cell">Miami Beach</div>
+        <div class="area-cell">Brickell</div>
+        <div class="area-cell">Westchester</div>
+        <div class="area-cell">South Miami</div>
+        <div class="area-cell">Homestead</div>
+        <div class="area-cell">Miami Gardens</div>
+        <div class="area-cell">North Miami</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact" id="contact">
+    <div class="container">
+      <div class="section-label reveal">06 — Contact</div>
+      <h2 class="section-title reveal reveal-delay-1">Schedule<br>your inspection.</h2>
+
+      <div class="contact-layout">
+        <div class="contact-data">
+          <div class="contact-data-row reveal">
+            <span class="contact-data-label">Phone</span>
+            <div class="contact-data-val"><a href="tel:7865550160">(786) 555-0160</a></div>
+          </div>
+          <div class="contact-data-row reveal reveal-delay-1">
+            <span class="contact-data-label">Email</span>
+            <div class="contact-data-val"><a href="mailto:inspect@truescope.io">inspect@truescope.io</a></div>
+          </div>
+          <div class="contact-data-row reveal reveal-delay-2">
+            <span class="contact-data-label">Hours</span>
+            <div class="contact-data-val">Mon–Sat: 7AM–6PM<br>Sun: By appointment</div>
+          </div>
+          <div class="contact-data-row reveal reveal-delay-3">
+            <span class="contact-data-label">License</span>
+            <div class="contact-data-val">#HI30009</div>
+          </div>
+          <div class="contact-data-row reveal reveal-delay-4">
+            <span class="contact-data-label">Response</span>
+            <div class="contact-data-val">We reply within 2 hours</div>
+          </div>
+        </div>
+
+        <form class="contact-form" action="https://formsubmit.co/inspect@truescope.io" method="POST" id="contactForm">
+          <input type="hidden" name="_subject" value="New Inspection Request — TrueScope">
+          <input type="hidden" name="_captcha" value="false">
+
+          <div class="cform-row">
+            <div class="cform-group" id="fg-name">
+              <label>Full Name *</label>
+              <input type="text" id="fname" name="name" placeholder="Jane Smith">
+              <span class="cform-error">Required</span>
+            </div>
+            <div class="cform-group" id="fg-phone">
+              <label>Phone *</label>
+              <input type="tel" id="fphone" name="phone" placeholder="(786) 555-0000">
+              <span class="cform-error">Required</span>
+            </div>
+          </div>
+
+          <div class="cform-row full">
+            <div class="cform-group" id="fg-email" style="border-right:var(--line);">
+              <label>Email *</label>
+              <input type="email" id="femail" name="email" placeholder="jane@email.com">
+              <span class="cform-error">Valid email required</span>
+            </div>
+          </div>
+
+          <div class="cform-row">
+            <div class="cform-group">
+              <label>Inspection Type</label>
+              <select name="type">
+                <option value="">Select type...</option>
+                <option>Full Home Inspection</option>
+                <option>Pre-Listing Inspection</option>
+                <option>New Construction Inspection</option>
+                <option>4-Point Insurance Inspection</option>
+                <option>Wind Mitigation Inspection</option>
+                <option>Pool & Spa Inspection</option>
+              </select>
+            </div>
+            <div class="cform-group">
+              <label>Property Address</label>
+              <input type="text" name="address" placeholder="123 Main St, Miami FL">
+            </div>
+          </div>
+
+          <div class="cform-row full">
+            <div class="cform-group" style="border-right:var(--line);">
+              <label>Additional Notes</label>
+              <textarea name="notes" placeholder="Property size, closing date, specific concerns..."></textarea>
+            </div>
+          </div>
+
+          <div class="cform-submit-row">
+            <button type="submit" class="cform-submit">SCHEDULE MY INSPECTION →</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BAR -->
+  <div class="cta-bar">
+    <div class="container">
+      <div class="cta-inner">
+        <h2 class="cta-title">Don't buy blind.<br><em>Know before you close.</em></h2>
+        <a href="#contact" class="cta-btn">Book Now</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-top">
+        <div>
+          <a href="truescope.html" class="footer-brand-name">
+            <div class="footer-brand-mark">
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <circle cx="6" cy="6" r="2.5" fill="none" stroke="#B5001E" stroke-width="1.5"/>
+                <line x1="8" y1="8" x2="11" y2="11" stroke="#B5001E" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            TRUESCOPE
+          </a>
+          <p>South Florida's most meticulous home inspection service. InterNACHI certified. Fully independent. Always on the buyer's side.</p>
+          <div class="footer-lic">License #HI30009</div>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Services</div>
+          <ul class="footer-links">
+            <li><a href="#services">Full Home Inspection</a></li>
+            <li><a href="#services">Pre-Listing Inspection</a></li>
+            <li><a href="#services">New Construction</a></li>
+            <li><a href="#services">4-Point Insurance</a></li>
+            <li><a href="#services">Wind Mitigation</a></li>
+            <li><a href="#services">Pool & Spa</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Company</div>
+          <ul class="footer-links">
+            <li><a href="#why">Our Standards</a></li>
+            <li><a href="#process">Our Process</a></li>
+            <li><a href="#reviews">Client Reviews</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="#contact">Contact</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <div class="footer-col-title">Contact</div>
+          <ul class="footer-links">
+            <li><a href="tel:7865550160">(786) 555-0160</a></li>
+            <li><a href="mailto:inspect@truescope.io">inspect@truescope.io</a></li>
+            <li><a href="#">Miami, FL</a></li>
+            <li style="color:var(--grey3);font-size:13px;margin-top:8px;">Mon–Sat 7AM–6PM</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="footer-copy">© 2025 TRUESCOPE INSPECTIONS — LICENSE #HI30009</div>
+        <a href="https://webnari.io" class="webnari-link" target="_blank" rel="noopener">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#9A9080" stroke-width="1.2"/><path d="M3 6 L5 8 L9 4" stroke="#9A9080" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          POWERED BY WEBNARI
+        </a>
+      </div>
+    </div>
+  </footer>
+
+</div><!-- end .main-content -->
+
+<script>
+  // Mobile drawer
+  const hamburger = document.getElementById('hamburger');
+  const drawer = document.getElementById('drawer');
+  const drawerClose = document.getElementById('drawer-close');
+
+  hamburger && hamburger.addEventListener('click', () => {
+    drawer.style.display = 'flex';
+    setTimeout(() => drawer.classList.add('open'), 10);
+  });
+
+  drawerClose && drawerClose.addEventListener('click', () => {
+    drawer.classList.remove('open');
+    setTimeout(() => drawer.style.display = 'none', 400);
+  });
+
+  document.querySelectorAll('.drawer-link').forEach(link => {
+    link.addEventListener('click', () => {
+      drawer.classList.remove('open');
+      setTimeout(() => drawer.style.display = 'none', 400);
+    });
+  });
+
+  // Scroll reveal
+  const allReveals = document.querySelectorAll('.reveal, .service-row, .why-col, .process-step, .review-item, .contact-data-row');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('reveal-visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  allReveals.forEach(el => observer.observe(el));
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const answer = item.querySelector('.faq-answer');
+      const isOpen = item.classList.contains('open');
+
+      document.querySelectorAll('.faq-item.open').forEach(open => {
+        open.classList.remove('open');
+        open.querySelector('.faq-answer').style.maxHeight = '0';
+      });
+
+      if (!isOpen) {
+        item.classList.add('open');
+        answer.style.maxHeight = answer.scrollHeight + 'px';
+      }
+    });
+  });
+
+  // Form validation
+  const form = document.getElementById('contactForm');
+  if (form) {
+    document.getElementById('fname').addEventListener('blur', function() {
+      const g = document.getElementById('fg-name');
+      g.classList.toggle('error', this.value.trim().length < 2);
+    });
+    document.getElementById('fphone').addEventListener('blur', function() {
+      const g = document.getElementById('fg-phone');
+      g.classList.toggle('error', this.value.trim().length < 7);
+    });
+    document.getElementById('femail').addEventListener('blur', function() {
+      const g = document.getElementById('fg-email');
+      g.classList.toggle('error', !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value));
+    });
+
+    form.addEventListener('submit', e => {
+      const name = document.getElementById('fname');
+      const phone = document.getElementById('fphone');
+      const email = document.getElementById('femail');
+      let valid = true;
+
+      const gn = document.getElementById('fg-name');
+      const gp = document.getElementById('fg-phone');
+      const ge = document.getElementById('fg-email');
+
+      if (name.value.trim().length < 2) { gn.classList.add('error'); valid = false; }
+      if (phone.value.trim().length < 7) { gp.classList.add('error'); valid = false; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value)) { ge.classList.add('error'); valid = false; }
+
+      if (!valid) e.preventDefault();
+    });
+  }
+
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth' }); }
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,2313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BounceBox Miami | Bounce House & Party Rentals | South Florida</title>
+<meta name="description" content="BounceBox Miami — South Florida's favorite bounce house and inflatable party rental company. Bounce castles, water slides, obstacle courses & full party packages delivered to your door.">
+<meta property="og:title" content="BounceBox Miami | Bounce House & Party Rentals">
+<meta property="og:description" content="Make your next party unforgettable! Bounce houses, water slides, obstacle courses & more delivered across South Florida.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --yellow: #FFD600;
+  --yellow2: #FFE84D;
+  --pink: #FF3EA5;
+  --pink2: #FF75C0;
+  --blue: #00C2FF;
+  --blue2: #66D9FF;
+  --lime: #A8FF3E;
+  --lime2: #C8FF7A;
+  --purple: #9B5DE5;
+  --orange: #FF6B2B;
+  --white: #FFFFFF;
+  --off-white: #FFFDF5;
+  --dark: #1A1A2E;
+  --text: #3D3560;
+  --muted: #8B85A8;
+  --border: #EDE8FF;
+  --surface: #F8F5FF;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--off-white);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* CONFETTI ANIMATION */
+@keyframes confetti-fall {
+  0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+
+.confetti-piece {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  top: -20px;
+  animation: confetti-fall linear infinite;
+  pointer-events: none;
+  z-index: 0;
+  border-radius: 2px;
+}
+
+/* FLOATING NAV */
+nav {
+  position: fixed;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  background: var(--white);
+  border-radius: 100px;
+  padding: 10px 20px;
+  box-shadow: 0 8px 32px rgba(155, 93, 229, 0.2), 0 2px 8px rgba(0,0,0,0.08);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: max-content;
+  max-width: calc(100vw - 32px);
+}
+
+.nav-logo {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.3rem;
+  color: var(--purple);
+  text-decoration: none;
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.nav-logo-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--yellow);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+.nav-link {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text);
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 100px;
+  transition: background 0.2s, color 0.2s;
+  white-space: nowrap;
+}
+
+.nav-link:hover { background: var(--surface); color: var(--purple); }
+
+.nav-cta {
+  background: var(--pink);
+  color: var(--white) !important;
+  padding: 10px 20px;
+  border-radius: 100px;
+  font-weight: 800;
+  margin-left: 4px;
+  box-shadow: 0 4px 12px rgba(255, 62, 165, 0.35);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.nav-cta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 62, 165, 0.45);
+  background: var(--pink) !important;
+  color: white !important;
+}
+
+.nav-hamburger {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.nav-hamburger span {
+  display: block;
+  width: 22px;
+  height: 2.5px;
+  background: var(--purple);
+  border-radius: 2px;
+  margin: 5px 0;
+  transition: 0.3s;
+}
+
+/* MOBILE MENU */
+.mobile-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--purple);
+  z-index: 999;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
+
+.mobile-overlay.open { display: flex; }
+
+.mobile-overlay a {
+  font-family: 'Fredoka One', cursive;
+  font-size: 2.2rem;
+  color: var(--white);
+  text-decoration: none;
+}
+
+.mobile-overlay .mobile-close {
+  position: absolute;
+  top: 20px; right: 20px;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+/* UTILITY */
+.container { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+
+.section-tag {
+  display: inline-block;
+  background: var(--yellow);
+  color: var(--dark);
+  font-family: 'Fredoka One', cursive;
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  padding: 6px 18px;
+  border-radius: 100px;
+  margin-bottom: 16px;
+}
+
+.section-tag.pink  { background: var(--pink);   color: white; }
+.section-tag.blue  { background: var(--blue);   color: var(--dark); }
+.section-tag.lime  { background: var(--lime);   color: var(--dark); }
+.section-tag.purple{ background: var(--purple); color: white; }
+
+/* BTN */
+.btn {
+  display: inline-block;
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.05rem;
+  letter-spacing: 0.03em;
+  padding: 14px 32px;
+  border-radius: 100px;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.btn:hover { transform: translateY(-3px); }
+
+.btn-pink {
+  background: var(--pink);
+  color: white;
+  box-shadow: 0 6px 20px rgba(255,62,165,0.35);
+}
+.btn-pink:hover { box-shadow: 0 10px 28px rgba(255,62,165,0.45); }
+
+.btn-yellow {
+  background: var(--yellow);
+  color: var(--dark);
+  box-shadow: 0 6px 20px rgba(255,214,0,0.4);
+}
+.btn-yellow:hover { box-shadow: 0 10px 28px rgba(255,214,0,0.5); }
+
+.btn-outline {
+  background: transparent;
+  color: var(--purple);
+  border: 2.5px solid var(--purple);
+  box-shadow: none;
+}
+.btn-outline:hover { background: var(--purple); color: white; box-shadow: 0 8px 20px rgba(155,93,229,0.3); }
+
+/* REVEAL */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+.reveal-delay-5 { transition-delay: 0.5s; }
+
+/* ===== HERO ===== */
+#hero {
+  min-height: 100vh;
+  background: var(--off-white);
+  display: flex;
+  align-items: center;
+  padding: 100px 24px 60px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* wavy bg blobs */
+#hero::before {
+  content: '';
+  position: absolute;
+  top: -120px; right: -120px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(255,214,0,0.25) 0%, transparent 65%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+#hero::after {
+  content: '';
+  position: absolute;
+  bottom: -80px; left: -80px;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(0,194,255,0.2) 0%, transparent 65%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.hero-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-copy h1 {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(2.8rem, 5.5vw, 5rem);
+  color: var(--dark);
+  line-height: 1.05;
+  margin-bottom: 20px;
+}
+
+.hero-copy h1 .highlight-yellow { color: var(--yellow); -webkit-text-stroke: 2px var(--dark); paint-order: stroke fill; }
+.hero-copy h1 .highlight-pink { color: var(--pink); }
+.hero-copy h1 .highlight-blue { color: var(--blue); -webkit-text-stroke: 1.5px var(--dark); paint-order: stroke fill; }
+
+.hero-copy p {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.7;
+  margin-bottom: 32px;
+  max-width: 480px;
+}
+
+.hero-btns {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+.hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.hero-badge {
+  background: var(--white);
+  border: 2px solid var(--border);
+  border-radius: 100px;
+  padding: 8px 16px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+
+.hero-badge svg { flex-shrink: 0; }
+
+.hero-visual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* floating bubbles around illustration */
+.float-bubble {
+  position: absolute;
+  border-radius: 50%;
+  animation: float-up 3s ease-in-out infinite alternate;
+}
+
+@keyframes float-up {
+  0%   { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(-18px) rotate(10deg); }
+}
+
+.hero-stat-pill {
+  position: absolute;
+  background: var(--white);
+  border-radius: 20px;
+  padding: 12px 18px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hero-stat-num {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.hero-stat-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+  line-height: 1.3;
+}
+
+/* ===== MARQUEE ===== */
+.marquee-wrap {
+  background: var(--purple);
+  padding: 14px 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.marquee-track {
+  display: inline-flex;
+  animation: marquee 25s linear infinite;
+}
+
+.marquee-track span {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1rem;
+  color: var(--white);
+  padding: 0 28px;
+  letter-spacing: 0.04em;
+}
+
+.marquee-track .dot { color: var(--yellow); font-size: 1.3rem; }
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ===== RENTALS ===== */
+#rentals {
+  padding: 100px 0;
+  background: var(--off-white);
+}
+
+.rentals-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.rentals-header h2 {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  color: var(--dark);
+  margin-bottom: 12px;
+}
+
+.rentals-header p {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--muted);
+  max-width: 520px;
+  margin: 0 auto;
+  line-height: 1.65;
+}
+
+.rentals-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.rental-card {
+  background: var(--white);
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+  transition: transform 0.3s, box-shadow 0.3s;
+  border: 2.5px solid transparent;
+}
+
+.rental-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.12);
+}
+
+.rental-card:hover.card-yellow { border-color: var(--yellow); }
+.rental-card:hover.card-pink   { border-color: var(--pink); }
+.rental-card:hover.card-blue   { border-color: var(--blue); }
+.rental-card:hover.card-lime   { border-color: var(--lime); }
+.rental-card:hover.card-purple { border-color: var(--purple); }
+.rental-card:hover.card-orange { border-color: var(--orange); }
+
+.rental-card-header {
+  padding: 28px 28px 16px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.rental-icon-wrap {
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rental-badge-tag {
+  font-family: 'Fredoka One', cursive;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  padding: 4px 12px;
+  border-radius: 100px;
+  color: white;
+}
+
+.rental-card-body { padding: 0 28px 28px; }
+
+.rental-card-body h3 {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.35rem;
+  color: var(--dark);
+  margin-bottom: 8px;
+}
+
+.rental-card-body p {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--muted);
+  line-height: 1.65;
+  margin-bottom: 18px;
+}
+
+.rental-features {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.rental-feature {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.rental-feature::before {
+  content: '✓';
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 900;
+  flex-shrink: 0;
+  color: white;
+  background: var(--lime);
+  line-height: 20px;
+  text-align: center;
+}
+
+.rental-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 2px dashed var(--border);
+  padding-top: 16px;
+}
+
+.rental-price {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.6rem;
+  color: var(--dark);
+}
+
+.rental-price span {
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.rental-btn {
+  font-family: 'Fredoka One', cursive;
+  font-size: 0.85rem;
+  padding: 8px 20px;
+  border-radius: 100px;
+  text-decoration: none;
+  color: white;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.rental-btn:hover { transform: scale(1.05); opacity: 0.9; }
+
+/* ===== PACKAGES ===== */
+#packages {
+  padding: 100px 0;
+  background: var(--purple);
+  position: relative;
+  overflow: hidden;
+}
+
+#packages::before {
+  content: '🎉';
+  position: absolute;
+  font-size: 18rem;
+  opacity: 0.04;
+  top: -40px; right: -40px;
+  pointer-events: none;
+}
+
+.packages-header {
+  text-align: center;
+  margin-bottom: 56px;
+}
+
+.packages-header h2 {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  color: var(--white);
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+.packages-header p {
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.7);
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.packages-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.package-card {
+  background: rgba(255,255,255,0.08);
+  border: 2px solid rgba(255,255,255,0.15);
+  border-radius: 28px;
+  padding: 36px 28px;
+  position: relative;
+  transition: transform 0.3s, border-color 0.3s;
+}
+
+.package-card:hover { transform: translateY(-6px); border-color: rgba(255,255,255,0.4); }
+
+.package-card.featured {
+  background: var(--yellow);
+  border-color: var(--yellow);
+}
+
+.package-popular-badge {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--pink);
+  color: white;
+  font-family: 'Fredoka One', cursive;
+  font-size: 0.78rem;
+  padding: 5px 18px;
+  border-radius: 100px;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(255,62,165,0.4);
+}
+
+.package-name {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.5rem;
+  color: white;
+  margin-bottom: 6px;
+}
+
+.package-card.featured .package-name { color: var(--dark); }
+
+.package-tagline {
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.65);
+  margin-bottom: 24px;
+}
+
+.package-card.featured .package-tagline { color: rgba(26,26,46,0.7); }
+
+.package-price {
+  font-family: 'Fredoka One', cursive;
+  font-size: 3rem;
+  color: var(--yellow);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.package-card.featured .package-price { color: var(--purple); }
+
+.package-price sub {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  vertical-align: baseline;
+  color: inherit;
+  opacity: 0.7;
+}
+
+.package-includes-label {
+  font-family: 'Fredoka One', cursive;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  margin: 20px 0 12px;
+}
+
+.package-card.featured .package-includes-label { color: rgba(26,26,46,0.5); }
+
+.package-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.9);
+}
+
+.package-card.featured .package-item { color: var(--dark); }
+
+.package-item-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.package-btn {
+  display: block;
+  text-align: center;
+  margin-top: 28px;
+  padding: 14px;
+  border-radius: 100px;
+  font-family: 'Fredoka One', cursive;
+  font-size: 1rem;
+  text-decoration: none;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.package-btn:hover { transform: scale(1.03); opacity: 0.9; }
+
+/* ===== WHY US ===== */
+#why {
+  padding: 100px 0;
+  background: var(--off-white);
+}
+
+.why-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.why-content h2 {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: var(--dark);
+  line-height: 1.1;
+  margin: 12px 0 24px;
+}
+
+.why-content p {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 32px;
+}
+
+.why-features {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.why-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px;
+  background: var(--white);
+  border-radius: 20px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+  transition: transform 0.2s;
+}
+
+.why-feature:hover { transform: translateX(4px); }
+
+.why-feature-icon {
+  width: 52px; height: 52px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.why-feature-text strong {
+  display: block;
+  font-family: 'Fredoka One', cursive;
+  font-size: 1rem;
+  color: var(--dark);
+  margin-bottom: 4px;
+}
+
+.why-feature-text span {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.why-stat-board {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.stat-bubble {
+  background: var(--white);
+  border-radius: 24px;
+  padding: 28px 20px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+  border-top: 4px solid transparent;
+  transition: transform 0.3s;
+}
+
+.stat-bubble:hover { transform: scale(1.04); }
+
+.stat-num {
+  font-family: 'Fredoka One', cursive;
+  font-size: 2.8rem;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ===== HOW IT WORKS ===== */
+#how {
+  padding: 100px 0;
+  background: var(--yellow);
+  position: relative;
+  overflow: hidden;
+}
+
+#how::after {
+  content: '';
+  position: absolute;
+  bottom: -80px; right: -80px;
+  width: 300px; height: 300px;
+  background: rgba(255,255,255,0.15);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.how-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.how-header h2 {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  color: var(--dark);
+  margin-top: 12px;
+}
+
+.how-steps {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  position: relative;
+}
+
+/* connecting arrow */
+.how-steps::before {
+  content: '';
+  position: absolute;
+  top: 44px;
+  left: calc(12.5% + 28px);
+  right: calc(12.5% + 28px);
+  height: 3px;
+  background: repeating-linear-gradient(90deg, var(--dark) 0, var(--dark) 12px, transparent 12px, transparent 20px);
+  opacity: 0.2;
+}
+
+.how-step {
+  text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.how-step-num {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  background: var(--dark);
+  color: white;
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  transition: transform 0.3s;
+}
+
+.how-step:hover .how-step-num { transform: scale(1.12) rotate(-5deg); }
+
+.how-step h3 {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.15rem;
+  color: var(--dark);
+  margin-bottom: 8px;
+}
+
+.how-step p {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: rgba(26,26,46,0.65);
+  line-height: 1.6;
+}
+
+/* ===== TESTIMONIALS ===== */
+#reviews {
+  padding: 100px 0;
+  background: var(--white);
+}
+
+.reviews-header {
+  text-align: center;
+  margin-bottom: 56px;
+}
+
+.reviews-header h2 {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  color: var(--dark);
+  margin-top: 12px;
+}
+
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.review-card {
+  background: var(--off-white);
+  border-radius: 24px;
+  padding: 28px;
+  position: relative;
+  border: 2.5px solid var(--border);
+  transition: transform 0.3s, border-color 0.3s;
+}
+
+.review-card:hover { transform: translateY(-5px); }
+.review-card:nth-child(1):hover { border-color: var(--pink); }
+.review-card:nth-child(2):hover { border-color: var(--blue); }
+.review-card:nth-child(3):hover { border-color: var(--yellow); }
+
+.review-emoji {
+  font-size: 2rem;
+  margin-bottom: 12px;
+  display: block;
+}
+
+.review-stars {
+  display: flex;
+  gap: 3px;
+  margin-bottom: 14px;
+}
+
+.review-text {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.75;
+  margin-bottom: 20px;
+  font-style: italic;
+}
+
+.review-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.review-avatar {
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.1rem;
+  color: white;
+  flex-shrink: 0;
+}
+
+.review-author strong {
+  display: block;
+  font-family: 'Fredoka One', cursive;
+  font-size: 0.95rem;
+  color: var(--dark);
+}
+
+.review-author span {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+/* ===== FAQ ===== */
+#faq {
+  padding: 100px 0;
+  background: var(--off-white);
+}
+
+.faq-layout {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 80px;
+  align-items: start;
+}
+
+.faq-sidebar h2 {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  color: var(--dark);
+  line-height: 1.1;
+  margin: 12px 0 20px;
+}
+
+.faq-sidebar p {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--muted);
+  line-height: 1.65;
+  margin-bottom: 28px;
+}
+
+.faq-list { display: flex; flex-direction: column; gap: 0; }
+
+.faq-item {
+  border-radius: 16px;
+  overflow: hidden;
+  margin-bottom: 10px;
+  background: var(--white);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.faq-question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  cursor: pointer;
+  gap: 12px;
+}
+
+.faq-question-text {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1rem;
+  color: var(--dark);
+}
+
+.faq-toggle {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: var(--purple);
+  flex-shrink: 0;
+  transition: background 0.2s;
+}
+
+.faq-item.open .faq-toggle { background: var(--purple); color: white; }
+
+.faq-answer {
+  display: none;
+  padding: 0 22px 18px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.faq-item.open .faq-answer { display: block; }
+
+/* ===== AREAS ===== */
+#areas {
+  padding: 80px 0;
+  background: var(--blue);
+}
+
+.areas-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.areas-content h2 {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  color: var(--dark);
+  margin-bottom: 14px;
+}
+
+.areas-content p {
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(26,26,46,0.7);
+  margin-bottom: 24px;
+  line-height: 1.65;
+}
+
+.areas-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.area-pill {
+  background: var(--white);
+  border-radius: 100px;
+  padding: 8px 18px;
+  font-family: 'Fredoka One', cursive;
+  font-size: 0.88rem;
+  color: var(--dark);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
+}
+
+.area-pill:hover { transform: scale(1.06); }
+
+/* ===== CONTACT ===== */
+#contact {
+  padding: 100px 0;
+  background: var(--dark);
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+}
+
+.contact-left h2 {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(2rem, 3.5vw, 3rem);
+  color: var(--white);
+  line-height: 1.1;
+  margin: 12px 0 24px;
+}
+
+.contact-left p {
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.65;
+  margin-bottom: 32px;
+}
+
+.contact-info-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.contact-info-icon {
+  width: 44px; height: 44px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.contact-info-text strong {
+  display: block;
+  font-family: 'Fredoka One', cursive;
+  font-size: 0.88rem;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 2px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.contact-info-text span {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--white);
+}
+
+.contact-form {
+  background: var(--white);
+  border-radius: 28px;
+  padding: 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-family: 'Fredoka One', cursive;
+  font-size: 0.85rem;
+  color: var(--text);
+  letter-spacing: 0.02em;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  background: var(--off-white);
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  padding: 12px 16px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--dark);
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus { border-color: var(--purple); }
+
+.form-group textarea { resize: vertical; min-height: 100px; }
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+.form-error {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #ef4444;
+  display: none;
+}
+
+.form-group.invalid .form-error { display: block; }
+.form-group.invalid input,
+.form-group.invalid textarea { border-color: #ef4444; }
+
+/* ===== CTA ===== */
+#cta {
+  padding: 80px 0;
+  background: var(--pink);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+#cta::before {
+  content: '';
+  position: absolute;
+  top: -50px; left: -50px;
+  width: 200px; height: 200px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
+}
+
+#cta::after {
+  content: '';
+  position: absolute;
+  bottom: -80px; right: -80px;
+  width: 280px; height: 280px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 50%;
+}
+
+#cta h2 {
+  font-family: 'Fredoka One', cursive;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  color: var(--white);
+  margin-bottom: 14px;
+  position: relative;
+  z-index: 1;
+}
+
+#cta p {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.85);
+  margin-bottom: 32px;
+  position: relative;
+  z-index: 1;
+}
+
+#cta .btn-group {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  background: var(--dark);
+  padding: 60px 0 28px;
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.2fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+
+.footer-brand .logo-text {
+  font-family: 'Fredoka One', cursive;
+  font-size: 1.6rem;
+  color: var(--yellow);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.footer-brand .logo-sub {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 14px;
+  display: block;
+}
+
+.footer-brand p {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.65;
+}
+
+.footer-col-title {
+  font-family: 'Fredoka One', cursive;
+  font-size: 0.9rem;
+  color: var(--yellow);
+  letter-spacing: 0.05em;
+  margin-bottom: 16px;
+}
+
+.footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+
+.footer-links a {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.55);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover { color: var(--yellow); }
+
+.footer-contact-line {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 12px;
+}
+
+.footer-bottom {
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-bottom-text {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.35);
+}
+
+.webnari-badge {
+  font-family: 'Fredoka One', cursive;
+  font-size: 0.78rem;
+  color: rgba(255,255,255,0.4);
+  text-decoration: none;
+  background: rgba(255,255,255,0.07);
+  border-radius: 100px;
+  padding: 5px 14px;
+  transition: color 0.2s, background 0.2s;
+}
+
+.webnari-badge:hover { color: var(--yellow); background: rgba(255,214,0,0.1); }
+
+/* RESPONSIVE */
+@media (max-width: 1024px) {
+  .rentals-grid { grid-template-columns: repeat(2, 1fr); }
+  .packages-grid { grid-template-columns: 1fr; max-width: 440px; margin: 0 auto; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 768px) {
+  nav { padding: 10px 16px; gap: 2px; }
+  .nav-link:not(.nav-cta) { display: none; }
+  .nav-hamburger { display: block; }
+  .hero-inner { grid-template-columns: 1fr; }
+  .hero-visual { display: none; }
+  .rentals-grid { grid-template-columns: 1fr; }
+  .how-steps { grid-template-columns: 1fr 1fr; }
+  .how-steps::before { display: none; }
+  .reviews-grid { grid-template-columns: 1fr; }
+  .why-grid { grid-template-columns: 1fr; gap: 40px; }
+  .faq-layout { grid-template-columns: 1fr; gap: 40px; }
+  .areas-inner { grid-template-columns: 1fr; gap: 32px; }
+  .contact-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; gap: 28px; }
+  #hero, #rentals, #packages, #why, #how, #reviews, #faq, #areas, #contact, #cta { padding-left: 0; padding-right: 0; }
+}
+
+@media (max-width: 480px) {
+  .how-steps { grid-template-columns: 1fr; }
+  .form-row { grid-template-columns: 1fr; }
+  .why-stat-board { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- CONFETTI -->
+<div id="confettiContainer" aria-hidden="true"></div>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <a href="bouncebox.html" class="nav-logo" aria-label="BounceBox Miami">
+    <div class="nav-logo-icon" aria-hidden="true">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M3 12L12 3l9 9" stroke="#1A1A2E" stroke-width="2.5" stroke-linecap="round"/><rect x="5" y="12" width="14" height="9" rx="3" fill="#1A1A2E"/></svg>
+    </div>
+    BounceBox
+  </a>
+  <a href="#rentals" class="nav-link">Rentals</a>
+  <a href="#packages" class="nav-link">Packages</a>
+  <a href="#how" class="nav-link">How It Works</a>
+  <a href="#reviews" class="nav-link">Reviews</a>
+  <a href="#contact" class="nav-link nav-cta">Book Now</a>
+  <button class="nav-hamburger" onclick="toggleMenu()" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-overlay" id="mobileMenu">
+  <button class="mobile-close" onclick="toggleMenu()" aria-label="Close">✕</button>
+  <a href="#rentals"  onclick="toggleMenu()">Rentals</a>
+  <a href="#packages" onclick="toggleMenu()">Packages</a>
+  <a href="#why"      onclick="toggleMenu()">Why Us</a>
+  <a href="#how"      onclick="toggleMenu()">How It Works</a>
+  <a href="#reviews"  onclick="toggleMenu()">Reviews</a>
+  <a href="#contact"  onclick="toggleMenu()">Book Now</a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <!-- Floating color blobs -->
+  <div class="float-bubble" style="width:80px;height:80px;background:rgba(255,214,0,0.25);top:20%;left:8%;animation-delay:0s"></div>
+  <div class="float-bubble" style="width:50px;height:50px;background:rgba(255,62,165,0.2);top:65%;left:4%;animation-delay:1s"></div>
+  <div class="float-bubble" style="width:60px;height:60px;background:rgba(0,194,255,0.2);top:30%;right:5%;animation-delay:0.5s"></div>
+  <div class="float-bubble" style="width:40px;height:40px;background:rgba(168,255,62,0.25);top:75%;right:8%;animation-delay:1.5s"></div>
+
+  <div class="hero-inner container">
+    <div class="hero-copy">
+      <span class="section-tag">🎈 South Florida's #1 Party Rental</span>
+      <h1>
+        Let The<br>
+        <span class="highlight-pink">Party</span><br>
+        <span class="highlight-blue">Bounce!</span>
+      </h1>
+      <p>Bounce houses, water slides, obstacle courses & more — delivered, set up, and taken down for you. All you do is have fun.</p>
+      <div class="hero-btns">
+        <a href="#rentals" class="btn btn-pink">Browse Rentals</a>
+        <a href="#packages" class="btn btn-outline">View Packages</a>
+      </div>
+      <div class="hero-badges">
+        <div class="hero-badge">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#A8FF3E" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>
+          Free Delivery & Setup
+        </div>
+        <div class="hero-badge">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF3EA5" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Fully Insured
+        </div>
+        <div class="hero-badge">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00C2FF" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Same-Day Available
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <!-- Floating stat pills -->
+      <div class="hero-stat-pill" style="top:-10px;left:-20px;animation:float-up 2.5s ease-in-out infinite alternate">
+        <span class="hero-stat-num" style="color:var(--pink)">500+</span>
+        <span class="hero-stat-label">Happy<br>Parties</span>
+      </div>
+      <div class="hero-stat-pill" style="bottom:20px;right:-20px;animation:float-up 3s ease-in-out infinite alternate-reverse">
+        <span class="hero-stat-num" style="color:var(--blue)">4.9★</span>
+        <span class="hero-stat-label">Google<br>Rating</span>
+      </div>
+      <!-- Bounce castle SVG -->
+      <svg viewBox="0 0 380 340" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:380px" role="img" aria-label="Bounce castle illustration">
+        <!-- Ground -->
+        <rect x="10" y="290" width="360" height="40" rx="8" fill="#A8FF3E" opacity="0.4"/>
+        <!-- Castle base/walls -->
+        <rect x="50" y="160" width="280" height="130" rx="6" fill="#FF3EA5"/>
+        <rect x="55" y="165" width="270" height="120" rx="4" fill="#FF75C0"/>
+        <!-- Castle windows -->
+        <rect x="90" y="195" width="50" height="55" rx="6" fill="#FFD600"/>
+        <rect x="165" y="195" width="50" height="55" rx="6" fill="#FFD600"/>
+        <rect x="240" y="195" width="50" height="55" rx="6" fill="#FFD600"/>
+        <!-- Entry arch -->
+        <path d="M155 290 L155 240 Q155 220 175 220 L205 220 Q225 220 225 240 L225 290 Z" fill="#9B5DE5"/>
+        <path d="M160 290 L160 244 Q160 226 178 226 L202 226 Q220 226 220 244 L220 290 Z" fill="#B27EEA"/>
+        <!-- Castle turrets -->
+        <rect x="40" y="120" width="70" height="60" rx="4" fill="#9B5DE5"/>
+        <rect x="270" y="120" width="70" height="60" rx="4" fill="#9B5DE5"/>
+        <!-- Turret tops -->
+        <path d="M40 120 L45 100 L55 110 L65 95 L75 110 L85 100 L95 110 L100 100 L110 120 Z" fill="#7C3AED"/>
+        <path d="M270 120 L275 100 L285 110 L295 95 L305 110 L315 100 L325 110 L330 100 L340 120 Z" fill="#7C3AED"/>
+        <!-- Top bounce area -->
+        <ellipse cx="190" cy="160" rx="150" ry="30" fill="#FFD600"/>
+        <ellipse cx="190" cy="155" rx="140" ry="25" fill="#FFE84D"/>
+        <!-- Bounce kids silhouettes -->
+        <circle cx="130" cy="138" r="14" fill="#FF3EA5"/>
+        <rect x="123" y="152" width="14" height="20" rx="4" fill="#FF3EA5"/>
+        <circle cx="190" cy="132" r="14" fill="#00C2FF"/>
+        <rect x="183" y="146" width="14" height="20" rx="4" fill="#00C2FF"/>
+        <circle cx="250" cy="140" r="14" fill="#A8FF3E"/>
+        <rect x="243" y="154" width="14" height="20" rx="4" fill="#A8FF3E"/>
+        <!-- Stars / sparkles -->
+        <circle cx="60" cy="80" r="5" fill="#FFD600"/>
+        <circle cx="320" cy="70" r="4" fill="#FF3EA5"/>
+        <circle cx="190" cy="55" r="6" fill="#00C2FF"/>
+        <path d="M60 60 L63 68 L71 68 L65 73 L67 81 L60 76 L53 81 L55 73 L49 68 L57 68 Z" fill="#FFD600" opacity="0.8"/>
+        <path d="M320 50 L322 56 L328 56 L323 60 L325 66 L320 62 L315 66 L317 60 L312 56 L318 56 Z" fill="#FF3EA5" opacity="0.8"/>
+        <!-- Flag banners -->
+        <line x1="50" y1="100" x2="340" y2="80" stroke="#9B5DE5" stroke-width="1.5" stroke-dasharray="4 4"/>
+        <polygon points="80,95 93,103 80,111" fill="#FFD600"/>
+        <polygon points="120,89 133,97 120,105" fill="#FF3EA5"/>
+        <polygon points="160,84 173,92 160,100" fill="#00C2FF"/>
+        <polygon points="200,81 213,89 200,97" fill="#A8FF3E"/>
+        <polygon points="240,82 253,90 240,98" fill="#9B5DE5"/>
+        <polygon points="280,84 293,92 280,100" fill="#FFD600"/>
+        <polygon points="320,88 333,96 320,104" fill="#FF3EA5"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-wrap">
+  <div class="marquee-track">
+    <span>Bounce Houses</span><span class="dot">★</span>
+    <span>Water Slides</span><span class="dot">★</span>
+    <span>Obstacle Courses</span><span class="dot">★</span>
+    <span>Combo Units</span><span class="dot">★</span>
+    <span>Concession Machines</span><span class="dot">★</span>
+    <span>Carnival Games</span><span class="dot">★</span>
+    <span>Tables &amp; Chairs</span><span class="dot">★</span>
+    <span>Free Delivery &amp; Setup</span><span class="dot">★</span>
+    <span>Bounce Houses</span><span class="dot">★</span>
+    <span>Water Slides</span><span class="dot">★</span>
+    <span>Obstacle Courses</span><span class="dot">★</span>
+    <span>Combo Units</span><span class="dot">★</span>
+    <span>Concession Machines</span><span class="dot">★</span>
+    <span>Carnival Games</span><span class="dot">★</span>
+    <span>Tables &amp; Chairs</span><span class="dot">★</span>
+    <span>Free Delivery &amp; Setup</span><span class="dot">★</span>
+  </div>
+</div>
+
+<!-- RENTALS -->
+<section id="rentals">
+  <div class="container">
+    <div class="rentals-header">
+      <span class="section-tag blue">Our Inflatables</span>
+      <h2>Pick Your Party Starter</h2>
+      <p>All units are commercial-grade, safety-certified, and cleaned before every rental. Delivery and setup always included.</p>
+    </div>
+    <div class="rentals-grid">
+      <!-- 1 -->
+      <div class="rental-card card-yellow reveal">
+        <div class="rental-card-header">
+          <div class="rental-icon-wrap" style="background:rgba(255,214,0,0.15)">
+            <svg width="36" height="36" viewBox="0 0 48 48" fill="none">
+              <rect x="6" y="24" width="36" height="18" rx="4" fill="#FFD600"/>
+              <path d="M6 24 Q6 12 24 12 Q42 12 42 24" fill="#FFE84D"/>
+              <rect x="18" y="24" width="12" height="18" rx="3" fill="#9B5DE5"/>
+              <rect x="10" y="18" width="8" height="10" rx="2" fill="#FF3EA5"/>
+              <rect x="30" y="18" width="8" height="10" rx="2" fill="#FF3EA5"/>
+            </svg>
+          </div>
+          <span class="rental-badge-tag" style="background:var(--yellow);color:var(--dark)">Most Popular</span>
+        </div>
+        <div class="rental-card-body">
+          <h3>Classic Bounce Castle</h3>
+          <p>The timeless party staple. Perfect for birthday parties, family reunions & neighborhood block parties. Ages 2–12.</p>
+          <div class="rental-features">
+            <span class="rental-feature">15×15 ft — fits up to 8 kids</span>
+            <span class="rental-feature">Included: blower, stakes, mat</span>
+            <span class="rental-feature">Full-day rental (8 hours)</span>
+          </div>
+          <div class="rental-card-footer">
+            <div class="rental-price">$185 <span>/ day</span></div>
+            <a href="#contact" class="rental-btn" style="background:var(--yellow);color:var(--dark)">Book It</a>
+          </div>
+        </div>
+      </div>
+      <!-- 2 -->
+      <div class="rental-card card-blue reveal reveal-delay-1">
+        <div class="rental-card-header">
+          <div class="rental-icon-wrap" style="background:rgba(0,194,255,0.12)">
+            <svg width="36" height="36" viewBox="0 0 48 48" fill="none">
+              <path d="M8 40 Q8 20 24 10 Q40 20 40 40" fill="#00C2FF"/>
+              <path d="M14 40 Q14 22 24 14 Q34 22 34 40" fill="#66D9FF"/>
+              <path d="M6 38 Q24 48 42 38" stroke="#1A1A2E" stroke-width="2" fill="none"/>
+              <circle cx="24" cy="32" r="4" fill="white" opacity="0.7"/>
+            </svg>
+          </div>
+          <span class="rental-badge-tag" style="background:var(--blue);color:var(--dark)">🌊 Summer Hit</span>
+        </div>
+        <div class="rental-card-body">
+          <h3>Water Slide Deluxe</h3>
+          <p>Beat Miami's heat with our giant water slides. Great for pool parties, summer celebrations, or just because it's hot out.</p>
+          <div class="rental-features">
+            <span class="rental-feature">18-ft tall dual-lane slide</span>
+            <span class="rental-feature">Requires water connection</span>
+            <span class="rental-feature">Ages 5–adult</span>
+          </div>
+          <div class="rental-card-footer">
+            <div class="rental-price">$295 <span>/ day</span></div>
+            <a href="#contact" class="rental-btn" style="background:var(--blue);color:var(--dark)">Book It</a>
+          </div>
+        </div>
+      </div>
+      <!-- 3 -->
+      <div class="rental-card card-pink reveal reveal-delay-2">
+        <div class="rental-card-header">
+          <div class="rental-icon-wrap" style="background:rgba(255,62,165,0.1)">
+            <svg width="36" height="36" viewBox="0 0 48 48" fill="none">
+              <rect x="4" y="26" width="40" height="16" rx="4" fill="#FF3EA5"/>
+              <path d="M4 26 L14 12 L34 12 L44 26" fill="#FF75C0"/>
+              <rect x="14" y="14" width="8" height="12" rx="2" fill="#FFD600"/>
+              <rect x="26" y="14" width="8" height="12" rx="2" fill="#FFD600"/>
+              <path d="M20 42 L28 42" stroke="white" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <span class="rental-badge-tag" style="background:var(--pink)">🏆 Mega Fun</span>
+        </div>
+        <div class="rental-card-body">
+          <h3>Obstacle Course</h3>
+          <p>Tunnels, pop-ups, climbing walls, and a slide finish. Perfect for older kids and competitive adults who still want to have fun.</p>
+          <div class="rental-features">
+            <span class="rental-feature">40 ft of obstacles end to end</span>
+            <span class="rental-feature">Races 2 kids simultaneously</span>
+            <span class="rental-feature">Ages 5–adult</span>
+          </div>
+          <div class="rental-card-footer">
+            <div class="rental-price">$325 <span>/ day</span></div>
+            <a href="#contact" class="rental-btn" style="background:var(--pink)">Book It</a>
+          </div>
+        </div>
+      </div>
+      <!-- 4 -->
+      <div class="rental-card card-lime reveal reveal-delay-3">
+        <div class="rental-card-header">
+          <div class="rental-icon-wrap" style="background:rgba(168,255,62,0.15)">
+            <svg width="36" height="36" viewBox="0 0 48 48" fill="none">
+              <rect x="6" y="20" width="36" height="22" rx="4" fill="#A8FF3E"/>
+              <path d="M6 20 Q6 8 24 8 Q42 8 42 20" fill="#C8FF7A"/>
+              <rect x="16" y="20" width="16" height="22" rx="3" fill="#9B5DE5"/>
+              <path d="M8 30 Q24 40 40 30" stroke="white" stroke-width="2" fill="none" opacity="0.5"/>
+              <circle cx="14" cy="15" r="3" fill="#FF3EA5"/>
+              <circle cx="34" cy="15" r="3" fill="#FF3EA5"/>
+            </svg>
+          </div>
+          <span class="rental-badge-tag" style="background:var(--lime);color:var(--dark)">Combo Deal</span>
+        </div>
+        <div class="rental-card-body">
+          <h3>Bounce & Slide Combo</h3>
+          <p>Get the best of both worlds — half bounce castle, half attached slide. One unit, double the joy for all ages.</p>
+          <div class="rental-features">
+            <span class="rental-feature">Built-in slide + bounce area</span>
+            <span class="rental-feature">18×15 ft footprint</span>
+            <span class="rental-feature">Wet or dry option</span>
+          </div>
+          <div class="rental-card-footer">
+            <div class="rental-price">$245 <span>/ day</span></div>
+            <a href="#contact" class="rental-btn" style="background:var(--lime);color:var(--dark)">Book It</a>
+          </div>
+        </div>
+      </div>
+      <!-- 5 -->
+      <div class="rental-card card-purple reveal reveal-delay-4">
+        <div class="rental-card-header">
+          <div class="rental-icon-wrap" style="background:rgba(155,93,229,0.12)">
+            <svg width="36" height="36" viewBox="0 0 48 48" fill="none">
+              <rect x="4" y="28" width="40" height="14" rx="4" fill="#9B5DE5"/>
+              <rect x="10" y="18" width="12" height="14" rx="3" fill="#B27EEA"/>
+              <rect x="26" y="14" width="14" height="18" rx="3" fill="#B27EEA"/>
+              <circle cx="16" cy="12" r="5" fill="#FFD600"/>
+              <circle cx="33" cy="8" r="4" fill="#FF3EA5"/>
+            </svg>
+          </div>
+          <span class="rental-badge-tag" style="background:var(--purple)">🎪 Carnival Vibes</span>
+        </div>
+        <div class="rental-card-body">
+          <h3>Carnival Game Station</h3>
+          <p>Ring toss, duck pond, bean bag throw, and more. Great addition to any party, perfect for all ages and competitive families.</p>
+          <div class="rental-features">
+            <span class="rental-feature">6 carnival-style games</span>
+            <span class="rental-feature">All equipment included</span>
+            <span class="rental-feature">Prize suggestions provided</span>
+          </div>
+          <div class="rental-card-footer">
+            <div class="rental-price">$175 <span>/ day</span></div>
+            <a href="#contact" class="rental-btn" style="background:var(--purple)">Book It</a>
+          </div>
+        </div>
+      </div>
+      <!-- 6 -->
+      <div class="rental-card card-orange reveal reveal-delay-5">
+        <div class="rental-card-header">
+          <div class="rental-icon-wrap" style="background:rgba(255,107,43,0.12)">
+            <svg width="36" height="36" viewBox="0 0 48 48" fill="none">
+              <rect x="8" y="24" width="32" height="16" rx="4" fill="#FF6B2B"/>
+              <path d="M12 24 Q12 10 24 10 Q36 10 36 24" fill="#FF8F5E"/>
+              <ellipse cx="24" cy="14" rx="8" ry="5" fill="white" opacity="0.3"/>
+              <rect x="20" y="24" width="8" height="16" rx="2" fill="#FFD600"/>
+              <circle cx="24" cy="20" r="3" fill="#FF3EA5"/>
+            </svg>
+          </div>
+          <span class="rental-badge-tag" style="background:var(--orange)">🍿 Yum!</span>
+        </div>
+        <div class="rental-card-body">
+          <h3>Concession Add-Ons</h3>
+          <p>Popcorn machine, snow cone maker, cotton candy spinner, and slushie machine. Make your party a full snack experience.</p>
+          <div class="rental-features">
+            <span class="rental-feature">Multiple machines available</span>
+            <span class="rental-feature">Supplies included (up to 50 servings)</span>
+            <span class="rental-feature">Mix and match options</span>
+          </div>
+          <div class="rental-card-footer">
+            <div class="rental-price">From $85 <span>/ unit</span></div>
+            <a href="#contact" class="rental-btn" style="background:var(--orange)">Add On</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PACKAGES -->
+<section id="packages">
+  <div class="container">
+    <div class="packages-header">
+      <span class="section-tag lime">Party Bundles</span>
+      <h2>Complete Party Packages</h2>
+      <p>Bundle and save — everything you need for an epic party in one simple booking.</p>
+    </div>
+    <div class="packages-grid">
+      <!-- Starter -->
+      <div class="package-card reveal">
+        <div class="package-name">Starter Party</div>
+        <div class="package-tagline">Perfect for smaller gatherings</div>
+        <div class="package-price">$249<sub>/event</sub></div>
+        <div class="package-includes-label">What's included</div>
+        <div class="package-item"><span class="package-item-dot" style="background:var(--blue)"></span>1 Classic Bounce Castle (up to 6 hrs)</div>
+        <div class="package-item"><span class="package-item-dot" style="background:var(--blue)"></span>Delivery, setup & takedown</div>
+        <div class="package-item"><span class="package-item-dot" style="background:var(--blue)"></span>Safety mat & stakes</div>
+        <div class="package-item"><span class="package-item-dot" style="background:var(--blue)"></span>Generator (if needed)</div>
+        <a href="#contact" class="package-btn" style="background:rgba(255,255,255,0.15);color:white;border:2px solid rgba(255,255,255,0.3)">Book Starter</a>
+      </div>
+      <!-- Featured -->
+      <div class="package-card featured reveal reveal-delay-2">
+        <span class="package-popular-badge">⭐ Most Popular</span>
+        <div class="package-name" style="color:var(--dark)">Party Blast</div>
+        <div class="package-tagline" style="color:rgba(26,26,46,0.6)">The full backyard takeover</div>
+        <div class="package-price" style="color:var(--purple)">$449<sub>/event</sub></div>
+        <div class="package-includes-label" style="color:rgba(26,26,46,0.5)">What's included</div>
+        <div class="package-item"><span class="package-item-dot" style="background:var(--purple)"></span>Bounce + Slide Combo (8 hrs)</div>
+        <div class="package-item"><span class="package-item-dot" style="background:var(--purple)"></span>1 Concession Machine of choice</div>
+        <div class="package-item"><span class="package-item-dot" style="background:var(--purple)"></span>Tables (6) &amp; Chairs (50)</div>
+        <div class="package-item"><span class="package-item-dot" style="background:var(--purple)"></span>Delivery, setup &amp; takedown</div>
+        <div class="package-item"><span class="package-item-dot" style="background:var(--purple)"></span>Attendant on-site (4 hrs)</div>
+        <a href="#contact" class="package-btn" style="background:var(--purple);color:white;">Book Party Blast</a>
+      </div>
+      <!-- Ultimate -->
+      <div class="package-card reveal reveal-delay-4">
+        <div class="package-name">Ultimate Bash</div>
+        <div class="package-tagline">Go all out. No regrets.</div>
+        <div class="package-price">$749<sub>/event</sub></div>
+        <div class="package-includes-label">What's included</div>
+        <div class="package-item"><span class="package-item-dot" style="background:var(--pink)"></span>Water Slide + Obstacle Course</div>
+        <div class="package-item"><span class="package-item-dot" style="background:var(--pink)"></span>3 Concession Machines</div>
+        <div class="package-item"><span class="package-item-dot" style="background:var(--pink)"></span>Carnival Game Station (6 games)</div>
+        <div class="package-item"><span class="package-item-dot" style="background:var(--pink)"></span>Tables (10) &amp; Chairs (100)</div>
+        <div class="package-item"><span class="package-item-dot" style="background:var(--pink)"></span>Dedicated on-site staff (6 hrs)</div>
+        <a href="#contact" class="package-btn" style="background:var(--pink);color:white;">Book Ultimate Bash</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section id="why">
+  <div class="container">
+    <div class="why-grid">
+      <div class="why-content reveal">
+        <span class="section-tag purple">Why BounceBox</span>
+        <h2>We Don't Just Deliver — We Make Memories</h2>
+        <p>With over 500 events served across South Florida, we've learned that the secret to a perfect party is showing up on time, setting up right, and leaving the stress at the door.</p>
+        <div class="why-features">
+          <div class="why-feature">
+            <div class="why-feature-icon" style="background:rgba(255,214,0,0.15)">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FFD600" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>
+            </div>
+            <div class="why-feature-text">
+              <strong>Free Delivery & Setup</strong>
+              <span>We haul it, inflate it, anchor it, and break it down after — you don't lift a finger.</span>
+            </div>
+          </div>
+          <div class="why-feature">
+            <div class="why-feature-icon" style="background:rgba(255,62,165,0.12)">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FF3EA5" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <div class="why-feature-text">
+              <strong>Fully Insured & Safety-Certified</strong>
+              <span>All units meet ASTM safety standards. Our staff are trained in inflatable safety protocols.</span>
+            </div>
+          </div>
+          <div class="why-feature">
+            <div class="why-feature-icon" style="background:rgba(0,194,255,0.12)">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#00C2FF" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </div>
+            <div class="why-feature-text">
+              <strong>On-Time Guarantee</strong>
+              <span>We show up early, set up fast. If we're late without notice, your rental is free.</span>
+            </div>
+          </div>
+          <div class="why-feature">
+            <div class="why-feature-icon" style="background:rgba(168,255,62,0.15)">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#6B9B47" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            </div>
+            <div class="why-feature-text">
+              <strong>Sparkling Clean Units</strong>
+              <span>Every inflatable is sanitized, inspected, and fully cleaned before and after each rental.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="why-stat-board reveal reveal-delay-2">
+        <div class="stat-bubble" style="border-top-color:var(--pink)">
+          <div class="stat-num" style="color:var(--pink)">500+</div>
+          <div class="stat-label">Parties Served</div>
+        </div>
+        <div class="stat-bubble" style="border-top-color:var(--blue)">
+          <div class="stat-num" style="color:var(--blue)">4.9★</div>
+          <div class="stat-label">Google Rating</div>
+        </div>
+        <div class="stat-bubble" style="border-top-color:var(--lime)">
+          <div class="stat-num" style="color:#6B9B47">100%</div>
+          <div class="stat-label">On-Time Rate</div>
+        </div>
+        <div class="stat-bubble" style="border-top-color:var(--yellow)">
+          <div class="stat-num" style="color:var(--orange)">12+</div>
+          <div class="stat-label">Cities Served</div>
+        </div>
+        <div class="stat-bubble" style="border-top-color:var(--purple)">
+          <div class="stat-num" style="color:var(--purple)">30+</div>
+          <div class="stat-label">Unit Types</div>
+        </div>
+        <div class="stat-bubble" style="border-top-color:var(--orange)">
+          <div class="stat-num" style="color:var(--orange)">5yr</div>
+          <div class="stat-label">In Business</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="container">
+    <div class="how-header">
+      <span class="section-tag purple">Super Simple</span>
+      <h2>How Booking Works</h2>
+    </div>
+    <div class="how-steps">
+      <div class="how-step reveal">
+        <div class="how-step-num" style="background:var(--pink)">1</div>
+        <h3>Pick Your Setup</h3>
+        <p>Choose from our catalog of inflatables, combos, and concession add-ons. Tell us your date, time, and address.</p>
+      </div>
+      <div class="how-step reveal reveal-delay-1">
+        <div class="how-step-num" style="background:var(--blue)">2</div>
+        <h3>Get a Quote</h3>
+        <p>We'll confirm availability and send your all-inclusive quote within 2 hours. No surprises, no hidden fees.</p>
+      </div>
+      <div class="how-step reveal reveal-delay-2">
+        <div class="how-step-num" style="background:var(--purple)">3</div>
+        <h3>We Deliver & Set Up</h3>
+        <p>Our team arrives early, sets everything up safely, and walks you through operation before the party starts.</p>
+      </div>
+      <div class="how-step reveal reveal-delay-3">
+        <div class="how-step-num" style="background:var(--lime);color:var(--dark)">4</div>
+        <h3>Party! We Handle the Rest</h3>
+        <p>Bounce, slide, laugh. When the party's over, we come back, break everything down, and haul it away. Easy.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section id="reviews">
+  <div class="container">
+    <div class="reviews-header">
+      <span class="section-tag pink">Real Families, Real Fun</span>
+      <h2>5-Star Party Memories</h2>
+    </div>
+    <div class="reviews-grid">
+      <div class="review-card reveal">
+        <span class="review-emoji">🎉</span>
+        <div class="review-stars">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#FFD600"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#FFD600"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#FFD600"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#FFD600"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#FFD600"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <p class="review-text">"We did the Ultimate Bash package for my son's 8th birthday and it was INSANE. The water slide had a line of kids the whole party. Setup was done before we even finished decorating. 100% rebooking for next year!"</p>
+        <div class="review-author">
+          <div class="review-avatar" style="background:var(--pink)">M</div>
+          <div>
+            <strong>Michelle T.</strong>
+            <span>Kendall · Birthday party</span>
+          </div>
+        </div>
+      </div>
+      <div class="review-card reveal reveal-delay-1">
+        <span class="review-emoji">🏆</span>
+        <div class="review-stars">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#FFD600"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#FFD600"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#FFD600"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#FFD600"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#FFD600"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <p class="review-text">"Used BounceBox for our company family picnic — rented the obstacle course and three concession machines. The team was professional, punctual, and our 200 employees (and their kids!) had a blast. Already planning next year's event with them."</p>
+        <div class="review-author">
+          <div class="review-avatar" style="background:var(--blue);color:var(--dark)">R</div>
+          <div>
+            <strong>Rafael C.</strong>
+            <span>Doral · Corporate event</span>
+          </div>
+        </div>
+      </div>
+      <div class="review-card reveal reveal-delay-2">
+        <span class="review-emoji">🎈</span>
+        <div class="review-stars">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#FFD600"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#FFD600"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#FFD600"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#FFD600"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="#FFD600"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <p class="review-text">"I was nervous booking online but the communication was great. They confirmed two days before, called 30 min before arrival, and had everything set up in under an hour. The bounce castle was HUGE — way bigger than I expected. My daughter still talks about it."</p>
+        <div class="review-author">
+          <div class="review-avatar" style="background:var(--lime);color:var(--dark)">A</div>
+          <div>
+            <strong>Alina G.</strong>
+            <span>Hialeah · 5th birthday party</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="container">
+    <div class="faq-layout">
+      <div class="faq-sidebar reveal">
+        <span class="section-tag">Got Questions?</span>
+        <h2>All Your Questions, Answered</h2>
+        <p>We want your party planning to be stress-free. Here are the most common questions we get — and if yours isn't here, just reach out!</p>
+        <a href="#contact" class="btn btn-pink" style="margin-top:8px">Ask Us Anything</a>
+      </div>
+      <div class="faq-list reveal reveal-delay-2">
+        <div class="faq-item">
+          <div class="faq-question">
+            <span class="faq-question-text">How much space do I need for a bounce house?</span>
+            <span class="faq-toggle">+</span>
+          </div>
+          <div class="faq-answer">Our standard bounce castles need a 20×20 ft flat area (grass or concrete both work). We'll ask for your setup location before confirming the booking to make sure everything fits safely.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <span class="faq-question-text">What if it rains on my party day?</span>
+            <span class="faq-toggle">+</span>
+          </div>
+          <div class="faq-answer">Light drizzle is usually fine — our inflatables have drainage and are safe in mild weather. In the case of heavy rain, lightning, or winds over 25 mph, we'll work with you to reschedule at no charge. Safety first, always.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <span class="faq-question-text">Do I need to provide power for the blower?</span>
+            <span class="faq-toggle">+</span>
+          </div>
+          <div class="faq-answer">The inflatable blower runs on standard 110V power. We need a dedicated outlet within 100 ft of the setup area. If you don't have access, we can rent you a generator for an additional fee.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <span class="faq-question-text">How far in advance should I book?</span>
+            <span class="faq-toggle">+</span>
+          </div>
+          <div class="faq-answer">Weekends in spring and summer book up fast — we recommend 2–3 weeks ahead. That said, we often have same-day and next-day availability on weekdays. Call us and we'll do our best!</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <span class="faq-question-text">Is there a deposit required?</span>
+            <span class="faq-toggle">+</span>
+          </div>
+          <div class="faq-answer">Yes — we require a 25% deposit to hold your date, with the balance due on the day of your event. We accept credit/debit cards, Zelle, and cash. No deposit, no reservation.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <span class="faq-question-text">Can adults use the inflatables?</span>
+            <span class="faq-toggle">+</span>
+          </div>
+          <div class="faq-answer">Most of our units have weight limits of 600–800 lbs total occupancy, so yes — adults can definitely join the fun! We just ask that adults be mindful of little ones sharing the space and always follow the posted rules.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AREAS -->
+<section id="areas">
+  <div class="container">
+    <div class="areas-inner">
+      <div class="areas-content reveal">
+        <span class="section-tag purple">We Come To You</span>
+        <h2>Delivering Party Joy<br>Across South Florida</h2>
+        <p>Based in Miami, we deliver to all surrounding cities — typically within a 40-mile radius. Delivery is always free within our service area.</p>
+        <a href="#contact" class="btn btn-yellow">Check Your City</a>
+      </div>
+      <div class="areas-grid reveal reveal-delay-2">
+        <span class="area-pill">Miami</span>
+        <span class="area-pill">Coral Gables</span>
+        <span class="area-pill">Doral</span>
+        <span class="area-pill">Hialeah</span>
+        <span class="area-pill">Kendall</span>
+        <span class="area-pill">Miami Beach</span>
+        <span class="area-pill">Brickell</span>
+        <span class="area-pill">Westchester</span>
+        <span class="area-pill">South Miami</span>
+        <span class="area-pill">Homestead</span>
+        <span class="area-pill">Miami Gardens</span>
+        <span class="area-pill">North Miami</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-left reveal">
+        <span class="section-tag yellow" style="color:var(--dark)">Get a Quote</span>
+        <h2>Let's Plan Your Party!</h2>
+        <p>Fill out the form and we'll get back to you within 2 hours with availability and pricing. No pressure, no commitment.</p>
+        <div class="contact-info-item">
+          <div class="contact-info-icon" style="background:rgba(255,214,0,0.15)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFD600" stroke-width="2.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 .82h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          </div>
+          <div class="contact-info-text">
+            <strong>Call or Text</strong>
+            <span>(786) 555-2150</span>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <div class="contact-info-icon" style="background:rgba(0,194,255,0.12)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#00C2FF" stroke-width="2.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div class="contact-info-text">
+            <strong>Email</strong>
+            <span>book@bounceboxmiami.com</span>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <div class="contact-info-icon" style="background:rgba(168,255,62,0.12)">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A8FF3E" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div class="contact-info-text">
+            <strong>Response Time</strong>
+            <span>Within 2 hours · 7 days a week</span>
+          </div>
+        </div>
+      </div>
+      <form class="contact-form reveal reveal-delay-2" action="https://formsubmit.co/book@bounceboxmiami.com" method="POST" id="bookingForm" novalidate>
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_subject" value="New party rental inquiry">
+        <div class="form-row">
+          <div class="form-group" id="fg-name">
+            <label for="name">Your Name</label>
+            <input type="text" id="name" name="name" placeholder="First & last name">
+            <span class="form-error">Name is required</span>
+          </div>
+          <div class="form-group" id="fg-phone">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" placeholder="(305) 000-0000">
+            <span class="form-error">Phone is required</span>
+          </div>
+        </div>
+        <div class="form-group" id="fg-email">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" placeholder="your@email.com">
+          <span class="form-error">Valid email required</span>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="event-date">Event Date</label>
+            <input type="date" id="event-date" name="event_date">
+          </div>
+          <div class="form-group">
+            <label for="rental-type">Interested In</label>
+            <select id="rental-type" name="rental_type">
+              <option value="">Select rental...</option>
+              <option>Classic Bounce Castle</option>
+              <option>Water Slide Deluxe</option>
+              <option>Obstacle Course</option>
+              <option>Bounce & Slide Combo</option>
+              <option>Carnival Game Station</option>
+              <option>Concession Add-Ons</option>
+              <option>Full Party Package</option>
+              <option>Not sure yet — help me choose!</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group" id="fg-message">
+          <label for="message">Party Details</label>
+          <textarea id="message" name="message" placeholder="Tell us about your event — location, expected guests, ages of kids, any special requests..."></textarea>
+          <span class="form-error">Please add some details</span>
+        </div>
+        <button type="submit" class="btn btn-pink" style="width:100%;font-size:1rem;padding:16px;border-radius:14px">
+          🎉 Send My Quote Request
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <h2>Ready to Make it the Best Party Ever?</h2>
+  <p>Dates book up fast — especially weekends. Reserve yours today!</p>
+  <div class="btn-group">
+    <a href="tel:7865552150" class="btn btn-yellow">Call (786) 555-2150</a>
+    <a href="#contact" class="btn" style="background:rgba(255,255,255,0.2);color:white;border:2px solid rgba(255,255,255,0.5)">Book Online</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <span class="logo-text">🏰 BounceBox Miami</span>
+        <span class="logo-sub">South Florida's Favorite Party Rental Co.</span>
+        <p>Bounce houses, water slides, obstacle courses, and full party packages — delivered, set up, and taken down across South Florida. Making parties epic since 2019.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Rentals</div>
+        <ul class="footer-links">
+          <li><a href="#rentals">Bounce Castles</a></li>
+          <li><a href="#rentals">Water Slides</a></li>
+          <li><a href="#rentals">Obstacle Courses</a></li>
+          <li><a href="#rentals">Combo Units</a></li>
+          <li><a href="#rentals">Concession Machines</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <ul class="footer-links">
+          <li><a href="#why">About Us</a></li>
+          <li><a href="#packages">Party Packages</a></li>
+          <li><a href="#reviews">Reviews</a></li>
+          <li><a href="#areas">Service Areas</a></li>
+          <li><a href="#contact">Book Now</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Contact</div>
+        <div class="footer-contact-line">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFD600" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 .82h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          (786) 555-2150
+        </div>
+        <div class="footer-contact-line">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFD600" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          book@bounceboxmiami.com
+        </div>
+        <div class="footer-contact-line" style="align-items:flex-start">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#FFD600" stroke-width="2" style="flex-shrink:0;margin-top:3px"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Mon–Sun: 7AM–9PM<br>Same-day bookings available
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-bottom-text">© 2025 BounceBox Miami LLC · FL Business License #BZX2019-0772 · Fully Insured</span>
+      <a href="https://webnari.io" class="webnari-badge" target="_blank" rel="noopener">Powered by Webnari</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Confetti
+(function() {
+  const container = document.getElementById('confettiContainer');
+  const colors = ['#FFD600','#FF3EA5','#00C2FF','#A8FF3E','#9B5DE5','#FF6B2B'];
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.style.left = Math.random() * 100 + 'vw';
+    p.style.background = colors[Math.floor(Math.random() * colors.length)];
+    p.style.width = (Math.random() * 8 + 6) + 'px';
+    p.style.height = (Math.random() * 8 + 6) + 'px';
+    p.style.animationDuration = (Math.random() * 8 + 6) + 's';
+    p.style.animationDelay = (Math.random() * 8) + 's';
+    p.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    container.appendChild(p);
+  }
+})();
+
+// Mobile menu
+function toggleMenu() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+
+// Scroll reveal
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// FAQ
+document.querySelectorAll('.faq-question').forEach(q => {
+  q.addEventListener('click', () => {
+    const item = q.closest('.faq-item');
+    const open = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!open) item.classList.add('open');
+  });
+});
+
+// Form validation
+const form = document.getElementById('bookingForm');
+if (form) {
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    let valid = true;
+    const checks = [
+      { id: 'name', fg: 'fg-name', check: v => v.trim().length > 1 },
+      { id: 'phone', fg: 'fg-phone', check: v => v.trim().length > 6 },
+      { id: 'email', fg: 'fg-email', check: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) },
+      { id: 'message', fg: 'fg-message', check: v => v.trim().length > 5 }
+    ];
+    checks.forEach(({ id, fg, check }) => {
+      const el = document.getElementById(id);
+      const fg_el = document.getElementById(fg);
+      if (!fg_el) return;
+      if (!check(el.value)) { fg_el.classList.add('invalid'); valid = false; }
+      else fg_el.classList.remove('invalid');
+    });
+    if (valid) form.submit();
+  });
+}
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const t = document.querySelector(a.getAttribute('href'));
+    if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+  });
+});
+</script>
+</body>
+</html>

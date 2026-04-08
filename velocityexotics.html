@@ -1,0 +1,2065 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Velocity Exotics | Exotic & Luxury Car Rentals Miami</title>
+  <meta name="description" content="Velocity Exotics — South Florida's premier exotic car rental. Lamborghini, Ferrari, McLaren, Rolls-Royce. Delivered to your door. (786) 555-2600.">
+  <meta property="og:title" content="Velocity Exotics | Exotic Car Rentals Miami">
+  <meta property="og:description" content="Drive the car you've always dreamed of. Lamborghini, Ferrari, McLaren, Rolls-Royce & more. Same-day delivery across South Florida.">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Michroma&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black: #05060A;
+      --dark: #0A0C12;
+      --surface: #10131C;
+      --surface2: #161922;
+      --border: #1E2332;
+      --border2: #2A3040;
+      --gold: #C9A84C;
+      --gold2: #E8C86A;
+      --gold3: #F5DFA0;
+      --red: #D62B2B;
+      --red2: #F04040;
+      --chrome: #A8B8C8;
+      --chrome2: #C8D8E8;
+      --white: #F0F2F8;
+      --muted: #5A6080;
+      --text: #8A96B0;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--black);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* Carbon fiber texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(45deg, rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 1px, transparent 1px, transparent 6px),
+        repeating-linear-gradient(-45deg, rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 1px, transparent 1px, transparent 6px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ======= NAV ======= */
+    .nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      transition: all 0.4s ease;
+    }
+    .nav-stripe {
+      height: 3px;
+      background: linear-gradient(90deg, var(--red), var(--gold), var(--red));
+      background-size: 200% 100%;
+      animation: stripeMove 3s linear infinite;
+    }
+    @keyframes stripeMove {
+      0% { background-position: 0% 0%; }
+      100% { background-position: 200% 0%; }
+    }
+    .nav-inner {
+      background: rgba(5,6,10,0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 68px;
+    }
+    .nav-scrolled .nav-inner {
+      background: rgba(5,6,10,0.98);
+    }
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+    .nav-logo-mark {
+      width: 36px;
+      height: 36px;
+    }
+    .nav-logo-text {
+      font-family: 'Michroma', monospace;
+      font-size: 15px;
+      letter-spacing: 0.15em;
+      color: var(--white);
+      text-transform: uppercase;
+    }
+    .nav-logo-sub {
+      font-family: 'Inter', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      color: var(--gold);
+      text-transform: uppercase;
+      display: block;
+      line-height: 1;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      list-style: none;
+    }
+    .nav-links a {
+      color: var(--chrome);
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-cta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .btn-nav {
+      font-family: 'Michroma', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 10px 22px;
+      background: var(--gold);
+      color: var(--black);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+      transition: all 0.2s;
+      font-weight: 700;
+    }
+    .btn-nav:hover { background: var(--gold2); }
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      background: none;
+      border: none;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--gold);
+      transition: all 0.3s;
+    }
+
+    /* Mobile menu */
+    .mobile-menu {
+      position: fixed;
+      inset: 0;
+      background: var(--black);
+      z-index: 999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      transform: translateX(100%);
+      transition: transform 0.4s cubic-bezier(0.77,0,0.175,1);
+    }
+    .mobile-menu.open { transform: translateX(0); }
+    .mobile-menu a {
+      font-family: 'Michroma', monospace;
+      font-size: 22px;
+      letter-spacing: 0.15em;
+      color: var(--white);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+    .mobile-menu a:hover { color: var(--gold); }
+    .mobile-close {
+      position: absolute;
+      top: 24px; right: 24px;
+      background: none;
+      border: none;
+      color: var(--gold);
+      font-size: 28px;
+      cursor: pointer;
+      font-family: 'Michroma', monospace;
+    }
+
+    /* ======= HERO ======= */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      overflow: hidden;
+      padding-top: 71px;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 70% 50%, rgba(198,40,40,0.08) 0%, transparent 60%),
+                  radial-gradient(ellipse at 20% 80%, rgba(201,168,76,0.06) 0%, transparent 50%),
+                  var(--black);
+    }
+    /* Speed lines */
+    .hero-lines {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    .speed-line {
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 1px;
+      background: linear-gradient(180deg, transparent, rgba(201,168,76,0.15), transparent);
+      animation: speedPulse 2s ease-in-out infinite;
+    }
+    @keyframes speedPulse {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 80px 40px;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border: 1px solid var(--gold);
+      color: var(--gold);
+      font-family: 'Michroma', monospace;
+      font-size: 9px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+      clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+    }
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+    .hero-title {
+      font-family: 'Michroma', monospace;
+      font-size: clamp(40px, 5.5vw, 72px);
+      line-height: 1.05;
+      color: var(--white);
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      margin-bottom: 24px;
+    }
+    .hero-title span {
+      color: var(--gold);
+      display: block;
+    }
+    .hero-title .outline-text {
+      -webkit-text-stroke: 1px var(--chrome);
+      color: transparent;
+    }
+    .hero-desc {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text);
+      max-width: 480px;
+      margin-bottom: 40px;
+    }
+    .hero-btns {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 56px;
+    }
+    .btn-primary {
+      font-family: 'Michroma', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 14px 32px;
+      background: var(--gold);
+      color: var(--black);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+      transition: all 0.2s;
+      font-weight: 700;
+    }
+    .btn-primary:hover { background: var(--gold2); transform: translateY(-2px); }
+    .btn-ghost {
+      font-family: 'Michroma', monospace;
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 13px 32px;
+      background: transparent;
+      color: var(--chrome);
+      border: 1px solid var(--border2);
+      cursor: pointer;
+      text-decoration: none;
+      clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+      transition: all 0.2s;
+    }
+    .btn-ghost:hover { border-color: var(--gold); color: var(--gold); }
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+    .hero-stat {
+      background: var(--surface);
+      padding: 20px;
+      text-align: center;
+    }
+    .stat-num {
+      font-family: 'Michroma', monospace;
+      font-size: 26px;
+      color: var(--gold);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .stat-label {
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .hero-car {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .car-glow {
+      position: absolute;
+      width: 80%;
+      height: 40%;
+      background: radial-gradient(ellipse, rgba(214,43,43,0.25) 0%, transparent 70%);
+      bottom: 10%;
+      left: 50%;
+      transform: translateX(-50%);
+      filter: blur(30px);
+    }
+
+    /* ======= MARQUEE ======= */
+    .marquee-strip {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+      padding: 14px 0;
+    }
+    .marquee-track {
+      display: flex;
+      gap: 48px;
+      animation: marqueeScroll 25s linear infinite;
+      white-space: nowrap;
+    }
+    @keyframes marqueeScroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    .marquee-item {
+      display: flex;
+      align-items: center;
+      gap: 48px;
+      font-family: 'Michroma', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+    .marquee-sep {
+      width: 4px;
+      height: 4px;
+      background: var(--red);
+      clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+      flex-shrink: 0;
+    }
+
+    /* ======= FLEET ======= */
+    .fleet {
+      padding: 100px 40px;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+    .section-label {
+      font-family: 'Michroma', monospace;
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: 'Michroma', monospace;
+      font-size: clamp(28px, 3.5vw, 44px);
+      color: var(--white);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+    }
+    .section-sub {
+      font-size: 14px;
+      color: var(--text);
+      margin-bottom: 60px;
+      max-width: 520px;
+    }
+    .fleet-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      background: var(--border);
+    }
+    .fleet-card {
+      background: var(--surface);
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .fleet-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      transform: scaleX(0);
+      transition: transform 0.3s;
+    }
+    .fleet-card:hover { background: var(--surface2); }
+    .fleet-card:hover::before { transform: scaleX(1); }
+    .fleet-card-num {
+      font-family: 'Michroma', monospace;
+      font-size: 48px;
+      color: var(--border2);
+      position: absolute;
+      top: 16px; right: 20px;
+      line-height: 1;
+      pointer-events: none;
+    }
+    .fleet-brand {
+      font-family: 'Michroma', monospace;
+      font-size: 9px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+    .fleet-model {
+      font-family: 'Michroma', monospace;
+      font-size: 20px;
+      color: var(--white);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+    .fleet-specs {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .fleet-spec {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+    .fleet-spec span {
+      color: var(--chrome);
+      font-weight: 600;
+    }
+    .fleet-svg {
+      width: 100%;
+      height: 100px;
+      margin: 16px 0;
+    }
+    .fleet-price {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .price-from {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .price-num {
+      font-family: 'Michroma', monospace;
+      font-size: 24px;
+      color: var(--gold);
+    }
+    .price-per {
+      font-size: 10px;
+      color: var(--muted);
+    }
+
+    /* ======= WHY US ======= */
+    .why {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .why-inner {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 100px 40px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .why-stat-big {
+      font-family: 'Michroma', monospace;
+      font-size: clamp(80px, 12vw, 160px);
+      color: var(--red);
+      line-height: 1;
+      -webkit-text-stroke: 1px var(--red);
+      position: relative;
+    }
+    .why-stat-big::after {
+      content: '+';
+      font-size: 0.5em;
+      color: var(--gold);
+      vertical-align: super;
+    }
+    .why-stat-label {
+      font-family: 'Michroma', monospace;
+      font-size: 12px;
+      letter-spacing: 0.2em;
+      color: var(--chrome);
+      text-transform: uppercase;
+      margin-top: -16px;
+      margin-bottom: 40px;
+    }
+    .why-features {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .why-feature {
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 48px 1fr;
+      gap: 20px;
+      align-items: start;
+      opacity: 0;
+      transform: translateX(-20px);
+      transition: all 0.5s ease;
+    }
+    .why-feature.revealed {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .why-feature-icon {
+      width: 48px;
+      height: 48px;
+      background: var(--black);
+      border: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+      flex-shrink: 0;
+    }
+    .why-feature-title {
+      font-family: 'Michroma', monospace;
+      font-size: 13px;
+      color: var(--white);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+    .why-feature-desc {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    /* ======= HOW IT WORKS ======= */
+    .process {
+      padding: 100px 40px;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+      background: var(--border);
+      margin-top: 60px;
+    }
+    .process-step {
+      background: var(--dark);
+      padding: 36px 28px;
+      position: relative;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.6s ease;
+    }
+    .process-step.revealed { opacity: 1; transform: translateY(0); }
+    .process-step-num {
+      font-family: 'Michroma', monospace;
+      font-size: 40px;
+      color: var(--border2);
+      margin-bottom: 16px;
+      line-height: 1;
+    }
+    .process-step-title {
+      font-family: 'Michroma', monospace;
+      font-size: 13px;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 12px;
+    }
+    .process-step-desc {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.6;
+    }
+    .process-connector {
+      position: absolute;
+      top: 36px; right: -1px;
+      width: 24px;
+      height: 2px;
+      background: var(--gold);
+      z-index: 10;
+    }
+    .process-step:last-child .process-connector { display: none; }
+
+    /* ======= TESTIMONIALS ======= */
+    .testimonials {
+      background: var(--black);
+      border-top: 1px solid var(--border);
+      padding: 100px 40px;
+    }
+    .testimonials-inner {
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      background: var(--border);
+      margin-top: 60px;
+    }
+    .testimonial-card {
+      background: var(--surface);
+      padding: 36px;
+      position: relative;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.5s ease;
+    }
+    .testimonial-card.revealed { opacity: 1; transform: translateY(0); }
+    .testimonial-quote-mark {
+      font-family: 'Michroma', monospace;
+      font-size: 60px;
+      color: var(--red);
+      opacity: 0.4;
+      line-height: 1;
+      margin-bottom: -20px;
+    }
+    .testimonial-text {
+      font-size: 14px;
+      line-height: 1.7;
+      color: var(--chrome);
+      margin-bottom: 28px;
+      font-style: italic;
+    }
+    .testimonial-stars {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 16px;
+    }
+    .star {
+      color: var(--gold);
+      font-size: 12px;
+    }
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .author-avatar {
+      width: 44px;
+      height: 44px;
+      background: var(--dark);
+      border: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Michroma', monospace;
+      font-size: 14px;
+      color: var(--gold);
+      clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+      flex-shrink: 0;
+    }
+    .author-name {
+      font-family: 'Michroma', monospace;
+      font-size: 11px;
+      color: var(--white);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .author-car {
+      font-size: 11px;
+      color: var(--gold);
+      margin-top: 2px;
+    }
+
+    /* ======= FLEET CATEGORIES ======= */
+    .categories {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 100px 40px;
+    }
+    .categories-inner {
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 60px;
+    }
+    .category-card {
+      padding: 28px 24px;
+      border: 1px solid var(--border2);
+      background: var(--dark);
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      opacity: 0;
+      transform: scale(0.95);
+      transition: all 0.4s ease;
+    }
+    .category-card.revealed { opacity: 1; transform: scale(1); }
+    .category-card:hover {
+      border-color: var(--gold);
+      background: var(--surface2);
+    }
+    .category-icon {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 16px;
+    }
+    .category-name {
+      font-family: 'Michroma', monospace;
+      font-size: 12px;
+      color: var(--white);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 6px;
+    }
+    .category-count {
+      font-size: 11px;
+      color: var(--gold);
+    }
+
+    /* ======= FAQ ======= */
+    .faq {
+      padding: 100px 40px;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 80px;
+      margin-top: 60px;
+    }
+    .faq-sidebar {
+      position: sticky;
+      top: 100px;
+      align-self: start;
+    }
+    .faq-sidebar-title {
+      font-family: 'Michroma', monospace;
+      font-size: 22px;
+      color: var(--white);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .faq-sidebar-text {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.7;
+      margin-bottom: 28px;
+    }
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+    }
+    .faq-q {
+      font-family: 'Michroma', monospace;
+      font-size: 12px;
+      color: var(--chrome);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 22px 0;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: color 0.2s;
+    }
+    .faq-q:hover { color: var(--gold); }
+    .faq-q.open { color: var(--gold); }
+    .faq-icon {
+      width: 20px;
+      height: 20px;
+      border: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: var(--gold);
+      flex-shrink: 0;
+      transition: all 0.3s;
+      clip-path: polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%);
+    }
+    .faq-icon.open { background: var(--gold); color: var(--black); }
+    .faq-a {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.7;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s ease;
+      padding: 0;
+    }
+    .faq-a.open {
+      max-height: 300px;
+      padding-bottom: 20px;
+    }
+
+    /* ======= SERVICE AREAS ======= */
+    .areas {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 80px 40px;
+    }
+    .areas-inner {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 60px;
+      align-items: center;
+    }
+    .areas-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .area-tag {
+      padding: 8px 16px;
+      border: 1px solid var(--border2);
+      font-family: 'Michroma', monospace;
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--chrome);
+      clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+      transition: all 0.2s;
+    }
+    .area-tag:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: rgba(201,168,76,0.05);
+    }
+
+    /* ======= CONTACT ======= */
+    .contact {
+      padding: 100px 40px;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+    .contact-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+    }
+    .contact-info-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .contact-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--surface);
+      border: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+      flex-shrink: 0;
+    }
+    .contact-label {
+      font-family: 'Michroma', monospace;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+    .contact-value {
+      font-size: 15px;
+      color: var(--white);
+    }
+    .contact-form {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 40px;
+    }
+    .form-title {
+      font-family: 'Michroma', monospace;
+      font-size: 16px;
+      color: var(--white);
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-label {
+      font-family: 'Michroma', monospace;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: block;
+      margin-bottom: 8px;
+    }
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      background: var(--dark);
+      border: 1px solid var(--border2);
+      color: var(--white);
+      padding: 12px 16px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--gold);
+    }
+    .form-textarea { resize: vertical; min-height: 100px; }
+    .form-select { cursor: pointer; }
+    .form-select option { background: var(--dark); }
+    .form-submit {
+      font-family: 'Michroma', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 14px 36px;
+      background: var(--gold);
+      color: var(--black);
+      border: none;
+      cursor: pointer;
+      width: 100%;
+      clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+      transition: all 0.2s;
+      font-weight: 700;
+    }
+    .form-submit:hover { background: var(--gold2); }
+    .form-error { color: var(--red2); font-size: 11px; margin-top: 4px; display: none; }
+    .form-error.show { display: block; }
+
+    /* ======= CTA BANNER ======= */
+    .cta-banner {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      padding: 80px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-banner::before {
+      content: 'VELOCITY';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Michroma', monospace;
+      font-size: clamp(80px, 15vw, 200px);
+      color: var(--border);
+      pointer-events: none;
+      z-index: 0;
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+    }
+    .cta-banner-inner {
+      position: relative;
+      z-index: 1;
+    }
+    .cta-title {
+      font-family: 'Michroma', monospace;
+      font-size: clamp(24px, 4vw, 48px);
+      color: var(--white);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .cta-sub {
+      font-size: 15px;
+      color: var(--text);
+      margin-bottom: 36px;
+    }
+    .cta-btns {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    /* ======= FOOTER ======= */
+    .footer {
+      background: var(--black);
+      border-top: 1px solid var(--border);
+      padding: 60px 40px 40px;
+    }
+    .footer-inner {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 40px;
+      margin-bottom: 40px;
+    }
+    .footer-brand {
+      font-family: 'Michroma', monospace;
+      font-size: 18px;
+      color: var(--white);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 12px;
+    }
+    .footer-tagline {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .footer-license {
+      font-size: 11px;
+      color: var(--border2);
+      font-family: 'Michroma', monospace;
+    }
+    .footer-col-title {
+      font-family: 'Michroma', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .footer-links a {
+      font-size: 12px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-contact-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .footer-contact-item svg { flex-shrink: 0; }
+    .footer-bottom {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: gap;
+      gap: 16px;
+    }
+    .footer-copy {
+      font-size: 11px;
+      color: var(--border2);
+      font-family: 'Michroma', monospace;
+    }
+    .webnari-badge {
+      font-size: 11px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .webnari-badge:hover { color: var(--gold); }
+
+    /* ======= REVEAL ANIMATIONS ======= */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .reveal.revealed { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+    .reveal-delay-5 { transition-delay: 0.5s; }
+
+    /* ======= RESPONSIVE ======= */
+    @media (max-width: 1024px) {
+      .hero-content { grid-template-columns: 1fr; }
+      .hero-car { display: none; }
+      .why-inner { grid-template-columns: 1fr; gap: 40px; }
+      .contact-inner { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+      .fleet-grid { grid-template-columns: 1fr 1fr; }
+      .categories-grid { grid-template-columns: repeat(2, 1fr); }
+      .process-steps { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 768px) {
+      .nav-links, .nav-cta .btn-nav { display: none; }
+      .hamburger { display: flex; }
+      .fleet-grid { grid-template-columns: 1fr; }
+      .faq-grid { grid-template-columns: 1fr; }
+      .faq-sidebar { position: static; }
+      .areas-inner { grid-template-columns: 1fr; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr; }
+      .hero-stats { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .nav-inner { padding: 0 20px; }
+      .hero-content, .fleet, .why-inner, .process, .testimonials, .categories, .faq, .contact, .areas-inner { padding-left: 20px; padding-right: 20px; }
+      .process-steps { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav class="nav" id="nav">
+    <div class="nav-stripe"></div>
+    <div class="nav-inner">
+      <a class="nav-logo" href="velocityexotics.html">
+        <svg class="nav-logo-mark" viewBox="0 0 36 36" fill="none">
+          <polygon points="18,2 34,10 34,26 18,34 2,26 2,10" fill="none" stroke="#C9A84C" stroke-width="1.5"/>
+          <polygon points="18,7 29,12.5 29,23.5 18,29 7,23.5 7,12.5" fill="#C9A84C" opacity="0.15"/>
+          <text x="18" y="22" text-anchor="middle" font-family="Michroma" font-size="10" fill="#C9A84C" font-weight="bold">V</text>
+        </svg>
+        <div>
+          <span class="nav-logo-text">Velocity Exotics</span>
+          <span class="nav-logo-sub">Exotic Car Rentals</span>
+        </div>
+      </a>
+      <ul class="nav-links">
+        <li><a href="#fleet">Fleet</a></li>
+        <li><a href="#categories">Collections</a></li>
+        <li><a href="#why">Why Us</a></li>
+        <li><a href="#process">How It Works</a></li>
+        <li><a href="#testimonials">Reviews</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <div class="nav-cta">
+        <a href="tel:7865552600" class="btn-nav">Reserve Now</a>
+        <button class="hamburger" onclick="toggleMobile()" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-close" onclick="toggleMobile()">✕</button>
+    <a href="#fleet" onclick="toggleMobile()">Fleet</a>
+    <a href="#categories" onclick="toggleMobile()">Collections</a>
+    <a href="#why" onclick="toggleMobile()">Why Us</a>
+    <a href="#process" onclick="toggleMobile()">How It Works</a>
+    <a href="#testimonials" onclick="toggleMobile()">Reviews</a>
+    <a href="#contact" onclick="toggleMobile()">Contact</a>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-bg"></div>
+    <div class="hero-lines">
+      <div class="speed-line" style="left:15%;animation-delay:0s;"></div>
+      <div class="speed-line" style="left:30%;animation-delay:0.6s;"></div>
+      <div class="speed-line" style="left:45%;animation-delay:1.2s;"></div>
+      <div class="speed-line" style="left:60%;animation-delay:0.3s;"></div>
+      <div class="speed-line" style="left:75%;animation-delay:0.9s;"></div>
+      <div class="speed-line" style="left:85%;animation-delay:1.5s;"></div>
+    </div>
+    <div class="hero-content">
+      <div>
+        <div class="hero-badge">
+          <div class="badge-dot"></div>
+          Same-Day Delivery Available
+        </div>
+        <h1 class="hero-title">
+          Drive The
+          <span>Dream</span>
+          <span class="outline-text">Today.</span>
+        </h1>
+        <p class="hero-desc">South Florida's premier exotic car rental. Lamborghini, Ferrari, McLaren, Rolls-Royce — delivered to your hotel, home, or event. No hassle, pure adrenaline.</p>
+        <div class="hero-btns">
+          <a href="#fleet" class="btn-primary">Browse the Fleet</a>
+          <a href="tel:7865552600" class="btn-ghost">(786) 555-2600</a>
+        </div>
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <span class="stat-num">50+</span>
+            <span class="stat-label">Exotic Vehicles</span>
+          </div>
+          <div class="hero-stat">
+            <span class="stat-num">4.9★</span>
+            <span class="stat-label">Average Rating</span>
+          </div>
+          <div class="hero-stat">
+            <span class="stat-num">24hr</span>
+            <span class="stat-label">Concierge</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-car">
+        <div class="car-glow"></div>
+        <svg viewBox="0 0 560 240" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:560px;">
+          <!-- Ground shadow -->
+          <ellipse cx="280" cy="218" rx="220" ry="12" fill="rgba(214,43,43,0.15)"/>
+          <!-- Car body - low slung supercar silhouette -->
+          <!-- Rear -->
+          <path d="M80 190 L90 155 L100 135 L120 120 L180 108 L200 100 L240 95 L280 93 L320 93 L360 95 L400 100 L440 112 L470 130 L485 155 L490 175 L490 190 Z" fill="url(#bodyGrad)" stroke="#C9A84C" stroke-width="1.2"/>
+          <defs>
+            <linearGradient id="bodyGrad" x1="80" y1="100" x2="490" y2="220" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#1A1A22"/>
+              <stop offset="50%" stop-color="#22222C"/>
+              <stop offset="100%" stop-color="#0E0E18"/>
+            </linearGradient>
+          </defs>
+          <!-- Roof -->
+          <path d="M200 100 L220 68 L260 54 L300 50 L340 52 L375 60 L400 78 L420 100 L360 95 L300 93 L240 95 Z" fill="url(#roofGrad)" stroke="#C9A84C" stroke-width="1"/>
+          <defs>
+            <linearGradient id="roofGrad" x1="200" y1="50" x2="420" y2="100" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#161620"/>
+              <stop offset="100%" stop-color="#0A0A14"/>
+            </linearGradient>
+          </defs>
+          <!-- Windshield -->
+          <path d="M215 99 L232 66 L262 54 L300 51 L335 52 L368 62 L392 80 L408 99 Z" fill="rgba(100,130,180,0.15)" stroke="rgba(201,168,76,0.5)" stroke-width="0.8"/>
+          <!-- Side window -->
+          <path d="M215 99 L230 70 L255 58 L220 100 Z" fill="rgba(100,130,180,0.1)" stroke="rgba(201,168,76,0.3)" stroke-width="0.5"/>
+          <!-- Door line -->
+          <path d="M160 108 L200 100 L350 95 L400 100 L420 115 L400 115 L200 115 Z" fill="none" stroke="rgba(201,168,76,0.3)" stroke-width="0.6"/>
+          <!-- Headlights -->
+          <path d="M460 130 L485 145 L488 165 L480 170 L462 162 L450 145 Z" fill="rgba(201,168,76,0.2)" stroke="#C9A84C" stroke-width="1"/>
+          <line x1="462" y1="135" x2="484" y2="148" stroke="#C9A84C" stroke-width="0.5"/>
+          <line x1="460" y1="142" x2="483" y2="156" stroke="#C9A84C" stroke-width="0.5"/>
+          <!-- Tail lights -->
+          <path d="M80 155 L95 145 L100 168 L88 175 L78 168 Z" fill="rgba(214,43,43,0.4)" stroke="#D62B2B" stroke-width="1"/>
+          <!-- Wheels -->
+          <circle cx="155" cy="192" r="34" fill="#0A0A14" stroke="#C9A84C" stroke-width="1.5"/>
+          <circle cx="155" cy="192" r="24" fill="none" stroke="rgba(201,168,76,0.4)" stroke-width="1"/>
+          <circle cx="155" cy="192" r="10" fill="#C9A84C" opacity="0.6"/>
+          <!-- Wheel spokes -->
+          <line x1="155" y1="168" x2="155" y2="182" stroke="#C9A84C" stroke-width="1.5" opacity="0.6"/>
+          <line x1="155" y1="202" x2="155" y2="216" stroke="#C9A84C" stroke-width="1.5" opacity="0.6"/>
+          <line x1="131" y1="192" x2="145" y2="192" stroke="#C9A84C" stroke-width="1.5" opacity="0.6"/>
+          <line x1="165" y1="192" x2="179" y2="192" stroke="#C9A84C" stroke-width="1.5" opacity="0.6"/>
+          <line x1="138" y1="175" x2="147" y2="184" stroke="#C9A84C" stroke-width="1.5" opacity="0.6"/>
+          <line x1="163" y1="200" x2="172" y2="209" stroke="#C9A84C" stroke-width="1.5" opacity="0.6"/>
+          <line x1="172" y1="175" x2="163" y2="184" stroke="#C9A84C" stroke-width="1.5" opacity="0.6"/>
+          <line x1="138" y1="200" x2="147" y2="209" stroke="#C9A84C" stroke-width="1.5" opacity="0.6"/>
+          <!-- Rear wheel -->
+          <circle cx="415" cy="192" r="34" fill="#0A0A14" stroke="#C9A84C" stroke-width="1.5"/>
+          <circle cx="415" cy="192" r="24" fill="none" stroke="rgba(201,168,76,0.4)" stroke-width="1"/>
+          <circle cx="415" cy="192" r="10" fill="#C9A84C" opacity="0.6"/>
+          <line x1="415" y1="168" x2="415" y2="182" stroke="#C9A84C" stroke-width="1.5" opacity="0.6"/>
+          <line x1="415" y1="202" x2="415" y2="216" stroke="#C9A84C" stroke-width="1.5" opacity="0.6"/>
+          <line x1="391" y1="192" x2="405" y2="192" stroke="#C9A84C" stroke-width="1.5" opacity="0.6"/>
+          <line x1="425" y1="192" x2="439" y2="192" stroke="#C9A84C" stroke-width="1.5" opacity="0.6"/>
+          <line x1="398" y1="175" x2="407" y2="184" stroke="#C9A84C" stroke-width="1.5" opacity="0.6"/>
+          <line x1="423" y1="200" x2="432" y2="209" stroke="#C9A84C" stroke-width="1.5" opacity="0.6"/>
+          <line x1="432" y1="175" x2="423" y2="184" stroke="#C9A84C" stroke-width="1.5" opacity="0.6"/>
+          <line x1="398" y1="200" x2="407" y2="209" stroke="#C9A84C" stroke-width="1.5" opacity="0.6"/>
+          <!-- Ground line -->
+          <line x1="60" y1="226" x2="520" y2="226" stroke="rgba(201,168,76,0.2)" stroke-width="1"/>
+          <!-- Speed lines -->
+          <line x1="0" y1="150" x2="70" y2="148" stroke="rgba(201,168,76,0.3)" stroke-width="1"/>
+          <line x1="0" y1="162" x2="65" y2="162" stroke="rgba(201,168,76,0.15)" stroke-width="0.5"/>
+          <line x1="0" y1="138" x2="55" y2="136" stroke="rgba(201,168,76,0.2)" stroke-width="0.5"/>
+          <!-- Brand mark -->
+          <text x="280" y="80" text-anchor="middle" font-family="Michroma" font-size="8" fill="rgba(201,168,76,0.4)" letter-spacing="3">LAMBORGHINI HURACÁN</text>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="marquee-strip">
+    <div class="marquee-track">
+      <div class="marquee-item">
+        <span>Lamborghini</span><div class="marquee-sep"></div>
+        <span>Ferrari</span><div class="marquee-sep"></div>
+        <span>McLaren</span><div class="marquee-sep"></div>
+        <span>Rolls-Royce</span><div class="marquee-sep"></div>
+        <span>Bentley</span><div class="marquee-sep"></div>
+        <span>Porsche</span><div class="marquee-sep"></div>
+        <span>Aston Martin</span><div class="marquee-sep"></div>
+        <span>Maserati</span><div class="marquee-sep"></div>
+        <span>Mercedes AMG</span><div class="marquee-sep"></div>
+        <span>BMW M Series</span><div class="marquee-sep"></div>
+      </div>
+      <div class="marquee-item">
+        <span>Lamborghini</span><div class="marquee-sep"></div>
+        <span>Ferrari</span><div class="marquee-sep"></div>
+        <span>McLaren</span><div class="marquee-sep"></div>
+        <span>Rolls-Royce</span><div class="marquee-sep"></div>
+        <span>Bentley</span><div class="marquee-sep"></div>
+        <span>Porsche</span><div class="marquee-sep"></div>
+        <span>Aston Martin</span><div class="marquee-sep"></div>
+        <span>Maserati</span><div class="marquee-sep"></div>
+        <span>Mercedes AMG</span><div class="marquee-sep"></div>
+        <span>BMW M Series</span><div class="marquee-sep"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FLEET -->
+  <section class="fleet" id="fleet">
+    <div class="section-label reveal">Featured Fleet</div>
+    <h2 class="section-title reveal reveal-delay-1">The Collection</h2>
+    <p class="section-sub reveal reveal-delay-2">From weekend thrills to full production shoots — our fleet is curated for one thing: unforgettable experiences.</p>
+    <div class="fleet-grid">
+      <div class="fleet-card reveal">
+        <span class="fleet-card-num">01</span>
+        <div class="fleet-brand">Lamborghini</div>
+        <div class="fleet-model">Huracán EVO</div>
+        <div class="fleet-specs">
+          <div class="fleet-spec">HP: <span>640</span></div>
+          <div class="fleet-spec">0-60: <span>2.9s</span></div>
+          <div class="fleet-spec">Top: <span>202mph</span></div>
+        </div>
+        <svg class="fleet-svg" viewBox="0 0 280 100" fill="none">
+          <path d="M40 80 L50 58 L70 45 L110 38 L160 36 L200 37 L230 43 L248 58 L252 72 L252 80Z" fill="#1A1A22" stroke="#C9A84C" stroke-width="0.8"/>
+          <path d="M110 38 L120 22 L150 16 L180 16 L200 22 L210 38Z" fill="#14141E" stroke="#C9A84C" stroke-width="0.6"/>
+          <circle cx="78" cy="82" r="16" fill="#0A0A12" stroke="#C9A84C" stroke-width="1"/>
+          <circle cx="78" cy="82" r="8" fill="none" stroke="rgba(201,168,76,0.4)" stroke-width="1"/>
+          <circle cx="216" cy="82" r="16" fill="#0A0A12" stroke="#C9A84C" stroke-width="1"/>
+          <circle cx="216" cy="82" r="8" fill="none" stroke="rgba(201,168,76,0.4)" stroke-width="1"/>
+        </svg>
+        <div class="fleet-price">
+          <span class="price-from">From</span>
+          <span class="price-num">$799</span>
+          <span class="price-per">/ day</span>
+        </div>
+      </div>
+      <div class="fleet-card reveal reveal-delay-1">
+        <span class="fleet-card-num">02</span>
+        <div class="fleet-brand">Ferrari</div>
+        <div class="fleet-model">F8 Tributo</div>
+        <div class="fleet-specs">
+          <div class="fleet-spec">HP: <span>710</span></div>
+          <div class="fleet-spec">0-60: <span>2.9s</span></div>
+          <div class="fleet-spec">Top: <span>211mph</span></div>
+        </div>
+        <svg class="fleet-svg" viewBox="0 0 280 100" fill="none">
+          <path d="M35 80 L44 56 L65 42 L110 36 L160 34 L205 36 L238 46 L252 62 L254 80Z" fill="#1A1A22" stroke="#D62B2B" stroke-width="0.8"/>
+          <path d="M105 36 L118 20 L152 13 L182 14 L202 23 L215 36Z" fill="#14141E" stroke="#D62B2B" stroke-width="0.6"/>
+          <circle cx="75" cy="82" r="16" fill="#0A0A12" stroke="#D62B2B" stroke-width="1"/>
+          <circle cx="75" cy="82" r="8" fill="none" stroke="rgba(214,43,43,0.4)" stroke-width="1"/>
+          <circle cx="215" cy="82" r="16" fill="#0A0A12" stroke="#D62B2B" stroke-width="1"/>
+          <circle cx="215" cy="82" r="8" fill="none" stroke="rgba(214,43,43,0.4)" stroke-width="1"/>
+        </svg>
+        <div class="fleet-price">
+          <span class="price-from">From</span>
+          <span class="price-num">$899</span>
+          <span class="price-per">/ day</span>
+        </div>
+      </div>
+      <div class="fleet-card reveal reveal-delay-2">
+        <span class="fleet-card-num">03</span>
+        <div class="fleet-brand">McLaren</div>
+        <div class="fleet-model">720S Spider</div>
+        <div class="fleet-specs">
+          <div class="fleet-spec">HP: <span>710</span></div>
+          <div class="fleet-spec">0-60: <span>2.8s</span></div>
+          <div class="fleet-spec">Top: <span>212mph</span></div>
+        </div>
+        <svg class="fleet-svg" viewBox="0 0 280 100" fill="none">
+          <path d="M38 80 L46 54 L68 40 L115 34 L158 32 L202 34 L235 46 L250 64 L252 80Z" fill="#1A1A22" stroke="#A8B8C8" stroke-width="0.8"/>
+          <path d="M112 34 L122 18 L155 12 L178 12 L200 18 L212 34Z" fill="#14141E" stroke="#A8B8C8" stroke-width="0.6"/>
+          <circle cx="76" cy="82" r="16" fill="#0A0A12" stroke="#A8B8C8" stroke-width="1"/>
+          <circle cx="76" cy="82" r="8" fill="none" stroke="rgba(168,184,200,0.4)" stroke-width="1"/>
+          <circle cx="214" cy="82" r="16" fill="#0A0A12" stroke="#A8B8C8" stroke-width="1"/>
+          <circle cx="214" cy="82" r="8" fill="none" stroke="rgba(168,184,200,0.4)" stroke-width="1"/>
+        </svg>
+        <div class="fleet-price">
+          <span class="price-from">From</span>
+          <span class="price-num">$999</span>
+          <span class="price-per">/ day</span>
+        </div>
+      </div>
+      <div class="fleet-card reveal reveal-delay-3">
+        <span class="fleet-card-num">04</span>
+        <div class="fleet-brand">Rolls-Royce</div>
+        <div class="fleet-model">Ghost</div>
+        <div class="fleet-specs">
+          <div class="fleet-spec">HP: <span>563</span></div>
+          <div class="fleet-spec">0-60: <span>4.6s</span></div>
+          <div class="fleet-spec">Seats: <span>5</span></div>
+        </div>
+        <svg class="fleet-svg" viewBox="0 0 280 100" fill="none">
+          <path d="M30 80 L36 52 L55 38 L100 30 L165 28 L220 30 L248 42 L258 64 L258 80Z" fill="#1A1A22" stroke="#C9A84C" stroke-width="0.8"/>
+          <path d="M95 30 L105 18 L165 14 L210 18 L220 30Z" fill="#14141E" stroke="#C9A84C" stroke-width="0.6"/>
+          <circle cx="72" cy="82" r="16" fill="#0A0A12" stroke="#C9A84C" stroke-width="1"/>
+          <circle cx="72" cy="82" r="8" fill="none" stroke="rgba(201,168,76,0.4)" stroke-width="1"/>
+          <circle cx="218" cy="82" r="16" fill="#0A0A12" stroke="#C9A84C" stroke-width="1"/>
+          <circle cx="218" cy="82" r="8" fill="none" stroke="rgba(201,168,76,0.4)" stroke-width="1"/>
+        </svg>
+        <div class="fleet-price">
+          <span class="price-from">From</span>
+          <span class="price-num">$1,199</span>
+          <span class="price-per">/ day</span>
+        </div>
+      </div>
+      <div class="fleet-card reveal reveal-delay-4">
+        <span class="fleet-card-num">05</span>
+        <div class="fleet-brand">Porsche</div>
+        <div class="fleet-model">911 Turbo S</div>
+        <div class="fleet-specs">
+          <div class="fleet-spec">HP: <span>640</span></div>
+          <div class="fleet-spec">0-60: <span>2.6s</span></div>
+          <div class="fleet-spec">Top: <span>205mph</span></div>
+        </div>
+        <svg class="fleet-svg" viewBox="0 0 280 100" fill="none">
+          <path d="M45 80 L52 58 L72 44 L115 38 L160 37 L200 38 L228 48 L244 64 L246 80Z" fill="#1A1A22" stroke="#A8B8C8" stroke-width="0.8"/>
+          <path d="M112 38 L120 24 L154 18 L178 19 L196 28 L206 38Z" fill="#14141E" stroke="#A8B8C8" stroke-width="0.6"/>
+          <circle cx="80" cy="82" r="16" fill="#0A0A12" stroke="#A8B8C8" stroke-width="1"/>
+          <circle cx="80" cy="82" r="8" fill="none" stroke="rgba(168,184,200,0.4)" stroke-width="1"/>
+          <circle cx="210" cy="82" r="16" fill="#0A0A12" stroke="#A8B8C8" stroke-width="1"/>
+          <circle cx="210" cy="82" r="8" fill="none" stroke="rgba(168,184,200,0.4)" stroke-width="1"/>
+        </svg>
+        <div class="fleet-price">
+          <span class="price-from">From</span>
+          <span class="price-num">$599</span>
+          <span class="price-per">/ day</span>
+        </div>
+      </div>
+      <div class="fleet-card reveal reveal-delay-5">
+        <span class="fleet-card-num">06</span>
+        <div class="fleet-brand">Bentley</div>
+        <div class="fleet-model">Continental GT</div>
+        <div class="fleet-specs">
+          <div class="fleet-spec">HP: <span>650</span></div>
+          <div class="fleet-spec">0-60: <span>3.6s</span></div>
+          <div class="fleet-spec">Seats: <span>4</span></div>
+        </div>
+        <svg class="fleet-svg" viewBox="0 0 280 100" fill="none">
+          <path d="M35 80 L42 54 L63 40 L105 33 L162 31 L212 33 L242 44 L254 62 L256 80Z" fill="#1A1A22" stroke="#C9A84C" stroke-width="0.8"/>
+          <path d="M100 33 L112 19 L162 14 L205 18 L215 33Z" fill="#14141E" stroke="#C9A84C" stroke-width="0.6"/>
+          <circle cx="74" cy="82" r="16" fill="#0A0A12" stroke="#C9A84C" stroke-width="1"/>
+          <circle cx="74" cy="82" r="8" fill="none" stroke="rgba(201,168,76,0.4)" stroke-width="1"/>
+          <circle cx="216" cy="82" r="16" fill="#0A0A12" stroke="#C9A84C" stroke-width="1"/>
+          <circle cx="216" cy="82" r="8" fill="none" stroke="rgba(201,168,76,0.4)" stroke-width="1"/>
+        </svg>
+        <div class="fleet-price">
+          <span class="price-from">From</span>
+          <span class="price-num">$699</span>
+          <span class="price-per">/ day</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORIES / USE CASES -->
+  <section class="categories" id="categories">
+    <div class="categories-inner">
+      <div class="section-label reveal">Use Cases</div>
+      <h2 class="section-title reveal reveal-delay-1">Every Occasion. One Fleet.</h2>
+      <p class="section-sub reveal reveal-delay-2">Whether you're celebrating, creating content, or just need the right car for the moment — we have the perfect match.</p>
+      <div class="categories-grid">
+        <div class="category-card reveal">
+          <svg class="category-icon" viewBox="0 0 60 60" fill="none">
+            <circle cx="30" cy="30" r="28" stroke="#C9A84C" stroke-width="1"/>
+            <path d="M20 35 L30 18 L40 35" stroke="#C9A84C" stroke-width="1.5" stroke-linejoin="round"/>
+            <line x1="17" y1="35" x2="43" y2="35" stroke="#C9A84C" stroke-width="1.5"/>
+          </svg>
+          <div class="category-name">Bachelor/Bachelorette</div>
+          <div class="category-count">12 vehicles available</div>
+        </div>
+        <div class="category-card reveal reveal-delay-1">
+          <svg class="category-icon" viewBox="0 0 60 60" fill="none">
+            <circle cx="30" cy="30" r="28" stroke="#D62B2B" stroke-width="1"/>
+            <rect x="18" y="22" width="24" height="16" rx="1" stroke="#D62B2B" stroke-width="1.5"/>
+            <circle cx="22" cy="30" r="2" fill="#D62B2B"/>
+            <line x1="26" y1="26" x2="38" y2="26" stroke="#D62B2B" stroke-width="1"/>
+            <line x1="26" y1="30" x2="34" y2="30" stroke="#D62B2B" stroke-width="1"/>
+          </svg>
+          <div class="category-name">Music Videos & Film</div>
+          <div class="category-count">All vehicles available</div>
+        </div>
+        <div class="category-card reveal reveal-delay-2">
+          <svg class="category-icon" viewBox="0 0 60 60" fill="none">
+            <circle cx="30" cy="30" r="28" stroke="#A8B8C8" stroke-width="1"/>
+            <path d="M22 36 L22 24 L30 20 L38 24 L38 36" stroke="#A8B8C8" stroke-width="1.5"/>
+            <rect x="26" y="28" width="8" height="8" stroke="#A8B8C8" stroke-width="1"/>
+          </svg>
+          <div class="category-name">Corporate Events</div>
+          <div class="category-count">Chauffeur options available</div>
+        </div>
+        <div class="category-card reveal reveal-delay-3">
+          <svg class="category-icon" viewBox="0 0 60 60" fill="none">
+            <circle cx="30" cy="30" r="28" stroke="#C9A84C" stroke-width="1"/>
+            <circle cx="30" cy="26" r="6" stroke="#C9A84C" stroke-width="1.5"/>
+            <path d="M18 44 C18 36 42 36 42 44" stroke="#C9A84C" stroke-width="1.5"/>
+          </svg>
+          <div class="category-name">Weekend Escapes</div>
+          <div class="category-count">Multi-day discounts</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY US -->
+  <section class="why" id="why">
+    <div class="why-inner">
+      <div>
+        <div class="why-stat-big reveal">500</div>
+        <div class="why-stat-label reveal reveal-delay-1">5-Star Reviews</div>
+        <div class="section-sub reveal reveal-delay-2">We don't just rent cars. We craft experiences that people talk about for years. That's why Miami's most discerning clients choose Velocity Exotics again and again.</div>
+        <a href="#contact" class="btn-primary reveal reveal-delay-3">Reserve Your Vehicle</a>
+      </div>
+      <div class="why-features">
+        <div class="why-feature">
+          <div class="why-feature-icon">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+              <path d="M11 2 L19 6 L19 11 C19 15.4 15.8 19.5 11 21 C6.2 19.5 3 15.4 3 11 L3 6 Z" stroke="#C9A84C" stroke-width="1.2"/>
+            </svg>
+          </div>
+          <div>
+            <div class="why-feature-title">Fully Insured & Protected</div>
+            <div class="why-feature-desc">Every rental includes comprehensive insurance coverage. We handle the paperwork; you handle the driving.</div>
+          </div>
+        </div>
+        <div class="why-feature">
+          <div class="why-feature-icon">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+              <circle cx="11" cy="11" r="8" stroke="#C9A84C" stroke-width="1.2"/>
+              <path d="M11 7 L11 11 L14 13" stroke="#C9A84C" stroke-width="1.2" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="why-feature-title">Same-Day Delivery</div>
+            <div class="why-feature-desc">Book before noon, get your car by evening. We deliver to hotels, homes, private terminals, and events across South Florida.</div>
+          </div>
+        </div>
+        <div class="why-feature">
+          <div class="why-feature-icon">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+              <path d="M4 11 L9 16 L18 7" stroke="#C9A84C" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div>
+            <div class="why-feature-title">No Hidden Fees</div>
+            <div class="why-feature-desc">What you see is what you pay. No fuel surcharges, no cleaning deposits unless damages occur, no surprises at pickup.</div>
+          </div>
+        </div>
+        <div class="why-feature">
+          <div class="why-feature-icon">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+              <path d="M11 3 L11 19 M3 11 L19 11" stroke="#C9A84C" stroke-width="1.2"/>
+            </svg>
+          </div>
+          <div>
+            <div class="why-feature-title">24/7 Concierge Support</div>
+            <div class="why-feature-desc">Flat tire at 2am? Question about an extension? Our concierge team is always reachable, always ready.</div>
+          </div>
+        </div>
+        <div class="why-feature">
+          <div class="why-feature-icon">
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+              <rect x="4" y="6" width="14" height="10" rx="1" stroke="#C9A84C" stroke-width="1.2"/>
+              <path d="M4 9 L18 9" stroke="#C9A84C" stroke-width="1"/>
+            </svg>
+          </div>
+          <div>
+            <div class="why-feature-title">Flexible Booking</div>
+            <div class="why-feature-desc">Daily, weekly, and weekend rates available. Multi-car packages for productions. Corporate accounts welcome.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process" id="process">
+    <div class="section-label reveal">Simple Process</div>
+    <h2 class="section-title reveal reveal-delay-1">Ready in 4 Steps</h2>
+    <p class="section-sub reveal reveal-delay-2">We make booking an exotic car as easy as ordering a ride.</p>
+    <div class="process-steps">
+      <div class="process-step reveal">
+        <div class="process-connector"></div>
+        <div class="process-step-num">01</div>
+        <div class="process-step-title">Choose Your Car</div>
+        <div class="process-step-desc">Browse our fleet online or call our concierge team to get a personalized recommendation based on your needs and budget.</div>
+      </div>
+      <div class="process-step reveal reveal-delay-1">
+        <div class="process-connector"></div>
+        <div class="process-step-num">02</div>
+        <div class="process-step-title">Reserve & Confirm</div>
+        <div class="process-step-desc">Submit your request, provide your license and payment, and we'll confirm your reservation within 30 minutes.</div>
+      </div>
+      <div class="process-step reveal reveal-delay-2">
+        <div class="process-connector"></div>
+        <div class="process-step-num">03</div>
+        <div class="process-step-title">We Deliver</div>
+        <div class="process-step-desc">We bring the car to you — hotel, marina, airport, private residence. Delivery within South Florida at no extra charge on most bookings.</div>
+      </div>
+      <div class="process-step reveal reveal-delay-3">
+        <div class="process-step-num">04</div>
+        <div class="process-step-title">Drive & Enjoy</div>
+        <div class="process-step-desc">Hit the road. Our team does a walkthrough, hands you the keys, and you're free to explore at your own pace.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials" id="testimonials">
+    <div class="testimonials-inner">
+      <div class="section-label reveal">Client Reviews</div>
+      <h2 class="section-title reveal reveal-delay-1">What Clients Say</h2>
+      <div class="testimonials-grid">
+        <div class="testimonial-card reveal">
+          <div class="testimonial-quote-mark">"</div>
+          <p class="testimonial-text">Rented the Huracán for my birthday weekend. These guys delivered it right to my hotel on South Beach, gave me a full orientation, and even had the tank full. 10/10 experience, will be back next month.</p>
+          <div class="testimonial-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+          <div class="testimonial-author">
+            <div class="author-avatar">MR</div>
+            <div>
+              <div class="author-name">Marco R.</div>
+              <div class="author-car">Lamborghini Huracán · 3 days</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card reveal reveal-delay-1">
+          <div class="testimonial-quote-mark">"</div>
+          <p class="testimonial-text">We needed three cars for a music video shoot on short notice. Velocity came through with a Ferrari, McLaren, and Rolls. Professional team, beautiful cars, and they worked around our production schedule.</p>
+          <div class="testimonial-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+          <div class="testimonial-author">
+            <div class="author-avatar">DA</div>
+            <div>
+              <div class="author-name">D. Alvarez</div>
+              <div class="author-car">Film Production Package · 2 days</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card reveal reveal-delay-2">
+          <div class="testimonial-quote-mark">"</div>
+          <p class="testimonial-text">Flew in from NYC and wanted to drive something special. Called at 10am, had a Porsche 911 Turbo at my Airbnb by 2pm. The car was immaculate. This is how luxury rentals should work.</p>
+          <div class="testimonial-stars"><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span></div>
+          <div class="testimonial-author">
+            <div class="author-avatar">JL</div>
+            <div>
+              <div class="author-name">James L.</div>
+              <div class="author-car">Porsche 911 Turbo S · 1 day</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq" id="faq">
+    <div class="section-label reveal">FAQ</div>
+    <h2 class="section-title reveal reveal-delay-1">Common Questions</h2>
+    <div class="faq-grid">
+      <div class="faq-sidebar">
+        <div class="faq-sidebar-title reveal">Still Have Questions?</div>
+        <p class="faq-sidebar-text reveal reveal-delay-1">Our concierge team is available 24/7. Don't hesitate to call or text — we love talking cars.</p>
+        <a href="tel:7865552600" class="btn-primary">Call (786) 555-2600</a>
+      </div>
+      <div class="faq-list">
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>What are the age and license requirements?</span>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-a">You must be at least 25 years old and hold a valid driver's license (US or international). A clean driving record is required. Some high-performance vehicles may require additional documentation.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>Is insurance included in the rental price?</span>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-a">Yes. Basic liability coverage is included. We also offer full comprehensive coverage upgrades for total peace of mind. Our team will walk you through all options at booking.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>How far in advance do I need to book?</span>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-a">We can often accommodate same-day bookings. For peak weekends (holidays, Formula 1 weekends, Art Basel, Ultra Music Festival), we recommend booking 2–4 weeks in advance to secure your preferred vehicle.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>Do you offer chauffeur or driven options?</span>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-a">Yes. We offer chauffeur-driven options for our Rolls-Royce and Bentley fleet, perfect for corporate events, weddings, and airport transfers. Ask us about full-day chauffeur packages.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>What is your cancellation policy?</span>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-a">Cancellations made 72+ hours before pickup receive a full refund. Cancellations within 48 hours forfeit 50% of the rental fee. Same-day cancellations are non-refundable. We understand emergencies — call us.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(this)">
+            <span>Where do you deliver within South Florida?</span>
+            <span class="faq-icon">+</span>
+          </div>
+          <div class="faq-a">We deliver to Miami, Miami Beach, Brickell, Coral Gables, Aventura, Fort Lauderdale, Palm Beach, and surrounding areas. Delivery fees apply for locations outside Miami-Dade County.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICE AREAS -->
+  <section class="areas">
+    <div class="areas-inner">
+      <div>
+        <div class="section-label reveal">We Cover</div>
+        <h2 class="section-title reveal reveal-delay-1" style="font-size:clamp(22px,3vw,34px);">South Florida Delivery</h2>
+        <p class="section-sub reveal reveal-delay-2">We bring the car to you anywhere across greater South Florida.</p>
+      </div>
+      <div class="areas-tags reveal reveal-delay-1">
+        <span class="area-tag">Miami Beach</span>
+        <span class="area-tag">Brickell</span>
+        <span class="area-tag">Coral Gables</span>
+        <span class="area-tag">Aventura</span>
+        <span class="area-tag">Doral</span>
+        <span class="area-tag">Wynwood</span>
+        <span class="area-tag">Coconut Grove</span>
+        <span class="area-tag">Key Biscayne</span>
+        <span class="area-tag">Fort Lauderdale</span>
+        <span class="area-tag">Hialeah</span>
+        <span class="area-tag">North Miami</span>
+        <span class="area-tag">Kendall</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact" id="contact">
+    <div class="section-label reveal">Get In Touch</div>
+    <h2 class="section-title reveal reveal-delay-1">Reserve Your Vehicle</h2>
+    <div class="contact-inner" style="margin-top:60px;">
+      <div>
+        <div class="contact-info-item reveal">
+          <div class="contact-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 4 L6.5 4 L8 8 L6.5 9.5 C7.5 11.5 8.5 12.5 10.5 13.5 L12 12 L16 13.5 L16 16 C14 17 6 14 4 4Z" stroke="#C9A84C" stroke-width="1.2"/></svg>
+          </div>
+          <div>
+            <div class="contact-label">Phone / Text</div>
+            <div class="contact-value">(786) 555-2600</div>
+          </div>
+        </div>
+        <div class="contact-info-item reveal reveal-delay-1">
+          <div class="contact-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="3" y="5" width="14" height="10" rx="1" stroke="#C9A84C" stroke-width="1.2"/><path d="M3 7 L10 12 L17 7" stroke="#C9A84C" stroke-width="1.2"/></svg>
+          </div>
+          <div>
+            <div class="contact-label">Email</div>
+            <div class="contact-value">reserve@velocityexotics.com</div>
+          </div>
+        </div>
+        <div class="contact-info-item reveal reveal-delay-2">
+          <div class="contact-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="9" r="4" stroke="#C9A84C" stroke-width="1.2"/><path d="M4 18 C4 14 16 14 16 18" stroke="#C9A84C" stroke-width="1.2"/></svg>
+          </div>
+          <div>
+            <div class="contact-label">Concierge Hours</div>
+            <div class="contact-value">24 / 7 — Always Available</div>
+          </div>
+        </div>
+        <div class="contact-info-item reveal reveal-delay-3">
+          <div class="contact-icon">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="#C9A84C" stroke-width="1.2"/><path d="M10 6 L10 10 L13 12" stroke="#C9A84C" stroke-width="1.2" stroke-linecap="round"/></svg>
+          </div>
+          <div>
+            <div class="contact-label">Response Time</div>
+            <div class="contact-value">Under 30 Minutes</div>
+          </div>
+        </div>
+      </div>
+      <div class="contact-form reveal reveal-delay-2">
+        <div class="form-title">Request a Reservation</div>
+        <form action="https://formsubmit.co/reserve@velocityexotics.com" method="POST" id="contactForm" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">First Name *</label>
+              <input class="form-input" type="text" name="first_name" placeholder="John" required>
+              <div class="form-error">First name is required</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Last Name *</label>
+              <input class="form-input" type="text" name="last_name" placeholder="Smith" required>
+              <div class="form-error">Last name is required</div>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Phone *</label>
+              <input class="form-input" type="tel" name="phone" placeholder="(786) 555-0000" required>
+              <div class="form-error">Phone is required</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Email *</label>
+              <input class="form-input" type="email" name="email" placeholder="john@email.com" required>
+              <div class="form-error">Valid email is required</div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Vehicle Interest</label>
+            <select class="form-select" name="vehicle">
+              <option value="">Select a vehicle...</option>
+              <option>Lamborghini Huracán EVO ($799/day)</option>
+              <option>Ferrari F8 Tributo ($899/day)</option>
+              <option>McLaren 720S Spider ($999/day)</option>
+              <option>Rolls-Royce Ghost ($1,199/day)</option>
+              <option>Porsche 911 Turbo S ($599/day)</option>
+              <option>Bentley Continental GT ($699/day)</option>
+              <option>Other / Undecided</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Pickup Date</label>
+              <input class="form-input" type="date" name="pickup_date">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Return Date</label>
+              <input class="form-input" type="date" name="return_date">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Message / Special Requests</label>
+            <textarea class="form-textarea" name="message" placeholder="Tell us about your event, delivery location, or any special requests..."></textarea>
+          </div>
+          <input type="hidden" name="_subject" value="New Vehicle Reservation Request - Velocity Exotics">
+          <input type="hidden" name="_captcha" value="false">
+          <button type="submit" class="form-submit">Send Reservation Request</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BANNER -->
+  <section class="cta-banner">
+    <div class="cta-banner-inner">
+      <div class="cta-title reveal">Your Dream Car Is Waiting</div>
+      <p class="cta-sub reveal reveal-delay-1">Same-day delivery across South Florida. Call now or submit a request — we'll confirm in under 30 minutes.</p>
+      <div class="cta-btns reveal reveal-delay-2">
+        <a href="tel:7865552600" class="btn-primary">(786) 555-2600</a>
+        <a href="#contact" class="btn-ghost">Send a Request</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand">Velocity Exotics</div>
+        <p class="footer-tagline">South Florida's premier exotic and luxury car rental company. Delivering the world's finest automobiles to your door since 2018.</p>
+        <div class="footer-license">FL Vehicle Rental License #VR2018-0441</div>
+      </div>
+      <div>
+        <div class="footer-col-title">Fleet</div>
+        <ul class="footer-links">
+          <li><a href="#fleet">Lamborghini</a></li>
+          <li><a href="#fleet">Ferrari</a></li>
+          <li><a href="#fleet">McLaren</a></li>
+          <li><a href="#fleet">Rolls-Royce</a></li>
+          <li><a href="#fleet">Porsche</a></li>
+          <li><a href="#fleet">Bentley</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Services</div>
+        <ul class="footer-links">
+          <li><a href="#categories">Weekend Rentals</a></li>
+          <li><a href="#categories">Film & Media</a></li>
+          <li><a href="#categories">Corporate</a></li>
+          <li><a href="#categories">Events</a></li>
+          <li><a href="#categories">Chauffeur Service</a></li>
+          <li><a href="#contact">Custom Packages</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Contact</div>
+        <div class="footer-contact-item">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2 L4.5 2 L5.5 5 L4 6.5 C5 8.5 5.5 9 7.5 10 L9 8.5 L12 9.5 L12 12 C10 13 3 10 2 2Z" stroke="#C9A84C" stroke-width="1"/></svg>
+          (786) 555-2600
+        </div>
+        <div class="footer-contact-item">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="2" y="3" width="10" height="8" rx="1" stroke="#C9A84C" stroke-width="1"/><path d="M2 5 L7 8.5 L12 5" stroke="#C9A84C" stroke-width="1"/></svg>
+          reserve@velocityexotics.com
+        </div>
+        <div class="footer-contact-item">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="5" stroke="#C9A84C" stroke-width="1"/><path d="M7 4 L7 7 L9 8.5" stroke="#C9A84C" stroke-width="1" stroke-linecap="round"/></svg>
+          Available 24/7
+        </div>
+        <div class="footer-contact-item">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 2 C5 2 3 3.8 3 6 C3 9 7 12 7 12 C7 12 11 9 11 6 C11 3.8 9 2 7 2 Z" stroke="#C9A84C" stroke-width="1"/><circle cx="7" cy="6" r="1.5" stroke="#C9A84C" stroke-width="0.8"/></svg>
+          Miami, FL — Delivery Statewide
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span class="footer-copy">© 2024 Velocity Exotics. All rights reserved. | FL Rental License #VR2018-0441</span>
+      <a href="https://webnari.io" class="webnari-badge" target="_blank" rel="noopener">Powered by Webnari</a>
+    </div>
+  </footer>
+
+  <script>
+    // NAV SCROLL
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) nav.classList.add('nav-scrolled');
+      else nav.classList.remove('nav-scrolled');
+    });
+
+    // MOBILE MENU
+    function toggleMobile() {
+      document.getElementById('mobileMenu').classList.toggle('open');
+    }
+
+    // FAQ
+    function toggleFaq(el) {
+      const answer = el.nextElementSibling;
+      const icon = el.querySelector('.faq-icon');
+      const isOpen = answer.classList.contains('open');
+      document.querySelectorAll('.faq-a.open').forEach(a => {
+        a.classList.remove('open');
+        a.previousElementSibling.classList.remove('open');
+        a.previousElementSibling.querySelector('.faq-icon').classList.remove('open');
+        a.previousElementSibling.querySelector('.faq-icon').textContent = '+';
+      });
+      if (!isOpen) {
+        answer.classList.add('open');
+        el.classList.add('open');
+        icon.classList.add('open');
+        icon.textContent = '−';
+      }
+    }
+
+    // INTERSECTION OBSERVER
+    const reveals = document.querySelectorAll('.reveal, .why-feature, .fleet-card, .fleet-card, .process-step, .testimonial-card, .category-card');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('revealed');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    reveals.forEach(el => observer.observe(el));
+
+    // FORM VALIDATION
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+      let valid = true;
+      const requiredFields = this.querySelectorAll('[required]');
+      requiredFields.forEach(field => {
+        const error = field.nextElementSibling;
+        if (!field.value.trim()) {
+          error.classList.add('show');
+          valid = false;
+        } else if (field.type === 'email' && !/\S+@\S+\.\S+/.test(field.value)) {
+          error.classList.add('show');
+          valid = false;
+        } else {
+          error.classList.remove('show');
+        }
+      });
+      if (!valid) e.preventDefault();
+    });
+
+    document.querySelectorAll('.form-input[required], .form-input[type="email"]').forEach(input => {
+      input.addEventListener('blur', function() {
+        const error = this.nextElementSibling;
+        if (!this.value.trim()) {
+          error.classList.add('show');
+        } else if (this.type === 'email' && !/\S+@\S+\.\S+/.test(this.value)) {
+          error.classList.add('show');
+        } else {
+          error.classList.remove('show');
+        }
+      });
+    });
+  </script>
+</body>
+</html>

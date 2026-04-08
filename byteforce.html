@@ -1,0 +1,1738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ByteForce Tech — Computer repair, IT support, virus removal, and data recovery in Doral, Miami. Fast, reliable, affordable tech support.">
+  <meta property="og:title" content="ByteForce Tech | Computer Repair & IT Support Miami">
+  <meta property="og:description" content="Miami's most reliable computer repair and IT support. Same-day service available. Doral based, all of South Florida served.">
+  <meta property="og:type" content="website">
+  <title>ByteForce Tech | Computer Repair & IT Support — Doral, Miami</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --void: #040606;
+      --black: #070D07;
+      --dark: #0A110A;
+      --surface: #0F180F;
+      --surface2: #142014;
+      --border: #1A2A1A;
+      --border2: #243824;
+      --green: #00FF41;
+      --green2: #00CC33;
+      --green3: #009922;
+      --green4: rgba(0, 255, 65, 0.08);
+      --green5: rgba(0, 255, 65, 0.04);
+      --amber: #FFB300;
+      --amber2: #FFCC44;
+      --red: #FF3B30;
+      --cyan: #00E5FF;
+      --white: #E8F5E8;
+      --text: #7AB87A;
+      --muted: #3D5C3D;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--void);
+      color: var(--text);
+      font-family: 'Space Mono', 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* Scanline overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0, 0, 0, 0.04) 2px,
+        rgba(0, 0, 0, 0.04) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ─── NAV ─── */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      background: rgba(4, 6, 6, 0.96);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(8px);
+    }
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 60px;
+      padding: 0 32px;
+    }
+    .nav-logo {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85rem;
+      color: var(--green);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 700;
+    }
+    .nav-logo-cursor {
+      display: inline-block;
+      width: 8px;
+      height: 14px;
+      background: var(--green);
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink { 50% { opacity: 0; } }
+    .nav-prompt { color: var(--green3); font-size: 0.75rem; }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      list-style: none;
+    }
+    .nav-links li a {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--text);
+      text-decoration: none;
+      padding: 0 16px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+      border-right: 1px solid var(--border);
+      letter-spacing: 0.05em;
+    }
+    .nav-links li:first-child a { border-left: 1px solid var(--border); }
+    .nav-links li a:hover { background: var(--green4); color: var(--green); }
+    .nav-links li a .cmd-prefix { color: var(--green3); }
+    .nav-cta {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--void);
+      background: var(--green);
+      padding: 10px 20px;
+      text-decoration: none;
+      transition: all 0.2s;
+      letter-spacing: 0.05em;
+      margin-left: 16px;
+    }
+    .nav-cta:hover { background: var(--green2); }
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+    }
+    .hamburger span { display: block; width: 22px; height: 1px; background: var(--green); }
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--void);
+      z-index: 999;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 48px 32px;
+      gap: 0;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu-line {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+      width: 100%;
+    }
+    .mobile-menu-line .prompt { color: var(--green3); font-size: 0.75rem; }
+    .mobile-menu-line a {
+      font-family: 'Space Mono', monospace;
+      font-size: 1rem;
+      color: var(--green);
+      text-decoration: none;
+    }
+    .mobile-close { position: absolute; top: 20px; right: 24px; background: none; border: 1px solid var(--border); color: var(--text); font-family: 'Space Mono', monospace; font-size: 0.7rem; padding: 6px 12px; cursor: pointer; }
+    .mobile-close:hover { border-color: var(--green); color: var(--green); }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      padding-top: 60px;
+      display: flex;
+      align-items: center;
+      background: var(--void);
+      position: relative;
+      overflow: hidden;
+    }
+    /* Green CRT glow */
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 600px;
+      height: 400px;
+      background: radial-gradient(ellipse, rgba(0, 255, 65, 0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 32px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      width: 100%;
+    }
+    .hero-terminal {
+      background: var(--dark);
+      border: 1px solid var(--border2);
+      position: relative;
+    }
+    .terminal-titlebar {
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border2);
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .terminal-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .terminal-dot.red { background: #FF3B30; }
+    .terminal-dot.yellow { background: #FFB300; }
+    .terminal-dot.green-dot { background: var(--green3); }
+    .terminal-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--muted);
+      margin-left: 8px;
+    }
+    .terminal-body {
+      padding: 28px 24px;
+      font-size: 0.8rem;
+      line-height: 2;
+      min-height: 380px;
+    }
+    .t-comment { color: var(--muted); }
+    .t-cmd { color: var(--amber); }
+    .t-output { color: var(--green); }
+    .t-success { color: var(--green); font-weight: 700; }
+    .t-error { color: var(--red); }
+    .t-prompt { color: var(--green3); }
+    .t-file { color: var(--cyan); }
+    .t-num { color: var(--amber2); }
+    .cursor-blink { animation: blink 1s step-end infinite; background: var(--green); width: 8px; height: 12px; display: inline-block; }
+
+    /* Hero right side */
+    .hero-content { }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid var(--border2);
+      padding: 6px 14px;
+      margin-bottom: 24px;
+      background: var(--green4);
+    }
+    .hero-eyebrow span {
+      font-size: 0.6rem;
+      color: var(--green);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--green);
+      border-radius: 50%;
+      animation: pulse-glow 1.5s ease infinite;
+    }
+    @keyframes pulse-glow {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(0,255,65,0.4); }
+      50% { box-shadow: 0 0 0 6px rgba(0,255,65,0); }
+    }
+    .hero-title {
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+    .hero-title .green-text { color: var(--green); text-shadow: 0 0 20px rgba(0,255,65,0.5); }
+    .hero-title .amber-text { color: var(--amber); }
+    .hero-tagline {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1rem;
+      color: var(--text);
+      margin-bottom: 40px;
+      line-height: 1.6;
+      font-weight: 300;
+    }
+    .hero-stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      margin-bottom: 36px;
+    }
+    .hero-stat {
+      background: var(--dark);
+      padding: 20px 16px;
+      text-align: center;
+    }
+    .hero-stat-val {
+      font-family: 'Space Mono', monospace;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--green);
+      display: block;
+      margin-bottom: 4px;
+    }
+    .hero-stat-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .hero-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .btn-green {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--void);
+      background: var(--green);
+      padding: 14px 28px;
+      text-decoration: none;
+      transition: all 0.2s;
+      letter-spacing: 0.05em;
+    }
+    .btn-green:hover { background: var(--amber); }
+    .btn-terminal {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--green);
+      background: transparent;
+      border: 1px solid var(--border2);
+      padding: 14px 28px;
+      text-decoration: none;
+      transition: all 0.2s;
+      letter-spacing: 0.05em;
+    }
+    .btn-terminal:hover { border-color: var(--green); background: var(--green4); }
+
+    /* ─── SECTION BASE ─── */
+    section { padding: 80px 32px; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .section-header { margin-bottom: 56px; }
+    .section-prompt {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--green3);
+      letter-spacing: 0.1em;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .section-prompt::before { content: '~/byteforce$'; }
+    .section-prompt .cmd-color { color: var(--amber); }
+    .section-title {
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(1.4rem, 3vw, 2.2rem);
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+    .section-desc {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
+      color: var(--text);
+      font-weight: 300;
+      max-width: 600px;
+      line-height: 1.7;
+    }
+
+    /* ─── STATUS BAR ─── */
+    .status-bar {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 32px;
+      display: flex;
+      gap: 40px;
+      overflow: hidden;
+    }
+    .status-item {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--muted);
+      white-space: nowrap;
+      display: flex;
+      gap: 8px;
+    }
+    .status-item .val { color: var(--green); }
+    .status-item .warn { color: var(--amber); }
+
+    /* ─── SERVICES ─── */
+    .services-section { background: var(--black); }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+    .service-card {
+      background: var(--dark);
+      padding: 36px 28px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.2s;
+    }
+    .service-card:hover { background: var(--surface2); }
+    .service-card::before {
+      content: attr(data-cmd);
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+    }
+    .service-icon {
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      background: var(--green4);
+      flex-shrink: 0;
+    }
+    .service-icon svg { width: 20px; height: 20px; color: var(--green); stroke-width: 1.5; }
+    .service-name {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+    .service-desc {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text);
+      line-height: 1.6;
+      margin-bottom: 16px;
+      font-weight: 300;
+    }
+    .service-eta {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--green3);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .service-eta::before { content: 'ETA:'; color: var(--muted); }
+
+    /* ─── WHY US ─── */
+    .why-section { background: var(--void); }
+    .why-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+    }
+    .why-terminal {
+      background: var(--dark);
+      border: 1px solid var(--border2);
+    }
+    .why-terminal-body {
+      padding: 24px;
+      font-size: 0.75rem;
+      line-height: 2;
+    }
+    .why-features {
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
+    }
+    .why-feature {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .why-feature-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--green3);
+      background: var(--green4);
+      border: 1px solid var(--border2);
+      padding: 6px 10px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .why-feature-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 6px;
+    }
+    .why-feature-desc {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text);
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    /* ─── PROCESS ─── */
+    .process-section { background: var(--black); }
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+    .process-step {
+      background: var(--dark);
+      padding: 32px 24px;
+      position: relative;
+    }
+    .process-step-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--green3);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .process-step-num::before { content: '>_'; color: var(--amber); }
+    .step-bar {
+      width: 100%;
+      height: 2px;
+      background: var(--border2);
+      margin-bottom: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .step-bar-fill {
+      height: 100%;
+      background: var(--green);
+      animation: fill-progress 3s ease infinite;
+    }
+    @keyframes fill-progress {
+      0% { width: 0; opacity: 1; }
+      70% { width: 100%; opacity: 1; }
+      100% { width: 100%; opacity: 0; }
+    }
+    .process-step-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 10px;
+    }
+    .process-step-desc {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem;
+      color: var(--text);
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    /* ─── PRICING / PLANS ─── */
+    .plans-section { background: var(--void); }
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+    .plan-card {
+      background: var(--dark);
+      padding: 40px 32px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.2s;
+    }
+    .plan-card.featured { background: var(--surface2); }
+    .plan-card.featured::before {
+      content: '// RECOMMENDED';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: var(--green);
+      color: var(--void);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      padding: 6px 16px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-align: center;
+    }
+    .plan-card.featured { padding-top: 52px; }
+    .plan-name {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--green3);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: 8px;
+    }
+    .plan-price {
+      font-family: 'Space Mono', monospace;
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .plan-price span { font-size: 0.9rem; color: var(--muted); }
+    .plan-desc {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem;
+      color: var(--text);
+      margin-bottom: 28px;
+      font-weight: 300;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .plan-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+    .plan-features li {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem;
+      color: var(--text);
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      font-weight: 300;
+    }
+    .plan-features li::before { content: '✓'; color: var(--green); flex-shrink: 0; font-family: monospace; font-size: 0.8rem; margin-top: 1px; }
+    .plan-features li.off { color: var(--muted); }
+    .plan-features li.off::before { content: '×'; color: var(--muted); }
+    .plan-btn {
+      display: block;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-align: center;
+      padding: 14px;
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      transition: all 0.2s;
+    }
+    .plan-btn-outline { color: var(--green); border: 1px solid var(--border2); }
+    .plan-btn-outline:hover { border-color: var(--green); background: var(--green4); }
+    .plan-btn-filled { background: var(--green); color: var(--void); border: 1px solid var(--green); }
+    .plan-btn-filled:hover { background: var(--amber); border-color: var(--amber); }
+
+    /* ─── TESTIMONIALS ─── */
+    .testimonials-section { background: var(--black); }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+    .testimonial-card {
+      background: var(--dark);
+      padding: 32px 28px;
+    }
+    .testimonial-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .testimonial-user {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--green);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .testimonial-user::before { content: '@'; color: var(--amber); }
+    .testimonial-rating {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--amber);
+    }
+    .testimonial-service-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+      display: flex;
+      gap: 8px;
+    }
+    .testimonial-service-tag::before { content: 'SERVICE:'; color: var(--border2); }
+    .testimonial-text {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+    .testimonial-status {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      color: var(--green3);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .testimonial-status::before { content: '■'; animation: blink 2s step-end infinite; }
+
+    /* ─── FAQ ─── */
+    .faq-section { background: var(--void); }
+    .faq-list { max-width: 800px; margin: 0 auto; }
+    .faq-item {
+      border: 1px solid var(--border);
+      margin-bottom: 4px;
+      background: var(--dark);
+    }
+    .faq-question {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      color: var(--white);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      padding: 20px 24px;
+      gap: 20px;
+      transition: background 0.2s;
+    }
+    .faq-question:hover { background: var(--green4); }
+    .faq-q-left { display: flex; align-items: center; gap: 12px; }
+    .faq-q-num { color: var(--green3); flex-shrink: 0; font-size: 0.65rem; }
+    .faq-indicator {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      color: var(--green3);
+      flex-shrink: 0;
+      width: 20px;
+      text-align: center;
+      transition: transform 0.3s;
+    }
+    .faq-item.open .faq-indicator { transform: rotate(90deg); color: var(--amber); }
+    .faq-answer {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text);
+      line-height: 1.7;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s;
+      font-weight: 300;
+      padding: 0 24px;
+    }
+    .faq-item.open .faq-answer { max-height: 300px; padding: 0 24px 24px 24px; }
+
+    /* ─── AREAS ─── */
+    .areas-section {
+      background: var(--dark);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .areas-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+    .area-item {
+      background: var(--void);
+      padding: 20px 16px;
+      text-align: center;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      transition: all 0.2s;
+      cursor: default;
+    }
+    .area-item:hover { background: var(--green4); color: var(--green); }
+
+    /* ─── CONTACT ─── */
+    .contact-section { background: var(--black); }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 60px;
+      align-items: start;
+    }
+    .contact-info-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+    .contact-info-title .green-text { color: var(--green); }
+    .contact-info-desc {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text);
+      margin-bottom: 36px;
+      line-height: 1.6;
+      font-weight: 300;
+    }
+    .contact-detail-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .contact-detail-key {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      color: var(--amber);
+      width: 80px;
+      flex-shrink: 0;
+      margin-top: 2px;
+      letter-spacing: 0.05em;
+    }
+    .contact-detail-val {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.9rem;
+      color: var(--text);
+      font-weight: 300;
+    }
+    .contact-detail-val a { color: var(--text); text-decoration: none; }
+    .contact-detail-val a:hover { color: var(--green); }
+    .contact-form-wrap {
+      background: var(--dark);
+      border: 1px solid var(--border2);
+    }
+    .form-titlebar {
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border2);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--muted);
+    }
+    .form-body { padding: 32px 28px; }
+    .form-group { margin-bottom: 20px; }
+    .form-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--green3);
+      display: block;
+      margin-bottom: 8px;
+      letter-spacing: 0.1em;
+    }
+    .form-label .label-type { color: var(--muted); margin-right: 6px; }
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      background: var(--void);
+      border: 1px solid var(--border2);
+      color: var(--white);
+      font-family: 'Space Mono', monospace;
+      font-size: 0.75rem;
+      padding: 12px 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--green); }
+    .form-input.error, .form-textarea.error { border-color: var(--red); }
+    .form-select { cursor: pointer; }
+    .form-select option { background: var(--dark); }
+    .form-textarea { height: 120px; resize: vertical; }
+    .form-error {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      color: var(--red);
+      margin-top: 6px;
+      display: none;
+    }
+    .form-group.has-error .form-error { display: block; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-submit {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--void);
+      background: var(--green);
+      border: none;
+      padding: 14px 32px;
+      cursor: pointer;
+      width: 100%;
+      letter-spacing: 0.1em;
+      transition: background 0.2s;
+      margin-top: 8px;
+    }
+    .form-submit:hover { background: var(--amber); }
+
+    /* ─── CTA ─── */
+    .cta-strip {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 64px 32px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-strip::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 200px;
+      background: radial-gradient(ellipse, rgba(0, 255, 65, 0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-inner { position: relative; }
+    .cta-pre {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.65rem;
+      color: var(--green3);
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+    }
+    .cta-title {
+      font-family: 'Space Mono', monospace;
+      font-size: clamp(1.2rem, 3vw, 1.8rem);
+      font-weight: 700;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+    .cta-desc {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.95rem;
+      color: var(--text);
+      margin-bottom: 32px;
+      font-weight: 300;
+    }
+
+    /* ─── FOOTER ─── */
+    .footer {
+      background: var(--void);
+      padding: 60px 32px 32px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 48px;
+    }
+    .footer-brand {
+      font-family: 'Space Mono', monospace;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--green);
+      margin-bottom: 4px;
+      text-shadow: 0 0 20px rgba(0,255,65,0.3);
+    }
+    .footer-brand-sub {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.55rem;
+      color: var(--muted);
+      letter-spacing: 0.1em;
+      margin-bottom: 16px;
+    }
+    .footer-desc {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+    .footer-col-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.6rem;
+      color: var(--green3);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      margin-bottom: 20px;
+    }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-links a {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 300;
+    }
+    .footer-links a::before { content: '>'; color: var(--border2); font-family: monospace; font-size: 0.65rem; }
+    .footer-links a:hover { color: var(--green); }
+    .footer-links a:hover::before { color: var(--green3); }
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .footer-copy { font-family: 'Space Mono', monospace; font-size: 0.55rem; color: var(--muted); }
+    .webnari-badge { font-family: 'Space Mono', monospace; font-size: 0.55rem; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .webnari-badge:hover { color: var(--green); }
+
+    /* ─── ANIMATIONS ─── */
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.5s, transform 0.5s; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1024px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 48px; }
+      .services-grid { grid-template-columns: repeat(2, 1fr); }
+      .why-grid { grid-template-columns: 1fr; }
+      .process-steps { grid-template-columns: repeat(2, 1fr); }
+      .plans-grid { grid-template-columns: repeat(2, 1fr); }
+      .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
+      .areas-grid { grid-template-columns: repeat(4, 1fr); }
+      .contact-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+    @media (max-width: 768px) {
+      section { padding: 60px 20px; }
+      .nav-inner { padding: 0 20px; }
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+      .services-grid { grid-template-columns: 1fr; }
+      .process-steps { grid-template-columns: 1fr; }
+      .plans-grid { grid-template-columns: 1fr; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .areas-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+      .hero-stats-row { grid-template-columns: repeat(3, 1fr); }
+      .form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="byteforce.html" class="nav-logo">
+      <span class="nav-prompt">byteforce$</span>&nbsp;_<div class="nav-logo-cursor"></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#services"><span class="cmd-prefix">./</span>services</a></li>
+      <li><a href="#plans"><span class="cmd-prefix">./</span>plans</a></li>
+      <li><a href="#process"><span class="cmd-prefix">./</span>process</a></li>
+      <li><a href="#reviews"><span class="cmd-prefix">./</span>reviews</a></li>
+      <li><a href="#faq"><span class="cmd-prefix">./</span>faq</a></li>
+      <li><a href="#contact"><span class="cmd-prefix">./</span>contact</a></li>
+    </ul>
+    <a href="tel:+17865550120" class="nav-cta">CALL NOW</a>
+    <button class="hamburger" id="hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="mobileClose">ESC</button>
+  <div class="mobile-menu-line"><span class="prompt">$</span><a href="#services" onclick="closeMenu()">services</a></div>
+  <div class="mobile-menu-line"><span class="prompt">$</span><a href="#plans" onclick="closeMenu()">plans</a></div>
+  <div class="mobile-menu-line"><span class="prompt">$</span><a href="#process" onclick="closeMenu()">process</a></div>
+  <div class="mobile-menu-line"><span class="prompt">$</span><a href="#reviews" onclick="closeMenu()">reviews</a></div>
+  <div class="mobile-menu-line"><span class="prompt">$</span><a href="#faq" onclick="closeMenu()">faq</a></div>
+  <div class="mobile-menu-line"><span class="prompt">$</span><a href="#contact" onclick="closeMenu()">contact</a></div>
+  <div class="mobile-menu-line" style="margin-top: 16px;"><a href="tel:+17865550120" class="btn-green">(786) 555-0120</a></div>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-inner">
+    <!-- Left: Terminal simulation -->
+    <div class="hero-terminal">
+      <div class="terminal-titlebar">
+        <div class="terminal-dot red"></div>
+        <div class="terminal-dot yellow"></div>
+        <div class="terminal-dot green-dot"></div>
+        <div class="terminal-title">byteforce_diagnostics — bash — 80×24</div>
+      </div>
+      <div class="terminal-body" id="terminalBody">
+        <div class="t-comment"># ByteForce Tech Diagnostic Suite v3.1.4</div>
+        <div class="t-comment"># Doral, FL — (786) 555-0120</div>
+        <div>&nbsp;</div>
+        <div><span class="t-prompt">byteforce@local:~$</span> <span class="t-cmd">run_diagnostics --full</span></div>
+        <div class="t-output">Scanning system... <span class="t-success">✓ connected</span></div>
+        <div>&nbsp;</div>
+        <div><span class="t-prompt">byteforce@local:~$</span> <span class="t-cmd">check services</span></div>
+        <div class="t-output">[<span class="t-success">PASS</span>] Computer Repair       <span class="t-num">→ available</span></div>
+        <div class="t-output">[<span class="t-success">PASS</span>] Virus Removal          <span class="t-num">→ same-day</span></div>
+        <div class="t-output">[<span class="t-success">PASS</span>] Data Recovery          <span class="t-num">→ 98% success</span></div>
+        <div class="t-output">[<span class="t-success">PASS</span>] Network Setup          <span class="t-num">→ available</span></div>
+        <div class="t-output">[<span class="t-success">PASS</span>] Remote Support         <span class="t-num">→ 24/7</span></div>
+        <div>&nbsp;</div>
+        <div><span class="t-prompt">byteforce@local:~$</span> <span class="t-cmd">get_quote --client=you</span></div>
+        <div class="t-output">Connecting to technician... <span class="t-success">READY</span></div>
+        <div class="t-output">Response time: <span class="t-num">under 2 hours</span></div>
+        <div class="t-output">Availability: <span class="t-success">NOW OPEN</span></div>
+        <div>&nbsp;</div>
+        <div><span class="t-prompt">byteforce@local:~$</span> <span class="cursor-blink"></span></div>
+      </div>
+    </div>
+
+    <!-- Right: Content -->
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <div class="pulse-dot"></div>
+        <span>Now Accepting Clients — Same-Day Available</span>
+      </div>
+      <h1 class="hero-title">
+        <span class="green-text">Fast.</span><br>
+        <span class="amber-text">Reliable.</span><br>
+        Tech Support.
+      </h1>
+      <p class="hero-tagline">Miami's most trusted computer repair and IT support. From cracked screens to catastrophic crashes — we've seen it all and fixed it all.</p>
+
+      <div class="hero-stats-row">
+        <div class="hero-stat">
+          <span class="hero-stat-val">8+</span>
+          <span class="hero-stat-label">YRS IN MIAMI</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-val">98%</span>
+          <span class="hero-stat-label">DATA RECOVERED</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-val">&lt;2H</span>
+          <span class="hero-stat-label">RESPONSE TIME</span>
+        </div>
+      </div>
+
+      <div class="hero-buttons">
+        <a href="#contact" class="btn-green">GET A FREE QUOTE</a>
+        <a href="tel:+17865550120" class="btn-terminal">(786) 555-0120</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATUS BAR -->
+<div class="status-bar" aria-hidden="true">
+  <div class="status-item">STATUS: <span class="val">ONLINE</span></div>
+  <div class="status-item">LOCATION: <span class="val">DORAL, FL</span></div>
+  <div class="status-item">WAIT TIME: <span class="val">NONE</span></div>
+  <div class="status-item">NEXT AVAILABLE: <span class="val">TODAY</span></div>
+  <div class="status-item">SATISFACTION: <span class="val">98.7%</span></div>
+  <div class="status-item">REPAIRS COMPLETED: <span class="val">3,200+</span></div>
+  <div class="status-item">STATUS: <span class="val">ONLINE</span></div>
+  <div class="status-item">LOCATION: <span class="val">DORAL, FL</span></div>
+  <div class="status-item">WAIT TIME: <span class="val">NONE</span></div>
+  <div class="status-item">NEXT AVAILABLE: <span class="val">TODAY</span></div>
+</div>
+
+<!-- SERVICES -->
+<section class="services-section" id="services">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-prompt"><span class="cmd-color">list_services --all</span></div>
+      <h2 class="section-title">What We Fix</h2>
+      <p class="section-desc">From hardware failures to software nightmares, we have the tools and expertise to get your tech back online — fast.</p>
+    </div>
+
+    <div class="services-grid">
+      <div class="service-card reveal" data-cmd="repair.exe">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="3" width="20" height="14" rx="1"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <div class="service-name">Computer & Laptop Repair</div>
+        <div class="service-desc">Screen replacements, keyboard repairs, motherboard diagnostics, battery replacements, water damage recovery, and hardware upgrades. All brands welcome.</div>
+        <div class="service-eta">Same-day for most repairs</div>
+      </div>
+      <div class="service-card reveal reveal-delay-1" data-cmd="virus.exe">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <div class="service-name">Virus & Malware Removal</div>
+        <div class="service-desc">Complete system deep-scan, ransomware removal, spyware elimination, rootkit detection, and security hardening. We don't just remove threats — we fortify defenses.</div>
+        <div class="service-eta">2–4 hours typically</div>
+      </div>
+      <div class="service-card reveal reveal-delay-2" data-cmd="recover.exe">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        </div>
+        <div class="service-name">Data Recovery</div>
+        <div class="service-desc">Deleted files, crashed drives, corrupted SSDs, formatted partitions. 98% success rate on logical failures. Free diagnostic to determine recoverability before you pay.</div>
+        <div class="service-eta">24–72 hrs depending on damage</div>
+      </div>
+      <div class="service-card reveal" data-cmd="network.exe">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="2"/><circle cx="4" cy="6" r="2"/><circle cx="20" cy="6" r="2"/><circle cx="4" cy="18" r="2"/><circle cx="20" cy="18" r="2"/><line x1="6" y1="6" x2="10" y2="11"/><line x1="18" y1="6" x2="14" y2="11"/><line x1="6" y1="18" x2="10" y2="13"/><line x1="18" y1="18" x2="14" y2="13"/></svg>
+        </div>
+        <div class="service-name">Network & WiFi Setup</div>
+        <div class="service-desc">Home and office network installation, router configuration, WiFi dead zone elimination, VPN setup, and network security audits. Fast, reliable connections guaranteed.</div>
+        <div class="service-eta">2–4 hours on-site</div>
+      </div>
+      <div class="service-card reveal reveal-delay-1" data-cmd="support.exe">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        </div>
+        <div class="service-name">Remote IT Support</div>
+        <div class="service-desc">Secure remote access for software issues, configuration problems, software installation, email setup, and tech troubleshooting. No travel required — resolved in minutes.</div>
+        <div class="service-eta">Available 24/7</div>
+      </div>
+      <div class="service-card reveal reveal-delay-2" data-cmd="business.exe">
+        <div class="service-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/><line x1="12" y1="12" x2="12" y2="16"/><line x1="10" y1="14" x2="14" y2="14"/></svg>
+        </div>
+        <div class="service-name">Business IT Management</div>
+        <div class="service-desc">Managed IT services for small businesses: server maintenance, employee device setup, cloud migration, backup systems, and priority support SLAs. We're your outsourced IT department.</div>
+        <div class="service-eta">Monthly retainer available</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section class="why-section" id="why">
+  <div class="container">
+    <div class="why-grid">
+      <div class="why-terminal">
+        <div class="terminal-titlebar">
+          <div class="terminal-dot red"></div>
+          <div class="terminal-dot yellow"></div>
+          <div class="terminal-dot green-dot"></div>
+          <div class="terminal-title">about_byteforce.txt</div>
+        </div>
+        <div class="why-terminal-body">
+          <div class="t-comment">/*</div>
+          <div class="t-comment"> * ByteForce Tech — Est. 2016</div>
+          <div class="t-comment"> * Doral, Florida</div>
+          <div class="t-comment"> */</div>
+          <div>&nbsp;</div>
+          <div><span class="t-cmd">const</span> <span class="t-file">byteforce</span> = &#123;</div>
+          <div>&nbsp;&nbsp;founded: <span class="t-num">2016</span>,</div>
+          <div>&nbsp;&nbsp;location: <span class="t-output">"Doral, FL"</span>,</div>
+          <div>&nbsp;&nbsp;repairs: <span class="t-num">3200</span>,</div>
+          <div>&nbsp;&nbsp;satisfactionRate: <span class="t-num">98.7</span>,</div>
+          <div>&nbsp;&nbsp;responseTime: <span class="t-output">"&lt; 2 hours"</span>,</div>
+          <div>&nbsp;&nbsp;remoteSupport: <span class="t-success">true</span>,</div>
+          <div>&nbsp;&nbsp;sameDay: <span class="t-success">true</span>,</div>
+          <div>&nbsp;&nbsp;freeQuote: <span class="t-success">true</span>,</div>
+          <div>&nbsp;&nbsp;license: <span class="t-output">"#IT2024-0445"</span></div>
+          <div>&#125;;</div>
+          <div>&nbsp;</div>
+          <div><span class="t-cmd">module</span>.<span class="t-file">exports</span> = byteforce;</div>
+          <div>&nbsp;</div>
+          <div><span class="t-prompt">→</span> <span class="t-success">LOADED SUCCESSFULLY</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="section-prompt"><span class="cmd-color">why_us --verbose</span></div>
+        <h2 class="section-title">Why ByteForce?</h2>
+        <div class="why-features">
+          <div class="why-feature reveal">
+            <div class="why-feature-num">01</div>
+            <div>
+              <div class="why-feature-title">No Fix, No Fee Guarantee</div>
+              <p class="why-feature-desc">We diagnose your problem for free. If we can't fix it, you pay nothing. Our confidence is backed by 8 years of experience and a 98.7% resolution rate.</p>
+            </div>
+          </div>
+          <div class="why-feature reveal reveal-delay-1">
+            <div class="why-feature-num">02</div>
+            <div>
+              <div class="why-feature-title">Same-Day Turnaround</div>
+              <p class="why-feature-desc">Most repairs are completed the same day you bring your device. Virus removal, screen replacements, RAM upgrades — we prioritize speed without cutting corners.</p>
+            </div>
+          </div>
+          <div class="why-feature reveal reveal-delay-2">
+            <div class="why-feature-num">03</div>
+            <div>
+              <div class="why-feature-title">Transparent, Flat-Rate Pricing</div>
+              <p class="why-feature-desc">We quote before we fix. No surprise charges, no hidden fees. The price you're quoted is the price you pay — every time, no exceptions.</p>
+            </div>
+          </div>
+          <div class="why-feature reveal reveal-delay-3">
+            <div class="why-feature-num">04</div>
+            <div>
+              <div class="why-feature-title">Bilingual Support (EN / ES)</div>
+              <p class="why-feature-desc">Our entire team is fully bilingual. We serve the Doral and Miami community in both English and Spanish — no language barriers, ever.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process-section" id="process">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-prompt"><span class="cmd-color">get_process --steps</span></div>
+      <h2 class="section-title">How It Works</h2>
+      <p class="section-desc">From drop-off to pickup, our process is simple, transparent, and designed around your convenience.</p>
+    </div>
+    <div class="process-steps">
+      <div class="process-step reveal">
+        <div class="process-step-num">STEP_01</div>
+        <div class="step-bar"><div class="step-bar-fill" style="animation-delay: 0s;"></div></div>
+        <div class="process-step-title">Free Diagnosis</div>
+        <p class="process-step-desc">Bring in your device or schedule a remote session. We run a full diagnostic at no charge and identify the exact problem before any work begins.</p>
+      </div>
+      <div class="process-step reveal reveal-delay-1">
+        <div class="process-step-num">STEP_02</div>
+        <div class="step-bar"><div class="step-bar-fill" style="animation-delay: 0.75s;"></div></div>
+        <div class="process-step-title">Get Your Quote</div>
+        <p class="process-step-desc">We give you a clear, flat-rate quote with no hidden fees. You approve the price before we touch a single component. Your call — always.</p>
+      </div>
+      <div class="process-step reveal reveal-delay-2">
+        <div class="process-step-num">STEP_03</div>
+        <div class="step-bar"><div class="step-bar-fill" style="animation-delay: 1.5s;"></div></div>
+        <div class="process-step-title">We Fix It</div>
+        <p class="process-step-desc">Our certified technicians get to work. Most repairs are same-day. You'll receive a text update when your device is ready for pickup or return shipping.</p>
+      </div>
+      <div class="process-step reveal reveal-delay-3">
+        <div class="process-step-num">STEP_04</div>
+        <div class="step-bar"><div class="step-bar-fill" style="animation-delay: 2.25s;"></div></div>
+        <div class="process-step-title">Back Online</div>
+        <p class="process-step-desc">Every repair includes a 90-day workmanship warranty. If the same issue returns within 90 days, we fix it for free. That's the ByteForce promise.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PLANS -->
+<section class="plans-section" id="plans">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-prompt"><span class="cmd-color">list --plans --monthly</span></div>
+      <h2 class="section-title">Support Plans</h2>
+      <p class="section-desc">For businesses and power users who need ongoing IT support. No more waiting — you're always our priority.</p>
+    </div>
+    <div class="plans-grid">
+      <div class="plan-card reveal">
+        <div class="plan-name">// BASIC</div>
+        <div class="plan-price">$89<span>/mo</span></div>
+        <p class="plan-desc">Perfect for home users and freelancers who want peace of mind tech coverage.</p>
+        <ul class="plan-features">
+          <li>Remote support — 5 hrs/month</li>
+          <li>Priority response time</li>
+          <li>1 in-shop repair/month (labor)</li>
+          <li>Monthly security scan</li>
+          <li class="off">On-site visits</li>
+          <li class="off">Dedicated technician</li>
+        </ul>
+        <a href="#contact" class="plan-btn plan-btn-outline">GET STARTED</a>
+      </div>
+      <div class="plan-card featured reveal reveal-delay-1">
+        <div class="plan-name">// PROFESSIONAL</div>
+        <div class="plan-price">$249<span>/mo</span></div>
+        <p class="plan-desc">Ideal for small businesses with 2–10 computers. Keeps your operation running smoothly.</p>
+        <ul class="plan-features">
+          <li>Remote support — unlimited</li>
+          <li>2 on-site visits/month</li>
+          <li>All in-shop repairs covered</li>
+          <li>Network monitoring</li>
+          <li>Backup management</li>
+          <li class="off">Dedicated technician</li>
+        </ul>
+        <a href="#contact" class="plan-btn plan-btn-filled">GET STARTED</a>
+      </div>
+      <div class="plan-card reveal reveal-delay-2">
+        <div class="plan-name">// ENTERPRISE</div>
+        <div class="plan-price">$599<span>/mo</span></div>
+        <p class="plan-desc">Full managed IT for businesses with 10+ computers. Your outsourced IT department.</p>
+        <ul class="plan-features">
+          <li>Dedicated technician assigned</li>
+          <li>Unlimited remote + on-site</li>
+          <li>24/7 emergency support</li>
+          <li>Server management</li>
+          <li>Cloud migration support</li>
+          <li>Security audit included</li>
+        </ul>
+        <a href="#contact" class="plan-btn plan-btn-outline">GET STARTED</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section" id="reviews">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-prompt"><span class="cmd-color">read reviews.log</span></div>
+      <h2 class="section-title">Client Logs</h2>
+      <p class="section-desc">Real feedback from real clients across South Florida.</p>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial-card reveal">
+        <div class="testimonial-header">
+          <div class="testimonial-user">carlos_m</div>
+          <div class="testimonial-rating">★★★★★ 5.0</div>
+        </div>
+        <div class="testimonial-service-tag">Data Recovery — External HDD</div>
+        <p class="testimonial-text">"Dropped my external drive and thought 4 years of photography work was gone forever. ByteForce recovered 100% of my files in 48 hours. I genuinely cried when I saw everything was back. These guys are wizards."</p>
+        <div class="testimonial-status">VERIFIED CLIENT — Doral, FL</div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-1">
+        <div class="testimonial-header">
+          <div class="testimonial-user">miami_realty</div>
+          <div class="testimonial-rating">★★★★★ 5.0</div>
+        </div>
+        <div class="testimonial-service-tag">Business IT Plan — Professional</div>
+        <p class="testimonial-text">"We switched to the Professional plan 6 months ago. Our downtime has dropped to almost zero. They respond within minutes, fix things remotely while we keep working. Best IT decision we've made."</p>
+        <div class="testimonial-status">VERIFIED CLIENT — Coral Gables, FL</div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-2">
+        <div class="testimonial-header">
+          <div class="testimonial-user">ana_g</div>
+          <div class="testimonial-rating">★★★★★ 5.0</div>
+        </div>
+        <div class="testimonial-service-tag">Virus Removal + Repair</div>
+        <p class="testimonial-text">"My laptop had ransomware and was completely locked. Brought it in at 10am and they called me at 2pm saying it was done. Same-day, no data lost, and they even upgraded my RAM while they had it open. Incredible."</p>
+        <div class="testimonial-status">VERIFIED CLIENT — Hialeah, FL</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-prompt"><span class="cmd-color">man byteforce --faq</span></div>
+      <h2 class="section-title">FAQ</h2>
+      <p class="section-desc">Common questions before you bring us your device.</p>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <div class="faq-q-left"><span class="faq-q-num">Q01:</span> How much does computer repair cost?</div>
+          <div class="faq-indicator">›</div>
+        </div>
+        <div class="faq-answer">Most common repairs range from $50–$200. Screen replacements are typically $80–$180 depending on the model. Virus removal is $75–$120. Data recovery starts at $100 for logical failures. We always give you a quote before starting work — no surprises.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <div class="faq-q-left"><span class="faq-q-num">Q02:</span> Do you work on both Macs and PCs?</div>
+          <div class="faq-indicator">›</div>
+        </div>
+        <div class="faq-answer">Yes — we service all major platforms: Windows (all versions), macOS, Linux, iOS, Android, and Chrome OS. Laptops, desktops, tablets, and smartphones. All brands welcome: Apple, Dell, HP, Lenovo, Asus, Acer, Samsung, and more.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <div class="faq-q-left"><span class="faq-q-num">Q03:</span> Can you recover data from a water-damaged device?</div>
+          <div class="faq-indicator">›</div>
+        </div>
+        <div class="faq-answer">Often yes, depending on how quickly you bring it in and the extent of damage. Turn the device off immediately and do not try to charge it. The sooner you bring it to us, the higher the chance of successful recovery. We'll diagnose it for free and let you know the odds before charging you anything.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <div class="faq-q-left"><span class="faq-q-num">Q04:</span> Do you offer remote support?</div>
+          <div class="faq-indicator">›</div>
+        </div>
+        <div class="faq-answer">Yes. Our remote support service uses secure, industry-standard screen-sharing tools. We can fix most software issues, malware, email configuration, software installation, and slow performance remotely — without you leaving home or the office. Available 24/7 for plan subscribers.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          <div class="faq-q-left"><span class="faq-q-num">Q05:</span> What is your warranty on repairs?</div>
+          <div class="faq-indicator">›</div>
+        </div>
+        <div class="faq-answer">All ByteForce repairs come with a 90-day workmanship warranty. If the same issue returns within 90 days due to our work, we'll fix it at no additional charge. Parts warranties vary by manufacturer — typically 90 days to 1 year depending on the component.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AREAS -->
+<section class="areas-section" id="areas">
+  <div class="container">
+    <div class="section-header" style="text-align: center; margin-bottom: 32px;">
+      <div class="section-prompt" style="justify-content: center;"><span class="cmd-color">get --service-areas</span></div>
+      <h2 class="section-title" style="text-align: center;">Coverage Map</h2>
+    </div>
+    <div class="areas-grid">
+      <div class="area-item">Doral</div>
+      <div class="area-item">Miami</div>
+      <div class="area-item">Hialeah</div>
+      <div class="area-item">Kendall</div>
+      <div class="area-item">Coral Gables</div>
+      <div class="area-item">Miami Beach</div>
+      <div class="area-item">Brickell</div>
+      <div class="area-item">Westchester</div>
+      <div class="area-item">South Miami</div>
+      <div class="area-item">Homestead</div>
+      <div class="area-item">N. Miami</div>
+      <div class="area-item">Aventura</div>
+      <div class="area-item">Miami Gardens</div>
+      <div class="area-item">Sweetwater</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+  <div class="container">
+    <div class="contact-grid">
+      <div>
+        <div class="section-prompt"><span class="cmd-color">contact --info</span></div>
+        <h2 class="contact-info-title"><span class="green-text">Get</span> A Free Quote</h2>
+        <p class="contact-info-desc">No diagnosis fees. No obligation. Just tell us what's wrong and we'll get back to you within 2 hours with a clear, honest quote.</p>
+
+        <div class="contact-detail-row">
+          <div class="contact-detail-key">PHONE:</div>
+          <div class="contact-detail-val"><a href="tel:+17865550120">(786) 555-0120</a></div>
+        </div>
+        <div class="contact-detail-row">
+          <div class="contact-detail-key">ADDRESS:</div>
+          <div class="contact-detail-val">9800 NW 41st St, Suite 204<br>Doral, FL 33178</div>
+        </div>
+        <div class="contact-detail-row">
+          <div class="contact-detail-key">HOURS:</div>
+          <div class="contact-detail-val">Mon–Sat 9AM–7PM<br>Sun 10AM–5PM</div>
+        </div>
+        <div class="contact-detail-row">
+          <div class="contact-detail-key">EMAIL:</div>
+          <div class="contact-detail-val"><a href="mailto:help@byteforcetech.com">help@byteforcetech.com</a></div>
+        </div>
+        <div class="contact-detail-row">
+          <div class="contact-detail-key">REMOTE:</div>
+          <div class="contact-detail-val">Available 24/7 for plan subscribers</div>
+        </div>
+        <div class="contact-detail-row">
+          <div class="contact-detail-key">LANG:</div>
+          <div class="contact-detail-val">English / Español</div>
+        </div>
+      </div>
+
+      <form class="contact-form-wrap" id="contactForm" action="https://formsubmit.co/help@byteforcetech.com" method="POST">
+        <input type="hidden" name="_subject" value="New Tech Support Request">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_next" value="https://webnari.io">
+        <div class="form-titlebar">
+          <div class="terminal-dot red"></div>
+          <div class="terminal-dot yellow"></div>
+          <div class="terminal-dot green-dot"></div>
+          <span style="margin-left: 8px;">submit_request.form</span>
+        </div>
+        <div class="form-body">
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="fname"><span class="label-type">string</span>first_name</label>
+              <input class="form-input" type="text" id="fname" name="first_name" placeholder="John">
+              <div class="form-error">// required</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="lname"><span class="label-type">string</span>last_name</label>
+              <input class="form-input" type="text" id="lname" name="last_name" placeholder="Smith">
+              <div class="form-error">// required</div>
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="form-group">
+              <label class="form-label" for="email"><span class="label-type">email</span>email_address</label>
+              <input class="form-input" type="email" id="email" name="email" placeholder="you@email.com">
+              <div class="form-error">// invalid email</div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="phone"><span class="label-type">tel</span>phone_number</label>
+              <input class="form-input" type="tel" id="phone" name="phone" placeholder="(786) 000-0000">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="service"><span class="label-type">enum</span>service_needed</label>
+            <select class="form-select" id="service" name="service">
+              <option value="">Select service...</option>
+              <option value="repair">Computer / Laptop Repair</option>
+              <option value="virus">Virus / Malware Removal</option>
+              <option value="data">Data Recovery</option>
+              <option value="network">Network / WiFi Setup</option>
+              <option value="remote">Remote Support</option>
+              <option value="business">Business IT Plan</option>
+              <option value="other">Other / Not Sure</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="message"><span class="label-type">text</span>describe_problem</label>
+            <textarea class="form-textarea" id="message" name="message" placeholder="// Describe your issue — device type, what happened, error messages..."></textarea>
+            <div class="form-error">// required</div>
+          </div>
+          <button type="submit" class="form-submit">SUBMIT_REQUEST.exe →</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-strip">
+  <div class="cta-inner">
+    <div class="cta-pre"><span>byteforce@local:~$</span><span style="color: var(--amber);">call_now --urgent</span></div>
+    <h2 class="cta-title">Device Down? We're On It.</h2>
+    <p class="cta-desc">Walk-ins welcome. Same-day service available Monday through Saturday. No appointment necessary for most repairs.</p>
+    <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+      <a href="tel:+17865550120" class="btn-green">(786) 555-0120</a>
+      <a href="#contact" class="btn-terminal">REQUEST ONLINE</a>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand">ByteForce Tech</div>
+      <div class="footer-brand-sub">// Computer Repair & IT Support — Est. 2016</div>
+      <p class="footer-desc">Doral's most trusted tech repair and IT support. Serving all of South Florida with honest pricing, fast turnaround, and a no-fix-no-fee guarantee.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">// SERVICES</div>
+      <ul class="footer-links">
+        <li><a href="#services">Computer Repair</a></li>
+        <li><a href="#services">Virus Removal</a></li>
+        <li><a href="#services">Data Recovery</a></li>
+        <li><a href="#services">Network Setup</a></li>
+        <li><a href="#services">Remote Support</a></li>
+        <li><a href="#services">Business IT</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">// COMPANY</div>
+      <ul class="footer-links">
+        <li><a href="#why">About Us</a></li>
+        <li><a href="#plans">Support Plans</a></li>
+        <li><a href="#process">Our Process</a></li>
+        <li><a href="#reviews">Reviews</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">// CONTACT</div>
+      <ul class="footer-links" style="gap: 14px;">
+        <li><a href="tel:+17865550120">(786) 555-0120</a></li>
+        <li><a href="#">9800 NW 41st St #204<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Doral, FL 33178</a></li>
+        <li><a href="#">Mon–Sat 9AM–7PM</a></li>
+        <li><a href="mailto:help@byteforcetech.com">help@byteforcetech.com</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">/* &copy; 2025 ByteForce Tech LLC · License #IT2024-0445 */</div>
+    <a href="https://webnari.io" class="webnari-badge" target="_blank" rel="noopener">// Powered by Webnari</a>
+  </div>
+</footer>
+
+<script>
+  // Hamburger
+  function closeMenu() { document.getElementById('mobileMenu').classList.remove('open'); }
+  document.getElementById('hamburger').addEventListener('click', () => { document.getElementById('mobileMenu').classList.add('open'); });
+  document.getElementById('mobileClose').addEventListener('click', closeMenu);
+
+  // FAQ
+  function toggleFaq(el) {
+    const item = el.parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Form validation
+  const form = document.getElementById('contactForm');
+  if (form) {
+    const required = [
+      document.getElementById('fname'),
+      document.getElementById('lname'),
+      document.getElementById('email'),
+      document.getElementById('message')
+    ];
+    required.forEach(input => input && input.addEventListener('blur', () => validateField(input)));
+    form.addEventListener('submit', (e) => {
+      let valid = true;
+      required.forEach(input => { if (input && !validateField(input)) valid = false; });
+      if (!valid) e.preventDefault();
+    });
+    function validateField(input) {
+      if (!input) return true;
+      const group = input.closest('.form-group');
+      let ok = input.value.trim() !== '';
+      if (input.type === 'email') ok = ok && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value);
+      if (group) {
+        input.classList.toggle('error', !ok);
+        group.classList.toggle('has-error', !ok);
+      }
+      return ok;
+    }
+  }
+</script>
+</body>
+</html>

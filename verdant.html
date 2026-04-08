@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Verdant Terrariums | Living Art & Botanical Design | Coconut Grove Miami</title>
+	<meta name="description" content="Hand-crafted terrariums & botanical design in Coconut Grove. Shop closed ecosystems, workshops, and plant collections. Open Wed-Mon 10AM-7PM.">
+	<meta property="og:title" content="Verdant Terrariums | Living Art, Grown by Hand">
+	<meta property="og:description" content="Hand-crafted terrariums & botanical design. 500+ terrariums created. Shop now or book a workshop.">
+	<meta property="og:type" content="business.business">
+	<meta property="og:image" content="https://webnari.io/verdant-og.jpg">
+	<meta property="og:url" content="https://webnari.io/verdant.html">
+	<meta name="theme-color" content="#2E7D32">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500&family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		html {
+			scroll-behavior: smooth;
+			scroll-padding-top: 80px;
+		}
+		body {
+			font-family: 'Space Grotesk', sans-serif;
+			font-size: 16px;
+			line-height: 1.6;
+			color: #1B1B1B;
+			background: #FFFFFF;
+			position: relative;
+			overflow-x: hidden;
+		}
+
+		/* Floating particles animation */
+		@keyframes float-up {
+			0% {
+				opacity: 0.3;
+				transform: translateY(0) translateX(0);
+			}
+			50% {
+				opacity: 0.6;
+			}
+			100% {
+				opacity: 0;
+				transform: translateY(-100vh) translateX(20px);
+			}
+		}
+		body::before {
+			content: '';
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100vh;
+			pointer-events: none;
+			z-index: 0;
+		}
+		.particle {
+			position: fixed;
+			width: 6px;
+			height: 6px;
+			background: #2E7D32;
+			border-radius: 50%;
+			pointer-events: none;
+			z-index: 1;
+		}
+
+		/* Typography */
+		h1, h2, h3, h4, h5, h6 {
+			font-family: 'Fraunces', serif;
+			font-weight: 600;
+			line-height: 1.2;
+		}
+		h1 { font-size: clamp(2.5rem, 8vw, 4rem); }
+		h2 { font-size: clamp(2rem, 6vw, 3rem); margin-bottom: 1.5rem; }
+		h3 { font-size: clamp(1.5rem, 4vw, 2rem); margin-bottom: 1rem; }
+
+		/* Colors */
+		:root {
+			--fern: #2E7D32;
+			--glass-teal: #00897B;
+			--earth: #795548;
+			--moss: #A5D6A7;
+			--green-white: #F1F8E9;
+			--soil: #1B1B1B;
+		}
+
+		/* Navigation */
+		nav {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			background: rgba(241, 248, 233, 0.85);
+			backdrop-filter: blur(12px);
+			border: 1px solid rgba(46, 125, 50, 0.15);
+			border-radius: 60px;
+			padding: 1rem 2rem;
+			z-index: 1000;
+			max-width: 800px;
+			width: 90%;
+			box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 2rem;
+			transition: all 0.3s ease;
+		}
+		nav.hide {
+			opacity: 0;
+			pointer-events: none;
+			transform: translate(-50%, -55%);
+		}
+		nav .logo {
+			font-family: 'Fraunces', serif;
+			font-size: 1.5rem;
+			font-style: italic;
+			font-weight: 600;
+			color: var(--fern);
+			white-space: nowrap;
+		}
+		nav a {
+			color: #1B1B1B;
+			text-decoration: none;
+			font-size: 0.95rem;
+			font-weight: 400;
+			transition: color 0.3s ease;
+		}
+		nav a:hover {
+			color: var(--fern);
+		}
+		nav .nav-links {
+			display: flex;
+			gap: 2rem;
+			list-style: none;
+		}
+		nav .cta-btn {
+			background: var(--fern);
+			color: #FFFFFF;
+			padding: 0.75rem 1.5rem;
+			border-radius: 25px;
+			border: none;
+			cursor: pointer;
+			font-size: 0.9rem;
+			font-weight: 500;
+			transition: all 0.3s ease;
+		}
+		nav .cta-btn:hover {
+			background: var(--glass-teal);
+			box-shadow: 0 4px 16px rgba(46, 125, 50, 0.3);
+		}
+		nav .hamburger {
+			display: none;
+			flex-direction: column;
+			cursor: pointer;
+			gap: 5px;
+		}
+		nav .hamburger span {
+			width: 24px;
+			height: 2px;
+			background: var(--fern);
+			transition: all 0.3s ease;
+		}
+		nav.mobile-open .hamburger span:nth-child(1) {
+			transform: rotate(45deg) translate(8px, 8px);
+		}
+		nav.mobile-open .hamburger span:nth-child(2) {
+			opacity: 0;
+		}
+		nav.mobile-open .hamburger span:nth-child(3) {
+			transform: rotate(-45deg) translate(8px, -8px);
+		}
+
+		/* Mobile menu overlay */
+		.mobile-menu {
+			display: none;
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 100vh;
+			background: linear-gradient(135deg, var(--green-white) 0%, rgba(165, 214, 167, 0.9) 100%);
+			z-index: 999;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: 2rem;
+		}
+		.mobile-menu.active {
+			display: flex;
+		}
+		.mobile-menu a {
+			font-family: 'Fraunces', serif;
+			font-size: 2rem;
+			color: var(--fern);
+			text-decoration: none;
+			font-weight: 500;
+		}
+		.mobile-menu .cta-btn {
+			background: var(--fern);
+			color: #FFFFFF;
+			padding: 1rem 2rem;
+			border-radius: 30px;
+			border: none;
+			cursor: pointer;
+			font-size: 1.1rem;
+			margin-top: 1rem;
+		}
+
+		/* Sections */
+		section {
+			scroll-margin-top: 100px;
+		}
+
+		/* Hero Section */
+		.hero {
+			min-height: 100vh;
+			background: var(--green-white);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 60px 20px;
+			text-align: center;
+			position: relative;
+			overflow: hidden;
+		}
+		.hero-content {
+			max-width: 900px;
+			position: relative;
+			z-index: 2;
+		}
+		.hero-circle {
+			width: 500px;
+			height: 500px;
+			border: 3px solid var(--fern);
+			border-radius: 50%;
+			margin: 0 auto 2rem;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			position: relative;
+			opacity: 0;
+			animation: reveal 0.8s ease forwards;
+		}
+		@keyframes reveal {
+			from { opacity: 0; transform: scale(0.95); }
+			to { opacity: 1; transform: scale(1); }
+		}
+		.hero-circle::before,
+		.hero-circle::after {
+			content: '';
+			position: absolute;
+			border: 1px solid var(--moss);
+			border-radius: 50%;
+		}
+		.hero-circle::before {
+			width: 380px;
+			height: 380px;
+		}
+		.hero-circle::after {
+			width: 260px;
+			height: 260px;
+		}
+		.hero h1 {
+			font-style: italic;
+			color: var(--fern);
+			margin-bottom: 1rem;
+			animation: revealText 0.8s ease 0.2s forwards;
+			opacity: 0;
+		}
+		@keyframes revealText {
+			from { opacity: 0; transform: translateY(20px); }
+			to { opacity: 1; transform: translateY(0); }
+		}
+		.hero p {
+			font-size: 1.1rem;
+			color: #555;
+			margin-bottom: 2rem;
+			animation: revealText 0.8s ease 0.3s forwards;
+			opacity: 0;
+		}
+		.hero-buttons {
+			display: flex;
+			gap: 1rem;
+			justify-content: center;
+			flex-wrap: wrap;
+			margin-bottom: 3rem;
+			animation: revealText 0.8s ease 0.4s forwards;
+			opacity: 0;
+		}
+		.btn-primary, .btn-secondary {
+			padding: 1rem 2rem;
+			border-radius: 30px;
+			border: none;
+			font-size: 1rem;
+			font-weight: 500;
+			cursor: pointer;
+			transition: all 0.3s ease;
+		}
+		.btn-primary {
+			background: var(--fern);
+			color: #FFFFFF;
+		}
+		.btn-primary:hover {
+			background: var(--glass-teal);
+			box-shadow: 0 6px 20px rgba(46, 125, 50, 0.4);
+		}
+		.btn-secondary {
+			background: transparent;
+			color: var(--fern);
+			border: 2px solid var(--fern);
+		}
+		.btn-secondary:hover {
+			background: var(--fern);
+			color: #FFFFFF;
+		}
+		.hero-stats {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+			gap: 2rem;
+			margin-top: 2rem;
+			animation: revealText 0.8s ease 0.5s forwards;
+			opacity: 0;
+		}
+		.stat-item {
+			padding: 1.5rem;
+			background: rgba(46, 125, 50, 0.05);
+			border-radius: 12px;
+			border: 1px solid var(--moss);
+		}
+		.stat-item h4 {
+			color: var(--fern);
+			margin-bottom: 0.5rem;
+		}
+		.stat-item p {
+			font-size: 0.9rem;
+			color: #666;
+			margin: 0;
+		}
+
+		/* Botanical decorations */
+		.botanical-left, .botanical-right {
+			position: absolute;
+			width: 200px;
+			height: 200px;
+			opacity: 0.3;
+			z-index: 0;
+		}
+		.botanical-left {
+			left: 20px;
+			top: 50%;
+			transform: translateY(-50%);
+		}
+		.botanical-right {
+			right: 20px;
+			bottom: 20%;
+		}
+
+		/* Section dividers */
+		.divider {
+			width: 100%;
+			height: 80px;
+			margin: 2rem 0;
+		}
+
+		/* Collections section */
+		.collections {
+			padding: 80px 20px;
+			background: var(--moss);
+		}
+		.collections h2 {
+			text-align: center;
+			color: var(--fern);
+		}
+		.collections-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+			gap: 2rem;
+			max-width: 1200px;
+			margin: 0 auto;
+		}
+		.collection-card {
+			background: rgba(255, 255, 255, 0.7);
+			border: 1px solid rgba(46, 125, 50, 0.2);
+			border-radius: 24px;
+			padding: 2rem;
+			text-align: center;
+			transition: all 0.3s ease;
+			box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+		}
+		.collection-card:hover {
+			transform: translateY(-8px);
+			box-shadow: 0 12px 32px rgba(46, 125, 50, 0.2);
+			background: rgba(255, 255, 255, 0.95);
+		}
+		.collection-card svg {
+			width: 60px;
+			height: 60px;
+			margin: 0 auto 1.5rem;
+			color: var(--glass-teal);
+		}
+		.collection-card h3 {
+			color: var(--fern);
+			margin-bottom: 0.5rem;
+		}
+		.collection-card p {
+			color: #666;
+			font-size: 0.95rem;
+		}
+
+		/* About section */
+		.about {
+			padding: 80px 20px;
+			background: #FFFFFF;
+		}
+		.about-grid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 4rem;
+			max-width: 1200px;
+			margin: 0 auto;
+			align-items: center;
+		}
+		.about-left h2 {
+			color: var(--fern);
+		}
+		.about-left ul {
+			list-style: none;
+			margin-top: 2rem;
+		}
+		.about-left li {
+			padding: 1rem 0;
+			padding-left: 2rem;
+			position: relative;
+			color: #555;
+		}
+		.about-left li::before {
+			content: '•';
+			position: absolute;
+			left: 0;
+			color: var(--glass-teal);
+			font-weight: bold;
+			font-size: 1.5rem;
+		}
+		.about-right {
+			position: relative;
+		}
+		.about-right svg {
+			width: 100%;
+			max-width: 400px;
+			height: auto;
+		}
+
+		/* Why us section */
+		.why-us {
+			padding: 80px 20px;
+			background: var(--soil);
+			color: #FFFFFF;
+		}
+		.why-us h2 {
+			text-align: center;
+			color: var(--moss);
+			margin-bottom: 3rem;
+		}
+		.why-us-grid {
+			max-width: 1000px;
+			margin: 0 auto;
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 3rem;
+		}
+		.stat-card {
+			background: rgba(165, 214, 167, 0.1);
+			border: 1px solid var(--moss);
+			border-radius: 16px;
+			padding: 2rem;
+			text-align: center;
+		}
+		.stat-card h4 {
+			font-size: 3rem;
+			color: var(--moss);
+			margin-bottom: 0.5rem;
+		}
+		.stat-card p {
+			color: #CCC;
+		}
+		.features {
+			display: flex;
+			flex-direction: column;
+			gap: 1.5rem;
+		}
+		.feature-row {
+			display: flex;
+			gap: 1rem;
+			align-items: flex-start;
+			padding: 1rem;
+			border-left: 3px solid var(--moss);
+		}
+		.feature-row::before {
+			content: '🌿';
+		}
+		.feature-row h4 {
+			color: var(--moss);
+			margin: 0 0 0.5rem 0;
+		}
+		.feature-row p {
+			color: #AAA;
+			font-size: 0.9rem;
+			margin: 0;
+		}
+
+		/* Process section */
+		.process {
+			padding: 80px 20px;
+			background: var(--green-white);
+		}
+		.process h2 {
+			text-align: center;
+			color: var(--fern);
+			margin-bottom: 3rem;
+		}
+		.process-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+			gap: 2rem;
+			max-width: 1200px;
+			margin: 0 auto;
+			position: relative;
+		}
+		.process-step {
+			text-align: center;
+		}
+		.step-number {
+			width: 80px;
+			height: 80px;
+			background: var(--fern);
+			color: #FFFFFF;
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 2rem;
+			font-weight: 700;
+			margin: 0 auto 1.5rem;
+		}
+		.process-step h3 {
+			color: var(--fern);
+			margin-bottom: 1rem;
+		}
+		.process-step p {
+			color: #666;
+			font-size: 0.95rem;
+		}
+
+		/* Workshop section */
+		.workshop {
+			padding: 80px 20px;
+			background: var(--moss);
+		}
+		.workshop h2 {
+			text-align: center;
+			color: var(--fern);
+			margin-bottom: 1rem;
+		}
+		.workshop-intro {
+			text-align: center;
+			color: #555;
+			max-width: 600px;
+			margin: 0 auto 3rem;
+			font-size: 1.05rem;
+		}
+		.workshop-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+			gap: 2rem;
+			max-width: 1200px;
+			margin: 0 auto;
+		}
+		.workshop-card {
+			background: rgba(255, 255, 255, 0.8);
+			border-radius: 24px;
+			padding: 2rem;
+			text-align: center;
+			box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+			transition: all 0.3s ease;
+		}
+		.workshop-card:hover {
+			transform: translateY(-8px);
+			box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+		}
+		.workshop-card h3 {
+			color: var(--fern);
+			margin-bottom: 1rem;
+		}
+		.workshop-price {
+			font-size: 1.5rem;
+			color: var(--glass-teal);
+			font-weight: 700;
+			margin: 1rem 0;
+		}
+		.workshop-card p {
+			color: #666;
+			font-size: 0.95rem;
+		}
+
+		/* Testimonials section */
+		.testimonials {
+			padding: 80px 20px;
+			background: #FFFFFF;
+		}
+		.testimonials h2 {
+			text-align: center;
+			color: var(--fern);
+			margin-bottom: 3rem;
+		}
+		.testimonials-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+			gap: 2rem;
+			max-width: 1200px;
+			margin: 0 auto;
+		}
+		.testimonial-card {
+			background: var(--green-white);
+			border-left: 4px solid var(--fern);
+			border-radius: 12px;
+			padding: 2rem;
+			box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+		}
+		.testimonial-card p {
+			font-style: italic;
+			color: #555;
+			margin-bottom: 1.5rem;
+		}
+		.testimonial-author {
+			display: flex;
+			align-items: center;
+			gap: 1rem;
+		}
+		.testimonial-avatar {
+			width: 40px;
+			height: 40px;
+			border-radius: 50%;
+			background: var(--fern);
+			color: #FFFFFF;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-weight: 700;
+			font-size: 1rem;
+		}
+		.testimonial-author h4 {
+			margin: 0;
+			color: var(--fern);
+			font-size: 1rem;
+		}
+		.testimonial-author .stars {
+			color: var(--glass-teal);
+			font-size: 0.9rem;
+		}
+
+		/* FAQ section */
+		.faq {
+			padding: 80px 20px;
+			background: var(--green-white);
+		}
+		.faq h2 {
+			text-align: center;
+			color: var(--fern);
+			margin-bottom: 3rem;
+		}
+		.faq-list {
+			max-width: 800px;
+			margin: 0 auto;
+		}
+		.faq-item {
+			margin-bottom: 1rem;
+			border: 1px solid var(--moss);
+			border-radius: 8px;
+			overflow: hidden;
+		}
+		.faq-question {
+			background: rgba(46, 125, 50, 0.05);
+			padding: 1.5rem;
+			cursor: pointer;
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			font-weight: 500;
+			color: var(--fern);
+			user-select: none;
+			transition: background 0.3s ease;
+		}
+		.faq-question:hover {
+			background: rgba(46, 125, 50, 0.1);
+		}
+		.faq-toggle {
+			width: 24px;
+			height: 24px;
+			border: 2px solid var(--fern);
+			border-radius: 50%;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-size: 1.2rem;
+			transition: transform 0.3s ease;
+		}
+		.faq-item.active .faq-toggle {
+			transform: rotate(45deg);
+		}
+		.faq-answer {
+			display: none;
+			padding: 1.5rem;
+			background: rgba(241, 248, 233, 0.5);
+			color: #555;
+			line-height: 1.8;
+		}
+		.faq-item.active .faq-answer {
+			display: block;
+		}
+
+		/* Areas section */
+		.areas {
+			padding: 80px 20px;
+			background: var(--moss);
+		}
+		.areas h2 {
+			text-align: center;
+			color: var(--fern);
+			margin-bottom: 3rem;
+		}
+		.areas-grid {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 1rem;
+			justify-content: center;
+			max-width: 1000px;
+			margin: 0 auto;
+		}
+		.area-tag {
+			background: rgba(255, 255, 255, 0.8);
+			border: 1px solid var(--fern);
+			color: var(--fern);
+			padding: 0.75rem 1.5rem;
+			border-radius: 50px;
+			font-size: 0.95rem;
+			transition: all 0.3s ease;
+		}
+		.area-tag:hover {
+			background: var(--fern);
+			color: #FFFFFF;
+		}
+
+		/* Contact section */
+		.contact {
+			padding: 80px 20px;
+			background: #FFFFFF;
+		}
+		.contact h2 {
+			text-align: center;
+			color: var(--fern);
+			margin-bottom: 3rem;
+		}
+		.contact-grid {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 4rem;
+			max-width: 1200px;
+			margin: 0 auto;
+		}
+		.contact-info h3 {
+			color: var(--fern);
+			margin-bottom: 2rem;
+		}
+		.contact-row {
+			display: flex;
+			gap: 1.5rem;
+			margin-bottom: 2rem;
+			align-items: flex-start;
+		}
+		.contact-row svg {
+			width: 24px;
+			height: 24px;
+			color: var(--glass-teal);
+			flex-shrink: 0;
+			margin-top: 2px;
+		}
+		.contact-row div h4 {
+			color: var(--fern);
+			margin-bottom: 0.5rem;
+		}
+		.contact-row div p {
+			color: #666;
+			margin: 0;
+		}
+		.contact-form {
+			display: flex;
+			flex-direction: column;
+			gap: 1.5rem;
+		}
+		.form-group {
+			display: flex;
+			flex-direction: column;
+		}
+		.form-group label {
+			font-weight: 500;
+			color: var(--fern);
+			margin-bottom: 0.5rem;
+		}
+		.form-group input,
+		.form-group textarea,
+		.form-group select {
+			padding: 1rem;
+			border: 1px solid var(--moss);
+			border-radius: 8px;
+			font-family: 'Space Grotesk', sans-serif;
+			font-size: 0.95rem;
+			transition: all 0.3s ease;
+		}
+		.form-group input:focus,
+		.form-group textarea:focus,
+		.form-group select:focus {
+			outline: none;
+			border-color: var(--fern);
+			box-shadow: 0 0 0 3px rgba(46, 125, 50, 0.1);
+		}
+		.form-group textarea {
+			resize: vertical;
+			min-height: 120px;
+		}
+		.form-error {
+			color: #E53935;
+			font-size: 0.85rem;
+			margin-top: 0.25rem;
+			display: none;
+		}
+		.form-group.error .form-error {
+			display: block;
+		}
+		.form-group.error input,
+		.form-group.error select,
+		.form-group.error textarea {
+			border-color: #E53935;
+		}
+		.form-submit {
+			background: var(--fern);
+			color: #FFFFFF;
+			padding: 1rem;
+			border-radius: 8px;
+			border: none;
+			font-size: 1rem;
+			font-weight: 500;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			margin-top: 1rem;
+		}
+		.form-submit:hover {
+			background: var(--glass-teal);
+		}
+
+		/* CTA Banner */
+		.cta-banner {
+			background: var(--fern);
+			color: #FFFFFF;
+			padding: 60px 20px;
+			text-align: center;
+		}
+		.cta-banner h2 {
+			color: #FFFFFF;
+			margin-bottom: 1.5rem;
+		}
+		.cta-banner .btn-primary {
+			background: #FFFFFF;
+			color: var(--fern);
+		}
+		.cta-banner .btn-primary:hover {
+			background: var(--moss);
+			color: var(--soil);
+		}
+
+		/* Footer */
+		footer {
+			background: var(--soil);
+			color: #FFFFFF;
+			padding: 60px 20px 40px;
+		}
+		.footer-grid {
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+			gap: 3rem;
+			max-width: 1200px;
+			margin: 0 auto 3rem;
+		}
+		.footer-col h4 {
+			color: var(--moss);
+			margin-bottom: 1.5rem;
+		}
+		.footer-col ul {
+			list-style: none;
+		}
+		.footer-col ul li {
+			margin-bottom: 0.75rem;
+		}
+		.footer-col a {
+			color: #AAA;
+			text-decoration: none;
+			transition: color 0.3s ease;
+		}
+		.footer-col a:hover {
+			color: var(--moss);
+		}
+		.footer-contact-icons {
+			display: flex;
+			gap: 1rem;
+			margin-top: 1.5rem;
+		}
+		.footer-contact-icons svg {
+			width: 24px;
+			height: 24px;
+			color: var(--moss);
+		}
+		.footer-bottom {
+			border-top: 1px solid rgba(255, 255, 255, 0.1);
+			padding-top: 2rem;
+			text-align: center;
+			color: #888;
+			font-size: 0.9rem;
+		}
+		.webnari-badge {
+			color: var(--moss);
+			text-decoration: none;
+			font-weight: 500;
+		}
+
+		/* Responsive */
+		@media (max-width: 768px) {
+			nav {
+				position: fixed;
+				top: 20px;
+				left: 20px;
+				right: 20px;
+				transform: none;
+				max-width: none;
+				width: auto;
+				border-radius: 30px;
+				padding: 0.75rem 1rem;
+				justify-content: space-between;
+				gap: 1rem;
+			}
+			nav.hide {
+				transform: translateY(-100px);
+			}
+			nav .nav-links {
+				display: none;
+			}
+			nav .hamburger {
+				display: flex;
+			}
+			.hero {
+				min-height: auto;
+				padding-top: 120px;
+			}
+			.hero-circle {
+				width: 300px;
+				height: 300px;
+			}
+			.hero-circle::before {
+				width: 220px;
+				height: 220px;
+			}
+			.hero-circle::after {
+				width: 140px;
+				height: 140px;
+			}
+			.botanical-left, .botanical-right {
+				display: none;
+			}
+			.about-grid,
+			.contact-grid,
+			.why-us-grid {
+				grid-template-columns: 1fr;
+				gap: 2rem;
+			}
+			.collections-grid,
+			.workshop-grid,
+			.testimonials-grid,
+			.process-grid {
+				grid-template-columns: 1fr;
+			}
+			.hero-stats {
+				grid-template-columns: 1fr;
+			}
+			.footer-grid {
+				grid-template-columns: 1fr;
+			}
+		}
+	</style>
+</head>
+<body>
+	<!-- Navigation -->
+	<nav id="nav">
+		<div class="logo">Verdant</div>
+		<ul class="nav-links">
+			<li><a href="#collections">Collections</a></li>
+			<li><a href="#about">About</a></li>
+			<li><a href="#workshop">Workshops</a></li>
+			<li><a href="#contact">Contact</a></li>
+		</ul>
+		<button class="cta-btn" onclick="scrollToSection('contact')">Visit Us</button>
+		<div class="hamburger" id="hamburger">
+			<span></span>
+			<span></span>
+			<span></span>
+		</div>
+	</nav>
+
+	<!-- Mobile Menu Overlay -->
+	<div class="mobile-menu" id="mobileMenu">
+		<a href="#collections" onclick="closeMenu()">Collections</a>
+		<a href="#about" onclick="closeMenu()">About</a>
+		<a href="#workshop" onclick="closeMenu()">Workshops</a>
+		<a href="#contact" onclick="closeMenu()">Contact</a>
+		<button class="cta-btn" onclick="scrollToSection('contact'); closeMenu();">Visit Us</button>
+	</div>
+
+	<!-- Hero Section -->
+	<section class="hero" id="hero">
+		<svg class="botanical-left" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+			<path d="M100 10 Q130 40 120 80 Q140 100 110 120 Q130 140 100 160" stroke="#2E7D32" stroke-width="2" fill="none" opacity="0.6"/>
+			<path d="M80 30 Q70 60 85 90" stroke="#00897B" stroke-width="1.5" fill="none" opacity="0.5"/>
+			<path d="M120 50 Q115 80 130 100" stroke="#00897B" stroke-width="1.5" fill="none" opacity="0.5"/>
+		</svg>
+
+		<svg class="botanical-right" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+			<circle cx="50" cy="80" r="8" fill="#2E7D32" opacity="0.4"/>
+			<path d="M50 80 Q60 90 70 95" stroke="#2E7D32" stroke-width="1.5" fill="none" opacity="0.5"/>
+			<path d="M50 80 Q40 90 30 95" stroke="#2E7D32" stroke-width="1.5" fill="none" opacity="0.5"/>
+			<path d="M50 80 Q55 70 60 60" stroke="#00897B" stroke-width="1.5" fill="none" opacity="0.5"/>
+			<path d="M50 80 Q45 70 40 60" stroke="#00897B" stroke-width="1.5" fill="none" opacity="0.5"/>
+		</svg>
+
+		<div class="hero-content">
+			<div class="hero-circle">
+				<div style="text-align: center; z-index: 10;">
+					<h1>Living Art, Grown by Hand</h1>
+					<p style="margin-top: 1rem;">Bespoke terrariums & botanical design for every home</p>
+				</div>
+			</div>
+			<div class="hero-buttons">
+				<button class="btn-primary" onclick="scrollToSection('collections')">Explore Collections</button>
+				<button class="btn-secondary" onclick="scrollToSection('workshop')">Book Workshop</button>
+			</div>
+			<div class="hero-stats">
+				<div class="stat-item">
+					<h4>500+</h4>
+					<p>Terrariums Created</p>
+				</div>
+				<div class="stat-item">
+					<h4>80+</h4>
+					<p>Plant Species</p>
+				</div>
+				<div class="stat-item">
+					<h4>7 Years</h4>
+					<p>Of Craft</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- SVG Divider -->
+	<svg class="divider" viewBox="0 0 1200 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+		<path d="M0,40 Q300,10 600,40 T1200,40" stroke="#2E7D32" stroke-width="2" fill="none"/>
+		<circle cx="100" cy="40" r="4" fill="#2E7D32"/>
+		<circle cx="600" cy="40" r="6" fill="#2E7D32"/>
+		<circle cx="1100" cy="40" r="4" fill="#2E7D32"/>
+	</svg>
+
+	<!-- Collections Section -->
+	<section class="collections" id="collections">
+		<h2>Our Collections</h2>
+		<div class="collections-grid">
+			<div class="collection-card">
+				<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+					<path d="M30 20 Q50 10 70 20 L70 75 Q50 85 30 75 Z" stroke="currentColor" stroke-width="2" fill="none"/>
+					<circle cx="40" cy="45" r="3" fill="currentColor" opacity="0.6"/>
+					<circle cx="50" cy="40" r="2" fill="currentColor" opacity="0.5"/>
+					<circle cx="60" cy="50" r="3" fill="currentColor" opacity="0.6"/>
+				</svg>
+				<h3>Closed Terrariums</h3>
+				<p>Self-sustaining miniature worlds with moss, ferns, and succulents. $65–$180</p>
+			</div>
+			<div class="collection-card">
+				<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+					<path d="M25 75 L35 20 L65 20 L75 75" stroke="currentColor" stroke-width="2" fill="none"/>
+					<path d="M30 70 L70 70" stroke="currentColor" stroke-width="2"/>
+					<path d="M40 30 Q50 25 60 30" stroke="currentColor" stroke-width="1.5" fill="none"/>
+				</svg>
+				<h3>Open Terrariums</h3>
+				<p>Air plants and desert succulents in breathable designs. $45–$120</p>
+			</div>
+			<div class="collection-card">
+				<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+					<rect x="35" y="35" width="30" height="30" rx="4" stroke="currentColor" stroke-width="2" fill="none"/>
+					<circle cx="42" cy="48" r="2" fill="currentColor" opacity="0.7"/>
+					<circle cx="50" cy="45" r="2.5" fill="currentColor" opacity="0.6"/>
+					<circle cx="58" cy="50" r="2" fill="currentColor" opacity="0.7"/>
+				</svg>
+				<h3>Moss Gardens</h3>
+				<p>Soft, verdant moss ecosystems in natural containers. $55–$95</p>
+			</div>
+			<div class="collection-card">
+				<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+					<path d="M50 15 L60 35 L82 35 L65 50 L75 70 L50 55 L25 70 L35 50 L18 35 L40 35 Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+					<circle cx="50" cy="50" r="20" stroke="currentColor" stroke-width="1" fill="none" opacity="0.5"/>
+				</svg>
+				<h3>Succulent Arrangements</h3>
+				<p>Hardy, drought-tolerant compositions with geometric appeal. $40–$100</p>
+			</div>
+			<div class="collection-card">
+				<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+					<rect x="20" y="20" width="60" height="60" rx="8" stroke="currentColor" stroke-width="2" fill="none"/>
+					<path d="M40 50 Q50 40 60 50" stroke="currentColor" stroke-width="1.5" fill="none"/>
+					<circle cx="35" cy="35" r="3" fill="currentColor" opacity="0.6"/>
+					<circle cx="65" cy="65" r="3" fill="currentColor" opacity="0.6"/>
+				</svg>
+				<h3>Corporate Gifts</h3>
+				<p>Custom branded terrariums for offices and events. $80–$250</p>
+			</div>
+			<div class="collection-card">
+				<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+					<path d="M30 50 L50 30 L70 50 L60 50 L60 70 L40 70 L40 50 Z" stroke="currentColor" stroke-width="2" fill="none"/>
+					<path d="M45 55 L55 55" stroke="currentColor" stroke-width="1" opacity="0.7"/>
+				</svg>
+				<h3>Workshop Kits</h3>
+				<p>Complete DIY kits to craft your own terrarium at home. $35–$75</p>
+			</div>
+		</div>
+	</section>
+
+	<!-- SVG Divider -->
+	<svg class="divider" viewBox="0 0 1200 80" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+		<path d="M0,40 Q300,70 600,40 T1200,40" stroke="#A5D6A7" stroke-width="2" fill="none"/>
+		<circle cx="100" cy="40" r="4" fill="#A5D6A7"/>
+		<circle cx="600" cy="40" r="6" fill="#A5D6A7"/>
+		<circle cx="1100" cy="40" r="4" fill="#A5D6A7"/>
+	</svg>
+
+	<!-- About Section -->
+	<section class="about" id="about">
+		<div class="about-grid">
+			<div class="about-left">
+				<h2>Rooted in Craft</h2>
+				<p>For seven years, Verdant Terrariums has been creating hand-crafted botanical art. Our founder, Elena Vásquez—a botanist and artist—believes that plants have the power to transform spaces and minds. Each terrarium is a miniature ecosystem, carefully curated with intention and love.</p>
+				<ul>
+					<li><strong>Hand-selected plants</strong> — sourced from sustainable local growers</li>
+					<li><strong>Zero-waste philosophy</strong> — recycled glass, natural materials, minimal packaging</li>
+					<li><strong>Living art</strong> — each piece is unique and evolves over time</li>
+				</ul>
+			</div>
+			<div class="about-right">
+				<svg viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg">
+					<!-- Terrarium jar -->
+					<path d="M80 60 L120 50 L180 50 L220 60 L220 300 Q220 340 180 350 L120 350 Q80 340 80 300 Z" stroke="#2E7D32" stroke-width="2" fill="rgba(241, 248, 233, 0.3)"/>
+					<!-- Layers -->
+					<ellipse cx="150" cy="320" rx="65" ry="8" fill="#795548" opacity="0.4"/>
+					<ellipse cx="150" cy="305" rx="65" ry="8" fill="#A5D6A7" opacity="0.5"/>
+					<ellipse cx="150" cy="290" rx="65" ry="8" fill="#795548" opacity="0.3"/>
+					<!-- Plants -->
+					<path d="M120 240 Q115 200 125 160" stroke="#2E7D32" stroke-width="2" fill="none"/>
+					<path d="M120 200 L110 180" stroke="#2E7D32" stroke-width="1.5" fill="none"/>
+					<path d="M120 200 L130 180" stroke="#2E7D32" stroke-width="1.5" fill="none"/>
+					<path d="M180 260 Q185 220 175 180" stroke="#00897B" stroke-width="2" fill="none"/>
+					<path d="M175 200 L165 170" stroke="#00897B" stroke-width="1.5" fill="none"/>
+					<path d="M175 200 L185 170" stroke="#00897B" stroke-width="1.5" fill="none"/>
+					<circle cx="150" cy="150" r="8" stroke="#2E7D32" stroke-width="1" fill="#A5D6A7" opacity="0.6"/>
+				</svg>
+			</div>
+		</div>
+	</section>
+
+	<!-- Why Us Section -->
+	<section class="why-us" id="why-us">
+		<h2>Why Choose Verdant</h2>
+		<div class="why-us-grid">
+			<div class="stat-card">
+				<h4>7</h4>
+				<p>Years of Experience</p>
+			</div>
+			<div class="features">
+				<div class="feature-row">
+					<div>
+						<h4>Hand-Selected Plants</h4>
+						<p>Each plant is chosen for health, beauty, and long-term thrival in its ecosystem.</p>
+					</div>
+				</div>
+				<div class="feature-row">
+					<div>
+						<h4>Sustainable Materials</h4>
+						<p>Recycled glass, natural substrates, zero-plastic philosophy throughout.</p>
+					</div>
+				</div>
+				<div class="feature-row">
+					<div>
+						<h4>Living Ecosystems</h4>
+						<p>Each terrarium is a self-sustaining world that evolves and grows with you.</p>
+					</div>
+				</div>
+				<div class="feature-row">
+					<div>
+						<h4>30-Day Care Guarantee</h4>
+						<p>If your terrarium doesn't thrive, we'll replace or refund within 30 days.</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Process Section -->
+	<section class="process">
+		<h2>FROM SOIL TO SOUL</h2>
+		<div class="process-grid">
+			<div class="process-step">
+				<div class="step-number">1</div>
+				<h3>Consultation</h3>
+				<p>We discuss your space, light conditions, and vision for your living artwork.</p>
+			</div>
+			<div class="process-step">
+				<div class="step-number">2</div>
+				<h3>Design</h3>
+				<p>Our team sketches and selects plants that match your aesthetic and environment.</p>
+			</div>
+			<div class="process-step">
+				<div class="step-number">3</div>
+				<h3>Build</h3>
+				<p>We hand-craft your terrarium with precision, layering soils, plants, and stones.</p>
+			</div>
+			<div class="process-step">
+				<div class="step-number">4</div>
+				<h3>Care Guide</h3>
+				<p>You receive custom care instructions to keep your ecosystem thriving for years.</p>
+			</div>
+		</div>
+	</section>
+
+	<!-- Workshop Section -->
+	<section class="workshop" id="workshop">
+		<h2>Terrarium Workshops</h2>
+		<p class="workshop-intro">Learn the art of terrarium building from Elena and our expert team. Perfect for beginners and plant lovers alike.</p>
+		<div class="workshop-grid">
+			<div class="workshop-card">
+				<h3>Group Workshop</h3>
+				<p>Join 4–8 participants on our studio. Includes all materials and a take-home terrarium.</p>
+				<div class="workshop-price">$55 / person</div>
+				<p style="font-size: 0.85rem; color: #999;">2 hours | Saturdays 2PM & 4PM</p>
+			</div>
+			<div class="workshop-card">
+				<h3>Private Session</h3>
+				<p>One-on-one or small group experience. Customize your design and get expert guidance.</p>
+				<div class="workshop-price">$85 / person</div>
+				<p style="font-size: 0.85rem; color: #999;">Flexible times</p>
+			</div>
+			<div class="workshop-card">
+				<h3>Corporate Team-Building</h3>
+				<p>Bring your team for a hands-on activity that boosts creativity and connection.</p>
+				<div class="workshop-price">$75 / person</div>
+				<p style="font-size: 0.85rem; color: #999;">Groups of 10+ | Weekday mornings</p>
+			</div>
+		</div>
+	</section>
+
+	<!-- Testimonials Section -->
+	<section class="testimonials">
+		<h2>What Our Customers Say</h2>
+		<div class="testimonials-grid">
+			<div class="testimonial-card">
+				<p>"Elena created a stunning closed terrarium for my living room. It's been thriving for 8 months with minimal care. Truly a work of living art."</p>
+				<div class="testimonial-author">
+					<div class="testimonial-avatar">M</div>
+					<div>
+						<h4>Mia Rodriguez</h4>
+						<span class="stars">★★★★★</span>
+					</div>
+				</div>
+			</div>
+			<div class="testimonial-card">
+				<p>"The workshop was incredible. I learned so much about plant biology and design. My DIY terrarium looks professional, and I'm obsessed with my new hobby."</p>
+				<div class="testimonial-author">
+					<div class="testimonial-avatar">J</div>
+					<div>
+						<h4>James Chen</h4>
+						<span class="stars">★★★★★</span>
+					</div>
+				</div>
+			</div>
+			<div class="testimonial-card">
+				<p>"We ordered 12 corporate terrariums for our office. The presentation was flawless, and the care instructions made it so easy to maintain them. Highly professional."</p>
+				<div class="testimonial-author">
+					<div class="testimonial-avatar">S</div>
+					<div>
+						<h4>Sarah Thompson</h4>
+						<span class="stars">★★★★★</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- FAQ Section -->
+	<section class="faq">
+		<h2>Frequently Asked Questions</h2>
+		<div class="faq-list">
+			<div class="faq-item">
+				<div class="faq-question">
+					<span>How do I care for my closed terrarium?</span>
+					<span class="faq-toggle">+</span>
+				</div>
+				<div class="faq-answer">Closed terrariums need minimal care. Water lightly once a month (they recycle their own moisture). Place in indirect light. Keep away from direct heat sources. If condensation is heavy, open briefly to release excess moisture.</div>
+			</div>
+			<div class="faq-item">
+				<div class="faq-question">
+					<span>Can I customize a terrarium to match my décor?</span>
+					<span class="faq-toggle">+</span>
+				</div>
+				<div class="faq-answer">Absolutely! We offer fully custom commissions. Discuss your style, color palette, size, and plant preferences. Elena will work with you to design a terrarium that complements your space perfectly. Custom orders typically take 1–2 weeks.</div>
+			</div>
+			<div class="faq-item">
+				<div class="faq-question">
+					<span>Do you ship terrariums outside of Miami?</span>
+					<span class="faq-toggle">+</span>
+				</div>
+				<div class="faq-answer">Yes! We ship securely throughout the US. All orders are carefully packed with protective materials. Shipping costs vary by location. Contact us for a quote on your custom terrarium.</div>
+			</div>
+			<div class="faq-item">
+				<div class="faq-question">
+					<span>What's included in the workshop?</span>
+					<span class="faq-toggle">+</span>
+				</div>
+				<div class="faq-answer">All materials (glass container, soil, plants, stones, tools), expert instruction from Elena, a take-home terrarium you've crafted, and a printed care guide. Refreshments provided. No experience necessary!</div>
+			</div>
+			<div class="faq-item">
+				<div class="faq-question">
+					<span>What if my terrarium isn't thriving?</span>
+					<span class="faq-toggle">+</span>
+				</div>
+				<div class="faq-answer">We stand behind our work with a 30-day guarantee. If your terrarium shows signs of decline despite proper care, we'll replace it or offer a full refund. Contact us with photos and care details for troubleshooting first.</div>
+			</div>
+			<div class="faq-item">
+				<div class="faq-question">
+					<span>How do I book a workshop or custom order?</span>
+					<span class="faq-toggle">+</span>
+				</div>
+				<div class="faq-answer">Use the contact form below, email us, or call. We'll confirm availability and discuss your specific needs. Deposits are required for custom orders. We typically respond within 24 hours.</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Service Areas Section -->
+	<section class="areas">
+		<h2>Delivering Living Art Across South Florida</h2>
+		<div class="areas-grid">
+			<span class="area-tag">Coconut Grove</span>
+			<span class="area-tag">Coral Gables</span>
+			<span class="area-tag">Miami Beach</span>
+			<span class="area-tag">Wynwood</span>
+			<span class="area-tag">Brickell</span>
+			<span class="area-tag">Homestead</span>
+			<span class="area-tag">Doral</span>
+			<span class="area-tag">Kendall</span>
+			<span class="area-tag">Hialeah</span>
+			<span class="area-tag">North Miami</span>
+			<span class="area-tag">Coral Springs</span>
+			<span class="area-tag">Aventura</span>
+		</div>
+	</section>
+
+	<!-- Contact Section -->
+	<section class="contact" id="contact">
+		<h2>Get in Touch</h2>
+		<div class="contact-grid">
+			<div class="contact-info">
+				<h3>Visit Our Studio</h3>
+				<div class="contact-row">
+					<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M12 2C7.03 2 3 6.03 3 11c0 5.25 9 13 9 13s9-7.75 9-13c0-4.97-4.03-9-9-9zm0 15c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z" fill="currentColor"/>
+					</svg>
+					<div>
+						<h4>Address</h4>
+						<p>3401 Main Highway, Coconut Grove, Miami FL 33133</p>
+					</div>
+				</div>
+				<div class="contact-row">
+					<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M17.92 7.02C17.45 6.18 16.5 5.6 15.46 5.6c-1.04 0-1.99.58-2.46 1.41-.16.28-.25.61-.25.96s.09.68.25.96c.47.83 1.42 1.41 2.46 1.41 1.04 0 1.99-.58 2.46-1.41.16-.28.25-.61.25-.96s-.09-.68-.25-.96zM12 20c-4.42 0-8-1.79-8-4 0-1.29.87-2.4 2.1-3.24.05 1.6.87 3.1 2.28 4.04-.51.51-1.06.98-1.63 1.4.78.47 1.65.87 2.58 1.13-.17.3-.27.64-.27 1.01 0 1.66 1.34 3 3 3s3-1.34 3-3c0-.37-.1-.71-.27-1.01.93-.26 1.8-.66 2.58-1.13-.57-.42-1.12-.89-1.63-1.4 1.41-.94 2.23-2.44 2.28-4.04 1.23.84 2.1 1.95 2.1 3.24 0 2.21-3.58 4-8 4z" fill="currentColor"/>
+					</svg>
+					<div>
+						<h4>Phone</h4>
+						<p>(786) 555-2900</p>
+					</div>
+				</div>
+				<div class="contact-row">
+					<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z" fill="currentColor"/>
+					</svg>
+					<div>
+						<h4>Hours</h4>
+						<p>Wed–Mon 10AM–7PM<br>Tue Closed</p>
+					</div>
+				</div>
+				<div class="contact-row">
+					<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.59-1.38-.95-2.23-1.54-.99-.65-35-.4-1.51-.63-.16-.09-.31-.3-.27-.84.04-.53.77-.68 2.02-.95 7.84-1.66 11.62-2.46 11.62-2.46s1.23-.5 1.23-1.42c0-.72-.65-.88-1.73-.84-.64.02-1.77.35-5.59 1.22z" fill="currentColor"/>
+					</svg>
+					<div>
+						<h4>Instagram</h4>
+						<p>@verdant.miami</p>
+					</div>
+				</div>
+			</div>
+			<form class="contact-form" id="contactForm" action="https://formsubmit.co/hello@verdant.miami" method="POST">
+				<div class="form-group">
+					<label for="name">Your Name *</label>
+					<input type="text" id="name" name="name" required>
+					<div class="form-error">Name is required</div>
+				</div>
+				<div class="form-group">
+					<label for="email">Email Address *</label>
+					<input type="email" id="email" name="email" required>
+					<div class="form-error">Valid email is required</div>
+				</div>
+				<div class="form-group">
+					<label for="phone">Phone Number</label>
+					<input type="tel" id="phone" name="phone">
+					<div class="form-error">Invalid phone number</div>
+				</div>
+				<div class="form-group">
+					<label for="interest">What are you interested in? *</label>
+					<select id="interest" name="interest" required>
+						<option value="">Select an option</option>
+						<option value="Terrarium Order">Terrarium Order</option>
+						<option value="Custom Design">Custom Design</option>
+						<option value="Workshop">Workshop</option>
+						<option value="Corporate Gift">Corporate Gift</option>
+					</select>
+					<div class="form-error">Please select an option</div>
+				</div>
+				<div class="form-group">
+					<label for="message">Message *</label>
+					<textarea id="message" name="message" required></textarea>
+					<div class="form-error">Message is required</div>
+				</div>
+				<button type="submit" class="form-submit">Send Message</button>
+			</form>
+		</div>
+	</section>
+
+	<!-- CTA Banner -->
+	<section class="cta-banner">
+		<h2>Ready to Add Living Art to Your Space?</h2>
+		<button class="btn-primary" onclick="scrollToSection('contact')">Book a Consultation</button>
+	</section>
+
+	<!-- Footer -->
+	<footer>
+		<div class="footer-grid">
+			<div class="footer-col">
+				<h4>Verdant Terrariums</h4>
+				<p>Living art, grown by hand. Hand-crafted botanical design in Coconut Grove, Miami.</p>
+				<div class="footer-contact-icons">
+					<a href="https://instagram.com/verdant.miami" target="_blank" rel="noopener noreferrer">
+						<svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+							<path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.266.07 1.646.07 4.85s-.012 3.584-.07 4.85c-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.85-.07-3.251-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM5.838 12a6.162 6.162 0 1 1 12.324 0 6.162 6.162 0 0 1-12.324 0zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm4.965-10.322a1.44 1.44 0 1 1 2.881.001 1.44 1.44 0 0 1-2.881-.001z"/>
+						</svg>
+					</a>
+				</div>
+			</div>
+			<div class="footer-col">
+				<h4>Collections</h4>
+				<ul>
+					<li><a href="#collections">Closed Terrariums</a></li>
+					<li><a href="#collections">Open Terrariums</a></li>
+					<li><a href="#collections">Moss Gardens</a></li>
+					<li><a href="#collections">Succulent Arrangements</a></li>
+					<li><a href="#collections">Corporate Gifts</a></li>
+					<li><a href="#collections">Workshop Kits</a></li>
+				</ul>
+			</div>
+			<div class="footer-col">
+				<h4>Company</h4>
+				<ul>
+					<li><a href="#about">About Us</a></li>
+					<li><a href="#workshop">Workshops</a></li>
+					<li><a href="#faq">FAQ</a></li>
+					<li><a href="#contact">Contact</a></li>
+					<li><a href="#">Privacy Policy</a></li>
+					<li><a href="#">Terms of Service</a></li>
+				</ul>
+			</div>
+			<div class="footer-col">
+				<h4>Contact</h4>
+				<p><strong>Address:</strong><br>3401 Main Highway<br>Coconut Grove, Miami FL 33133</p>
+				<p style="margin-top: 1rem;"><strong>Phone:</strong><br>(786) 555-2900</p>
+				<p style="margin-top: 1rem;"><strong>Hours:</strong><br>Wed–Mon 10AM–7PM<br>Tue Closed</p>
+			</div>
+		</div>
+		<div class="footer-bottom">
+			<p>&copy; 2026 Verdant Terrariums. All rights reserved. | <a href="https://webnari.io" class="webnari-badge">Powered by Webnari</a></p>
+		</div>
+	</footer>
+
+	<script>
+		// Floating particles animation
+		function createParticles() {
+			const particleCount = 12;
+			for (let i = 0; i < particleCount; i++) {
+				const particle = document.createElement('div');
+				particle.className = 'particle';
+				particle.style.left = Math.random() * 100 + '%';
+				particle.style.top = Math.random() * 100 + '%';
+				particle.style.animationDuration = (5 + Math.random() * 5) + 's';
+				particle.style.animationDelay = Math.random() * 2 + 's';
+				particle.style.animation = `float-up ${5 + Math.random() * 5}s linear infinite`;
+				document.body.appendChild(particle);
+			}
+		}
+
+		// Navigation scroll behavior
+		const nav = document.getElementById('nav');
+		let lastScrollTop = 0;
+		window.addEventListener('scroll', () => {
+			const scrollTop = window.scrollY;
+			if (scrollTop > lastScrollTop && scrollTop > 300) {
+				nav.classList.add('hide');
+			} else {
+				nav.classList.remove('hide');
+			}
+			lastScrollTop = scrollTop;
+		});
+
+		// Mobile menu toggle
+		const hamburger = document.getElementById('hamburger');
+		const mobileMenu = document.getElementById('mobileMenu');
+		const navElement = document.getElementById('nav');
+
+		hamburger.addEventListener('click', () => {
+			mobileMenu.classList.toggle('active');
+			navElement.classList.toggle('mobile-open');
+		});
+
+		function closeMenu() {
+			mobileMenu.classList.remove('active');
+			navElement.classList.remove('mobile-open');
+		}
+
+		// Smooth scroll to section
+		function scrollToSection(sectionId) {
+			const section = document.getElementById(sectionId);
+			if (section) {
+				section.scrollIntoView({ behavior: 'smooth' });
+				closeMenu();
+			}
+		}
+
+		// Scroll reveal animations
+		const observerOptions = {
+			threshold: 0.1,
+			rootMargin: '0px 0px -100px 0px'
+		};
+
+		const observer = new IntersectionObserver((entries) => {
+			entries.forEach(entry => {
+				if (entry.isIntersecting) {
+					entry.target.style.opacity = '1';
+					entry.target.style.transform = 'translateY(0)';
+				}
+			});
+		}, observerOptions);
+
+		document.querySelectorAll('section').forEach(section => {
+			section.style.opacity = '0';
+			section.style.transform = 'translateY(20px)';
+			section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+			observer.observe(section);
+		});
+
+		// FAQ accordion functionality
+		document.querySelectorAll('.faq-question').forEach(question => {
+			question.addEventListener('click', () => {
+				const faqItem = question.parentElement;
+				faqItem.classList.toggle('active');
+			});
+		});
+
+		// Form validation
+		const contactForm = document.getElementById('contactForm');
+		const formInputs = contactForm.querySelectorAll('input, select, textarea');
+
+		formInputs.forEach(input => {
+			input.addEventListener('blur', () => validateField(input));
+		});
+
+		function validateField(field) {
+			const formGroup = field.parentElement;
+			let isValid = true;
+
+			if (field.type === 'email') {
+				const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+				isValid = emailRegex.test(field.value);
+			} else if (field.type === 'tel') {
+				const phoneRegex = /^[\d\s\-\(\)]+$/;
+				isValid = field.value === '' || phoneRegex.test(field.value);
+			} else if (field.required) {
+				isValid = field.value.trim() !== '';
+			}
+
+			if (!isValid) {
+				formGroup.classList.add('error');
+			} else {
+				formGroup.classList.remove('error');
+			}
+		}
+
+		contactForm.addEventListener('submit', (e) => {
+			let isFormValid = true;
+			formInputs.forEach(input => {
+				validateField(input);
+				if (input.parentElement.classList.contains('error')) {
+					isFormValid = false;
+				}
+			});
+
+			if (!isFormValid) {
+				e.preventDefault();
+			}
+		});
+
+		// Initialize particles on page load
+		window.addEventListener('load', createParticles);
+
+		// Smooth scroll behavior
+		document.documentElement.style.scrollBehavior = 'smooth';
+	</script>
+</body>
+</html>

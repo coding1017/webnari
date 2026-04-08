@@ -1,0 +1,2116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ToolBelt Co. | Miami's #1 Handyman Service — Fast, Fixed, Done.</title>
+  <meta name="description" content="ToolBelt Co. — Miami's most trusted handyman service. Drywall, carpentry, fixture installation, furniture assembly, and more. Same-day service available.">
+  <meta property="og:title" content="ToolBelt Co. | Miami Handyman — Fast, Fixed, Done!">
+  <meta property="og:description" content="No job too small. No excuse to leave it broken. Call ToolBelt Co. and get it FIXED!">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;600;700;800&family=Permanent+Marker&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --white: #FFFFFF;
+      --paper: #FFFEF5;
+      --paper2: #FFF9E6;
+      --red: #DC2626;
+      --red2: #B91C1C;
+      --blue: #1D4ED8;
+      --blue2: #1E3A8A;
+      --yellow: #FBBF24;
+      --yellow2: #F59E0B;
+      --black: #0A0A0A;
+      --outline: 3px solid #0A0A0A;
+      --outline-thick: 4px solid #0A0A0A;
+      --shadow: 5px 5px 0px #0A0A0A;
+      --shadow-lg: 8px 8px 0px #0A0A0A;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--paper);
+      color: var(--black);
+      overflow-x: hidden;
+    }
+
+    /* ─── HALFTONE DOT PATTERN ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(0,0,0,0.07) 1.5px, transparent 1.5px);
+      background-size: 20px 20px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    * { position: relative; z-index: 1; }
+
+    /* ─── NAV ─── */
+    nav {
+      background: var(--black);
+      border-bottom: var(--outline-thick);
+      padding: 0 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 68px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-logo {
+      font-family: 'Bangers', cursive;
+      font-size: 28px;
+      letter-spacing: 0.05em;
+      color: var(--yellow);
+      text-decoration: none;
+      text-shadow: 2px 2px 0 var(--red);
+    }
+
+    .nav-logo span { color: var(--white); text-shadow: none; }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'Bangers', cursive;
+      font-size: 17px;
+      letter-spacing: 0.08em;
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      padding: 6px 14px;
+      border: 2px solid transparent;
+      transition: all 0.15s;
+    }
+
+    .nav-links a:hover {
+      color: var(--yellow);
+      border-color: var(--yellow);
+      background: rgba(251,191,36,0.1);
+    }
+
+    .nav-cta {
+      background: var(--red) !important;
+      color: var(--white) !important;
+      border: 2px solid var(--white) !important;
+      font-family: 'Bangers', cursive !important;
+      font-size: 17px !important;
+      letter-spacing: 0.08em !important;
+      padding: 8px 22px !important;
+      transition: all 0.15s !important;
+      box-shadow: 3px 3px 0 var(--red2) !important;
+    }
+
+    .nav-cta:hover {
+      transform: translate(-2px, -2px) !important;
+      box-shadow: 5px 5px 0 var(--red2) !important;
+    }
+
+    .emergency-bar {
+      background: var(--red);
+      color: var(--white);
+      text-align: center;
+      padding: 8px;
+      font-family: 'Bangers', cursive;
+      font-size: 16px;
+      letter-spacing: 0.1em;
+      border-bottom: var(--outline);
+    }
+
+    .emergency-bar a {
+      color: var(--yellow);
+      text-decoration: none;
+    }
+
+    /* Hamburger */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: 2px solid var(--yellow);
+      padding: 6px 8px;
+    }
+
+    .nav-hamburger span {
+      width: 22px;
+      height: 2px;
+      background: var(--yellow);
+      display: block;
+    }
+
+    /* Mobile menu */
+    .mobile-menu {
+      position: fixed;
+      inset: 0;
+      background: var(--black);
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .mobile-menu.open { opacity: 1; pointer-events: all; }
+
+    .mobile-menu a {
+      font-family: 'Bangers', cursive;
+      font-size: 42px;
+      letter-spacing: 0.05em;
+      color: var(--yellow);
+      text-decoration: none;
+      text-shadow: 3px 3px 0 var(--red);
+    }
+
+    .mobile-close {
+      position: absolute;
+      top: 20px; right: 30px;
+      font-family: 'Bangers', cursive;
+      font-size: 32px;
+      color: var(--white);
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: calc(100vh - 68px);
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      border-bottom: var(--outline-thick);
+    }
+
+    .hero-left {
+      background: var(--yellow);
+      border-right: var(--outline-thick);
+      padding: 60px 60px 60px 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--black);
+      color: var(--yellow);
+      font-family: 'Bangers', cursive;
+      font-size: 14px;
+      letter-spacing: 0.15em;
+      padding: 6px 16px;
+      border: var(--outline);
+      margin-bottom: 24px;
+      width: fit-content;
+    }
+
+    .hero-badge::before {
+      content: '★';
+      color: var(--red);
+    }
+
+    .hero-title {
+      font-family: 'Bangers', cursive;
+      font-size: clamp(60px, 7vw, 100px);
+      line-height: 0.92;
+      letter-spacing: 0.02em;
+      color: var(--black);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      -webkit-text-stroke: 2px var(--black);
+    }
+
+    .hero-title .hero-title-outline {
+      -webkit-text-stroke: 3px var(--black);
+      color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--black);
+      margin-bottom: 36px;
+      max-width: 380px;
+      line-height: 1.4;
+    }
+
+    .hero-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 40px;
+    }
+
+    .btn-comic {
+      font-family: 'Bangers', cursive;
+      font-size: 20px;
+      letter-spacing: 0.08em;
+      padding: 12px 28px;
+      border: var(--outline-thick);
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.12s;
+      cursor: pointer;
+      text-transform: uppercase;
+    }
+
+    .btn-red {
+      background: var(--red);
+      color: var(--white);
+      box-shadow: var(--shadow);
+    }
+
+    .btn-red:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-blue {
+      background: var(--blue);
+      color: var(--white);
+      box-shadow: var(--shadow);
+    }
+
+    .btn-blue:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .btn-white {
+      background: var(--white);
+      color: var(--black);
+      box-shadow: var(--shadow);
+    }
+
+    .btn-white:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+    }
+
+    .hero-stat {
+      background: var(--black);
+      color: var(--yellow);
+      padding: 14px;
+      text-align: center;
+      border: 2px solid var(--black);
+    }
+
+    .hero-stat-num {
+      font-family: 'Bangers', cursive;
+      font-size: 32px;
+      letter-spacing: 0.05em;
+      line-height: 1;
+    }
+
+    .hero-stat-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.7);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 2px;
+    }
+
+    .hero-right {
+      background: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Halftone on blue panel */
+    .hero-right::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.12) 2px, transparent 2px);
+      background-size: 16px 16px;
+      z-index: 0;
+    }
+
+    .hero-illustration {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Action burst background */
+    .hero-burst {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 380px;
+      height: 380px;
+      z-index: 1;
+    }
+
+    /* SAME-DAY stamp badge */
+    .hero-stamp {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      width: 110px;
+      height: 110px;
+      background: var(--red);
+      border: 4px solid var(--white);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      transform: rotate(15deg);
+      z-index: 3;
+      box-shadow: 0 0 0 2px var(--black);
+    }
+
+    .hero-stamp-text {
+      font-family: 'Bangers', cursive;
+      font-size: 14px;
+      letter-spacing: 0.05em;
+      color: var(--white);
+      line-height: 1.2;
+    }
+
+    .hero-stamp-big {
+      font-family: 'Bangers', cursive;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--yellow);
+      line-height: 1;
+    }
+
+    /* ─── SECTION DIVIDER ─── */
+    .section-divider {
+      background: var(--black);
+      padding: 12px 0;
+      overflow: hidden;
+      border-top: var(--outline);
+      border-bottom: var(--outline);
+    }
+
+    .divider-track {
+      display: flex;
+      animation: marquee 20s linear infinite;
+      white-space: nowrap;
+    }
+
+    .divider-item {
+      font-family: 'Bangers', cursive;
+      font-size: 18px;
+      letter-spacing: 0.15em;
+      color: var(--yellow);
+      padding: 0 24px;
+      flex-shrink: 0;
+    }
+
+    .divider-item::after {
+      content: ' ★ ';
+      color: var(--red);
+    }
+
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ─── SECTIONS ─── */
+    section { z-index: 1; }
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 40px; }
+
+    .section-tag {
+      display: inline-block;
+      font-family: 'Bangers', cursive;
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      background: var(--yellow);
+      color: var(--black);
+      border: var(--outline);
+      padding: 4px 12px;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    .section-title-comic {
+      font-family: 'Bangers', cursive;
+      font-size: clamp(38px, 4vw, 60px);
+      letter-spacing: 0.03em;
+      line-height: 0.95;
+      color: var(--black);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    /* ─── SERVICES ─── */
+    .services {
+      padding: 100px 0;
+      background: var(--paper);
+    }
+
+    .services-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: end;
+      margin-bottom: 60px;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      background: var(--black);
+      border: var(--outline-thick);
+    }
+
+    .service-card {
+      background: var(--white);
+      padding: 32px 28px;
+      border: none;
+      transition: all 0.15s;
+      cursor: default;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 5px;
+      background: var(--yellow);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.2s;
+    }
+
+    .service-card:hover {
+      background: var(--paper2);
+      transform: translate(-3px, -3px);
+      box-shadow: 3px 3px 0 var(--black), 4px 4px 0 var(--black), 5px 5px 0 var(--black);
+      z-index: 2;
+    }
+
+    .service-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .service-num {
+      font-family: 'Bangers', cursive;
+      font-size: 48px;
+      color: rgba(0,0,0,0.07);
+      line-height: 1;
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      letter-spacing: -0.02em;
+    }
+
+    .service-icon-box {
+      width: 56px;
+      height: 56px;
+      background: var(--yellow);
+      border: var(--outline);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      transition: transform 0.15s;
+    }
+
+    .service-card:hover .service-icon-box {
+      transform: rotate(-5deg);
+    }
+
+    .service-icon-box svg {
+      width: 26px;
+      height: 26px;
+      stroke: var(--black);
+      stroke-width: 2.5;
+      fill: none;
+    }
+
+    .service-name {
+      font-family: 'Bangers', cursive;
+      font-size: 24px;
+      letter-spacing: 0.04em;
+      color: var(--black);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+
+    .service-desc {
+      font-size: 14px;
+      line-height: 1.6;
+      color: #444;
+      font-weight: 600;
+    }
+
+    .service-price {
+      margin-top: 16px;
+      font-family: 'Bangers', cursive;
+      font-size: 20px;
+      color: var(--red);
+      letter-spacing: 0.05em;
+    }
+
+    /* ─── WHY US ─── */
+    .why-us {
+      background: var(--blue);
+      border-top: var(--outline-thick);
+      border-bottom: var(--outline-thick);
+      padding: 100px 0;
+    }
+
+    .why-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .why-big-card {
+      background: var(--yellow);
+      border: var(--outline-thick);
+      padding: 50px;
+      text-align: center;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .why-big-num {
+      font-family: 'Bangers', cursive;
+      font-size: 120px;
+      line-height: 1;
+      color: var(--black);
+      letter-spacing: -0.02em;
+    }
+
+    .why-big-label {
+      font-family: 'Bangers', cursive;
+      font-size: 22px;
+      letter-spacing: 0.06em;
+      color: var(--black);
+      text-transform: uppercase;
+      margin-top: -8px;
+    }
+
+    .why-big-sublabel {
+      font-size: 14px;
+      font-weight: 700;
+      color: rgba(0,0,0,0.6);
+      margin-top: 8px;
+    }
+
+    .why-features {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .why-feature {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      background: rgba(255,255,255,0.08);
+      border: 2px solid rgba(255,255,255,0.15);
+      padding: 20px;
+      transition: all 0.15s;
+    }
+
+    .why-feature:hover {
+      background: rgba(255,255,255,0.15);
+      transform: translateX(4px);
+    }
+
+    .why-feature-icon {
+      width: 44px;
+      height: 44px;
+      background: var(--yellow);
+      border: var(--outline);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .why-feature-icon svg {
+      width: 22px;
+      height: 22px;
+      stroke: var(--black);
+      stroke-width: 2.5;
+      fill: none;
+    }
+
+    .why-feature-text {
+      flex: 1;
+    }
+
+    .why-feature-title {
+      font-family: 'Bangers', cursive;
+      font-size: 20px;
+      letter-spacing: 0.04em;
+      color: var(--yellow);
+      text-transform: uppercase;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .why-feature-desc {
+      font-size: 14px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.4;
+    }
+
+    /* ─── PROCESS ─── */
+    .process {
+      padding: 100px 0;
+      background: var(--red);
+      border-bottom: var(--outline-thick);
+    }
+
+    .process-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .process-header .section-tag {
+      background: var(--black);
+      color: var(--yellow);
+    }
+
+    .process-header .section-title-comic {
+      color: var(--white);
+    }
+
+    .process-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      background: var(--black);
+      border: var(--outline-thick);
+    }
+
+    .process-step {
+      background: var(--paper);
+      padding: 36px 28px;
+      text-align: center;
+    }
+
+    .process-step-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: var(--yellow);
+      border: var(--outline-thick);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bangers', cursive;
+      font-size: 30px;
+      letter-spacing: 0.02em;
+      color: var(--black);
+      margin: 0 auto 20px;
+      box-shadow: 4px 4px 0 var(--black);
+    }
+
+    .process-step-name {
+      font-family: 'Bangers', cursive;
+      font-size: 22px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--black);
+      margin-bottom: 10px;
+    }
+
+    .process-step-desc {
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.5;
+      color: #555;
+    }
+
+    /* ─── TESTIMONIALS (SPEECH BUBBLES) ─── */
+    .testimonials {
+      padding: 100px 0;
+      background: var(--paper);
+      border-bottom: var(--outline-thick);
+    }
+
+    .testimonials-header {
+      text-align: center;
+      margin-bottom: 64px;
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+
+    .testimonial-card {
+      position: relative;
+    }
+
+    .speech-bubble {
+      background: var(--white);
+      border: var(--outline-thick);
+      padding: 28px;
+      position: relative;
+      box-shadow: var(--shadow);
+      margin-bottom: 28px;
+    }
+
+    .speech-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -22px;
+      left: 36px;
+      width: 0;
+      height: 0;
+      border-left: 18px solid transparent;
+      border-right: 10px solid transparent;
+      border-top: 22px solid var(--black);
+    }
+
+    .speech-bubble::before {
+      content: '';
+      position: absolute;
+      bottom: -18px;
+      left: 38px;
+      width: 0;
+      height: 0;
+      border-left: 16px solid transparent;
+      border-right: 8px solid transparent;
+      border-top: 19px solid var(--white);
+      z-index: 1;
+    }
+
+    .speech-stars {
+      display: flex;
+      gap: 3px;
+      margin-bottom: 12px;
+    }
+
+    .speech-stars span {
+      font-size: 18px;
+      color: var(--yellow);
+      -webkit-text-stroke: 1px var(--black);
+    }
+
+    .speech-text {
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.5;
+      color: var(--black);
+    }
+
+    .testimonial-author-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 12px;
+      padding-top: 4px;
+    }
+
+    .testimonial-avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: var(--outline-thick);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bangers', cursive;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .avatar-red { background: var(--red); color: var(--white); }
+    .avatar-blue { background: var(--blue); color: var(--white); }
+    .avatar-yellow { background: var(--yellow); color: var(--black); }
+
+    .testimonial-name {
+      font-family: 'Bangers', cursive;
+      font-size: 20px;
+      letter-spacing: 0.04em;
+      color: var(--black);
+      line-height: 1;
+    }
+
+    .testimonial-service {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--red);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* ─── PRICING ─── */
+    .pricing {
+      padding: 100px 0;
+      background: var(--yellow);
+      border-bottom: var(--outline-thick);
+    }
+
+    .pricing-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 4px;
+      background: var(--black);
+      border: var(--outline-thick);
+    }
+
+    .pricing-card {
+      background: var(--white);
+      padding: 40px 32px;
+      text-align: center;
+      position: relative;
+    }
+
+    .pricing-card.featured {
+      background: var(--black);
+    }
+
+    .pricing-badge {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--red);
+      color: var(--white);
+      font-family: 'Bangers', cursive;
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      padding: 4px 16px;
+      border: var(--outline);
+      white-space: nowrap;
+    }
+
+    .pricing-tier {
+      font-family: 'Bangers', cursive;
+      font-size: 18px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 8px;
+    }
+
+    .pricing-card.featured .pricing-tier { color: var(--yellow); }
+
+    .pricing-price {
+      font-family: 'Bangers', cursive;
+      font-size: 52px;
+      letter-spacing: -0.01em;
+      color: var(--black);
+      line-height: 1;
+    }
+
+    .pricing-card.featured .pricing-price { color: var(--yellow); }
+
+    .pricing-unit {
+      font-size: 14px;
+      font-weight: 700;
+      color: #888;
+      margin-bottom: 24px;
+    }
+
+    .pricing-card.featured .pricing-unit { color: rgba(255,255,255,0.5); }
+
+    .pricing-features {
+      list-style: none;
+      text-align: left;
+      margin-bottom: 28px;
+    }
+
+    .pricing-features li {
+      font-size: 14px;
+      font-weight: 700;
+      padding: 8px 0;
+      border-bottom: 1.5px dashed rgba(0,0,0,0.12);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--black);
+    }
+
+    .pricing-card.featured .pricing-features li { color: rgba(255,255,255,0.8); border-color: rgba(255,255,255,0.1); }
+
+    .pricing-features li::before {
+      content: '✓';
+      font-weight: 900;
+      color: var(--red);
+      font-size: 16px;
+    }
+
+    .pricing-card.featured .pricing-features li::before { color: var(--yellow); }
+
+    /* ─── FAQ ─── */
+    .faq {
+      padding: 100px 0;
+      background: var(--paper);
+      border-bottom: var(--outline-thick);
+    }
+
+    .faq-header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4px;
+      background: var(--black);
+      border: var(--outline-thick);
+    }
+
+    .faq-item {
+      background: var(--white);
+    }
+
+    .faq-question {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 24px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      gap: 16px;
+      border-bottom: 2px solid var(--black);
+    }
+
+    .faq-question-text {
+      font-family: 'Bangers', cursive;
+      font-size: 18px;
+      letter-spacing: 0.04em;
+      color: var(--black);
+      text-transform: uppercase;
+    }
+
+    .faq-plus {
+      width: 32px;
+      height: 32px;
+      background: var(--yellow);
+      border: var(--outline);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Bangers', cursive;
+      font-size: 22px;
+      color: var(--black);
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+
+    .faq-item.open .faq-plus {
+      background: var(--red);
+      color: var(--white);
+      transform: rotate(45deg);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+    }
+
+    .faq-answer-inner {
+      padding: 16px 24px 22px;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.6;
+      color: #444;
+    }
+
+    .faq-item.open .faq-answer { max-height: 200px; }
+
+    /* ─── AREAS ─── */
+    .areas {
+      padding: 80px 0;
+      background: var(--black);
+      border-bottom: var(--outline-thick);
+    }
+
+    .areas-title {
+      font-family: 'Bangers', cursive;
+      font-size: clamp(32px, 4vw, 52px);
+      letter-spacing: 0.04em;
+      color: var(--yellow);
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 40px;
+      text-shadow: 3px 3px 0 var(--red);
+    }
+
+    .areas-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+
+    .area-tag {
+      background: var(--paper);
+      border: var(--outline);
+      font-family: 'Bangers', cursive;
+      font-size: 15px;
+      letter-spacing: 0.08em;
+      color: var(--black);
+      padding: 6px 18px;
+      text-transform: uppercase;
+      transition: all 0.12s;
+    }
+
+    .area-tag:hover {
+      background: var(--yellow);
+      transform: translate(-2px, -2px);
+      box-shadow: 2px 2px 0 var(--black);
+    }
+
+    /* ─── CONTACT ─── */
+    .contact {
+      padding: 100px 0;
+      background: var(--paper);
+    }
+
+    .contact-inner {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 60px;
+      align-items: start;
+    }
+
+    .contact-left .section-tag {
+      background: var(--red);
+      color: var(--white);
+    }
+
+    .contact-details {
+      margin-top: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .contact-detail-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px;
+      background: var(--white);
+      border: var(--outline);
+      box-shadow: 3px 3px 0 var(--black);
+    }
+
+    .contact-detail-item svg {
+      width: 24px;
+      height: 24px;
+      stroke: var(--red);
+      stroke-width: 2.5;
+      fill: none;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .contact-detail-text {
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.4;
+    }
+
+    .contact-detail-text strong {
+      font-family: 'Bangers', cursive;
+      font-size: 18px;
+      letter-spacing: 0.04em;
+      display: block;
+      line-height: 1;
+      margin-bottom: 2px;
+    }
+
+    .contact-form-wrapper {
+      background: var(--white);
+      border: var(--outline-thick);
+      padding: 40px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .contact-form-title {
+      font-family: 'Bangers', cursive;
+      font-size: 28px;
+      letter-spacing: 0.04em;
+      color: var(--black);
+      text-transform: uppercase;
+      margin-bottom: 28px;
+    }
+
+    .form-group { margin-bottom: 18px; }
+
+    .form-label {
+      display: block;
+      font-family: 'Bangers', cursive;
+      font-size: 14px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--black);
+      margin-bottom: 6px;
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      border: var(--outline);
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--black);
+      background: var(--paper);
+      font-family: 'Nunito', sans-serif;
+      outline: none;
+      transition: box-shadow 0.15s;
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      box-shadow: 3px 3px 0 var(--yellow);
+    }
+
+    .form-textarea { resize: vertical; min-height: 100px; }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    .form-submit {
+      width: 100%;
+      background: var(--red);
+      color: var(--white);
+      border: var(--outline-thick);
+      padding: 14px;
+      font-family: 'Bangers', cursive;
+      font-size: 22px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      transition: all 0.12s;
+    }
+
+    .form-submit:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .form-error { font-size: 12px; font-weight: 800; color: var(--red); margin-top: 4px; display: none; }
+    .form-error.visible { display: block; }
+
+    /* ─── CTA ─── */
+    .cta-section {
+      background: var(--yellow);
+      border-top: var(--outline-thick);
+      padding: 80px 40px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .cta-title {
+      font-family: 'Bangers', cursive;
+      font-size: clamp(48px, 6vw, 80px);
+      letter-spacing: 0.03em;
+      color: var(--black);
+      text-transform: uppercase;
+      line-height: 0.9;
+    }
+
+    .cta-title span { color: var(--red); }
+
+    .cta-sub {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--black);
+      max-width: 480px;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--black);
+      color: rgba(255,255,255,0.6);
+      padding: 60px 0 32px;
+      border-top: var(--outline-thick);
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 48px;
+    }
+
+    .footer-logo {
+      font-family: 'Bangers', cursive;
+      font-size: 32px;
+      letter-spacing: 0.04em;
+      color: var(--yellow);
+      text-shadow: 2px 2px 0 var(--red);
+      margin-bottom: 12px;
+    }
+
+    .footer-desc {
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .footer-license {
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
+    }
+
+    .footer-col-title {
+      font-family: 'Bangers', cursive;
+      font-size: 16px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--yellow);
+      margin-bottom: 16px;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-links a {
+      font-size: 14px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover { color: var(--yellow); }
+
+    .footer-bottom {
+      border-top: 2px solid rgba(255,255,255,0.1);
+      padding-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-bottom p { font-size: 13px; font-weight: 600; }
+
+    .webnari-badge {
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.2s;
+    }
+
+    .webnari-badge:hover { color: var(--yellow); }
+
+    /* ─── REVEAL ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.08s; }
+    .reveal-delay-2 { transition-delay: 0.16s; }
+    .reveal-delay-3 { transition-delay: 0.24s; }
+    .reveal-delay-4 { transition-delay: 0.32s; }
+    .reveal-delay-5 { transition-delay: 0.40s; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1024px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-right { height: 380px; }
+      .services-header { grid-template-columns: 1fr; gap: 24px; }
+      .services-grid { grid-template-columns: 1fr 1fr; }
+      .why-inner { grid-template-columns: 1fr; gap: 48px; }
+      .process-grid { grid-template-columns: 1fr 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; max-width: 400px; margin: 0 auto; background: transparent; border: none; gap: 16px; }
+      .pricing-card { border: var(--outline-thick); }
+      .faq-grid { grid-template-columns: 1fr; }
+      .contact-inner { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 24px; }
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+      .container { padding: 0 24px; }
+      .hero-left { padding: 60px 24px 40px; }
+      .hero-stats { grid-template-columns: 1fr 1fr; }
+      .services-grid { grid-template-columns: 1fr; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .pricing-grid { max-width: 100%; }
+      .process-grid { grid-template-columns: 1fr 1fr; }
+      .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+      .footer-bottom { flex-direction: column; gap: 10px; text-align: center; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- EMERGENCY BAR -->
+  <div class="emergency-bar">
+    &#128681; SAME-DAY SERVICE AVAILABLE — CALL NOW: <a href="tel:7865550650">(786) 555-0650</a> &#128681;
+  </div>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <a href="toolbelt.html" class="nav-logo">ToolBelt<span> Co.</span></a>
+    <ul class="nav-links">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#why-us">Why Us</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+      <li><a href="#testimonials">Reviews</a></li>
+      <li><a href="#contact" class="nav-cta">Get a Quote</a></li>
+    </ul>
+    <button class="nav-hamburger" id="hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-close" id="mobileClose">✕</button>
+    <a href="#services" class="mobile-link">Services</a>
+    <a href="#why-us" class="mobile-link">Why Us</a>
+    <a href="#pricing" class="mobile-link">Pricing</a>
+    <a href="#testimonials" class="mobile-link">Reviews</a>
+    <a href="#contact" class="mobile-link">Get a Quote!</a>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-left">
+      <div class="hero-badge">South Florida's Favorite Handyman</div>
+      <h1 class="hero-title">
+        If it's<br>
+        <span class="hero-title-outline">Broken,</span><br>
+        We Fix it!
+      </h1>
+      <p class="hero-subtitle">From squeaky doors to drywall disasters — no job too small, no excuse to live with it broken. Fast. Reliable. Guaranteed.</p>
+      <div class="hero-buttons">
+        <a href="#contact" class="btn-comic btn-red">Get a Free Quote!</a>
+        <a href="tel:7865550650" class="btn-comic btn-blue">Call Now!</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-num">8,000+</div>
+          <div class="hero-stat-label">Jobs Done</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">4.9★</div>
+          <div class="hero-stat-label">Google Rating</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">Same-Day</div>
+          <div class="hero-stat-label">Available</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <!-- Action burst / starburst SVG background -->
+      <svg class="hero-burst" viewBox="0 0 400 400" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <g opacity="0.25">
+          <polygon points="200,0 215,180 240,10 240,185 275,25 265,190 300,45 285,195 330,70 305,205 355,100 325,215 375,135 345,228 390,170 358,242 400,205 365,255 400,240 368,266" fill="white"/>
+          <polygon points="200,400 185,220 160,390 160,215 125,375 135,210 100,355 115,205 70,330 95,195 45,300 75,185 25,265 55,172 10,230 42,158 0,195 35,145 0,160 32,134" fill="white"/>
+        </g>
+        <!-- Starburst rays -->
+        <g opacity="0.15" stroke="white" stroke-width="2">
+          <line x1="200" y1="0" x2="200" y2="400"/>
+          <line x1="0" y1="200" x2="400" y2="200"/>
+          <line x1="0" y1="0" x2="400" y2="400"/>
+          <line x1="400" y1="0" x2="0" y2="400"/>
+          <line x1="100" y1="0" x2="300" y2="400"/>
+          <line x1="300" y1="0" x2="100" y2="400"/>
+          <line x1="0" y1="100" x2="400" y2="300"/>
+          <line x1="0" y1="300" x2="400" y2="100"/>
+        </g>
+      </svg>
+
+      <!-- Handyman SVG illustration -->
+      <div class="hero-illustration">
+        <svg viewBox="0 0 280 380" width="280" height="380" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Body/Torso - work shirt blue -->
+          <rect x="80" y="170" width="120" height="130" rx="4" fill="#1D4ED8" stroke="#0A0A0A" stroke-width="3"/>
+          <!-- Shirt pocket -->
+          <rect x="95" y="185" width="40" height="30" rx="2" fill="#1E3A8A" stroke="#0A0A0A" stroke-width="2"/>
+          <!-- Pencil in pocket -->
+          <rect x="115" y="180" width="5" height="25" rx="2" fill="#FBBF24" stroke="#0A0A0A" stroke-width="1.5"/>
+          <!-- Overall straps -->
+          <path d="M80 175 L80 130" stroke="#0A0A0A" stroke-width="3" fill="none"/>
+          <path d="M200 175 L200 130" stroke="#0A0A0A" stroke-width="3" fill="none"/>
+          <!-- Head -->
+          <ellipse cx="140" cy="105" rx="50" ry="55" fill="#F5D0A9" stroke="#0A0A0A" stroke-width="3"/>
+          <!-- Hard hat -->
+          <ellipse cx="140" cy="78" rx="56" ry="20" fill="#FBBF24" stroke="#0A0A0A" stroke-width="3"/>
+          <rect x="88" y="70" width="104" height="28" rx="3" fill="#FBBF24" stroke="#0A0A0A" stroke-width="3"/>
+          <!-- Hat brim -->
+          <rect x="80" y="93" width="120" height="8" rx="2" fill="#F59E0B" stroke="#0A0A0A" stroke-width="2"/>
+          <!-- Eyes -->
+          <ellipse cx="122" cy="105" rx="8" ry="8" fill="white" stroke="#0A0A0A" stroke-width="2"/>
+          <circle cx="124" cy="106" r="4" fill="#0A0A0A"/>
+          <ellipse cx="158" cy="105" rx="8" ry="8" fill="white" stroke="#0A0A0A" stroke-width="2"/>
+          <circle cx="160" cy="106" r="4" fill="#0A0A0A"/>
+          <!-- Eyebrows -->
+          <path d="M113 95 Q122 90 131 95" stroke="#0A0A0A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path d="M149 95 Q158 90 167 95" stroke="#0A0A0A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <!-- Big smile -->
+          <path d="M122 120 Q140 135 158 120" stroke="#0A0A0A" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <!-- Mustache -->
+          <path d="M127 115 Q140 120 153 115" stroke="#5C3D1E" stroke-width="3" fill="none" stroke-linecap="round"/>
+          <!-- Belt line -->
+          <rect x="80" y="280" width="120" height="14" fill="#92400E" stroke="#0A0A0A" stroke-width="2.5"/>
+          <rect x="132" y="278" width="16" height="18" rx="1" fill="#FBBF24" stroke="#0A0A0A" stroke-width="2"/>
+          <!-- Pants -->
+          <rect x="80" y="294" width="52" height="80" rx="2" fill="#1E3A8A" stroke="#0A0A0A" stroke-width="2.5"/>
+          <rect x="148" y="294" width="52" height="80" rx="2" fill="#1E3A8A" stroke="#0A0A0A" stroke-width="2.5"/>
+          <!-- Boots -->
+          <rect x="76" y="368" width="60" height="12" rx="3" fill="#5C3D1E" stroke="#0A0A0A" stroke-width="2"/>
+          <rect x="144" y="368" width="60" height="12" rx="3" fill="#5C3D1E" stroke="#0A0A0A" stroke-width="2"/>
+          <!-- Left arm holding wrench -->
+          <rect x="30" y="165" width="52" height="28" rx="12" fill="#F5D0A9" stroke="#0A0A0A" stroke-width="2.5" transform="rotate(-30 56 179)"/>
+          <!-- Wrench -->
+          <g transform="translate(0, 140) rotate(-30 40 60)">
+            <rect x="22" y="55" width="12" height="50" rx="3" fill="#94A3B8" stroke="#0A0A0A" stroke-width="2"/>
+            <path d="M16 48 Q28 38 40 48 L40 66 Q28 70 16 66Z" fill="#94A3B8" stroke="#0A0A0A" stroke-width="2"/>
+            <path d="M0 52 Q10 42 16 52 L16 62 Q10 68 0 60Z" fill="#94A3B8" stroke="#0A0A0A" stroke-width="2"/>
+            <path d="M40 52 Q50 42 56 52 L56 62 Q50 68 40 60Z" fill="#94A3B8" stroke="#0A0A0A" stroke-width="2"/>
+          </g>
+          <!-- Right arm -->
+          <rect x="198" y="165" width="52" height="28" rx="12" fill="#F5D0A9" stroke="#0A0A0A" stroke-width="2.5" transform="rotate(20 224 179)"/>
+          <!-- Toolbox -->
+          <rect x="195" y="290" width="65" height="40" rx="4" fill="#DC2626" stroke="#0A0A0A" stroke-width="2.5"/>
+          <rect x="215" y="284" width="25" height="12" rx="4" fill="#B91C1C" stroke="#0A0A0A" stroke-width="2"/>
+          <line x1="195" y1="310" x2="260" y2="310" stroke="#0A0A0A" stroke-width="2"/>
+          <circle cx="228" cy="310" r="3" fill="#FBBF24" stroke="#0A0A0A" stroke-width="1.5"/>
+        </svg>
+      </div>
+
+      <!-- SAME-DAY stamp -->
+      <div class="hero-stamp">
+        <div class="hero-stamp-text">SAME<br>DAY</div>
+        <div class="hero-stamp-big">SERVICE!</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION DIVIDER MARQUEE -->
+  <div class="section-divider">
+    <div class="divider-track" id="dividerTrack">
+      <span class="divider-item">Drywall Repair</span>
+      <span class="divider-item">Carpentry</span>
+      <span class="divider-item">Fixture Install</span>
+      <span class="divider-item">Furniture Assembly</span>
+      <span class="divider-item">Caulking</span>
+      <span class="divider-item">Tile Work</span>
+      <span class="divider-item">Door Repair</span>
+      <span class="divider-item">TV Mounting</span>
+      <span class="divider-item">Drywall Repair</span>
+      <span class="divider-item">Carpentry</span>
+      <span class="divider-item">Fixture Install</span>
+      <span class="divider-item">Furniture Assembly</span>
+      <span class="divider-item">Caulking</span>
+      <span class="divider-item">Tile Work</span>
+      <span class="divider-item">Door Repair</span>
+      <span class="divider-item">TV Mounting</span>
+    </div>
+  </div>
+
+  <!-- SERVICES -->
+  <section class="services" id="services">
+    <div class="container">
+      <div class="services-header">
+        <div>
+          <div class="section-tag reveal">What We Fix</div>
+          <h2 class="section-title-comic reveal reveal-delay-1">Our Super<br>Services!</h2>
+        </div>
+        <p class="reveal reveal-delay-2" style="font-size: 16px; font-weight: 700; color: #444; line-height: 1.5;">
+          No job is too small and no excuse is good enough to keep living with that broken thing. Licensed, insured, and fast — that's the ToolBelt Co. promise.
+        </p>
+      </div>
+
+      <div class="services-grid reveal">
+        <div class="service-card">
+          <div class="service-num">01</div>
+          <div class="service-icon-box">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <path d="M9 9h6M9 12h6M9 15h4"/>
+            </svg>
+          </div>
+          <div class="service-name">Drywall Repair</div>
+          <p class="service-desc">Holes, cracks, water damage? We patch, texture-match, and paint so seamlessly you'll forget it ever happened.</p>
+          <p class="service-price">From $89</p>
+        </div>
+
+        <div class="service-card">
+          <div class="service-num">02</div>
+          <div class="service-icon-box" style="background: var(--blue);">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="stroke: white;">
+              <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+            </svg>
+          </div>
+          <div class="service-name">Carpentry & Wood</div>
+          <p class="service-desc">Shelving, trim work, cabinet repairs, custom installations. We work with wood like pros because we ARE pros.</p>
+          <p class="service-price">From $99/hr</p>
+        </div>
+
+        <div class="service-card">
+          <div class="service-num">03</div>
+          <div class="service-icon-box" style="background: var(--red);">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="stroke: white;">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+          </div>
+          <div class="service-name">Fixture Install</div>
+          <p class="service-desc">Ceiling fans, light fixtures, faucets, towel bars, curtain rods — you bought it, we'll hang/install it perfectly.</p>
+          <p class="service-price">From $65</p>
+        </div>
+
+        <div class="service-card">
+          <div class="service-num">04</div>
+          <div class="service-icon-box">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            </svg>
+          </div>
+          <div class="service-name">Furniture Assembly</div>
+          <p class="service-desc">IKEA instructions making you cry? Let us handle it. We assemble all furniture brands fast and correctly, first time.</p>
+          <p class="service-price">From $79</p>
+        </div>
+
+        <div class="service-card">
+          <div class="service-num">05</div>
+          <div class="service-icon-box" style="background: var(--blue);">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="stroke: white;">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 8v4l3 3"/>
+            </svg>
+          </div>
+          <div class="service-name">Caulking & Sealing</div>
+          <p class="service-desc">Bathroom, kitchen, windows — proper caulking saves you from water damage and keeps your home sealed tight.</p>
+          <p class="service-price">From $75</p>
+        </div>
+
+        <div class="service-card">
+          <div class="service-num">06</div>
+          <div class="service-icon-box" style="background: var(--red);">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" style="stroke: white;">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+          </div>
+          <div class="service-name">Odd Jobs & More</div>
+          <p class="service-desc">TV mounting, door repairs, tile work, weatherstripping, gutter cleaning — if it needs fixing, we've done it.</p>
+          <p class="service-price">From $59</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- WHY US -->
+  <section class="why-us" id="why-us">
+    <div class="container">
+      <div class="why-inner">
+        <div class="why-big-card reveal">
+          <div class="why-big-num">8K+</div>
+          <div class="why-big-label">Jobs Completed!</div>
+          <p class="why-big-sublabel">Across Miami-Dade since 2014</p>
+        </div>
+
+        <div>
+          <div class="section-tag reveal" style="background: var(--yellow); color: var(--black);">Why ToolBelt?</div>
+          <h2 class="section-title-comic reveal reveal-delay-1" style="color: var(--white);">The Mightiest<br>Handymen!</h2>
+          <div class="why-features">
+            <div class="why-feature reveal reveal-delay-2">
+              <div class="why-feature-icon">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </div>
+              <div class="why-feature-text">
+                <div class="why-feature-title">Same-Day Service</div>
+                <p class="why-feature-desc">Call before noon, get us that same afternoon. Life's too short to wait a week for a handyman.</p>
+              </div>
+            </div>
+            <div class="why-feature reveal reveal-delay-3">
+              <div class="why-feature-icon">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                </svg>
+              </div>
+              <div class="why-feature-text">
+                <div class="why-feature-title">Licensed & Insured</div>
+                <p class="why-feature-desc">FL Contractor licensed and fully insured. Your home is in safe hands — we back every job with our guarantee.</p>
+              </div>
+            </div>
+            <div class="why-feature reveal reveal-delay-4">
+              <div class="why-feature-icon">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="12" y1="1" x2="12" y2="23"/>
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                </svg>
+              </div>
+              <div class="why-feature-text">
+                <div class="why-feature-title">Upfront Flat-Rate Pricing</div>
+                <p class="why-feature-desc">No surprise invoices. We quote before we start and that's the price you pay. Full stop.</p>
+              </div>
+            </div>
+            <div class="why-feature reveal reveal-delay-5">
+              <div class="why-feature-icon">
+                <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                  <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+              </div>
+              <div class="why-feature-text">
+                <div class="why-feature-title">30-Day Workmanship Guarantee</div>
+                <p class="why-feature-desc">If it's not right, we fix it free. Every job backed by our 30-day no-questions guarantee.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process" id="process">
+    <div class="container">
+      <div class="process-header">
+        <div class="section-tag reveal">How It Works</div>
+        <h2 class="section-title-comic reveal reveal-delay-1">Fixed in 4<br>Easy Steps!</h2>
+      </div>
+      <div class="process-grid reveal">
+        <div class="process-step">
+          <div class="process-step-circle">1</div>
+          <div class="process-step-name">You Call!</div>
+          <p class="process-step-desc">Ring us or submit a quote request. Tell us what needs fixing — no job description is too weird for us.</p>
+        </div>
+        <div class="process-step">
+          <div class="process-step-circle" style="background: var(--red); color: white;">2</div>
+          <div class="process-step-name">We Quote!</div>
+          <p class="process-step-desc">We give you a flat-rate, upfront price before starting any work. No hidden fees, ever. Promise.</p>
+        </div>
+        <div class="process-step">
+          <div class="process-step-circle" style="background: var(--blue); color: white;">3</div>
+          <div class="process-step-name">We Fix!</div>
+          <p class="process-step-desc">Our expert handyman arrives on time, brings all the tools needed, and gets the job done right.</p>
+        </div>
+        <div class="process-step">
+          <div class="process-step-circle">4</div>
+          <div class="process-step-name">You Enjoy!</div>
+          <p class="process-step-desc">Job done, cleaned up, and inspected. You approve, we invoice. Backed by our 30-day guarantee!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials" id="testimonials">
+    <div class="container">
+      <div class="testimonials-header">
+        <div class="section-tag reveal">Reviews</div>
+        <h2 class="section-title-comic reveal reveal-delay-1">Happy Customers<br>Say It Best!</h2>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card reveal">
+          <div class="speech-bubble">
+            <div class="speech-stars">
+              <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+            </div>
+            <p class="speech-text">Called at 9am about a fist-sized hole in my drywall from a doorknob. By 2pm it was patched, textured, and painted. I couldn't even find where it was. UNREAL turnaround. My go-to handyman forever.</p>
+          </div>
+          <div class="testimonial-author-row">
+            <div class="testimonial-avatar avatar-red">J</div>
+            <div>
+              <div class="testimonial-name">Jorge M.</div>
+              <div class="testimonial-service">Drywall Repair · Brickell</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card reveal reveal-delay-1">
+          <div class="speech-bubble">
+            <div class="speech-stars">
+              <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+            </div>
+            <p class="speech-text">Hired ToolBelt Co. to assemble 4 IKEA pieces and mount 3 TVs in my new apartment. Marco was done in 3 hours and made me feel like I was the one being difficult for ordering IKEA. 10/10 would hire again.</p>
+          </div>
+          <div class="testimonial-author-row">
+            <div class="testimonial-avatar avatar-blue">A</div>
+            <div>
+              <div class="testimonial-name">Amanda R.</div>
+              <div class="testimonial-service">Furniture Assembly · TV Mounting · Doral</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card reveal reveal-delay-2">
+          <div class="speech-bubble">
+            <div class="speech-stars">
+              <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+            </div>
+            <p class="speech-text">This company does what they say they'll do. Showed up on time, gave me the quote, fixed my ceiling fan, replaced my garbage disposal, and recaulked my tub — all in one visit. Flat rate pricing is a dream.</p>
+          </div>
+          <div class="testimonial-author-row">
+            <div class="testimonial-avatar avatar-yellow">D</div>
+            <div>
+              <div class="testimonial-name">David K.</div>
+              <div class="testimonial-service">Multiple Repairs · Kendall</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section class="pricing" id="pricing">
+    <div class="container">
+      <div class="pricing-header">
+        <div class="section-tag reveal" style="background: var(--black); color: var(--yellow);">Simple Pricing</div>
+        <h2 class="section-title-comic reveal reveal-delay-1">No Surprises,<br>Just Results!</h2>
+      </div>
+      <div class="pricing-grid reveal">
+        <div class="pricing-card">
+          <div class="pricing-tier">Quick Fix</div>
+          <div class="pricing-price">$89</div>
+          <div class="pricing-unit">Flat rate · 1 small task</div>
+          <ul class="pricing-features">
+            <li>1 repair / task</li>
+            <li>Up to 2 hours labor</li>
+            <li>All tools included</li>
+            <li>30-day guarantee</li>
+            <li>Same-day available</li>
+          </ul>
+          <a href="#contact" class="btn-comic btn-white" style="display: block; text-align: center;">Book Quick Fix</a>
+        </div>
+
+        <div class="pricing-card featured">
+          <div class="pricing-badge">★ MOST POPULAR ★</div>
+          <div class="pricing-tier">Half Day</div>
+          <div class="pricing-price">$249</div>
+          <div class="pricing-unit">Flat rate · Up to 4 hours</div>
+          <ul class="pricing-features">
+            <li>Multiple tasks / repairs</li>
+            <li>Up to 4 hours labor</li>
+            <li>All tools included</li>
+            <li>30-day guarantee</li>
+            <li>Priority scheduling</li>
+            <li>Free touch-up return</li>
+          </ul>
+          <a href="#contact" class="btn-comic btn-yellow" style="display: block; text-align: center; color: var(--black);">Book Half Day</a>
+        </div>
+
+        <div class="pricing-card">
+          <div class="pricing-tier">Full Day</div>
+          <div class="pricing-price">$449</div>
+          <div class="pricing-unit">Flat rate · Full 8 hours</div>
+          <ul class="pricing-features">
+            <li>All-day project work</li>
+            <li>Up to 8 hours labor</li>
+            <li>All tools + materials*</li>
+            <li>30-day guarantee</li>
+            <li>Priority scheduling</li>
+            <li>Project manager assigned</li>
+          </ul>
+          <a href="#contact" class="btn-comic btn-white" style="display: block; text-align: center;">Book Full Day</a>
+        </div>
+      </div>
+      <p style="text-align:center; margin-top: 24px; font-size: 13px; font-weight: 700; color: rgba(0,0,0,0.5);">*Materials billed separately at cost. Specialty jobs (electrical, plumbing permits) quoted individually.</p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq" id="faq">
+    <div class="container">
+      <div class="faq-header">
+        <div class="section-tag reveal">Questions?</div>
+        <h2 class="section-title-comic reveal reveal-delay-1">We've Got<br>Answers!</h2>
+      </div>
+      <div class="faq-grid reveal">
+        <div class="faq-item">
+          <button class="faq-question"><span class="faq-question-text">Do You Do Same-Day Service?</span><div class="faq-plus">+</div></button>
+          <div class="faq-answer"><p class="faq-answer-inner">YES! We offer same-day service for most small-to-medium jobs if you call before noon on weekdays. Weekend same-day is subject to availability. Call (786) 555-0650 and we'll get you on the schedule.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question"><span class="faq-question-text">Are You Licensed And Insured?</span><div class="faq-plus">+</div></button>
+          <div class="faq-answer"><p class="faq-answer-inner">Absolutely. ToolBelt Co. holds a Florida Registered Contractor license and carries $2M general liability insurance plus workers' comp. We can provide certificates of insurance on request.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question"><span class="faq-question-text">What If The Job Takes Longer?</span><div class="faq-plus">+</div></button>
+          <div class="faq-answer"><p class="faq-answer-inner">We quote before we start. If unexpected complications arise (hidden damage, structural issues, etc.), we stop, inform you immediately, and requote before proceeding. No billing surprises — ever.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question"><span class="faq-question-text">Do I Need To Provide Materials?</span><div class="faq-plus">+</div></button>
+          <div class="faq-answer"><p class="faq-answer-inner">For most jobs, no — we bring standard materials and supplies. For specific materials (branded paint, custom fixtures, specialty hardware), we either source them for you at cost or you can provide them ahead of time.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question"><span class="faq-question-text">What Areas Do You Cover?</span><div class="faq-plus">+</div></button>
+          <div class="faq-answer"><p class="faq-answer-inner">We serve all of Miami-Dade County including Miami, Coral Gables, Brickell, Doral, Hialeah, Kendall, Miami Beach, and surrounding areas. For Broward County jobs, call for availability.</p></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question"><span class="faq-question-text">Can You Do Electrical Or Plumbing?</span><div class="faq-plus">+</div></button>
+          <div class="faq-answer"><p class="faq-answer-inner">We handle fixture-level electrical (ceiling fans, light fixtures, outlets) and plumbing (faucets, disposals, shutoff valves). For work requiring permits, we partner with licensed electricians and plumbers and coordinate it all for you.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AREAS -->
+  <section class="areas" id="areas">
+    <div class="container">
+      <h2 class="areas-title reveal">We Serve All of South Florida!</h2>
+      <div class="areas-grid reveal reveal-delay-1">
+        <span class="area-tag">Miami</span>
+        <span class="area-tag">Coral Gables</span>
+        <span class="area-tag">Doral</span>
+        <span class="area-tag">Hialeah</span>
+        <span class="area-tag">Kendall</span>
+        <span class="area-tag">Miami Beach</span>
+        <span class="area-tag">Brickell</span>
+        <span class="area-tag">Westchester</span>
+        <span class="area-tag">South Miami</span>
+        <span class="area-tag">Homestead</span>
+        <span class="area-tag">Miami Gardens</span>
+        <span class="area-tag">North Miami</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact" id="contact">
+    <div class="container">
+      <div class="contact-inner">
+        <div class="contact-left">
+          <div class="section-tag reveal">Contact Us!</div>
+          <h2 class="section-title-comic reveal reveal-delay-1">Stop Living<br>With Broken!<br><span style="color: var(--red);">Call Us!</span></h2>
+          <div class="contact-details">
+            <div class="contact-detail-item reveal reveal-delay-2">
+              <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.21h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 8.91A16 16 0 0 0 15.09 15.91l.86-.86a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke-linecap="round"/></svg>
+              <div class="contact-detail-text">
+                <strong>(786) 555-0650</strong>
+                Mon–Sat 7AM–8PM · Sun 9AM–5PM
+              </div>
+            </div>
+            <div class="contact-detail-item reveal reveal-delay-3">
+              <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              <div class="contact-detail-text">
+                <strong>info@toolbeltco.com</strong>
+                We reply in under 1 hour
+              </div>
+            </div>
+            <div class="contact-detail-item reveal reveal-delay-4">
+              <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke-linecap="round"/><circle cx="12" cy="10" r="3"/></svg>
+              <div class="contact-detail-text">
+                <strong>Serving All Miami-Dade</strong>
+                We come to you — no shop needed
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-form-wrapper reveal">
+          <div class="contact-form-title">Get a Free Quote — No Pressure!</div>
+          <form action="https://formsubmit.co/info@toolbeltco.com" method="POST" id="contactForm" novalidate>
+            <input type="hidden" name="_subject" value="New Quote Request - ToolBelt Co.">
+            <input type="hidden" name="_captcha" value="false">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="fname">First Name</label>
+                <input class="form-input" type="text" id="fname" name="first_name" placeholder="Jorge" required>
+                <span class="form-error" id="fnameErr">Name required!</span>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="phone">Phone Number</label>
+                <input class="form-input" type="tel" id="phone" name="phone" placeholder="(305) 555-0000" required>
+                <span class="form-error" id="phoneErr">Phone required!</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="email">Email Address</label>
+              <input class="form-input" type="email" id="email" name="email" placeholder="jorge@email.com" required>
+              <span class="form-error" id="emailErr">Valid email required!</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="service">Type of Job</label>
+              <select class="form-select" id="service" name="service">
+                <option value="">Select the job type...</option>
+                <option value="Drywall Repair">Drywall Repair</option>
+                <option value="Carpentry">Carpentry &amp; Wood Work</option>
+                <option value="Fixture Installation">Fixture Installation</option>
+                <option value="Furniture Assembly">Furniture Assembly</option>
+                <option value="Caulking & Sealing">Caulking &amp; Sealing</option>
+                <option value="TV Mounting">TV Mounting</option>
+                <option value="Multiple / Odd Jobs">Multiple / Odd Jobs</option>
+                <option value="Other">Something Else</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="message">Describe The Job</label>
+              <textarea class="form-textarea" id="message" name="message" placeholder="Tell us what needs fixing! Photos help if you have them."></textarea>
+            </div>
+            <button type="submit" class="form-submit">Get My Free Quote! →</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="section-tag" style="background: var(--black); color: var(--yellow);">Don't Wait!</div>
+    <h2 class="cta-title">Stop Living<br>With <span>Broken!</span></h2>
+    <p class="cta-sub">Same-day service available. Flat-rate pricing. 30-day guarantee. What are you waiting for?</p>
+    <div style="display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;">
+      <a href="tel:7865550650" class="btn-comic btn-red">Call (786) 555-0650</a>
+      <a href="#contact" class="btn-comic btn-blue">Get a Free Quote</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-logo">ToolBelt Co.</div>
+          <p class="footer-desc">Miami's most reliable handyman service since 2014. No job too small, no excuse good enough.</p>
+          <p class="footer-license">FL Contractor License #HM2024-0617<br>Licensed · Insured · Bonded</p>
+        </div>
+        <div>
+          <div class="footer-col-title">Services</div>
+          <ul class="footer-links">
+            <li><a href="#services">Drywall Repair</a></li>
+            <li><a href="#services">Carpentry</a></li>
+            <li><a href="#services">Fixture Install</a></li>
+            <li><a href="#services">Furniture Assembly</a></li>
+            <li><a href="#services">Caulking & Sealing</a></li>
+            <li><a href="#services">Odd Jobs</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Company</div>
+          <ul class="footer-links">
+            <li><a href="#why-us">Why ToolBelt</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#testimonials">Reviews</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Call Now</div>
+          <ul class="footer-links">
+            <li><a href="tel:7865550650">(786) 555-0650</a></li>
+            <li><a href="mailto:info@toolbeltco.com">info@toolbeltco.com</a></li>
+            <li><a href="#">All Miami-Dade County</a></li>
+            <li><a href="#">Mon–Sat: 7AM–8PM</a></li>
+            <li><a href="#">Sun: 9AM–5PM</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 ToolBelt Co. All Rights Reserved.</p>
+        <a href="https://webnari.io" class="webnari-badge">Powered by Webnari</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // HAMBURGER
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileClose = document.getElementById('mobileClose');
+    hamburger.addEventListener('click', () => mobileMenu.classList.add('open'));
+    mobileClose.addEventListener('click', () => mobileMenu.classList.remove('open'));
+    document.querySelectorAll('.mobile-link').forEach(link => {
+      link.addEventListener('click', () => mobileMenu.classList.remove('open'));
+    });
+
+    // FAQ ACCORDION
+    document.querySelectorAll('.faq-question').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-item');
+        const isOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+        if (!isOpen) item.classList.add('open');
+      });
+    });
+
+    // SCROLL REVEAL
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // FORM VALIDATION
+    const form = document.getElementById('contactForm');
+    form.addEventListener('submit', function(e) {
+      let valid = true;
+      const checks = [
+        { id: 'fname', errId: 'fnameErr', check: v => v.trim().length > 0 },
+        { id: 'phone', errId: 'phoneErr', check: v => v.trim().length >= 7 },
+        { id: 'email', errId: 'emailErr', check: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) },
+      ];
+      checks.forEach(f => {
+        const input = document.getElementById(f.id);
+        const err = document.getElementById(f.errId);
+        if (!f.check(input.value)) { err.classList.add('visible'); valid = false; }
+        else { err.classList.remove('visible'); }
+      });
+      if (!valid) e.preventDefault();
+    });
+  </script>
+</body>
+</html>

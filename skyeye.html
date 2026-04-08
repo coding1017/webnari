@@ -1,0 +1,2426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SkyEye Aerials | Drone Photography & Videography — Miami, FL</title>
+  <meta name="description" content="SkyEye Aerials — FAA-certified drone photography and aerial videography in Miami. Real estate, weddings, commercial, film, inspection, and mapping services.">
+  <meta property="og:title" content="SkyEye Aerials | Miami Drone Photography">
+  <meta property="og:description" content="FAA-certified aerial cinematography and photography. 4K drone footage, real estate, events, commercial production. Miami's premier drone service.">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,200;0,300;0,400;0,500;0,700;1,200&family=Space+Mono:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --space: #06040C;
+      --dark: #0B0818;
+      --surface: #110E1E;
+      --surface2: #18152A;
+      --border: #2A2245;
+      --border2: #3A3260;
+      --indigo: #4F46E5;
+      --indigo2: #6366F1;
+      --indigo3: #818CF8;
+      --lime: #B8FF00;
+      --lime2: #D4FF4D;
+      --silver: #94A3B8;
+      --silver2: #CBD5E1;
+      --white: #F0F0FF;
+      --muted: #64748B;
+      --text: #8892B0;
+      --glow-indigo: rgba(79,70,229,0.4);
+      --glow-lime: rgba(184,255,0,0.3);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Exo 2', sans-serif;
+      background: var(--space);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    /* ─── SCANLINE OVERLAY ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.08) 2px,
+        rgba(0,0,0,0.08) 4px
+      );
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    /* ─── ISOMETRIC GRID GLOBAL BG ─── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(79,70,229,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(79,70,229,0.04) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    * { position: relative; z-index: 1; }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 200;
+      background: rgba(6,4,12,0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 40px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .nav-logo-mark {
+      width: 36px;
+      height: 36px;
+      border: 1.5px solid var(--indigo);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .nav-logo-mark::before {
+      content: '';
+      position: absolute;
+      inset: 3px;
+      border: 1px solid rgba(79,70,229,0.3);
+    }
+
+    .nav-logo-mark svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--lime);
+      fill: none;
+    }
+
+    .nav-logo-text {
+      font-family: 'Space Mono', monospace;
+      font-size: 15px;
+      color: var(--white);
+      letter-spacing: 0.08em;
+    }
+
+    .nav-logo-text span { color: var(--lime); }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.3s;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0; right: 0;
+      height: 1px;
+      background: var(--lime);
+      transform: scaleX(0);
+      transition: transform 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--white); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+
+    .nav-cta {
+      background: transparent !important;
+      color: var(--lime) !important;
+      border: 1px solid var(--lime) !important;
+      font-family: 'Space Mono', monospace !important;
+      font-size: 11px !important;
+      letter-spacing: 0.12em !important;
+      padding: 8px 20px !important;
+      text-transform: uppercase !important;
+      transition: all 0.3s !important;
+      box-shadow: 0 0 0 rgba(184,255,0,0) !important;
+    }
+
+    .nav-cta:hover {
+      background: rgba(184,255,0,0.08) !important;
+      box-shadow: 0 0 20px rgba(184,255,0,0.2) !important;
+    }
+
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+      background: none;
+      border: 1px solid var(--border2);
+      padding: 6px 8px;
+    }
+
+    .nav-hamburger span {
+      width: 18px;
+      height: 1.5px;
+      background: var(--lime);
+      display: block;
+    }
+
+    /* MOBILE MENU */
+    .mobile-menu {
+      position: fixed;
+      inset: 0;
+      background: var(--space);
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s;
+    }
+
+    .mobile-menu.open { opacity: 1; pointer-events: all; }
+
+    .mobile-menu a {
+      font-family: 'Space Mono', monospace;
+      font-size: 24px;
+      letter-spacing: 0.1em;
+      color: var(--white);
+      text-decoration: none;
+      text-transform: uppercase;
+      transition: color 0.2s;
+    }
+
+    .mobile-menu a:hover { color: var(--lime); }
+
+    .mobile-close {
+      position: absolute;
+      top: 20px; right: 32px;
+      background: none;
+      border: 1px solid var(--border2);
+      color: var(--silver);
+      font-family: 'Space Mono', monospace;
+      font-size: 14px;
+      padding: 8px 14px;
+      cursor: pointer;
+    }
+
+    /* ─── HUD HEADER BAR ─── */
+    .hud-bar {
+      position: fixed;
+      top: 64px;
+      left: 0; right: 0;
+      z-index: 150;
+      background: rgba(6,4,12,0.85);
+      border-bottom: 1px solid var(--border);
+      padding: 6px 40px;
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      overflow: hidden;
+    }
+
+    .hud-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .hud-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .hud-value {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      color: var(--lime);
+    }
+
+    .hud-separator {
+      width: 1px;
+      height: 20px;
+      background: var(--border);
+    }
+
+    .hud-pulse {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--lime);
+      animation: pulse-glow 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse-glow {
+      0%, 100% { opacity: 1; box-shadow: 0 0 6px var(--lime); }
+      50% { opacity: 0.4; box-shadow: 0 0 2px var(--lime); }
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      padding-top: 110px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .hero-left {
+      padding: 60px 60px 60px 80px;
+      position: relative;
+    }
+
+    /* Corner bracket decoration */
+    .hero-left::before {
+      content: '';
+      position: absolute;
+      top: 40px; left: 60px;
+      width: 40px; height: 40px;
+      border-top: 1.5px solid var(--indigo);
+      border-left: 1.5px solid var(--indigo);
+    }
+
+    .hero-coord {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .hero-coord-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--indigo);
+    }
+
+    .hero-title {
+      font-family: 'Exo 2', sans-serif;
+      font-size: clamp(44px, 5.5vw, 76px);
+      font-weight: 700;
+      line-height: 1.0;
+      color: var(--white);
+      margin-bottom: 12px;
+      letter-spacing: -0.01em;
+    }
+
+    .hero-title .lime { color: var(--lime); }
+    .hero-title .outline {
+      -webkit-text-stroke: 1.5px var(--indigo3);
+      color: transparent;
+    }
+
+    .hero-subtitle {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 17px;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--text);
+      max-width: 440px;
+      margin-bottom: 40px;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 56px;
+    }
+
+    .btn-primary {
+      background: var(--indigo);
+      color: var(--white);
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 14px 28px;
+      border: 1px solid var(--indigo);
+      text-decoration: none;
+      transition: all 0.3s;
+      box-shadow: 0 0 0 rgba(79,70,229,0);
+    }
+
+    .btn-primary:hover {
+      background: var(--indigo2);
+      box-shadow: 0 0 30px rgba(79,70,229,0.4);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--silver2);
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 14px 28px;
+      border: 1px solid var(--border2);
+      text-decoration: none;
+      transition: all 0.3s;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--silver);
+      color: var(--white);
+    }
+
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+
+    .hero-stat {
+      background: var(--surface);
+      padding: 16px;
+      text-align: center;
+    }
+
+    .hero-stat-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 22px;
+      color: var(--lime);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .hero-stat-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    .hero-right {
+      position: relative;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* Targeting reticle rings */
+    .hero-rings {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .hero-ring {
+      position: absolute;
+      border: 1px solid rgba(79,70,229,0.2);
+      border-radius: 50%;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      animation: ring-rotate 20s linear infinite;
+    }
+
+    .hero-ring:nth-child(2) { animation-duration: 30s; animation-direction: reverse; }
+    .hero-ring:nth-child(3) { animation-duration: 25s; }
+
+    @keyframes ring-rotate {
+      0% { transform: translate(-50%, -50%) rotate(0deg); }
+      100% { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    /* Scan line animation */
+    .hero-scan {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(184,255,0,0.6), transparent);
+      animation: scan 4s ease-in-out infinite;
+      box-shadow: 0 0 20px rgba(184,255,0,0.3);
+    }
+
+    @keyframes scan {
+      0% { top: 0; opacity: 1; }
+      50% { top: 100%; opacity: 0.6; }
+      100% { top: 0; opacity: 1; }
+    }
+
+    .hero-drone-wrap {
+      position: relative;
+      z-index: 5;
+      animation: hover-float 4s ease-in-out infinite;
+    }
+
+    @keyframes hover-float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    /* Crosshairs */
+    .crosshair {
+      position: absolute;
+      z-index: 4;
+    }
+
+    .crosshair-h {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(79,70,229,0.4), transparent);
+      top: 50%; left: 0; right: 0;
+    }
+
+    .crosshair-v {
+      width: 1px;
+      background: linear-gradient(180deg, transparent, rgba(79,70,229,0.4), transparent);
+      left: 50%; top: 0; bottom: 0;
+    }
+
+    /* GPS coordinate overlays */
+    .gps-overlay {
+      position: absolute;
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      color: rgba(184,255,0,0.5);
+      letter-spacing: 0.08em;
+    }
+
+    .gps-tl { top: 80px; left: 20px; }
+    .gps-tr { top: 80px; right: 20px; text-align: right; }
+    .gps-bl { bottom: 60px; left: 20px; }
+    .gps-br { bottom: 60px; right: 20px; text-align: right; }
+
+    /* ─── SECTIONS ─── */
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 40px; }
+
+    .section-label {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .section-label-line {
+      height: 1px;
+      width: 32px;
+      background: var(--indigo);
+    }
+
+    .section-label span {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--indigo3);
+    }
+
+    .section-title {
+      font-family: 'Exo 2', sans-serif;
+      font-size: clamp(36px, 3.5vw, 52px);
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.1;
+      letter-spacing: -0.01em;
+    }
+
+    .section-title .lime { color: var(--lime); }
+
+    /* ─── SERVICES ─── */
+    .services {
+      padding: 120px 0;
+      background: var(--space);
+    }
+
+    .services-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: end;
+      margin-bottom: 72px;
+    }
+
+    .services-desc {
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.8;
+      color: var(--text);
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+
+    .service-card {
+      background: var(--surface);
+      padding: 36px 30px;
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .service-card::before {
+      content: attr(data-num);
+      position: absolute;
+      top: -10px;
+      right: 20px;
+      font-family: 'Space Mono', monospace;
+      font-size: 80px;
+      color: rgba(79,70,229,0.06);
+      line-height: 1;
+      pointer-events: none;
+    }
+
+    .service-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--indigo), var(--lime));
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s;
+    }
+
+    .service-card:hover {
+      background: var(--surface2);
+    }
+
+    .service-card:hover::after {
+      transform: scaleX(1);
+    }
+
+    .service-icon {
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .service-card:hover .service-icon {
+      border-color: var(--indigo);
+      box-shadow: 0 0 20px rgba(79,70,229,0.2);
+    }
+
+    .service-icon svg {
+      width: 20px;
+      height: 20px;
+      stroke: var(--indigo3);
+      fill: none;
+      stroke-width: 1.5;
+    }
+
+    .service-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--indigo3);
+      margin-bottom: 8px;
+    }
+
+    .service-name {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 10px;
+    }
+
+    .service-desc {
+      font-size: 13px;
+      font-weight: 300;
+      line-height: 1.65;
+      color: var(--text);
+    }
+
+    .service-price {
+      margin-top: 16px;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      color: var(--lime);
+    }
+
+    /* ─── CAPABILITIES / WHY US ─── */
+    .capabilities {
+      padding: 120px 0;
+      background: var(--dark);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .capabilities-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 100px;
+      align-items: center;
+    }
+
+    .capability-visual {
+      position: relative;
+    }
+
+    .cap-main-stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 48px 40px;
+      text-align: center;
+      position: relative;
+    }
+
+    /* Corner decorators */
+    .cap-main-stat::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: -1px;
+      width: 20px; height: 20px;
+      border-top: 2px solid var(--lime);
+      border-left: 2px solid var(--lime);
+    }
+
+    .cap-main-stat::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; right: -1px;
+      width: 20px; height: 20px;
+      border-bottom: 2px solid var(--lime);
+      border-right: 2px solid var(--lime);
+    }
+
+    .cap-stat-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 80px;
+      line-height: 1;
+      color: var(--lime);
+      letter-spacing: -0.02em;
+      text-shadow: 0 0 40px rgba(184,255,0,0.3);
+    }
+
+    .cap-stat-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    .cap-stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+      margin-top: 1px;
+    }
+
+    .cap-stat-mini {
+      background: var(--surface);
+      padding: 20px;
+      text-align: center;
+    }
+
+    .cap-stat-mini-num {
+      font-family: 'Space Mono', monospace;
+      font-size: 20px;
+      color: var(--indigo3);
+      line-height: 1;
+    }
+
+    .cap-stat-mini-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-top: 4px;
+    }
+
+    .cap-features {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .cap-feature {
+      display: grid;
+      grid-template-columns: 40px 1fr;
+      gap: 20px;
+      align-items: flex-start;
+      padding: 24px 0;
+      border-bottom: 1px solid var(--border);
+      transition: all 0.3s;
+    }
+
+    .cap-feature:first-child { padding-top: 0; }
+
+    .cap-feature:hover {
+      padding-left: 8px;
+    }
+
+    .cap-feature-icon {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: border-color 0.3s;
+    }
+
+    .cap-feature:hover .cap-feature-icon {
+      border-color: var(--indigo);
+      box-shadow: 0 0 16px rgba(79,70,229,0.2);
+    }
+
+    .cap-feature-icon svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--indigo3);
+      fill: none;
+      stroke-width: 1.5;
+    }
+
+    .cap-feature-name {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+
+    .cap-feature-desc {
+      font-size: 13px;
+      font-weight: 300;
+      line-height: 1.6;
+      color: var(--text);
+    }
+
+    /* ─── PORTFOLIO GALLERY ─── */
+    .portfolio {
+      padding: 120px 0;
+      background: var(--space);
+    }
+
+    .portfolio-header {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: end;
+      margin-bottom: 56px;
+    }
+
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: auto auto;
+      gap: 1px;
+      background: var(--border);
+    }
+
+    .portfolio-card {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+
+    .portfolio-card:first-child {
+      grid-column: span 2;
+    }
+
+    .portfolio-card-inner {
+      aspect-ratio: 16/9;
+      background: var(--surface);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.4s;
+    }
+
+    .portfolio-card:first-child .portfolio-card-inner {
+      aspect-ratio: auto;
+      height: 320px;
+    }
+
+    .portfolio-card-inner svg {
+      width: 48px;
+      height: 48px;
+      stroke: var(--border2);
+      fill: none;
+      transition: all 0.4s;
+    }
+
+    .portfolio-card:hover .portfolio-card-inner {
+      background: var(--surface2);
+    }
+
+    .portfolio-card:hover .portfolio-card-inner svg {
+      stroke: var(--indigo3);
+      filter: drop-shadow(0 0 10px rgba(79,70,229,0.5));
+    }
+
+    /* Gradient overlay placeholders for visual interest */
+    .portfolio-card:nth-child(1) .portfolio-card-inner {
+      background: linear-gradient(135deg, rgba(17,14,30,0.8), rgba(11,8,24,0.95));
+      border: 1px solid rgba(79,70,229,0.1);
+    }
+
+    .portfolio-card:nth-child(2) .portfolio-card-inner {
+      background: linear-gradient(135deg, rgba(11,8,24,0.9), rgba(24,21,42,0.8));
+    }
+
+    .portfolio-card:nth-child(3) .portfolio-card-inner {
+      background: linear-gradient(135deg, rgba(24,21,42,0.9), rgba(17,14,30,0.8));
+    }
+
+    .portfolio-card:nth-child(4) .portfolio-card-inner {
+      background: linear-gradient(135deg, rgba(11,8,24,0.95), rgba(6,4,12,0.9));
+    }
+
+    .portfolio-card:nth-child(5) .portfolio-card-inner {
+      background: linear-gradient(135deg, rgba(17,14,30,0.9), rgba(24,21,42,0.85));
+    }
+
+    .portfolio-overlay {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 20px;
+      background: linear-gradient(to top, rgba(6,4,12,0.95), transparent);
+      transform: translateY(60%);
+      transition: transform 0.4s;
+    }
+
+    .portfolio-card:hover .portfolio-overlay {
+      transform: translateY(0);
+    }
+
+    .portfolio-title {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+
+    .portfolio-tag {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--lime);
+    }
+
+    /* ─── PROCESS ─── */
+    .process {
+      padding: 120px 0;
+      background: var(--dark);
+      border-top: 1px solid var(--border);
+    }
+
+    .process-header { text-align: center; margin-bottom: 80px; }
+    .process-header .section-label { justify-content: center; }
+
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      position: relative;
+    }
+
+    .process-steps::before {
+      content: '';
+      position: absolute;
+      top: 22px;
+      left: calc(12.5% + 22px);
+      right: calc(12.5% + 22px);
+      height: 1px;
+      background: linear-gradient(90deg, var(--indigo), var(--lime), var(--indigo));
+    }
+
+    .process-step {
+      padding: 0 24px;
+      text-align: center;
+    }
+
+    .process-step-num {
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--indigo);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      font-family: 'Space Mono', monospace;
+      font-size: 14px;
+      color: var(--indigo3);
+      position: relative;
+      z-index: 1;
+      background: var(--dark);
+    }
+
+    .process-step-name {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 10px;
+    }
+
+    .process-step-desc {
+      font-size: 13px;
+      font-weight: 300;
+      line-height: 1.6;
+      color: var(--text);
+    }
+
+    /* ─── TESTIMONIALS ─── */
+    .testimonials {
+      padding: 120px 0;
+      background: var(--space);
+      border-top: 1px solid var(--border);
+    }
+
+    .testimonials-header { text-align: center; margin-bottom: 72px; }
+    .testimonials-header .section-label { justify-content: center; }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      background: var(--border);
+    }
+
+    .testimonial-card {
+      background: var(--surface);
+      padding: 36px 32px;
+      position: relative;
+      transition: background 0.3s;
+    }
+
+    .testimonial-card:hover {
+      background: var(--surface2);
+    }
+
+    .testimonial-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .testimonial-avatar {
+      width: 44px;
+      height: 44px;
+      border: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Space Mono', monospace;
+      font-size: 14px;
+      color: var(--indigo3);
+      flex-shrink: 0;
+    }
+
+    .testimonial-name {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--white);
+    }
+
+    .testimonial-handle {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: var(--lime);
+      letter-spacing: 0.08em;
+    }
+
+    .testimonial-stars {
+      display: flex;
+      gap: 2px;
+      margin-bottom: 16px;
+    }
+
+    .testimonial-stars svg {
+      width: 12px;
+      height: 12px;
+      fill: var(--indigo3);
+    }
+
+    .testimonial-text {
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--text);
+    }
+
+    /* ─── FAQ ─── */
+    .faq {
+      padding: 120px 0;
+      background: var(--dark);
+      border-top: 1px solid var(--border);
+    }
+
+    .faq-inner {
+      display: grid;
+      grid-template-columns: 1fr 2fr;
+      gap: 100px;
+    }
+
+    .faq-sticky {
+      position: sticky;
+      top: 120px;
+    }
+
+    .faq-list { display: flex; flex-direction: column; }
+
+    .faq-item {
+      border-top: 1px solid var(--border);
+    }
+
+    .faq-item:last-child { border-bottom: 1px solid var(--border); }
+
+    .faq-question {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 0;
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      gap: 16px;
+    }
+
+    .faq-question-text {
+      font-family: 'Exo 2', sans-serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--silver2);
+      line-height: 1.3;
+      transition: color 0.3s;
+    }
+
+    .faq-item.open .faq-question-text { color: var(--white); }
+
+    .faq-toggle {
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.3s;
+    }
+
+    .faq-toggle svg {
+      width: 12px;
+      height: 12px;
+      stroke: var(--muted);
+      transition: transform 0.3s, stroke 0.3s;
+      fill: none;
+    }
+
+    .faq-item.open .faq-toggle {
+      border-color: var(--lime);
+      box-shadow: 0 0 12px rgba(184,255,0,0.2);
+    }
+
+    .faq-item.open .faq-toggle svg {
+      transform: rotate(45deg);
+      stroke: var(--lime);
+    }
+
+    .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+    .faq-answer-inner {
+      padding: 0 0 20px;
+      font-size: 14px;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--text);
+    }
+
+    .faq-item.open .faq-answer { max-height: 300px; }
+
+    /* ─── AREAS ─── */
+    .areas {
+      padding: 80px 0;
+      background: var(--space);
+      border-top: 1px solid var(--border);
+    }
+
+    .areas-inner {
+      display: flex;
+      align-items: center;
+      gap: 60px;
+    }
+
+    .areas-label { flex-shrink: 0; }
+
+    .areas-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .area-tag {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text);
+      padding: 6px 16px;
+      transition: all 0.3s;
+    }
+
+    .area-tag:hover {
+      border-color: var(--indigo);
+      color: var(--indigo3);
+      box-shadow: 0 0 12px rgba(79,70,229,0.15);
+    }
+
+    /* ─── CONTACT ─── */
+    .contact {
+      padding: 120px 0;
+      background: var(--dark);
+      border-top: 1px solid var(--border);
+    }
+
+    .contact-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+    }
+
+    .contact-title {
+      font-family: 'Exo 2', sans-serif;
+      font-size: clamp(32px, 3vw, 44px);
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.15;
+      margin-bottom: 12px;
+    }
+
+    .contact-title .lime { color: var(--lime); }
+
+    .contact-body {
+      font-size: 15px;
+      font-weight: 300;
+      line-height: 1.7;
+      color: var(--text);
+      margin-bottom: 36px;
+    }
+
+    .contact-detail {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .contact-detail-icon {
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .contact-detail-icon svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--indigo3);
+      fill: none;
+      stroke-width: 1.5;
+    }
+
+    .contact-detail-text {
+      font-size: 13px;
+      color: var(--text);
+      font-weight: 300;
+      line-height: 1.5;
+    }
+
+    .contact-detail-text strong {
+      display: block;
+      font-size: 15px;
+      color: var(--white);
+      font-weight: 500;
+      margin-bottom: 1px;
+    }
+
+    .contact-form {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: 44px;
+    }
+
+    /* Form border corner decorators */
+    .contact-form::before {
+      content: '';
+      position: absolute;
+      top: -1px; left: -1px;
+      width: 16px; height: 16px;
+      border-top: 2px solid var(--indigo);
+      border-left: 2px solid var(--indigo);
+    }
+
+    .contact-form::after {
+      content: '';
+      position: absolute;
+      bottom: -1px; right: -1px;
+      width: 16px; height: 16px;
+      border-bottom: 2px solid var(--lime);
+      border-right: 2px solid var(--lime);
+    }
+
+    .form-group { margin-bottom: 18px; }
+
+    .form-label {
+      display: block;
+      font-family: 'Space Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      background: var(--space);
+      border: 1px solid var(--border);
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--white);
+      font-family: 'Exo 2', sans-serif;
+      outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
+    }
+
+    .form-input::placeholder, .form-textarea::placeholder {
+      color: var(--muted);
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--indigo);
+      box-shadow: 0 0 0 1px rgba(79,70,229,0.3);
+    }
+
+    .form-select option { background: var(--space); }
+
+    .form-textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+    .form-submit {
+      width: 100%;
+      background: var(--indigo);
+      color: var(--white);
+      border: 1px solid var(--indigo);
+      padding: 14px;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .form-submit:hover {
+      background: var(--indigo2);
+      box-shadow: 0 0 30px rgba(79,70,229,0.4);
+    }
+
+    .form-error { font-size: 11px; color: #F87171; margin-top: 4px; display: none; font-family: 'Space Mono', monospace; }
+    .form-error.visible { display: block; }
+
+    /* ─── CTA ─── */
+    .cta-section {
+      padding: 100px 0;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .cta-section::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(79,70,229,0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .cta-title {
+      font-family: 'Exo 2', sans-serif;
+      font-size: clamp(36px, 4vw, 56px);
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+
+    .cta-title .lime { color: var(--lime); }
+
+    .cta-sub {
+      font-size: 16px;
+      font-weight: 300;
+      color: var(--text);
+      margin-bottom: 40px;
+    }
+
+    .cta-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    /* ─── FOOTER ─── */
+    footer {
+      background: var(--space);
+      border-top: 1px solid var(--border);
+      padding: 72px 0 36px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 60px;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .footer-logo-text {
+      font-family: 'Space Mono', monospace;
+      font-size: 16px;
+      color: var(--white);
+      letter-spacing: 0.06em;
+    }
+
+    .footer-logo-text span { color: var(--lime); }
+
+    .footer-desc {
+      font-size: 13px;
+      font-weight: 300;
+      line-height: 1.6;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    .footer-license {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: rgba(255,255,255,0.2);
+      letter-spacing: 0.06em;
+      line-height: 1.6;
+    }
+
+    .footer-col-title {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .footer-links a {
+      font-size: 13px;
+      font-weight: 300;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover { color: var(--white); }
+
+    .footer-bottom {
+      border-top: 1px solid var(--border);
+      padding-top: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-bottom p {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--muted);
+      letter-spacing: 0.06em;
+    }
+
+    .webnari-badge {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      color: rgba(255,255,255,0.2);
+      text-decoration: none;
+      letter-spacing: 0.08em;
+      transition: color 0.3s;
+    }
+
+    .webnari-badge:hover { color: var(--lime); }
+
+    /* ─── REVEAL ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+    .reveal-delay-5 { transition-delay: 0.5s; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1024px) {
+      .hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero-right { height: 60vw; }
+      .services-header { grid-template-columns: 1fr; gap: 24px; }
+      .services-grid { grid-template-columns: 1fr 1fr; }
+      .capabilities-inner { grid-template-columns: 1fr; gap: 60px; }
+      .portfolio-header { grid-template-columns: 1fr; }
+      .portfolio-grid { grid-template-columns: 1fr 1fr; }
+      .portfolio-card:first-child { grid-column: span 2; }
+      .process-steps { grid-template-columns: 1fr 1fr; gap: 48px; }
+      .process-steps::before { display: none; }
+      .testimonials-grid { grid-template-columns: 1fr 1fr; }
+      .faq-inner { grid-template-columns: 1fr; gap: 48px; }
+      .faq-sticky { position: static; }
+      .contact-inner { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 24px; }
+      .nav-links { display: none; }
+      .nav-hamburger { display: flex; }
+      .hud-bar { padding: 6px 24px; }
+      .container { padding: 0 24px; }
+      .hero-left { padding: 80px 24px 48px; }
+      .hero-stats { grid-template-columns: 1fr 1fr; }
+      .services-grid { grid-template-columns: 1fr; }
+      .portfolio-grid { grid-template-columns: 1fr; }
+      .portfolio-card:first-child { grid-column: span 1; }
+      .process-steps { grid-template-columns: 1fr 1fr; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .areas-inner { flex-direction: column; align-items: flex-start; }
+      .footer-grid { grid-template-columns: 1fr; gap: 36px; }
+      .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+      .form-row { grid-template-columns: 1fr; }
+      .cta-buttons { flex-direction: column; align-items: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav id="nav">
+    <a href="skyeye.html" class="nav-logo">
+      <div class="nav-logo-mark">
+        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M3 12l2.5-2.5M18.5 12 21 9.5M12 21l2.5-2.5M12 6 9.5 3.5"/>
+          <circle cx="12" cy="12" r="8" opacity="0.3"/>
+        </svg>
+      </div>
+      <div class="nav-logo-text">SKY<span>EYE</span></div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#portfolio">Portfolio</a></li>
+      <li><a href="#capabilities">About</a></li>
+      <li><a href="#testimonials">Reviews</a></li>
+      <li><a href="#contact" class="nav-cta">Book a Flight</a></li>
+    </ul>
+    <button class="nav-hamburger" id="hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- HUD STATUS BAR -->
+  <div class="hud-bar">
+    <div class="hud-item">
+      <div class="hud-pulse"></div>
+      <div class="hud-label">Status</div>
+      <div class="hud-value">AVAILABLE</div>
+    </div>
+    <div class="hud-separator"></div>
+    <div class="hud-item">
+      <div class="hud-label">Location</div>
+      <div class="hud-value">Miami, FL</div>
+    </div>
+    <div class="hud-separator"></div>
+    <div class="hud-item">
+      <div class="hud-label">FAA Part 107</div>
+      <div class="hud-value">CERTIFIED</div>
+    </div>
+    <div class="hud-separator"></div>
+    <div class="hud-item">
+      <div class="hud-label">Max Altitude</div>
+      <div class="hud-value">400 FT AGL</div>
+    </div>
+    <div class="hud-separator"></div>
+    <div class="hud-item">
+      <div class="hud-label">Resolution</div>
+      <div class="hud-value">6K / 4K HDR</div>
+    </div>
+    <div class="hud-separator"></div>
+    <div class="hud-item">
+      <div class="hud-label">Turnaround</div>
+      <div class="hud-value">24-48 HRS</div>
+    </div>
+  </div>
+
+  <!-- MOBILE MENU -->
+  <div class="mobile-menu" id="mobileMenu">
+    <button class="mobile-close" id="mobileClose">[ CLOSE ]</button>
+    <a href="#services" class="mobile-link">Services</a>
+    <a href="#portfolio" class="mobile-link">Portfolio</a>
+    <a href="#capabilities" class="mobile-link">About</a>
+    <a href="#testimonials" class="mobile-link">Reviews</a>
+    <a href="#contact" class="mobile-link">Book a Flight</a>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero" id="home">
+    <div class="hero-left">
+      <div class="hero-coord">
+        <div class="hero-coord-dot"></div>
+        25.7617° N, 80.1918° W — MIAMI METRO AREA
+      </div>
+      <h1 class="hero-title">
+        The <span class="lime">World</span><br>
+        From <span class="outline">Above.</span>
+      </h1>
+      <p class="hero-subtitle">FAA-certified drone cinematography and aerial photography for real estate, commercial brands, events, and film production across South Florida.</p>
+      <div class="hero-buttons">
+        <a href="#contact" class="btn-primary">Book a Flight</a>
+        <a href="#portfolio" class="btn-ghost">View Portfolio</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-num">1,200+</div>
+          <div class="hero-stat-label">Projects</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">4K/6K</div>
+          <div class="hero-stat-label">Resolution</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">FAA</div>
+          <div class="hero-stat-label">Part 107</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-num">24hr</div>
+          <div class="hero-stat-label">Delivery</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <!-- Targeting rings -->
+      <div class="hero-rings">
+        <div class="hero-ring" style="width: 600px; height: 600px;"></div>
+        <div class="hero-ring" style="width: 400px; height: 400px; border-color: rgba(184,255,0,0.1);"></div>
+        <div class="hero-ring" style="width: 220px; height: 220px;"></div>
+      </div>
+
+      <!-- Scan line -->
+      <div class="hero-scan"></div>
+
+      <!-- Crosshairs -->
+      <div class="crosshair crosshair-h"></div>
+      <div class="crosshair crosshair-v"></div>
+
+      <!-- GPS corner overlays -->
+      <div class="gps-overlay gps-tl">LAT: 25.7617° N<br>ALT: 350 FT AGL<br>SPEED: 42 MPH</div>
+      <div class="gps-overlay gps-tr">LON: 80.1918° W<br>HEADING: 180°<br>SATS: 12</div>
+      <div class="gps-overlay gps-bl">BATTERY: 84%<br>SIGNAL: STRONG<br>MODE: CINE</div>
+      <div class="gps-overlay gps-br">SENSOR: 6K<br>ISO: 400<br>SHUTTER: 1/250</div>
+
+      <!-- Drone SVG Illustration -->
+      <div class="hero-drone-wrap">
+        <svg viewBox="0 0 300 260" width="300" height="260" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Drone body center -->
+          <rect x="115" y="105" width="70" height="50" rx="8" fill="#18152A" stroke="#4F46E5" stroke-width="1.5"/>
+          <!-- Center detail lines -->
+          <rect x="125" y="115" width="50" height="30" rx="4" fill="#110E1E" stroke="#2A2245" stroke-width="1"/>
+          <!-- Camera gimbal mount -->
+          <ellipse cx="150" cy="145" rx="18" ry="10" fill="#110E1E" stroke="#4F46E5" stroke-width="1"/>
+          <circle cx="150" cy="148" r="8" fill="#0B0818" stroke="#6366F1" stroke-width="1.5"/>
+          <circle cx="150" cy="148" r="4" fill="#4F46E5" stroke="#818CF8" stroke-width="1"/>
+          <circle cx="150" cy="148" r="1.5" fill="#B8FF00"/>
+          <!-- Arms -->
+          <!-- Front-left arm -->
+          <path d="M115 118 L68 88" stroke="#2A2245" stroke-width="3" stroke-linecap="round"/>
+          <!-- Front-right arm -->
+          <path d="M185 118 L232 88" stroke="#2A2245" stroke-width="3" stroke-linecap="round"/>
+          <!-- Rear-left arm -->
+          <path d="M115 142 L68 172" stroke="#2A2245" stroke-width="3" stroke-linecap="round"/>
+          <!-- Rear-right arm -->
+          <path d="M185 142 L232 172" stroke="#2A2245" stroke-width="3" stroke-linecap="round"/>
+          <!-- Motor hubs -->
+          <circle cx="68" cy="88" r="16" fill="#18152A" stroke="#4F46E5" stroke-width="1.5"/>
+          <circle cx="232" cy="88" r="16" fill="#18152A" stroke="#4F46E5" stroke-width="1.5"/>
+          <circle cx="68" cy="172" r="16" fill="#18152A" stroke="#4F46E5" stroke-width="1.5"/>
+          <circle cx="232" cy="172" r="16" fill="#18152A" stroke="#4F46E5" stroke-width="1.5"/>
+          <!-- Motor center dots -->
+          <circle cx="68" cy="88" r="5" fill="#6366F1"/>
+          <circle cx="232" cy="88" r="5" fill="#6366F1"/>
+          <circle cx="68" cy="172" r="5" fill="#B8FF00"/>
+          <circle cx="232" cy="172" r="5" fill="#B8FF00"/>
+          <!-- Propellers FL (spinning) -->
+          <ellipse cx="68" cy="88" rx="38" ry="5" fill="rgba(79,70,229,0.15)" stroke="rgba(79,70,229,0.4)" stroke-width="1"/>
+          <ellipse cx="68" cy="88" rx="5" ry="38" fill="rgba(79,70,229,0.08)" stroke="rgba(79,70,229,0.25)" stroke-width="1"/>
+          <!-- Propellers FR -->
+          <ellipse cx="232" cy="88" rx="38" ry="5" fill="rgba(79,70,229,0.15)" stroke="rgba(79,70,229,0.4)" stroke-width="1"/>
+          <ellipse cx="232" cy="88" rx="5" ry="38" fill="rgba(79,70,229,0.08)" stroke="rgba(79,70,229,0.25)" stroke-width="1"/>
+          <!-- Propellers RL (lime = rear) -->
+          <ellipse cx="68" cy="172" rx="38" ry="5" fill="rgba(184,255,0,0.1)" stroke="rgba(184,255,0,0.3)" stroke-width="1"/>
+          <ellipse cx="68" cy="172" rx="5" ry="38" fill="rgba(184,255,0,0.06)" stroke="rgba(184,255,0,0.2)" stroke-width="1"/>
+          <!-- Propellers RR -->
+          <ellipse cx="232" cy="172" rx="38" ry="5" fill="rgba(184,255,0,0.1)" stroke="rgba(184,255,0,0.3)" stroke-width="1"/>
+          <ellipse cx="232" cy="172" rx="5" ry="38" fill="rgba(184,255,0,0.06)" stroke="rgba(184,255,0,0.2)" stroke-width="1"/>
+          <!-- LED lights on body -->
+          <circle cx="120" cy="120" r="2" fill="#B8FF00" opacity="0.8"/>
+          <circle cx="180" cy="120" r="2" fill="#B8FF00" opacity="0.8"/>
+          <!-- Status LED -->
+          <rect x="143" y="108" width="14" height="4" rx="2" fill="#4F46E5"/>
+          <!-- Body LED strip glow -->
+          <line x1="116" y1="130" x2="184" y2="130" stroke="#4F46E5" stroke-width="0.5" opacity="0.6"/>
+          <!-- Downward glow beam from camera -->
+          <path d="M135 158 L110 220 M150 160 L150 225 M165 158 L190 220" stroke="rgba(184,255,0,0.12)" stroke-width="2"/>
+          <!-- Shadow / ground effect -->
+          <ellipse cx="150" cy="245" rx="60" ry="8" fill="rgba(79,70,229,0.06)"/>
+        </svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="services" id="services">
+    <div class="container">
+      <div class="services-header">
+        <div>
+          <div class="section-label reveal">
+            <div class="section-label-line"></div>
+            <span>Mission Types</span>
+          </div>
+          <h2 class="section-title reveal reveal-delay-1">Every angle.<br>Every <span class="lime">mission.</span></h2>
+        </div>
+        <p class="services-desc reveal reveal-delay-2">
+          From luxury real estate to feature film B-roll, SkyEye operates with FAA Part 107 certification, full liability insurance, and a fleet of professional cinema-grade drones capable of shooting in conditions most operators won't attempt.
+        </p>
+      </div>
+
+      <div class="services-grid reveal">
+        <div class="service-card" data-num="01">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+          </div>
+          <div class="service-tag">01 — Real Estate</div>
+          <div class="service-name">Property Aerials</div>
+          <p class="service-desc">Showcase listings from perspectives that ground-level cameras can't reach. Aerial stills, video walkthroughs, neighborhood context shots, and twilight magic hour packages.</p>
+          <p class="service-price">From $299/property</p>
+        </div>
+
+        <div class="service-card" data-num="02">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+            </svg>
+          </div>
+          <div class="service-tag">02 — Events</div>
+          <div class="service-name">Weddings & Events</div>
+          <p class="service-desc">Cinematic aerial coverage of ceremonies, receptions, corporate events, and festivals. FAA waivers available for controlled airspace locations including beaches and waterfront venues.</p>
+          <p class="service-price">From $599/event</p>
+        </div>
+
+        <div class="service-card" data-num="03">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="3" width="20" height="14" rx="2"/>
+              <line x1="8" y1="21" x2="16" y2="21"/>
+              <line x1="12" y1="17" x2="12" y2="21"/>
+            </svg>
+          </div>
+          <div class="service-tag">03 — Commercial</div>
+          <div class="service-name">Brand & Marketing</div>
+          <p class="service-desc">Brand campaigns, product launches, social media content, hotel and resort marketing, and destination promotion. Delivered in formats optimized for every platform.</p>
+          <p class="service-price">From $899/day</p>
+        </div>
+
+        <div class="service-card" data-num="04">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+          </div>
+          <div class="service-tag">04 — Inspection</div>
+          <div class="service-name">Rooftop & Structure</div>
+          <p class="service-desc">Insurance inspection, roof condition assessment, construction progress documentation, cell tower surveys, and solar array inspection. High-res stills with geo-tagged coordinates.</p>
+          <p class="service-price">From $449/inspection</p>
+        </div>
+
+        <div class="service-card" data-num="05">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="23 7 16 12 23 17 23 7"/>
+              <rect x="1" y="5" width="15" height="14" rx="2"/>
+            </svg>
+          </div>
+          <div class="service-tag">05 — Film & TV</div>
+          <div class="service-name">Cinematic Production</div>
+          <p class="service-desc">DCI 6K RAW aerial cinematography for feature films, documentaries, music videos, and streaming productions. FPV freestyle and tracking shot specialists on staff.</p>
+          <p class="service-price">From $1,800/day</p>
+        </div>
+
+        <div class="service-card" data-num="06">
+          <div class="service-icon">
+            <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="3 11 22 2 13 21 11 13 3 11"/>
+            </svg>
+          </div>
+          <div class="service-tag">06 — Mapping</div>
+          <div class="service-name">Survey & Mapping</div>
+          <p class="service-desc">Photogrammetric 3D mapping, topographic surveys, orthomosaic generation, and volumetric measurements for construction, agriculture, and land management.</p>
+          <p class="service-price">Custom quote</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section class="portfolio" id="portfolio">
+    <div class="container">
+      <div class="portfolio-header">
+        <div>
+          <div class="section-label reveal">
+            <div class="section-label-line"></div>
+            <span>Selected Work</span>
+          </div>
+          <h2 class="section-title reveal reveal-delay-1">Recent <span class="lime">flights.</span></h2>
+        </div>
+        <p class="services-desc reveal reveal-delay-2">A selection of recent commercial and editorial aerial projects across South Florida. Full portfolio available upon request.</p>
+      </div>
+
+      <div class="portfolio-grid reveal">
+        <div class="portfolio-card">
+          <div class="portfolio-card-inner">
+            <svg viewBox="0 0 48 48"><rect x="8" y="8" width="32" height="32" rx="2" stroke-width="1.5"/><circle cx="24" cy="24" r="8"/><path d="M24 16v-4M24 36v4M16 24h-4M36 24h4" stroke-width="1.5"/></svg>
+          </div>
+          <div class="portfolio-overlay">
+            <div class="portfolio-title">Star Island Luxury Estate</div>
+            <div class="portfolio-tag">Real Estate · Miami Beach</div>
+          </div>
+        </div>
+
+        <div class="portfolio-card">
+          <div class="portfolio-card-inner">
+            <svg viewBox="0 0 48 48"><polygon points="24,8 40,40 8,40" stroke-width="1.5"/><line x1="24" y1="16" x2="24" y2="30" stroke-width="1.5"/><circle cx="24" cy="35" r="2"/></svg>
+          </div>
+          <div class="portfolio-overlay">
+            <div class="portfolio-title">Coral Gables Wedding</div>
+            <div class="portfolio-tag">Event · Coral Gables</div>
+          </div>
+        </div>
+
+        <div class="portfolio-card">
+          <div class="portfolio-card-inner">
+            <svg viewBox="0 0 48 48"><path d="M8 40L24 8l16 32H8z" stroke-width="1.5"/><circle cx="24" cy="24" r="4"/></svg>
+          </div>
+          <div class="portfolio-overlay">
+            <div class="portfolio-title">Hotel Costa Brand Campaign</div>
+            <div class="portfolio-tag">Commercial · South Beach</div>
+          </div>
+        </div>
+
+        <div class="portfolio-card">
+          <div class="portfolio-card-inner">
+            <svg viewBox="0 0 48 48"><rect x="8" y="16" width="32" height="24" rx="2" stroke-width="1.5"/><path d="M16 16V12a8 8 0 0 1 16 0v4" stroke-width="1.5"/><circle cx="24" cy="28" r="3"/></svg>
+          </div>
+          <div class="portfolio-overlay">
+            <div class="portfolio-title">Construction Progress Docs</div>
+            <div class="portfolio-tag">Inspection · Doral</div>
+          </div>
+        </div>
+
+        <div class="portfolio-card">
+          <div class="portfolio-card-inner">
+            <svg viewBox="0 0 48 48"><path d="M24 8c-8.84 0-16 7.16-16 16s7.16 16 16 16 16-7.16 16-16S32.84 8 24 8z" stroke-width="1.5"/><path d="M24 16v8l5.66 5.66" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </div>
+          <div class="portfolio-overlay">
+            <div class="portfolio-title">Documentary B-Roll</div>
+            <div class="portfolio-tag">Film · Miami River</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CAPABILITIES / WHY US -->
+  <section class="capabilities" id="capabilities">
+    <div class="container">
+      <div class="capabilities-inner">
+        <div class="capability-visual reveal">
+          <div class="cap-main-stat">
+            <div class="cap-stat-num">FAA</div>
+            <div class="cap-stat-label">Part 107 Certified — Always Legal, Always Safe</div>
+          </div>
+          <div class="cap-stats-row">
+            <div class="cap-stat-mini">
+              <div class="cap-stat-mini-num">1,200+</div>
+              <div class="cap-stat-mini-label">Projects Flown</div>
+            </div>
+            <div class="cap-stat-mini">
+              <div class="cap-stat-mini-num">6K</div>
+              <div class="cap-stat-mini-label">Max Resolution</div>
+            </div>
+            <div class="cap-stat-mini">
+              <div class="cap-stat-mini-num">24hr</div>
+              <div class="cap-stat-mini-label">Turnaround</div>
+            </div>
+            <div class="cap-stat-mini">
+              <div class="cap-stat-mini-num">$2M</div>
+              <div class="cap-stat-mini-label">Liability Ins.</div>
+            </div>
+            <div class="cap-stat-mini">
+              <div class="cap-stat-mini-num">DJI</div>
+              <div class="cap-stat-mini-label">Inspire / Mavic</div>
+            </div>
+            <div class="cap-stat-mini">
+              <div class="cap-stat-mini-num">48hr</div>
+              <div class="cap-stat-mini-label">Edit Delivery</div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="section-label reveal">
+            <div class="section-label-line"></div>
+            <span>Why SkyEye</span>
+          </div>
+          <h2 class="section-title reveal reveal-delay-1">Not all drones<br>are <span class="lime">equal.</span></h2>
+          <div class="cap-features reveal reveal-delay-2">
+            <div class="cap-feature">
+              <div class="cap-feature-icon">
+                <svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <div>
+                <div class="cap-feature-name">FAA Certified & Fully Insured</div>
+                <p class="cap-feature-desc">Part 107 certified pilot on every flight. $2M general liability and hull insurance. All COAs and LAANC authorizations handled in-house.</p>
+              </div>
+            </div>
+            <div class="cap-feature">
+              <div class="cap-feature-icon">
+                <svg viewBox="0 0 24 24" stroke-linecap="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+              </div>
+              <div>
+                <div class="cap-feature-name">Cinema-Grade Equipment</div>
+                <p class="cap-feature-desc">DJI Inspire 3 with Zenmuse X9 (6K RAW), Mavic 3 Cine, and a dedicated FPV rig for creative cinematic movement. We don't shoot consumer footage.</p>
+              </div>
+            </div>
+            <div class="cap-feature">
+              <div class="cap-feature-icon">
+                <svg viewBox="0 0 24 24" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              </div>
+              <div>
+                <div class="cap-feature-name">24-Hour Photo Delivery</div>
+                <p class="cap-feature-desc">Real estate stills within 24 hours. Video edits within 48 hours. Rush same-day delivery available for an additional fee. We run on your deadline.</p>
+              </div>
+            </div>
+            <div class="cap-feature">
+              <div class="cap-feature-icon">
+                <svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+              <div>
+                <div class="cap-feature-name">South Florida Airspace Experts</div>
+                <p class="cap-feature-desc">We know Miami's Class B, C, and D airspace restrictions inside and out. We fly beaches, downtown corridors, and waterfront locations that other operators can't legally access.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process" id="process">
+    <div class="container">
+      <div class="process-header">
+        <div class="section-label reveal">
+          <div class="section-label-line"></div>
+          <span>Mission Flow</span>
+        </div>
+        <h2 class="section-title reveal reveal-delay-1">From brief to <span class="lime">delivery.</span></h2>
+      </div>
+
+      <div class="process-steps">
+        <div class="process-step reveal">
+          <div class="process-step-num">01</div>
+          <div class="process-step-name">Brief & Quote</div>
+          <p class="process-step-desc">Share your project requirements, location, and deliverables. We'll respond with a detailed quote within 4 hours.</p>
+        </div>
+        <div class="process-step reveal reveal-delay-1">
+          <div class="process-step-num">02</div>
+          <div class="process-step-name">Plan & Authorize</div>
+          <p class="process-step-desc">We handle all FAA authorizations, airspace filings, and flight planning. You get a full mission brief including weather window.</p>
+        </div>
+        <div class="process-step reveal reveal-delay-2">
+          <div class="process-step-num">03</div>
+          <div class="process-step-name">Fly & Capture</div>
+          <p class="process-step-desc">Professional pilot executes the mission with cinema-grade equipment. Safety and creative quality are never compromised.</p>
+        </div>
+        <div class="process-step reveal reveal-delay-3">
+          <div class="process-step-num">04</div>
+          <div class="process-step-name">Edit & Deliver</div>
+          <p class="process-step-desc">Color-graded edits and retouched stills delivered via cloud link. Typically 24 hours for photos, 48 for video.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials" id="testimonials">
+    <div class="container">
+      <div class="testimonials-header">
+        <div class="section-label reveal">
+          <div class="section-label-line"></div>
+          <span>Client Missions</span>
+        </div>
+        <h2 class="section-title reveal reveal-delay-1">What clients <span class="lime">say.</span></h2>
+      </div>
+
+      <div class="testimonials-grid reveal">
+        <div class="testimonial-card">
+          <div class="testimonial-header">
+            <div class="testimonial-avatar">RE</div>
+            <div>
+              <div class="testimonial-name">Ricardo Estevez</div>
+              <div class="testimonial-handle">Real Estate Broker · Star Island</div>
+            </div>
+          </div>
+          <div class="testimonial-stars">
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <p class="testimonial-text">SkyEye is the only aerial team I use for my Star Island and Coconut Grove listings. The twilight shots are extraordinary — properties go under contract faster when buyers see them from above. They also handle all the airspace stuff I could never figure out myself.</p>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-header">
+            <div class="testimonial-avatar">MV</div>
+            <div>
+              <div class="testimonial-name">Maya Villanueva</div>
+              <div class="testimonial-handle">Creative Director · Hotel Costa</div>
+            </div>
+          </div>
+          <div class="testimonial-stars">
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <p class="testimonial-text">We commissioned SkyEye for our brand refresh campaign and the results exceeded every expectation. The 6K footage is breathtaking — every frame looks like a movie still. Our Instagram engagement tripled after posting the aerial content they delivered. The 48-hour turnaround was a lifesaver for our campaign deadline.</p>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-header">
+            <div class="testimonial-avatar">JL</div>
+            <div>
+              <div class="testimonial-name">James Lugo</div>
+              <div class="testimonial-handle">Construction PM · Brickell Dev.</div>
+            </div>
+          </div>
+          <div class="testimonial-stars">
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <p class="testimonial-text">We use SkyEye monthly for construction progress documentation across our Brickell projects. They geo-tag every image, deliver clean orthomosaics, and our project investors love seeing the aerial updates in reports. Professional, punctual, and they understand what site managers actually need.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq" id="faq">
+    <div class="container">
+      <div class="faq-inner">
+        <div class="faq-sticky">
+          <div class="section-label reveal">
+            <div class="section-label-line"></div>
+            <span>Mission Briefing</span>
+          </div>
+          <h2 class="section-title reveal reveal-delay-1">Common <span class="lime">questions.</span></h2>
+          <p class="services-desc" style="margin-top: 20px; font-size: 14px;">Can't find the answer? Contact us directly and we'll respond within 2 hours.</p>
+          <a href="#contact" class="btn-primary" style="display: inline-block; margin-top: 28px;">Ask Us Anything</a>
+        </div>
+        <div class="faq-list reveal">
+          <div class="faq-item">
+            <button class="faq-question"><span class="faq-question-text">Do you fly in restricted airspace around Miami?</span><div class="faq-toggle"><svg viewBox="0 0 24 24" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></button>
+            <div class="faq-answer"><p class="faq-answer-inner">Yes — this is one of our key differentiators. We hold FAA Part 107 certification and work directly with LAANC (Low Altitude Authorization and Notification Capability) to obtain real-time airspace authorizations. We regularly operate within Miami International's Class B airspace, South Beach, and other restricted zones that require federal authorization.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question"><span class="faq-question-text">What happens if weather cancels the shoot?</span><div class="faq-toggle"><svg viewBox="0 0 24 24" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></button>
+            <div class="faq-answer"><p class="faq-answer-inner">We monitor weather 48 hours in advance and communicate proactively. If conditions are unsafe for flight (wind >25mph, rain, thunderstorm activity), we reschedule at no charge. We never compromise safety for a deadline — and we've never missed a weather window we couldn't work around by adjusting timing.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question"><span class="faq-question-text">How fast do you deliver the final footage?</span><div class="faq-toggle"><svg viewBox="0 0 24 24" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></button>
+            <div class="faq-answer"><p class="faq-answer-inner">Standard delivery is 24 hours for edited real estate photo packages and 48 hours for video edits. Rush same-day delivery (for real estate only) is available for an additional $150. Large-scale commercial or film projects will have project-specific timelines agreed upon in advance.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question"><span class="faq-question-text">Are you licensed and insured?</span><div class="faq-toggle"><svg viewBox="0 0 24 24" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></button>
+            <div class="faq-answer"><p class="faq-answer-inner">All pilots are FAA Part 107 certified. We carry $2 million general liability insurance and hull insurance on all aircraft. COIs are available on request and can be issued to third parties (venues, production companies, property owners) within 24 hours.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question"><span class="faq-question-text">What file formats do you deliver?</span><div class="faq-toggle"><svg viewBox="0 0 24 24" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></button>
+            <div class="faq-answer"><p class="faq-answer-inner">Photos are delivered as high-resolution JPEG and optional RAW/DNG files. Video is delivered as H.264/H.265 MP4 optimized for your platform (web, broadcast, social). For commercial productions, we can deliver ProRes or DNG RAW sequences for editorial. All files are delivered via secure cloud link.</p></div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question"><span class="faq-question-text">Can you handle night and twilight shoots?</span><div class="faq-toggle"><svg viewBox="0 0 24 24" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></button>
+            <div class="faq-answer"><p class="faq-answer-inner">Absolutely — twilight is our specialty for real estate. We hold an FAA waiver for night operations, allowing us to fly during civil twilight and after dark. Night shots of Miami's skyline, waterfront properties, and lit venues are some of our most requested services. Additional lighting equipment is available for ground elements.</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- AREAS -->
+  <section class="areas" id="areas">
+    <div class="container">
+      <div class="areas-inner">
+        <div class="areas-label">
+          <div class="section-label reveal" style="margin-bottom: 8px;">
+            <div class="section-label-line"></div>
+            <span>Coverage Zone</span>
+          </div>
+          <div class="section-title reveal reveal-delay-1" style="font-size: 28px;">South<br><span class="lime">Florida</span></div>
+        </div>
+        <div class="areas-tags reveal reveal-delay-2">
+          <span class="area-tag">Miami</span>
+          <span class="area-tag">Coral Gables</span>
+          <span class="area-tag">Doral</span>
+          <span class="area-tag">Hialeah</span>
+          <span class="area-tag">Kendall</span>
+          <span class="area-tag">Miami Beach</span>
+          <span class="area-tag">Brickell</span>
+          <span class="area-tag">Coconut Grove</span>
+          <span class="area-tag">South Miami</span>
+          <span class="area-tag">Homestead</span>
+          <span class="area-tag">Miami Gardens</span>
+          <span class="area-tag">North Miami</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact" id="contact">
+    <div class="container">
+      <div class="contact-inner">
+        <div>
+          <div class="section-label reveal">
+            <div class="section-label-line"></div>
+            <span>Launch a Mission</span>
+          </div>
+          <h2 class="contact-title reveal reveal-delay-1">Book your<br><span class="lime">flight.</span></h2>
+          <p class="contact-body reveal reveal-delay-2">Tell us about your project and we'll respond with a detailed quote within 4 business hours. Rush inquiries: call us directly.</p>
+          <div class="contact-detail reveal reveal-delay-3">
+            <div class="contact-detail-icon">
+              <svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 1.21h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 8.91A16 16 0 0 0 15.09 15.91l.86-.86a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </div>
+            <div class="contact-detail-text">
+              <strong>(305) 555-2150</strong>
+              Mon–Sat 8AM–7PM · Emergency line 24/7
+            </div>
+          </div>
+          <div class="contact-detail reveal reveal-delay-4">
+            <div class="contact-detail-icon">
+              <svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div class="contact-detail-text">
+              <strong>fly@skyeyeaerials.com</strong>
+              Responded within 4 business hours
+            </div>
+          </div>
+          <div class="contact-detail reveal reveal-delay-4">
+            <div class="contact-detail-icon">
+              <svg viewBox="0 0 24 24" stroke-linecap="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div class="contact-detail-text">
+              <strong>Miami, FL — All South Florida</strong>
+              FAA authorized for Metro Miami airspace
+            </div>
+          </div>
+        </div>
+
+        <form class="contact-form reveal" action="https://formsubmit.co/fly@skyeyeaerials.com" method="POST" id="contactForm" novalidate>
+          <input type="hidden" name="_subject" value="New Project Brief - SkyEye Aerials">
+          <input type="hidden" name="_captcha" value="false">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="fname">First Name</label>
+              <input class="form-input" type="text" id="fname" name="first_name" placeholder="Ricardo" required>
+              <span class="form-error" id="fnameErr">Name required.</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="lname">Last Name</label>
+              <input class="form-input" type="text" id="lname" name="last_name" placeholder="Estevez" required>
+              <span class="form-error" id="lnameErr">Last name required.</span>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="email">Email</label>
+              <input class="form-input" type="email" id="email" name="email" placeholder="ricardo@email.com" required>
+              <span class="form-error" id="emailErr">Valid email required.</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="phone">Phone</label>
+              <input class="form-input" type="tel" id="phone" name="phone" placeholder="(305) 555-0000">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="service">Mission Type</label>
+            <select class="form-select" id="service" name="mission_type">
+              <option value="">Select mission type...</option>
+              <option value="Real Estate Photography">Real Estate Photography</option>
+              <option value="Wedding / Event">Wedding / Event Aerial</option>
+              <option value="Commercial / Marketing">Commercial / Brand Campaign</option>
+              <option value="Roof / Structure Inspection">Roof / Structure Inspection</option>
+              <option value="Film / TV Production">Film & TV Production</option>
+              <option value="Survey / Mapping">Survey & Mapping</option>
+              <option value="Other">Other / Custom Project</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="location">Shoot Location</label>
+            <input class="form-input" type="text" id="location" name="location" placeholder="Address or area, Miami FL">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="message">Project Brief</label>
+            <textarea class="form-textarea" id="message" name="message" placeholder="Tell us about your project — timeline, deliverables, special requirements..."></textarea>
+          </div>
+          <button type="submit" class="form-submit">Transmit Brief →</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="section-label" style="justify-content: center; margin-bottom: 16px;">
+      <div class="section-label-line"></div>
+      <span>Cleared for Takeoff</span>
+      <div class="section-label-line"></div>
+    </div>
+    <h2 class="cta-title">Ready to see your<br>world from <span class="lime">above?</span></h2>
+    <p class="cta-sub">FAA certified. Fully insured. 24-hour delivery. Let's fly.</p>
+    <div class="cta-buttons">
+      <a href="#contact" class="btn-primary">Book a Flight</a>
+      <a href="tel:3055552150" class="btn-ghost">Call (305) 555-2150</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-logo">
+            <div class="nav-logo-mark" style="width:28px;height:28px;">
+              <svg viewBox="0 0 24 24" width="14" height="14" stroke="var(--lime)" fill="none" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 4v2M12 18v2M4 12h2M18 12h2"/></svg>
+            </div>
+            <div class="footer-logo-text">SKY<span>EYE</span> AERIALS</div>
+          </div>
+          <p class="footer-desc">South Florida's premier FAA-certified aerial photography and cinematography service. Real estate, commercial, events, film & inspection.</p>
+          <p class="footer-license">FAA Part 107 Certificate #4720119<br>LAANC Authorized · $2M Liability Insurance</p>
+        </div>
+        <div>
+          <div class="footer-col-title">Services</div>
+          <ul class="footer-links">
+            <li><a href="#services">Real Estate Aerials</a></li>
+            <li><a href="#services">Weddings & Events</a></li>
+            <li><a href="#services">Commercial Production</a></li>
+            <li><a href="#services">Inspection & Survey</a></li>
+            <li><a href="#services">Film & TV</a></li>
+            <li><a href="#services">3D Mapping</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Company</div>
+          <ul class="footer-links">
+            <li><a href="#capabilities">About SkyEye</a></li>
+            <li><a href="#portfolio">Portfolio</a></li>
+            <li><a href="#testimonials">Reviews</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="#contact">Contact</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+          </ul>
+        </div>
+        <div>
+          <div class="footer-col-title">Contact</div>
+          <ul class="footer-links">
+            <li><a href="tel:3055552150">(305) 555-2150</a></li>
+            <li><a href="mailto:fly@skyeyeaerials.com">fly@skyeyeaerials.com</a></li>
+            <li><a href="#">Miami, FL — South Florida</a></li>
+            <li><a href="#">Mon–Sat: 8AM–7PM</a></li>
+            <li><a href="#">Emergency: 24/7</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2025 SkyEye Aerials LLC. All Rights Reserved.</p>
+        <a href="https://webnari.io" class="webnari-badge">Powered by Webnari</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // HAMBURGER
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileClose = document.getElementById('mobileClose');
+    hamburger.addEventListener('click', () => mobileMenu.classList.add('open'));
+    mobileClose.addEventListener('click', () => mobileMenu.classList.remove('open'));
+    document.querySelectorAll('.mobile-link').forEach(link => {
+      link.addEventListener('click', () => mobileMenu.classList.remove('open'));
+    });
+
+    // FAQ ACCORDION
+    document.querySelectorAll('.faq-question').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-item');
+        const isOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+        if (!isOpen) item.classList.add('open');
+      });
+    });
+
+    // SCROLL REVEAL
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // LIVE HUD CLOCK
+    function updateHUD() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString('en-US', { hour12: false });
+    }
+    setInterval(updateHUD, 1000);
+    updateHUD();
+
+    // FORM VALIDATION
+    const form = document.getElementById('contactForm');
+    form.addEventListener('submit', function(e) {
+      let valid = true;
+      const checks = [
+        { id: 'fname', errId: 'fnameErr', check: v => v.trim().length > 0 },
+        { id: 'lname', errId: 'lnameErr', check: v => v.trim().length > 0 },
+        { id: 'email', errId: 'emailErr', check: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v) },
+      ];
+      checks.forEach(f => {
+        const input = document.getElementById(f.id);
+        const err = document.getElementById(f.errId);
+        if (!f.check(input.value)) { err.classList.add('visible'); valid = false; input.style.borderColor = 'rgba(248,113,113,0.5)'; }
+        else { err.classList.remove('visible'); input.style.borderColor = ''; }
+      });
+      if (!valid) e.preventDefault();
+    });
+  </script>
+</body>
+</html>

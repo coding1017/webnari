@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ember & Oak Catering - Premium private event catering in Coconut Grove, Miami. Crafted cuisine for life's finest moments.">
+    <meta name="keywords" content="catering, event catering, private events, Miami catering, Coconut Grove">
+    <meta property="og:title" content="Ember & Oak Catering - Premium Event Catering in Miami">
+    <meta property="og:description" content="Locally sourced, handcrafted cuisine for your most important celebrations.">
+    <meta property="og:type" content="business.business">
+    <meta property="og:url" content="https://webnari.io/emberoak.html">
+    <title>Ember & Oak Catering | Premium Event Catering Miami</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Cormorant+Infant:wght@600;700&family=Crimson+Text:ital@0;1&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --cream: #FBF7F0;
+            --parchment: #F0E8D8;
+            --dark-walnut: #2C1810;
+            --espresso: #1A0E08;
+            --ember-orange: #D4763C;
+            --burnt-sienna: #A0522D;
+            --sage-green: #7D8C6E;
+            --warm-gold: #C8A456;
+            --text-brown: #4A3728;
+            --muted: #8B7B6B;
+            --white: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Crimson Text', serif;
+            background-color: var(--cream);
+            color: var(--text-brown);
+            line-height: 1.7;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-radial-gradient(
+                circle at 0 0,
+                rgba(139, 123, 107, 0.02) 0,
+                rgba(139, 123, 107, 0.02) 2px,
+                transparent 2px,
+                transparent 4px
+            );
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .nav-logo {
+            font-family: 'Caveat', cursive;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--ember-orange);
+            text-decoration: none;
+            letter-spacing: 1px;
+        }
+
+        .nav-links {
+            display: none;
+        }
+
+        .nav-links.active {
+            display: flex;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            flex-direction: column;
+            background-color: var(--cream);
+            padding: 40px 20px;
+            gap: 20px;
+            z-index: 999;
+        }
+
+        .nav-link {
+            font-family: 'Cormorant Infant', serif;
+            font-size: 18px;
+            color: var(--text-brown);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: var(--ember-orange);
+        }
+
+        .mobile-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--ember-orange);
+            border: none;
+            cursor: pointer;
+            gap: 6px;
+            flex-direction: column;
+            z-index: 1001;
+            position: relative;
+        }
+
+        .mobile-toggle span {
+            width: 20px;
+            height: 2px;
+            background-color: var(--cream);
+            transition: 0.3s;
+        }
+
+        .mobile-toggle.active span:nth-child(1) {
+            transform: rotate(45deg) translateY(12px);
+        }
+
+        .mobile-toggle.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .mobile-toggle.active span:nth-child(3) {
+            transform: rotate(-45deg) translateY(-12px);
+        }
+
+        .floating-nav {
+            display: none;
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--cream);
+            border-radius: 50px;
+            padding: 12px 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            z-index: 900;
+            gap: 30px;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .floating-nav.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .floating-nav .nav-link {
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .cta-btn {
+            background-color: var(--ember-orange);
+            color: var(--cream);
+            padding: 10px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-family: 'Cormorant Infant', serif;
+            font-size: 16px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .cta-btn:hover {
+            background-color: var(--burnt-sienna);
+            transform: translateY(-2px);
+        }
+
+        .cta-btn-outlined {
+            background-color: transparent;
+            color: var(--dark-walnut);
+            border: 2px solid var(--dark-walnut);
+            padding: 10px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-family: 'Cormorant Infant', serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cta-btn-outlined:hover {
+            background-color: var(--dark-walnut);
+            color: var(--cream);
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--parchment);
+            position: relative;
+            text-align: center;
+            padding: 40px 20px;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 600px;
+        }
+
+        .hero-wreath {
+            width: 300px;
+            height: 300px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            opacity: 0.6;
+        }
+
+        .hero h1 {
+            font-family: 'Cormorant Infant', serif;
+            font-size: clamp(48px, 8vw, 80px);
+            color: var(--dark-walnut);
+            font-weight: 700;
+            letter-spacing: 3px;
+            position: relative;
+            z-index: 3;
+        }
+
+        .hero-tagline {
+            font-family: 'Caveat', cursive;
+            font-size: 28px;
+            color: var(--ember-orange);
+            margin: 20px 0 30px;
+            font-weight: 400;
+        }
+
+        .gold-divider {
+            width: 100px;
+            height: 2px;
+            background-color: var(--warm-gold);
+            margin: 20px auto 30px;
+            position: relative;
+            z-index: 3;
+        }
+
+        .gold-divider::before {
+            content: '';
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background-color: var(--warm-gold);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 40px;
+            position: relative;
+            z-index: 3;
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            z-index: 3;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        /* Sections */
+        section {
+            padding: 80px 20px;
+        }
+
+        section h2 {
+            font-family: 'Cormorant Infant', serif;
+            font-size: clamp(36px, 6vw, 56px);
+            color: var(--dark-walnut);
+            text-align: center;
+            margin-bottom: 50px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        /* Menu Section */
+        .menu {
+            background-color: var(--dark-walnut);
+            color: var(--cream);
+        }
+
+        .menu h2 {
+            color: var(--cream);
+        }
+
+        .menu-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 50px;
+        }
+
+        .menu-icon {
+            width: 40px;
+            height: 40px;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .menu-card {
+            background-color: var(--parchment);
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            transform: rotate(-1deg);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            color: var(--text-brown);
+        }
+
+        .menu-card:nth-child(even) {
+            transform: rotate(1deg);
+        }
+
+        .menu-card:hover {
+            transform: rotate(0deg) translateY(-5px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .menu-label {
+            font-family: 'Caveat', cursive;
+            font-size: 18px;
+            color: var(--ember-orange);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .menu-card h3 {
+            font-family: 'Cormorant Infant', serif;
+            font-size: 28px;
+            color: var(--dark-walnut);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .menu-card p {
+            font-size: 15px;
+            color: var(--muted);
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .menu-price {
+            font-family: 'Cormorant Infant', serif;
+            font-size: 20px;
+            color: var(--warm-gold);
+            font-weight: 700;
+        }
+
+        /* About Section */
+        .about {
+            background-color: var(--cream);
+        }
+
+        .about-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .about-quote {
+            position: relative;
+        }
+
+        .quote-mark {
+            font-family: 'Cormorant Infant', serif;
+            font-size: 120px;
+            color: var(--warm-gold);
+            line-height: 1;
+            margin-bottom: 20px;
+        }
+
+        .quote-text {
+            font-family: 'Cormorant Infant', serif;
+            font-size: 28px;
+            color: var(--dark-walnut);
+            font-style: italic;
+            font-weight: 700;
+            line-height: 1.6;
+        }
+
+        .about-text h3 {
+            font-family: 'Cormorant Infant', serif;
+            font-size: 24px;
+            color: var(--dark-walnut);
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .about-text p {
+            margin-bottom: 20px;
+            line-height: 1.8;
+        }
+
+        .stats-row {
+            display: flex;
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Cormorant Infant', serif;
+            font-size: 32px;
+            color: var(--warm-gold);
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-family: 'Caveat', cursive;
+            font-size: 18px;
+            color: var(--muted);
+        }
+
+        @media (max-width: 768px) {
+            .about-content {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-row {
+                flex-direction: column;
+            }
+        }
+
+        /* Why Choose Us Section */
+        .why-choose {
+            background-color: var(--parchment);
+        }
+
+        .features {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .feature-row {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+            padding: 30px;
+            border-left: 5px solid var(--sage-green);
+            background-color: rgba(253, 247, 240, 0.8);
+            border-radius: 4px;
+        }
+
+        .feature-icon {
+            width: 50px;
+            height: 50px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feature-icon svg {
+            width: 100%;
+            height: 100%;
+            stroke: var(--sage-green);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .feature-content h3 {
+            font-family: 'Cormorant Infant', serif;
+            font-size: 22px;
+            color: var(--dark-walnut);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .feature-content p {
+            color: var(--muted);
+            font-size: 15px;
+        }
+
+        /* Process Section */
+        .process {
+            background-color: var(--dark-walnut);
+            color: var(--cream);
+        }
+
+        .process h2 {
+            color: var(--cream);
+        }
+
+        .steps-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1000px;
+            margin: 0 auto;
+            position: relative;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .step {
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+            position: relative;
+        }
+
+        .step-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: var(--warm-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-family: 'Cormorant Infant', serif;
+            font-size: 36px;
+            color: var(--dark-walnut);
+            font-weight: 700;
+        }
+
+        .step h3 {
+            font-family: 'Cormorant Infant', serif;
+            font-size: 20px;
+            color: var(--cream);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .step p {
+            font-size: 14px;
+            color: rgba(251, 247, 240, 0.9);
+        }
+
+        .step::after {
+            content: '';
+            position: absolute;
+            top: 40px;
+            left: 100%;
+            width: 40px;
+            height: 3px;
+            background-color: var(--warm-gold);
+            z-index: 0;
+        }
+
+        .step:last-child::after {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .steps-container {
+                flex-direction: column;
+            }
+
+            .step::after {
+                display: none;
+            }
+        }
+
+        /* Testimonials Section */
+        .testimonials {
+            background-color: var(--cream);
+        }
+
+        .testimonials h2 {
+            position: relative;
+        }
+
+        .testimonials h2::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 2px;
+            background-color: var(--ember-orange);
+            margin: 15px auto 0;
+        }
+
+        .testimonial-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .testimonial-card {
+            background-color: var(--parchment);
+            padding: 30px;
+            border-radius: 8px;
+            border-left: 5px solid var(--ember-orange);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            transform: rotate(-0.5deg);
+            transition: transform 0.3s ease;
+        }
+
+        .testimonial-card:nth-child(even) {
+            transform: rotate(0.5deg);
+        }
+
+        .testimonial-card:hover {
+            transform: rotate(0deg);
+        }
+
+        .testimonial-quote {
+            font-family: 'Cormorant Infant', serif;
+            font-size: 22px;
+            color: var(--dark-walnut);
+            font-style: italic;
+            margin-bottom: 20px;
+            line-height: 1.8;
+            font-weight: 700;
+        }
+
+        .testimonial-author {
+            font-family: 'Caveat', cursive;
+            font-size: 18px;
+            color: var(--ember-orange);
+            font-weight: 700;
+        }
+
+        /* Gallery Section */
+        .gallery {
+            background-color: var(--parchment);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .gallery-card {
+            height: 300px;
+            border-radius: 8px;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+
+        .gallery-card:hover {
+            transform: scale(1.05);
+        }
+
+        .gallery-card h3 {
+            font-family: 'Cormorant Infant', serif;
+            font-size: 24px;
+            color: var(--cream);
+            font-weight: 700;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .gallery-1 { background: linear-gradient(135deg, #D4A0A0 0%, #C8A97E 100%); }
+        .gallery-2 { background: linear-gradient(135deg, #8FA582 0%, #7D8C6E 100%); }
+        .gallery-3 { background: linear-gradient(135deg, #D4763C 0%, #A0522D 100%); }
+        .gallery-4 { background: linear-gradient(135deg, #2C1810 0%, #4A3728 100%); }
+        .gallery-5 { background: linear-gradient(135deg, #7D8C6E 0%, #C8A456 100%); }
+        .gallery-6 { background: linear-gradient(135deg, #A0522D 0%, #D4A0A0 100%); }
+
+        /* FAQ Section */
+        .faq {
+            background-color: var(--cream);
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(139, 123, 107, 0.2);
+        }
+
+        .faq-question {
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--parchment);
+            border-radius: 4px;
+            font-family: 'Cormorant Infant', serif;
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--dark-walnut);
+            transition: background-color 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background-color: rgba(212, 118, 60, 0.1);
+        }
+
+        .faq-toggle {
+            color: var(--warm-gold);
+            font-size: 24px;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.active .faq-toggle {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding: 0 20px;
+            color: var(--muted);
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 300px;
+            padding: 20px;
+        }
+
+        /* Service Areas */
+        .areas {
+            background-color: var(--parchment);
+        }
+
+        .areas-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .areas-note {
+            font-style: italic;
+            color: var(--muted);
+            margin: 30px 0 40px;
+            font-size: 16px;
+        }
+
+        .area-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .area-pill {
+            border: 2px solid var(--sage-green);
+            color: var(--text-brown);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-family: 'Caveat', cursive;
+            font-size: 16px;
+            font-weight: 700;
+            background-color: transparent;
+            transition: all 0.3s ease;
+        }
+
+        .area-pill:hover {
+            background-color: var(--sage-green);
+            color: var(--cream);
+        }
+
+        /* Contact Section */
+        .contact {
+            background-color: var(--parchment);
+        }
+
+        .contact-content {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: start;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .contact-item {
+            display: flex;
+            gap: 20px;
+        }
+
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .contact-icon svg {
+            width: 100%;
+            height: 100%;
+            stroke: var(--ember-orange);
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .contact-detail h3 {
+            font-family: 'Caveat', cursive;
+            font-size: 18px;
+            color: var(--ember-orange);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .contact-detail p {
+            font-size: 16px;
+            color: var(--text-brown);
+        }
+
+        .contact-form {
+            background-color: var(--cream);
+            padding: 30px;
+            border-radius: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-family: 'Caveat', cursive;
+            font-size: 14px;
+            color: var(--ember-orange);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 0;
+            border: none;
+            border-bottom: 2px solid var(--muted);
+            background-color: transparent;
+            font-family: 'Crimson Text', serif;
+            font-size: 15px;
+            color: var(--text-brown);
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(74, 55, 40, 0.5);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-bottom-color: var(--ember-orange);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--ember-orange);
+            color: var(--cream);
+            border: none;
+            border-radius: 50px;
+            font-family: 'Cormorant Infant', serif;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .submit-btn:hover {
+            background-color: var(--burnt-sienna);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .contact-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* CTA Banner */
+        .cta-banner {
+            background-color: var(--ember-orange);
+            color: var(--cream);
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .cta-banner h2 {
+            color: var(--cream);
+            margin-bottom: 30px;
+        }
+
+        .cta-banner-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .cta-banner-btn-dark {
+            background-color: var(--dark-walnut);
+            color: var(--cream);
+            padding: 14px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-family: 'Cormorant Infant', serif;
+            font-size: 16px;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .cta-banner-btn-dark:hover {
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
+        .cta-banner-btn-outlined {
+            background-color: transparent;
+            color: var(--cream);
+            border: 2px solid var(--cream);
+            padding: 12px 28px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-family: 'Cormorant Infant', serif;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .cta-banner-btn-outlined:hover {
+            background-color: var(--cream);
+            color: var(--ember-orange);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--espresso);
+            color: var(--cream);
+            padding: 50px 20px 30px;
+            border-top: 2px solid var(--warm-gold);
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .footer-col h4 {
+            font-family: 'Caveat', cursive;
+            font-size: 22px;
+            color: var(--warm-gold);
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .footer-col p {
+            font-size: 14px;
+            color: rgba(251, 247, 240, 0.8);
+            margin-bottom: 10px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: rgba(251, 247, 240, 0.8);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--warm-gold);
+        }
+
+        .footer-badge {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(212, 118, 60, 0.3);
+            font-size: 13px;
+            color: rgba(251, 247, 240, 0.7);
+        }
+
+        .footer-badge a {
+            color: var(--warm-gold);
+            text-decoration: none;
+        }
+
+        .footer-badge a:hover {
+            text-decoration: underline;
+        }
+
+        /* Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+        }
+
+        .reveal.active {
+            animation: revealFadeUp 0.8s ease-out forwards;
+        }
+
+        @keyframes revealFadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .reveal-delay-1.active { animation-delay: 0.1s; }
+        .reveal-delay-2.active { animation-delay: 0.2s; }
+        .reveal-delay-3.active { animation-delay: 0.3s; }
+        .reveal-delay-4.active { animation-delay: 0.4s; }
+        .reveal-delay-5.active { animation-delay: 0.5s; }
+        .reveal-delay-6.active { animation-delay: 0.6s; }
+
+        @media (max-width: 768px) {
+            section {
+                padding: 60px 20px;
+            }
+
+            section h2 {
+                font-size: 32px;
+                margin-bottom: 40px;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .hero-buttons button,
+            .hero-buttons a {
+                width: 100%;
+            }
+
+            .menu-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .floating-nav {
+                bottom: 20px;
+            }
+
+            .cta-banner-buttons {
+                flex-direction: column;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-container">
+            <a href="emberoak.html" class="nav-logo">Ember & Oak</a>
+            <button class="mobile-toggle" id="mobileToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <div class="nav-links" id="navLinks">
+            <a href="#menu" class="nav-link">Menu</a>
+            <a href="#about" class="nav-link">About</a>
+            <a href="#process" class="nav-link">Events</a>
+            <a href="#testimonials" class="nav-link">Reviews</a>
+            <a href="#contact" class="nav-link">Contact</a>
+        </div>
+    </nav>
+
+    <!-- Floating Nav (appears on scroll) -->
+    <div class="floating-nav" id="floatingNav">
+        <a href="#menu" class="nav-link">Menu</a>
+        <a href="#about" class="nav-link">About</a>
+        <a href="#process" class="nav-link">Events</a>
+        <a href="#testimonials" class="nav-link">Reviews</a>
+        <a href="#contact" class="nav-link">Contact</a>
+        <a href="#contact" class="cta-btn">Inquire</a>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <svg class="hero-wreath" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <g id="leaf">
+                    <ellipse cx="5" cy="0" rx="4" ry="8" fill="none" stroke="currentColor" stroke-width="1.5" transform="rotate(0)"/>
+                </g>
+            </defs>
+            <circle cx="150" cy="150" r="140" fill="none" stroke="currentColor" stroke-width="2.5"/>
+            <circle cx="150" cy="150" r="125" fill="none" stroke="currentColor" stroke-width="1.5" opacity="0.5"/>
+            <g stroke="currentColor" stroke-width="2" fill="none">
+                <path d="M 80 150 Q 75 120, 90 100" stroke-width="2"/>
+                <path d="M 220 150 Q 225 120, 210 100" stroke-width="2"/>
+                <path d="M 80 150 Q 75 180, 90 200" stroke-width="2"/>
+                <path d="M 220 150 Q 225 180, 210 200" stroke-width="2"/>
+            </g>
+        </svg>
+        <div class="hero-content">
+            <h1>Ember & Oak</h1>
+            <p class="hero-tagline">crafted cuisine for life's finest moments</p>
+            <div class="gold-divider"></div>
+            <div class="hero-buttons">
+                <a href="#menu" class="cta-btn">View Our Menus</a>
+                <a href="#contact" class="cta-btn-outlined">Plan Your Event</a>
+            </div>
+        </div>
+        <div class="scroll-hint">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--ember-orange);">
+                <path d="M12 5v14M19 12l-7 7-7-7"/>
+            </svg>
+        </div>
+    </section>
+
+    <!-- Menu Section -->
+    <section class="menu" id="menu">
+        <div class="menu-header">
+            <h2>Our Culinary Offerings</h2>
+        </div>
+        <div class="menu-grid">
+            <div class="menu-card reveal">
+                <p class="menu-label">Signature</p>
+                <h3>Wedding Receptions</h3>
+                <p>Elegant multi-course experiences designed for your most important celebration. Customizable menus featuring locally sourced ingredients and artisanal preparation.</p>
+                <p class="menu-price">from $85/person</p>
+            </div>
+            <div class="menu-card reveal reveal-delay-1">
+                <p class="menu-label">Corporate</p>
+                <h3>Corporate Events</h3>
+                <p>Professional catering for conferences, galas, and business celebrations. We handle everything from passed hors d'oeuvres to plated dinners with precision and elegance.</p>
+                <p class="menu-price">from $55/person</p>
+            </div>
+            <div class="menu-card reveal reveal-delay-2">
+                <p class="menu-label">Premium</p>
+                <h3>Intimate Dinners</h3>
+                <p>Chef-curated dining experiences for your most exclusive gatherings. Limited parties with personalized service and bespoke menus crafted to perfection.</p>
+                <p class="menu-price">from $120/person</p>
+            </div>
+            <div class="menu-card reveal reveal-delay-3">
+                <p class="menu-label">Social</p>
+                <h3>Cocktail Parties</h3>
+                <p>Sophisticated passed appetizers, station service, and craft beverage pairings. Perfect for networking events, receptions, and social celebrations of any scale.</p>
+                <p class="menu-price">from $45/person</p>
+            </div>
+            <div class="menu-card reveal reveal-delay-4">
+                <p class="menu-label">Festive</p>
+                <h3>Holiday Celebrations</h3>
+                <p>Seasonal menus celebrating family traditions and festive spirit. From intimate gatherings to grand celebrations, we create memorable holiday experiences.</p>
+                <p class="menu-price">from $65/person</p>
+            </div>
+            <div class="menu-card reveal reveal-delay-5">
+                <p class="menu-label">Exclusive</p>
+                <h3>Custom Experiences</h3>
+                <p>Bespoke culinary creations for your unique vision. Work directly with Chef Adriana to design a fully customized menu reflecting your tastes and story.</p>
+                <p class="menu-price">from $150/person</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="about-content">
+            <div class="about-quote">
+                <div class="quote-mark">"</div>
+                <p class="quote-text">Every plate we serve carries a piece of our heart.</p>
+            </div>
+            <div class="about-text">
+                <h3>Chef Adriana's Story</h3>
+                <p>With 18 years of culinary experience and a deep passion for bringing people together, Chef Adriana has crafted Ember & Oak as a celebration of locally sourced ingredients and time-honored techniques. Every dish is prepared from scratch, every event is treated as a masterpiece.</p>
+                <p>Growing up in Coconut Grove, Adriana learned that the best meals are more than food—they're memories, connections, and stories shared around a table. This philosophy guides every catering event we undertake.</p>
+                <p>From farm to table, from consultation to dessert, Ember & Oak brings warmth, creativity, and genuine care to your most precious moments.</p>
+                <div class="stats-row">
+                    <div class="stat reveal">
+                        <div class="stat-number">18</div>
+                        <div class="stat-label">Years of Expertise</div>
+                    </div>
+                    <div class="stat reveal reveal-delay-1">
+                        <div class="stat-number">2,000+</div>
+                        <div class="stat-label">Events Catered</div>
+                    </div>
+                    <div class="stat reveal reveal-delay-2">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">Farm to Table</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us Section -->
+    <section class="why-choose">
+        <h2>Why Ember & Oak</h2>
+        <div class="features">
+            <div class="feature-row reveal">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11zm3.5 6.5c2.33 0 4.31-1.46 5.11-3.5H6.89c.8 2.04 2.78 3.5 5.11 3.5z"/>
+                    </svg>
+                </div>
+                <div class="feature-content">
+                    <h3>Locally Sourced Ingredients</h3>
+                    <p>We partner with South Florida's finest farmers and suppliers to bring you the freshest, most sustainable ingredients. Every component is selected for quality and flavor.</p>
+                </div>
+            </div>
+            <div class="feature-row reveal reveal-delay-1">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                    </svg>
+                </div>
+                <div class="feature-content">
+                    <h3>Custom Menu Design</h3>
+                    <p>No two events are alike. We work closely with you to design a personalized menu that reflects your tastes, dietary needs, theme, and vision for the perfect celebration.</p>
+                </div>
+            </div>
+            <div class="feature-row reveal reveal-delay-2">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                </div>
+                <div class="feature-content">
+                    <h3>Full-Service Event Staff</h3>
+                    <p>From setup to cleanup, our professional team handles every detail. We provide servers, bartenders, coordinators, and support so you can enjoy your event stress-free.</p>
+                </div>
+            </div>
+            <div class="feature-row reveal reveal-delay-3">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11.99 5V1h-1v4H7.58c-.44-1.76-2.07-3-4.08-3-2.27 0-4.09 1.99-4.09 4.45 0 2.47 1.82 4.45 4.09 4.45.41 0 .81-.05 1.19-.15.35 1.1 1.26 2.05 2.43 2.37.46.1.92.15 1.38.15.78 0 1.52-.12 2.21-.36V19c0 1.1.9 2 2 2h1v-4h4v-2h-4V5h-1zm-6.96 9.05C4.26 14.05 2.5 12.54 2.5 10.45c0-2.09 1.76-3.6 3.53-3.6 1.77 0 3.53 1.51 3.53 3.6 0 2.09-1.76 3.6-3.53 3.6z"/>
+                    </svg>
+                </div>
+                <div class="feature-content">
+                    <h3>Dietary Accommodation Specialists</h3>
+                    <p>Allergies, preferences, religious requirements—we handle all dietary needs with care and expertise. Every guest receives thoughtfully prepared cuisine they can enjoy.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Process Section -->
+    <section class="process" id="process">
+        <h2>Your Event Journey</h2>
+        <div class="steps-container">
+            <div class="step reveal">
+                <div class="step-circle">1</div>
+                <h3>Initial Tasting Consultation</h3>
+                <p>We begin with a personal tasting where you explore flavor profiles, ingredients, and get to know our approach to your event.</p>
+            </div>
+            <div class="step reveal reveal-delay-1">
+                <div class="step-circle">2</div>
+                <h3>Menu Customization</h3>
+                <p>Based on your preferences and event theme, we craft a bespoke menu designed specifically for you, with accommodation for all dietary needs.</p>
+            </div>
+            <div class="step reveal reveal-delay-2">
+                <div class="step-circle">3</div>
+                <h3>Planning & Coordination</h3>
+                <p>Our team manages logistics, timeline, staff scheduling, and all event details so you can focus on celebration and connection.</p>
+            </div>
+            <div class="step reveal reveal-delay-3">
+                <div class="step-circle">4</div>
+                <h3>The Grand Experience</h3>
+                <p>From first course to final dessert, our team ensures flawless execution, impeccable service, and an unforgettable culinary experience for every guest.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials" id="testimonials">
+        <h2>From Our Guest Book</h2>
+        <div class="testimonial-grid">
+            <div class="testimonial-card reveal">
+                <p class="testimonial-quote">"Ember & Oak made our wedding reception absolutely unforgettable. Every course was a work of art, and the team moved seamlessly through our celebration. Our guests are still talking about the food."</p>
+                <p class="testimonial-author">— Sarah & Michael, June 2025</p>
+            </div>
+            <div class="testimonial-card reveal reveal-delay-1">
+                <p class="testimonial-quote">"Chef Adriana understood our vision perfectly. She created a menu that honored our family traditions while bringing something entirely fresh and exciting. Pure magic."</p>
+                <p class="testimonial-author">— Elena Rodriguez, November 2025</p>
+            </div>
+            <div class="testimonial-card reveal reveal-delay-2">
+                <p class="testimonial-quote">"For our corporate gala, Ember & Oak delivered exceptional cuisine and professional service. The team was discrete, attentive, and made our event shine. We've already booked for next year."</p>
+                <p class="testimonial-author">— James Patterson, CFO, December 2025</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Gallery Section -->
+    <section class="gallery">
+        <h2>Event Inspirations</h2>
+        <div class="gallery-grid">
+            <div class="gallery-card gallery-1 reveal">
+                <h3>Romantic Blush</h3>
+            </div>
+            <div class="gallery-card gallery-2 reveal reveal-delay-1">
+                <h3>Garden Elegance</h3>
+            </div>
+            <div class="gallery-card gallery-3 reveal reveal-delay-2">
+                <h3>Tropical Sunset</h3>
+            </div>
+            <div class="gallery-card gallery-4 reveal reveal-delay-3">
+                <h3>Classic Black Tie</h3>
+            </div>
+            <div class="gallery-card gallery-5 reveal reveal-delay-4">
+                <h3>Bohemian Grove</h3>
+            </div>
+            <div class="gallery-card gallery-6 reveal reveal-delay-5">
+                <h3>Modern Minimalist</h3>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq">
+        <h2>Common Questions</h2>
+        <div class="faq-container">
+            <div class="faq-item reveal">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>What is your minimum guest count?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>We accommodate intimate gatherings of 15 guests and up to large celebrations of 300+. For smaller events, please contact us directly to discuss options.</p>
+                </div>
+            </div>
+            <div class="faq-item reveal reveal-delay-1">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>How do you handle dietary restrictions and allergies?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>We take all dietary needs seriously. During consultation, we discuss allergies, vegetarian/vegan preferences, religious requirements, and health concerns. We prepare separate items when necessary and ensure clear labeling and handling protocols.</p>
+                </div>
+            </div>
+            <div class="faq-item reveal reveal-delay-2">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>Can we do a tasting before booking?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Absolutely! We strongly encourage tastings. This allows you to experience our work firsthand and collaborate on menu refinement. Tastings typically take place at your venue or our location by appointment.</p>
+                </div>
+            </div>
+            <div class="faq-item reveal reveal-delay-3">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>What is your booking and payment timeline?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>We recommend booking 2-3 months in advance for best availability. A deposit of 50% secures your date, with the balance due two weeks before your event. Flexible payment plans available upon request.</p>
+                </div>
+            </div>
+            <div class="faq-item reveal reveal-delay-4">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>Do you provide service staff, bartenders, and rentals?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Yes! We provide full-service staffing including servers, bartenders, and coordinators. We can also recommend trusted rental partners for linens, china, glassware, and furniture.</p>
+                </div>
+            </div>
+            <div class="faq-item reveal reveal-delay-5">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>Do you cater events outside of Coconut Grove?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>We regularly serve all of South Florida and are available for destination events throughout Florida. We can arrange travel, on-site setup, and full coordination. Speak with us about your location.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Service Areas -->
+    <section class="areas">
+        <h2>Where We Serve</h2>
+        <p class="areas-note">Available for destination events throughout Florida</p>
+        <div class="areas-container">
+            <div class="area-pills">
+                <span class="area-pill">Miami</span>
+                <span class="area-pill">Coral Gables</span>
+                <span class="area-pill">Doral</span>
+                <span class="area-pill">Hialeah</span>
+                <span class="area-pill">Kendall</span>
+                <span class="area-pill">Miami Beach</span>
+                <span class="area-pill">Brickell</span>
+                <span class="area-pill">Westchester</span>
+                <span class="area-pill">South Miami</span>
+                <span class="area-pill">Homestead</span>
+                <span class="area-pill">Miami Gardens</span>
+                <span class="area-pill">North Miami</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <h2>Let's Plan Your Event</h2>
+        <div class="contact-content">
+            <div class="contact-info">
+                <div class="contact-item reveal">
+                    <div class="contact-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17.92 7.02C17.45 6.18 16.38 5.85 15.55 6.3l-.37.2c-.39.22-.68.63-.68 1.1 0 .71.58 1.29 1.29 1.29.47 0 .88-.29 1.1-.68l.2-.37c.45-.83.12-1.9-.63-2.37zM16.07 16.98c-.8-.47-1.25-1.43-1.25-2.42 0-.99.45-1.95 1.25-2.42.8.47 1.25 1.43 1.25 2.42 0 .99-.45 1.95-1.25 2.42z"/>
+                            <path d="M17.46 11.54c.67 0 1.29-.27 1.74-.74.45.47 1.07.74 1.74.74v-1.5c-.47 0-.89-.2-1.2-.54-.31.34-.73.54-1.2.54 0 .83.67 1.5 1.5 1.5v-1.5c-.83 0-1.5.67-1.5 1.5v1.5z"/>
+                            <path d="M6 6c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2H6zm5 11c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/>
+                        </svg>
+                    </div>
+                    <div class="contact-detail">
+                        <h3>Phone</h3>
+                        <p><a href="tel:+13055551850" style="color: inherit; text-decoration: none;">(305) 555-1850</a></p>
+                    </div>
+                </div>
+                <div class="contact-item reveal reveal-delay-1">
+                    <div class="contact-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+                        </svg>
+                    </div>
+                    <div class="contact-detail">
+                        <h3>Email</h3>
+                        <p><a href="mailto:hello@emberoak.co" style="color: inherit; text-decoration: none;">hello@emberoak.co</a></p>
+                    </div>
+                </div>
+                <div class="contact-item reveal reveal-delay-2">
+                    <div class="contact-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                        </svg>
+                    </div>
+                    <div class="contact-detail">
+                        <h3>Hours</h3>
+                        <p>Mon–Sat 9AM–6PM<br/>Events 24/7</p>
+                    </div>
+                </div>
+                <div class="contact-item reveal reveal-delay-3">
+                    <div class="contact-icon">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm3.5-9c.83 0 1.5-.67 1.5-1.5S16.33 8 15.5 8 14 8.67 14 9.5s.67 1.5 1.5 1.5zm-7 0c.83 0 1.5-.67 1.5-1.5S9.33 8 8.5 8 7 8.67 7 9.5 7.67 11 8.5 11z"/>
+                        </svg>
+                    </div>
+                    <div class="contact-detail">
+                        <h3>Location</h3>
+                        <p>Coconut Grove, Miami, FL</p>
+                    </div>
+                </div>
+            </div>
+            <form class="contact-form" action="https://formsubmit.co/hello@emberoak.co" method="POST" id="contactForm">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" id="name" name="name" placeholder="Your Full Name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="event-date">Event Date</label>
+                    <input type="date" id="event-date" name="event_date" required>
+                </div>
+                <div class="form-group">
+                    <label for="guests">Number of Guests</label>
+                    <input type="number" id="guests" name="guests" placeholder="e.g., 50" min="15" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Tell Us About Your Vision</label>
+                    <textarea id="message" name="message" placeholder="Share your ideas, preferences, and any special requests..." required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Request a Consultation</button>
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_next" value="https://webnari.io/emberoak.html">
+            </form>
+        </div>
+    </section>
+
+    <!-- CTA Banner -->
+    <section class="cta-banner">
+        <h2>Let's Create Something Beautiful Together</h2>
+        <div class="cta-banner-buttons">
+            <a href="#contact" class="cta-banner-btn-dark">Start Planning</a>
+            <a href="tel:+13055551850" class="cta-banner-btn-outlined">Call (305) 555-1850</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-col">
+                <h4>Ember & Oak</h4>
+                <p>Crafted cuisine for life's finest moments.</p>
+                <p style="font-size: 12px; margin-top: 10px;">Catering License #CAT2025-0847</p>
+            </div>
+            <div class="footer-col">
+                <h4>Services</h4>
+                <ul class="footer-links">
+                    <li><a href="#menu">Wedding Catering</a></li>
+                    <li><a href="#menu">Corporate Events</a></li>
+                    <li><a href="#menu">Intimate Dinners</a></li>
+                    <li><a href="#menu">Cocktail Parties</a></li>
+                    <li><a href="#menu">Holiday Celebrations</a></li>
+                    <li><a href="#menu">Custom Experiences</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Company</h4>
+                <ul class="footer-links">
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#process">Our Process</a></li>
+                    <li><a href="#testimonials">Reviews</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contact</h4>
+                <p><strong>Phone:</strong><br/><a href="tel:+13055551850" style="color: rgba(251, 247, 240, 0.8); text-decoration: none;">(305) 555-1850</a></p>
+                <p><strong>Email:</strong><br/><a href="mailto:hello@emberoak.co" style="color: rgba(251, 247, 240, 0.8); text-decoration: none;">hello@emberoak.co</a></p>
+                <p><strong>Hours:</strong><br/>Mon–Sat 9AM–6PM</p>
+            </div>
+        </div>
+        <div class="footer-badge">
+            <p>Powered by <a href="https://webnari.io/">Webnari</a> — Website as a Service</p>
+            <p>&copy; 2025 Ember & Oak Catering. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile Navigation Toggle
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navLinks = document.getElementById('navLinks');
+
+        mobileToggle.addEventListener('click', function() {
+            mobileToggle.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+
+        // Close mobile menu when a link is clicked
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', function() {
+                mobileToggle.classList.remove('active');
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // Floating Navigation on Scroll
+        const floatingNav = document.getElementById('floatingNav');
+        let lastScrollY = 0;
+        let scrollTimeout;
+
+        window.addEventListener('scroll', function() {
+            lastScrollY = window.scrollY;
+
+            // Show floating nav after scrolling past hero
+            if (window.scrollY > window.innerHeight * 0.3) {
+                floatingNav.classList.add('active');
+            } else {
+                floatingNav.classList.remove('active');
+            }
+
+            // Clear existing timeout
+            clearTimeout(scrollTimeout);
+
+            // Hide floating nav when at top
+            if (window.scrollY < 100) {
+                floatingNav.classList.remove('active');
+            }
+        });
+
+        // Intersection Observer for Scroll Reveals
+        const revealElements = document.querySelectorAll('.reveal');
+
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        revealElements.forEach(el => revealObserver.observe(el));
+
+        // FAQ Toggle
+        function toggleFAQ(element) {
+            const item = element.parentElement;
+            item.classList.toggle('active');
+        }
+
+        // Form Validation
+        const contactForm = document.getElementById('contactForm');
+
+        contactForm.addEventListener('submit', function(e) {
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const eventDate = document.getElementById('event-date').value;
+            const guests = document.getElementById('guests').value;
+            const message = document.getElementById('message').value.trim();
+
+            if (!name) {
+                e.preventDefault();
+                alert('Please enter your name.');
+                return;
+            }
+
+            if (!email || !email.includes('@')) {
+                e.preventDefault();
+                alert('Please enter a valid email address.');
+                return;
+            }
+
+            if (!eventDate) {
+                e.preventDefault();
+                alert('Please select an event date.');
+                return;
+            }
+
+            if (!guests || guests < 15) {
+                e.preventDefault();
+                alert('Minimum guest count is 15.');
+                return;
+            }
+
+            if (!message) {
+                e.preventDefault();
+                alert('Please tell us about your event vision.');
+                return;
+            }
+        });
+
+        // Smooth Scroll for Anchor Links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href !== '#' && document.querySelector(href)) {
+                    e.preventDefault();
+                    document.querySelector(href).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Prevent body scroll when mobile menu is open
+        navLinks.addEventListener('click', function(e) {
+            if (e.target.classList.contains('nav-link')) {
+                document.body.style.overflow = 'auto';
+            }
+        });
+    </script>
+</body>
+</html>

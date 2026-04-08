@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="InkSeal Mobile Notary - Professional notary and signing agent services in Miami, Florida. Same-day availability, bilingual services.">
+  <meta name="theme-color" content="#1A1A1A">
+  <meta property="og:title" content="InkSeal Mobile Notary | Miami FL">
+  <meta property="og:description" content="Professional mobile notary and signing agent services. Serving South Florida with bilingual support.">
+  <meta property="og:image" content="https://webnari.io/og-inkseal.png">
+  <meta property="og:url" content="https://webnari.io/inkseal.html">
+  <title>InkSeal Mobile Notary | Miami FL</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --ink: #1A1A1A;
+      --parchment: #F5EFE0;
+      --cream: #FAF6ED;
+      --red: #C53030;
+      --gray: #6B7280;
+      --charcoal: #374151;
+      --light-gray: #9CA3AF;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--ink);
+      background: linear-gradient(135deg, var(--parchment) 0%, var(--cream) 100%);
+      line-height: 1.7;
+      font-weight: 300;
+      position: relative;
+    }
+
+    /* Washi paper texture overlay */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image:
+        radial-gradient(circle at 20% 50%, rgba(197, 48, 48, 0.02) 0%, transparent 50%),
+        radial-gradient(circle at 80% 80%, rgba(26, 26, 26, 0.02) 0%, transparent 50%);
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 999;
+      background: transparent;
+      transition: all 0.4s ease;
+      border-bottom: 1px solid rgba(197, 48, 48, 0.3);
+      backdrop-filter: blur(0px);
+    }
+
+    nav.scrolled {
+      background: rgba(245, 239, 224, 0.95);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-logo {
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: 'Noto Serif Display', serif;
+      font-size: 0.95rem;
+      color: var(--ink);
+      text-decoration: none;
+      transition: color 0.3s ease;
+      letter-spacing: 0.5px;
+    }
+
+    .nav-links a:hover {
+      color: var(--red);
+    }
+
+    .nav-cta {
+      background: var(--red);
+      color: white !important;
+      padding: 0.65rem 1.5rem;
+      border-radius: 50px;
+      font-weight: 400;
+      transition: all 0.3s ease;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+    }
+
+    .nav-cta:hover {
+      background: #a82a2a;
+      transform: translateY(-2px);
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 0.4rem;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 0.5rem;
+    }
+
+    .hamburger span {
+      width: 24px;
+      height: 2px;
+      background: var(--ink);
+      transition: all 0.3s ease;
+    }
+
+    /* Mobile Navigation */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--parchment);
+      z-index: 998;
+      flex-direction: column;
+      padding: 6rem 2rem;
+      gap: 1.5rem;
+    }
+
+    .mobile-menu.active {
+      display: flex;
+    }
+
+    .mobile-menu a {
+      font-family: 'Noto Serif Display', serif;
+      font-size: 1.5rem;
+      color: var(--ink);
+      text-decoration: none;
+      letter-spacing: 0.5px;
+    }
+
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 6rem 2rem;
+      margin-top: 4rem;
+      position: relative;
+    }
+
+    .hero-seal {
+      width: 140px;
+      height: 140px;
+      margin-bottom: 3rem;
+      animation: floatSeal 6s ease-in-out infinite;
+    }
+
+    @keyframes floatSeal {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+
+    .hero h1 {
+      font-family: 'Noto Serif Display', serif;
+      font-size: clamp(2.5rem, 8vw, 4.5rem);
+      line-height: 1.2;
+      letter-spacing: -0.5px;
+      margin-bottom: 1.5rem;
+      max-width: 900px;
+      font-weight: 400;
+    }
+
+    .hero h1 em {
+      font-style: italic;
+      color: var(--red);
+      font-weight: 600;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--gray);
+      max-width: 600px;
+      margin-bottom: 3rem;
+      letter-spacing: 0.3px;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      animation: bobbing 2s ease-in-out infinite;
+    }
+
+    .scroll-hint-line {
+      width: 1px;
+      height: 24px;
+      background: var(--red);
+      animation: slideDown 1.5s ease-in-out infinite;
+    }
+
+    @keyframes bobbing {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(8px); }
+    }
+
+    @keyframes slideDown {
+      0% { transform: scaleY(0); }
+      50% { transform: scaleY(1); }
+      100% { transform: scaleY(0) translateY(12px); }
+    }
+
+    /* Brush Divider */
+    .brush-divider {
+      max-width: 600px;
+      height: 40px;
+      margin: 6rem auto;
+    }
+
+    /* Services Section */
+    .services {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 8rem 2rem;
+      position: relative;
+    }
+
+    .services-title {
+      font-family: 'Noto Serif Display', serif;
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 4rem;
+      letter-spacing: -0.3px;
+      position: relative;
+      padding-bottom: 1rem;
+    }
+
+    .services-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 3px;
+      background: var(--red);
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 3rem;
+      margin-bottom: 4rem;
+    }
+
+    @media (min-width: 768px) {
+      .services-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .service-card {
+      padding-left: 2rem;
+      border-left: 3px solid var(--red);
+      position: relative;
+      opacity: 0;
+      animation: revealUp 0.8s ease-out forwards;
+    }
+
+    .service-card::before {
+      content: '';
+      position: absolute;
+      left: -10px;
+      top: 0;
+      width: 8px;
+      height: 8px;
+      background: var(--red);
+      border-radius: 50%;
+    }
+
+    @keyframes revealUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .service-card h3 {
+      font-family: 'Noto Serif Display', serif;
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.2px;
+      font-weight: 600;
+    }
+
+    .service-card p {
+      font-size: 0.95rem;
+      color: var(--gray);
+      margin-bottom: 0.75rem;
+    }
+
+    .service-price {
+      font-family: 'Noto Serif Display', serif;
+      font-size: 1rem;
+      color: var(--red);
+      font-weight: 600;
+    }
+
+    /* About Section */
+    .about {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 8rem 2rem;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    @media (min-width: 768px) {
+      .about {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .about-quote {
+      font-family: 'Noto Serif Display', serif;
+      font-size: 1.8rem;
+      font-style: italic;
+      line-height: 1.4;
+      color: var(--ink);
+      position: relative;
+      padding-left: 2rem;
+    }
+
+    .about-quote::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 3px;
+      height: 60px;
+      background: var(--red);
+    }
+
+    .about-content h2 {
+      font-family: 'Noto Serif Display', serif;
+      font-size: 2rem;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.3px;
+      font-weight: 400;
+    }
+
+    .about-content p {
+      font-size: 0.95rem;
+      color: var(--gray);
+      margin-bottom: 1.25rem;
+      line-height: 1.8;
+    }
+
+    .about-credit {
+      font-family: 'Noto Serif Display', serif;
+      font-size: 0.9rem;
+      font-style: italic;
+      color: var(--light-gray);
+      margin-top: 1rem;
+    }
+
+    /* Why Choose Us */
+    .why {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 8rem 2rem;
+    }
+
+    .why h2 {
+      font-family: 'Noto Serif Display', serif;
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 4rem;
+      letter-spacing: -0.3px;
+      position: relative;
+      padding-bottom: 1rem;
+    }
+
+    .why h2::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 3px;
+      background: var(--red);
+    }
+
+    .why-feature {
+      padding: 2rem 0;
+      border-bottom: 1px solid rgba(197, 48, 48, 0.2);
+      display: flex;
+      gap: 1.5rem;
+      align-items: flex-start;
+      opacity: 0;
+      animation: revealUp 0.8s ease-out forwards;
+    }
+
+    .why-feature:last-child {
+      border-bottom: none;
+    }
+
+    .why-dot {
+      width: 12px;
+      height: 12px;
+      background: var(--red);
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 0.4rem;
+    }
+
+    .why-feature h3 {
+      font-family: 'Noto Serif Display', serif;
+      font-size: 1.15rem;
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.2px;
+    }
+
+    .why-feature p {
+      font-size: 0.95rem;
+      color: var(--gray);
+    }
+
+    /* Process Section */
+    .process {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 8rem 2rem;
+    }
+
+    .process h2 {
+      font-family: 'Noto Serif Display', serif;
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 4rem;
+      letter-spacing: -0.3px;
+      position: relative;
+      padding-bottom: 1rem;
+    }
+
+    .process h2::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 3px;
+      background: var(--red);
+    }
+
+    .process-steps {
+      position: relative;
+      padding-left: 2rem;
+    }
+
+    .process-steps::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--red);
+    }
+
+    .process-step {
+      margin-bottom: 3rem;
+      padding-left: 2rem;
+      position: relative;
+      opacity: 0;
+      animation: revealUp 0.8s ease-out forwards;
+    }
+
+    .process-step::before {
+      content: attr(data-num);
+      position: absolute;
+      left: -2.4rem;
+      top: 0;
+      font-family: 'Noto Serif Display', serif;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--red);
+      opacity: 0.3;
+    }
+
+    .process-step h3 {
+      font-family: 'Noto Serif Display', serif;
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.2px;
+    }
+
+    .process-step p {
+      font-size: 0.95rem;
+      color: var(--gray);
+    }
+
+    /* Testimonials */
+    .testimonials {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 8rem 2rem;
+    }
+
+    .testimonials h2 {
+      font-family: 'Noto Serif Display', serif;
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 4rem;
+      letter-spacing: -0.3px;
+      position: relative;
+      padding-bottom: 1rem;
+    }
+
+    .testimonials h2::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 3px;
+      background: var(--red);
+    }
+
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 3rem;
+    }
+
+    @media (min-width: 768px) {
+      .testimonial-grid {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      }
+    }
+
+    .testimonial-card {
+      padding: 2rem 0;
+      border-top: 1px solid rgba(197, 48, 48, 0.3);
+      border-bottom: 1px solid rgba(197, 48, 48, 0.3);
+      opacity: 0;
+      animation: revealUp 0.8s ease-out forwards;
+    }
+
+    .testimonial-quote {
+      font-family: 'Noto Serif Display', serif;
+      font-size: 2rem;
+      color: var(--red);
+      opacity: 0.6;
+      margin-bottom: 1rem;
+      line-height: 1;
+    }
+
+    .testimonial-text {
+      font-size: 0.95rem;
+      color: var(--gray);
+      font-style: italic;
+      margin-bottom: 1rem;
+      line-height: 1.7;
+    }
+
+    .testimonial-author {
+      font-family: 'Noto Serif Display', serif;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--ink);
+    }
+
+    /* FAQ Section */
+    .faq {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 8rem 2rem;
+    }
+
+    .faq h2 {
+      font-family: 'Noto Serif Display', serif;
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 4rem;
+      letter-spacing: -0.3px;
+      position: relative;
+      padding-bottom: 1rem;
+    }
+
+    .faq h2::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 3px;
+      background: var(--red);
+    }
+
+    .faq-item {
+      margin-bottom: 1.5rem;
+    }
+
+    .faq-question {
+      font-family: 'Noto Serif Display', serif;
+      font-size: 1.05rem;
+      padding: 1.5rem 0;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(197, 48, 48, 0.2);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: color 0.3s ease;
+    }
+
+    .faq-question:hover {
+      color: var(--red);
+    }
+
+    .faq-toggle {
+      width: 20px;
+      height: 20px;
+      border: 2px solid var(--red);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: var(--red);
+      flex-shrink: 0;
+      transition: all 0.3s ease;
+    }
+
+    .faq-item.active .faq-toggle {
+      transform: rotate(180deg);
+      background: var(--red);
+      color: white;
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      padding: 0;
+      color: var(--gray);
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .faq-item.active .faq-answer {
+      max-height: 500px;
+      padding: 1rem 0;
+    }
+
+    /* Service Areas */
+    .areas {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 8rem 2rem;
+    }
+
+    .areas h2 {
+      font-family: 'Noto Serif Display', serif;
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 2rem;
+      letter-spacing: -0.3px;
+      position: relative;
+      padding-bottom: 1rem;
+    }
+
+    .areas h2::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 3px;
+      background: var(--red);
+    }
+
+    .areas-text {
+      font-size: 0.95rem;
+      color: var(--gray);
+      line-height: 1.8;
+      text-align: center;
+      font-style: italic;
+    }
+
+    .areas-text span {
+      display: inline;
+    }
+
+    .area-dot {
+      display: inline-block;
+      width: 4px;
+      height: 4px;
+      background: var(--red);
+      border-radius: 50%;
+      margin: 0 0.5rem;
+      vertical-align: middle;
+    }
+
+    /* Contact Section */
+    .contact {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 8rem 2rem;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 4rem;
+    }
+
+    @media (min-width: 768px) {
+      .contact {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .contact h2 {
+      grid-column: 1 / -1;
+      font-family: 'Noto Serif Display', serif;
+      font-size: 2.5rem;
+      text-align: center;
+      margin-bottom: 2rem;
+      letter-spacing: -0.3px;
+      position: relative;
+      padding-bottom: 1rem;
+    }
+
+    .contact h2::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 40px;
+      height: 3px;
+      background: var(--red);
+    }
+
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .contact-item {
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(197, 48, 48, 0.2);
+    }
+
+    .contact-item:last-child {
+      border-bottom: none;
+    }
+
+    .contact-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--gray);
+      margin-bottom: 0.4rem;
+      display: block;
+    }
+
+    .contact-value {
+      font-family: 'Noto Serif Display', serif;
+      font-size: 1.05rem;
+      color: var(--ink);
+    }
+
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .form-group label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: var(--gray);
+      margin-bottom: 0.4rem;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--red);
+      padding: 0.8rem 0;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      color: var(--ink);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-bottom-color: var(--charcoal);
+      box-shadow: 0 2px 0 var(--red);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 120px;
+      font-size: 0.9rem;
+    }
+
+    .form-error {
+      font-size: 0.8rem;
+      color: var(--red);
+      margin-top: 0.3rem;
+      display: none;
+    }
+
+    .form-group.error input,
+    .form-group.error textarea {
+      border-bottom-color: var(--red);
+    }
+
+    .form-group.error .form-error {
+      display: block;
+    }
+
+    .submit-btn {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: var(--red);
+      color: white;
+      border: none;
+      font-family: 'Noto Serif Display', serif;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      align-self: flex-start;
+      margin-top: 1rem;
+    }
+
+    .submit-btn:hover {
+      background: #a82a2a;
+      transform: scale(1.05);
+    }
+
+    .submit-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* Footer */
+    footer {
+      background: var(--ink);
+      color: white;
+      padding: 4rem 2rem;
+      text-align: center;
+      border-top: 1px solid rgba(197, 48, 48, 0.3);
+      margin-top: 8rem;
+    }
+
+    .footer-logo {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 1.5rem;
+    }
+
+    .footer-brand {
+      font-family: 'Noto Serif Display', serif;
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      letter-spacing: 0.5px;
+    }
+
+    .footer-text {
+      font-size: 0.85rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 0.5rem;
+      line-height: 1.6;
+    }
+
+    .footer-badge {
+      display: inline-block;
+      margin-top: 1.5rem;
+      padding: 0.8rem 1.5rem;
+      border: 1px solid var(--red);
+      border-radius: 50px;
+      font-size: 0.8rem;
+      color: var(--red);
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .footer-badge:hover {
+      background: var(--red);
+      color: white;
+    }
+
+    /* Animations */
+    .reveal {
+      opacity: 0;
+    }
+
+    .reveal-visible {
+      animation: revealUp 0.8s ease-out forwards;
+    }
+
+    .reveal-delay-1 {
+      animation-delay: 0.1s;
+    }
+
+    .reveal-delay-2 {
+      animation-delay: 0.2s;
+    }
+
+    .reveal-delay-3 {
+      animation-delay: 0.3s;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .hamburger {
+        display: flex;
+      }
+
+      .nav-logo {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+      }
+
+      .hero {
+        margin-top: 3rem;
+        padding: 4rem 1.5rem;
+      }
+
+      .hero h1 {
+        font-size: 2rem;
+      }
+
+      .services,
+      .about,
+      .why,
+      .process,
+      .testimonials,
+      .faq,
+      .areas,
+      .contact {
+        padding: 5rem 1.5rem;
+      }
+
+      .about {
+        grid-template-columns: 1fr;
+      }
+
+      .services-title,
+      .process h2,
+      .testimonials h2,
+      .faq h2,
+      .areas h2,
+      .contact h2 {
+        font-size: 1.8rem;
+      }
+
+      .why h2 {
+        font-size: 1.8rem;
+      }
+
+      .submit-btn {
+        width: 100px;
+        height: 100px;
+        font-size: 0.7rem;
+      }
+    }
+
+    /* Stagger animations */
+    .service-card:nth-child(1) { animation-delay: 0s; }
+    .service-card:nth-child(2) { animation-delay: 0.1s; }
+    .service-card:nth-child(3) { animation-delay: 0.2s; }
+    .service-card:nth-child(4) { animation-delay: 0.3s; }
+    .service-card:nth-child(5) { animation-delay: 0.4s; }
+    .service-card:nth-child(6) { animation-delay: 0.5s; }
+
+    .why-feature:nth-child(1) { animation-delay: 0s; }
+    .why-feature:nth-child(2) { animation-delay: 0.1s; }
+    .why-feature:nth-child(3) { animation-delay: 0.2s; }
+    .why-feature:nth-child(4) { animation-delay: 0.3s; }
+
+    .process-step:nth-child(1) { animation-delay: 0s; }
+    .process-step:nth-child(2) { animation-delay: 0.1s; }
+    .process-step:nth-child(3) { animation-delay: 0.2s; }
+
+    .testimonial-card:nth-child(1) { animation-delay: 0s; }
+    .testimonial-card:nth-child(2) { animation-delay: 0.1s; }
+    .testimonial-card:nth-child(3) { animation-delay: 0.2s; }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav id="navbar">
+    <div class="nav-container">
+      <svg class="nav-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="48" fill="none" stroke="#C53030" stroke-width="2"/>
+        <circle cx="50" cy="50" r="44" fill="none" stroke="#C53030" stroke-width="1"/>
+        <text x="50" y="58" font-family="'Noto Serif Display', serif" font-size="24" font-weight="700" fill="#C53030" text-anchor="middle">IS</text>
+      </svg>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#services">Services</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#process">Process</a></li>
+        <li><a href="#reviews">Reviews</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+      <a href="#contact" class="nav-cta">Book Signing</a>
+      <button class="hamburger" id="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="#services" onclick="closeMobileMenu()">Services</a>
+    <a href="#about" onclick="closeMobileMenu()">About</a>
+    <a href="#process" onclick="closeMobileMenu()">Process</a>
+    <a href="#reviews" onclick="closeMobileMenu()">Reviews</a>
+    <a href="#contact" onclick="closeMobileMenu()">Contact</a>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero" id="hero">
+    <svg class="hero-seal" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="roughEdges">
+          <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="3" result="noise"/>
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="2"/>
+        </filter>
+      </defs>
+      <circle cx="50" cy="50" r="48" fill="#C53030" filter="url(#roughEdges)"/>
+      <circle cx="50" cy="50" r="48" fill="none" stroke="#F5EFE0" stroke-width="2"/>
+      <text x="50" y="62" font-family="'Noto Serif Display', serif" font-size="32" font-weight="700" fill="#F5EFE0" text-anchor="middle" letter-spacing="2">IS</text>
+    </svg>
+    <h1>Every Document Deserves <em>Certainty.</em></h1>
+    <p>Professional notary and signing agent services for South Florida. Mobile, bilingual, and available when you need us.</p>
+    <div class="scroll-hint">
+      <div class="scroll-hint-line"></div>
+    </div>
+  </section>
+
+  <!-- Brush Divider 1 -->
+  <svg class="brush-divider" viewBox="0 0 600 40" xmlns="http://www.w3.org/2000/svg">
+    <path d="M 50 20 Q 100 10, 150 20 Q 200 30, 250 20 Q 300 10, 350 20 Q 400 30, 450 20 Q 500 10, 550 20"
+          stroke="#C53030" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+  </svg>
+
+  <!-- Services Section -->
+  <section class="services" id="services">
+    <h2 class="services-title">Our Services</h2>
+    <div class="services-grid">
+      <div class="service-card">
+        <h3>Real Estate Closings</h3>
+        <p>Comprehensive notarization and witness services for residential and commercial property transactions.</p>
+        <div class="service-price">$150</div>
+      </div>
+      <div class="service-card">
+        <h3>Loan Signings</h3>
+        <p>Expert handling of mortgage documents, promissory notes, and lending agreements with full compliance.</p>
+        <div class="service-price">$125</div>
+      </div>
+      <div class="service-card">
+        <h3>Power of Attorney</h3>
+        <p>Certified notarization of POA documents for financial, medical, and legal authority delegation.</p>
+        <div class="service-price">$75</div>
+      </div>
+      <div class="service-card">
+        <h3>Estate Documents</h3>
+        <p>Notarization of wills, trusts, affidavits, and probate-related documents with meticulous accuracy.</p>
+        <div class="service-price">$100</div>
+      </div>
+      <div class="service-card">
+        <h3>Apostille Services</h3>
+        <p>Florida Apostille certification for international document authentication and legal recognition.</p>
+        <div class="service-price">$85</div>
+      </div>
+      <div class="service-card">
+        <h3>I-9 Verification</h3>
+        <p>Employment eligibility document notarization and I-9 form certification for HR compliance.</p>
+        <div class="service-price">$60</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Brush Divider 2 -->
+  <svg class="brush-divider" viewBox="0 0 600 40" xmlns="http://www.w3.org/2000/svg">
+    <path d="M 50 20 Q 100 10, 150 20 Q 200 30, 250 20 Q 300 10, 350 20 Q 400 30, 450 20 Q 500 10, 550 20"
+          stroke="#C53030" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+  </svg>
+
+  <!-- About Section -->
+  <section class="about" id="about">
+    <div>
+      <div class="about-quote">"Every signature carries responsibility. I treat yours with the utmost care and professionalism."</div>
+    </div>
+    <div class="about-content">
+      <h2>About Maria</h2>
+      <p>With over a decade of experience as a Florida-commissioned notary public and NNA-certified signing agent, Maria Chen brings meticulous attention to detail and unwavering professionalism to every document. Specializing in real estate closings and loan signings across Miami-Dade and Broward counties, Maria understands the critical importance of accuracy and compliance in legal transactions.</p>
+      <p>Maria's bilingual expertise (English, Spanish, and Mandarin) and mobile service model have made her the trusted choice for busy professionals, attorneys, and title companies throughout South Florida.</p>
+      <p class="about-credit">— Maria Chen, FL Notary Commission #HH123456 | NNA Certified Signing Agent</p>
+    </div>
+  </section>
+
+  <!-- Brush Divider 3 -->
+  <svg class="brush-divider" viewBox="0 0 600 40" xmlns="http://www.w3.org/2000/svg">
+    <path d="M 50 20 Q 100 10, 150 20 Q 200 30, 250 20 Q 300 10, 350 20 Q 400 30, 450 20 Q 500 10, 550 20"
+          stroke="#C53030" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+  </svg>
+
+  <!-- Why Choose Us -->
+  <section class="why" id="why">
+    <h2>Why Choose InkSeal</h2>
+    <div class="why-feature">
+      <div class="why-dot"></div>
+      <div>
+        <h3>Mobile Service</h3>
+        <p>We come to you—home, office, or coffee shop. No need to travel or wait in offices.</p>
+      </div>
+    </div>
+    <div class="why-feature">
+      <div class="why-dot"></div>
+      <div>
+        <h3>Same-Day Availability</h3>
+        <p>Most appointments scheduled within 24 hours. Emergency signings accommodated whenever possible.</p>
+      </div>
+    </div>
+    <div class="why-feature">
+      <div class="why-dot"></div>
+      <div>
+        <h3>Bilingual Services</h3>
+        <p>Fluent in English, Spanish, and Mandarin Chinese for diverse client needs and international clients.</p>
+      </div>
+    </div>
+    <div class="why-feature">
+      <div class="why-dot"></div>
+      <div>
+        <h3>Bonded & Insured</h3>
+        <p>$25,000 bond ensures protection and peace of mind. Every transaction handled with the highest standards.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Brush Divider 4 -->
+  <svg class="brush-divider" viewBox="0 0 600 40" xmlns="http://www.w3.org/2000/svg">
+    <path d="M 50 20 Q 100 10, 150 20 Q 200 30, 250 20 Q 300 10, 350 20 Q 400 30, 450 20 Q 500 10, 550 20"
+          stroke="#C53030" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+  </svg>
+
+  <!-- Process Section -->
+  <section class="process" id="process">
+    <h2>Our Process</h2>
+    <div class="process-steps">
+      <div class="process-step" data-num="01">
+        <h3>Schedule</h3>
+        <p>Contact us by phone or form. We confirm your appointment and any special requirements for your documents.</p>
+      </div>
+      <div class="process-step" data-num="02">
+        <h3>Meet & Verify</h3>
+        <p>Maria arrives at your location with her notary seal and journal. She verifies your identity and witnesses your signature in person.</p>
+      </div>
+      <div class="process-step" data-num="03">
+        <h3>Complete & Certify</h3>
+        <p>Documents are signed, notarized, and officially stamped. You receive copies for your records immediately.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Brush Divider 5 -->
+  <svg class="brush-divider" viewBox="0 0 600 40" xmlns="http://www.w3.org/2000/svg">
+    <path d="M 50 20 Q 100 10, 150 20 Q 200 30, 250 20 Q 300 10, 350 20 Q 400 30, 450 20 Q 500 10, 550 20"
+          stroke="#C53030" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+  </svg>
+
+  <!-- Testimonials Section -->
+  <section class="testimonials" id="reviews">
+    <h2>Client Testimonials</h2>
+    <div class="testimonial-grid">
+      <div class="testimonial-card">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">Maria made our real estate closing seamless. She was professional, prompt, and thorough. Highly recommended for any notary needs.</p>
+        <div class="testimonial-author">— Jennifer Rodriguez, Real Estate Agent</div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">I needed an apostille done quickly. Maria accommodated my emergency within hours. Exceptional service and attention to detail.</p>
+        <div class="testimonial-author">— David Kim, Attorney at Law</div>
+      </div>
+      <div class="testimonial-card">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">The convenience of having a notary come to my office saved us valuable time. Maria's bilingual skills were a lifesaver for our client.</p>
+        <div class="testimonial-author">— Sarah Chen, Title Company Manager</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Brush Divider 6 -->
+  <svg class="brush-divider" viewBox="0 0 600 40" xmlns="http://www.w3.org/2000/svg">
+    <path d="M 50 20 Q 100 10, 150 20 Q 200 30, 250 20 Q 300 10, 350 20 Q 400 30, 450 20 Q 500 10, 550 20"
+          stroke="#C53030" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+  </svg>
+
+  <!-- FAQ Section -->
+  <section class="faq" id="faq">
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item">
+      <div class="faq-question">
+        <span>What documents can you notarize?</span>
+        <div class="faq-toggle">+</div>
+      </div>
+      <div class="faq-answer">We notarize most legal documents including real estate deeds, mortgages, power of attorney, wills, affidavits, loan documents, and more. Some documents have restrictions—contact us to verify.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">
+        <span>How quickly can you come?</span>
+        <div class="faq-toggle">+</div>
+      </div>
+      <div class="faq-answer">We typically schedule appointments within 24 hours. For urgent matters, same-day service is often available. Call us to check availability for your preferred time.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">
+        <span>Do you charge travel fees?</span>
+        <div class="faq-toggle">+</div>
+      </div>
+      <div class="faq-answer">Travel fees apply for appointments outside our primary service area or after hours. Contact us for a quote for your specific location and timing.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">
+        <span>What identification do I need?</span>
+        <div class="faq-toggle">+</div>
+      </div>
+      <div class="faq-answer">Florida law requires valid government-issued ID with a photo and signature. Acceptable forms include driver's license, passport, and state ID. Expired IDs are generally not accepted.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">
+        <span>Are you NNA certified?</span>
+        <div class="faq-toggle">+</div>
+      </div>
+      <div class="faq-answer">Yes, Maria is an NNA (National Notary Association) Certified Signing Agent with specialized training in loan closings and complex transaction documents.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">
+        <span>Can you handle international documents?</span>
+        <div class="faq-toggle">+</div>
+      </div>
+      <div class="faq-answer">Yes. We provide Florida Apostille certification for documents needed internationally. Processing typically takes 3-5 business days.</div>
+    </div>
+  </section>
+
+  <!-- Brush Divider 7 -->
+  <svg class="brush-divider" viewBox="0 0 600 40" xmlns="http://www.w3.org/2000/svg">
+    <path d="M 50 20 Q 100 10, 150 20 Q 200 30, 250 20 Q 300 10, 350 20 Q 400 30, 450 20 Q 500 10, 550 20"
+          stroke="#C53030" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+  </svg>
+
+  <!-- Service Areas -->
+  <section class="areas" id="areas">
+    <h2>Service Areas</h2>
+    <p class="areas-text">
+      <span>We proudly serve Coral Gables</span>
+      <span class="area-dot"></span>
+      <span>Miami</span>
+      <span class="area-dot"></span>
+      <span>Miami Beach</span>
+      <span class="area-dot"></span>
+      <span>Brickell</span>
+      <span class="area-dot"></span>
+      <span>Doral</span>
+      <span class="area-dot"></span>
+      <span>Kendall</span>
+      <span class="area-dot"></span>
+      <span>Hialeah</span>
+      <span class="area-dot"></span>
+      <span>Westchester</span>
+      <span class="area-dot"></span>
+      <span>South Miami</span>
+      <span class="area-dot"></span>
+      <span>Homestead</span>
+      <span class="area-dot"></span>
+      <span>and surrounding communities throughout South Florida.</span>
+    </p>
+  </section>
+
+  <!-- Brush Divider 8 -->
+  <svg class="brush-divider" viewBox="0 0 600 40" xmlns="http://www.w3.org/2000/svg">
+    <path d="M 50 20 Q 100 10, 150 20 Q 200 30, 250 20 Q 300 10, 350 20 Q 400 30, 450 20 Q 500 10, 550 20"
+          stroke="#C53030" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+  </svg>
+
+  <!-- Contact Section -->
+  <section class="contact" id="contact">
+    <h2>Get in Touch</h2>
+    <div class="contact-info">
+      <div class="contact-item">
+        <span class="contact-label">Phone</span>
+        <div class="contact-value"><a href="tel:+17865556060" style="color: var(--ink); text-decoration: none;">(786) 555-0600</a></div>
+      </div>
+      <div class="contact-item">
+        <span class="contact-label">Email</span>
+        <div class="contact-value"><a href="mailto:hello@inkseal.com" style="color: var(--ink); text-decoration: none;">hello@inkseal.com</a></div>
+      </div>
+      <div class="contact-item">
+        <span class="contact-label">Location</span>
+        <div class="contact-value">Coral Gables, FL 33134<br>Serving all of South Florida</div>
+      </div>
+      <div class="contact-item">
+        <span class="contact-label">Hours</span>
+        <div class="contact-value">Monday–Sunday<br>7:00 AM – 10:00 PM<br>(by appointment)</div>
+      </div>
+    </div>
+    <form class="contact-form" id="contactForm">
+      <div class="form-group">
+        <label for="name">Your Name</label>
+        <input type="text" id="name" name="name" required>
+        <div class="form-error">Name is required</div>
+      </div>
+      <div class="form-group">
+        <label for="email">Email Address</label>
+        <input type="email" id="email" name="email" required>
+        <div class="form-error">Valid email is required</div>
+      </div>
+      <div class="form-group">
+        <label for="phone">Phone Number</label>
+        <input type="tel" id="phone" name="phone" required>
+        <div class="form-error">Phone number is required</div>
+      </div>
+      <div class="form-group">
+        <label for="service">Service Needed</label>
+        <input type="text" id="service" name="service" placeholder="e.g., Real Estate Closing" required>
+        <div class="form-error">Service is required</div>
+      </div>
+      <div class="form-group">
+        <label for="message">Message</label>
+        <textarea id="message" name="message" required></textarea>
+        <div class="form-error">Message is required</div>
+      </div>
+      <button type="submit" class="submit-btn">Send</button>
+    </form>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <svg class="footer-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="50" cy="50" r="48" fill="none" stroke="#C53030" stroke-width="2"/>
+      <circle cx="50" cy="50" r="44" fill="none" stroke="#C53030" stroke-width="1"/>
+      <text x="50" y="58" font-family="'Noto Serif Display', serif" font-size="24" font-weight="700" fill="#C53030" text-anchor="middle">IS</text>
+    </svg>
+    <div class="footer-brand">InkSeal Mobile Notary</div>
+    <div class="footer-text">
+      Florida Notary Commission #HH123456<br>
+      Bonded & Insured • $25,000<br>
+      NNA Certified Signing Agent
+    </div>
+    <a href="https://webnari.io" class="footer-badge">Powered by Webnari</a>
+  </footer>
+
+  <script>
+    // Mobile Menu Toggle
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    hamburger.addEventListener('click', () => {
+      mobileMenu.classList.toggle('active');
+    });
+
+    function closeMobileMenu() {
+      mobileMenu.classList.remove('active');
+    }
+
+    // Navbar scroll effect
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 50) {
+        navbar.classList.add('scrolled');
+      } else {
+        navbar.classList.remove('scrolled');
+      }
+    });
+
+    // Intersection Observer for scroll reveals
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -100px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('reveal-visible');
+        }
+      });
+    }, observerOptions);
+
+    // Observe elements for animation
+    document.querySelectorAll('.service-card, .why-feature, .process-step, .testimonial-card').forEach(el => {
+      el.classList.add('reveal');
+      observer.observe(el);
+    });
+
+    // FAQ Accordion
+    const faqItems = document.querySelectorAll('.faq-item');
+    faqItems.forEach(item => {
+      const question = item.querySelector('.faq-question');
+      question.addEventListener('click', () => {
+        const isActive = item.classList.contains('active');
+        faqItems.forEach(el => el.classList.remove('active'));
+        if (!isActive) {
+          item.classList.add('active');
+        }
+      });
+    });
+
+    // Form Validation
+    const contactForm = document.getElementById('contactForm');
+    const formInputs = contactForm.querySelectorAll('input, textarea');
+
+    formInputs.forEach(input => {
+      input.addEventListener('blur', validateField);
+      input.addEventListener('input', () => {
+        if (input.parentElement.classList.contains('error')) {
+          validateField.call(input);
+        }
+      });
+    });
+
+    function validateField() {
+      const field = this;
+      const group = field.parentElement;
+      let isValid = true;
+
+      if (!field.value.trim()) {
+        isValid = false;
+      } else if (field.id === 'email') {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        isValid = emailRegex.test(field.value);
+      } else if (field.id === 'phone') {
+        const phoneRegex = /^[\d\s\-\+\(\)]{10,}$/;
+        isValid = phoneRegex.test(field.value);
+      }
+
+      if (!isValid) {
+        group.classList.add('error');
+      } else {
+        group.classList.remove('error');
+      }
+
+      return isValid;
+    }
+
+    contactForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      let allValid = true;
+      formInputs.forEach(input => {
+        if (!validateField.call(input)) {
+          allValid = false;
+        }
+      });
+
+      if (allValid) {
+        // Use formsubmit.co as action
+        const formData = new FormData(contactForm);
+        const actionUrl = 'https://formsubmit.co/hello@inkseal.com';
+
+        fetch(actionUrl, {
+          method: 'POST',
+          body: formData
+        }).then(response => {
+          if (response.ok) {
+            alert('Thank you! Your booking request has been sent. We will contact you shortly.');
+            contactForm.reset();
+            formInputs.forEach(input => input.parentElement.classList.remove('error'));
+          }
+        }).catch(error => {
+          console.error('Form submission error:', error);
+          alert('There was an error submitting the form. Please try again or call us directly.');
+        });
+      }
+    });
+
+    // Smooth scroll for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        if (this.getAttribute('href') !== '#') {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth' });
+            closeMobileMenu();
+          }
+        }
+      });
+    });
+
+    // Stagger animation helper
+    function staggerAnimation(selector, delayUnit = 100) {
+      const elements = document.querySelectorAll(selector);
+      elements.forEach((el, index) => {
+        el.style.animationDelay = `${index * delayUnit}ms`;
+      });
+    }
+  </script>
+</body>
+</html>

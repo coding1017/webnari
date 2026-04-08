@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Azure Sail Co. — Private Sailing Charters, Miami</title>
+<meta name="description" content="Azure Sail Co. — Private sailing charters, yacht rentals & sunset cruises departing from Miami. Experience the Florida coastline from the water.">
+<meta property="og:title" content="Azure Sail Co. — Private Sailing Charters Miami">
+<meta property="og:description" content="Private sailing charters, yacht rentals & sunset cruises. Miami, FL.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Nunito:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&family=Zilla+Slab:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --navy: #0B1728;
+    --navy2: #142238;
+    --navy3: #1E3252;
+    --sand: #F5E6C4;
+    --sand2: #EDD8A8;
+    --sand3: #E0C484;
+    --coral: #E84C3D;
+    --coral2: #F06B5E;
+    --ocean: #2E86C1;
+    --ocean2: #4FA3D8;
+    --sky: #87CEEB;
+    --white: #FFFDF8;
+    --text-dark: #1A2840;
+    --text-mid: #445568;
+    --text-light: #7A8EA0;
+    --gold: #C9A84C;
+    --gold2: #E8C860;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--white);
+    color: var(--text-dark);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* TICKET BAR — top announcement */
+  .ticket-bar {
+    background: var(--coral);
+    padding: 10px 40px;
+    text-align: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .ticket-bar span { opacity: 0.8; }
+  .ticket-sep { opacity: 0.5; }
+
+  /* NAVIGATION */
+  .nav {
+    background: var(--navy);
+    padding: 0 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: 72px;
+    border-bottom: 2px solid var(--navy3);
+  }
+  .nav-logo {
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    line-height: 1;
+  }
+  .nav-logo-main {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    color: var(--sand);
+    letter-spacing: 0.08em;
+    line-height: 1;
+  }
+  .nav-logo-sub {
+    font-size: 0.55rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ocean2);
+    margin-top: 2px;
+  }
+  .nav-links { display: flex; align-items: center; gap: 32px; }
+  .nav-links a {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(245,230,196,0.7);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--sand); }
+  .nav-cta {
+    background: var(--coral);
+    color: var(--white) !important;
+    padding: 10px 24px !important;
+    letter-spacing: 0.1em !important;
+    transition: background 0.2s !important;
+  }
+  .nav-cta:hover { background: var(--coral2) !important; }
+  .hamburger {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 5px;
+    padding: 4px;
+  }
+  .hamburger span { display: block; width: 24px; height: 2px; background: var(--sand); transition: all 0.3s; }
+  .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+  .mobile-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--navy);
+    z-index: 90;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    padding-top: 80px;
+  }
+  .mobile-overlay.open { display: flex; }
+  .mobile-overlay a {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    letter-spacing: 0.08em;
+    color: var(--sand);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .mobile-overlay a:hover { color: var(--coral); }
+
+  /* HERO — RETRO POSTER */
+  .hero {
+    background: var(--navy);
+    position: relative;
+    overflow: hidden;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  /* Sun ray background */
+  .hero-rays {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+  }
+  /* Horizon bands */
+  .hero-horizon {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 38%;
+    background: linear-gradient(to bottom, #0B3060, #1A4F8C, #2E70B8);
+    clip-path: ellipse(65% 100% at 50% 100%);
+  }
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    flex: 1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 80px 80px 60px;
+    gap: 60px;
+  }
+  .hero-left { }
+  .hero-tag {
+    display: inline-block;
+    border: 1.5px solid var(--coral);
+    color: var(--coral);
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    margin-bottom: 24px;
+  }
+  .hero-h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(4rem, 8vw, 8rem);
+    line-height: 0.92;
+    color: var(--sand);
+    letter-spacing: 0.02em;
+    margin-bottom: 20px;
+  }
+  .hero-h1 .outline {
+    -webkit-text-stroke: 2px var(--sand);
+    color: transparent;
+  }
+  .hero-h1 .accent { color: var(--coral); }
+  .hero-tagline {
+    font-family: 'Zilla Slab', serif;
+    font-size: 1.05rem;
+    font-style: italic;
+    color: var(--ocean2);
+    margin-bottom: 36px;
+    line-height: 1.5;
+    max-width: 380px;
+  }
+  .hero-btns { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 48px; }
+  .btn-coral {
+    background: var(--coral);
+    color: var(--white);
+    padding: 14px 36px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.2s;
+    display: inline-block;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  }
+  .btn-coral:hover { background: var(--coral2); }
+  .btn-ghost-sand {
+    border: 2px solid rgba(245,230,196,0.4);
+    color: var(--sand);
+    padding: 14px 36px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: border-color 0.2s;
+    display: inline-block;
+  }
+  .btn-ghost-sand:hover { border-color: var(--sand); }
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border: 1px solid rgba(245,230,196,0.15);
+  }
+  .hero-stat { padding: 16px 20px; border-right: 1px solid rgba(245,230,196,0.15); }
+  .hero-stat:last-child { border-right: none; }
+  .h-stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.2rem;
+    color: var(--sand);
+    line-height: 1;
+    letter-spacing: 0.05em;
+  }
+  .h-stat-label { font-size: 0.6rem; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(245,230,196,0.5); margin-top: 4px; }
+
+  /* HERO SVG ILLUSTRATION */
+  .hero-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .hero-boat-svg { width: 100%; max-width: 480px; }
+  /* Poster stamp */
+  .hero-stamp {
+    position: absolute;
+    top: 20px;
+    right: -20px;
+    width: 120px;
+    height: 120px;
+    border: 3px solid var(--gold);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transform: rotate(18deg);
+    background: rgba(11,23,40,0.8);
+  }
+  .stamp-text {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.1em;
+    color: var(--gold);
+    line-height: 1.1;
+  }
+  .stamp-small { font-size: 0.55rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--gold2); margin-top: 4px; }
+
+  /* WAVE DIVIDER */
+  .wave-div { line-height: 0; background: var(--navy); }
+  .wave-div svg { display: block; width: 100%; }
+
+  /* SECTION BASE */
+  .section-inner { padding: 100px 80px; }
+  .section-label {
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--coral);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::before { content: ''; display: block; width: 32px; height: 2px; background: var(--coral); }
+  .section-h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.8rem, 5vw, 5rem);
+    letter-spacing: 0.04em;
+    color: var(--navy);
+    line-height: 0.95;
+    margin-bottom: 20px;
+  }
+  .section-h2.light { color: var(--sand); }
+  .section-h2 .coral-acc { color: var(--coral); }
+  .section-desc {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--text-mid);
+    line-height: 1.7;
+    max-width: 520px;
+  }
+  .section-desc.light { color: rgba(245,230,196,0.7); }
+
+  /* EXPERIENCES SECTION */
+  .experiences-section { background: var(--white); }
+  .exp-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: end;
+    margin-bottom: 72px;
+  }
+  .experiences-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+  .exp-card {
+    border: 2px solid var(--sand2);
+    transition: border-color 0.3s, transform 0.3s;
+    position: relative;
+    overflow: hidden;
+    background: var(--white);
+  }
+  .exp-card:hover { border-color: var(--coral); transform: translateY(-4px); }
+  .exp-card-img {
+    height: 200px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  /* Circular "porthole" frame concept */
+  .exp-card-img::before {
+    content: '';
+    position: absolute;
+    inset: -30%;
+    border-radius: 50%;
+    border: 3px solid rgba(245,230,196,0.2);
+    pointer-events: none;
+  }
+  .exp-card-body { padding: 28px 24px 32px; }
+  .exp-price-tag {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: var(--coral);
+    color: var(--white);
+    font-size: 0.72rem;
+    font-weight: 800;
+    padding: 4px 12px;
+    letter-spacing: 0.05em;
+  }
+  .exp-duration {
+    font-size: 0.6rem;
+    font-weight: 800;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--ocean);
+    margin-bottom: 10px;
+  }
+  .exp-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.7rem;
+    letter-spacing: 0.04em;
+    color: var(--navy);
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .exp-desc { font-size: 0.85rem; color: var(--text-mid); line-height: 1.65; margin-bottom: 20px; }
+  .exp-includes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .exp-tag {
+    font-size: 0.58rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    border: 1px solid var(--sand2);
+    padding: 3px 8px;
+  }
+  .exp-book-btn {
+    display: block;
+    margin-top: 20px;
+    text-align: center;
+    padding: 10px 20px;
+    background: var(--navy);
+    color: var(--sand);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .exp-book-btn:hover { background: var(--navy3); }
+
+  /* FLEET SECTION */
+  .fleet-section { background: var(--navy2); padding: 100px 80px; }
+  .fleet-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--navy3); margin-top: 64px; }
+  .fleet-card { background: var(--navy2); padding: 44px 36px; border-top: 3px solid transparent; transition: border-color 0.3s; }
+  .fleet-card:hover { border-color: var(--coral); }
+  .fleet-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4rem;
+    color: var(--navy3);
+    line-height: 1;
+    margin-bottom: 16px;
+    letter-spacing: 0.05em;
+  }
+  .fleet-vessel-type {
+    font-size: 0.6rem;
+    font-weight: 800;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--ocean2);
+    margin-bottom: 12px;
+  }
+  .fleet-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 0.04em;
+    color: var(--sand);
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+  .fleet-desc { font-size: 0.85rem; color: rgba(245,230,196,0.55); line-height: 1.7; margin-bottom: 24px; }
+  .fleet-specs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .fleet-spec-item { }
+  .fleet-spec-val {
+    font-family: 'Zilla Slab', serif;
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: var(--sand);
+    line-height: 1;
+  }
+  .fleet-spec-key { font-size: 0.58rem; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(245,230,196,0.4); margin-top: 2px; }
+
+  /* WHY US */
+  .whyus-section { background: var(--sand); padding: 100px 80px; }
+  .whyus-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: center; }
+  .whyus-left { }
+  .whyus-big-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 9rem;
+    line-height: 0.85;
+    color: var(--sand2);
+    letter-spacing: 0.02em;
+    margin-bottom: 12px;
+  }
+  .whyus-big-label { font-size: 0.7rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-mid); margin-bottom: 32px; }
+  .whyus-features { display: flex; flex-direction: column; gap: 20px; }
+  .whyus-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--sand3);
+  }
+  .feature-icon {
+    width: 44px;
+    height: 44px;
+    background: var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    color: var(--sand);
+  }
+  .feature-title { font-size: 0.9rem; font-weight: 800; color: var(--navy); margin-bottom: 4px; letter-spacing: 0.02em; }
+  .feature-text { font-size: 0.82rem; color: var(--text-mid); line-height: 1.6; }
+  .whyus-right { }
+  .whyus-poster {
+    background: var(--navy);
+    padding: 48px 40px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .whyus-poster::before {
+    content: '';
+    position: absolute;
+    inset: 8px;
+    border: 1px solid rgba(245,230,196,0.15);
+    pointer-events: none;
+  }
+  .poster-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.5rem;
+    color: var(--sand);
+    letter-spacing: 0.05em;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .poster-subtitle {
+    font-family: 'Zilla Slab', serif;
+    font-style: italic;
+    font-size: 1rem;
+    color: var(--ocean2);
+    margin-bottom: 32px;
+  }
+  /* Retro compass SVG */
+  .poster-compass { width: 140px; height: 140px; margin: 0 auto 32px; display: block; }
+  .poster-detail { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(245,230,196,0.5); line-height: 1.8; }
+
+  /* REVIEWS */
+  .reviews-section { background: var(--white); padding: 100px 80px; }
+  .reviews-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: end;
+    margin-bottom: 64px;
+  }
+  .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .review-card { padding: 36px 32px; border: 2px solid var(--sand2); position: relative; }
+  .review-card::before {
+    content: '"';
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 5rem;
+    color: var(--coral);
+    position: absolute;
+    top: 12px;
+    right: 24px;
+    line-height: 1;
+    opacity: 0.25;
+  }
+  .review-stars { color: var(--gold); font-size: 0.9rem; letter-spacing: 2px; margin-bottom: 16px; }
+  .review-text {
+    font-family: 'Zilla Slab', serif;
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--text-dark);
+    line-height: 1.65;
+    margin-bottom: 24px;
+  }
+  .review-bottom { display: flex; align-items: center; gap: 14px; border-top: 1px solid var(--sand2); padding-top: 16px; }
+  .review-avatar {
+    width: 40px; height: 40px;
+    background: var(--navy);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    color: var(--sand);
+    flex-shrink: 0;
+  }
+  .review-name { font-size: 0.82rem; font-weight: 800; color: var(--navy); margin-bottom: 2px; }
+  .review-meta { font-size: 0.65rem; color: var(--text-light); letter-spacing: 0.05em; }
+
+  /* FAQ */
+  .faq-section { background: var(--navy); padding: 100px 80px; }
+  .faq-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    margin-bottom: 64px;
+  }
+  .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: var(--navy3); }
+  .faq-item { background: var(--navy2); }
+  .faq-q {
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 22px 28px;
+    text-align: left;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    color: var(--sand);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    transition: background 0.2s;
+  }
+  .faq-q:hover { background: var(--navy3); }
+  .faq-toggle {
+    font-size: 1.2rem;
+    color: var(--coral);
+    transition: transform 0.3s;
+    flex-shrink: 0;
+    font-style: normal;
+  }
+  .faq-q.active .faq-toggle { transform: rotate(45deg); }
+  .faq-a {
+    display: none;
+    padding: 0 28px 22px;
+    font-size: 0.84rem;
+    color: rgba(245,230,196,0.6);
+    line-height: 1.8;
+    font-weight: 400;
+  }
+  .faq-a.open { display: block; }
+
+  /* AREAS */
+  .areas-section { background: var(--sand); padding: 80px 80px; }
+  .areas-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+  .areas-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+  .area-chip {
+    background: var(--navy);
+    color: var(--sand);
+    padding: 8px 20px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+  }
+
+  /* CONTACT */
+  .contact-section { background: var(--navy2); padding: 100px 80px; }
+  .contact-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; }
+  .contact-left { }
+  .contact-info-rows { margin-top: 40px; display: flex; flex-direction: column; gap: 28px; }
+  .cinfo-row { display: flex; align-items: flex-start; gap: 16px; }
+  .cinfo-icon {
+    width: 40px; height: 40px;
+    background: var(--navy3);
+    border: 1px solid var(--navy);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ocean2);
+    flex-shrink: 0;
+  }
+  .cinfo-label { font-size: 0.58rem; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(245,230,196,0.4); margin-bottom: 4px; }
+  .cinfo-val { font-size: 0.9rem; font-weight: 600; color: var(--sand); line-height: 1.5; }
+  .contact-form-wrap { }
+  .cf-group { margin-bottom: 24px; }
+  .cf-label { display: block; font-size: 0.6rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(245,230,196,0.5); margin-bottom: 8px; }
+  .cf-input {
+    width: 100%;
+    background: var(--navy);
+    border: 1px solid var(--navy3);
+    border-radius: 0;
+    padding: 12px 16px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 400;
+    color: var(--sand);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .cf-input::placeholder { color: rgba(245,230,196,0.3); }
+  .cf-input:focus { border-color: var(--ocean2); }
+  .cf-select {
+    width: 100%;
+    background: var(--navy);
+    border: 1px solid var(--navy3);
+    padding: 12px 16px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    color: var(--sand);
+    outline: none;
+    appearance: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .cf-select:focus { border-color: var(--ocean2); }
+  .cf-select option { background: var(--navy2); }
+  .cf-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .cf-submit {
+    background: var(--coral);
+    color: var(--white);
+    border: none;
+    padding: 14px 40px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+    width: 100%;
+    margin-top: 8px;
+  }
+  .cf-submit:hover { background: var(--coral2); }
+
+  /* CTA BANNER */
+  .cta-section {
+    background: var(--coral);
+    padding: 80px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-section::before {
+    content: 'CAST OFF';
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14rem;
+    color: rgba(0,0,0,0.08);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    pointer-events: none;
+    letter-spacing: 0.05em;
+  }
+  .cta-content { position: relative; z-index: 1; text-align: center; }
+  .cta-h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 6vw, 6rem);
+    color: var(--white);
+    letter-spacing: 0.04em;
+    line-height: 0.95;
+    margin-bottom: 20px;
+  }
+  .cta-sub { font-size: 1rem; font-weight: 600; color: rgba(255,255,255,0.8); margin-bottom: 36px; max-width: 500px; margin-left: auto; margin-right: auto; }
+  .cta-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .cta-btn-navy { background: var(--navy); color: var(--sand); padding: 14px 40px; font-size: 0.8rem; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; transition: background 0.2s; }
+  .cta-btn-navy:hover { background: var(--navy2); }
+  .cta-btn-white { border: 2px solid rgba(255,255,255,0.6); color: var(--white); padding: 14px 40px; font-size: 0.8rem; font-weight: 800; letter-spacing: 0.15em; text-transform: uppercase; text-decoration: none; transition: border-color 0.2s; }
+  .cta-btn-white:hover { border-color: var(--white); }
+
+  /* FOOTER */
+  .footer { background: var(--navy); border-top: 1px solid var(--navy3); }
+  .footer-inner { padding: 64px 80px 40px; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; }
+  .footer-brand { text-decoration: none; display: block; }
+  .footer-brand-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.2rem;
+    color: var(--sand);
+    letter-spacing: 0.06em;
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+  .footer-brand-sub { font-size: 0.58rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--ocean2); margin-bottom: 20px; display: block; }
+  .footer-blurb { font-size: 0.82rem; color: rgba(245,230,196,0.45); line-height: 1.7; max-width: 280px; margin-bottom: 16px; }
+  .footer-license { font-size: 0.6rem; color: rgba(245,230,196,0.25); letter-spacing: 0.05em; }
+  .footer-col-title { font-size: 0.58rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; color: rgba(245,230,196,0.3); margin-bottom: 20px; }
+  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-links a { font-size: 0.8rem; font-weight: 600; color: rgba(245,230,196,0.5); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--sand); }
+  .footer-contact-list { display: flex; flex-direction: column; gap: 12px; }
+  .footer-contact-row { display: flex; gap: 10px; align-items: flex-start; }
+  .footer-contact-row svg { color: var(--ocean2); flex-shrink: 0; margin-top: 2px; }
+  .footer-contact-row span { font-size: 0.78rem; color: rgba(245,230,196,0.5); line-height: 1.5; }
+  .footer-bottom { margin: 0 80px; padding: 20px 0; border-top: 1px solid var(--navy3); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+  .footer-copy { font-size: 0.65rem; color: rgba(245,230,196,0.25); }
+  .webnari-badge { font-size: 0.65rem; color: rgba(245,230,196,0.25); text-decoration: none; transition: color 0.2s; }
+  .webnari-badge:hover { color: var(--ocean2); }
+
+  /* REVEAL */
+  .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.65s ease, transform 0.65s ease; }
+  .reveal.visible { opacity: 1; transform: none; }
+  .reveal-delay-1 { transition-delay: 0.12s; }
+  .reveal-delay-2 { transition-delay: 0.24s; }
+  .reveal-delay-3 { transition-delay: 0.36s; }
+  .reveal-delay-4 { transition-delay: 0.48s; }
+
+  /* RESPONSIVE */
+  @media (max-width: 1100px) {
+    .section-inner { padding: 80px 48px; }
+    .fleet-section, .whyus-section, .reviews-section, .faq-section, .areas-section, .contact-section, .cta-section { padding: 80px 48px; }
+    .footer-inner { grid-template-columns: 1fr 1fr; padding: 60px 48px 40px; }
+    .footer-bottom { margin: 0 48px; }
+    .experiences-grid { grid-template-columns: 1fr 1fr; }
+    .reviews-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 900px) {
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .nav { padding: 0 24px; }
+    .hero-content { grid-template-columns: 1fr; padding: 60px 32px; }
+    .hero-right { display: none; }
+    .hero-stats { grid-template-columns: 1fr 1fr; }
+    .exp-header { grid-template-columns: 1fr; gap: 32px; }
+    .experiences-grid { grid-template-columns: 1fr; }
+    .fleet-grid { grid-template-columns: 1fr; }
+    .whyus-inner { grid-template-columns: 1fr; }
+    .whyus-big-num { font-size: 6rem; }
+    .reviews-header { grid-template-columns: 1fr; gap: 24px; }
+    .faq-header { grid-template-columns: 1fr; gap: 24px; }
+    .faq-grid { grid-template-columns: 1fr; }
+    .areas-inner { grid-template-columns: 1fr; gap: 40px; }
+    .contact-inner { grid-template-columns: 1fr; gap: 48px; }
+    .section-inner { padding: 70px 32px; }
+    .fleet-section, .whyus-section, .reviews-section, .faq-section, .areas-section, .contact-section, .cta-section { padding: 70px 32px; }
+    .footer-inner { padding: 60px 32px 40px; grid-template-columns: 1fr 1fr; }
+    .footer-bottom { margin: 0 32px; }
+    .cf-row { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 540px) {
+    .hero-stats { grid-template-columns: 1fr; }
+    .footer-inner { grid-template-columns: 1fr; }
+    .hero-btns { flex-direction: column; }
+    .cta-btns { flex-direction: column; }
+    .ticket-bar { padding: 10px 20px; font-size: 0.65rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- TICKET BAR -->
+<div class="ticket-bar">
+  <span>⚓ DEPARTING FROM MIAMI BEACH MARINA</span>
+  <span class="ticket-sep">·</span>
+  <span>PRIVATE SAILING CHARTERS AVAILABLE YEAR-ROUND</span>
+  <span class="ticket-sep">·</span>
+  <span>CALL (305) 555-3000</span>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="#" class="nav-logo">
+    <span class="nav-logo-main">Azure Sail Co.</span>
+    <span class="nav-logo-sub">Miami · Private Sailing Charters</span>
+  </a>
+  <div class="nav-links">
+    <a href="#experiences">Experiences</a>
+    <a href="#fleet">Our Fleet</a>
+    <a href="#about">About</a>
+    <a href="#reviews">Reviews</a>
+    <a href="#contact">Contact</a>
+    <a href="#contact" class="nav-cta">Book a Charter</a>
+  </div>
+  <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-overlay" id="mobileOverlay">
+  <a href="#experiences" class="mob-link">Experiences</a>
+  <a href="#fleet" class="mob-link">Fleet</a>
+  <a href="#about" class="mob-link">About</a>
+  <a href="#reviews" class="mob-link">Reviews</a>
+  <a href="#contact" class="mob-link" style="color:var(--coral);">Book Now</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <!-- Sun rays SVG background -->
+  <svg class="hero-rays" viewBox="0 0 1440 800" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <radialGradient id="sunGrad" cx="50%" cy="35%" r="60%">
+        <stop offset="0%" stop-color="#E8A820" stop-opacity="0.18"/>
+        <stop offset="100%" stop-color="#0B1728" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <rect width="1440" height="800" fill="url(#sunGrad)"/>
+    <!-- Sun rays lines -->
+    <g stroke="rgba(232,200,96,0.06)" stroke-width="1">
+      <line x1="720" y1="280" x2="0" y2="0"/>
+      <line x1="720" y1="280" x2="200" y2="0"/>
+      <line x1="720" y1="280" x2="400" y2="0"/>
+      <line x1="720" y1="280" x2="600" y2="0"/>
+      <line x1="720" y1="280" x2="800" y2="0"/>
+      <line x1="720" y1="280" x2="1000" y2="0"/>
+      <line x1="720" y1="280" x2="1200" y2="0"/>
+      <line x1="720" y1="280" x2="1440" y2="0"/>
+      <line x1="720" y1="280" x2="1440" y2="400"/>
+      <line x1="720" y1="280" x2="0" y2="400"/>
+    </g>
+    <!-- Stars / dots -->
+    <circle cx="200" cy="80" r="1.5" fill="rgba(245,230,196,0.3)"/>
+    <circle cx="1100" cy="120" r="1" fill="rgba(245,230,196,0.25)"/>
+    <circle cx="350" cy="200" r="1" fill="rgba(245,230,196,0.2)"/>
+    <circle cx="900" cy="60" r="2" fill="rgba(245,230,196,0.2)"/>
+    <circle cx="1250" cy="180" r="1.5" fill="rgba(245,230,196,0.15)"/>
+  </svg>
+  <!-- Wave at bottom of hero -->
+  <div class="hero-horizon"></div>
+
+  <div class="hero-content">
+    <div class="hero-left">
+      <div class="hero-tag">Est. 2014 · Miami, Florida</div>
+      <h1 class="hero-h1">
+        <span class="outline">SET</span><br>
+        SAIL<br>
+        <span class="accent">TODAY.</span>
+      </h1>
+      <p class="hero-tagline">Private sailing charters, sunset cruises & yacht rentals departing from Miami Beach Marina. Your ocean escape awaits.</p>
+      <div class="hero-btns">
+        <a href="#contact" class="btn-coral">Book a Charter</a>
+        <a href="#experiences" class="btn-ghost-sand">View Experiences</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="h-stat-num">10+</div>
+          <div class="h-stat-label">Years at Sea</div>
+        </div>
+        <div class="hero-stat">
+          <div class="h-stat-num">4.9★</div>
+          <div class="h-stat-label">Avg. Rating</div>
+        </div>
+        <div class="hero-stat">
+          <div class="h-stat-num">800+</div>
+          <div class="h-stat-label">Charters Sailed</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-right">
+      <!-- Sailing vessel SVG illustration -->
+      <svg class="hero-boat-svg" viewBox="0 0 480 480" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Sailing yacht illustration">
+        <!-- Water -->
+        <path d="M20 360 Q120 340 240 360 Q360 380 460 355 L460 440 L20 440 Z" fill="#1A4F8C" opacity="0.5"/>
+        <path d="M20 375 Q120 355 240 375 Q360 395 460 370" stroke="#2E70B8" stroke-width="1.5" fill="none" opacity="0.6"/>
+        <path d="M40 390 Q140 372 260 390 Q380 408 460 385" stroke="#2E70B8" stroke-width="1" fill="none" opacity="0.4"/>
+        <!-- Hull -->
+        <path d="M120 340 L360 340 L380 368 Q300 385 240 384 Q180 385 100 368 Z" fill="#0B1728"/>
+        <path d="M120 340 L360 340 L380 368" stroke="#E5D6B4" stroke-width="1.5" fill="none"/>
+        <!-- Hull stripe -->
+        <path d="M108 355 L372 355 L382 364" stroke="var(--coral)" stroke-width="2.5" fill="none"/>
+        <!-- Deck -->
+        <rect x="130" y="332" width="220" height="10" rx="0" fill="#0E2040"/>
+        <!-- Mast -->
+        <line x1="240" y1="80" x2="240" y2="342" stroke="#C9A84C" stroke-width="3"/>
+        <!-- Boom -->
+        <line x1="240" y1="280" x2="340" y2="340" stroke="#C9A84C" stroke-width="2"/>
+        <!-- Main sail -->
+        <path d="M240 100 L240 290 L340 340 Z" fill="rgba(245,230,196,0.9)" stroke="#E0C484" stroke-width="1"/>
+        <!-- Jib sail -->
+        <path d="M240 120 L150 300 L240 300 Z" fill="rgba(232,76,61,0.85)" stroke="#C53020" stroke-width="1"/>
+        <!-- Sail reinforcing lines -->
+        <line x1="240" y1="100" x2="300" y2="320" stroke="rgba(200,180,120,0.3)" stroke-width="0.5"/>
+        <line x1="240" y1="140" x2="320" y2="335" stroke="rgba(200,180,120,0.3)" stroke-width="0.5"/>
+        <!-- Rigging lines -->
+        <line x1="240" y1="82" x2="140" y2="340" stroke="rgba(200,180,120,0.4)" stroke-width="0.7"/>
+        <line x1="240" y1="82" x2="340" y2="340" stroke="rgba(200,180,120,0.4)" stroke-width="0.7"/>
+        <line x1="240" y1="82" x2="100" y2="345" stroke="rgba(200,180,120,0.3)" stroke-width="0.6"/>
+        <!-- Flag -->
+        <line x1="240" y1="80" x2="240" y2="68" stroke="#C9A84C" stroke-width="1.5"/>
+        <path d="M240 68 L260 74 L240 80 Z" fill="var(--coral)"/>
+        <!-- Porthole windows -->
+        <circle cx="160" cy="352" r="6" fill="none" stroke="#2E86C1" stroke-width="1.5"/>
+        <circle cx="320" cy="352" r="6" fill="none" stroke="#2E86C1" stroke-width="1.5"/>
+        <!-- Decorative circular frame for poster feel -->
+        <circle cx="240" cy="240" r="210" stroke="rgba(201,168,76,0.1)" stroke-width="1" fill="none"/>
+        <circle cx="240" cy="240" r="230" stroke="rgba(201,168,76,0.06)" stroke-width="1" fill="none"/>
+        <!-- Location text -->
+        <text x="240" y="460" fill="rgba(201,168,76,0.5)" font-size="9" font-family="sans-serif" letter-spacing="4" text-anchor="middle" font-weight="bold">MIAMI · FLORIDA</text>
+      </svg>
+      <!-- Stamp overlay -->
+      <div class="hero-stamp">
+        <div class="stamp-text">USCG<br>LICENSED</div>
+        <div class="stamp-small">Since 2014</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WAVE DIVIDER -->
+<div class="wave-div">
+  <svg viewBox="0 0 1440 60" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,30 Q360,60 720,30 Q1080,0 1440,30 L1440,60 L0,60 Z" fill="var(--white)"/>
+  </svg>
+</div>
+
+<!-- EXPERIENCES -->
+<section class="experiences-section" id="experiences">
+  <div class="section-inner">
+    <div class="exp-header">
+      <div>
+        <div class="section-label reveal">Our Charters</div>
+        <h2 class="section-h2 reveal reveal-delay-1">Every voyage, <span class="coral-acc">curated.</span></h2>
+      </div>
+      <p class="section-desc reveal reveal-delay-2">From intimate sunset sails for two to full-day offshore adventures for groups of sixteen, every Azure Sail charter is planned and captained by our USCG-licensed crew.</p>
+    </div>
+    <div class="experiences-grid">
+      <div class="exp-card reveal">
+        <div class="exp-card-img" style="background: linear-gradient(135deg, var(--navy), #1A3A5C);">
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none" stroke="rgba(245,230,196,0.5)" stroke-width="1.5" aria-hidden="true">
+            <circle cx="40" cy="20" r="12"/>
+            <path d="M40 32 L40 58 L20 68 M40 58 L60 68"/>
+            <path d="M26 44 L54 44"/>
+          </svg>
+          <span class="exp-price-tag">from $350</span>
+        </div>
+        <div class="exp-card-body">
+          <div class="exp-duration">2 Hours</div>
+          <div class="exp-name">Sunset Sail</div>
+          <div class="exp-desc">Catch the famous Miami sunset from the deck of a private sailing yacht. The most romantic two hours in South Florida — wine, breeze, golden hour.</div>
+          <div class="exp-includes">
+            <span class="exp-tag">Up to 8 guests</span>
+            <span class="exp-tag">BYO Beverages</span>
+            <span class="exp-tag">Captain + Crew</span>
+          </div>
+          <a href="#contact" class="exp-book-btn">Reserve Now</a>
+        </div>
+      </div>
+      <div class="exp-card reveal reveal-delay-1">
+        <div class="exp-card-img" style="background: linear-gradient(135deg, #1A3A5C, var(--ocean));">
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none" stroke="rgba(245,230,196,0.5)" stroke-width="1.5" aria-hidden="true">
+            <path d="M20 50 L40 20 L60 50 Z"/>
+            <line x1="40" y1="20" x2="40" y2="65"/>
+            <path d="M10 58 Q40 50 70 58"/>
+          </svg>
+          <span class="exp-price-tag">from $650</span>
+        </div>
+        <div class="exp-card-body">
+          <div class="exp-duration">4 Hours</div>
+          <div class="exp-name">Half Day Sail</div>
+          <div class="exp-desc">Explore Biscayne Bay, pass by Star Island mansions, or anchor off the Venetian Islands for a swim. A morning or afternoon charter that does it all.</div>
+          <div class="exp-includes">
+            <span class="exp-tag">Up to 12 guests</span>
+            <span class="exp-tag">Snorkel Gear</span>
+            <span class="exp-tag">Soft Drinks</span>
+          </div>
+          <a href="#contact" class="exp-book-btn">Reserve Now</a>
+        </div>
+      </div>
+      <div class="exp-card reveal reveal-delay-2">
+        <div class="exp-card-img" style="background: linear-gradient(135deg, #0B3060, #1E3252);">
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none" stroke="rgba(201,168,76,0.6)" stroke-width="1.5" aria-hidden="true">
+            <circle cx="40" cy="40" r="28"/>
+            <line x1="40" y1="12" x2="40" y2="68"/>
+            <line x1="12" y1="40" x2="68" y2="40"/>
+            <path d="M40 12 L46 20 L40 28 L34 20 Z"/>
+          </svg>
+          <span class="exp-price-tag">from $1,200</span>
+        </div>
+        <div class="exp-card-body">
+          <div class="exp-duration">Full Day</div>
+          <div class="exp-name">Offshore Adventure</div>
+          <div class="exp-desc">Head to the open Atlantic. Visit the Bimini Islands, the Bahamas Banks, or anchor at untouched sandbars. Includes breakfast and lunch aboard.</div>
+          <div class="exp-includes">
+            <span class="exp-tag">Up to 10 guests</span>
+            <span class="exp-tag">Meals Included</span>
+            <span class="exp-tag">Open Bar</span>
+          </div>
+          <a href="#contact" class="exp-book-btn">Reserve Now</a>
+        </div>
+      </div>
+      <div class="exp-card reveal">
+        <div class="exp-card-img" style="background: linear-gradient(135deg, #1A2840, var(--navy));">
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none" stroke="rgba(232,76,61,0.6)" stroke-width="1.5" aria-hidden="true">
+            <path d="M40 15 L65 55 H15 Z"/>
+            <line x1="40" y1="15" x2="40" y2="68"/>
+            <circle cx="40" cy="40" r="8"/>
+          </svg>
+          <span class="exp-price-tag">from $900</span>
+        </div>
+        <div class="exp-card-body">
+          <div class="exp-duration">3–5 Hours</div>
+          <div class="exp-name">Corporate Event</div>
+          <div class="exp-desc">Host your next client event, team outing, or product launch on the water. We handle catering coordination, A/V, branding, and logistics.</div>
+          <div class="exp-includes">
+            <span class="exp-tag">Up to 16 guests</span>
+            <span class="exp-tag">Custom Catering</span>
+            <span class="exp-tag">Event Staffing</span>
+          </div>
+          <a href="#contact" class="exp-book-btn">Inquire</a>
+        </div>
+      </div>
+      <div class="exp-card reveal reveal-delay-1">
+        <div class="exp-card-img" style="background: linear-gradient(135deg, #1A2840, #2E4060);">
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none" stroke="rgba(245,230,196,0.5)" stroke-width="1.5" aria-hidden="true">
+            <path d="M40 20 C28 30 16 42 16 56 C16 64 26 70 40 70 C54 70 64 64 64 56 C64 42 52 30 40 20Z"/>
+            <circle cx="40" cy="44" r="10"/>
+          </svg>
+          <span class="exp-price-tag">from $500</span>
+        </div>
+        <div class="exp-card-body">
+          <div class="exp-duration">3 Hours</div>
+          <div class="exp-name">Bachelorette / Party</div>
+          <div class="exp-desc">The ultimate party on the water — decorations, music, custom cocktails, and a crew that knows how to celebrate. A bachelorette they'll never forget.</div>
+          <div class="exp-includes">
+            <span class="exp-tag">Up to 12 guests</span>
+            <span class="exp-tag">Decorations</span>
+            <span class="exp-tag">Bluetooth Speaker</span>
+          </div>
+          <a href="#contact" class="exp-book-btn">Reserve Now</a>
+        </div>
+      </div>
+      <div class="exp-card reveal reveal-delay-2">
+        <div class="exp-card-img" style="background: linear-gradient(135deg, #0D2030, #1A3040);">
+          <svg width="80" height="80" viewBox="0 0 80 80" fill="none" stroke="rgba(201,168,76,0.6)" stroke-width="1.5" aria-hidden="true">
+            <rect x="20" y="20" width="40" height="40" rx="20"/>
+            <path d="M32 40 L36 44 L48 36"/>
+          </svg>
+          <span class="exp-price-tag">Custom</span>
+        </div>
+        <div class="exp-card-body">
+          <div class="exp-duration">Flexible</div>
+          <div class="exp-name">Custom Charter</div>
+          <div class="exp-desc">Tell us your vision — proposal, photography session, birthday, or extended bareboat cruise — and we'll build the perfect itinerary around you.</div>
+          <div class="exp-includes">
+            <span class="exp-tag">Any Group Size</span>
+            <span class="exp-tag">Custom Route</span>
+            <span class="exp-tag">Photography Add-on</span>
+          </div>
+          <a href="#contact" class="exp-book-btn">Plan My Trip</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FLEET -->
+<section class="fleet-section" id="fleet">
+  <div class="section-label reveal" style="color:var(--ocean2);">Our Vessels</div>
+  <h2 class="section-h2 light reveal reveal-delay-1">The <span class="coral-acc">fleet.</span></h2>
+  <div class="fleet-grid">
+    <div class="fleet-card reveal">
+      <div class="fleet-num">01</div>
+      <div class="fleet-vessel-type">Sailing Sloop · Monohull</div>
+      <div class="fleet-name">La Brisa</div>
+      <div class="fleet-desc">A stunning 42-foot Beneteau with a teak deck, open cockpit, and effortless performance. Perfect for intimate sunset sails and half-day adventures.</div>
+      <div class="fleet-specs">
+        <div class="fleet-spec-item"><div class="fleet-spec-val">42 ft</div><div class="fleet-spec-key">LOA</div></div>
+        <div class="fleet-spec-item"><div class="fleet-spec-val">8 pax</div><div class="fleet-spec-key">Capacity</div></div>
+        <div class="fleet-spec-item"><div class="fleet-spec-val">2018</div><div class="fleet-spec-key">Built</div></div>
+        <div class="fleet-spec-item"><div class="fleet-spec-val">Sail</div><div class="fleet-spec-key">Propulsion</div></div>
+      </div>
+    </div>
+    <div class="fleet-card reveal reveal-delay-1">
+      <div class="fleet-num">02</div>
+      <div class="fleet-vessel-type">Sailing Catamaran</div>
+      <div class="fleet-name">Marea Azul</div>
+      <div class="fleet-desc">Our flagship 52-foot Leopard catamaran offers spacious deck living, twin hulls for stability, and a flybridge bar — the ultimate party on water.</div>
+      <div class="fleet-specs">
+        <div class="fleet-spec-item"><div class="fleet-spec-val">52 ft</div><div class="fleet-spec-key">LOA</div></div>
+        <div class="fleet-spec-item"><div class="fleet-spec-val">16 pax</div><div class="fleet-spec-key">Capacity</div></div>
+        <div class="fleet-spec-item"><div class="fleet-spec-val">2021</div><div class="fleet-spec-key">Built</div></div>
+        <div class="fleet-spec-item"><div class="fleet-spec-val">Sail + Motor</div><div class="fleet-spec-key">Propulsion</div></div>
+      </div>
+    </div>
+    <div class="fleet-card reveal reveal-delay-2">
+      <div class="fleet-num">03</div>
+      <div class="fleet-vessel-type">Motor Yacht</div>
+      <div class="fleet-name">Azul Profundo</div>
+      <div class="fleet-desc">When you need speed and luxury, our 45-foot Viking sport cruiser delivers. Corporate events, long-range day trips, and offshore fishing packages.</div>
+      <div class="fleet-specs">
+        <div class="fleet-spec-item"><div class="fleet-spec-val">45 ft</div><div class="fleet-spec-key">LOA</div></div>
+        <div class="fleet-spec-item"><div class="fleet-spec-val">12 pax</div><div class="fleet-spec-key">Capacity</div></div>
+        <div class="fleet-spec-item"><div class="fleet-spec-val">2019</div><div class="fleet-spec-key">Built</div></div>
+        <div class="fleet-spec-item"><div class="fleet-spec-val">Twin Diesel</div><div class="fleet-spec-key">Propulsion</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section class="whyus-section" id="about">
+  <div class="whyus-inner">
+    <div class="whyus-left">
+      <div class="section-label reveal" style="color:var(--navy);">Why Azure Sail</div>
+      <div class="whyus-big-num reveal">10+</div>
+      <div class="whyus-big-label reveal">Years Captaining Miami Waters</div>
+      <div class="whyus-features">
+        <div class="whyus-feature reveal">
+          <div class="feature-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div>
+            <div class="feature-title">USCG Licensed & Fully Insured</div>
+            <div class="feature-text">All captains hold active USCG 100-ton Master licenses. Every vessel is Coast Guard inspected, fully insured, and equipped with certified safety equipment.</div>
+          </div>
+        </div>
+        <div class="whyus-feature reveal reveal-delay-1">
+          <div class="feature-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+          </div>
+          <div>
+            <div class="feature-title">Locally Owned & Operated</div>
+            <div class="feature-text">Azure Sail was founded in Miami by Miami sailors. We know every anchorage, every sandbar, and every spectacular sunset spot that tourists never find.</div>
+          </div>
+        </div>
+        <div class="whyus-feature reveal reveal-delay-2">
+          <div class="feature-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+          </div>
+          <div>
+            <div class="feature-title">800+ 5-Star Charters Delivered</div>
+            <div class="feature-text">Our repeat client rate speaks for itself. 70% of bookings come from returning guests or personal referrals. We're not a rental service — we're your sailing concierge.</div>
+          </div>
+        </div>
+        <div class="whyus-feature reveal reveal-delay-3">
+          <div class="feature-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          </div>
+          <div>
+            <div class="feature-title">Tailored to Every Occasion</div>
+            <div class="feature-text">From proposals to product launches, we coordinate every detail — catering, florals, photography, music, and custom routing — so you can simply enjoy the moment.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="whyus-right reveal reveal-delay-1">
+      <div class="whyus-poster">
+        <div class="poster-title">AZURE<br>SAIL CO.</div>
+        <div class="poster-subtitle">Miami · Since 2014</div>
+        <!-- Compass SVG -->
+        <svg class="poster-compass" viewBox="0 0 140 140" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Compass illustration">
+          <circle cx="70" cy="70" r="64" stroke="rgba(201,168,76,0.3)" stroke-width="1.5"/>
+          <circle cx="70" cy="70" r="54" stroke="rgba(201,168,76,0.15)" stroke-width="1"/>
+          <circle cx="70" cy="70" r="6" fill="var(--gold)"/>
+          <!-- Cardinal directions -->
+          <text x="70" y="18" fill="var(--sand)" font-size="11" font-family="sans-serif" text-anchor="middle" font-weight="bold">N</text>
+          <text x="70" y="130" fill="rgba(245,230,196,0.5)" font-size="9" font-family="sans-serif" text-anchor="middle">S</text>
+          <text x="12" y="75" fill="rgba(245,230,196,0.5)" font-size="9" font-family="sans-serif" text-anchor="middle">W</text>
+          <text x="128" y="75" fill="rgba(245,230,196,0.5)" font-size="9" font-family="sans-serif" text-anchor="middle">E</text>
+          <!-- Needle -->
+          <path d="M70 70 L70 24" stroke="var(--coral)" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M70 70 L70 116" stroke="rgba(245,230,196,0.4)" stroke-width="2" stroke-linecap="round"/>
+          <!-- Tick marks -->
+          <line x1="70" y1="22" x2="70" y2="30" stroke="rgba(201,168,76,0.4)" stroke-width="1"/>
+          <line x1="118" y1="70" x2="110" y2="70" stroke="rgba(201,168,76,0.4)" stroke-width="1"/>
+          <line x1="70" y1="118" x2="70" y2="110" stroke="rgba(201,168,76,0.4)" stroke-width="1"/>
+          <line x1="22" y1="70" x2="30" y2="70" stroke="rgba(201,168,76,0.4)" stroke-width="1"/>
+        </svg>
+        <div class="poster-detail">MIAMI BEACH MARINA · DOCK 14<br>USCG CHARTER #MI2014-0882<br>SAIL THE ATLANTIC</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="reviews-section" id="reviews">
+  <div class="reviews-header">
+    <div>
+      <div class="section-label reveal">Testimonials</div>
+      <h2 class="section-h2 reveal reveal-delay-1">Heard from <span class="coral-acc">sailors.</span></h2>
+    </div>
+    <p class="section-desc reveal reveal-delay-2">800+ charters. 4.9 stars. The reviews write themselves — but here are a few that really capture what a day on Azure Sail feels like.</p>
+  </div>
+  <div class="reviews-grid">
+    <div class="review-card reveal">
+      <div class="review-stars">★★★★★</div>
+      <div class="review-text">We did the sunset sail for our anniversary and it was absolutely magical. Captain Marco knew exactly where to position the boat for the best light. We'll be booking the half-day next time.</div>
+      <div class="review-bottom">
+        <div class="review-avatar">L</div>
+        <div>
+          <div class="review-name">Lucia & Daniel V.</div>
+          <div class="review-meta">Sunset Sail · Coral Gables</div>
+        </div>
+      </div>
+    </div>
+    <div class="review-card reveal reveal-delay-1">
+      <div class="review-stars">★★★★★</div>
+      <div class="review-text">Azure Sail handled our company's client event flawlessly. 14 people, catering from Zuma, and the whole team was professional, fun, and made it feel effortless. We'll be back every year.</div>
+      <div class="review-bottom">
+        <div class="review-avatar">R</div>
+        <div>
+          <div class="review-name">Rafael M.</div>
+          <div class="review-meta">Corporate Charter · Brickell</div>
+        </div>
+      </div>
+    </div>
+    <div class="review-card reveal reveal-delay-2">
+      <div class="review-stars">★★★★★</div>
+      <div class="review-text">Proposed to my girlfriend on the Marea Azul during the full-day Bahamas trip. She said yes. Captain and crew set up champagne, flowers, the whole thing. Couldn't have done it without them.</div>
+      <div class="review-bottom">
+        <div class="review-avatar">T</div>
+        <div>
+          <div class="review-name">Thomas P.</div>
+          <div class="review-meta">Custom Charter · Miami Beach</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <div class="faq-header">
+    <div>
+      <div class="section-label reveal" style="color:var(--coral);">FAQ</div>
+      <h2 class="section-h2 light reveal reveal-delay-1">Before you <span class="coral-acc">sail.</span></h2>
+    </div>
+    <p class="section-desc light reveal reveal-delay-2">Common questions from first-time sailors and seasoned boaters alike. Call us anytime at (305) 555-3000.</p>
+  </div>
+  <div class="faq-grid">
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false">Do I need sailing experience? <span class="faq-toggle">+</span></button>
+      <div class="faq-a">Not at all. Every charter includes a fully licensed USCG captain and first mate. You just show up and enjoy — no sailing knowledge required. We also offer sailing lesson add-ons if you want to take the helm yourself.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false">What should I bring? <span class="faq-toggle">+</span></button>
+      <div class="faq-a">Sunscreen, a hat, sunglasses, and non-marking soft-soled shoes (or plan to go barefoot on deck). For longer charters, we recommend a light layer for the evening breeze. We provide towels, safety equipment, and all on-board essentials.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false">Can we bring our own food and drinks? <span class="faq-toggle">+</span></button>
+      <div class="faq-a">Absolutely. For all charters you're welcome to bring your own food and beverages — we have a full galley cooler and ice. For corporate and party charters we also coordinate catering from Miami's top restaurants.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false">What is the weather cancellation policy? <span class="faq-toggle">+</span></button>
+      <div class="faq-a">Safety is paramount. If we cancel due to weather (wind over 20 knots, lightning, or NOAA small craft advisories), you receive a full refund or complimentary rescheduling. Client-initiated cancellations within 72 hours are non-refundable.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false">Where do we depart from? <span class="faq-toggle">+</span></button>
+      <div class="faq-a">All charters depart from Miami Beach Marina (Dock 14), just off Alton Road and 17th Street. Easy access with paid parking on-site. We also offer private dock pickup for Brickell and Key Biscayne locations by arrangement.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false">Is there a minimum group size? <span class="faq-toggle">+</span></button>
+      <div class="faq-a">No minimum. Our sunset sail starts at $350 for a private charter regardless of group size, making it perfect even for couples. Pricing scales with guest count and charter length — contact us for a custom quote.</div>
+    </div>
+  </div>
+</section>
+
+<!-- AREAS -->
+<section class="areas-section" id="areas">
+  <div class="areas-inner">
+    <div>
+      <div class="section-label reveal" style="color:var(--navy);">Departure Points & Coverage</div>
+      <h2 class="section-h2 reveal reveal-delay-1">We sail <span class="coral-acc">everywhere.</span></h2>
+      <p class="section-desc reveal reveal-delay-2" style="margin-top:16px;">Departing from Miami Beach Marina with full coverage across South Florida's coastline, Biscayne Bay, and offshore routes to the Bahamas.</p>
+    </div>
+    <div>
+      <div class="areas-grid reveal reveal-delay-1">
+        <span class="area-chip">Miami Beach</span>
+        <span class="area-chip">Biscayne Bay</span>
+        <span class="area-chip">Key Biscayne</span>
+        <span class="area-chip">Brickell</span>
+        <span class="area-chip">Coconut Grove</span>
+        <span class="area-chip">Coral Gables</span>
+        <span class="area-chip">Downtown Miami</span>
+        <span class="area-chip">Fisher Island</span>
+        <span class="area-chip">Star Island</span>
+        <span class="area-chip">Venetian Islands</span>
+        <span class="area-chip">Bahamas</span>
+        <span class="area-chip">Open Atlantic</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+  <div class="contact-inner">
+    <div class="contact-left">
+      <div class="section-label reveal" style="color:var(--ocean2);">Book a Charter</div>
+      <h2 class="section-h2 light reveal reveal-delay-1">Let's <span class="coral-acc">set sail.</span></h2>
+      <div class="contact-info-rows">
+        <div class="cinfo-row reveal reveal-delay-2">
+          <div class="cinfo-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+          <div><div class="cinfo-label">Phone</div><div class="cinfo-val">(305) 555-3000</div></div>
+        </div>
+        <div class="cinfo-row reveal reveal-delay-2">
+          <div class="cinfo-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg></div>
+          <div><div class="cinfo-label">Marina Location</div><div class="cinfo-val">Miami Beach Marina, Dock 14<br>300 Alton Road, Miami Beach, FL 33139</div></div>
+        </div>
+        <div class="cinfo-row reveal reveal-delay-3">
+          <div class="cinfo-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg></div>
+          <div><div class="cinfo-label">Hours</div><div class="cinfo-val">Departures 7 Days a Week<br>6:00 AM – Sunset</div></div>
+        </div>
+        <div class="cinfo-row reveal reveal-delay-3">
+          <div class="cinfo-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg></div>
+          <div><div class="cinfo-label">Email</div><div class="cinfo-val">ahoy@azuresailco.com</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="contact-form-wrap">
+      <form action="https://formsubmit.co/ahoy@azuresailco.com" method="POST" id="sailForm" novalidate>
+        <input type="hidden" name="_subject" value="Charter Inquiry — Azure Sail Co.">
+        <input type="hidden" name="_captcha" value="false">
+        <div class="cf-row">
+          <div class="cf-group">
+            <label class="cf-label" for="fname">First Name</label>
+            <input class="cf-input" type="text" id="fname" name="fname" placeholder="Maria" required>
+          </div>
+          <div class="cf-group">
+            <label class="cf-label" for="lname">Last Name</label>
+            <input class="cf-input" type="text" id="lname" name="lname" placeholder="García" required>
+          </div>
+        </div>
+        <div class="cf-group">
+          <label class="cf-label" for="email">Email Address</label>
+          <input class="cf-input" type="email" id="email" name="email" placeholder="you@email.com" required>
+        </div>
+        <div class="cf-group">
+          <label class="cf-label" for="phone">Phone Number</label>
+          <input class="cf-input" type="tel" id="phone" name="phone" placeholder="(305) 555-0000">
+        </div>
+        <div class="cf-row">
+          <div class="cf-group">
+            <label class="cf-label" for="charter">Charter Type</label>
+            <select class="cf-select" id="charter" name="charter">
+              <option value="">Select...</option>
+              <option>Sunset Sail (2 hr)</option>
+              <option>Half Day Sail (4 hr)</option>
+              <option>Full Day Offshore</option>
+              <option>Corporate Event</option>
+              <option>Bachelorette / Party</option>
+              <option>Custom Charter</option>
+            </select>
+          </div>
+          <div class="cf-group">
+            <label class="cf-label" for="guests">Number of Guests</label>
+            <input class="cf-input" type="number" id="guests" name="guests" placeholder="e.g. 6" min="1" max="16">
+          </div>
+        </div>
+        <div class="cf-group">
+          <label class="cf-label" for="date">Preferred Date</label>
+          <input class="cf-input" type="date" id="date" name="date">
+        </div>
+        <div class="cf-group">
+          <label class="cf-label" for="notes">Special Requests or Notes</label>
+          <textarea class="cf-input" id="notes" name="notes" rows="3" placeholder="Occasion, catering needs, accessibility requirements..."></textarea>
+        </div>
+        <button type="submit" class="cf-submit">Send Charter Request</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section class="cta-section">
+  <div class="cta-content">
+    <h2 class="cta-h2 reveal">THE OCEAN IS CALLING.</h2>
+    <p class="cta-sub reveal reveal-delay-1">Same-week bookings available. First-time clients receive a complimentary bottle of champagne on any sunset sail.</p>
+    <div class="cta-btns">
+      <a href="#contact" class="cta-btn-navy reveal reveal-delay-2">Book Your Charter</a>
+      <a href="tel:3055553000" class="cta-btn-white reveal reveal-delay-3">Call (305) 555-3000</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <a href="#" class="footer-brand">
+        <div class="footer-brand-name">Azure Sail Co.</div>
+        <span class="footer-brand-sub">Miami · Private Sailing Charters</span>
+      </a>
+      <p class="footer-blurb">South Florida's premier private sailing charter company. USCG licensed and insured, operating from Miami Beach Marina since 2014.</p>
+      <div class="footer-license">USCG Charter License #MI2014-0882 · FWCC Licensed · Fully Insured</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Experiences</div>
+      <ul class="footer-links">
+        <li><a href="#experiences">Sunset Sail</a></li>
+        <li><a href="#experiences">Half Day Sail</a></li>
+        <li><a href="#experiences">Full Day Offshore</a></li>
+        <li><a href="#experiences">Corporate Events</a></li>
+        <li><a href="#experiences">Bachelorette</a></li>
+        <li><a href="#experiences">Custom Charters</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Company</div>
+      <ul class="footer-links">
+        <li><a href="#fleet">Our Fleet</a></li>
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#reviews">Reviews</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#contact">Book a Charter</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Contact</div>
+      <div class="footer-contact-list">
+        <div class="footer-contact-row">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          <span>(305) 555-3000</span>
+        </div>
+        <div class="footer-contact-row">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+          <span>Miami Beach Marina, Dock 14<br>Miami Beach, FL 33139</span>
+        </div>
+        <div class="footer-contact-row">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+          <span>7 Days a Week, 6AM–Sunset</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 Azure Sail Co. LLC. All rights reserved.</div>
+    <a href="https://webnari.io" class="webnari-badge" target="_blank" rel="noopener">Powered by Webnari</a>
+  </div>
+</footer>
+
+<script>
+  // Mobile nav
+  const hamburger = document.getElementById('hamburger');
+  const overlay = document.getElementById('mobileOverlay');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    overlay.classList.toggle('open');
+    document.body.style.overflow = overlay.classList.contains('open') ? 'hidden' : '';
+  });
+  overlay.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      hamburger.classList.remove('open');
+      overlay.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  });
+
+  // FAQ
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const ans = btn.nextElementSibling;
+      const isOpen = btn.classList.contains('active');
+      document.querySelectorAll('.faq-q').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-expanded', 'false');
+        b.nextElementSibling.classList.remove('open');
+      });
+      if (!isOpen) {
+        btn.classList.add('active');
+        btn.setAttribute('aria-expanded', 'true');
+        ans.classList.add('open');
+      }
+    });
+  });
+
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 }).observe ? (() => {
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('visible'); }
+      });
+    }, { threshold: 0.08 });
+    reveals.forEach(el => obs.observe(el));
+  })() : reveals.forEach(el => el.classList.add('visible'));
+
+  // Form validation
+  const sailForm = document.getElementById('sailForm');
+  sailForm.addEventListener('submit', e => {
+    let valid = true;
+    sailForm.querySelectorAll('[required]').forEach(f => {
+      if (!f.value.trim()) { f.style.borderColor = '#E84C3D'; valid = false; }
+      else { f.style.borderColor = ''; }
+    });
+    if (!valid) { e.preventDefault(); alert('Please fill in all required fields.'); }
+  });
+  sailForm.querySelectorAll('.cf-input[required]').forEach(f => {
+    f.addEventListener('blur', () => {
+      f.style.borderColor = f.value.trim() ? 'var(--ocean2)' : '#E84C3D';
+    });
+  });
+</script>
+</body>
+</html>

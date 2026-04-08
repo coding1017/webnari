@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DeepBlue Dive Co. | Scuba & Snorkel Adventures | Miami, FL</title>
+<meta name="description" content="DeepBlue Dive Co. offers premium scuba diving, snorkeling tours, and PADI certification courses in South Florida. Explore reefs, wrecks, and marine life.">
+<meta property="og:title" content="DeepBlue Dive Co. | Scuba & Snorkel Adventures">
+<meta property="og:description" content="Premium scuba diving and snorkeling tours in South Florida. PADI certified. Explore the deep.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;600;800;900&family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--abyss:#030816;--deep:#061028;--surface:#0A1A3C;--surface2:#0E2248;--border:#163060;
+--bio:#00FFD1;--bio2:#00E5BB;--bio3:#80FFE8;--purple:#7B61FF;--purple2:#A78BFA;
+--coral:#FF6B8A;--coral2:#FF8FA8;--amber:#FFB547;
+--white:#E8F4FF;--muted:#5A7A9A;--text:#8AB4D8;--heading:#E8F4FF;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Space Grotesk',sans-serif;background:var(--abyss);color:var(--text);overflow-x:hidden;line-height:1.7;font-weight:400}
+body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(0,255,209,0.03) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(123,97,255,0.02) 0%,transparent 50%);pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;inset:0;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.015'/%3E%3C/svg%3E");pointer-events:none;z-index:0}
+h1,h2,h3,h4{font-family:'Unbounded',sans-serif;color:var(--heading);line-height:1.15;font-weight:800}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block}
+
+/* Bubbles background */
+.bubbles{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.bubble{position:absolute;border-radius:50%;background:radial-gradient(circle at 30% 30%,rgba(0,255,209,0.08),transparent 70%);animation:rise linear infinite}
+@keyframes rise{0%{transform:translateY(100vh) scale(0.5);opacity:0}10%{opacity:1}90%{opacity:0.5}100%{transform:translateY(-10vh) scale(1);opacity:0}}
+
+/* NAV — glass morphism horizontal with depth meter */
+.nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:16px 40px;display:flex;align-items:center;justify-content:space-between;transition:all 0.4s}
+.nav.scrolled{background:rgba(3,8,22,0.85);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-logo{display:flex;align-items:center;gap:12px}
+.nav-logo svg{width:36px;height:36px}
+.nav-logo span{font-family:'Unbounded',sans-serif;font-size:1.1rem;font-weight:600;color:var(--bio);letter-spacing:-0.5px}
+.nav-links{display:flex;gap:32px;align-items:center}
+.nav-links a{font-size:0.85rem;color:var(--muted);letter-spacing:1px;text-transform:uppercase;transition:color 0.3s;position:relative}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--bio);transition:width 0.3s}
+.nav-links a:hover{color:var(--bio)}
+.nav-links a:hover::after{width:100%}
+.nav-cta{background:transparent;border:1.5px solid var(--bio);color:var(--bio);padding:10px 24px;border-radius:100px;font-family:'Space Grotesk',sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.3s;text-transform:uppercase;letter-spacing:1px}
+.nav-cta:hover{background:var(--bio);color:var(--abyss)}
+.depth-indicator{position:fixed;right:20px;top:50%;transform:translateY(-50%);z-index:999;display:flex;flex-direction:column;align-items:center;gap:8px}
+.depth-indicator .line{width:1px;height:120px;background:linear-gradient(to bottom,var(--bio),transparent);position:relative}
+.depth-indicator .marker{width:8px;height:8px;border-radius:50%;background:var(--bio);box-shadow:0 0 12px var(--bio);position:absolute;left:50%;transform:translateX(-50%);transition:top 0.3s}
+.depth-indicator .label{font-size:0.65rem;color:var(--muted);writing-mode:vertical-rl;letter-spacing:2px;text-transform:uppercase;font-family:'Space Grotesk',sans-serif}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;z-index:1001}
+.hamburger span{width:24px;height:2px;background:var(--bio);transition:all 0.3s}
+.mobile-menu{display:none;position:fixed;inset:0;background:rgba(3,8,22,0.97);z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:32px}
+.mobile-menu.open{display:flex}
+.mobile-menu a{font-family:'Unbounded',sans-serif;font-size:1.5rem;color:var(--heading);transition:color 0.3s}
+.mobile-menu a:hover{color:var(--bio)}
+
+/* HERO — immersive full-screen with animated jellyfish SVGs */
+.hero{min-height:100vh;display:flex;align-items:center;padding:120px 40px 80px;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse at 30% 70%,rgba(0,255,209,0.06) 0%,transparent 50%),radial-gradient(ellipse at 70% 20%,rgba(123,97,255,0.04) 0%,transparent 40%)}
+.hero-content{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;position:relative;z-index:1}
+.hero-text h1{font-size:clamp(2.5rem,5vw,4.5rem);letter-spacing:-2px;margin-bottom:20px}
+.hero-text h1 .accent{color:var(--bio);display:block;text-shadow:0 0 40px rgba(0,255,209,0.3)}
+.hero-text p{font-size:1.1rem;color:var(--text);max-width:480px;margin-bottom:32px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(0,255,209,0.08);border:1px solid rgba(0,255,209,0.2);border-radius:100px;padding:8px 18px;margin-bottom:24px;font-size:0.78rem;color:var(--bio);text-transform:uppercase;letter-spacing:2px}
+.hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--bio);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(0,255,209,0.4)}50%{opacity:0.7;box-shadow:0 0 0 8px rgba(0,255,209,0)}}
+.hero-btns{display:flex;gap:16px;flex-wrap:wrap}
+.btn-primary{background:var(--bio);color:var(--abyss);padding:14px 32px;border-radius:100px;font-weight:600;font-size:0.9rem;transition:all 0.3s;border:none;cursor:pointer;font-family:'Space Grotesk',sans-serif}
+.btn-primary:hover{box-shadow:0 0 30px rgba(0,255,209,0.3);transform:translateY(-2px)}
+.btn-ghost{background:transparent;color:var(--white);padding:14px 32px;border-radius:100px;font-weight:500;font-size:0.9rem;border:1px solid var(--border);transition:all 0.3s;cursor:pointer;font-family:'Space Grotesk',sans-serif}
+.btn-ghost:hover{border-color:var(--bio);color:var(--bio)}
+.hero-visual{position:relative;height:500px;display:flex;align-items:center;justify-content:center}
+.hero-visual svg{width:100%;max-width:450px}
+.hero-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-top:48px;grid-column:1/-1}
+.hero-stat{background:var(--deep);padding:24px 20px;text-align:center}
+.hero-stat .num{font-family:'Unbounded',sans-serif;font-size:1.6rem;font-weight:800;color:var(--bio)}
+.hero-stat .label{font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:4px}
+
+/* SECTIONS */
+section{position:relative;z-index:1}
+.container{max-width:1200px;margin:0 auto;padding:0 40px}
+.section-pad{padding:100px 0}
+.section-label{display:inline-flex;align-items:center;gap:8px;font-size:0.75rem;color:var(--bio);text-transform:uppercase;letter-spacing:3px;margin-bottom:16px}
+.section-label::before{content:'';width:24px;height:1px;background:var(--bio)}
+.section-title{font-size:clamp(1.8rem,3.5vw,2.8rem);margin-bottom:20px;letter-spacing:-1px}
+.section-desc{color:var(--text);max-width:560px;font-size:1rem}
+
+/* SERVICES — bioluminescent cards with glow borders */
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
+.service-card{background:var(--deep);border:1px solid var(--border);border-radius:16px;padding:36px 28px;transition:all 0.4s;position:relative;overflow:hidden}
+.service-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--bio),var(--purple));opacity:0;transition:opacity 0.4s}
+.service-card:hover{border-color:rgba(0,255,209,0.3);transform:translateY(-4px)}
+.service-card:hover::before{opacity:1}
+.service-icon{width:48px;height:48px;border-radius:12px;background:rgba(0,255,209,0.08);display:flex;align-items:center;justify-content:center;margin-bottom:20px}
+.service-icon svg{width:24px;height:24px;stroke:var(--bio);fill:none;stroke-width:1.5}
+.service-card h3{font-size:1.15rem;margin-bottom:10px;font-weight:600}
+.service-card p{font-size:0.9rem;color:var(--muted);line-height:1.6}
+.service-card .price{display:inline-block;margin-top:16px;font-family:'Unbounded',sans-serif;font-size:0.85rem;color:var(--bio)}
+
+/* WHY US — split layout with depth-effect numbers */
+.why-section{background:var(--deep)}
+.why-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;margin-top:48px}
+.why-big-stat{text-align:center}
+.why-big-stat .number{font-family:'Unbounded',sans-serif;font-size:6rem;font-weight:900;background:linear-gradient(180deg,var(--bio),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1}
+.why-big-stat .sublabel{font-size:1rem;color:var(--muted);margin-top:8px}
+.why-features{display:flex;flex-direction:column;gap:24px}
+.why-feature{display:flex;gap:16px;align-items:flex-start}
+.why-feature .marker{width:10px;height:10px;min-width:10px;border-radius:50%;background:var(--bio);margin-top:8px;box-shadow:0 0 10px rgba(0,255,209,0.3)}
+.why-feature h4{font-size:1rem;font-weight:600;margin-bottom:4px}
+.why-feature p{font-size:0.88rem;color:var(--muted)}
+
+/* PROCESS */
+.process-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;margin-top:48px}
+.process-step{text-align:center;position:relative}
+.process-step::after{content:'';position:absolute;top:28px;left:60%;width:80%;height:1px;background:linear-gradient(90deg,var(--bio),transparent);opacity:0.3}
+.process-step:last-child::after{display:none}
+.step-num{width:56px;height:56px;border-radius:50%;border:2px solid var(--bio);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-family:'Unbounded',sans-serif;font-size:1.1rem;color:var(--bio);font-weight:600;box-shadow:0 0 20px rgba(0,255,209,0.1)}
+.process-step h3{font-size:1rem;margin-bottom:8px;font-weight:600}
+.process-step p{font-size:0.85rem;color:var(--muted)}
+
+/* TESTIMONIALS — glass cards */
+.testimonials-section{background:var(--deep)}
+.testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
+.testimonial-card{background:rgba(10,26,60,0.6);backdrop-filter:blur(12px);border:1px solid var(--border);border-radius:16px;padding:32px;transition:all 0.3s}
+.testimonial-card:hover{border-color:rgba(0,255,209,0.2)}
+.testimonial-stars{display:flex;gap:4px;margin-bottom:16px}
+.testimonial-stars svg{width:16px;height:16px;fill:var(--amber)}
+.testimonial-card blockquote{font-size:0.95rem;color:var(--text);font-style:italic;line-height:1.7;margin-bottom:20px}
+.testimonial-author{display:flex;align-items:center;gap:12px}
+.testimonial-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--bio),var(--purple));display:flex;align-items:center;justify-content:center;font-family:'Unbounded',sans-serif;font-size:0.85rem;color:var(--abyss);font-weight:700}
+.testimonial-name{font-weight:600;font-size:0.88rem;color:var(--heading)}
+.testimonial-role{font-size:0.75rem;color:var(--muted)}
+
+/* FAQ */
+.faq-list{max-width:720px;margin:48px auto 0;display:flex;flex-direction:column;gap:12px}
+.faq-item{border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color 0.3s}
+.faq-item.open{border-color:rgba(0,255,209,0.3)}
+.faq-q{padding:20px 24px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-weight:600;font-size:0.95rem;color:var(--heading);transition:color 0.3s}
+.faq-q:hover{color:var(--bio)}
+.faq-q svg{width:20px;height:20px;stroke:var(--muted);transition:transform 0.3s,stroke 0.3s;flex-shrink:0}
+.faq-item.open .faq-q svg{transform:rotate(45deg);stroke:var(--bio)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.4s ease,padding 0.4s}
+.faq-a-inner{padding:0 24px 20px;font-size:0.9rem;color:var(--muted);line-height:1.7}
+
+/* AREAS */
+.areas-grid{display:flex;flex-wrap:wrap;gap:10px;margin-top:32px}
+.area-tag{padding:10px 20px;border:1px solid var(--border);border-radius:100px;font-size:0.85rem;color:var(--text);transition:all 0.3s}
+.area-tag:hover{border-color:var(--bio);color:var(--bio)}
+
+/* CONTACT */
+.contact-section{background:var(--deep)}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;margin-top:48px}
+.contact-info{display:flex;flex-direction:column;gap:28px}
+.contact-row{display:flex;gap:16px;align-items:flex-start}
+.contact-row svg{width:20px;height:20px;stroke:var(--bio);flex-shrink:0;margin-top:2px}
+.contact-row .info-label{font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.contact-row .info-value{color:var(--heading);font-weight:500;font-size:0.95rem}
+.contact-form{display:flex;flex-direction:column;gap:16px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-group label{font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.form-group input,.form-group select,.form-group textarea{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;color:var(--heading);font-family:'Space Grotesk',sans-serif;font-size:0.9rem;transition:border-color 0.3s;outline:none}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--bio)}
+.form-group textarea{resize:vertical;min-height:100px}
+.form-group select{appearance:none;cursor:pointer}
+.form-submit{width:100%}
+.form-error{font-size:0.75rem;color:var(--coral);margin-top:2px;display:none}
+
+/* CTA BANNER */
+.cta-banner{background:linear-gradient(135deg,var(--surface) 0%,var(--deep) 50%,var(--surface) 100%);border-top:1px solid var(--border);border-bottom:1px solid var(--border);text-align:center;padding:80px 40px}
+.cta-banner h2{font-size:clamp(1.6rem,3vw,2.4rem);margin-bottom:16px;letter-spacing:-1px}
+.cta-banner p{color:var(--text);margin-bottom:32px;max-width:480px;margin-left:auto;margin-right:auto}
+
+/* FOOTER */
+.footer{background:var(--abyss);border-top:1px solid var(--border);padding:60px 40px 32px}
+.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:40px;max-width:1200px;margin:0 auto}
+.footer-brand p{color:var(--muted);font-size:0.85rem;margin-top:12px;max-width:260px}
+.footer-col h4{font-size:0.8rem;text-transform:uppercase;letter-spacing:2px;color:var(--heading);margin-bottom:16px;font-weight:600}
+.footer-col a{display:block;color:var(--muted);font-size:0.85rem;margin-bottom:10px;transition:color 0.3s}
+.footer-col a:hover{color:var(--bio)}
+.footer-bottom{max-width:1200px;margin:40px auto 0;padding-top:24px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;font-size:0.78rem;color:var(--muted)}
+.webnari-badge{display:inline-flex;align-items:center;gap:6px;color:var(--muted);font-size:0.75rem;transition:color 0.3s}
+.webnari-badge:hover{color:var(--bio)}
+
+/* SCROLL REVEAL */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity 0.7s ease,transform 0.7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:0.1s}
+.reveal-delay-2{transition-delay:0.2s}
+.reveal-delay-3{transition-delay:0.3s}
+.reveal-delay-4{transition-delay:0.35s}
+.reveal-delay-5{transition-delay:0.4s}
+
+/* MOBILE */
+@media(max-width:900px){
+.nav-links,.depth-indicator{display:none}
+.hamburger{display:flex}
+.hero-content{grid-template-columns:1fr;gap:40px;text-align:center}
+.hero-text p{margin:0 auto 32px}
+.hero-btns{justify-content:center}
+.hero-visual{height:300px}
+.hero-stats{grid-template-columns:repeat(2,1fr)}
+.services-grid,.testimonials-grid{grid-template-columns:1fr}
+.why-grid,.contact-grid{grid-template-columns:1fr;gap:40px}
+.process-steps{grid-template-columns:repeat(2,1fr)}
+.process-step::after{display:none}
+.footer-grid{grid-template-columns:1fr 1fr;gap:32px}
+.form-row{grid-template-columns:1fr}
+.nav{padding:14px 20px}
+.container{padding:0 20px}
+.hero{padding:100px 20px 60px}
+}
+@media(max-width:600px){
+.hero-stats{grid-template-columns:1fr 1fr}
+.process-steps{grid-template-columns:1fr}
+.footer-grid{grid-template-columns:1fr}
+.areas-grid{justify-content:center}
+}
+</style>
+</head>
+<body>
+
+<!-- Floating bubbles -->
+<div class="bubbles" aria-hidden="true" id="bubbles"></div>
+
+<!-- Navigation -->
+<nav class="nav" id="nav">
+<div class="nav-logo">
+<svg viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="16" stroke="#00FFD1" stroke-width="1.5"/><path d="M18 6C18 6 10 14 10 20C10 24.4 13.6 28 18 28C22.4 28 26 24.4 26 20C26 14 18 6 18 6Z" fill="none" stroke="#00FFD1" stroke-width="1.5"/><circle cx="18" cy="20" r="3" fill="#00FFD1" opacity="0.3"/></svg>
+<span>DeepBlue</span>
+</div>
+<div class="nav-links">
+<a href="#services">Services</a>
+<a href="#why">About</a>
+<a href="#process">Process</a>
+<a href="#reviews">Reviews</a>
+<a href="#faq">FAQ</a>
+<a href="#contact">Contact</a>
+</div>
+<a href="tel:+13055552350" class="nav-cta">Book a Dive</a>
+<div class="hamburger" id="hamburger" aria-label="Menu toggle">
+<span></span><span></span><span></span>
+</div>
+</nav>
+
+<!-- Depth indicator -->
+<div class="depth-indicator" aria-hidden="true">
+<div class="label">Depth</div>
+<div class="line"><div class="marker" id="depthMarker" style="top:0"></div></div>
+<div class="label" style="font-size:0.6rem">0m</div>
+</div>
+
+<!-- Mobile Menu -->
+<div class="mobile-menu" id="mobileMenu">
+<a href="#services" onclick="closeMobile()">Services</a>
+<a href="#why" onclick="closeMobile()">About</a>
+<a href="#process" onclick="closeMobile()">Process</a>
+<a href="#reviews" onclick="closeMobile()">Reviews</a>
+<a href="#faq" onclick="closeMobile()">FAQ</a>
+<a href="#contact" onclick="closeMobile()">Contact</a>
+<a href="tel:+13055552350" class="btn-primary" onclick="closeMobile()">Book a Dive</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+<div class="hero-bg"></div>
+<div class="hero-content">
+<div class="hero-text">
+<div class="hero-badge"><span class="dot"></span> PADI 5-Star Dive Center</div>
+<h1>Explore the<span class="accent">Deep Blue.</span></h1>
+<p>South Florida's premier scuba diving and snorkeling outfitter. From reef adventures to wreck dives and PADI certification — discover what lies beneath.</p>
+<div class="hero-btns">
+<a href="#contact" class="btn-primary">Book Your Adventure</a>
+<a href="#services" class="btn-ghost">View Trips</a>
+</div>
+</div>
+<div class="hero-visual">
+<svg viewBox="0 0 400 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+<!-- Jellyfish 1 -->
+<g opacity="0.7" style="animation:float1 6s ease-in-out infinite">
+<ellipse cx="200" cy="120" rx="65" ry="45" fill="url(#jGrad1)" opacity="0.5"/>
+<ellipse cx="200" cy="120" rx="50" ry="35" fill="none" stroke="#00FFD1" stroke-width="0.8" opacity="0.6"/>
+<path d="M155 140 Q160 200 145 260" stroke="#00FFD1" stroke-width="0.8" opacity="0.4" fill="none"/>
+<path d="M175 145 Q178 210 165 275" stroke="#7B61FF" stroke-width="0.6" opacity="0.3" fill="none"/>
+<path d="M195 148 Q197 215 190 280" stroke="#00FFD1" stroke-width="0.8" opacity="0.4" fill="none"/>
+<path d="M215 148 Q213 215 220 280" stroke="#7B61FF" stroke-width="0.6" opacity="0.3" fill="none"/>
+<path d="M235 145 Q232 210 245 275" stroke="#00FFD1" stroke-width="0.8" opacity="0.4" fill="none"/>
+<path d="M250 140 Q245 200 260 260" stroke="#00FFD1" stroke-width="0.8" opacity="0.3" fill="none"/>
+<circle cx="185" cy="110" r="4" fill="#00FFD1" opacity="0.2"/>
+<circle cx="215" cy="108" r="3" fill="#7B61FF" opacity="0.2"/>
+</g>
+<!-- Jellyfish 2 small -->
+<g opacity="0.4" style="animation:float2 8s ease-in-out infinite">
+<ellipse cx="80" cy="220" rx="30" ry="20" fill="url(#jGrad2)" opacity="0.4"/>
+<path d="M55 232 Q58 265 50 300" stroke="#FF6B8A" stroke-width="0.5" opacity="0.3" fill="none"/>
+<path d="M72 235 Q74 270 68 305" stroke="#7B61FF" stroke-width="0.5" opacity="0.3" fill="none"/>
+<path d="M88 235 Q86 270 92 305" stroke="#FF6B8A" stroke-width="0.5" opacity="0.3" fill="none"/>
+<path d="M105 232 Q102 265 110 300" stroke="#7B61FF" stroke-width="0.5" opacity="0.3" fill="none"/>
+</g>
+<!-- Coral -->
+<g opacity="0.3">
+<path d="M30 400 Q35 360 28 330 Q40 340 50 320 Q55 350 60 400" stroke="#FF6B8A" stroke-width="1" fill="none"/>
+<path d="M340 410 Q345 370 360 340 Q365 360 380 350 Q375 380 370 410" stroke="#7B61FF" stroke-width="1" fill="none"/>
+</g>
+<!-- Bioluminescent particles -->
+<circle cx="50" cy="80" r="2" fill="#00FFD1" opacity="0.6" style="animation:twinkle 3s infinite"/>
+<circle cx="320" cy="150" r="1.5" fill="#7B61FF" opacity="0.5" style="animation:twinkle 4s infinite 1s"/>
+<circle cx="350" cy="300" r="2" fill="#00FFD1" opacity="0.4" style="animation:twinkle 3.5s infinite 0.5s"/>
+<circle cx="100" cy="350" r="1.5" fill="#FF6B8A" opacity="0.3" style="animation:twinkle 5s infinite 2s"/>
+<circle cx="280" cy="60" r="1" fill="#FFB547" opacity="0.4" style="animation:twinkle 4s infinite"/>
+<defs>
+<radialGradient id="jGrad1"><stop offset="0%" stop-color="#00FFD1" stop-opacity="0.3"/><stop offset="100%" stop-color="#7B61FF" stop-opacity="0.05"/></radialGradient>
+<radialGradient id="jGrad2"><stop offset="0%" stop-color="#FF6B8A" stop-opacity="0.3"/><stop offset="100%" stop-color="#7B61FF" stop-opacity="0.05"/></radialGradient>
+</defs>
+</svg>
+</div>
+<div class="hero-stats">
+<div class="hero-stat reveal"><div class="num">2,500+</div><div class="label">Dives Led</div></div>
+<div class="hero-stat reveal reveal-delay-1"><div class="num">15+</div><div class="label">Years Experience</div></div>
+<div class="hero-stat reveal reveal-delay-2"><div class="num">4.9</div><div class="label">Star Rating</div></div>
+<div class="hero-stat reveal reveal-delay-3"><div class="num">6</div><div class="label">PADI Instructors</div></div>
+</div>
+</div>
+</section>
+
+<style>
+@keyframes float1{0%,100%{transform:translateY(0)}50%{transform:translateY(-15px)}}
+@keyframes float2{0%,100%{transform:translateY(0) translateX(0)}50%{transform:translateY(-10px) translateX(8px)}}
+@keyframes twinkle{0%,100%{opacity:0.2;r:1}50%{opacity:0.8;r:2.5}}
+</style>
+
+<!-- SERVICES -->
+<section id="services" class="section-pad">
+<div class="container">
+<div class="section-label reveal">What We Offer</div>
+<h2 class="section-title reveal">Dive Experiences</h2>
+<p class="section-desc reveal">From beginner snorkel trips to advanced wreck explorations, every adventure is led by PADI-certified professionals.</p>
+<div class="services-grid">
+<div class="service-card reveal">
+<div class="service-icon"><svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+<h3>Reef Snorkeling</h3>
+<p>Guided snorkel tours along South Florida's most vibrant coral reefs. All gear included. Perfect for beginners and families.</p>
+<span class="price">From $65/person</span>
+</div>
+<div class="service-card reveal reveal-delay-1">
+<div class="service-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+<h3>Discover Scuba</h3>
+<p>Your first breath underwater. Half-day introductory course with pool training and a shallow open-water dive. No certification needed.</p>
+<span class="price">From $149/person</span>
+</div>
+<div class="service-card reveal reveal-delay-2">
+<div class="service-icon"><svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/></svg></div>
+<h3>PADI Certification</h3>
+<p>Open Water, Advanced, Rescue, and Divemaster courses. Classroom, confined water, and open-water dives over 3-5 days.</p>
+<span class="price">From $399</span>
+</div>
+<div class="service-card reveal reveal-delay-3">
+<div class="service-icon"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+<h3>Wreck Diving</h3>
+<p>Explore sunken ships, artificial reefs, and historical wrecks off the coast of Miami and Fort Lauderdale. Advanced cert required.</p>
+<span class="price">From $120/person</span>
+</div>
+<div class="service-card reveal reveal-delay-4">
+<div class="service-icon"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg></div>
+<h3>Private Charters</h3>
+<p>Exclusive boat for your group. Custom dive or snorkel itinerary, catering options, and a dedicated crew for up to 12 guests.</p>
+<span class="price">From $800/trip</span>
+</div>
+<div class="service-card reveal reveal-delay-5">
+<div class="service-icon"><svg viewBox="0 0 24 24"><path d="M23 12a11.05 11.05 0 00-22 0zm-5 7a3 3 0 01-6 0"/><line x1="12" y1="2" x2="12" y2="6"/></svg></div>
+<h3>Night Diving</h3>
+<p>Experience the reef after dark. Bioluminescent plankton, nocturnal marine life, and a completely different underwater world.</p>
+<span class="price">From $95/person</span>
+</div>
+</div>
+</div>
+</section>
+
+<!-- WHY US -->
+<section id="why" class="why-section section-pad">
+<div class="container">
+<div class="section-label reveal">Why DeepBlue</div>
+<h2 class="section-title reveal">Trusted by Thousands of Divers</h2>
+<div class="why-grid">
+<div class="why-big-stat reveal">
+<div class="number">15+</div>
+<div class="sublabel">Years of Safe Diving Operations</div>
+</div>
+<div class="why-features">
+<div class="why-feature reveal">
+<div class="marker"></div>
+<div><h4>PADI 5-Star Rated</h4><p>One of only a handful of PADI 5-Star Dive Centers in South Florida. Highest training and safety standards.</p></div>
+</div>
+<div class="why-feature reveal reveal-delay-1">
+<div class="marker"></div>
+<div><h4>Small Group Sizes</h4><p>Maximum 6 divers per instructor ensures personalized attention and a safer, more enjoyable experience.</p></div>
+</div>
+<div class="why-feature reveal reveal-delay-2">
+<div class="marker"></div>
+<div><h4>Premium Equipment</h4><p>All gear is top-tier, regularly serviced, and included in every trip. Aqualung, Suunto, and Mares equipment.</p></div>
+</div>
+<div class="why-feature reveal reveal-delay-3">
+<div class="marker"></div>
+<div><h4>Marine Conservation</h4><p>10% of every booking supports local reef restoration. We partner with Coral Restoration Foundation.</p></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- PROCESS -->
+<section id="process" class="section-pad">
+<div class="container">
+<div class="section-label reveal">How It Works</div>
+<h2 class="section-title reveal">Surface to Sea in 4 Steps</h2>
+<div class="process-steps">
+<div class="process-step reveal">
+<div class="step-num">1</div>
+<h3>Choose Your Trip</h3>
+<p>Browse our experiences and select the dive or snorkel adventure that matches your skill level and interests.</p>
+</div>
+<div class="process-step reveal reveal-delay-1">
+<div class="step-num">2</div>
+<h3>Book Online</h3>
+<p>Reserve your spot with a small deposit. We'll send a confirmation with everything you need to know.</p>
+</div>
+<div class="process-step reveal reveal-delay-2">
+<div class="step-num">3</div>
+<h3>Gear Up</h3>
+<p>Meet at our dive center in Key Biscayne. We fit you with premium gear and run a safety briefing.</p>
+</div>
+<div class="process-step reveal reveal-delay-3">
+<div class="step-num">4</div>
+<h3>Dive In</h3>
+<p>Board our custom dive boat and head to the site. Our instructors guide you through every moment underwater.</p>
+</div>
+</div>
+</div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="reviews" class="testimonials-section section-pad">
+<div class="container">
+<div class="section-label reveal">Reviews</div>
+<h2 class="section-title reveal">What Divers Say</h2>
+<div class="testimonials-grid">
+<div class="testimonial-card reveal">
+<div class="testimonial-stars"><svg viewBox="0 0 20 20"><path d="M10 1l2.39 4.84L18 6.71l-4 3.9.94 5.5L10 13.38 5.06 16.1 6 10.6l-4-3.9 5.61-.87z"/></svg><svg viewBox="0 0 20 20"><path d="M10 1l2.39 4.84L18 6.71l-4 3.9.94 5.5L10 13.38 5.06 16.1 6 10.6l-4-3.9 5.61-.87z"/></svg><svg viewBox="0 0 20 20"><path d="M10 1l2.39 4.84L18 6.71l-4 3.9.94 5.5L10 13.38 5.06 16.1 6 10.6l-4-3.9 5.61-.87z"/></svg><svg viewBox="0 0 20 20"><path d="M10 1l2.39 4.84L18 6.71l-4 3.9.94 5.5L10 13.38 5.06 16.1 6 10.6l-4-3.9 5.61-.87z"/></svg><svg viewBox="0 0 20 20"><path d="M10 1l2.39 4.84L18 6.71l-4 3.9.94 5.5L10 13.38 5.06 16.1 6 10.6l-4-3.9 5.61-.87z"/></svg></div>
+<blockquote>My first open water dive ever and it was magical. The instructor was patient, professional, and made me feel completely safe the entire time. Already booked my next trip.</blockquote>
+<div class="testimonial-author"><div class="testimonial-avatar">S</div><div><div class="testimonial-name">Sarah Mitchell</div><div class="testimonial-role">Discover Scuba Diver</div></div></div>
+</div>
+<div class="testimonial-card reveal reveal-delay-1">
+<div class="testimonial-stars"><svg viewBox="0 0 20 20"><path d="M10 1l2.39 4.84L18 6.71l-4 3.9.94 5.5L10 13.38 5.06 16.1 6 10.6l-4-3.9 5.61-.87z"/></svg><svg viewBox="0 0 20 20"><path d="M10 1l2.39 4.84L18 6.71l-4 3.9.94 5.5L10 13.38 5.06 16.1 6 10.6l-4-3.9 5.61-.87z"/></svg><svg viewBox="0 0 20 20"><path d="M10 1l2.39 4.84L18 6.71l-4 3.9.94 5.5L10 13.38 5.06 16.1 6 10.6l-4-3.9 5.61-.87z"/></svg><svg viewBox="0 0 20 20"><path d="M10 1l2.39 4.84L18 6.71l-4 3.9.94 5.5L10 13.38 5.06 16.1 6 10.6l-4-3.9 5.61-.87z"/></svg><svg viewBox="0 0 20 20"><path d="M10 1l2.39 4.84L18 6.71l-4 3.9.94 5.5L10 13.38 5.06 16.1 6 10.6l-4-3.9 5.61-.87z"/></svg></div>
+<blockquote>Got my PADI Open Water cert through DeepBlue and it was the best decision. The wreck dive at the end was unforgettable. These guys know what they're doing.</blockquote>
+<div class="testimonial-author"><div class="testimonial-avatar">M</div><div><div class="testimonial-name">Marcus Rodriguez</div><div class="testimonial-role">PADI Open Water</div></div></div>
+</div>
+<div class="testimonial-card reveal reveal-delay-2">
+<div class="testimonial-stars"><svg viewBox="0 0 20 20"><path d="M10 1l2.39 4.84L18 6.71l-4 3.9.94 5.5L10 13.38 5.06 16.1 6 10.6l-4-3.9 5.61-.87z"/></svg><svg viewBox="0 0 20 20"><path d="M10 1l2.39 4.84L18 6.71l-4 3.9.94 5.5L10 13.38 5.06 16.1 6 10.6l-4-3.9 5.61-.87z"/></svg><svg viewBox="0 0 20 20"><path d="M10 1l2.39 4.84L18 6.71l-4 3.9.94 5.5L10 13.38 5.06 16.1 6 10.6l-4-3.9 5.61-.87z"/></svg><svg viewBox="0 0 20 20"><path d="M10 1l2.39 4.84L18 6.71l-4 3.9.94 5.5L10 13.38 5.06 16.1 6 10.6l-4-3.9 5.61-.87z"/></svg><svg viewBox="0 0 20 20"><path d="M10 1l2.39 4.84L18 6.71l-4 3.9.94 5.5L10 13.38 5.06 16.1 6 10.6l-4-3.9 5.61-.87z"/></svg></div>
+<blockquote>We chartered a private boat for our anniversary. The crew set up everything perfectly — champagne, snorkeling in a secluded spot, and an amazing sunset ride back. Truly special.</blockquote>
+<div class="testimonial-author"><div class="testimonial-avatar">J</div><div><div class="testimonial-name">Julia & Tony Vasquez</div><div class="testimonial-role">Private Charter</div></div></div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" class="section-pad">
+<div class="container">
+<div class="section-label reveal" style="text-align:center;display:flex;justify-content:center">Frequently Asked</div>
+<h2 class="section-title reveal" style="text-align:center">Common Questions</h2>
+<div class="faq-list">
+<div class="faq-item reveal">
+<div class="faq-q">Do I need to know how to swim?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+<div class="faq-a"><div class="faq-a-inner">Basic swimming ability is required for scuba diving. For snorkeling, we provide flotation vests so you can enjoy the experience even if you're not a strong swimmer. Our Discover Scuba program includes pool training first.</div></div>
+</div>
+<div class="faq-item reveal reveal-delay-1">
+<div class="faq-q">What's included in the price?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+<div class="faq-a"><div class="faq-a-inner">All trips include full equipment (mask, snorkel, fins, wetsuit, BCD, regulator, tank), boat transportation, professional guide/instructor, water and snacks. Certification courses also include PADI materials and certification fees.</div></div>
+</div>
+<div class="faq-item reveal reveal-delay-2">
+<div class="faq-q">How deep do you dive?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+<div class="faq-a"><div class="faq-a-inner">Snorkeling stays at the surface. Discover Scuba dives reach 30-40 feet. Open Water certified divers go to 60 feet. Advanced divers can explore sites up to 100+ feet including deeper wreck dives.</div></div>
+</div>
+<div class="faq-item reveal reveal-delay-3">
+<div class="faq-q">What marine life will I see?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+<div class="faq-a"><div class="faq-a-inner">South Florida reefs are home to sea turtles, nurse sharks, moray eels, eagle rays, barracuda, lobsters, colorful tropical fish, and seasonal visitors like manatees and whale sharks. Every dive is different.</div></div>
+</div>
+<div class="faq-item reveal">
+<div class="faq-q">What's your cancellation policy?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+<div class="faq-a"><div class="faq-a-inner">Full refund if cancelled 48+ hours in advance. 50% refund within 24-48 hours. No refund within 24 hours. Weather cancellations by us are always fully refunded or rescheduled at no cost.</div></div>
+</div>
+<div class="faq-item reveal reveal-delay-1">
+<div class="faq-q">Do you offer group discounts?<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
+<div class="faq-a"><div class="faq-a-inner">Yes. Groups of 6+ receive 10% off. Corporate team-building and school groups get custom pricing. Private charters are the best value for groups of 8-12 people.</div></div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- SERVICE AREAS -->
+<section class="section-pad" style="background:var(--deep)">
+<div class="container">
+<div class="section-label reveal">Dive Sites</div>
+<h2 class="section-title reveal">Where We Dive</h2>
+<p class="section-desc reveal">We launch from Key Biscayne and cover the best dive and snorkel sites across South Florida.</p>
+<div class="areas-grid" style="margin-top:32px">
+<span class="area-tag reveal">Key Biscayne</span>
+<span class="area-tag reveal">Miami Beach</span>
+<span class="area-tag reveal">Brickell</span>
+<span class="area-tag reveal">Coral Gables</span>
+<span class="area-tag reveal">Coconut Grove</span>
+<span class="area-tag reveal">Fort Lauderdale</span>
+<span class="area-tag reveal">Deerfield Beach</span>
+<span class="area-tag reveal">Hollywood</span>
+<span class="area-tag reveal">Pompano Beach</span>
+<span class="area-tag reveal">Boca Raton</span>
+<span class="area-tag reveal">Key Largo</span>
+<span class="area-tag reveal">Islamorada</span>
+</div>
+</div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="contact-section section-pad">
+<div class="container">
+<div class="section-label reveal">Get In Touch</div>
+<h2 class="section-title reveal">Ready to Dive?</h2>
+<div class="contact-grid">
+<div class="contact-info reveal">
+<div class="contact-row">
+<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+<div><div class="info-label">Phone</div><div class="info-value"><a href="tel:+13055552350">(305) 555-2350</a></div></div>
+</div>
+<div class="contact-row">
+<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+<div><div class="info-label">Email</div><div class="info-value">hello@deepbluedive.co</div></div>
+</div>
+<div class="contact-row">
+<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+<div><div class="info-label">Dive Center</div><div class="info-value">200 Crandon Blvd, Suite 8<br>Key Biscayne, FL 33149</div></div>
+</div>
+<div class="contact-row">
+<svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+<div><div class="info-label">Hours</div><div class="info-value">Mon–Sat 7AM–6PM<br>Sun 8AM–4PM</div></div>
+</div>
+</div>
+<form class="contact-form reveal" id="contactForm" action="https://formsubmit.co/hello@deepbluedive.co" method="POST">
+<input type="hidden" name="_captcha" value="false">
+<input type="hidden" name="_subject" value="New Booking Inquiry — DeepBlue Dive Co.">
+<div class="form-row">
+<div class="form-group">
+<label for="fname">First Name</label>
+<input type="text" id="fname" name="first_name" required>
+<div class="form-error" id="fnameErr">Please enter your first name</div>
+</div>
+<div class="form-group">
+<label for="lname">Last Name</label>
+<input type="text" id="lname" name="last_name" required>
+<div class="form-error" id="lnameErr">Please enter your last name</div>
+</div>
+</div>
+<div class="form-row">
+<div class="form-group">
+<label for="email">Email</label>
+<input type="email" id="email" name="email" required>
+<div class="form-error" id="emailErr">Please enter a valid email</div>
+</div>
+<div class="form-group">
+<label for="phone">Phone</label>
+<input type="tel" id="phone" name="phone">
+</div>
+</div>
+<div class="form-group">
+<label for="trip">Trip Interest</label>
+<select id="trip" name="trip_interest">
+<option value="">Select a trip...</option>
+<option>Reef Snorkeling</option>
+<option>Discover Scuba</option>
+<option>PADI Certification</option>
+<option>Wreck Diving</option>
+<option>Private Charter</option>
+<option>Night Diving</option>
+</select>
+</div>
+<div class="form-group">
+<label for="message">Message</label>
+<textarea id="message" name="message" rows="4" placeholder="Tell us about your group size, preferred dates, experience level..."></textarea>
+</div>
+<button type="submit" class="btn-primary form-submit">Send Inquiry</button>
+</form>
+</div>
+</div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner">
+<h2 class="reveal">The Ocean Is Calling.</h2>
+<p class="reveal">Book your next underwater adventure today and discover why thousands of divers trust DeepBlue.</p>
+<a href="#contact" class="btn-primary reveal">Book Your Dive</a>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+<div class="footer-grid">
+<div class="footer-brand">
+<div class="nav-logo" style="margin-bottom:4px">
+<svg viewBox="0 0 36 36" width="28" height="28" fill="none"><circle cx="18" cy="18" r="16" stroke="#00FFD1" stroke-width="1.5"/><path d="M18 6C18 6 10 14 10 20C10 24.4 13.6 28 18 28C22.4 28 26 24.4 26 20C26 14 18 6 18 6Z" fill="none" stroke="#00FFD1" stroke-width="1.5"/></svg>
+<span style="font-size:1rem">DeepBlue Dive Co.</span>
+</div>
+<p>PADI 5-Star Dive Center. Premium scuba diving, snorkeling, and certification in South Florida since 2011.</p>
+</div>
+<div class="footer-col">
+<h4>Experiences</h4>
+<a href="#services">Reef Snorkeling</a>
+<a href="#services">Discover Scuba</a>
+<a href="#services">PADI Certification</a>
+<a href="#services">Wreck Diving</a>
+<a href="#services">Private Charters</a>
+<a href="#services">Night Diving</a>
+</div>
+<div class="footer-col">
+<h4>Company</h4>
+<a href="#why">About Us</a>
+<a href="#reviews">Reviews</a>
+<a href="#process">How It Works</a>
+<a href="#faq">FAQ</a>
+<a href="#contact">Contact</a>
+</div>
+<div class="footer-col">
+<h4>Contact</h4>
+<a href="tel:+13055552350">(305) 555-2350</a>
+<a href="mailto:hello@deepbluedive.co">hello@deepbluedive.co</a>
+<a>200 Crandon Blvd, Ste 8</a>
+<a>Key Biscayne, FL 33149</a>
+</div>
+</div>
+<div class="footer-bottom">
+<span>&copy; 2026 DeepBlue Dive Co. All rights reserved. PADI #38291</span>
+<a href="https://webnari.io" target="_blank" class="webnari-badge">
+<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+Powered by Webnari
+</a>
+</div>
+</footer>
+
+<script>
+// Bubbles
+(function(){const b=document.getElementById('bubbles');for(let i=0;i<15;i++){const d=document.createElement('div');d.className='bubble';const s=Math.random()*40+10;d.style.width=s+'px';d.style.height=s+'px';d.style.left=Math.random()*100+'%';d.style.animationDuration=(Math.random()*15+10)+'s';d.style.animationDelay=(Math.random()*10)+'s';b.appendChild(d)}})();
+
+// Nav scroll
+const nav=document.getElementById('nav');
+window.addEventListener('scroll',()=>{nav.classList.toggle('scrolled',window.scrollY>50)});
+
+// Depth marker
+const marker=document.getElementById('depthMarker');
+window.addEventListener('scroll',()=>{const p=window.scrollY/(document.documentElement.scrollHeight-window.innerHeight);marker.style.top=(p*112)+'px'});
+
+// Hamburger
+const hamburger=document.getElementById('hamburger');
+const mobileMenu=document.getElementById('mobileMenu');
+hamburger.addEventListener('click',()=>{mobileMenu.classList.toggle('open');hamburger.classList.toggle('active')});
+function closeMobile(){mobileMenu.classList.remove('open');hamburger.classList.remove('active')}
+
+// Scroll reveal
+const obs=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}})},{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+
+// FAQ
+document.querySelectorAll('.faq-q').forEach(q=>{q.addEventListener('click',()=>{const item=q.parentElement;const a=item.querySelector('.faq-a');const wasOpen=item.classList.contains('open');document.querySelectorAll('.faq-item').forEach(i=>{i.classList.remove('open');i.querySelector('.faq-a').style.maxHeight=null});if(!wasOpen){item.classList.add('open');a.style.maxHeight=a.scrollHeight+'px'}})});
+
+// Form validation
+const form=document.getElementById('contactForm');
+function showErr(id){document.getElementById(id).style.display='block'}
+function hideErr(id){document.getElementById(id).style.display='none'}
+['fname','lname','email'].forEach(id=>{document.getElementById(id).addEventListener('blur',function(){if(!this.value.trim()){showErr(id+'Err')}else{hideErr(id+'Err')}});document.getElementById(id).addEventListener('input',function(){if(this.value.trim())hideErr(id+'Err')})});
+form.addEventListener('submit',function(e){let valid=true;if(!document.getElementById('fname').value.trim()){showErr('fnameErr');valid=false}if(!document.getElementById('lname').value.trim()){showErr('lnameErr');valid=false}const em=document.getElementById('email');if(!em.value.trim()||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em.value)){showErr('emailErr');valid=false}if(!valid)e.preventDefault()});
+</script>
+</body>
+</html>

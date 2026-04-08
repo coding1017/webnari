@@ -1,0 +1,1772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Bonfire Smokehouse — Craft BBQ & Southern Kitchen in Wynwood Miami. Low & slow smoked meats, scratch-made sides, craft cocktails. Open Tue-Sun.">
+  <meta name="theme-color" content="#3E2723">
+  <meta property="og:title" content="Bonfire Smokehouse — Craft BBQ & Southern Kitchen">
+  <meta property="og:description" content="Low & slow smoked meats, authentic Southern sides, Wynwood Miami. 14-hour smokes, 100% hardwood, family recipes.">
+  <meta property="og:image" content="https://webnari.io/bonfire-og.jpg">
+  <meta property="og:url" content="https://webnari.io/bonfire.html">
+  <title>Bonfire Smokehouse — Craft BBQ & Southern Kitchen, Miami</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@700;900&family=Josefin+Sans:wght@300;400;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ===== DESIGN TOKENS ===== */
+    :root {
+      --smoke: #3E2723;
+      --ember: #E65100;
+      --mustard: #F9A825;
+      --cream: #F5F0E8;
+      --charcoal: #1B1B1B;
+      --dark-smoke: #2C1B15;
+      --light-cream: #FDFAF4;
+      --muted: #8B7355;
+      --text: #3E2723;
+      --text-light: #FFFFFF;
+    }
+
+    /* ===== GLOBAL ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Josefin Sans', sans-serif;
+      background-color: var(--cream);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Crimson Pro', serif;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      text-shadow: 3px 3px 0 rgba(0, 0, 0, 0.15);
+    }
+
+    h1 { font-size: 4rem; line-height: 1.1; }
+    h2 { font-size: 3rem; line-height: 1.2; }
+    h3 { font-size: 1.8rem; line-height: 1.3; }
+    h4 { font-size: 1.3rem; }
+
+    a { color: inherit; text-decoration: none; transition: all 0.3s ease; }
+    a:hover { color: var(--ember); }
+
+    button {
+      font-family: 'Josefin Sans', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      text-transform: uppercase;
+    }
+
+    /* ===== NAV ===== */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background-color: var(--charcoal);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+      border-bottom: 3px solid var(--ember);
+    }
+
+    .nav-logo {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .nav-logo h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      color: var(--ember);
+      text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    .nav-logo small {
+      font-size: 0.65rem;
+      letter-spacing: 0.15em;
+      color: var(--mustard);
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      align-items: center;
+    }
+
+    .nav-links a {
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-light);
+      font-weight: 400;
+      border-bottom: 2px solid transparent;
+    }
+
+    .nav-links a:hover {
+      border-bottom-color: var(--mustard);
+      color: var(--mustard);
+    }
+
+    .nav-cta {
+      background-color: var(--mustard);
+      color: var(--charcoal);
+      padding: 0.6rem 1.2rem;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      border: 2px solid var(--charcoal);
+      box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .nav-cta:hover {
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      background: none;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .hamburger span {
+      width: 28px;
+      height: 3px;
+      background-color: var(--mustard);
+      transition: all 0.3s ease;
+    }
+
+    .hamburger.active span:nth-child(1) {
+      transform: rotate(45deg) translate(8px, 8px);
+    }
+
+    .hamburger.active span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .hamburger.active span:nth-child(3) {
+      transform: rotate(-45deg) translate(7px, -7px);
+    }
+
+    /* ===== MOBILE NAV ===== */
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.95);
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      z-index: 999;
+    }
+
+    .mobile-menu.active {
+      display: flex;
+    }
+
+    .mobile-menu a {
+      font-size: 1.5rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--mustard);
+      font-weight: 700;
+    }
+
+    .mobile-menu .nav-cta {
+      margin-top: 2rem;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      min-height: 100vh;
+      background: radial-gradient(circle at center, #6D4C41 0%, var(--charcoal) 70%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 8rem 2rem 4rem;
+      gap: 3rem;
+      margin-top: 60px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(230, 81, 0, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      z-index: -1;
+    }
+
+    .hero h1 {
+      color: var(--text-light);
+      max-width: 900px;
+      font-size: 5rem;
+      text-shadow: 4px 4px 0 rgba(0, 0, 0, 0.4);
+    }
+
+    .hero-svg {
+      width: 300px;
+      height: 300px;
+      margin: 2rem 0;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin: 2rem 0;
+    }
+
+    .stat-item {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 1.5rem 2rem;
+      border: 2px solid var(--mustard);
+      color: var(--text-light);
+    }
+
+    .stat-item strong {
+      display: block;
+      color: var(--mustard);
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .stat-item span {
+      display: block;
+      font-size: 1.2rem;
+      margin-top: 0.5rem;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+
+    .btn {
+      padding: 0.9rem 2.2rem;
+      font-size: 0.8rem;
+      letter-spacing: 0.1em;
+      border: 2px solid;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background-color: var(--ember);
+      color: var(--text-light);
+      border-color: var(--ember);
+      box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translate(-3px, -3px);
+      box-shadow: 7px 7px 0 rgba(0, 0, 0, 0.4);
+      background-color: #CC4700;
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: var(--text-light);
+      border-color: var(--mustard);
+      box-shadow: 4px 4px 0 rgba(230, 81, 0, 0.3);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--mustard);
+      color: var(--charcoal);
+      transform: translate(-3px, -3px);
+      box-shadow: 7px 7px 0 rgba(230, 81, 0, 0.4);
+    }
+
+    /* ===== DIVIDER ===== */
+    .flame-divider {
+      width: 100%;
+      height: 120px;
+      background-color: var(--cream);
+    }
+
+    /* ===== MENU SECTION ===== */
+    .menu-section {
+      background-color: var(--light-cream);
+      padding: 5rem 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .menu-section h2 {
+      text-align: center;
+      margin-bottom: 3rem;
+      color: var(--charcoal);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 3rem;
+      margin-bottom: 2rem;
+    }
+
+    .menu-category h3 {
+      font-size: 1.5rem;
+      color: var(--ember);
+      margin-bottom: 1.5rem;
+      border-bottom: 3px solid var(--ember);
+      padding-bottom: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .menu-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1rem;
+      margin-bottom: 1.2rem;
+      font-size: 0.95rem;
+    }
+
+    .menu-item-name {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .menu-item-dots {
+      flex-grow: 1;
+      border-bottom: 2px dotted var(--muted);
+      height: 0.5rem;
+    }
+
+    .menu-item-price {
+      font-weight: 700;
+      color: var(--ember);
+      white-space: nowrap;
+      text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    /* ===== ABOUT SECTION ===== */
+    .about {
+      background-color: var(--charcoal);
+      background-image: repeating-linear-gradient(
+        90deg,
+        rgba(62, 39, 35, 0.5) 0px,
+        rgba(62, 39, 35, 0.5) 2px,
+        transparent 2px,
+        transparent 4px
+      );
+      color: var(--text-light);
+      padding: 5rem 2rem;
+    }
+
+    .about-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .about h2 {
+      color: var(--mustard);
+      margin-bottom: 2rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+    }
+
+    .about h3 {
+      color: var(--text-light);
+      margin-bottom: 1rem;
+    }
+
+    .about p {
+      margin-bottom: 1.5rem;
+      line-height: 1.8;
+      font-size: 1rem;
+    }
+
+    .about-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .about-stat {
+      background-color: rgba(230, 81, 0, 0.15);
+      padding: 1.5rem;
+      border: 2px solid var(--ember);
+    }
+
+    .about-stat strong {
+      display: block;
+      color: var(--mustard);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+
+    .about-stat span {
+      display: block;
+      font-size: 1.3rem;
+      color: var(--text-light);
+    }
+
+    .about-svg {
+      width: 100%;
+      max-width: 400px;
+      justify-self: center;
+    }
+
+    /* ===== WHY BONFIRE ===== */
+    .why-bonfire {
+      background-color: var(--light-cream);
+      padding: 5rem 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .why-bonfire h2 {
+      text-align: center;
+      margin-bottom: 3rem;
+      color: var(--charcoal);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+
+    .feature-card {
+      background-color: var(--cream);
+      padding: 2rem;
+      border: 3px solid var(--smoke);
+      text-align: center;
+    }
+
+    .feature-card h3 {
+      color: var(--ember);
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      margin: 0 auto 1rem;
+    }
+
+    .feature-card p {
+      font-size: 0.95rem;
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    /* ===== PROCESS ===== */
+    .process {
+      background-color: var(--charcoal);
+      color: var(--text-light);
+      padding: 5rem 2rem;
+    }
+
+    .process-content {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .process h2 {
+      text-align: center;
+      margin-bottom: 3rem;
+      color: var(--mustard);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+    }
+
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      position: relative;
+    }
+
+    .process-step {
+      text-align: center;
+    }
+
+    .step-number {
+      width: 80px;
+      height: 80px;
+      background-color: var(--ember);
+      border: 3px solid var(--mustard);
+      border-radius: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--text-light);
+      text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    .process-step h3 {
+      color: var(--mustard);
+      margin-bottom: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .process-step p {
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    /* ===== TESTIMONIALS ===== */
+    .testimonials {
+      background-color: var(--light-cream);
+      padding: 5rem 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .testimonials h2 {
+      text-align: center;
+      margin-bottom: 3rem;
+      color: var(--charcoal);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+    }
+
+    .testimonial-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+    }
+
+    .testimonial-card {
+      background-color: var(--cream);
+      padding: 2rem;
+      border: 3px double var(--smoke);
+      position: relative;
+    }
+
+    .testimonial-quote {
+      font-size: 3rem;
+      color: var(--ember);
+      opacity: 0.3;
+      position: absolute;
+      top: -10px;
+      left: 10px;
+      font-family: 'Crimson Pro', serif;
+    }
+
+    .testimonial-text {
+      font-style: italic;
+      margin-bottom: 1.5rem;
+      color: var(--text);
+      line-height: 1.7;
+      font-size: 0.95rem;
+    }
+
+    .testimonial-author {
+      font-weight: 700;
+      color: var(--ember);
+      margin-bottom: 0.5rem;
+    }
+
+    .testimonial-stars {
+      color: var(--mustard);
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+    }
+
+    /* ===== FAQ ===== */
+    .faq {
+      background-color: var(--charcoal);
+      color: var(--text-light);
+      padding: 5rem 2rem;
+    }
+
+    .faq-content {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .faq h2 {
+      text-align: center;
+      margin-bottom: 3rem;
+      color: var(--mustard);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+    }
+
+    .faq-item {
+      margin-bottom: 1.5rem;
+      border: 2px solid var(--ember);
+      background-color: rgba(230, 81, 0, 0.05);
+    }
+
+    .faq-question {
+      padding: 1.5rem;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
+      color: var(--mustard);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      user-select: none;
+    }
+
+    .faq-question:hover {
+      background-color: rgba(230, 81, 0, 0.15);
+    }
+
+    .faq-toggle {
+      font-size: 1.3rem;
+      font-weight: 900;
+      transition: transform 0.3s ease;
+    }
+
+    .faq-toggle.active {
+      transform: rotate(45deg);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease;
+      background-color: rgba(230, 81, 0, 0.1);
+    }
+
+    .faq-answer.active {
+      max-height: 500px;
+    }
+
+    .faq-answer p {
+      padding: 0 1.5rem 1.5rem;
+      color: var(--text-light);
+      line-height: 1.7;
+    }
+
+    /* ===== AREAS ===== */
+    .areas {
+      background-color: var(--light-cream);
+      padding: 5rem 2rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .areas h2 {
+      text-align: center;
+      margin-bottom: 3rem;
+      color: var(--charcoal);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+    }
+
+    .areas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 1.5rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .area-tag {
+      background-color: var(--cream);
+      padding: 1rem;
+      text-align: center;
+      border: 2px solid var(--smoke);
+      font-weight: 600;
+      color: var(--text);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.9rem;
+    }
+
+    /* ===== CONTACT ===== */
+    .contact {
+      background-color: var(--charcoal);
+      color: var(--text-light);
+      padding: 5rem 2rem;
+    }
+
+    .contact-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+    }
+
+    .contact-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .contact-info h2 {
+      color: var(--mustard);
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+    }
+
+    .contact-block {
+      background-color: rgba(230, 81, 0, 0.15);
+      padding: 1.5rem;
+      border: 2px solid var(--ember);
+    }
+
+    .contact-block h4 {
+      color: var(--mustard);
+      margin-bottom: 0.5rem;
+      font-size: 0.85rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .contact-block p {
+      color: var(--text-light);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+
+    .contact-form h3 {
+      color: var(--mustard);
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .form-group label {
+      font-weight: 700;
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--mustard);
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      padding: 0.9rem;
+      border: 2px solid var(--ember);
+      background-color: rgba(255, 255, 255, 0.05);
+      color: var(--text-light);
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 0.9rem;
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      background-color: rgba(230, 81, 0, 0.1);
+      box-shadow: inset 0 0 0 2px var(--mustard);
+    }
+
+    .form-submit {
+      background-color: var(--ember);
+      color: var(--text-light);
+      padding: 1rem;
+      font-size: 0.8rem;
+      margin-top: 1rem;
+      box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    .form-submit:hover {
+      background-color: #CC4700;
+      transform: translate(-2px, -2px);
+      box-shadow: 5px 5px 0 rgba(0, 0, 0, 0.4);
+    }
+
+    /* ===== CTA BANNER ===== */
+    .cta-banner {
+      background-color: var(--ember);
+      color: var(--text-light);
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+
+    .cta-banner h2 {
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text-light);
+    }
+
+    .cta-banner .btn {
+      background-color: var(--charcoal);
+      color: var(--mustard);
+      border-color: var(--charcoal);
+      font-size: 0.9rem;
+    }
+
+    .cta-banner .btn:hover {
+      background-color: var(--mustard);
+      color: var(--charcoal);
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background-color: var(--charcoal);
+      color: var(--text-light);
+      padding: 3rem 2rem;
+      border-top: 3px solid var(--ember);
+    }
+
+    .footer-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .footer-col h4 {
+      color: var(--mustard);
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .footer-col ul {
+      list-style: none;
+    }
+
+    .footer-col ul li {
+      margin-bottom: 0.7rem;
+    }
+
+    .footer-col ul li a {
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 0.9rem;
+    }
+
+    .footer-col ul li a:hover {
+      color: var(--mustard);
+    }
+
+    .footer-bottom {
+      text-align: center;
+      padding-top: 2rem;
+      border-top: 2px solid var(--ember);
+      font-size: 0.85rem;
+    }
+
+    .webnari-badge {
+      display: inline-block;
+      background-color: rgba(230, 81, 0, 0.2);
+      padding: 0.6rem 1.2rem;
+      border: 1px solid var(--mustard);
+      margin-top: 1rem;
+      font-size: 0.75rem;
+    }
+
+    .webnari-badge a {
+      color: var(--mustard);
+      font-weight: 700;
+    }
+
+    /* ===== SCROLL REVEAL ===== */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1.visible { transition-delay: 0.1s; }
+    .reveal-delay-2.visible { transition-delay: 0.2s; }
+    .reveal-delay-3.visible { transition-delay: 0.3s; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .hamburger {
+        display: flex;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .nav-cta {
+        display: none;
+      }
+
+      nav {
+        padding: 0.8rem 1rem;
+      }
+
+      h1 { font-size: 2.5rem; }
+      h2 { font-size: 1.8rem; }
+      h3 { font-size: 1.3rem; }
+
+      .hero {
+        padding: 6rem 1.5rem 2rem;
+        min-height: auto;
+      }
+
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+
+      .hero-svg {
+        width: 200px;
+        height: 200px;
+      }
+
+      .hero-stats {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .stat-item {
+        width: 100%;
+      }
+
+      .about-content {
+        grid-template-columns: 1fr;
+      }
+
+      .contact-content {
+        grid-template-columns: 1fr;
+      }
+
+      .menu-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .process-steps {
+        grid-template-columns: 1fr;
+      }
+
+      .testimonial-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .areas-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .faq-question {
+        font-size: 0.9rem;
+      }
+
+      .menu-section,
+      .why-bonfire,
+      .testimonials,
+      .areas {
+        padding: 3rem 1.5rem;
+      }
+
+      .about,
+      .process,
+      .faq,
+      .contact {
+        padding: 3rem 1.5rem;
+      }
+
+      .hero-buttons {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">
+      <h2>BONFIRE</h2>
+      <small>Smokehouse</small>
+    </div>
+    <div class="nav-links">
+      <a href="#menu">Menu</a>
+      <a href="#about">About</a>
+      <a href="#process">Process</a>
+      <a href="#contact">Contact</a>
+    </div>
+    <button class="nav-cta">Call Now: (305) 555-2850</button>
+    <button class="hamburger" aria-label="Toggle menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </nav>
+
+  <div class="mobile-menu">
+    <a href="#menu">Menu</a>
+    <a href="#about">About</a>
+    <a href="#process">Process</a>
+    <a href="#contact">Contact</a>
+    <button class="nav-cta">Call Now: (305) 555-2850</button>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <h1 class="reveal">LOW & SLOW SINCE 2018</h1>
+
+    <svg class="hero-svg reveal reveal-delay-1" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <!-- Pig silhouette -->
+      <ellipse cx="100" cy="80" rx="40" ry="50" fill="none" stroke="#F9A825" stroke-width="2"/>
+      <!-- Head -->
+      <circle cx="100" cy="40" r="25" fill="none" stroke="#F9A825" stroke-width="2"/>
+      <!-- Snout -->
+      <ellipse cx="100" cy="35" rx="12" ry="8" fill="none" stroke="#F9A825" stroke-width="2"/>
+      <!-- Ears -->
+      <path d="M 85 20 Q 80 10 85 5" fill="none" stroke="#F9A825" stroke-width="2"/>
+      <path d="M 115 20 Q 120 10 115 5" fill="none" stroke="#F9A825" stroke-width="2"/>
+      <!-- Legs -->
+      <line x1="85" y1="120" x2="80" y2="160" stroke="#F9A825" stroke-width="2"/>
+      <line x1="100" y1="130" x2="100" y2="170" stroke="#F9A825" stroke-width="2"/>
+      <line x1="115" y1="120" x2="120" y2="160" stroke="#F9A825" stroke-width="2"/>
+      <!-- Tail curl -->
+      <path d="M 140 90 Q 160 80 165 100" fill="none" stroke="#F9A825" stroke-width="2"/>
+      <!-- Smoke wisps -->
+      <path d="M 60 50 Q 50 40 55 25" fill="none" stroke="#E65100" stroke-width="2" opacity="0.6"/>
+      <path d="M 140 60 Q 155 50 150 30" fill="none" stroke="#E65100" stroke-width="2" opacity="0.6"/>
+    </svg>
+
+    <div class="hero-stats reveal reveal-delay-2">
+      <div class="stat-item">
+        <strong>Smoke Time</strong>
+        <span>14 Hours</span>
+      </div>
+      <div class="stat-item">
+        <strong>Wood Choice</strong>
+        <span>Oak & Cherry</span>
+      </div>
+      <div class="stat-item">
+        <strong>Our Secret</strong>
+        <span>Family Recipes</span>
+      </div>
+    </div>
+
+    <div class="hero-buttons reveal reveal-delay-3">
+      <button class="btn btn-primary">Order Online</button>
+      <button class="btn btn-secondary">Make Reservation</button>
+    </div>
+  </section>
+
+  <!-- FLAME DIVIDER -->
+  <svg class="flame-divider" viewBox="0 0 1400 120" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none">
+    <defs>
+      <pattern id="flames" x="0" y="0" width="100" height="120" patternUnits="userSpaceOnUse">
+        <path d="M 20 80 Q 10 60 15 40 Q 8 20 20 10 Q 25 25 30 40 Q 35 60 25 80" fill="#E65100" opacity="0.3"/>
+        <path d="M 50 85 Q 35 65 40 45 Q 30 25 50 5 Q 55 30 60 50 Q 70 70 55 85" fill="#F9A825" opacity="0.2"/>
+        <path d="M 80 80 Q 70 60 72 40 Q 65 20 80 8 Q 85 30 88 50 Q 92 70 82 80" fill="#E65100" opacity="0.25"/>
+      </pattern>
+    </defs>
+    <rect width="1400" height="120" fill="url(#flames)"/>
+  </svg>
+
+  <!-- MENU SECTION -->
+  <section class="menu-section" id="menu">
+    <h2 class="reveal">The Menu</h2>
+
+    <div class="menu-grid">
+      <!-- Smoked Meats -->
+      <div class="menu-category reveal reveal-delay-1">
+        <h3>Smoked Meats</h3>
+
+        <div class="menu-item">
+          <span class="menu-item-name">Brisket (lb.)</span>
+          <span class="menu-item-dots"></span>
+          <span class="menu-item-price">$24</span>
+        </div>
+
+        <div class="menu-item">
+          <span class="menu-item-name">Pulled Pork (lb.)</span>
+          <span class="menu-item-dots"></span>
+          <span class="menu-item-price">$18</span>
+        </div>
+
+        <div class="menu-item">
+          <span class="menu-item-name">Ribs Half Rack</span>
+          <span class="menu-item-dots"></span>
+          <span class="menu-item-price">$22</span>
+        </div>
+
+        <div class="menu-item">
+          <span class="menu-item-name">Ribs Full Rack</span>
+          <span class="menu-item-dots"></span>
+          <span class="menu-item-price">$38</span>
+        </div>
+
+        <div class="menu-item">
+          <span class="menu-item-name">Smoked Chicken (Half)</span>
+          <span class="menu-item-dots"></span>
+          <span class="menu-item-price">$16</span>
+        </div>
+
+        <div class="menu-item">
+          <span class="menu-item-name">Burnt Ends</span>
+          <span class="menu-item-dots"></span>
+          <span class="menu-item-price">$26</span>
+        </div>
+
+        <div class="menu-item">
+          <span class="menu-item-name">Smoked Sausage (lb.)</span>
+          <span class="menu-item-dots"></span>
+          <span class="menu-item-price">$14</span>
+        </div>
+      </div>
+
+      <!-- Sides -->
+      <div class="menu-category reveal reveal-delay-2">
+        <h3>Sides</h3>
+
+        <div class="menu-item">
+          <span class="menu-item-name">Mac & Cheese</span>
+          <span class="menu-item-dots"></span>
+          <span class="menu-item-price">$8</span>
+        </div>
+
+        <div class="menu-item">
+          <span class="menu-item-name">Collard Greens</span>
+          <span class="menu-item-dots"></span>
+          <span class="menu-item-price">$7</span>
+        </div>
+
+        <div class="menu-item">
+          <span class="menu-item-name">Cornbread</span>
+          <span class="menu-item-dots"></span>
+          <span class="menu-item-price">$5</span>
+        </div>
+
+        <div class="menu-item">
+          <span class="menu-item-name">Coleslaw</span>
+          <span class="menu-item-dots"></span>
+          <span class="menu-item-price">$6</span>
+        </div>
+
+        <div class="menu-item">
+          <span class="menu-item-name">Baked Beans</span>
+          <span class="menu-item-dots"></span>
+          <span class="menu-item-price">$7</span>
+        </div>
+
+        <div class="menu-item">
+          <span class="menu-item-name">Pickles & Onions</span>
+          <span class="menu-item-dots"></span>
+          <span class="menu-item-price">$4</span>
+        </div>
+      </div>
+
+      <!-- Drinks -->
+      <div class="menu-category reveal reveal-delay-3">
+        <h3>Drinks</h3>
+
+        <div class="menu-item">
+          <span class="menu-item-name">Sweet Tea</span>
+          <span class="menu-item-dots"></span>
+          <span class="menu-item-price">$4</span>
+        </div>
+
+        <div class="menu-item">
+          <span class="menu-item-name">Craft Lemonade</span>
+          <span class="menu-item-dots"></span>
+          <span class="menu-item-price">$5</span>
+        </div>
+
+        <div class="menu-item">
+          <span class="menu-item-name">Local IPA</span>
+          <span class="menu-item-dots"></span>
+          <span class="menu-item-price">$8</span>
+        </div>
+
+        <div class="menu-item">
+          <span class="menu-item-name">Bourbon Selection</span>
+          <span class="menu-item-dots"></span>
+          <span class="menu-item-price">$12–18</span>
+        </div>
+
+        <div class="menu-item">
+          <span class="menu-item-name">House Cocktails</span>
+          <span class="menu-item-dots"></span>
+          <span class="menu-item-price">$10</span>
+        </div>
+
+        <div class="menu-item">
+          <span class="menu-item-name">Soft Drinks</span>
+          <span class="menu-item-dots"></span>
+          <span class="menu-item-price">$3</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT SECTION -->
+  <section class="about" id="about">
+    <div class="about-content">
+      <div class="reveal reveal-delay-1">
+        <h2>The Pit</h2>
+        <h3>Where Magic Happens</h3>
+        <p>Bonfire Smokehouse is where tradition meets craft. Our pitmaster, Marco Reyes, has perfected the art of low and slow smoking over two decades. Every brisket, every rack of ribs tells a story of patience, precision, and passion.</p>
+        <p>We source only the finest cuts of meat and hardwoods—oak and cherry—to create the most authentic, deeply flavorful barbecue in Wynwood. No shortcuts. No compromises. Just pure smokehouse tradition.</p>
+
+        <div class="about-stats">
+          <div class="about-stat reveal reveal-delay-2">
+            <strong>Smoke Time</strong>
+            <span>14 Hours</span>
+          </div>
+          <div class="about-stat reveal reveal-delay-2">
+            <strong>Hardwood Only</strong>
+            <span>100%</span>
+          </div>
+          <div class="about-stat reveal reveal-delay-3">
+            <strong>Family Recipes</strong>
+            <span>Since 1998</span>
+          </div>
+          <div class="about-stat reveal reveal-delay-3">
+            <strong>Daily Smokes</strong>
+            <span>4+ Pits</span>
+          </div>
+        </div>
+      </div>
+
+      <svg class="about-svg reveal reveal-delay-2" viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg">
+        <!-- Smoker drum -->
+        <rect x="50" y="80" width="100" height="120" fill="none" stroke="#F9A825" stroke-width="2" rx="5"/>
+        <!-- Door -->
+        <rect x="60" y="100" width="80" height="80" fill="none" stroke="#F9A825" stroke-width="2"/>
+        <!-- Thermometer -->
+        <rect x="140" y="100" width="8" height="60" fill="none" stroke="#F9A825" stroke-width="2"/>
+        <circle cx="144" cy="95" r="6" fill="none" stroke="#F9A825" stroke-width="2"/>
+        <!-- Legs -->
+        <line x1="70" y1="200" x2="60" y2="260" stroke="#F9A825" stroke-width="2"/>
+        <line x1="130" y1="200" x2="140" y2="260" stroke="#F9A825" stroke-width="2"/>
+        <!-- Lid -->
+        <ellipse cx="100" cy="80" rx="55" ry="15" fill="none" stroke="#F9A825" stroke-width="2"/>
+        <!-- Smoke wisps -->
+        <path d="M 85 60 Q 75 40 80 20" fill="none" stroke="#E65100" stroke-width="2" opacity="0.5"/>
+        <path d="M 100 50 Q 95 30 105 10" fill="none" stroke="#E65100" stroke-width="2" opacity="0.5"/>
+        <path d="M 115 60 Q 125 40 120 20" fill="none" stroke="#E65100" stroke-width="2" opacity="0.5"/>
+      </svg>
+    </div>
+  </section>
+
+  <!-- WHY BONFIRE -->
+  <section class="why-bonfire">
+    <h2 class="reveal">Why Bonfire</h2>
+
+    <div class="features-grid">
+      <div class="feature-card reveal reveal-delay-1">
+        <svg class="feature-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="30" r="8" fill="#E65100"/>
+          <path d="M 45 40 Q 35 60 40 85" fill="none" stroke="#E65100" stroke-width="2"/>
+          <path d="M 50 40 Q 50 65 50 85" fill="none" stroke="#E65100" stroke-width="2"/>
+          <path d="M 55 40 Q 65 60 60 85" fill="none" stroke="#E65100" stroke-width="2"/>
+        </svg>
+        <h3>Real Wood Fire</h3>
+        <p>100% oak and cherry hardwoods. No gas, no shortcuts. Just authentic smoke-infused flavor that takes 14 hours to perfect.</p>
+      </div>
+
+      <div class="feature-card reveal reveal-delay-2">
+        <svg class="feature-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <rect x="30" y="20" width="40" height="50" fill="none" stroke="#E65100" stroke-width="2"/>
+          <line x1="35" y1="30" x2="65" y2="30" stroke="#E65100" stroke-width="2"/>
+          <line x1="35" y1="40" x2="65" y2="40" stroke="#E65100" stroke-width="2"/>
+          <line x1="35" y1="50" x2="65" y2="50" stroke="#E65100" stroke-width="2"/>
+          <line x1="35" y1="60" x2="65" y2="60" stroke="#E65100" stroke-width="2"/>
+        </svg>
+        <h3>No Shortcuts</h3>
+        <p>Hand-cut meats, house-made rubs, slow-smoked to perfection. Every plate represents our commitment to quality.</p>
+      </div>
+
+      <div class="feature-card reveal reveal-delay-3">
+        <svg class="feature-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <path d="M 30 70 Q 30 40 50 20 Q 70 40 70 70" fill="none" stroke="#E65100" stroke-width="2"/>
+          <circle cx="50" cy="70" r="5" fill="#E65100"/>
+          <line x1="40" y1="50" x2="60" y2="50" stroke="#E65100" stroke-width="2"/>
+        </svg>
+        <h3>Made from Scratch</h3>
+        <p>All sauces, sides, and marinades crafted daily. We control every ingredient, every flavor, every bite.</p>
+      </div>
+
+      <div class="feature-card reveal reveal-delay-1">
+        <svg class="feature-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="30" fill="none" stroke="#E65100" stroke-width="2"/>
+          <circle cx="30" cy="40" r="4" fill="#E65100"/>
+          <circle cx="50" cy="30" r="4" fill="#E65100"/>
+          <circle cx="70" cy="40" r="4" fill="#E65100"/>
+          <circle cx="60" cy="65" r="4" fill="#E65100"/>
+          <circle cx="40" cy="65" r="4" fill="#E65100"/>
+        </svg>
+        <h3>Community First</h3>
+        <p>We're not just serving food—we're gathering neighbors and friends. Bonfire is where Miami comes together over good smoke.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="process" id="process">
+    <div class="process-content">
+      <h2 class="reveal">From Pit to Plate</h2>
+
+      <div class="process-steps">
+        <div class="process-step reveal reveal-delay-1">
+          <div class="step-number">1</div>
+          <h3>Select Cuts</h3>
+          <p>We source premium briskets, ribs, and chicken from trusted suppliers. Quality starts here.</p>
+        </div>
+
+        <div class="process-step reveal reveal-delay-2">
+          <div class="step-number">2</div>
+          <h3>Season & Rub</h3>
+          <p>Hand-applied family recipe rubs create the perfect crust and flavor foundation.</p>
+        </div>
+
+        <div class="process-step reveal reveal-delay-3">
+          <div class="step-number">3</div>
+          <h3>Low & Slow Smoke</h3>
+          <p>14 hours in our hardwood fire. Patience and precision unlock deep, complex flavors.</p>
+        </div>
+
+        <div class="process-step reveal reveal-delay-1">
+          <div class="step-number">4</div>
+          <h3>Serve Fresh</h3>
+          <p>Hot off the pit. Every plate crafted to order. This is barbecue at its finest.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials">
+    <h2 class="reveal">What People Say</h2>
+
+    <div class="testimonial-grid">
+      <div class="testimonial-card reveal reveal-delay-1">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">The best brisket I've had in Miami. Marco's smoked it to absolute perfection. Worth every penny and every minute of the 14-hour process.</p>
+        <p class="testimonial-author">James T.</p>
+        <p class="testimonial-stars">★★★★★</p>
+      </div>
+
+      <div class="testimonial-card reveal reveal-delay-2">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">We catered our wedding at Bonfire and it was unforgettable. The food was incredible, the service was flawless. Can't thank Marco and the team enough.</p>
+        <p class="testimonial-author">Sarah & David M.</p>
+        <p class="testimonial-stars">★★★★★</p>
+      </div>
+
+      <div class="testimonial-card reveal reveal-delay-3">
+        <div class="testimonial-quote">"</div>
+        <p class="testimonial-text">This is what real BBQ tastes like. No artificial smoke, no shortcuts. The ribs fall off the bone and the sauce is finger-licking amazing.</p>
+        <p class="testimonial-author">Roberto V.</p>
+        <p class="testimonial-stars">★★★★★</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq">
+    <div class="faq-content">
+      <h2 class="reveal">Frequently Asked</h2>
+
+      <div class="faq-item reveal reveal-delay-1">
+        <div class="faq-question">
+          <span>Do you offer catering?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <p>Absolutely! We cater events throughout South Florida. From corporate lunches to weddings, we'll bring authentic smokehouse BBQ to your celebration. Contact us for custom quotes and menu options.</p>
+        </div>
+      </div>
+
+      <div class="faq-item reveal reveal-delay-2">
+        <div class="faq-question">
+          <span>Are there vegetarian options?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <p>We offer grilled vegetables, mac & cheese, collard greens, baked beans, coleslaw, and cornbread. While we specialize in meat, our veggie sides are just as lovingly prepared.</p>
+        </div>
+      </div>
+
+      <div class="faq-item reveal reveal-delay-3">
+        <div class="faq-question">
+          <span>Can I make a reservation?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <p>Yes! Reservations are available for groups of 6 or more. Call us at (305) 555-2850 or use our online form. Walk-ins are always welcome, especially Tue-Thu.</p>
+        </div>
+      </div>
+
+      <div class="faq-item reveal reveal-delay-1">
+        <div class="faq-question">
+          <span>Is BYOB allowed?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <p>We have a full bar with craft cocktails, local beers, and premium bourbons. BYOB is not permitted, but our selection pairs perfectly with our smoked meats.</p>
+        </div>
+      </div>
+
+      <div class="faq-item reveal reveal-delay-2">
+        <div class="faq-question">
+          <span>Is there parking available?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <p>Yes! Street parking is available along NW 25th Street and we have a small lot behind the building. Wynwood has plenty of street parking within a short walk.</p>
+        </div>
+      </div>
+
+      <div class="faq-item reveal reveal-delay-3">
+        <div class="faq-question">
+          <span>What about large parties?</span>
+          <span class="faq-toggle">+</span>
+        </div>
+        <div class="faq-answer">
+          <p>We love hosting large groups! For parties of 15+, we recommend booking in advance. We offer family-style platters, buffet service, and full catering. Call us to discuss your event.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICE AREAS -->
+  <section class="areas">
+    <h2 class="reveal">We Cater All of South Florida</h2>
+
+    <div class="areas-grid">
+      <div class="area-tag reveal reveal-delay-1">Miami</div>
+      <div class="area-tag reveal reveal-delay-1">Coral Gables</div>
+      <div class="area-tag reveal reveal-delay-2">Doral</div>
+      <div class="area-tag reveal reveal-delay-2">Hialeah</div>
+      <div class="area-tag reveal reveal-delay-3">Kendall</div>
+      <div class="area-tag reveal reveal-delay-3">Miami Beach</div>
+      <div class="area-tag reveal reveal-delay-1">Brickell</div>
+      <div class="area-tag reveal reveal-delay-2">Westchester</div>
+      <div class="area-tag reveal reveal-delay-3">South Miami</div>
+      <div class="area-tag reveal reveal-delay-1">Homestead</div>
+      <div class="area-tag reveal reveal-delay-2">Miami Gardens</div>
+      <div class="area-tag reveal reveal-delay-3">North Miami</div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact" id="contact">
+    <div class="contact-content">
+      <div class="contact-info reveal reveal-delay-1">
+        <h2>Get in Touch</h2>
+
+        <div class="contact-block">
+          <h4>Address</h4>
+          <p>318 NW 25th Street<br>Wynwood, Miami FL 33127</p>
+        </div>
+
+        <div class="contact-block">
+          <h4>Phone</h4>
+          <p><a href="tel:+13055552850">(305) 555-2850</a></p>
+        </div>
+
+        <div class="contact-block">
+          <h4>Hours</h4>
+          <p>Tue–Thu: 11AM–10PM<br>
+             Fri–Sat: 11AM–12AM<br>
+             Sun: 11AM–9PM<br>
+             Mon: Closed</p>
+        </div>
+
+        <div class="contact-block">
+          <h4>Questions?</h4>
+          <p>Use the form to reach out. We respond within 24 hours.</p>
+        </div>
+      </div>
+
+      <form class="contact-form reveal reveal-delay-2" action="https://formsubmit.co/info@bonfiresmokehouse.com" method="POST">
+        <h3>Contact Us</h3>
+
+        <div class="form-group">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="name" placeholder="Your name" required>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" placeholder="your@email.com" required>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" name="phone" placeholder="(305) 555-0000">
+        </div>
+
+        <div class="form-group">
+          <label for="event">Event Type</label>
+          <select id="event" name="event" required>
+            <option value="">Select an option</option>
+            <option value="Reservation">Dine In Reservation</option>
+            <option value="Catering">Catering Inquiry</option>
+            <option value="Private Event">Private Event</option>
+            <option value="General">General Question</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" placeholder="Tell us more..." rows="5"></textarea>
+        </div>
+
+        <button type="submit" class="form-submit">Send Message</button>
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_next" value="https://webnari.io/bonfire.html?thanks=true">
+      </form>
+    </div>
+  </section>
+
+  <!-- CTA BANNER -->
+  <section class="cta-banner">
+    <h2>Fire Up Your Next Event</h2>
+    <p style="color: rgba(255,255,255,0.9); margin-bottom: 1.5rem; font-size: 1.1rem;">Call Marco Reyes at <strong>(305) 555-2850</strong> for catering and reservations.</p>
+    <button class="btn">Call Now</button>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-content">
+      <div class="footer-col">
+        <h4>Bonfire Smokehouse</h4>
+        <p style="font-size: 0.9rem; line-height: 1.6; color: rgba(255,255,255,0.8);">Craft BBQ & Southern Kitchen in Wynwood, Miami. 14-hour smoked meats, family recipes, 100% hardwood. Low & slow since 2018.</p>
+      </div>
+
+      <div class="footer-col">
+        <h4>Menu</h4>
+        <ul>
+          <li><a href="#menu">Smoked Meats</a></li>
+          <li><a href="#menu">Sides</a></li>
+          <li><a href="#menu">Drinks</a></li>
+          <li><a href="#process">Our Process</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><a href="#contact">Catering</a></li>
+          <li><a href="#contact">Reservations</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="tel:+13055552850">(305) 555-2850</a></li>
+          <li>318 NW 25th Street<br>Wynwood, Miami FL 33127</li>
+          <li style="margin-top: 1rem; font-size: 0.85rem;">Tue–Thu: 11AM–10PM<br>
+              Fri–Sat: 11AM–12AM<br>
+              Sun: 11AM–9PM</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <p>&copy; 2018–2026 Bonfire Smokehouse. All rights reserved.</p>
+      <div class="webnari-badge">
+        Powered by <a href="https://webnari.io" target="_blank" rel="noopener noreferrer">Webnari</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // ===== HAMBURGER MENU =====
+    const hamburger = document.querySelector('.hamburger');
+    const mobileMenu = document.querySelector('.mobile-menu');
+    const mobileLinks = document.querySelectorAll('.mobile-menu a');
+
+    hamburger.addEventListener('click', () => {
+      hamburger.classList.toggle('active');
+      mobileMenu.classList.toggle('active');
+    });
+
+    mobileLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('active');
+        mobileMenu.classList.remove('active');
+      });
+    });
+
+    // ===== SCROLL REVEAL =====
+    const revealElements = document.querySelectorAll('.reveal');
+
+    const revealOnScroll = () => {
+      revealElements.forEach(element => {
+        const elementTop = element.getBoundingClientRect().top;
+        const elementBottom = element.getBoundingClientRect().bottom;
+        const isVisible = elementTop < window.innerHeight && elementBottom > 0;
+
+        if (isVisible) {
+          element.classList.add('visible');
+        }
+      });
+    };
+
+    window.addEventListener('scroll', revealOnScroll);
+    revealOnScroll(); // Trigger on page load
+
+    // ===== FAQ ACCORDION =====
+    const faqItems = document.querySelectorAll('.faq-item');
+
+    faqItems.forEach(item => {
+      const question = item.querySelector('.faq-question');
+      const answer = item.querySelector('.faq-answer');
+      const toggle = item.querySelector('.faq-toggle');
+
+      question.addEventListener('click', () => {
+        const isOpen = answer.classList.contains('active');
+
+        // Close all other FAQs
+        faqItems.forEach(otherItem => {
+          if (otherItem !== item) {
+            otherItem.querySelector('.faq-answer').classList.remove('active');
+            otherItem.querySelector('.faq-toggle').classList.remove('active');
+          }
+        });
+
+        // Toggle current FAQ
+        if (isOpen) {
+          answer.classList.remove('active');
+          toggle.classList.remove('active');
+        } else {
+          answer.classList.add('active');
+          toggle.classList.add('active');
+        }
+      });
+    });
+
+    // ===== FORM VALIDATION =====
+    const form = document.querySelector('.contact-form');
+    const formInputs = form.querySelectorAll('input[required], textarea[required], select[required]');
+
+    formInputs.forEach(input => {
+      input.addEventListener('blur', () => {
+        if (input.value.trim() === '') {
+          input.style.borderColor = '#E65100';
+          input.style.boxShadow = 'inset 0 0 0 1px #E65100';
+        } else {
+          input.style.borderColor = '';
+          input.style.boxShadow = '';
+        }
+      });
+    });
+
+    form.addEventListener('submit', (e) => {
+      let isValid = true;
+
+      formInputs.forEach(input => {
+        if (input.value.trim() === '') {
+          isValid = false;
+          input.style.borderColor = '#E65100';
+          input.style.boxShadow = 'inset 0 0 0 2px #E65100';
+        }
+      });
+
+      if (!isValid) {
+        e.preventDefault();
+      }
+    });
+
+    // ===== SMOOTH SCROLL =====
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        const href = this.getAttribute('href');
+        if (href !== '#' && document.querySelector(href)) {
+          e.preventDefault();
+          document.querySelector(href).scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+          });
+        }
+      });
+    });
+  </script>
+</body>
+</html>

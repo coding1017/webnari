@@ -1,0 +1,1828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Iron Moth Tattoo — Custom tattoo artistry in Little Havana, Miami. Specializing in Neo-Traditional, Blackwork, Watercolor, and Fine Line tattoos. Walk-ins welcome.">
+  <meta property="og:title" content="Iron Moth Tattoo | Custom Tattoo Studio Miami">
+  <meta property="og:description" content="Award-winning tattoo artistry in the heart of Little Havana. Book your custom piece today.">
+  <meta property="og:type" content="website">
+  <title>Iron Moth Tattoo | Custom Tattoo Studio — Miami, FL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400;1,500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black: #0A0808;
+      --black2: #100C0C;
+      --surface: #160E0E;
+      --surface2: #1E1414;
+      --border: #2E1A1A;
+      --border2: #3E2020;
+      --burgundy: #8B1A1A;
+      --burgundy2: #A82020;
+      --burgundy3: #C43030;
+      --gold: #C9A844;
+      --gold2: #E8C860;
+      --gold3: #F5DFA0;
+      --ivory: #F5F0E8;
+      --ivory2: #EDE4D8;
+      --muted: #8A7A72;
+      --text: #C8B8A8;
+      --white: #F8F3EC;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--black);
+      color: var(--text);
+      font-family: 'EB Garamond', Georgia, serif;
+      font-size: 18px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ─── ORNAMENTAL UTILITIES ─── */
+    .ornament {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      justify-content: center;
+      margin: 0 auto 32px;
+    }
+    .ornament-line {
+      flex: 1;
+      max-width: 120px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--gold));
+    }
+    .ornament-line.right {
+      background: linear-gradient(to left, transparent, var(--gold));
+    }
+    .ornament-diamond {
+      width: 8px;
+      height: 8px;
+      background: var(--gold);
+      transform: rotate(45deg);
+      flex-shrink: 0;
+    }
+    .ornament-diamond.small {
+      width: 4px;
+      height: 4px;
+    }
+
+    /* ─── NAV ─── */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      padding: 0 40px;
+      background: rgba(10, 8, 8, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      transition: all 0.4s ease;
+    }
+    .nav.scrolled {
+      border-bottom-color: var(--gold);
+      background: rgba(10, 8, 8, 0.98);
+    }
+    .nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 72px;
+    }
+    .nav-logo {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 1.1rem;
+      color: var(--gold);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+    .nav-logo span {
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      color: var(--muted);
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 36px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text);
+      text-decoration: none;
+      transition: color 0.3s;
+      position: relative;
+    }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -4px;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--gold);
+      transform: scaleX(0);
+      transition: transform 0.3s;
+    }
+    .nav-links a:hover { color: var(--gold); }
+    .nav-links a:hover::after { transform: scaleX(1); }
+    .nav-cta {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--black);
+      background: var(--gold);
+      padding: 10px 22px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border: 1px solid var(--gold);
+    }
+    .nav-cta:hover {
+      background: transparent;
+      color: var(--gold);
+    }
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+    }
+    .hamburger span {
+      display: block;
+      width: 24px;
+      height: 1.5px;
+      background: var(--gold);
+      transition: all 0.3s;
+    }
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--black);
+      z-index: 999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: 'Cinzel', serif;
+      font-size: 1.5rem;
+      letter-spacing: 0.2em;
+      color: var(--ivory);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .mobile-menu a:hover { color: var(--gold); }
+    .mobile-close {
+      position: absolute;
+      top: 24px;
+      right: 32px;
+      font-size: 2rem;
+      color: var(--muted);
+      cursor: pointer;
+      font-family: 'Cinzel', serif;
+      background: none;
+      border: none;
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      background: var(--black);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding-top: 72px;
+    }
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 60%, rgba(139, 26, 26, 0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 20% 80%, rgba(201, 168, 68, 0.06) 0%, transparent 60%);
+    }
+    .hero-border {
+      position: absolute;
+      inset: 20px;
+      border: 1px solid rgba(201, 168, 68, 0.15);
+      pointer-events: none;
+    }
+    .hero-border::before {
+      content: '';
+      position: absolute;
+      inset: 8px;
+      border: 1px solid rgba(201, 168, 68, 0.08);
+    }
+    /* Corner ornaments */
+    .hero-corner {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+    }
+    .hero-corner.tl { top: 20px; left: 20px; border-top: 2px solid var(--gold); border-left: 2px solid var(--gold); }
+    .hero-corner.tr { top: 20px; right: 20px; border-top: 2px solid var(--gold); border-right: 2px solid var(--gold); }
+    .hero-corner.bl { bottom: 20px; left: 20px; border-bottom: 2px solid var(--gold); border-left: 2px solid var(--gold); }
+    .hero-corner.br { bottom: 20px; right: 20px; border-bottom: 2px solid var(--gold); border-right: 2px solid var(--gold); }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 60px 40px;
+      max-width: 900px;
+    }
+    .hero-eyebrow {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 24px;
+    }
+    .hero-moth {
+      width: 160px;
+      height: 120px;
+      margin: 0 auto 32px;
+      display: block;
+    }
+    .hero-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(2.8rem, 8vw, 5.5rem);
+      font-weight: 900;
+      color: var(--ivory);
+      line-height: 1.05;
+      margin-bottom: 8px;
+      text-shadow: 0 0 80px rgba(201, 168, 68, 0.2);
+    }
+    .hero-title em {
+      color: var(--gold);
+      font-style: normal;
+    }
+    .hero-subtitle {
+      font-family: 'Cinzel', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 28px;
+    }
+    .hero-tagline {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.25rem;
+      font-style: italic;
+      color: var(--text);
+      margin-bottom: 48px;
+      max-width: 560px;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 48px;
+    }
+    .hero-buttons {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--black);
+      background: var(--gold);
+      padding: 16px 36px;
+      text-decoration: none;
+      transition: all 0.3s;
+      border: 1px solid var(--gold);
+    }
+    .btn-primary:hover {
+      background: var(--gold2);
+      border-color: var(--gold2);
+    }
+    .btn-outline {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+      background: transparent;
+      padding: 16px 36px;
+      text-decoration: none;
+      border: 1px solid var(--border2);
+      transition: all 0.3s;
+    }
+    .btn-outline:hover {
+      border-color: var(--gold);
+      background: rgba(201, 168, 68, 0.08);
+    }
+    .hero-stats {
+      display: flex;
+      gap: 48px;
+      justify-content: center;
+      margin-top: 64px;
+      padding-top: 48px;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .hero-stat {
+      text-align: center;
+    }
+    .hero-stat-num {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 2rem;
+      color: var(--gold);
+      display: block;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .hero-stat-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+
+    /* ─── SECTIONS ─── */
+    section { padding: 100px 40px; }
+    .container { max-width: 1200px; margin: 0 auto; }
+    .section-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--burgundy3);
+      display: block;
+      text-align: center;
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 700;
+      color: var(--ivory);
+      text-align: center;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+    .section-desc {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.1rem;
+      font-style: italic;
+      color: var(--muted);
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 60px;
+    }
+
+    /* ─── MARQUEE ─── */
+    .marquee-strip {
+      background: var(--burgundy);
+      padding: 14px 0;
+      overflow: hidden;
+      border-top: 1px solid var(--burgundy2);
+      border-bottom: 1px solid var(--burgundy2);
+    }
+    .marquee-track {
+      display: flex;
+      gap: 0;
+      animation: marquee 30s linear infinite;
+      white-space: nowrap;
+      width: max-content;
+    }
+    .marquee-item {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .marquee-dot {
+      width: 4px;
+      height: 4px;
+      background: var(--gold);
+      transform: rotate(45deg);
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+    /* ─── STYLES SECTION ─── */
+    .styles-section { background: var(--black2); }
+    .styles-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2px;
+      background: var(--border);
+    }
+    .style-card {
+      background: var(--surface);
+      padding: 48px 36px;
+      position: relative;
+      overflow: hidden;
+      transition: all 0.4s ease;
+      cursor: default;
+    }
+    .style-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--gold);
+      transform: scaleX(0);
+      transition: transform 0.4s ease;
+    }
+    .style-card:hover::before { transform: scaleX(1); }
+    .style-card:hover { background: var(--surface2); }
+    .style-number {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 3.5rem;
+      font-weight: 900;
+      color: rgba(201, 168, 68, 0.08);
+      position: absolute;
+      top: 16px;
+      right: 24px;
+      line-height: 1;
+      user-select: none;
+    }
+    .style-icon {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 24px;
+      color: var(--gold);
+    }
+    .style-name {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--ivory);
+      margin-bottom: 12px;
+      letter-spacing: 0.05em;
+    }
+    .style-desc {
+      font-family: 'EB Garamond', serif;
+      font-size: 1rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    .style-price {
+      font-family: 'Cinzel', serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+
+    /* ─── ARTISTS ─── */
+    .artists-section { background: var(--black); }
+    .artists-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+    }
+    .artist-card {
+      position: relative;
+      text-align: center;
+    }
+    .artist-portrait {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      margin: 0 auto 24px;
+      position: relative;
+      border: 2px solid var(--border2);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--surface);
+      transition: border-color 0.3s;
+    }
+    .artist-card:hover .artist-portrait { border-color: var(--gold); }
+    .artist-portrait svg { width: 80px; height: 80px; color: var(--muted); }
+    .artist-ring {
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 1px solid rgba(201, 168, 68, 0.2);
+    }
+    .artist-name {
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--ivory);
+      margin-bottom: 4px;
+    }
+    .artist-specialty {
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+    .artist-bio {
+      font-family: 'EB Garamond', serif;
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .artist-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 16px;
+    }
+    .artist-tag {
+      font-family: 'Cinzel', serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border: 1px solid var(--border2);
+      padding: 4px 12px;
+    }
+
+    /* ─── PROCESS ─── */
+    .process-section {
+      background: var(--surface);
+      position: relative;
+      overflow: hidden;
+    }
+    .process-section::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% 50%, rgba(139, 26, 26, 0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 32px;
+      position: relative;
+      z-index: 1;
+    }
+    .process-steps::before {
+      content: '';
+      position: absolute;
+      top: 36px;
+      left: 80px;
+      right: 80px;
+      height: 1px;
+      background: linear-gradient(to right, transparent, var(--border2) 20%, var(--border2) 80%, transparent);
+    }
+    .process-step {
+      text-align: center;
+      padding-top: 24px;
+    }
+    .process-num {
+      width: 72px;
+      height: 72px;
+      border: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 24px;
+      position: relative;
+      background: var(--black);
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 1.5rem;
+      color: var(--gold);
+      transform: rotate(45deg);
+    }
+    .process-num span { transform: rotate(-45deg); display: block; }
+    .process-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--ivory);
+      margin-bottom: 12px;
+      letter-spacing: 0.05em;
+    }
+    .process-desc {
+      font-family: 'EB Garamond', serif;
+      font-size: 0.95rem;
+      color: var(--muted);
+      font-style: italic;
+      line-height: 1.6;
+    }
+
+    /* ─── TESTIMONIALS ─── */
+    .testimonials-section { background: var(--black); }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .testimonial-card {
+      background: var(--surface);
+      padding: 40px 32px;
+      border: 1px solid var(--border);
+      position: relative;
+      transition: border-color 0.3s;
+    }
+    .testimonial-card:hover { border-color: var(--gold); }
+    .testimonial-quote-mark {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 5rem;
+      color: rgba(201, 168, 68, 0.12);
+      position: absolute;
+      top: 8px;
+      left: 24px;
+      line-height: 1;
+      user-select: none;
+    }
+    .testimonial-stars {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 20px;
+    }
+    .testimonial-stars svg {
+      width: 14px;
+      height: 14px;
+      fill: var(--gold);
+    }
+    .testimonial-text {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.05rem;
+      font-style: italic;
+      color: var(--text);
+      line-height: 1.7;
+      margin-bottom: 28px;
+      position: relative;
+      z-index: 1;
+    }
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .testimonial-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      color: var(--gold);
+      font-weight: 700;
+    }
+    .testimonial-name {
+      font-family: 'Cinzel', serif;
+      font-size: 0.8rem;
+      color: var(--ivory);
+      font-weight: 600;
+    }
+    .testimonial-style {
+      font-family: 'Cinzel', serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-top: 2px;
+    }
+
+    /* ─── FAQ ─── */
+    .faq-section { background: var(--black2); }
+    .faq-list {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      padding: 28px 0;
+    }
+    .faq-question {
+      font-family: 'Cinzel', serif;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--ivory);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      gap: 20px;
+      letter-spacing: 0.03em;
+      transition: color 0.3s;
+    }
+    .faq-question:hover { color: var(--gold); }
+    .faq-toggle {
+      width: 24px;
+      height: 24px;
+      border: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transform: rotate(45deg);
+      transition: all 0.3s;
+      background: transparent;
+    }
+    .faq-item.open .faq-toggle {
+      background: var(--gold);
+      border-color: var(--gold);
+      transform: rotate(0deg);
+    }
+    .faq-toggle svg { width: 12px; height: 12px; color: var(--gold); }
+    .faq-item.open .faq-toggle svg { color: var(--black); }
+    .faq-answer {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.05rem;
+      font-style: italic;
+      color: var(--muted);
+      line-height: 1.7;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding-top 0.4s ease;
+    }
+    .faq-item.open .faq-answer {
+      max-height: 400px;
+      padding-top: 20px;
+    }
+
+    /* ─── AREAS ─── */
+    .areas-section {
+      background: var(--surface);
+      text-align: center;
+    }
+    .areas-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .area-chip {
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--text);
+      border: 1px solid var(--border2);
+      padding: 10px 20px;
+      transition: all 0.3s;
+    }
+    .area-chip:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    /* ─── CONTACT ─── */
+    .contact-section { background: var(--black); }
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.4fr;
+      gap: 80px;
+      align-items: start;
+    }
+    .contact-info-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 8px;
+    }
+    .contact-info-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--ivory);
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+    .contact-info-desc {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.05rem;
+      font-style: italic;
+      color: var(--muted);
+      margin-bottom: 48px;
+      line-height: 1.6;
+    }
+    .contact-detail {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .contact-detail-icon {
+      width: 40px;
+      height: 40px;
+      border: 1px solid var(--border2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .contact-detail-icon svg { width: 18px; height: 18px; color: var(--gold); }
+    .contact-detail-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.6rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+    .contact-detail-value {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.05rem;
+      color: var(--text);
+    }
+    .contact-detail-value a { color: var(--text); text-decoration: none; }
+    .contact-detail-value a:hover { color: var(--gold); }
+    .contact-form {
+      background: var(--surface);
+      padding: 48px;
+      border: 1px solid var(--border);
+    }
+    .form-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--ivory);
+      margin-bottom: 32px;
+      letter-spacing: 0.05em;
+    }
+    .form-group {
+      margin-bottom: 24px;
+    }
+    .form-label {
+      font-family: 'Cinzel', serif;
+      font-size: 0.58rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: block;
+      margin-bottom: 8px;
+    }
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      background: var(--black);
+      border: 1px solid var(--border2);
+      color: var(--text);
+      font-family: 'EB Garamond', serif;
+      font-size: 1rem;
+      padding: 14px 16px;
+      transition: border-color 0.3s;
+      outline: none;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--gold);
+      color: var(--ivory);
+    }
+    .form-select { cursor: pointer; }
+    .form-select option { background: var(--surface); }
+    .form-textarea { height: 140px; resize: vertical; }
+    .form-input.error, .form-textarea.error { border-color: var(--burgundy3); }
+    .form-error {
+      font-family: 'Cinzel', serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--burgundy3);
+      margin-top: 6px;
+      display: none;
+    }
+    .form-group.has-error .form-error { display: block; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+    .form-submit {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--black);
+      background: var(--gold);
+      border: 1px solid var(--gold);
+      padding: 16px 32px;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.3s;
+      margin-top: 8px;
+    }
+    .form-submit:hover { background: var(--gold2); border-color: var(--gold2); }
+
+    /* ─── CTA BANNER ─── */
+    .cta-banner {
+      background: var(--burgundy);
+      padding: 80px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 80% at 50% 50%, rgba(201, 168, 68, 0.12) 0%, transparent 70%);
+    }
+    .cta-banner-inner { position: relative; z-index: 1; max-width: 700px; margin: 0 auto; }
+    .cta-banner-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 700;
+      color: var(--ivory);
+      margin-bottom: 16px;
+    }
+    .cta-banner-desc {
+      font-family: 'EB Garamond', serif;
+      font-size: 1.1rem;
+      font-style: italic;
+      color: rgba(245, 240, 232, 0.7);
+      margin-bottom: 36px;
+    }
+
+    /* ─── FOOTER ─── */
+    .footer {
+      background: var(--black2);
+      padding: 80px 40px 40px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 60px;
+      margin-bottom: 60px;
+    }
+    .footer-brand-name {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 1.2rem;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+    .footer-brand-tagline {
+      font-family: 'Cinzel', serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+    .footer-desc {
+      font-family: 'EB Garamond', serif;
+      font-size: 0.95rem;
+      font-style: italic;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+    .footer-license {
+      font-family: 'Cinzel', serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(138, 122, 114, 0.6);
+    }
+    .footer-col-title {
+      font-family: 'Cinzel', serif;
+      font-size: 0.65rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--ivory);
+      margin-bottom: 24px;
+    }
+    .footer-links {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .footer-links a {
+      font-family: 'EB Garamond', serif;
+      font-size: 0.95rem;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .footer-links a:hover { color: var(--gold); }
+    .footer-contact-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .footer-contact-item svg { width: 16px; height: 16px; color: var(--gold); flex-shrink: 0; margin-top: 3px; }
+    .footer-contact-item span { font-family: 'EB Garamond', serif; font-size: 0.95rem; color: var(--muted); }
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-top: 32px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: gap;
+      gap: 16px;
+    }
+    .footer-copy {
+      font-family: 'Cinzel', serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(138, 122, 114, 0.5);
+    }
+    .webnari-badge {
+      font-family: 'Cinzel', serif;
+      font-size: 0.55rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(138, 122, 114, 0.5);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .webnari-badge:hover { color: var(--gold); }
+
+    /* ─── ANIMATIONS ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 1024px) {
+      .styles-grid { grid-template-columns: repeat(2, 1fr); }
+      .artists-grid { grid-template-columns: repeat(2, 1fr); }
+      .process-steps { grid-template-columns: repeat(2, 1fr); }
+      .process-steps::before { display: none; }
+      .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
+      .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+      .footer-grid { grid-template-columns: repeat(2, 1fr); gap: 40px; }
+    }
+    @media (max-width: 768px) {
+      section { padding: 72px 24px; }
+      .nav { padding: 0 24px; }
+      .nav-links, .nav-cta { display: none; }
+      .hamburger { display: flex; }
+      .styles-grid { grid-template-columns: 1fr; }
+      .artists-grid { grid-template-columns: 1fr; }
+      .process-steps { grid-template-columns: 1fr; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; gap: 32px; }
+      .footer-bottom { flex-direction: column; text-align: center; }
+      .contact-form { padding: 32px 24px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .hero-stats { gap: 28px; }
+      .hero-corner { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav" id="nav">
+  <div class="nav-inner">
+    <a href="ironmoth.html" class="nav-logo">
+      Iron Moth Tattoo
+      <span>Custom Tattoo Studio · Miami, FL</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#styles">Styles</a></li>
+      <li><a href="#artists">Artists</a></li>
+      <li><a href="#process">Process</a></li>
+      <li><a href="#reviews">Reviews</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+    <a href="#contact" class="nav-cta">Book Consultation</a>
+    <button class="hamburger" id="hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="mobileClose" aria-label="Close menu">&times;</button>
+  <a href="#styles" onclick="document.getElementById('mobileMenu').classList.remove('open')">Styles</a>
+  <a href="#artists" onclick="document.getElementById('mobileMenu').classList.remove('open')">Artists</a>
+  <a href="#process" onclick="document.getElementById('mobileMenu').classList.remove('open')">Process</a>
+  <a href="#reviews" onclick="document.getElementById('mobileMenu').classList.remove('open')">Reviews</a>
+  <a href="#faq" onclick="document.getElementById('mobileMenu').classList.remove('open')">FAQ</a>
+  <a href="#contact" onclick="document.getElementById('mobileMenu').classList.remove('open')">Contact</a>
+  <a href="#contact" class="btn-primary" onclick="document.getElementById('mobileMenu').classList.remove('open')">Book Consultation</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-border"></div>
+  <div class="hero-corner tl"></div>
+  <div class="hero-corner tr"></div>
+  <div class="hero-corner bl"></div>
+  <div class="hero-corner br"></div>
+
+  <div class="hero-content">
+    <div class="hero-eyebrow">Est. 2014 · Little Havana, Miami</div>
+
+    <!-- Moth SVG -->
+    <svg class="hero-moth" viewBox="0 0 160 120" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <!-- Wings -->
+      <ellipse cx="55" cy="55" rx="48" ry="32" fill="rgba(139,26,26,0.4)" stroke="#C9A844" stroke-width="1"/>
+      <ellipse cx="105" cy="55" rx="48" ry="32" fill="rgba(139,26,26,0.4)" stroke="#C9A844" stroke-width="1"/>
+      <!-- Lower wings -->
+      <ellipse cx="50" cy="75" rx="32" ry="18" fill="rgba(139,26,26,0.25)" stroke="#C9A844" stroke-width="0.8"/>
+      <ellipse cx="110" cy="75" rx="32" ry="18" fill="rgba(139,26,26,0.25)" stroke="#C9A844" stroke-width="0.8"/>
+      <!-- Wing patterns -->
+      <ellipse cx="55" cy="52" rx="18" ry="12" fill="rgba(201,168,68,0.12)" stroke="rgba(201,168,68,0.4)" stroke-width="0.8"/>
+      <ellipse cx="105" cy="52" rx="18" ry="12" fill="rgba(201,168,68,0.12)" stroke="rgba(201,168,68,0.4)" stroke-width="0.8"/>
+      <!-- Eye spots on wings -->
+      <circle cx="55" cy="52" r="5" fill="rgba(201,168,68,0.3)" stroke="#C9A844" stroke-width="1"/>
+      <circle cx="55" cy="52" r="2" fill="#C9A844"/>
+      <circle cx="105" cy="52" r="5" fill="rgba(201,168,68,0.3)" stroke="#C9A844" stroke-width="1"/>
+      <circle cx="105" cy="52" r="2" fill="#C9A844"/>
+      <!-- Body -->
+      <ellipse cx="80" cy="58" rx="6" ry="28" fill="#1E1414" stroke="#C9A844" stroke-width="1"/>
+      <!-- Head -->
+      <circle cx="80" cy="30" r="7" fill="#1E1414" stroke="#C9A844" stroke-width="1"/>
+      <!-- Antennae -->
+      <line x1="77" y1="24" x2="62" y2="12" stroke="#C9A844" stroke-width="1"/>
+      <line x1="83" y1="24" x2="98" y2="12" stroke="#C9A844" stroke-width="1"/>
+      <circle cx="62" cy="12" r="2" fill="#C9A844"/>
+      <circle cx="98" cy="12" r="2" fill="#C9A844"/>
+    </svg>
+
+    <h1 class="hero-title">Iron <em>Moth</em><br>Tattoo</h1>
+    <p class="hero-subtitle">Custom Tattoo Artistry · Miami, Florida</p>
+    <p class="hero-tagline">Where ink meets intention. Every mark a story, every piece a legacy.</p>
+
+    <div class="ornament">
+      <div class="ornament-line"></div>
+      <div class="ornament-diamond"></div>
+      <div class="ornament-diamond small" style="margin: 0 -8px;"></div>
+      <div class="ornament-diamond"></div>
+      <div class="ornament-line right"></div>
+    </div>
+
+    <div class="hero-buttons">
+      <a href="#contact" class="btn-primary">Book Your Consultation</a>
+      <a href="#styles" class="btn-outline">Explore Our Work</a>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="hero-stat-num">10+</span>
+        <span class="hero-stat-label">Years in Miami</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">4K+</span>
+        <span class="hero-stat-label">Pieces Completed</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">6</span>
+        <span class="hero-stat-label">Master Artists</span>
+      </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">100%</span>
+        <span class="hero-stat-label">Custom Designs</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-strip" aria-hidden="true">
+  <div class="marquee-track">
+    <div class="marquee-item"><span class="marquee-dot"></span>Neo-Traditional</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Blackwork</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Watercolor</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Fine Line</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Illustrative</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Japanese</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Geometric</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Cover-Ups</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Neo-Traditional</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Blackwork</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Watercolor</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Fine Line</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Illustrative</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Japanese</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Geometric</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Cover-Ups</div>
+  </div>
+</div>
+
+<!-- STYLES -->
+<section class="styles-section" id="styles">
+  <div class="container">
+    <span class="section-label">Our Specialties</span>
+    <h2 class="section-title">Tattoo Styles</h2>
+    <p class="section-desc">Six master artists, six distinct specialties. Whatever vision you carry, we have the hand to bring it to life.</p>
+
+    <div class="styles-grid">
+      <div class="style-card reveal">
+        <div class="style-number">01</div>
+        <svg class="style-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M24 8L28 18H38L30 24L33 34L24 28L15 34L18 24L10 18H20L24 8Z" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <circle cx="24" cy="24" r="6" stroke="currentColor" stroke-width="1" fill="none" opacity="0.4"/>
+        </svg>
+        <div class="style-name">Neo-Traditional</div>
+        <div class="style-desc">Bold outlines meet vibrant, painterly color palettes. A contemporary evolution of classic American traditional tattooing with nuanced shading and saturated hues.</div>
+        <div class="style-price">Starting at $200/hr</div>
+      </div>
+      <div class="style-card reveal reveal-delay-1">
+        <div class="style-number">02</div>
+        <svg class="style-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="8" y="8" width="32" height="32" stroke="currentColor" stroke-width="1.5" fill="rgba(201,168,68,0.05)"/>
+          <rect x="14" y="14" width="20" height="20" stroke="currentColor" stroke-width="0.8" fill="rgba(201,168,68,0.08)" opacity="0.6"/>
+          <line x1="8" y1="24" x2="40" y2="24" stroke="currentColor" stroke-width="0.5" opacity="0.4"/>
+          <line x1="24" y1="8" x2="24" y2="40" stroke="currentColor" stroke-width="0.5" opacity="0.4"/>
+        </svg>
+        <div class="style-name">Blackwork</div>
+        <div class="style-desc">Pure black ink in its most powerful form. Geometric patterns, ornamental designs, and bold graphic compositions that command attention and age beautifully.</div>
+        <div class="style-price">Starting at $180/hr</div>
+      </div>
+      <div class="style-card reveal reveal-delay-2">
+        <div class="style-number">03</div>
+        <svg class="style-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="18" cy="24" r="10" stroke="currentColor" stroke-width="1.5" fill="none"/>
+          <circle cx="30" cy="20" r="8" stroke="currentColor" stroke-width="1" fill="rgba(201,168,68,0.1)" opacity="0.7"/>
+          <circle cx="26" cy="30" r="6" stroke="currentColor" stroke-width="0.8" fill="rgba(201,168,68,0.05)" opacity="0.5"/>
+        </svg>
+        <div class="style-name">Watercolor</div>
+        <div class="style-desc">The canvas of your skin treated like fine paper. Flowing, translucent colors that bleed and bloom, creating ethereal, painterly compositions of breathtaking delicacy.</div>
+        <div class="style-price">Starting at $220/hr</div>
+      </div>
+      <div class="style-card reveal reveal-delay-1">
+        <div class="style-number">04</div>
+        <svg class="style-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <line x1="12" y1="36" x2="36" y2="12" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="16" y1="36" x2="36" y2="16" stroke="currentColor" stroke-width="0.8" opacity="0.5"/>
+          <line x1="12" y1="32" x2="32" y2="12" stroke="currentColor" stroke-width="0.8" opacity="0.5"/>
+          <circle cx="36" cy="12" r="4" stroke="currentColor" stroke-width="1.2" fill="none"/>
+          <circle cx="12" cy="36" r="3" stroke="currentColor" stroke-width="1" fill="rgba(201,168,68,0.2)"/>
+        </svg>
+        <div class="style-name">Fine Line</div>
+        <div class="style-desc">Precision at its most refined. Hair-thin linework creating intricate botanicals, portraiture, and minimalist designs of exceptional detail. Subtle and sophisticated.</div>
+        <div class="style-price">Starting at $200/hr</div>
+      </div>
+      <div class="style-card reveal reveal-delay-2">
+        <div class="style-number">05</div>
+        <svg class="style-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M24 8C24 8 16 16 12 24C8 32 12 40 24 40C36 40 40 32 36 24C32 16 24 8 24 8Z" stroke="currentColor" stroke-width="1.5" fill="rgba(201,168,68,0.05)"/>
+          <path d="M20 20C20 20 18 26 20 30C22 34 26 34 28 30C30 26 28 20 24 18" stroke="currentColor" stroke-width="1" fill="none" opacity="0.6"/>
+        </svg>
+        <div class="style-name">Japanese Traditional</div>
+        <div class="style-desc">Rooted in centuries of Irezumi tradition. Bold compositions featuring koi, dragons, chrysanthemums, and mythological subjects with classic Japanese color and shading.</div>
+        <div class="style-price">Starting at $200/hr</div>
+      </div>
+      <div class="style-card reveal reveal-delay-3">
+        <div class="style-number">06</div>
+        <svg class="style-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M24 10L38 18V30L24 38L10 30V18L24 10Z" stroke="currentColor" stroke-width="1.5" fill="rgba(201,168,68,0.05)"/>
+          <path d="M24 16L32 20.5V29.5L24 34L16 29.5V20.5L24 16Z" stroke="currentColor" stroke-width="0.8" fill="none" opacity="0.5"/>
+          <circle cx="24" cy="24" r="4" fill="rgba(201,168,68,0.3)" stroke="currentColor" stroke-width="1"/>
+        </svg>
+        <div class="style-name">Geometric / Mandala</div>
+        <div class="style-desc">Sacred geometry rendered in flawless symmetry. Intricate mandalas, sacred patterns, and geometric compositions that radiate mathematical beauty and spiritual resonance.</div>
+        <div class="style-price">Starting at $180/hr</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ARTISTS -->
+<section class="artists-section" id="artists">
+  <div class="container">
+    <span class="section-label">The Collective</span>
+    <h2 class="section-title">Our Artists</h2>
+    <p class="section-desc">Each artist at Iron Moth brings a distinct mastery, cultivated over years of dedicated practice and continuous artistic evolution.</p>
+
+    <div class="ornament" style="margin-bottom: 60px;">
+      <div class="ornament-line"></div>
+      <div class="ornament-diamond small"></div>
+      <div class="ornament-diamond"></div>
+      <div class="ornament-diamond small"></div>
+      <div class="ornament-line right"></div>
+    </div>
+
+    <div class="artists-grid">
+      <div class="artist-card reveal">
+        <div class="artist-portrait">
+          <div class="artist-ring"></div>
+          <svg viewBox="0 0 80 80" fill="none">
+            <circle cx="40" cy="30" r="16" stroke="currentColor" stroke-width="1.2" fill="none"/>
+            <path d="M15 70C15 56 25 48 40 48C55 48 65 56 65 70" stroke="currentColor" stroke-width="1.2" fill="none"/>
+          </svg>
+        </div>
+        <div class="artist-name">Valentina Cruz</div>
+        <div class="artist-specialty">Lead Artist · 12 Years Experience</div>
+        <p class="artist-bio">Originally from Medellín, Valentina brings a Latin-infused perspective to Neo-Traditional and Illustrative work. Her signature style melds botanical motifs with bold architecture.</p>
+        <div class="artist-tags">
+          <span class="artist-tag">Neo-Traditional</span>
+          <span class="artist-tag">Botanical</span>
+          <span class="artist-tag">Illustrative</span>
+        </div>
+      </div>
+      <div class="artist-card reveal reveal-delay-1">
+        <div class="artist-portrait">
+          <div class="artist-ring"></div>
+          <svg viewBox="0 0 80 80" fill="none">
+            <circle cx="40" cy="30" r="16" stroke="currentColor" stroke-width="1.2" fill="none"/>
+            <path d="M15 70C15 56 25 48 40 48C55 48 65 56 65 70" stroke="currentColor" stroke-width="1.2" fill="none"/>
+          </svg>
+        </div>
+        <div class="artist-name">Marcus Thorne</div>
+        <div class="artist-specialty">Blackwork Specialist · 9 Years Experience</div>
+        <p class="artist-bio">Marcus approaches blackwork as architecture for the body. His geometric compositions and ornamental patterns carry structural precision married to organic intuition.</p>
+        <div class="artist-tags">
+          <span class="artist-tag">Blackwork</span>
+          <span class="artist-tag">Geometric</span>
+          <span class="artist-tag">Mandala</span>
+        </div>
+      </div>
+      <div class="artist-card reveal reveal-delay-2">
+        <div class="artist-portrait">
+          <div class="artist-ring"></div>
+          <svg viewBox="0 0 80 80" fill="none">
+            <circle cx="40" cy="30" r="16" stroke="currentColor" stroke-width="1.2" fill="none"/>
+            <path d="M15 70C15 56 25 48 40 48C55 48 65 56 65 70" stroke="currentColor" stroke-width="1.2" fill="none"/>
+          </svg>
+        </div>
+        <div class="artist-name">Yuki Tanaka</div>
+        <div class="artist-specialty">Japanese Traditional · 15 Years Experience</div>
+        <p class="artist-bio">Trained under masters in Osaka, Yuki translates centuries of Irezumi tradition through a contemporary lens. Her koi and dragon compositions are studied by artists worldwide.</p>
+        <div class="artist-tags">
+          <span class="artist-tag">Japanese</span>
+          <span class="artist-tag">Irezumi</span>
+          <span class="artist-tag">Color Work</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process-section" id="process">
+  <div class="container">
+    <span class="section-label">How It Works</span>
+    <h2 class="section-title">The Iron Moth Process</h2>
+    <p class="section-desc">From first conversation to finished masterpiece, every step is designed with your comfort and vision in mind.</p>
+
+    <div class="process-steps">
+      <div class="process-step reveal">
+        <div class="process-num"><span>I</span></div>
+        <div class="process-title">Consultation</div>
+        <p class="process-desc">We begin with a private consultation — free of charge — to understand your vision, placement, size, and style. No pressure, no rush. We listen first.</p>
+      </div>
+      <div class="process-step reveal reveal-delay-1">
+        <div class="process-num"><span>II</span></div>
+        <div class="process-title">Custom Design</div>
+        <p class="process-desc">Your artist creates a bespoke design crafted exclusively for you. Never a flash piece pulled from a folder — every Iron Moth tattoo is original art.</p>
+      </div>
+      <div class="process-step reveal reveal-delay-2">
+        <div class="process-num"><span>III</span></div>
+        <div class="process-title">Design Approval</div>
+        <p class="process-desc">We present the design before your session date. Revisions are welcomed. You confirm only when every detail feels exactly right. Your approval is everything.</p>
+      </div>
+      <div class="process-step reveal reveal-delay-3">
+        <div class="process-num"><span>IV</span></div>
+        <div class="process-title">The Tattoo Session</div>
+        <p class="process-desc">In a clean, calm, private studio with premium inks and sterile instruments. Your comfort is paramount throughout. We finish only when the work is perfect.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section" id="reviews">
+  <div class="container">
+    <span class="section-label">Client Stories</span>
+    <h2 class="section-title">What They Say</h2>
+    <p class="section-desc">The most meaningful measure of our work is the way our clients carry it — for the rest of their lives.</p>
+
+    <div class="testimonials-grid">
+      <div class="testimonial-card reveal">
+        <div class="testimonial-quote-mark">"</div>
+        <div class="testimonial-stars">
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <p class="testimonial-text">"Valentina designed a full sleeve that tells the story of my grandmother's garden in Colombia. I cry every time someone asks me about it. The artistry is beyond anything I imagined."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">SC</div>
+          <div>
+            <div class="testimonial-name">Sofia Castellanos</div>
+            <div class="testimonial-style">Neo-Traditional Full Sleeve</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-1">
+        <div class="testimonial-quote-mark">"</div>
+        <div class="testimonial-stars">
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <p class="testimonial-text">"Marcus covered a 10-year-old mistake with a geometric back piece that I'd never have believed possible. He saw potential I couldn't. Booked for my chest piece next month."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">DJ</div>
+          <div>
+            <div class="testimonial-name">David James</div>
+            <div class="testimonial-style">Blackwork Cover-Up</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-2">
+        <div class="testimonial-quote-mark">"</div>
+        <div class="testimonial-stars">
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <p class="testimonial-text">"Yuki's Japanese koi piece on my thigh stops people in their tracks. The color depth, the movement she captured — it genuinely looks like it's swimming. Worth every penny."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">MR</div>
+          <div>
+            <div class="testimonial-name">Maria Rodriguez</div>
+            <div class="testimonial-style">Japanese Traditional Thigh</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <div class="container">
+    <span class="section-label">Frequently Asked</span>
+    <h2 class="section-title">Before You Book</h2>
+    <p class="section-desc">We believe an informed client is a comfortable client. Here are the questions we hear most often.</p>
+
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          How much does a custom tattoo cost?
+          <div class="faq-toggle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </div>
+        <div class="faq-answer">Our artists charge between $180–$220 per hour depending on specialty. Minimum session rate is $150. Small pieces (under 2 inches) are typically quoted as flat rates. Large-scale work and sleeves are priced after consultation. We never quote without seeing your vision — every piece is unique.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          How far in advance should I book?
+          <div class="faq-toggle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </div>
+        <div class="faq-answer">Our senior artists book 4–8 weeks in advance. Junior artists may have availability within 1–2 weeks. Walk-ins are welcome when schedules allow — call ahead to check same-day availability. For large-scale projects, we recommend booking at least 6 weeks out.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Is a consultation required before booking?
+          <div class="faq-toggle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </div>
+        <div class="faq-answer">For custom pieces, yes — and the consultation is always free. For simpler designs or flash pieces, we can often proceed directly to booking. Consultations can be done in-person, over the phone, or via email with reference images. We want to make this process as easy as possible for you.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          How do I prepare for my tattoo session?
+          <div class="faq-toggle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </div>
+        <div class="faq-answer">Eat a full meal 2–3 hours before your appointment. Stay well hydrated. Avoid alcohol for 24 hours prior. Wear comfortable clothing that allows easy access to the tattoo area. Moisturize the area daily in the week leading up to your session. Avoid prolonged sun exposure to the skin being tattooed.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          What are your sterilization and safety standards?
+          <div class="faq-toggle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </div>
+        <div class="faq-answer">Iron Moth maintains the highest safety standards in the industry. All needles are single-use and disposed of in sharps containers. Work surfaces are sterile-draped for each client. Artists are licensed by the Florida Department of Health and undergo ongoing safety training. We use only reputable, skin-safe inks.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question" onclick="toggleFaq(this)">
+          Do you do touch-ups?
+          <div class="faq-toggle">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </div>
+        <div class="faq-answer">Yes. All Iron Moth tattoos include one complimentary touch-up session within 6 months of the original appointment, as long as aftercare instructions were followed. Touch-ups for tattoos done elsewhere are welcome at our standard hourly rate. We stand behind every piece that leaves our studio.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AREAS -->
+<section class="areas-section" id="areas">
+  <div class="container">
+    <span class="section-label">We Serve</span>
+    <h2 class="section-title">South Florida</h2>
+    <p class="section-desc" style="margin-bottom: 40px;">Clients travel to us from across South Florida and beyond. We're proud to be Miami's destination studio.</p>
+    <div class="areas-list">
+      <div class="area-chip">Little Havana</div>
+      <div class="area-chip">Brickell</div>
+      <div class="area-chip">Wynwood</div>
+      <div class="area-chip">Coral Gables</div>
+      <div class="area-chip">Miami Beach</div>
+      <div class="area-chip">Coconut Grove</div>
+      <div class="area-chip">Doral</div>
+      <div class="area-chip">Hialeah</div>
+      <div class="area-chip">Kendall</div>
+      <div class="area-chip">South Miami</div>
+      <div class="area-chip">North Miami</div>
+      <div class="area-chip">Homestead</div>
+      <div class="area-chip">Miami Gardens</div>
+      <div class="area-chip">Aventura</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+  <div class="container">
+    <div class="contact-grid">
+      <div>
+        <div class="contact-info-label">Book Your Session</div>
+        <h2 class="contact-info-title">Begin Your<br><em style="font-style: italic; color: var(--gold);">Story</em></h2>
+        <p class="contact-info-desc">Fill out the form and we'll be in touch within 24 hours to schedule your complimentary consultation. Walk-ins are always welcome — call first to check availability.</p>
+
+        <div class="contact-detail">
+          <div class="contact-detail-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 014 11.69a19.79 19.79 0 01-3.07-8.67A2 2 0 012.92 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          </div>
+          <div>
+            <div class="contact-detail-label">Phone</div>
+            <div class="contact-detail-value"><a href="tel:+13055551200">(305) 555-1200</a></div>
+          </div>
+        </div>
+
+        <div class="contact-detail">
+          <div class="contact-detail-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div>
+            <div class="contact-detail-label">Studio Address</div>
+            <div class="contact-detail-value">1840 SW 8th Street<br>Little Havana, Miami FL 33135</div>
+          </div>
+        </div>
+
+        <div class="contact-detail">
+          <div class="contact-detail-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div>
+            <div class="contact-detail-label">Studio Hours</div>
+            <div class="contact-detail-value">Tue–Sat 11AM–8PM<br>Sun 12PM–6PM · Mon Closed</div>
+          </div>
+        </div>
+
+        <div class="contact-detail">
+          <div class="contact-detail-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div>
+            <div class="contact-detail-label">Email</div>
+            <div class="contact-detail-value"><a href="mailto:ink@ironmothtattoo.com">ink@ironmothtattoo.com</a></div>
+          </div>
+        </div>
+      </div>
+
+      <form class="contact-form" id="contactForm" action="https://formsubmit.co/ink@ironmothtattoo.com" method="POST">
+        <input type="hidden" name="_subject" value="New Tattoo Consultation Request">
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_next" value="https://webnari.io">
+        <div class="form-title">Request a Consultation</div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label" for="fname">First Name</label>
+            <input class="form-input" type="text" id="fname" name="first_name" placeholder="Your first name">
+            <div class="form-error">Please enter your name</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="lname">Last Name</label>
+            <input class="form-input" type="text" id="lname" name="last_name" placeholder="Your last name">
+            <div class="form-error">Please enter your last name</div>
+          </div>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label" for="email">Email</label>
+            <input class="form-input" type="email" id="email" name="email" placeholder="your@email.com">
+            <div class="form-error">Please enter a valid email</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="phone">Phone</label>
+            <input class="form-input" type="tel" id="phone" name="phone" placeholder="(305) 000-0000">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="style">Tattoo Style</label>
+          <select class="form-select" id="style" name="style">
+            <option value="">Select a style...</option>
+            <option value="neo-traditional">Neo-Traditional</option>
+            <option value="blackwork">Blackwork / Geometric</option>
+            <option value="watercolor">Watercolor</option>
+            <option value="fine-line">Fine Line</option>
+            <option value="japanese">Japanese Traditional</option>
+            <option value="cover-up">Cover-Up</option>
+            <option value="unsure">Not Sure Yet</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="size">Approximate Size</label>
+          <select class="form-select" id="size" name="size">
+            <option value="">Select a size...</option>
+            <option value="small">Small (under 2 inches)</option>
+            <option value="medium">Medium (2–4 inches)</option>
+            <option value="large">Large (4–8 inches)</option>
+            <option value="xlarge">X-Large (full panel or sleeve)</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="message">Tell Us About Your Vision</label>
+          <textarea class="form-textarea" id="message" name="message" placeholder="Describe your tattoo idea — subject, placement, mood, any reference images you love..."></textarea>
+          <div class="form-error">Please describe your tattoo idea</div>
+        </div>
+
+        <button type="submit" class="form-submit">Send Consultation Request</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner">
+  <div class="cta-banner-inner">
+    <div class="ornament" style="justify-content: center; margin-bottom: 24px;">
+      <div class="ornament-line" style="max-width: 60px;"></div>
+      <div class="ornament-diamond"></div>
+      <div class="ornament-line right" style="max-width: 60px;"></div>
+    </div>
+    <h2 class="cta-banner-title">Walk-Ins Always Welcome</h2>
+    <p class="cta-banner-desc">No appointment necessary for flash pieces and smaller work. Stop by any Tuesday through Sunday and let's create something together.</p>
+    <a href="tel:+13055551200" class="btn-primary" style="display: inline-block;">(305) 555-1200</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand-name">Iron Moth Tattoo</div>
+      <div class="footer-brand-tagline">Custom Tattoo Artistry · Est. 2014</div>
+      <p class="footer-desc">Miami's premier custom tattoo studio. Six master artists, one shared commitment: art that lasts a lifetime, crafted with integrity.</p>
+      <div class="footer-license">FL Health License #TAT2024-0088</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Styles</div>
+      <ul class="footer-links">
+        <li><a href="#styles">Neo-Traditional</a></li>
+        <li><a href="#styles">Blackwork</a></li>
+        <li><a href="#styles">Watercolor</a></li>
+        <li><a href="#styles">Fine Line</a></li>
+        <li><a href="#styles">Japanese Traditional</a></li>
+        <li><a href="#styles">Cover-Ups</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Studio</div>
+      <ul class="footer-links">
+        <li><a href="#artists">Our Artists</a></li>
+        <li><a href="#process">Our Process</a></li>
+        <li><a href="#reviews">Client Reviews</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#contact">Book a Consultation</a></li>
+        <li><a href="#contact">Aftercare Guide</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Contact</div>
+      <div class="footer-contact-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 014 11.69a19.79 19.79 0 01-3.07-8.67A2 2 0 012.92 1h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        <span>(305) 555-1200</span>
+      </div>
+      <div class="footer-contact-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <span>1840 SW 8th St<br>Miami, FL 33135</span>
+      </div>
+      <div class="footer-contact-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <span>Tue–Sun 11AM–8PM</span>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">&copy; 2025 Iron Moth Tattoo LLC. All rights reserved.</div>
+    <a href="https://webnari.io" class="webnari-badge" target="_blank" rel="noopener">Powered by Webnari</a>
+  </div>
+</footer>
+
+<script>
+  // Nav scroll
+  window.addEventListener('scroll', () => {
+    document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 50);
+  });
+
+  // Hamburger
+  document.getElementById('hamburger').addEventListener('click', () => {
+    document.getElementById('mobileMenu').classList.add('open');
+  });
+  document.getElementById('mobileClose').addEventListener('click', () => {
+    document.getElementById('mobileMenu').classList.remove('open');
+  });
+
+  // FAQ
+  function toggleFaq(el) {
+    const item = el.parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  }
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Form validation
+  const form = document.getElementById('contactForm');
+  if (form) {
+    const required = form.querySelectorAll('[id="fname"],[id="lname"],[id="email"],[id="message"]');
+    required.forEach(input => {
+      input.addEventListener('blur', () => validateField(input));
+    });
+    form.addEventListener('submit', (e) => {
+      let valid = true;
+      required.forEach(input => { if (!validateField(input)) valid = false; });
+      if (!valid) e.preventDefault();
+    });
+    function validateField(input) {
+      const group = input.closest('.form-group');
+      let ok = input.value.trim() !== '';
+      if (input.type === 'email') ok = ok && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value);
+      input.classList.toggle('error', !ok);
+      group.classList.toggle('has-error', !ok);
+      return ok;
+    }
+  }
+</script>
+</body>
+</html>

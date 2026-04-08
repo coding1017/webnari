@@ -1,0 +1,1009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ShadowLine Investigations | Licensed Private Investigators in Miami</title>
+    <meta name="description" content="ShadowLine Investigations — licensed, discreet private investigation services in South Florida. Surveillance, background checks, fraud, infidelity, corporate.">
+    <meta property="og:title" content="ShadowLine Investigations | Miami Private Investigators">
+    <meta property="og:description" content="Discreet. Thorough. Licensed. South Florida's trusted private investigation firm.">
+    <meta property="og:type" content="website">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Libre+Bodoni:ital,wght@0,400;0,700;1,400&family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --black: #08070A;
+            --dark: #0F0E14;
+            --surface: #16151E;
+            --surface2: #1E1D28;
+            --border: #2A2938;
+            --amber: #D4A24E;
+            --amber2: #E8BD6A;
+            --amber3: #F5D48A;
+            --smoke: #6B6980;
+            --text: #9896A8;
+            --heading: #EEEDF4;
+            --white: #F8F7FC;
+            --red: #C4444A;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Work Sans', sans-serif;
+            background: var(--black);
+            color: var(--text);
+            line-height: 1.7;
+            font-weight: 400;
+            overflow-x: hidden;
+        }
+
+        /* Film grain overlay */
+        body::before {
+            content: '';
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9999; opacity: 0.5;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Libre Bodoni', serif;
+            color: var(--heading);
+            line-height: 1.25;
+            font-weight: 700;
+        }
+
+        a { text-decoration: none; color: inherit; }
+        ul { list-style: none; }
+
+        .container { max-width: 1180px; margin: 0 auto; padding: 0 24px; }
+
+        /* ========== NAV ========== */
+        .nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+            background: rgba(8,7,10,0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-inner {
+            max-width: 1180px; margin: 0 auto; padding: 0 24px;
+            display: flex; align-items: center; justify-content: space-between;
+            height: 72px;
+        }
+        .nav-logo {
+            font-family: 'Libre Bodoni', serif; font-size: 1.4rem;
+            font-weight: 700; color: var(--amber);
+            display: flex; align-items: center; gap: 12px;
+        }
+        .nav-logo-mark {
+            width: 40px; height: 40px; border: 2px solid var(--amber);
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; position: relative;
+        }
+        .nav-logo-mark svg { width: 20px; height: 20px; }
+        .nav-links { display: flex; align-items: center; gap: 4px; }
+        .nav-links a {
+            padding: 8px 16px; font-size: 0.88rem; font-weight: 500;
+            color: var(--smoke); transition: color 0.3s; letter-spacing: 0.5px;
+        }
+        .nav-links a:hover { color: var(--amber); }
+        .nav-cta {
+            color: var(--black) !important; background: var(--amber);
+            padding: 10px 24px !important; font-weight: 600 !important;
+            transition: all 0.3s !important; letter-spacing: 1px;
+            text-transform: uppercase; font-size: 0.78rem !important;
+        }
+        .nav-cta:hover { background: var(--amber2) !important; }
+
+        .hamburger {
+            display: none; background: none; border: 1px solid var(--border);
+            cursor: pointer; width: 44px; height: 44px; align-items: center;
+            justify-content: center;
+        }
+        .hamburger svg { width: 22px; height: 22px; stroke: var(--amber); }
+
+        .mobile-menu {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--black); z-index: 999; flex-direction: column;
+            align-items: center; justify-content: center; gap: 20px;
+            opacity: 0; pointer-events: none; transition: opacity 0.4s;
+        }
+        .mobile-menu.open { display: flex; opacity: 1; pointer-events: all; }
+        .mobile-menu a {
+            font-family: 'Libre Bodoni', serif; font-size: 1.6rem;
+            color: var(--heading); padding: 10px; transition: color 0.3s;
+        }
+        .mobile-menu a:hover { color: var(--amber); }
+        .mobile-close {
+            position: absolute; top: 18px; right: 24px; background: none;
+            border: 1px solid var(--border); cursor: pointer; width: 44px; height: 44px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .mobile-close svg { width: 22px; height: 22px; stroke: var(--heading); }
+
+        /* ========== HERO ========== */
+        .hero {
+            padding: 180px 0 120px;
+            background: linear-gradient(180deg, var(--dark) 0%, var(--black) 100%);
+            position: relative; overflow: hidden;
+        }
+        .hero::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(ellipse at 30% 20%, rgba(212,162,78,0.06) 0%, transparent 60%);
+        }
+        .hero-content { position: relative; z-index: 2; max-width: 720px; }
+        .hero-label {
+            font-size: 0.78rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 4px; color: var(--amber); margin-bottom: 24px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .hero-label::before {
+            content: ''; width: 40px; height: 1px; background: var(--amber);
+        }
+        .hero h1 {
+            font-size: clamp(2.8rem, 6vw, 4.5rem); margin-bottom: 24px;
+            letter-spacing: -1px;
+        }
+        .hero h1 em {
+            font-style: italic; color: var(--amber);
+        }
+        .hero-desc {
+            font-size: 1.1rem; color: var(--smoke); max-width: 540px;
+            margin-bottom: 40px; line-height: 1.8;
+        }
+        .hero-btns { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 60px; }
+        .btn-gold {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 16px 36px; font-size: 0.85rem; font-weight: 600;
+            background: var(--amber); color: var(--black);
+            text-transform: uppercase; letter-spacing: 1.5px;
+            transition: all 0.3s; border: none; cursor: pointer;
+        }
+        .btn-gold:hover { background: var(--amber2); transform: translateY(-1px); }
+        .btn-outline {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 16px 36px; font-size: 0.85rem; font-weight: 600;
+            background: transparent; color: var(--amber); border: 1px solid var(--amber);
+            text-transform: uppercase; letter-spacing: 1.5px;
+            transition: all 0.3s; cursor: pointer;
+        }
+        .btn-outline:hover { background: rgba(212,162,78,0.1); }
+
+        .hero-stats {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px;
+            background: var(--border); border: 1px solid var(--border);
+        }
+        .hero-stat {
+            background: var(--dark); padding: 24px 20px; text-align: center;
+        }
+        .hero-stat .num {
+            font-family: 'Libre Bodoni', serif; font-size: 2rem;
+            font-weight: 700; color: var(--amber);
+        }
+        .hero-stat .label {
+            font-size: 0.78rem; color: var(--smoke); margin-top: 4px;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+
+        /* Decorative line */
+        .gold-line {
+            width: 100%; height: 1px;
+            background: linear-gradient(90deg, transparent 0%, var(--amber) 50%, transparent 100%);
+            opacity: 0.3;
+        }
+
+        /* ========== SECTIONS ========== */
+        section { padding: 100px 0; }
+        .section-label {
+            font-size: 0.78rem; font-weight: 600; text-transform: uppercase;
+            letter-spacing: 4px; color: var(--amber); margin-bottom: 16px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .section-label::before {
+            content: ''; width: 24px; height: 1px; background: var(--amber);
+        }
+        .section-title {
+            font-size: clamp(1.8rem, 3.5vw, 2.8rem); margin-bottom: 16px;
+        }
+        .section-desc {
+            font-size: 1.02rem; color: var(--smoke); max-width: 520px; line-height: 1.8;
+        }
+        .section-header { margin-bottom: 60px; }
+
+        /* ========== SERVICES ========== */
+        .services-section { background: var(--dark); }
+        .services-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+            background: var(--border);
+        }
+        .service-card {
+            background: var(--surface); padding: 40px 32px;
+            transition: all 0.4s; position: relative; overflow: hidden;
+        }
+        .service-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: var(--amber); transform: scaleX(0); transition: transform 0.4s;
+            transform-origin: left;
+        }
+        .service-card:hover::before { transform: scaleX(1); }
+        .service-card:hover { background: var(--surface2); }
+        .service-num {
+            font-family: 'Libre Bodoni', serif; font-size: 3rem;
+            font-weight: 700; color: var(--border); margin-bottom: 20px;
+            line-height: 1;
+        }
+        .service-card h3 { font-size: 1.2rem; margin-bottom: 12px; }
+        .service-card p { font-size: 0.9rem; color: var(--smoke); line-height: 1.7; }
+
+        /* ========== WHY US ========== */
+        .why-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start;
+        }
+        .why-left { position: sticky; top: 120px; }
+        .why-big-num {
+            font-family: 'Libre Bodoni', serif; font-size: 8rem;
+            font-weight: 700; color: var(--amber); opacity: 0.15;
+            line-height: 1; margin-bottom: -40px;
+        }
+        .why-features { display: flex; flex-direction: column; gap: 0; }
+        .why-feature {
+            padding: 28px 0; border-bottom: 1px solid var(--border);
+            display: flex; gap: 20px; align-items: flex-start;
+        }
+        .why-feature:last-child { border-bottom: none; }
+        .why-feature-icon {
+            width: 12px; height: 12px; border: 2px solid var(--amber);
+            transform: rotate(45deg); flex-shrink: 0; margin-top: 6px;
+        }
+        .why-feature h4 { font-size: 1.05rem; margin-bottom: 6px; }
+        .why-feature p { font-size: 0.9rem; color: var(--smoke); }
+
+        /* ========== PROCESS ========== */
+        .process-section { background: var(--dark); }
+        .process-timeline {
+            display: flex; flex-direction: column; gap: 0;
+            max-width: 800px; margin: 0 auto;
+            border-left: 1px solid var(--border); padding-left: 48px;
+            position: relative;
+        }
+        .process-step {
+            padding: 32px 0; position: relative;
+        }
+        .process-step::before {
+            content: ''; position: absolute; left: -53px; top: 40px;
+            width: 10px; height: 10px; background: var(--amber);
+            transform: rotate(45deg);
+        }
+        .process-step-num {
+            font-family: 'Libre Bodoni', serif; font-size: 0.85rem;
+            color: var(--amber); margin-bottom: 8px; letter-spacing: 2px;
+        }
+        .process-step h4 { font-size: 1.3rem; margin-bottom: 10px; }
+        .process-step p { font-size: 0.92rem; color: var(--smoke); max-width: 560px; }
+
+        /* ========== TESTIMONIALS ========== */
+        .testimonials-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+        }
+        .testimonial-card {
+            background: var(--surface); padding: 36px 28px;
+            border: 1px solid var(--border); transition: all 0.3s;
+        }
+        .testimonial-card:hover { border-color: var(--amber); }
+        .testimonial-quote {
+            font-family: 'Libre Bodoni', serif; font-size: 3rem;
+            color: var(--amber); opacity: 0.3; line-height: 1; margin-bottom: 8px;
+        }
+        .testimonial-card blockquote {
+            font-size: 0.95rem; font-style: italic; color: var(--text);
+            margin-bottom: 24px; line-height: 1.7;
+        }
+        .testimonial-author .name {
+            font-weight: 600; color: var(--heading); font-size: 0.92rem;
+        }
+        .testimonial-author .role {
+            font-size: 0.8rem; color: var(--smoke); margin-top: 2px;
+        }
+
+        /* ========== FAQ ========== */
+        .faq-section { background: var(--dark); }
+        .faq-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 80px;
+        }
+        .faq-left { position: sticky; top: 120px; align-self: start; }
+        .faq-list { display: flex; flex-direction: column; gap: 0; }
+        .faq-item { border-bottom: 1px solid var(--border); }
+        .faq-q {
+            width: 100%; text-align: left; background: none; border: none;
+            padding: 24px 0; display: flex; justify-content: space-between;
+            align-items: center; cursor: pointer; color: var(--heading);
+            font-family: 'Work Sans', sans-serif; font-size: 1rem; font-weight: 500;
+            transition: color 0.3s; gap: 16px;
+        }
+        .faq-q:hover { color: var(--amber); }
+        .faq-toggle {
+            width: 12px; height: 12px; border-right: 2px solid var(--amber);
+            border-bottom: 2px solid var(--amber); transform: rotate(45deg);
+            transition: transform 0.3s; flex-shrink: 0;
+        }
+        .faq-item.open .faq-toggle { transform: rotate(-135deg); }
+        .faq-a { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+        .faq-a-inner { padding: 0 0 24px; font-size: 0.92rem; color: var(--smoke); line-height: 1.7; }
+        .faq-item.open .faq-a { max-height: 300px; }
+
+        /* ========== AREAS ========== */
+        .areas-flex {
+            display: flex; flex-wrap: wrap; gap: 12px;
+        }
+        .area-tag {
+            padding: 10px 24px; border: 1px solid var(--border);
+            font-size: 0.88rem; color: var(--text); transition: all 0.3s;
+        }
+        .area-tag:hover { border-color: var(--amber); color: var(--amber); }
+
+        /* ========== CONTACT ========== */
+        .contact-section { background: var(--dark); }
+        .contact-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 60px;
+        }
+        .contact-info { display: flex; flex-direction: column; gap: 28px; }
+        .contact-item {
+            display: flex; gap: 16px; align-items: flex-start;
+        }
+        .contact-item-icon {
+            width: 20px; height: 20px; flex-shrink: 0; margin-top: 3px;
+        }
+        .contact-item-icon svg { width: 20px; height: 20px; stroke: var(--amber); }
+        .contact-item h4 {
+            font-family: 'Work Sans', sans-serif; font-size: 0.78rem;
+            text-transform: uppercase; letter-spacing: 2px; color: var(--smoke);
+            margin-bottom: 4px; font-weight: 600;
+        }
+        .contact-item p { font-size: 1rem; color: var(--heading); }
+        .contact-note {
+            padding: 24px; border: 1px solid var(--border);
+            background: var(--surface); margin-top: 12px;
+        }
+        .contact-note p { font-size: 0.88rem; color: var(--smoke); font-style: italic; }
+
+        .contact-form { display: flex; flex-direction: column; gap: 0; }
+        .form-group { margin-bottom: 24px; }
+        .form-group label {
+            display: block; font-size: 0.75rem; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 2px; color: var(--smoke);
+            margin-bottom: 10px;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 14px 0; border: none;
+            border-bottom: 1px solid var(--border);
+            background: transparent; color: var(--heading);
+            font-family: 'Work Sans', sans-serif; font-size: 0.95rem;
+            outline: none; transition: border-color 0.3s;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            border-bottom-color: var(--amber);
+        }
+        .form-group input::placeholder, .form-group textarea::placeholder {
+            color: var(--border);
+        }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .form-group select option { background: var(--surface); color: var(--text); }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .form-error { color: var(--red); font-size: 0.78rem; margin-top: 6px; display: none; }
+
+        /* ========== CTA ========== */
+        .cta-section {
+            background: var(--amber); padding: 80px 0; position: relative; overflow: hidden;
+        }
+        .cta-section::before {
+            content: 'SHADOWLINE'; position: absolute; bottom: -30px; left: 50%;
+            transform: translateX(-50%); font-family: 'Libre Bodoni', serif;
+            font-size: clamp(4rem, 10vw, 10rem); font-weight: 700;
+            color: rgba(0,0,0,0.06); white-space: nowrap; pointer-events: none;
+        }
+        .cta-content {
+            text-align: center; position: relative; z-index: 2;
+        }
+        .cta-section h2 {
+            color: var(--black); font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+            margin-bottom: 16px;
+        }
+        .cta-section p {
+            color: rgba(0,0,0,0.6); font-size: 1.02rem; margin-bottom: 32px;
+            max-width: 480px; margin-left: auto; margin-right: auto;
+        }
+        .btn-dark {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 16px 40px; font-size: 0.85rem; font-weight: 600;
+            background: var(--black); color: var(--amber);
+            text-transform: uppercase; letter-spacing: 1.5px;
+            transition: all 0.3s; border: none; cursor: pointer;
+        }
+        .btn-dark:hover { background: var(--dark); transform: translateY(-1px); }
+
+        /* ========== FOOTER ========== */
+        .footer {
+            background: var(--black); border-top: 1px solid var(--border);
+            padding: 60px 0 30px; color: var(--smoke);
+        }
+        .footer-grid {
+            display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px;
+            margin-bottom: 40px;
+        }
+        .footer-brand {
+            font-family: 'Libre Bodoni', serif; font-size: 1.4rem;
+            color: var(--amber); margin-bottom: 12px;
+        }
+        .footer-desc { font-size: 0.88rem; color: var(--smoke); line-height: 1.7; max-width: 280px; }
+        .footer h5 {
+            font-family: 'Work Sans', sans-serif; font-size: 0.75rem;
+            text-transform: uppercase; letter-spacing: 2px; color: var(--text);
+            margin-bottom: 16px; font-weight: 600;
+        }
+        .footer ul li { margin-bottom: 10px; }
+        .footer ul a { font-size: 0.88rem; color: var(--smoke); transition: color 0.3s; }
+        .footer ul a:hover { color: var(--amber); }
+        .footer-bottom {
+            border-top: 1px solid var(--border); padding-top: 24px;
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 0.82rem; flex-wrap: wrap; gap: 12px;
+        }
+        .webnari-badge { color: var(--border); font-size: 0.78rem; transition: color 0.3s; }
+        .webnari-badge:hover { color: var(--smoke); }
+
+        /* ========== REVEAL ========== */
+        .reveal {
+            opacity: 0; transform: translateY(24px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .reveal-delay-1 { transition-delay: 0.12s; }
+        .reveal-delay-2 { transition-delay: 0.24s; }
+        .reveal-delay-3 { transition-delay: 0.36s; }
+        .reveal-delay-4 { transition-delay: 0.48s; }
+        .reveal-delay-5 { transition-delay: 0.6s; }
+
+        /* ========== RESPONSIVE ========== */
+        @media (max-width: 1024px) {
+            .services-grid { grid-template-columns: repeat(2, 1fr); }
+            .why-grid { grid-template-columns: 1fr; gap: 40px; }
+            .why-left { position: static; }
+            .faq-grid { grid-template-columns: 1fr; gap: 40px; }
+            .faq-left { position: static; }
+            .contact-grid { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr 1fr; }
+            .hero-stats { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hamburger { display: flex; }
+            .services-grid { grid-template-columns: 1fr; }
+            .testimonials-grid { grid-template-columns: 1fr; }
+            .hero-stats { grid-template-columns: 1fr 1fr; }
+            .form-row { grid-template-columns: 1fr; }
+            .footer-grid { grid-template-columns: 1fr; }
+            section { padding: 70px 0; }
+            .hero { padding: 140px 0 80px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- NAV -->
+    <nav class="nav">
+        <div class="nav-inner">
+            <a href="#" class="nav-logo">
+                <div class="nav-logo-mark">
+                    <svg viewBox="0 0 20 20" fill="none" stroke="#D4A24E" stroke-width="1.5" stroke-linecap="round">
+                        <circle cx="10" cy="8" r="5"/><line x1="7" y1="12" x2="3" y2="18"/><line x1="13" y1="12" x2="17" y2="18"/>
+                    </svg>
+                </div>
+                ShadowLine
+            </a>
+            <div class="nav-links">
+                <a href="#services">Services</a>
+                <a href="#why">Why Us</a>
+                <a href="#process">Process</a>
+                <a href="#reviews">Reviews</a>
+                <a href="#faq">FAQ</a>
+                <a href="#contact">Contact</a>
+                <a href="tel:7865550340" class="nav-cta">Free Consult</a>
+            </div>
+            <button class="hamburger" onclick="toggleMobile()" aria-label="Menu">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+                    <line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="16" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- MOBILE MENU -->
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="mobile-close" onclick="toggleMobile()" aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round">
+                <line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/>
+            </svg>
+        </button>
+        <a href="#services" onclick="toggleMobile()">Services</a>
+        <a href="#why" onclick="toggleMobile()">Why Us</a>
+        <a href="#process" onclick="toggleMobile()">Process</a>
+        <a href="#reviews" onclick="toggleMobile()">Reviews</a>
+        <a href="#faq" onclick="toggleMobile()">FAQ</a>
+        <a href="#contact" onclick="toggleMobile()">Contact</a>
+        <a href="tel:7865550340" style="color:var(--amber);">Call (786) 555-0340</a>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content reveal">
+                <div class="hero-label">Licensed Private Investigators</div>
+                <h1>The Truth Doesn't<br>Hide From <em>Us</em></h1>
+                <p class="hero-desc">ShadowLine Investigations delivers discreet, thorough investigative services across South Florida. When you need answers, we find them.</p>
+                <div class="hero-btns">
+                    <a href="#contact" class="btn-gold">Free Consultation</a>
+                    <a href="tel:7865550340" class="btn-outline">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+                        (786) 555-0340
+                    </a>
+                </div>
+            </div>
+            <div class="hero-stats reveal reveal-delay-2">
+                <div class="hero-stat">
+                    <div class="num">22+</div>
+                    <div class="label">Years Experience</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="num">4,800</div>
+                    <div class="label">Cases Closed</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="num">97%</div>
+                    <div class="label">Success Rate</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="num">100%</div>
+                    <div class="label">Confidential</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="gold-line"></div>
+
+    <!-- SERVICES -->
+    <section class="services-section" id="services">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-label">What We Do</div>
+                <h2 class="section-title">Investigation Services</h2>
+                <p class="section-desc">From domestic matters to complex corporate investigations, our licensed team handles every case with precision and discretion.</p>
+            </div>
+            <div class="services-grid reveal">
+                <div class="service-card">
+                    <div class="service-num">01</div>
+                    <h3>Surveillance</h3>
+                    <p>Covert physical and electronic surveillance with detailed photographic and video documentation. Court-admissible evidence gathering.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-num">02</div>
+                    <h3>Background Checks</h3>
+                    <p>Comprehensive background investigations for individuals and businesses. Criminal records, employment history, financial checks, and more.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-num">03</div>
+                    <h3>Infidelity</h3>
+                    <p>Discreet domestic investigations providing clarity and peace of mind. We handle sensitive matters with empathy and professionalism.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-num">04</div>
+                    <h3>Corporate Fraud</h3>
+                    <p>Internal theft, embezzlement, intellectual property violations, and competitor intelligence. Protect your business interests.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-num">05</div>
+                    <h3>Missing Persons</h3>
+                    <p>Locate missing family members, debtors, witnesses, or heirs. Nationwide database access and field investigation resources.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-num">06</div>
+                    <h3>Insurance Claims</h3>
+                    <p>Investigate fraudulent insurance claims, workers' compensation fraud, and accident reconstruction. Expert testimony available.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- WHY US -->
+    <section id="why">
+        <div class="container">
+            <div class="why-grid">
+                <div class="why-left reveal">
+                    <div class="section-label">Why ShadowLine</div>
+                    <h2 class="section-title">Experience You Can Trust</h2>
+                    <p class="section-desc" style="margin-bottom:32px;">Founded by former law enforcement professionals, ShadowLine brings investigative expertise that gets results.</p>
+                    <div class="why-big-num">22</div>
+                    <p style="font-size:1.1rem;color:var(--smoke);">Years of investigative excellence in South Florida</p>
+                </div>
+                <div class="why-features">
+                    <div class="why-feature reveal">
+                        <div class="why-feature-icon"></div>
+                        <div>
+                            <h4>Florida Licensed & Insured</h4>
+                            <p>Fully licensed by the state of Florida (License #PI2024-0487). Bonded and insured for your protection.</p>
+                        </div>
+                    </div>
+                    <div class="why-feature reveal reveal-delay-1">
+                        <div class="why-feature-icon"></div>
+                        <div>
+                            <h4>Court-Admissible Evidence</h4>
+                            <p>All evidence gathered meets legal standards. Our investigators are experienced expert witnesses.</p>
+                        </div>
+                    </div>
+                    <div class="why-feature reveal reveal-delay-2">
+                        <div class="why-feature-icon"></div>
+                        <div>
+                            <h4>Absolute Discretion</h4>
+                            <p>Your case details are held in strict confidence. Encrypted communications, secure file sharing, and NDA available.</p>
+                        </div>
+                    </div>
+                    <div class="why-feature reveal reveal-delay-3">
+                        <div class="why-feature-icon"></div>
+                        <div>
+                            <h4>Former Law Enforcement</h4>
+                            <p>Our team includes retired detectives and federal agents with deep investigative training and contacts.</p>
+                        </div>
+                    </div>
+                    <div class="why-feature reveal reveal-delay-4">
+                        <div class="why-feature-icon"></div>
+                        <div>
+                            <h4>Real-Time Case Updates</h4>
+                            <p>Secure client portal with live case updates. Know where your investigation stands at all times.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="gold-line"></div>
+
+    <!-- PROCESS -->
+    <section class="process-section" id="process">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-label">How It Works</div>
+                <h2 class="section-title">Our Investigation Process</h2>
+                <p class="section-desc">Every case follows a structured methodology refined over two decades of professional investigation.</p>
+            </div>
+            <div class="process-timeline">
+                <div class="process-step reveal">
+                    <div class="process-step-num">STEP 01</div>
+                    <h4>Confidential Consultation</h4>
+                    <p>We discuss your situation in complete confidence. No obligation, no judgment. We assess feasibility and outline a strategy tailored to your needs.</p>
+                </div>
+                <div class="process-step reveal reveal-delay-1">
+                    <div class="process-step-num">STEP 02</div>
+                    <h4>Case Strategy & Agreement</h4>
+                    <p>We develop a detailed investigation plan with clear objectives, timeline, and transparent pricing. You approve before any work begins.</p>
+                </div>
+                <div class="process-step reveal reveal-delay-2">
+                    <div class="process-step-num">STEP 03</div>
+                    <h4>Active Investigation</h4>
+                    <p>Our investigators execute the plan using proven techniques, advanced technology, and extensive databases. You receive progress updates throughout.</p>
+                </div>
+                <div class="process-step reveal reveal-delay-3">
+                    <div class="process-step-num">STEP 04</div>
+                    <h4>Comprehensive Report</h4>
+                    <p>You receive a detailed report with all findings, evidence, documentation, and expert recommendations. Testimony services available if needed.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section id="reviews">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-label">Client Experiences</div>
+                <h2 class="section-title">What Our Clients Say</h2>
+                <p class="section-desc">For obvious reasons, we protect our clients' identities. These are real reviews shared with permission.</p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card reveal">
+                    <div class="testimonial-quote">"</div>
+                    <blockquote>"They handled my case with incredible sensitivity. The evidence they gathered was exactly what my attorney needed. Professional from start to finish."</blockquote>
+                    <div class="testimonial-author">
+                        <div class="name">Anonymous Client</div>
+                        <div class="role">Domestic Investigation, Miami</div>
+                    </div>
+                </div>
+                <div class="testimonial-card reveal reveal-delay-1">
+                    <div class="testimonial-quote">"</div>
+                    <blockquote>"We were losing six figures annually to internal theft. ShadowLine identified the source within two weeks and provided evidence that held up in court."</blockquote>
+                    <div class="testimonial-author">
+                        <div class="name">R. Mendez, CFO</div>
+                        <div class="role">Corporate Fraud Case, Doral</div>
+                    </div>
+                </div>
+                <div class="testimonial-card reveal reveal-delay-2">
+                    <div class="testimonial-quote">"</div>
+                    <blockquote>"After hiring two other firms with no results, ShadowLine located my estranged sibling within 10 days. Their database access and fieldwork are unmatched."</blockquote>
+                    <div class="testimonial-author">
+                        <div class="name">D. Whitfield</div>
+                        <div class="role">Missing Person Case, Coral Gables</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq-section" id="faq">
+        <div class="container">
+            <div class="faq-grid">
+                <div class="faq-left reveal">
+                    <div class="section-label">FAQ</div>
+                    <h2 class="section-title">Frequently Asked Questions</h2>
+                    <p class="section-desc">We understand you may have questions before hiring an investigator. Here are answers to the most common ones.</p>
+                </div>
+                <div class="faq-list">
+                    <div class="faq-item reveal">
+                        <button class="faq-q" onclick="toggleFaq(this)">
+                            Is what you do legal?
+                            <span class="faq-toggle"></span>
+                        </button>
+                        <div class="faq-a"><div class="faq-a-inner">Absolutely. All our methods comply with Florida state law. We are fully licensed by the Florida Department of Agriculture and Consumer Services, Division of Licensing. We never use illegal wiretapping, trespassing, or hacking.</div></div>
+                    </div>
+                    <div class="faq-item reveal reveal-delay-1">
+                        <button class="faq-q" onclick="toggleFaq(this)">
+                            How much does an investigation cost?
+                            <span class="faq-toggle"></span>
+                        </button>
+                        <div class="faq-a"><div class="faq-a-inner">Costs vary depending on the type and complexity of the case. We offer a free initial consultation to assess your needs and provide a transparent estimate. Most cases range from $1,500 to $5,000, with surveillance billed hourly.</div></div>
+                    </div>
+                    <div class="faq-item reveal reveal-delay-2">
+                        <button class="faq-q" onclick="toggleFaq(this)">
+                            Will the subject know they're being investigated?
+                            <span class="faq-toggle"></span>
+                        </button>
+                        <div class="faq-a"><div class="faq-a-inner">No. Discretion is paramount. Our investigators are trained in covert operations and blend into any environment. We use unmarked vehicles and civilian attire. The subject will not be alerted to the investigation.</div></div>
+                    </div>
+                    <div class="faq-item reveal reveal-delay-3">
+                        <button class="faq-q" onclick="toggleFaq(this)">
+                            Can your evidence be used in court?
+                            <span class="faq-toggle"></span>
+                        </button>
+                        <div class="faq-a"><div class="faq-a-inner">Yes. All evidence we gather is documented following legal chain-of-custody procedures and is admissible in Florida courts. Our investigators are also available as expert witnesses if needed.</div></div>
+                    </div>
+                    <div class="faq-item reveal reveal-delay-4">
+                        <button class="faq-q" onclick="toggleFaq(this)">
+                            How long does a typical investigation take?
+                            <span class="faq-toggle"></span>
+                        </button>
+                        <div class="faq-a"><div class="faq-a-inner">It depends on the case type. Background checks can be completed in 2-3 days. Surveillance cases typically require 1-2 weeks. Complex fraud or missing persons cases may take 2-6 weeks. We'll give you a realistic timeline during consultation.</div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AREAS -->
+    <section id="areas">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-label">Coverage</div>
+                <h2 class="section-title">South Florida Coverage</h2>
+                <p class="section-desc">Our investigators operate throughout Miami-Dade, Broward, and Palm Beach counties with nationwide connections.</p>
+            </div>
+            <div class="areas-flex reveal">
+                <span class="area-tag">Miami</span>
+                <span class="area-tag">Coral Gables</span>
+                <span class="area-tag">Doral</span>
+                <span class="area-tag">Hialeah</span>
+                <span class="area-tag">Kendall</span>
+                <span class="area-tag">Miami Beach</span>
+                <span class="area-tag">Brickell</span>
+                <span class="area-tag">Westchester</span>
+                <span class="area-tag">South Miami</span>
+                <span class="area-tag">Homestead</span>
+                <span class="area-tag">Fort Lauderdale</span>
+                <span class="area-tag">West Palm Beach</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="contact-section" id="contact">
+        <div class="container">
+            <div class="section-header reveal">
+                <div class="section-label">Get in Touch</div>
+                <h2 class="section-title">Request a Free Consultation</h2>
+                <p class="section-desc">All consultations are strictly confidential. Tell us about your situation and we'll discuss how we can help.</p>
+            </div>
+            <div class="contact-grid">
+                <div class="contact-info reveal">
+                    <div class="contact-item">
+                        <div class="contact-item-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+                        </div>
+                        <div>
+                            <h4>Phone</h4>
+                            <p>(786) 555-0340</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-item-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        </div>
+                        <div>
+                            <h4>Email</h4>
+                            <p>cases@shadowlineinv.com</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-item-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        </div>
+                        <div>
+                            <h4>Availability</h4>
+                            <p>24/7 — Emergency investigations available</p>
+                        </div>
+                    </div>
+                    <div class="contact-note">
+                        <p>All inquiries are treated with absolute confidentiality. We do not store communication logs. Encrypted channels available upon request.</p>
+                    </div>
+                </div>
+                <form class="contact-form reveal" action="https://formsubmit.co/cases@shadowlineinv.com" method="POST" id="contactForm" onsubmit="return validateForm()">
+                    <input type="hidden" name="_captcha" value="false">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">Your Name</label>
+                            <input type="text" id="name" name="name" placeholder="Full name" required>
+                            <div class="form-error" id="nameError">Please enter your name</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone</label>
+                            <input type="tel" id="phone" name="phone" placeholder="(786) 555-0000" required>
+                            <div class="form-error" id="phoneError">Please enter a valid phone</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="your@email.com" required>
+                        <div class="form-error" id="emailError">Please enter a valid email</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="caseType">Type of Investigation</label>
+                        <select id="caseType" name="case_type">
+                            <option value="">Select...</option>
+                            <option value="surveillance">Surveillance</option>
+                            <option value="background">Background Check</option>
+                            <option value="infidelity">Domestic / Infidelity</option>
+                            <option value="corporate">Corporate / Fraud</option>
+                            <option value="missing">Missing Person</option>
+                            <option value="insurance">Insurance Investigation</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Describe Your Situation</label>
+                        <textarea id="message" name="message" placeholder="Please share as much detail as you're comfortable with. All information is strictly confidential."></textarea>
+                    </div>
+                    <button type="submit" class="btn-gold" style="width:100%;justify-content:center;">Request Free Consultation</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <div class="cta-content reveal">
+            <h2>The Truth Is Out There.<br>Let Us Find It.</h2>
+            <p>Free, confidential consultation. No obligation. Your privacy is guaranteed.</p>
+            <a href="tel:7865550340" class="btn-dark">Call (786) 555-0340</a>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <div class="footer-brand">ShadowLine</div>
+                    <p class="footer-desc">Licensed private investigation firm serving South Florida since 2004. Discreet, thorough, results-driven.</p>
+                    <p style="margin-top:12px;font-size:0.82rem;opacity:0.4;">FL PI License #PI2024-0487</p>
+                </div>
+                <div>
+                    <h5>Services</h5>
+                    <ul>
+                        <li><a href="#services">Surveillance</a></li>
+                        <li><a href="#services">Background Checks</a></li>
+                        <li><a href="#services">Infidelity</a></li>
+                        <li><a href="#services">Corporate Fraud</a></li>
+                        <li><a href="#services">Missing Persons</a></li>
+                        <li><a href="#services">Insurance Claims</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5>Company</h5>
+                    <ul>
+                        <li><a href="#why">About Us</a></li>
+                        <li><a href="#process">Our Process</a></li>
+                        <li><a href="#reviews">Reviews</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                        <li><a href="#areas">Coverage</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5>Contact</h5>
+                    <ul>
+                        <li><a href="tel:7865550340">(786) 555-0340</a></li>
+                        <li><a href="mailto:cases@shadowlineinv.com">cases@shadowlineinv.com</a></li>
+                        <li><a>Available 24/7</a></li>
+                        <li><a>Miami, FL</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; 2026 ShadowLine Investigations. All rights reserved.</span>
+                <a href="https://webnari.io" target="_blank" class="webnari-badge">Powered by Webnari</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu
+        function toggleMobile() {
+            document.getElementById('mobileMenu').classList.toggle('open');
+            document.body.style.overflow = document.getElementById('mobileMenu').classList.contains('open') ? 'hidden' : '';
+        }
+
+        // FAQ
+        function toggleFaq(btn) {
+            const item = btn.parentElement;
+            const wasOpen = item.classList.contains('open');
+            document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+            if (!wasOpen) item.classList.add('open');
+        }
+
+        // Scroll reveal
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // Form validation
+        function validateForm() {
+            let valid = true;
+            const name = document.getElementById('name');
+            const email = document.getElementById('email');
+            const phone = document.getElementById('phone');
+            document.querySelectorAll('.form-error').forEach(e => e.style.display = 'none');
+            if (!name.value.trim()) { document.getElementById('nameError').style.display = 'block'; valid = false; }
+            if (!email.value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) { document.getElementById('emailError').style.display = 'block'; valid = false; }
+            if (!phone.value.match(/[\d\-()+ ]{7,}/)) { document.getElementById('phoneError').style.display = 'block'; valid = false; }
+            return valid;
+        }
+
+        // Blur validation
+        document.querySelectorAll('#contactForm input[required]').forEach(input => {
+            input.addEventListener('blur', function() {
+                const errorEl = document.getElementById(this.id + 'Error');
+                if (!errorEl) return;
+                if (this.type === 'email') {
+                    errorEl.style.display = this.value.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/) ? 'none' : 'block';
+                } else if (this.type === 'tel') {
+                    errorEl.style.display = this.value.match(/[\d\-()+ ]{7,}/) ? 'none' : 'block';
+                } else {
+                    errorEl.style.display = this.value.trim() ? 'none' : 'block';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

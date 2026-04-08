@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MeridianWell | Acupuncture & Holistic Wellness — Coral Gables, Miami</title>
+  <meta name="description" content="MeridianWell — licensed acupuncture, herbal medicine, cupping, and integrative wellness care in Coral Gables. Rooted in tradition, guided by science." />
+  <meta property="og:title" content="MeridianWell | Acupuncture & Holistic Wellness" />
+  <meta property="og:description" content="Licensed acupuncture and holistic health care in Coral Gables, Miami. Pain relief, stress, fertility, and whole-body wellness." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Gilda+Display&family=Mulish:ital,wght@0,200;0,300;0,400;0,600;0,700;1,200;1,300;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --ivory: #F9F7F4;
+      --ivory2: #F2EEE8;
+      --ivory3: #E8E2D9;
+      --parch: #EDE5D8;
+      --botanical: #2D6A4F;
+      --botanical2: #3D8063;
+      --botanical3: #52A080;
+      --sage: #A8C5A0;
+      --sage2: #BFCFB8;
+      --sage3: #D6E4D2;
+      --stone: #D4B896;
+      --stone2: #E2C9A8;
+      --stone3: #F0DFC3;
+      --terra: #C4704E;
+      --ink: #2A2420;
+      --ink2: #3E3630;
+      --text: #5A504A;
+      --muted: #8A7E76;
+      --border: #D8D0C4;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Mulish', sans-serif;
+      background: var(--ivory);
+      color: var(--ink);
+      overflow-x: hidden;
+    }
+    /* Subtle washi texture */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 300 300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.018'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* ── NAV — Floating Centered Pill ── */
+    .nav-wrapper {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      width: calc(100% - 48px);
+      max-width: 900px;
+    }
+    nav {
+      background: rgba(249,247,244,0.88);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 60px;
+      padding: 14px 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 4px 24px rgba(42,36,32,0.06);
+      transition: box-shadow 0.3s;
+    }
+    nav.scrolled {
+      box-shadow: 0 8px 40px rgba(42,36,32,0.1);
+    }
+    .nav-logo {
+      font-family: 'Gilda Display', serif;
+      font-size: 1.15rem;
+      color: var(--botanical);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .nav-logo-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--sage);
+      display: inline-block;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      color: var(--text);
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 30px;
+      transition: background 0.2s, color 0.2s;
+    }
+    .nav-links a:hover { background: var(--sage3); color: var(--botanical); }
+    .nav-cta {
+      background: var(--botanical) !important;
+      color: var(--ivory) !important;
+      padding: 10px 22px !important;
+      border-radius: 30px !important;
+      font-weight: 600 !important;
+    }
+    .nav-cta:hover { background: var(--botanical2) !important; }
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      cursor: pointer;
+      background: none;
+      border: none;
+    }
+    .hamburger span { display: block; width: 22px; height: 1.5px; background: var(--ink); transition: all 0.3s; }
+    .mobile-menu {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: var(--ivory);
+      z-index: 99;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      font-family: 'Gilda Display', serif;
+      font-size: 2.2rem;
+      color: var(--botanical);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .mobile-menu a:hover { color: var(--terra); }
+    .mobile-close {
+      position: absolute;
+      top: 28px; right: 32px;
+      background: none; border: none;
+      font-size: 1.6rem;
+      color: var(--text);
+      cursor: pointer;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+      padding: 120px 80px 80px;
+    }
+    /* Organic blob backgrounds */
+    .hero-blob1 {
+      position: absolute;
+      top: -10%;
+      right: -5%;
+      width: 55vw;
+      height: 55vw;
+      background: radial-gradient(ellipse, rgba(168,197,160,0.35) 0%, transparent 70%);
+      border-radius: 60% 40% 55% 45% / 45% 55% 45% 55%;
+      animation: blobFloat 14s ease-in-out infinite;
+      pointer-events: none;
+    }
+    .hero-blob2 {
+      position: absolute;
+      bottom: -15%;
+      left: -8%;
+      width: 45vw;
+      height: 45vw;
+      background: radial-gradient(ellipse, rgba(212,184,150,0.25) 0%, transparent 70%);
+      border-radius: 40% 60% 45% 55% / 55% 45% 60% 40%;
+      animation: blobFloat 18s ease-in-out infinite reverse;
+      pointer-events: none;
+    }
+    .hero-blob3 {
+      position: absolute;
+      top: 30%;
+      left: 30%;
+      width: 35vw;
+      height: 35vw;
+      background: radial-gradient(ellipse, rgba(45,106,79,0.06) 0%, transparent 70%);
+      border-radius: 55% 45% 40% 60% / 40% 60% 45% 55%;
+      animation: blobFloat 22s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes blobFloat {
+      0%, 100% { border-radius: 60% 40% 55% 45% / 45% 55% 45% 55%; transform: translate(0,0) scale(1); }
+      33% { border-radius: 45% 55% 40% 60% / 55% 45% 60% 40%; transform: translate(2%, 3%) scale(1.02); }
+      66% { border-radius: 55% 45% 60% 40% / 40% 60% 45% 55%; transform: translate(-2%, -1%) scale(0.98); }
+    }
+    .hero-content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .hero-left-content {}
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--sage3);
+      border: 1px solid var(--sage2);
+      border-radius: 30px;
+      padding: 7px 16px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      color: var(--botanical);
+      margin-bottom: 28px;
+    }
+    .hero-badge-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--botanical);
+      animation: pulse-dot 2.5s infinite;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.4); opacity: 0.7; }
+    }
+    .hero-title {
+      font-family: 'Gilda Display', serif;
+      font-weight: 400;
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      line-height: 1.1;
+      color: var(--ink);
+      margin-bottom: 24px;
+      letter-spacing: -0.01em;
+    }
+    .hero-title em {
+      font-style: italic;
+      color: var(--botanical);
+    }
+    .hero-description {
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--text);
+      font-weight: 300;
+      max-width: 420px;
+      margin-bottom: 40px;
+    }
+    .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+    .btn-botanical {
+      background: var(--botanical);
+      color: var(--ivory);
+      padding: 14px 32px;
+      border-radius: 40px;
+      font-family: 'Mulish', sans-serif;
+      font-weight: 600;
+      font-size: 0.88rem;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.2s;
+      display: inline-block;
+    }
+    .btn-botanical:hover { background: var(--botanical2); transform: translateY(-2px); }
+    .btn-outline-botanical {
+      border: 1.5px solid var(--botanical);
+      color: var(--botanical);
+      padding: 14px 32px;
+      border-radius: 40px;
+      font-family: 'Mulish', sans-serif;
+      font-weight: 600;
+      font-size: 0.88rem;
+      letter-spacing: 0.04em;
+      text-decoration: none;
+      transition: background 0.2s, color 0.2s;
+      display: inline-block;
+    }
+    .btn-outline-botanical:hover { background: var(--sage3); }
+    .hero-right-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .hero-stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      margin-top: 52px;
+      border-top: 1px solid var(--border);
+      padding-top: 32px;
+    }
+    .hero-stat-v { text-align: left; padding-right: 28px; border-right: 1px solid var(--border); margin-right: 28px; }
+    .hero-stat-v:last-child { border-right: none; padding-right: 0; margin-right: 0; }
+    .hero-stat-num-v {
+      font-family: 'Gilda Display', serif;
+      font-size: 2.2rem;
+      color: var(--botanical);
+      display: block;
+    }
+    .hero-stat-lbl-v {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      display: block;
+      margin-top: 4px;
+      text-transform: uppercase;
+    }
+
+    /* ── ZEN DIVIDER ── */
+    .zen-divider {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 48px 80px;
+      background: var(--ivory2);
+    }
+    .zen-line { flex: 1; height: 1px; background: var(--border); }
+    .zen-enso {
+      width: 36px;
+      height: 36px;
+      flex-shrink: 0;
+    }
+    .zen-text {
+      font-family: 'Gilda Display', serif;
+      font-style: italic;
+      font-size: 1rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      white-space: nowrap;
+    }
+
+    /* ── SECTIONS ── */
+    section { padding: 100px 80px; }
+    .section-label-v {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--botanical);
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .section-label-v::before {
+      content: '';
+      display: block;
+      width: 20px;
+      height: 1px;
+      background: var(--botanical);
+    }
+    h2.section-title-v {
+      font-family: 'Gilda Display', serif;
+      font-weight: 400;
+      font-size: clamp(2.2rem, 4.5vw, 3.6rem);
+      line-height: 1.15;
+      color: var(--ink);
+      margin-bottom: 16px;
+    }
+    h2.section-title-v em { font-style: italic; color: var(--botanical); }
+    h2.section-title-v.light { color: var(--ivory); }
+    h2.section-title-v.light em { color: var(--stone2); }
+
+    /* ── SERVICES ── */
+    .services-v { background: var(--ivory2); }
+    .services-header-v {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: end;
+      margin-bottom: 72px;
+    }
+    .services-grid-v {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .service-card-v {
+      background: var(--ivory);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 28px;
+      position: relative;
+      overflow: hidden;
+      transition: box-shadow 0.3s, transform 0.3s, border-color 0.3s;
+    }
+    .service-card-v:hover {
+      box-shadow: 0 16px 48px rgba(45,106,79,0.1);
+      transform: translateY(-4px);
+      border-color: var(--sage);
+    }
+    .service-card-v::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(to right, var(--botanical), var(--sage));
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .service-card-v:hover::before { opacity: 1; }
+    .service-icon-v {
+      width: 52px;
+      height: 52px;
+      background: var(--sage3);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 22px;
+      transition: background 0.3s;
+    }
+    .service-card-v:hover .service-icon-v { background: var(--botanical); }
+    .service-icon-v svg { width: 24px; height: 24px; color: var(--botanical); transition: color 0.3s; }
+    .service-card-v:hover .service-icon-v svg { color: var(--ivory); }
+    .service-card-v h3 {
+      font-family: 'Gilda Display', serif;
+      font-size: 1.15rem;
+      color: var(--ink);
+      margin-bottom: 10px;
+      font-weight: 400;
+    }
+    .service-card-v p {
+      font-size: 0.88rem;
+      line-height: 1.7;
+      color: var(--text);
+      font-weight: 300;
+      margin-bottom: 16px;
+    }
+    .service-duration {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--botanical);
+    }
+
+    /* ── PHILOSOPHY / ABOUT ── */
+    .about-v {
+      background: var(--botanical);
+      padding: 0;
+    }
+    .about-v-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      min-height: 600px;
+    }
+    .about-v-left {
+      padding: 100px 80px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .about-v-right {
+      background: var(--botanical2);
+      padding: 100px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .about-v-right::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 30% 50%, rgba(168,197,160,0.15) 0%, transparent 60%);
+    }
+    .philosophy-quote {
+      font-family: 'Gilda Display', serif;
+      font-style: italic;
+      font-size: 2rem;
+      color: var(--ivory);
+      line-height: 1.4;
+      margin-bottom: 32px;
+      font-weight: 400;
+      position: relative;
+      z-index: 2;
+    }
+    .about-v-body {
+      font-size: 0.98rem;
+      line-height: 1.85;
+      color: rgba(249,247,244,0.75);
+      font-weight: 300;
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 2;
+    }
+    .about-founder-v {
+      margin-top: 36px;
+      padding-top: 28px;
+      border-top: 1px solid rgba(255,255,255,0.12);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+      z-index: 2;
+    }
+    .founder-avatar-v {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Gilda Display', serif;
+      font-style: italic;
+      font-size: 1.2rem;
+      color: var(--stone2);
+      flex-shrink: 0;
+    }
+    .founder-name-v {
+      font-family: 'Gilda Display', serif;
+      font-size: 0.95rem;
+      color: var(--ivory);
+    }
+    .founder-title-v {
+      font-size: 0.8rem;
+      color: rgba(249,247,244,0.6);
+      font-weight: 300;
+      margin-top: 3px;
+    }
+    .about-v-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: rgba(255,255,255,0.1);
+      margin-top: 0;
+      position: relative;
+      z-index: 2;
+    }
+    .about-v-stat-box {
+      background: rgba(45,106,79,0.0);
+      padding: 28px 24px;
+    }
+    .about-v-stat-num {
+      font-family: 'Gilda Display', serif;
+      font-size: 2.8rem;
+      color: var(--stone2);
+      display: block;
+    }
+    .about-v-stat-lbl {
+      font-size: 0.78rem;
+      color: rgba(249,247,244,0.65);
+      font-weight: 300;
+      display: block;
+      margin-top: 4px;
+    }
+
+    /* ── PROCESS / HOW WE CARE ── */
+    .process-v { background: var(--parch); }
+    .process-header-v {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+      margin-bottom: 64px;
+    }
+    .process-curve {
+      position: relative;
+    }
+    /* A flowing SVG path connecting the steps */
+    .process-steps-v {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      position: relative;
+    }
+    .process-step-v {
+      padding: 0 28px 0 0;
+      position: relative;
+    }
+    .process-step-v:last-child { padding-right: 0; }
+    .step-circle-v {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--botanical);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 2;
+    }
+    .step-circle-v span {
+      font-family: 'Gilda Display', serif;
+      font-size: 1.1rem;
+      color: var(--ivory);
+    }
+    .process-connector {
+      position: absolute;
+      top: 27px;
+      left: 56px;
+      right: 28px;
+      height: 1px;
+      background: var(--stone2);
+    }
+    .process-step-v:last-child .process-connector { display: none; }
+    .process-step-v h3 {
+      font-family: 'Gilda Display', serif;
+      font-size: 1.1rem;
+      color: var(--ink);
+      margin-bottom: 10px;
+      font-weight: 400;
+    }
+    .process-step-v p {
+      font-size: 0.87rem;
+      line-height: 1.7;
+      color: var(--text);
+      font-weight: 300;
+    }
+
+    /* ── TESTIMONIALS ── */
+    .testimonials-v { background: var(--ivory3); }
+    .testimonials-slider {
+      margin-top: 60px;
+      position: relative;
+    }
+    .testimonials-grid-v {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .review-card-v {
+      background: var(--ivory);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 32px;
+      position: relative;
+    }
+    .review-card-v::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 24px;
+      bottom: 24px;
+      width: 3px;
+      background: linear-gradient(to bottom, var(--botanical), var(--sage));
+      border-radius: 0 2px 2px 0;
+    }
+    .stars-v {
+      color: var(--stone);
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      margin-bottom: 14px;
+    }
+    .review-text-v {
+      font-family: 'Gilda Display', serif;
+      font-style: italic;
+      font-size: 1.05rem;
+      line-height: 1.75;
+      color: var(--ink2);
+      margin-bottom: 24px;
+    }
+    .review-author-v {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .review-avatar-v {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--sage3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--botanical);
+      flex-shrink: 0;
+    }
+    .review-name-v {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .review-role-v {
+      font-size: 0.78rem;
+      color: var(--muted);
+      font-weight: 300;
+      margin-top: 2px;
+    }
+
+    /* ── FAQ ── */
+    .faq-v { background: var(--ivory2); }
+    .faq-layout-v {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 80px;
+      margin-top: 60px;
+    }
+    .faq-sidebar-v h3 {
+      font-family: 'Gilda Display', serif;
+      font-size: 2.8rem;
+      font-weight: 400;
+      color: var(--botanical);
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+    .faq-sidebar-v p {
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: var(--text);
+      font-weight: 300;
+    }
+    .faq-list-v { display: flex; flex-direction: column; }
+    .faq-item-v { border-bottom: 1px solid var(--border); }
+    .faq-q-v {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 22px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      cursor: pointer;
+      text-align: left;
+    }
+    .faq-q-v-text {
+      font-family: 'Gilda Display', serif;
+      font-size: 1rem;
+      color: var(--ink);
+      font-weight: 400;
+    }
+    .faq-toggle-v {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--botanical);
+      font-size: 1.2rem;
+      font-weight: 300;
+      flex-shrink: 0;
+      transition: background 0.3s, border-color 0.3s, transform 0.3s;
+    }
+    .faq-item-v.open .faq-toggle-v {
+      background: var(--sage3);
+      border-color: var(--sage);
+      transform: rotate(45deg);
+    }
+    .faq-a-v { max-height: 0; overflow: hidden; transition: max-height 0.35s ease; }
+    .faq-a-v-inner {
+      padding-bottom: 22px;
+      font-size: 0.92rem;
+      line-height: 1.8;
+      color: var(--text);
+      font-weight: 300;
+    }
+
+    /* ── AREAS ── */
+    .areas-v { background: var(--sage3); }
+    .areas-grid-v {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 40px;
+    }
+    .area-tag-v {
+      background: rgba(255,255,255,0.6);
+      border: 1px solid var(--sage2);
+      border-radius: 30px;
+      padding: 9px 22px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      color: var(--botanical);
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .area-tag-v:hover { background: var(--ivory); border-color: var(--botanical); }
+
+    /* ── CONTACT ── */
+    .contact-v {
+      background: var(--ivory);
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 0;
+      padding: 0;
+    }
+    .contact-v-left { padding: 100px 80px; background: var(--ivory2); }
+    .contact-v-right { padding: 100px 80px; }
+    .contact-info-v {
+      margin-bottom: 28px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+    .contact-icon-v {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--sage3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .contact-icon-v svg { width: 18px; height: 18px; color: var(--botanical); }
+    .contact-info-label-v {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+    .contact-info-val-v {
+      font-size: 0.95rem;
+      color: var(--ink);
+      line-height: 1.5;
+    }
+    .form-group-v { margin-bottom: 18px; }
+    .form-group-v label {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 8px;
+    }
+    .form-group-v input,
+    .form-group-v textarea,
+    .form-group-v select {
+      width: 100%;
+      background: var(--ivory2);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      color: var(--ink);
+      padding: 13px 16px;
+      font-family: 'Mulish', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 300;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-group-v input:focus,
+    .form-group-v textarea:focus,
+    .form-group-v select:focus {
+      border-color: var(--botanical);
+      box-shadow: 0 0 0 4px rgba(45,106,79,0.08);
+    }
+    .form-group-v input.error,
+    .form-group-v textarea.error { border-color: var(--terra); }
+    .form-group-v textarea { resize: vertical; min-height: 110px; }
+    .form-group-v select option { background: var(--ivory); }
+    .form-submit-v {
+      background: var(--botanical);
+      color: var(--ivory);
+      border: none;
+      border-radius: 40px;
+      padding: 16px 44px;
+      font-family: 'Mulish', sans-serif;
+      font-weight: 600;
+      font-size: 0.9rem;
+      letter-spacing: 0.04em;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s;
+    }
+    .form-submit-v:hover { background: var(--botanical2); }
+
+    /* ── CTA ── */
+    .cta-v {
+      background: var(--stone3);
+      padding: 80px;
+      text-align: center;
+    }
+    .cta-v h2 {
+      font-family: 'Gilda Display', serif;
+      font-size: clamp(2rem, 4.5vw, 3.4rem);
+      color: var(--ink);
+      margin-bottom: 12px;
+      font-weight: 400;
+      line-height: 1.2;
+    }
+    .cta-v h2 em { font-style: italic; color: var(--botanical); }
+    .cta-v p {
+      font-size: 1rem;
+      color: var(--text);
+      margin-bottom: 36px;
+      font-weight: 300;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--ink);
+      padding: 64px 80px;
+    }
+    .footer-v-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1.5fr;
+      gap: 48px;
+      margin-bottom: 48px;
+    }
+    .footer-v-brand {
+      font-family: 'Gilda Display', serif;
+      font-size: 1.4rem;
+      color: var(--ivory);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .footer-brand-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--sage); }
+    .footer-v-tagline {
+      font-size: 0.88rem;
+      color: rgba(249,247,244,0.55);
+      line-height: 1.7;
+      font-weight: 300;
+      margin-bottom: 20px;
+    }
+    .footer-v-license {
+      font-size: 0.72rem;
+      letter-spacing: 0.06em;
+      color: rgba(249,247,244,0.35);
+    }
+    .footer-v-col h4 {
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(168,197,160,0.7);
+      margin-bottom: 20px;
+    }
+    .footer-v-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-v-col ul a {
+      color: rgba(249,247,244,0.55);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 300;
+      transition: color 0.2s;
+    }
+    .footer-v-col ul a:hover { color: var(--sage); }
+    .footer-v-contact { display: flex; flex-direction: column; gap: 12px; }
+    .footer-v-ci {
+      font-size: 0.88rem;
+      color: rgba(249,247,244,0.55);
+      font-weight: 300;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .footer-v-ci svg { width: 14px; height: 14px; color: var(--sage); flex-shrink: 0; margin-top: 3px; }
+    .footer-v-bottom {
+      border-top: 1px solid rgba(255,255,255,0.08);
+      padding-top: 28px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer-v-bottom p {
+      font-size: 0.8rem;
+      color: rgba(249,247,244,0.35);
+      font-weight: 300;
+    }
+    .webnari-v {
+      font-size: 0.78rem;
+      color: rgba(249,247,244,0.35);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    .webnari-v:hover { color: var(--sage); }
+
+    /* ── REVEALS ── */
+    .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+    .reveal-delay-4 { transition-delay: 0.4s; }
+    .reveal-delay-5 { transition-delay: 0.5s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 1100px) {
+      section { padding: 80px 40px; }
+      .hero { padding: 120px 40px 80px; }
+      .hero-content { grid-template-columns: 1fr; gap: 48px; }
+      .hero-right-content { display: none; }
+      .services-header-v { grid-template-columns: 1fr; gap: 24px; }
+      .services-grid-v { grid-template-columns: 1fr 1fr; }
+      .about-v-inner { grid-template-columns: 1fr; }
+      .about-v-left, .about-v-right { padding: 60px 40px; }
+      .process-steps-v { grid-template-columns: 1fr 1fr; gap: 32px; }
+      .process-connector { display: none; }
+      .testimonials-grid-v { grid-template-columns: 1fr; }
+      .faq-layout-v { grid-template-columns: 1fr; gap: 40px; }
+      .contact-v { grid-template-columns: 1fr; }
+      .contact-v-left, .contact-v-right { padding: 60px 40px; }
+      .cta-v { padding: 64px 40px; }
+      .footer-v-grid { grid-template-columns: 1fr 1fr; }
+      footer { padding: 48px 40px; }
+      .zen-divider { padding: 40px; }
+      .process-header-v { grid-template-columns: 1fr; gap: 24px; }
+    }
+    @media (max-width: 768px) {
+      .nav-wrapper { top: 12px; width: calc(100% - 24px); }
+      nav { padding: 12px 20px; }
+      .nav-links { display: none; }
+      .hamburger { display: flex; }
+      section { padding: 64px 24px; }
+      .hero { padding: 100px 24px 64px; }
+      .services-grid-v { grid-template-columns: 1fr; }
+      .process-steps-v { grid-template-columns: 1fr; }
+      .hero-stats-row { grid-template-columns: 1fr; border: none; }
+      .hero-stat-v { border-right: none; border-bottom: 1px solid var(--border); padding-right: 0; margin-right: 0; padding-bottom: 20px; margin-bottom: 20px; }
+      .hero-stat-v:last-child { border-bottom: none; }
+      .footer-v-grid { grid-template-columns: 1fr; }
+      footer { padding: 40px 24px; }
+      .cta-v { padding: 48px 24px; }
+      .zen-divider { padding: 32px 24px; flex-wrap: wrap; }
+      .zen-text { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<div class="nav-wrapper">
+  <nav id="mainNav">
+    <a href="meridianwell.html" class="nav-logo">
+      <span class="nav-logo-dot"></span>
+      MeridianWell
+    </a>
+    <ul class="nav-links">
+      <li><a href="#services">Services</a></li>
+      <li><a href="#about">Our Practice</a></li>
+      <li><a href="#process">Your Visit</a></li>
+      <li><a href="#reviews">Reviews</a></li>
+      <li><a href="#contact" class="nav-cta">Book Now</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+</div>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" id="mobileClose">✕</button>
+  <a href="#services" onclick="closeMobile()">Services</a>
+  <a href="#about" onclick="closeMobile()">Our Practice</a>
+  <a href="#process" onclick="closeMobile()">Your Visit</a>
+  <a href="#reviews" onclick="closeMobile()">Reviews</a>
+  <a href="#contact" onclick="closeMobile()">Book Now</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" style="padding-top:140px;padding-bottom:100px;padding-left:80px;padding-right:80px;">
+  <!-- Organic blobs -->
+  <div class="hero-blob1"></div>
+  <div class="hero-blob2"></div>
+  <div class="hero-blob3"></div>
+  <div class="hero-content">
+    <div class="hero-left-content">
+      <div class="hero-badge">
+        <span class="hero-badge-dot"></span>
+        Licensed Acupuncture · Coral Gables, FL
+      </div>
+      <h1 class="hero-title">
+        Heal from<br>the <em>Inside</em><br>Out
+      </h1>
+      <p class="hero-description">Ancient wisdom, modern care. MeridianWell integrates acupuncture, herbal medicine, and holistic therapies to restore balance, relieve pain, and support whole-body wellness.</p>
+      <div class="hero-btns">
+        <a href="#contact" class="btn-botanical">Book a Session</a>
+        <a href="#services" class="btn-outline-botanical">View Services</a>
+      </div>
+      <div class="hero-stats-row">
+        <div class="hero-stat-v">
+          <span class="hero-stat-num-v">1,800+</span>
+          <span class="hero-stat-lbl-v">Patients Treated</span>
+        </div>
+        <div class="hero-stat-v">
+          <span class="hero-stat-num-v">12+</span>
+          <span class="hero-stat-lbl-v">Years Practice</span>
+        </div>
+        <div class="hero-stat-v">
+          <span class="hero-stat-num-v">4.9★</span>
+          <span class="hero-stat-lbl-v">Patient Rating</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-right-content">
+      <!-- Botanical / meridian body SVG illustration -->
+      <svg viewBox="0 0 340 480" width="320" height="460" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Holistic wellness botanical illustration">
+        <!-- Large leaf botanical background -->
+        <ellipse cx="170" cy="240" rx="140" ry="200" fill="rgba(168,197,160,0.1)" stroke="rgba(168,197,160,0.3)" stroke-width="1"/>
+        <!-- Leaf shapes -->
+        <path d="M170 60 Q220 120 200 200 Q170 260 170 60Z" fill="rgba(45,106,79,0.08)" stroke="rgba(45,106,79,0.2)" stroke-width="1"/>
+        <path d="M170 60 Q120 120 140 200 Q170 260 170 60Z" fill="rgba(45,106,79,0.06)" stroke="rgba(45,106,79,0.15)" stroke-width="1"/>
+        <!-- Leaf veins -->
+        <line x1="170" y1="70" x2="170" y2="255" stroke="rgba(45,106,79,0.25)" stroke-width="1" stroke-dasharray="2 4"/>
+        <line x1="170" y1="110" x2="195" y2="150" stroke="rgba(45,106,79,0.2)" stroke-width="0.8"/>
+        <line x1="170" y1="130" x2="148" y2="165" stroke="rgba(45,106,79,0.2)" stroke-width="0.8"/>
+        <line x1="170" y1="155" x2="198" y2="188" stroke="rgba(45,106,79,0.2)" stroke-width="0.8"/>
+        <line x1="170" y1="175" x2="145" y2="205" stroke="rgba(45,106,79,0.2)" stroke-width="0.8"/>
+        <!-- Meridian lines (stylized body map) -->
+        <!-- Central meridian -->
+        <path d="M170 90 Q170 180 168 280 Q166 340 170 400" stroke="rgba(45,106,79,0.5)" stroke-width="1.5" stroke-dasharray="4 4" stroke-linecap="round"/>
+        <!-- Left channel -->
+        <path d="M148 110 Q140 190 138 280 Q136 340 140 390" stroke="rgba(168,197,160,0.6)" stroke-width="1" stroke-dasharray="3 5" stroke-linecap="round"/>
+        <!-- Right channel -->
+        <path d="M192 110 Q200 190 202 280 Q204 340 200 390" stroke="rgba(168,197,160,0.6)" stroke-width="1" stroke-dasharray="3 5" stroke-linecap="round"/>
+        <!-- Horizontal energy points (acupoints) -->
+        <circle cx="170" cy="100" r="5" fill="rgba(45,106,79,0.5)" stroke="rgba(45,106,79,0.8)" stroke-width="1.5"/>
+        <circle cx="170" cy="130" r="4" fill="rgba(212,184,150,0.7)" stroke="rgba(196,112,78,0.6)" stroke-width="1.5"/>
+        <circle cx="170" cy="165" r="5" fill="rgba(45,106,79,0.5)" stroke="rgba(45,106,79,0.8)" stroke-width="1.5"/>
+        <circle cx="170" cy="200" r="3.5" fill="rgba(212,184,150,0.7)" stroke="rgba(196,112,78,0.6)" stroke-width="1.5"/>
+        <circle cx="170" cy="235" r="5" fill="rgba(45,106,79,0.5)" stroke="rgba(45,106,79,0.8)" stroke-width="1.5"/>
+        <circle cx="170" cy="270" r="4" fill="rgba(212,184,150,0.7)" stroke="rgba(196,112,78,0.6)" stroke-width="1.5"/>
+        <circle cx="170" cy="305" r="5" fill="rgba(45,106,79,0.5)" stroke="rgba(45,106,79,0.8)" stroke-width="1.5"/>
+        <circle cx="170" cy="340" r="3.5" fill="rgba(212,184,150,0.7)" stroke="rgba(196,112,78,0.6)" stroke-width="1.5"/>
+        <!-- Small radial lines at each acupoint (needle indicator) -->
+        <line x1="170" y1="90" x2="170" y2="80" stroke="rgba(196,112,78,0.5)" stroke-width="1" stroke-linecap="round"/>
+        <line x1="178" y1="98" x2="185" y2="92" stroke="rgba(196,112,78,0.4)" stroke-width="0.8" stroke-linecap="round"/>
+        <line x1="162" y1="98" x2="155" y2="92" stroke="rgba(196,112,78,0.4)" stroke-width="0.8" stroke-linecap="round"/>
+        <!-- Botanical flowers on sides -->
+        <circle cx="95" cy="180" r="18" fill="rgba(168,197,160,0.2)" stroke="rgba(168,197,160,0.4)" stroke-width="1"/>
+        <circle cx="95" cy="180" r="8" fill="rgba(45,106,79,0.25)"/>
+        <circle cx="245" cy="300" r="14" fill="rgba(212,184,150,0.25)" stroke="rgba(212,184,150,0.5)" stroke-width="1"/>
+        <circle cx="245" cy="300" r="6" fill="rgba(196,112,78,0.3)"/>
+        <!-- Stem -->
+        <path d="M95 198 Q90 240 95 260" stroke="rgba(45,106,79,0.3)" stroke-width="1" stroke-linecap="round"/>
+        <path d="M245 314 Q250 350 242 370" stroke="rgba(45,106,79,0.3)" stroke-width="1" stroke-linecap="round"/>
+        <!-- Branch leaves -->
+        <ellipse cx="82" cy="230" rx="16" ry="8" fill="rgba(45,106,79,0.12)" stroke="rgba(45,106,79,0.2)" stroke-width="1" transform="rotate(-30 82 230)"/>
+        <ellipse cx="108" cy="245" rx="14" ry="7" fill="rgba(45,106,79,0.1)" stroke="rgba(45,106,79,0.18)" stroke-width="1" transform="rotate(20 108 245)"/>
+        <!-- Glow at center mass -->
+        <circle cx="170" cy="240" r="8" fill="rgba(45,106,79,0.12)" stroke="none"/>
+        <circle cx="170" cy="240" r="16" fill="rgba(45,106,79,0.05)" stroke="none"/>
+        <!-- Decorative outer ring -->
+        <circle cx="170" cy="240" r="170" fill="none" stroke="rgba(168,197,160,0.12)" stroke-width="1" stroke-dasharray="8 12"/>
+        <circle cx="170" cy="240" r="145" fill="none" stroke="rgba(168,197,160,0.08)" stroke-width="1" stroke-dasharray="4 16"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- ZEN DIVIDER -->
+<div class="zen-divider" aria-hidden="true">
+  <div class="zen-line"></div>
+  <svg class="zen-enso" viewBox="0 0 40 40" fill="none">
+    <path d="M20 6 C30 6, 36 12, 36 20 C36 28, 30 35, 22 36 C12 36, 5 30, 5 20 C5 12, 10 7, 18 6" stroke="rgba(45,106,79,0.4)" stroke-width="2" stroke-linecap="round" fill="none"/>
+  </svg>
+  <span class="zen-text">Acupuncture · Herbal Medicine · Cupping · Moxa · Tui Na · Nutritional Guidance</span>
+  <svg class="zen-enso" viewBox="0 0 40 40" fill="none">
+    <path d="M20 6 C30 6, 36 12, 36 20 C36 28, 30 35, 22 36 C12 36, 5 30, 5 20 C5 12, 10 7, 18 6" stroke="rgba(45,106,79,0.4)" stroke-width="2" stroke-linecap="round" fill="none"/>
+  </svg>
+  <div class="zen-line"></div>
+</div>
+
+<!-- SERVICES -->
+<section class="services-v" id="services">
+  <div class="services-header-v">
+    <div>
+      <div class="section-label-v reveal">What We Offer</div>
+      <h2 class="section-title-v reveal">Treatments &amp;<br><em>Modalities</em></h2>
+    </div>
+    <p style="font-size:1rem;line-height:1.8;color:var(--text);font-weight:300;" class="reveal">Each treatment is personalized to your constitution, symptoms, and goals. We integrate traditional Chinese medicine principles with contemporary evidence-based practice.</p>
+  </div>
+  <div class="services-grid-v">
+    <div class="service-card-v reveal">
+      <div class="service-icon-v">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><line x1="12" y1="2" x2="12" y2="22"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="7" y1="12" x2="17" y2="12"/><line x1="8" y1="18" x2="16" y2="18"/></svg>
+      </div>
+      <h3>Acupuncture</h3>
+      <p>Precise needle placement along classical meridian pathways to restore qi flow, reduce inflammation, relieve pain, and regulate the nervous system.</p>
+      <span class="service-duration">60 or 90 min · From $120</span>
+    </div>
+    <div class="service-card-v reveal reveal-delay-1">
+      <div class="service-icon-v">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10"/><path d="M12 8v4l3 3"/></svg>
+      </div>
+      <h3>Herbal Medicine</h3>
+      <p>Classical formulas and custom herbal prescriptions from our dispensary — adapted to your constitution and specific health concerns.</p>
+      <span class="service-duration">Consultation · From $85</span>
+    </div>
+    <div class="service-card-v reveal reveal-delay-2">
+      <div class="service-icon-v">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M16 8h.01M8 8h.01M12 4h.01M12 20h.01M20 12h.01M4 12h.01"/></svg>
+      </div>
+      <h3>Cupping Therapy</h3>
+      <p>Fire and silicone cupping to release myofascial tension, improve circulation, and address chronic muscular pain and respiratory conditions.</p>
+      <span class="service-duration">45 min · From $90</span>
+    </div>
+    <div class="service-card-v reveal reveal-delay-3">
+      <div class="service-icon-v">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+      </div>
+      <h3>Moxibustion</h3>
+      <p>Warming therapy using dried mugwort (moxa) to stimulate specific points, nourish qi and blood, and treat cold and deficient conditions.</p>
+      <span class="service-duration">45 min · Included in most sessions</span>
+    </div>
+    <div class="service-card-v reveal reveal-delay-4">
+      <div class="service-icon-v">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M18 11.5C18 16.1945 13.5 19 12 22C10.5 19 6 16.1945 6 11.5a6 6 0 0112 0z"/></svg>
+      </div>
+      <h3>Tui Na Massage</h3>
+      <p>Chinese therapeutic bodywork using structured rhythmic pressure, acupressure, and joint mobilization to address musculoskeletal and internal imbalances.</p>
+      <span class="service-duration">60 min · From $110</span>
+    </div>
+    <div class="service-card-v reveal reveal-delay-5">
+      <div class="service-icon-v">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 3h18v4H3zM3 10h18M7 21l5-11 5 11M9 17h6"/></svg>
+      </div>
+      <h3>Nutritional Guidance</h3>
+      <p>TCM-based dietary therapy and modern nutritional counseling tailored to your constitution, seasonal context, and therapeutic goals.</p>
+      <span class="service-duration">60 min · From $95</span>
+    </div>
+  </div>
+</section>
+
+<!-- PHILOSOPHY / ABOUT -->
+<section class="about-v" id="about" style="padding:0;">
+  <div class="about-v-inner">
+    <div class="about-v-left">
+      <div class="section-label-v reveal" style="color:rgba(168,197,160,0.8);">Our Practice</div>
+      <h2 class="section-title-v light reveal">Rooted in <em>Tradition</em>,<br>Guided by Science</h2>
+      <div class="about-v-stats reveal">
+        <div class="about-v-stat-box">
+          <span class="about-v-stat-num">1,800+</span>
+          <span class="about-v-stat-lbl">Patients served</span>
+        </div>
+        <div class="about-v-stat-box">
+          <span class="about-v-stat-num">12</span>
+          <span class="about-v-stat-lbl">Years licensed</span>
+        </div>
+        <div class="about-v-stat-box">
+          <span class="about-v-stat-num">92%</span>
+          <span class="about-v-stat-lbl">Report improvement</span>
+        </div>
+        <div class="about-v-stat-box">
+          <span class="about-v-stat-num">8</span>
+          <span class="about-v-stat-lbl">Avg. sessions to results</span>
+        </div>
+      </div>
+      <div class="about-founder-v reveal">
+        <div class="founder-avatar-v">A</div>
+        <div>
+          <div class="founder-name-v">Dr. Anika Patel, DAOM, L.Ac.</div>
+          <div class="founder-title-v">Doctor of Acupuncture & Oriental Medicine · Florida Licensed</div>
+        </div>
+      </div>
+    </div>
+    <div class="about-v-right">
+      <p class="philosophy-quote reveal">"The body knows how to heal itself — we simply restore the conditions that allow it to."</p>
+      <p class="about-v-body reveal">MeridianWell was founded by Dr. Anika Patel after over a decade practicing integrative medicine in hospital settings and private clinics across the US and India. She brings a rare synthesis of classical Chinese medicine training with Western biomedical understanding.</p>
+      <p class="about-v-body reveal reveal-delay-1">Our Coral Gables practice specializes in pain management, women's health and fertility support, stress and anxiety, digestive disorders, and neurological conditions. We see each patient as a whole person — not a collection of symptoms — and build treatment plans that evolve with you over time.</p>
+      <p class="about-v-body reveal reveal-delay-2">Every session is unhurried. Every needle placement is deliberate. Every recommendation is grounded in both ancient scholarship and current clinical research.</p>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process-v" id="process">
+  <div class="process-header-v">
+    <div>
+      <div class="section-label-v reveal">Your Visit</div>
+      <h2 class="section-title-v reveal">What to<br><em>Expect</em></h2>
+    </div>
+    <p style="font-size:1rem;line-height:1.8;color:var(--text);font-weight:300;" class="reveal">First-time patients are often surprised by how relaxing the experience is. Here's what the journey looks like, from booking to breakthrough.</p>
+  </div>
+  <div class="process-steps-v">
+    <div class="process-step-v reveal">
+      <div class="step-circle-v"><span>1</span></div>
+      <div class="process-connector"></div>
+      <h3>Book & Intake</h3>
+      <p>Complete our comprehensive health history intake form before your first visit. We read your pulse, examine your tongue, and listen carefully to your health story — usually 30 minutes for new patients.</p>
+    </div>
+    <div class="process-step-v reveal reveal-delay-1">
+      <div class="step-circle-v"><span>2</span></div>
+      <div class="process-connector"></div>
+      <h3>Diagnosis & Plan</h3>
+      <p>Dr. Patel creates your TCM diagnosis and develops a treatment strategy — which points to needle, which adjunct therapies to include, and how many sessions are recommended for your condition.</p>
+    </div>
+    <div class="process-step-v reveal reveal-delay-2">
+      <div class="step-circle-v"><span>3</span></div>
+      <div class="process-connector"></div>
+      <h3>Treatment</h3>
+      <p>You'll rest comfortably for 30–45 minutes with needles in place, often experiencing warmth, tingling, or profound relaxation. Many patients fall asleep. Moxibustion or cupping may be integrated as needed.</p>
+    </div>
+    <div class="process-step-v reveal reveal-delay-3">
+      <div class="step-circle-v"><span>4</span></div>
+      <h3>Care Plan & Follow-Up</h3>
+      <p>After your session we discuss your response, refine your herbal formula if applicable, and schedule your follow-up. Most patients notice significant change within 4–8 sessions.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-v" id="reviews">
+  <div class="section-label-v reveal">Patient Voices</div>
+  <h2 class="section-title-v reveal">Real Stories of<br><em>Healing</em></h2>
+  <div class="testimonials-grid-v">
+    <div class="review-card-v reveal">
+      <div class="stars-v">★★★★★</div>
+      <p class="review-text-v">"I came to MeridianWell for chronic lower back pain after two years of failed physical therapy and pain medication. After six sessions with Dr. Patel, I had 80% less pain and had been able to stop taking NSAIDs completely. Her approach is methodical, her explanations are clear, and the clinic itself feels like a sanctuary."</p>
+      <div class="review-author-v">
+        <div class="review-avatar-v">JK</div>
+        <div>
+          <div class="review-name-v">James Kowalski</div>
+          <div class="review-role-v">Chronic Pain Patient · Coral Gables</div>
+        </div>
+      </div>
+    </div>
+    <div class="review-card-v reveal reveal-delay-1">
+      <div class="stars-v">★★★★★</div>
+      <p class="review-text-v">"I was struggling with anxiety and insomnia for years, trying everything from sleep medication to CBT. A friend recommended acupuncture as a last resort. Within three sessions at MeridianWell I was sleeping through the night. Within two months, my anxiety was at levels I hadn't experienced since my twenties. Truly transformative."</p>
+      <div class="review-author-v">
+        <div class="review-avatar-v">PT</div>
+        <div>
+          <div class="review-name-v">Priya Thomas</div>
+          <div class="review-role-v">Anxiety & Sleep Patient · Miami Beach</div>
+        </div>
+      </div>
+    </div>
+    <div class="review-card-v reveal reveal-delay-2">
+      <div class="stars-v">★★★★★</div>
+      <p class="review-text-v">"After two miscarriages, my OB recommended we try acupuncture to support our IVF cycle. I was skeptical. Dr. Patel created a protocol combining acupuncture and herbal support that my reproductive endocrinologist fully approved. Our first IVF cycle after starting treatment was successful. Our daughter is now two years old."</p>
+      <div class="review-author-v">
+        <div class="review-avatar-v">MR</div>
+        <div>
+          <div class="review-name-v">Maria & Carlos Rodriguez</div>
+          <div class="review-role-v">Fertility Support Patients · Doral</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-v" id="faq">
+  <div class="faq-layout-v">
+    <div class="faq-sidebar-v">
+      <h3 class="reveal">Have<br>Questions?</h3>
+      <p class="reveal" style="margin-bottom:28px;">We welcome every question — especially from first-time patients. Acupuncture is deeply effective and extremely safe in trained hands, but we understand the curiosity.</p>
+      <a href="tel:+13055552750" class="btn-botanical reveal">Call (305) 555-2750</a>
+    </div>
+    <div class="faq-list-v reveal">
+      <div class="faq-item-v">
+        <button class="faq-q-v" aria-expanded="false">
+          <span class="faq-q-v-text">Does acupuncture hurt?</span>
+          <span class="faq-toggle-v">+</span>
+        </button>
+        <div class="faq-a-v">
+          <div class="faq-a-v-inner">Acupuncture needles are hair-thin — nothing like hypodermic needles. Most patients feel a brief, mild sensation upon insertion — often described as a dull ache, warmth, or heaviness — and then relax completely. A majority of patients fall asleep during treatment. If you feel significant discomfort at any point, we adjust immediately.</div>
+        </div>
+      </div>
+      <div class="faq-item-v">
+        <button class="faq-q-v" aria-expanded="false">
+          <span class="faq-q-v-text">How many sessions will I need?</span>
+          <span class="faq-toggle-v">+</span>
+        </button>
+        <div class="faq-a-v">
+          <div class="faq-a-v-inner">This depends entirely on your condition. Acute issues (recent injury, acute stress) may resolve in 3–5 sessions. Chronic conditions typically require 8–12 sessions to see lasting improvement. Dr. Patel will give you an honest timeline after your initial intake — we don't keep patients coming indefinitely when their condition has resolved.</div>
+        </div>
+      </div>
+      <div class="faq-item-v">
+        <button class="faq-q-v" aria-expanded="false">
+          <span class="faq-q-v-text">Is acupuncture covered by insurance?</span>
+          <span class="faq-toggle-v">+</span>
+        </button>
+        <div class="faq-a-v">
+          <div class="faq-a-v-inner">Many insurance plans now cover acupuncture, particularly for musculoskeletal pain and headaches. We accept most major PPO plans and are happy to verify your benefits before your first appointment at no charge. We also offer payment plans and a reduced-fee community clinic on the first Tuesday of each month.</div>
+        </div>
+      </div>
+      <div class="faq-item-v">
+        <button class="faq-q-v" aria-expanded="false">
+          <span class="faq-q-v-text">What conditions do you treat?</span>
+          <span class="faq-toggle-v">+</span>
+        </button>
+        <div class="faq-a-v">
+          <div class="faq-a-v-inner">We treat a wide range of conditions including chronic and acute pain (back, neck, joint, headache/migraine), women's health and fertility, stress and anxiety, insomnia, digestive issues (IBS, Crohn's), respiratory conditions, neurological symptoms, and immune support. The WHO recognizes over 100 conditions for which acupuncture has demonstrated effectiveness.</div>
+        </div>
+      </div>
+      <div class="faq-item-v">
+        <button class="faq-q-v" aria-expanded="false">
+          <span class="faq-q-v-text">Can I continue seeing my other doctors?</span>
+          <span class="faq-toggle-v">+</span>
+        </button>
+        <div class="faq-a-v">
+          <div class="faq-a-v-inner">Absolutely — we function as an integrative complement to your primary care, specialist, or physical therapy team. We frequently collaborate with MDs, OBGYNs, reproductive endocrinologists, oncologists, and neurologists. Acupuncture is not a replacement for necessary medical care — it's a powerful addition to a comprehensive wellness strategy.</div>
+        </div>
+      </div>
+      <div class="faq-item-v">
+        <button class="faq-q-v" aria-expanded="false">
+          <span class="faq-q-v-text">What should I do before my appointment?</span>
+          <span class="faq-toggle-v">+</span>
+        </button>
+        <div class="faq-a-v">
+          <div class="faq-a-v-inner">Eat a light meal 1–2 hours before your session (avoid coming on an empty stomach). Wear or bring comfortable, loose-fitting clothing. Avoid coffee and alcohol on the day of your treatment. Come ready to rest — we've created a space where you can truly let go.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AREAS -->
+<section class="areas-v" id="areas" style="padding:80px 80px;">
+  <div class="section-label-v reveal">Where We Serve</div>
+  <h2 class="section-title-v reveal">South Florida<br>Service Area</h2>
+  <p style="font-size:0.95rem;color:var(--text);font-weight:300;margin-top:12px;max-width:500px;" class="reveal">Our Coral Gables clinic serves patients from across Miami-Dade. We see patients by appointment only and offer telehealth consultations for herbal medicine nationwide.</p>
+  <div class="areas-grid-v">
+    <span class="area-tag-v">Coral Gables</span>
+    <span class="area-tag-v">Miami Beach</span>
+    <span class="area-tag-v">Coconut Grove</span>
+    <span class="area-tag-v">Brickell</span>
+    <span class="area-tag-v">South Miami</span>
+    <span class="area-tag-v">Kendall</span>
+    <span class="area-tag-v">Doral</span>
+    <span class="area-tag-v">Hialeah</span>
+    <span class="area-tag-v">North Miami</span>
+    <span class="area-tag-v">Homestead</span>
+    <span class="area-tag-v">Miami Gardens</span>
+    <span class="area-tag-v">Westchester</span>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-v" id="contact" style="padding:0;">
+  <div class="contact-v-left">
+    <div class="section-label-v reveal">Get in Touch</div>
+    <h2 class="section-title-v reveal">Begin Your<br><em>Healing Journey</em></h2>
+    <p style="font-size:0.95rem;color:var(--text);font-weight:300;margin-top:16px;margin-bottom:44px;" class="reveal">We welcome new patients with warmth and no judgment. Fill in the form and we'll reach out within one business day to schedule your consultation.</p>
+    <div class="contact-info-v reveal">
+      <div class="contact-icon-v">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+      </div>
+      <div>
+        <div class="contact-info-label-v">Phone</div>
+        <div class="contact-info-val-v">(305) 555-2750</div>
+      </div>
+    </div>
+    <div class="contact-info-v reveal reveal-delay-1">
+      <div class="contact-icon-v">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+      </div>
+      <div>
+        <div class="contact-info-label-v">Clinic Address</div>
+        <div class="contact-info-val-v">3250 Mary Street, Suite 101<br>Coconut Grove / Coral Gables, FL 33133</div>
+      </div>
+    </div>
+    <div class="contact-info-v reveal reveal-delay-2">
+      <div class="contact-icon-v">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div>
+        <div class="contact-info-label-v">Clinic Hours</div>
+        <div class="contact-info-val-v">Mon–Fri: 9AM–7PM<br>Sat: 9AM–3PM · Sun: Closed</div>
+      </div>
+    </div>
+    <div class="contact-info-v reveal reveal-delay-3">
+      <div class="contact-icon-v">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </div>
+      <div>
+        <div class="contact-info-label-v">Email</div>
+        <div class="contact-info-val-v">care@meridianwell.com</div>
+      </div>
+    </div>
+  </div>
+  <div class="contact-v-right">
+    <h3 style="font-family:'Gilda Display',serif;font-size:1.5rem;color:var(--ink);margin-bottom:28px;font-weight:400;" class="reveal">New Patient Inquiry</h3>
+    <form action="https://formsubmit.co/care@meridianwell.com" method="POST" id="contactForm" novalidate>
+      <input type="hidden" name="_subject" value="New Patient Inquiry — MeridianWell" />
+      <input type="hidden" name="_captcha" value="false" />
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;" class="reveal">
+        <div class="form-group-v">
+          <label>First Name *</label>
+          <input type="text" name="first_name" placeholder="Sofia" required />
+        </div>
+        <div class="form-group-v">
+          <label>Last Name *</label>
+          <input type="text" name="last_name" placeholder="Chen" required />
+        </div>
+      </div>
+      <div class="form-group-v reveal reveal-delay-1">
+        <label>Email Address *</label>
+        <input type="email" name="email" placeholder="sofia@email.com" required />
+      </div>
+      <div class="form-group-v reveal reveal-delay-1">
+        <label>Phone Number</label>
+        <input type="tel" name="phone" placeholder="(305) 000-0000" />
+      </div>
+      <div class="form-group-v reveal reveal-delay-2">
+        <label>Primary Concern *</label>
+        <select name="concern" required>
+          <option value="">What brings you to us?</option>
+          <option>Chronic or Acute Pain</option>
+          <option>Women's Health / Fertility</option>
+          <option>Stress, Anxiety, or Depression</option>
+          <option>Insomnia or Sleep Disorders</option>
+          <option>Digestive Issues</option>
+          <option>Headaches or Migraines</option>
+          <option>Respiratory Conditions</option>
+          <option>Immune Support / General Wellness</option>
+          <option>Other / Not Sure</option>
+        </select>
+      </div>
+      <div class="form-group-v reveal reveal-delay-2">
+        <label>Have you had acupuncture before?</label>
+        <select name="prior_acupuncture">
+          <option value="">Select...</option>
+          <option>No, this would be my first time</option>
+          <option>Yes, occasionally</option>
+          <option>Yes, regularly</option>
+        </select>
+      </div>
+      <div class="form-group-v reveal reveal-delay-3">
+        <label>Tell us more about your health goals</label>
+        <textarea name="message" placeholder="Any relevant history, previous treatments tried, questions..."></textarea>
+      </div>
+      <button type="submit" class="form-submit-v reveal reveal-delay-3">Send New Patient Inquiry</button>
+    </form>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-v">
+  <h2>Your body has the answers.<br><em>Let's help it remember.</em></h2>
+  <p>Book your initial consultation today. New patients welcome. Most insurance accepted.</p>
+  <a href="#contact" class="btn-botanical" style="font-size:0.92rem;padding:15px 40px;">Schedule Your First Visit</a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-v-grid">
+    <div>
+      <div class="footer-v-brand">
+        <span class="footer-brand-dot"></span>
+        MeridianWell
+      </div>
+      <p class="footer-v-tagline">Licensed acupuncture, herbal medicine, and integrative wellness care. Rooted in 4,000 years of tradition. Guided by science. Coral Gables, Miami since 2012.</p>
+      <div class="footer-v-license">FL Acupuncture License #AP2024-0563 · NCCAOM Certified · DAOM, L.Ac.</div>
+    </div>
+    <div class="footer-v-col">
+      <h4>Treatments</h4>
+      <ul>
+        <li><a href="#services">Acupuncture</a></li>
+        <li><a href="#services">Herbal Medicine</a></li>
+        <li><a href="#services">Cupping Therapy</a></li>
+        <li><a href="#services">Moxibustion</a></li>
+        <li><a href="#services">Tui Na Massage</a></li>
+        <li><a href="#services">Nutritional Guidance</a></li>
+      </ul>
+    </div>
+    <div class="footer-v-col">
+      <h4>Practice</h4>
+      <ul>
+        <li><a href="#about">About Dr. Patel</a></li>
+        <li><a href="#process">Your First Visit</a></li>
+        <li><a href="#reviews">Patient Reviews</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#areas">Service Areas</a></li>
+        <li><a href="#contact">Book Appointment</a></li>
+      </ul>
+    </div>
+    <div class="footer-v-col">
+      <h4>Contact</h4>
+      <div class="footer-v-contact">
+        <div class="footer-v-ci">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          <span>(305) 555-2750</span>
+        </div>
+        <div class="footer-v-ci">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>3250 Mary St, Suite 101<br>Coral Gables, FL 33133</span>
+        </div>
+        <div class="footer-v-ci">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>Mon–Fri 9AM–7PM · Sat 9AM–3PM</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-v-bottom">
+    <p>&copy; 2025 MeridianWell LLC. All rights reserved. This website is for informational purposes and does not constitute medical advice.</p>
+    <a href="https://webnari.io" class="webnari-v" target="_blank" rel="noopener">Powered by Webnari</a>
+  </div>
+</footer>
+
+<script>
+  // Nav scroll
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 60));
+
+  // Mobile menu
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const mobileClose = document.getElementById('mobileClose');
+  hamburger.addEventListener('click', () => mobileMenu.classList.add('open'));
+  mobileClose.addEventListener('click', () => mobileMenu.classList.remove('open'));
+  function closeMobile() { mobileMenu.classList.remove('open'); }
+
+  // Reveal animations
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // FAQ
+  document.querySelectorAll('.faq-q-v').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item-v');
+      const answer = item.querySelector('.faq-a-v');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item-v').forEach(i => {
+        i.classList.remove('open');
+        i.querySelector('.faq-a-v').style.maxHeight = '0';
+        i.querySelector('.faq-q-v').setAttribute('aria-expanded', 'false');
+      });
+      if (!isOpen) {
+        item.classList.add('open');
+        answer.style.maxHeight = answer.scrollHeight + 'px';
+        btn.setAttribute('aria-expanded', 'true');
+      }
+    });
+  });
+
+  // Form validation
+  const form = document.getElementById('contactForm');
+  form.addEventListener('submit', e => {
+    let valid = true;
+    form.querySelectorAll('[required]').forEach(f => {
+      f.classList.remove('error');
+      if (!f.value.trim()) { f.classList.add('error'); valid = false; }
+    });
+    if (!valid) e.preventDefault();
+  });
+  form.querySelectorAll('input, textarea, select').forEach(f => {
+    f.addEventListener('blur', () => {
+      if (f.required && !f.value.trim()) f.classList.add('error');
+      else f.classList.remove('error');
+    });
+  });
+</script>
+</body>
+</html>

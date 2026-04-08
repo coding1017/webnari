@@ -1,0 +1,1825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="BrightMind Academy - K-12 Tutoring & Test Prep in South Florida. Expert tutors in Math, Science, English, and SAT/ACT Prep.">
+    <meta property="og:title" content="BrightMind Academy - Transform Your Learning">
+    <meta property="og:description" content="Expert K-12 tutoring and test prep for students in South Florida.">
+    <meta property="og:image" content="https://webnari.io/brightmind-og.png">
+    <meta property="og:url" content="https://webnari.io/brightmind.html">
+    <meta name="theme-color" content="#FF6B6B">
+    <title>BrightMind Academy | Tutoring & Test Prep</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #FF6B6B;
+            --secondary: #FFD93D;
+            --tertiary: #6ECFFF;
+            --mint: #4ECDC4;
+            --bg: #FFF9F0;
+            --text: #2D2D3A;
+            --muted: #7A7A8E;
+            --coral-light: #FFD9D9;
+            --yellow-light: #FFFAED;
+            --blue-light: #E8F8FF;
+            --mint-light: #E8F9F7;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+        }
+
+        /* Navigation */
+        .nav-pill {
+            position: fixed;
+            top: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border-radius: 60px;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .nav-pill.scrolled {
+            padding: 0.75rem 1.75rem;
+            top: 1.5rem;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.12);
+        }
+
+        .nav-logo {
+            font-family: 'Nunito', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text);
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--tertiary));
+            border-radius: 2px;
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            padding: 0.7rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-family: 'Nunito', sans-serif;
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0.5rem;
+        }
+
+        .hamburger span {
+            width: 24px;
+            height: 3px;
+            background: var(--text);
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 6rem 2rem 2rem;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--bg) 0%, var(--blue-light) 50%, var(--mint-light) 100%);
+        }
+
+        .hero-content {
+            max-width: 800px;
+            z-index: 2;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            animation: bounce-in 0.8s ease-out;
+            color: var(--text);
+        }
+
+        .hero h1 .highlight {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: var(--muted);
+            margin-bottom: 2.5rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-bottom: 4rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 1rem 2.5rem;
+            border: none;
+            border-radius: 30px;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), #FF5252);
+            color: white;
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 107, 107, 0.4);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 3px solid var(--primary);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+        }
+
+        .btn-secondary:hover {
+            background: var(--coral-light);
+            transform: translateY(-3px);
+        }
+
+        .hero-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .hero-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.08);
+            transform: rotate(var(--rotation, 0deg));
+            transition: transform 0.3s;
+        }
+
+        .hero-card:nth-child(1) {
+            --rotation: -3deg;
+        }
+
+        .hero-card:nth-child(2) {
+            --rotation: 0deg;
+            margin-top: 1rem;
+        }
+
+        .hero-card:nth-child(3) {
+            --rotation: 3deg;
+        }
+
+        .hero-card:hover {
+            transform: rotate(0deg) translateY(-5px);
+        }
+
+        .hero-card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero-card h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        /* Decorative shapes */
+        .shape-float {
+            position: absolute;
+            opacity: 0.6;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .shape-1 {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, var(--primary), var(--coral-light));
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            top: 10%;
+            right: 10%;
+            animation-delay: 0s;
+        }
+
+        .shape-2 {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--secondary), var(--yellow-light));
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            bottom: 15%;
+            left: 5%;
+            animation-delay: 1s;
+        }
+
+        .shape-3 {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--tertiary), var(--blue-light));
+            border-radius: 40% 60% 60% 40% / 40% 40% 60% 60%;
+            top: 40%;
+            left: 10%;
+            animation-delay: 2s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-30px);
+            }
+        }
+
+        @keyframes bounce-in {
+            0% {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Subjects Section */
+        .section {
+            padding: 6rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .section-title .highlight {
+            background: linear-gradient(135deg, var(--primary), var(--tertiary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--muted);
+            margin-bottom: 3rem;
+            font-size: 1.1rem;
+        }
+
+        .subjects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            animation-delay: 0.1s;
+        }
+
+        .subject-card {
+            padding: 2.5rem;
+            border-radius: 24px;
+            border: 3px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .subject-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            opacity: 0;
+            transition: all 0.4s;
+        }
+
+        .subject-card:nth-child(1) {
+            background: linear-gradient(135deg, var(--coral-light) 0%, var(--bg) 100%);
+            border-color: var(--primary);
+        }
+
+        .subject-card:nth-child(1)::before {
+            background: var(--primary);
+        }
+
+        .subject-card:nth-child(2) {
+            background: linear-gradient(135deg, var(--yellow-light) 0%, var(--bg) 100%);
+            border-color: var(--secondary);
+        }
+
+        .subject-card:nth-child(2)::before {
+            background: var(--secondary);
+        }
+
+        .subject-card:nth-child(3) {
+            background: linear-gradient(135deg, var(--blue-light) 0%, var(--bg) 100%);
+            border-color: var(--tertiary);
+        }
+
+        .subject-card:nth-child(3)::before {
+            background: var(--tertiary);
+        }
+
+        .subject-card:nth-child(4) {
+            background: linear-gradient(135deg, var(--mint-light) 0%, var(--bg) 100%);
+            border-color: var(--mint);
+        }
+
+        .subject-card:nth-child(4)::before {
+            background: var(--mint);
+        }
+
+        .subject-card:nth-child(5) {
+            background: linear-gradient(135deg, var(--coral-light) 0%, var(--bg) 100%);
+            border-color: var(--primary);
+        }
+
+        .subject-card:nth-child(5)::before {
+            background: var(--primary);
+        }
+
+        .subject-card:nth-child(6) {
+            background: linear-gradient(135deg, var(--blue-light) 0%, var(--bg) 100%);
+            border-color: var(--tertiary);
+        }
+
+        .subject-card:nth-child(6)::before {
+            background: var(--tertiary);
+        }
+
+        .subject-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .subject-card:hover::before {
+            opacity: 0.1;
+            top: -25%;
+            right: -25%;
+        }
+
+        .subject-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .subject-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+            color: var(--text);
+        }
+
+        .subject-card p {
+            color: var(--muted);
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .subject-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 700;
+            transition: gap 0.3s;
+        }
+
+        .subject-link:hover {
+            gap: 1rem;
+        }
+
+        /* Why Us Section */
+        .why-us {
+            background: linear-gradient(135deg, var(--blue-light) 0%, var(--mint-light) 100%);
+            padding: 6rem 2rem;
+        }
+
+        .why-us-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .why-us-stat {
+            font-size: 4rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .why-us-label {
+            font-size: 1.3rem;
+            color: var(--muted);
+            margin-bottom: 3rem;
+        }
+
+        .why-us-features {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .feature-item {
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            flex-shrink: 0;
+            box-shadow: 0 10px 30px rgba(255, 107, 107, 0.2);
+        }
+
+        .feature-item h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--text);
+        }
+
+        .feature-item p {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        /* How It Works */
+        .how-it-works {
+            background: white;
+            padding: 6rem 2rem;
+        }
+
+        .steps-container {
+            max-width: 900px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+        }
+
+        .step {
+            text-align: center;
+            position: relative;
+        }
+
+        .step::after {
+            content: '';
+            position: absolute;
+            width: 2px;
+            height: 80px;
+            background: linear-gradient(180deg, var(--primary), transparent);
+            bottom: -90px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .step:last-child::after {
+            display: none;
+        }
+
+        .step-number {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 15px 40px rgba(255, 107, 107, 0.3);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+        }
+
+        .step h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.75rem;
+            color: var(--text);
+        }
+
+        .step p {
+            color: var(--muted);
+            font-size: 0.95rem;
+        }
+
+        /* Testimonials */
+        .testimonials {
+            background: linear-gradient(135deg, var(--coral-light) 0%, var(--yellow-light) 100%);
+            padding: 6rem 2rem;
+        }
+
+        .testimonials-scroll {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .testimonial-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .testimonial-stars {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--secondary);
+        }
+
+        .testimonial-text {
+            font-size: 0.95rem;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .testimonial-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 900;
+            font-size: 1.5rem;
+        }
+
+        .testimonial-name {
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.25rem;
+        }
+
+        .testimonial-role {
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+
+        /* Pricing */
+        .pricing {
+            background: white;
+            padding: 6rem 2rem;
+        }
+
+        .pricing-cards {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .pricing-card {
+            border-radius: 24px;
+            padding: 3rem 2.5rem;
+            border: 3px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .pricing-card.featured {
+            border-color: var(--primary);
+            transform: scale(1.05);
+            box-shadow: 0 25px 60px rgba(255, 107, 107, 0.15);
+        }
+
+        .pricing-card:nth-child(1) {
+            background: linear-gradient(135deg, var(--yellow-light) 0%, var(--bg) 100%);
+        }
+
+        .pricing-card:nth-child(2) {
+            background: linear-gradient(135deg, var(--coral-light) 0%, var(--bg) 100%);
+        }
+
+        .pricing-card:nth-child(3) {
+            background: linear-gradient(135deg, var(--mint-light) 0%, var(--bg) 100%);
+        }
+
+        .pricing-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .pricing-price {
+            font-size: 2.8rem;
+            font-weight: 900;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .pricing-period {
+            color: var(--muted);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin: 2rem 0;
+            text-align: left;
+        }
+
+        .pricing-features li {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            color: var(--muted);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .pricing-features li::before {
+            content: '✓';
+            color: var(--mint);
+            font-weight: 900;
+            font-size: 1.2rem;
+        }
+
+        .pricing-card .btn {
+            width: 100%;
+            margin-top: 2rem;
+        }
+
+        /* FAQ */
+        .faq {
+            background: linear-gradient(135deg, var(--blue-light) 0%, var(--bg) 100%);
+            padding: 6rem 2rem;
+        }
+
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: white;
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            border: 2px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+        }
+
+        .faq-item:hover {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .faq-question {
+            padding: 1.5rem 2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            border: none;
+            width: 100%;
+            text-align: left;
+            font-weight: 700;
+            color: var(--text);
+            font-family: 'Nunito', sans-serif;
+            transition: background 0.3s;
+        }
+
+        .faq-question:hover {
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .faq-toggle {
+            font-size: 1.5rem;
+            transition: transform 0.3s;
+        }
+
+        .faq-item.active .faq-toggle {
+            transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+        }
+
+        .faq-answer-content {
+            padding: 2rem;
+            color: var(--muted);
+            line-height: 1.8;
+        }
+
+        /* Areas */
+        .areas {
+            background: white;
+            padding: 6rem 2rem;
+        }
+
+        .areas-container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .areas-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            justify-content: center;
+        }
+
+        .area-pill {
+            padding: 0.8rem 1.8rem;
+            border-radius: 30px;
+            background: linear-gradient(135deg, var(--coral-light), var(--bg));
+            border: 2px solid var(--primary);
+            color: var(--text);
+            font-weight: 700;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .area-pill:nth-child(2n) {
+            background: linear-gradient(135deg, var(--blue-light), var(--bg));
+            border-color: var(--tertiary);
+        }
+
+        .area-pill:nth-child(3n) {
+            background: linear-gradient(135deg, var(--mint-light), var(--bg));
+            border-color: var(--mint);
+        }
+
+        .area-pill:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Contact */
+        .contact {
+            background: linear-gradient(135deg, var(--yellow-light) 0%, var(--bg) 100%);
+            padding: 6rem 2rem;
+        }
+
+        .contact-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .contact-svg {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+        }
+
+        .contact-form {
+            background: white;
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.08);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            background: var(--bg);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-group input.error,
+        .form-group textarea.error {
+            border-color: #FF6B6B;
+            background: rgba(255, 107, 107, 0.05);
+        }
+
+        .form-group .error-message {
+            color: #FF6B6B;
+            font-size: 0.8rem;
+            margin-top: 0.25rem;
+            display: none;
+        }
+
+        .form-group.invalid .error-message {
+            display: block;
+        }
+
+        .form-submit {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 800;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .form-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(255, 107, 107, 0.3);
+        }
+
+        .form-submit:active {
+            transform: translateY(-1px);
+        }
+
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, var(--text), #1a1a24);
+            color: white;
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: color 0.3s;
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 2rem;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        .powered-by {
+            display: inline-block;
+            margin-top: 1rem;
+        }
+
+        .powered-by a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .powered-by a:hover {
+            text-decoration: underline;
+        }
+
+        /* Scroll Reveal Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+
+        /* Mobile Styles */
+        @media (max-width: 768px) {
+            .nav-pill {
+                border-radius: 20px;
+                padding: 0.8rem 1rem;
+                gap: 1rem;
+            }
+
+            .nav-logo {
+                font-size: 1.2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .hamburger.active span:nth-child(1) {
+                transform: rotate(45deg) translateY(15px);
+            }
+
+            .hamburger.active span:nth-child(2) {
+                opacity: 0;
+            }
+
+            .hamburger.active span:nth-child(3) {
+                transform: rotate(-45deg) translateY(-15px);
+            }
+
+            .mobile-menu {
+                position: fixed;
+                top: 80px;
+                left: 0;
+                right: 0;
+                background: white;
+                flex-direction: column;
+                padding: 2rem;
+                gap: 1rem;
+                list-style: none;
+                max-height: 0;
+                overflow: hidden;
+                transition: max-height 0.3s;
+                z-index: 999;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            }
+
+            .mobile-menu.active {
+                max-height: 500px;
+            }
+
+            .mobile-menu a {
+                color: var(--text);
+                text-decoration: none;
+                font-weight: 700;
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .subjects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .why-us-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .steps-container {
+                gap: 2rem;
+            }
+
+            .step::after {
+                height: 40px;
+                bottom: -50px;
+            }
+
+            .contact-content {
+                grid-template-columns: 1fr;
+            }
+
+            .testimonials-scroll {
+                grid-template-columns: 1fr;
+            }
+
+            .shape-1, .shape-2, .shape-3 {
+                opacity: 0.3;
+            }
+
+            .pricing-card.featured {
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .pricing-price {
+                font-size: 2rem;
+            }
+
+            .hero-buttons {
+                gap: 1rem;
+            }
+
+            .btn {
+                padding: 0.8rem 1.5rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navigation -->
+    <nav class="nav-pill">
+        <div class="nav-logo">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="12" cy="12" r="9" stroke="url(#grad1)" stroke-width="2" fill="none"/>
+                <path d="M12 6V12L15 15" stroke="url(#grad1)" stroke-width="2" stroke-linecap="round"/>
+                <defs>
+                    <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#FF6B6B;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#FFD93D;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+            </svg>
+            BrightMind
+        </div>
+        <ul class="nav-links">
+            <li><a href="#subjects">Subjects</a></li>
+            <li><a href="#why">Why Us</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <button class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        <ul class="mobile-menu" id="mobile-menu">
+            <li><a href="#subjects">Subjects</a></li>
+            <li><a href="#why">Why Us</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+        <button class="nav-cta" onclick="document.querySelector('#contact').scrollIntoView({behavior: 'smooth'})">Start Learning</button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="shape-float shape-1"></div>
+        <div class="shape-float shape-2"></div>
+        <div class="shape-float shape-3"></div>
+
+        <div class="hero-content reveal">
+            <h1>Transform Your <span class="highlight">Learning Journey</span></h1>
+            <p class="hero-subtitle">Expert tutors, personalized instruction, and proven results. Your academic success starts here.</p>
+
+            <div class="hero-buttons">
+                <button class="btn btn-primary" onclick="document.querySelector('#contact').scrollIntoView({behavior: 'smooth'})">Get Started</button>
+                <button class="btn btn-secondary" onclick="alert('Schedule a free consultation call: (305) 555-1600')">Free Consultation</button>
+            </div>
+
+            <div class="hero-cards">
+                <div class="hero-card reveal reveal-delay-1">
+                    <div class="hero-card-icon">🧮</div>
+                    <h3>Math</h3>
+                    <p>Algebra to Calculus</p>
+                </div>
+                <div class="hero-card reveal reveal-delay-2">
+                    <div class="hero-card-icon">🔬</div>
+                    <h3>Science & STEM</h3>
+                    <p>Biology, Chemistry, Physics</p>
+                </div>
+                <div class="hero-card reveal reveal-delay-3">
+                    <div class="hero-card-icon">📚</div>
+                    <h3>English & Writing</h3>
+                    <p>Literature, Essays, AP</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Subjects Section -->
+    <section class="section" id="subjects">
+        <h2 class="section-title reveal">Our <span class="highlight">Subjects</span></h2>
+        <p class="section-subtitle reveal">World-class instruction across the subjects that matter most</p>
+
+        <div class="subjects-grid">
+            <div class="subject-card reveal reveal-delay-1">
+                <div class="subject-icon">🧮</div>
+                <h3>Math Tutoring</h3>
+                <p>From foundational arithmetic to AP Calculus. We break down complex concepts with clear, engaging explanations.</p>
+                <a href="#contact" class="subject-link">Learn More →</a>
+            </div>
+
+            <div class="subject-card reveal reveal-delay-2">
+                <div class="subject-icon">🔬</div>
+                <h3>Science & STEM</h3>
+                <p>Biology, Chemistry, Physics, and AP Sciences. Hands-on learning that makes science stick.</p>
+                <a href="#contact" class="subject-link">Learn More →</a>
+            </div>
+
+            <div class="subject-card reveal reveal-delay-3">
+                <div class="subject-icon">📚</div>
+                <h3>English & Writing</h3>
+                <p>Literature, essay writing, grammar, and AP English courses. Become a confident communicator.</p>
+                <a href="#contact" class="subject-link">Learn More →</a>
+            </div>
+
+            <div class="subject-card reveal reveal-delay-1">
+                <div class="subject-icon">🎯</div>
+                <h3>SAT & ACT Prep</h3>
+                <p>Strategic test-taking skills and comprehensive content review. Score improvement guaranteed.</p>
+                <a href="#contact" class="subject-link">Learn More →</a>
+            </div>
+
+            <div class="subject-card reveal reveal-delay-2">
+                <div class="subject-icon">🏆</div>
+                <h3>AP Course Support</h3>
+                <p>Prepare for AP exams with focused instruction covering all key concepts and exam strategies.</p>
+                <a href="#contact" class="subject-link">Learn More →</a>
+            </div>
+
+            <div class="subject-card reveal reveal-delay-3">
+                <div class="subject-icon">🌎</div>
+                <h3>Spanish & ESL</h3>
+                <p>Language mastery through conversational practice and culturally-rich instruction.</p>
+                <a href="#contact" class="subject-link">Learn More →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Us Section -->
+    <section class="why-us" id="why">
+        <div class="why-us-content">
+            <div class="reveal">
+                <div class="why-us-stat">97%</div>
+                <div class="why-us-label">Student satisfaction & grade improvement</div>
+            </div>
+
+            <div class="why-us-features">
+                <div class="feature-item reveal reveal-delay-1">
+                    <div class="feature-icon">👨‍🏫</div>
+                    <div>
+                        <h4>Expert Tutors</h4>
+                        <p>Highly qualified educators with advanced degrees in their subject areas.</p>
+                    </div>
+                </div>
+
+                <div class="feature-item reveal reveal-delay-2">
+                    <div class="feature-icon">🎯</div>
+                    <div>
+                        <h4>Personalized Learning</h4>
+                        <p>Custom lesson plans tailored to your unique learning style and goals.</p>
+                    </div>
+                </div>
+
+                <div class="feature-item reveal reveal-delay-3">
+                    <div class="feature-icon">📈</div>
+                    <div>
+                        <h4>Proven Results</h4>
+                        <p>Average grade improvement of 1.8 points. SAT/ACT average improvement: 200+ points.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="section how-it-works">
+        <h2 class="section-title reveal">How It <span class="highlight">Works</span></h2>
+        <p class="section-subtitle reveal">Three simple steps to academic success</p>
+
+        <div class="steps-container">
+            <div class="step reveal reveal-delay-1">
+                <div class="step-number">1</div>
+                <h3>Assessment</h3>
+                <p>We evaluate your strengths and identify areas for improvement through a detailed consultation.</p>
+            </div>
+
+            <div class="step reveal reveal-delay-2">
+                <div class="step-number">2</div>
+                <h3>Custom Plan</h3>
+                <p>Our tutors create a personalized learning roadmap designed specifically for your goals.</p>
+            </div>
+
+            <div class="step reveal reveal-delay-3">
+                <div class="step-number">3</div>
+                <h3>Results</h3>
+                <p>Regular progress tracking and adjustments ensure continuous improvement and success.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="section testimonials">
+        <h2 class="section-title reveal">What <span class="highlight">Students Say</span></h2>
+        <p class="section-subtitle reveal">Real stories of transformation and growth</p>
+
+        <div class="testimonials-scroll">
+            <div class="testimonial-card reveal reveal-delay-1">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"BrightMind helped me raise my SAT score from 1150 to 1450. The tutors really understood exactly what I needed to work on."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">SJ</div>
+                    <div>
+                        <div class="testimonial-name">Sarah Johnson</div>
+                        <div class="testimonial-role">Senior, SAT Prep</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card reveal reveal-delay-2">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"My chemistry grade went from C to A thanks to the clear explanations and practice problems. I actually enjoy chemistry now!"</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">MK</div>
+                    <div>
+                        <div class="testimonial-name">Marcus Kim</div>
+                        <div class="testimonial-role">Junior, Chemistry</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="testimonial-card reveal reveal-delay-3">
+                <div class="testimonial-stars">★★★★★</div>
+                <p class="testimonial-text">"The tutors at BrightMind made AP Calc actually make sense. I went from struggling to getting a 4 on the AP exam!"</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">LP</div>
+                    <div>
+                        <div class="testimonial-name">Lisa Patel</div>
+                        <div class="testimonial-role">Senior, AP Calculus</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing -->
+    <section class="section pricing">
+        <h2 class="section-title reveal">Simple <span class="highlight">Pricing</span></h2>
+        <p class="section-subtitle reveal">Flexible plans to fit your budget and learning goals</p>
+
+        <div class="pricing-cards">
+            <div class="pricing-card reveal reveal-delay-1">
+                <h3 class="pricing-title">Individual Sessions</h3>
+                <div class="pricing-price">$55</div>
+                <p class="pricing-period">per 1-hour session</p>
+                <ul class="pricing-features">
+                    <li>One-on-one instruction</li>
+                    <li>Personalized lesson plans</li>
+                    <li>Flexible scheduling</li>
+                    <li>Progress tracking</li>
+                </ul>
+                <button class="btn btn-primary" onclick="document.querySelector('#contact').scrollIntoView({behavior: 'smooth'})">Get Started</button>
+            </div>
+
+            <div class="pricing-card featured reveal reveal-delay-2">
+                <h3 class="pricing-title">Small Group (3-5)</h3>
+                <div class="pricing-price">$35</div>
+                <p class="pricing-period">per student/hour</p>
+                <ul class="pricing-features">
+                    <li>Small group instruction</li>
+                    <li>Collaborative learning</li>
+                    <li>Cost-effective option</li>
+                    <li>Same expert tutors</li>
+                </ul>
+                <button class="btn btn-primary" onclick="document.querySelector('#contact').scrollIntoView({behavior: 'smooth'})">Join a Group</button>
+            </div>
+
+            <div class="pricing-card reveal reveal-delay-3">
+                <h3 class="pricing-title">Test Prep Package</h3>
+                <div class="pricing-price">$450</div>
+                <p class="pricing-period">10 sessions (SAT/ACT)</p>
+                <ul class="pricing-features">
+                    <li>Comprehensive test prep</li>
+                    <li>Practice exams included</li>
+                    <li>Strategy & content coverage</li>
+                    <li>Email support included</li>
+                </ul>
+                <button class="btn btn-primary" onclick="document.querySelector('#contact').scrollIntoView({behavior: 'smooth'})">Enroll Now</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section faq">
+        <h2 class="section-title reveal">Frequently Asked <span class="highlight">Questions</span></h2>
+
+        <div class="faq-container">
+            <div class="faq-item reveal reveal-delay-1">
+                <button class="faq-question">
+                    <span>How do I schedule my first session?</span>
+                    <span class="faq-toggle">+</span>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">Contact us via our form below or call (305) 555-1600 for a free consultation. We'll discuss your goals and match you with the perfect tutor. Sessions start within 1-2 weeks of your first contact.</div>
+                </div>
+            </div>
+
+            <div class="faq-item reveal reveal-delay-2">
+                <button class="faq-question">
+                    <span>What is your cancellation policy?</span>
+                    <span class="faq-toggle">+</span>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">We require 24-hour notice for cancellations. Cancellations with less notice may be charged. We do allow one make-up session per month at no charge.</div>
+                </div>
+            </div>
+
+            <div class="faq-item reveal reveal-delay-3">
+                <button class="faq-question">
+                    <span>Can I switch tutors if needed?</span>
+                    <span class="faq-toggle">+</span>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">Absolutely. If you feel the tutor isn't the right fit, we'll match you with another qualified instructor at no additional cost. Your success is our priority.</div>
+                </div>
+            </div>
+
+            <div class="faq-item reveal reveal-delay-1">
+                <button class="faq-question">
+                    <span>Do you offer online and in-person tutoring?</span>
+                    <span class="faq-toggle">+</span>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">Yes! We offer both in-person sessions at our Coral Gables location and online sessions via secure video conferencing. Choose whatever works best for you.</div>
+                </div>
+            </div>
+
+            <div class="faq-item reveal reveal-delay-2">
+                <button class="faq-question">
+                    <span>What subjects do you tutor?</span>
+                    <span class="faq-toggle">+</span>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">We specialize in Math (Algebra through Calculus), Science (Biology, Chemistry, Physics), English & Writing, SAT/ACT Prep, AP Course Support, and Spanish/ESL. Contact us for subjects not listed.</div>
+                </div>
+            </div>
+
+            <div class="faq-item reveal reveal-delay-3">
+                <button class="faq-question">
+                    <span>Are there discounts for packages?</span>
+                    <span class="faq-toggle">+</span>
+                </button>
+                <div class="faq-answer">
+                    <div class="faq-answer-content">Yes! Our 10-session Test Prep Package is discounted compared to individual sessions. We also offer monthly plans with 3+ sessions per month at a 10% discount.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Service Areas -->
+    <section class="section areas">
+        <h2 class="section-title reveal">We Serve <span class="highlight">South Florida</span></h2>
+        <p class="section-subtitle reveal">Serving families across Miami-Dade County</p>
+
+        <div class="areas-container">
+            <div class="areas-grid">
+                <div class="area-pill reveal reveal-delay-1">Miami</div>
+                <div class="area-pill reveal reveal-delay-2">Coral Gables</div>
+                <div class="area-pill reveal reveal-delay-3">Coconut Grove</div>
+                <div class="area-pill reveal reveal-delay-1">South Miami</div>
+                <div class="area-pill reveal reveal-delay-2">Kendall</div>
+                <div class="area-pill reveal reveal-delay-3">Pinecrest</div>
+                <div class="area-pill reveal reveal-delay-1">Key Biscayne</div>
+                <div class="area-pill reveal reveal-delay-2">Brickell</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="section contact" id="contact">
+        <h2 class="section-title reveal">Get In <span class="highlight">Touch</span></h2>
+
+        <div class="contact-content">
+            <div class="reveal">
+                <svg class="contact-svg" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Pencil illustration -->
+                    <rect x="80" y="160" width="240" height="60" rx="20" fill="#FF6B6B" opacity="0.3"/>
+                    <rect x="85" y="165" width="230" height="50" rx="15" fill="none" stroke="#FF6B6B" stroke-width="2"/>
+
+                    <!-- Pencil tip -->
+                    <polygon points="100,200 85,215 85,185" fill="#FFD93D"/>
+
+                    <!-- Pencil shaft -->
+                    <rect x="100" y="180" width="200" height="40" rx="5" fill="#6ECFFF"/>
+                    <rect x="100" y="180" width="200" height="40" rx="5" fill="none" stroke="#2D2D3A" stroke-width="2"/>
+
+                    <!-- Eraser -->
+                    <rect x="300" y="185" width="25" height="30" fill="#FF6B6B" rx="3"/>
+
+                    <!-- Decorative stars -->
+                    <circle cx="150" cy="280" r="15" fill="#FFD93D" opacity="0.6"/>
+                    <circle cx="250" cy="290" r="10" fill="#6ECFFF" opacity="0.6"/>
+                    <circle cx="120" cy="320" r="8" fill="#4ECDC4" opacity="0.6"/>
+
+                    <!-- Contact info -->
+                    <text x="200" y="370" font-family="DM Sans" font-size="16" text-anchor="middle" fill="#2D2D3A" font-weight="700">
+                        Ready to Get Started?
+                    </text>
+                </svg>
+            </div>
+
+            <form class="contact-form reveal" method="POST" action="https://formsubmit.co/info@brightmindacademy.com">
+                <h3 style="margin-bottom: 1.5rem; color: var(--text);">Send us a Message</h3>
+
+                <div class="form-group">
+                    <label for="name">Full Name *</label>
+                    <input type="text" id="name" name="name" required>
+                    <span class="error-message">Please enter your name</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" name="email" required>
+                    <span class="error-message">Please enter a valid email</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" id="phone" name="phone">
+                </div>
+
+                <div class="form-group">
+                    <label for="subject">Subject *</label>
+                    <input type="text" id="subject" name="subject" placeholder="e.g., SAT Prep, Math Tutoring" required>
+                    <span class="error-message">Please enter a subject</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="message">Message *</label>
+                    <textarea id="message" name="message" required></textarea>
+                    <span class="error-message">Please enter your message</span>
+                </div>
+
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_next" value="https://webnari.io/brightmind.html">
+
+                <button type="submit" class="form-submit">Send Message</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>BrightMind Academy</h4>
+                <p style="font-size: 0.9rem; color: rgba(255,255,255,0.7); margin-bottom: 1rem;">
+                    K-12 Tutoring & Test Prep<br>
+                    Coral Gables, FL 33134
+                </p>
+                <a href="tel:+13055551600" style="font-weight: 700; color: var(--secondary);">📞 (305) 555-1600</a>
+            </div>
+
+            <div class="footer-section">
+                <h4>Services</h4>
+                <ul>
+                    <li><a href="#subjects">Math Tutoring</a></li>
+                    <li><a href="#subjects">Science & STEM</a></li>
+                    <li><a href="#subjects">English & Writing</a></li>
+                    <li><a href="#subjects">SAT/ACT Prep</a></li>
+                    <li><a href="#subjects">AP Courses</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Company</h4>
+                <ul>
+                    <li><a href="#why">Why Us</a></li>
+                    <li><a href="#pricing">Pricing</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="#">Privacy Policy</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Hours</h4>
+                <p style="font-size: 0.9rem;">
+                    Mon–Fri: 3PM–8PM<br>
+                    Sat: 9AM–3PM<br>
+                    Sun: Closed
+                </p>
+                <p style="font-size: 0.85rem; margin-top: 1rem; color: rgba(255,255,255,0.6);">
+                    License: #EDU2026-0541
+                </p>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 BrightMind Academy. All rights reserved.</p>
+            <p class="powered-by">
+                Powered by <a href="https://webnari.io" target="_blank" rel="noopener noreferrer">Webnari</a>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobile-menu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+        });
+
+        // Close mobile menu when link is clicked
+        document.querySelectorAll('.mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                mobileMenu.classList.remove('active');
+            });
+        });
+
+        // Nav scroll effect
+        const navPill = document.querySelector('.nav-pill');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navPill.classList.add('scrolled');
+            } else {
+                navPill.classList.remove('scrolled');
+            }
+        });
+
+        // Scroll reveal animation using Intersection Observer
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+        // FAQ accordion
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', (e) => {
+                const item = question.parentElement;
+                const wasActive = item.classList.contains('active');
+
+                document.querySelectorAll('.faq-item').forEach(faq => {
+                    faq.classList.remove('active');
+                });
+
+                if (!wasActive) {
+                    item.classList.add('active');
+                }
+            });
+        });
+
+        // Form validation
+        const form = document.querySelector('form');
+        const inputs = form.querySelectorAll('input[required], textarea[required]');
+
+        inputs.forEach(input => {
+            input.addEventListener('blur', () => validateField(input));
+        });
+
+        function validateField(field) {
+            const parent = field.parentElement;
+            const isValid = field.checkValidity();
+
+            if (!isValid) {
+                parent.classList.add('invalid');
+                field.classList.add('error');
+            } else {
+                parent.classList.remove('invalid');
+                field.classList.remove('error');
+            }
+        }
+
+        form.addEventListener('submit', (e) => {
+            let isFormValid = true;
+
+            inputs.forEach(input => {
+                if (!input.checkValidity()) {
+                    isFormValid = false;
+                    const parent = input.parentElement;
+                    parent.classList.add('invalid');
+                    input.classList.add('error');
+                }
+            });
+
+            if (!isFormValid) {
+                e.preventDefault();
+            }
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href !== '#' && document.querySelector(href)) {
+                    e.preventDefault();
+                    document.querySelector(href).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

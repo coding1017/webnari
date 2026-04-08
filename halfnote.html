@@ -1,0 +1,1922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="HalfNote Studios — Music Lessons & Performance Academy in Coconut Grove, Miami. Piano, guitar, voice, drums, violin, and music production lessons for all ages.">
+  <meta property="og:title" content="HalfNote Studios — Find Your Sound">
+  <meta property="og:description" content="Music lessons & performance academy in Coconut Grove, Miami. All ages, flexible scheduling, professional instructors.">
+  <meta property="og:image" content="https://webnari.io/og-halfnote.jpg">
+  <meta property="og:url" content="https://webnari.io/halfnote.html">
+  <title>HalfNote Studios — Music Lessons & Performance Academy</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Source+Serif+4:ital,wght@0,400;0,600;1,400;1,600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --riso-blue: #0078BF;
+      --riso-pink: #E85D75;
+      --riso-yellow: #FFE042;
+      --paper-white: #F2EDE4;
+      --paper-light: #FAF7F0;
+      --ink-black: #1A1A1A;
+      --muted-gray: #6B6B6B;
+      --white: #FFFFFF;
+      --font-display: 'Archivo Black', sans-serif;
+      --font-body: 'Source Serif 4', serif;
+      --font-mono: 'Space Mono', monospace;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--paper-white);
+      color: var(--ink-black);
+      line-height: 1.6;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Grain texture overlay */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' seed='2' /%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+      z-index: -1;
+    }
+
+    /* Desktop: Left sidebar nav */
+    @media (min-width: 901px) {
+      body {
+        margin-left: 260px;
+      }
+
+      .sidebar-nav {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 260px;
+        height: 100vh;
+        background: var(--paper-white);
+        padding: 40px 20px;
+        z-index: 1000;
+        border-right: 3px solid var(--ink-black);
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .nav-logo {
+        font-family: var(--font-display);
+        font-size: 24px;
+        color: var(--ink-black);
+        margin-bottom: 40px;
+        text-align: center;
+        line-height: 1.2;
+        letter-spacing: -1px;
+      }
+
+      .nav-logo svg {
+        width: 32px;
+        height: 32px;
+        display: inline-block;
+        margin-bottom: 8px;
+      }
+
+      .nav-links {
+        flex: 1;
+        list-style: none;
+      }
+
+      .nav-links li {
+        margin-bottom: 20px;
+      }
+
+      .nav-links a {
+        color: var(--ink-black);
+        text-decoration: none;
+        font-family: var(--font-mono);
+        font-size: 13px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 6px;
+        border-bottom: 1px dotted var(--muted-gray);
+        transition: color 0.3s ease;
+      }
+
+      .nav-links a:hover {
+        color: var(--riso-blue);
+      }
+
+      .nav-links .page-number {
+        color: var(--riso-pink);
+        font-weight: 700;
+      }
+
+      .nav-bottom {
+        border-top: 3px solid var(--ink-black);
+        padding-top: 20px;
+      }
+
+      .nav-phone {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        color: var(--ink-black);
+        margin-bottom: 20px;
+        line-height: 1.4;
+      }
+
+      .nav-cta {
+        background: var(--riso-blue);
+        color: var(--white);
+        border: none;
+        padding: 12px 16px;
+        font-family: var(--font-display);
+        font-size: 13px;
+        cursor: pointer;
+        text-decoration: none;
+        display: block;
+        text-align: center;
+        border-radius: 2px;
+        transition: background 0.3s ease;
+      }
+
+      .nav-cta:hover {
+        background: #005a8f;
+      }
+
+      .mobile-menu-button {
+        display: none;
+      }
+    }
+
+    /* Mobile: Top bar + hamburger */
+    @media (max-width: 900px) {
+      body {
+        margin-left: 0;
+      }
+
+      .sidebar-nav {
+        position: fixed;
+        left: -260px;
+        top: 0;
+        width: 260px;
+        height: 100vh;
+        background: var(--paper-white);
+        padding: 40px 20px;
+        z-index: 999;
+        border-right: 3px solid var(--ink-black);
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        transition: left 0.3s ease;
+      }
+
+      .sidebar-nav.active {
+        left: 0;
+      }
+
+      .nav-logo {
+        font-family: var(--font-display);
+        font-size: 20px;
+        color: var(--ink-black);
+        margin-bottom: 30px;
+        text-align: center;
+        line-height: 1.2;
+      }
+
+      .nav-links {
+        flex: 1;
+        list-style: none;
+      }
+
+      .nav-links li {
+        margin-bottom: 16px;
+      }
+
+      .nav-links a {
+        color: var(--ink-black);
+        text-decoration: none;
+        font-family: var(--font-mono);
+        font-size: 13px;
+        display: block;
+        padding: 8px 0;
+        border-bottom: 1px dotted var(--muted-gray);
+      }
+
+      .nav-bottom {
+        border-top: 3px solid var(--ink-black);
+        padding-top: 20px;
+      }
+
+      .nav-phone {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        color: var(--ink-black);
+        margin-bottom: 16px;
+      }
+
+      .nav-cta {
+        background: var(--riso-blue);
+        color: var(--white);
+        border: none;
+        padding: 12px 16px;
+        font-family: var(--font-display);
+        font-size: 13px;
+        cursor: pointer;
+        display: block;
+        text-align: center;
+        border-radius: 2px;
+      }
+
+      .mobile-menu-button {
+        position: fixed;
+        top: 16px;
+        left: 16px;
+        z-index: 1001;
+        background: var(--riso-blue);
+        border: none;
+        width: 44px;
+        height: 44px;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 6px;
+        padding: 0;
+      }
+
+      .mobile-menu-button span {
+        width: 24px;
+        height: 2px;
+        background: var(--white);
+        display: block;
+        transition: all 0.3s ease;
+      }
+
+      .mobile-menu-button.active span:nth-child(1) {
+        transform: rotate(45deg) translateY(12px);
+      }
+
+      .mobile-menu-button.active span:nth-child(2) {
+        opacity: 0;
+      }
+
+      .mobile-menu-button.active span:nth-child(3) {
+        transform: rotate(-45deg) translateY(-12px);
+      }
+
+      header {
+        height: 60px;
+        background: var(--paper-white);
+        border-bottom: 3px solid var(--ink-black);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .top-logo {
+        font-family: var(--font-display);
+        font-size: 18px;
+        color: var(--ink-black);
+      }
+    }
+
+    /* Main content container */
+    main {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Hero section */
+    .hero {
+      padding: 80px 40px;
+      background: var(--paper-white);
+      position: relative;
+      min-height: 600px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        padding: 100px 20px 60px;
+      }
+    }
+
+    .hero-decorative {
+      position: absolute;
+      pointer-events: none;
+    }
+
+    .hero-shape-1 {
+      width: 280px;
+      height: 280px;
+      background: var(--riso-pink);
+      border-radius: 50%;
+      top: 80px;
+      right: 60px;
+      opacity: 0.3;
+      animation: float 6s ease-in-out infinite;
+    }
+
+    .hero-shape-2 {
+      width: 200px;
+      height: 200px;
+      background: var(--riso-yellow);
+      top: 200px;
+      left: 40px;
+      opacity: 0.4;
+      animation: float 7s ease-in-out infinite 0.3s;
+    }
+
+    .hero-shape-3 {
+      width: 150px;
+      height: 150px;
+      background: var(--riso-blue);
+      clip-path: polygon(50% 0%, 100% 38%, 82% 100%, 18% 100%, 0% 38%);
+      bottom: 100px;
+      right: 200px;
+      opacity: 0.3;
+      animation: float 8s ease-in-out infinite 0.6s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(20px); }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      max-width: 700px;
+    }
+
+    .hero-headline {
+      font-family: var(--font-display);
+      font-size: 72px;
+      line-height: 1.1;
+      margin-bottom: 20px;
+      color: var(--ink-black);
+      transform: rotate(-2deg);
+      letter-spacing: -2px;
+    }
+
+    @media (max-width: 900px) {
+      .hero-headline {
+        font-size: 48px;
+      }
+    }
+
+    .hero-headline .accent {
+      color: var(--riso-blue);
+      display: inline-block;
+    }
+
+    .hero-stamp {
+      display: inline-block;
+      width: 140px;
+      height: 140px;
+      border: 2px dashed var(--riso-pink);
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-mono);
+      font-size: 14px;
+      color: var(--riso-pink);
+      margin: 30px 0;
+      transform: rotate(12deg);
+      font-weight: 700;
+    }
+
+    .hero-instruments {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 40px;
+    }
+
+    .instrument-pill {
+      background: var(--ink-black);
+      color: var(--paper-white);
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-family: var(--font-display);
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      display: inline-block;
+      animation: slideUp 0.6s ease-out backwards;
+    }
+
+    .instrument-pill:nth-child(1) { animation-delay: 0.1s; }
+    .instrument-pill:nth-child(2) { animation-delay: 0.2s; }
+    .instrument-pill:nth-child(3) { animation-delay: 0.3s; }
+    .instrument-pill:nth-child(4) { animation-delay: 0.4s; }
+    .instrument-pill:nth-child(5) { animation-delay: 0.5s; }
+    .instrument-pill:nth-child(6) { animation-delay: 0.6s; }
+
+    @keyframes slideUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Lessons section */
+    .lessons {
+      background: var(--riso-blue);
+      padding: 80px 40px;
+      color: var(--white);
+    }
+
+    @media (max-width: 900px) {
+      .lessons {
+        padding: 60px 20px;
+      }
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 56px;
+      margin-bottom: 50px;
+      letter-spacing: -1px;
+    }
+
+    @media (max-width: 900px) {
+      .section-title {
+        font-size: 40px;
+        margin-bottom: 40px;
+      }
+    }
+
+    .lessons-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+    }
+
+    .lesson-card {
+      background: var(--paper-white);
+      padding: 30px;
+      border: 3px solid var(--ink-black);
+      color: var(--ink-black);
+      border-radius: 4px;
+      transform: rotate(-1deg);
+      transition: all 0.3s ease;
+      animation: fadeInUp 0.6s ease-out backwards;
+    }
+
+    .lesson-card:nth-child(even) {
+      transform: rotate(1deg);
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .lesson-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .lesson-card:nth-child(even):hover {
+      transform: translateY(-8px);
+    }
+
+    .lesson-index {
+      font-family: var(--font-mono);
+      font-size: 32px;
+      color: var(--riso-pink);
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .lesson-name {
+      font-family: var(--font-display);
+      font-size: 24px;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .lesson-description {
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 16px;
+      color: var(--muted-gray);
+    }
+
+    .lesson-price {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      color: var(--riso-blue);
+      font-weight: 700;
+    }
+
+    /* About section */
+    .about {
+      padding: 80px 40px;
+      background: var(--paper-white);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    @media (max-width: 900px) {
+      .about {
+        grid-template-columns: 1fr;
+        padding: 60px 20px;
+        gap: 40px;
+      }
+    }
+
+    .about-visual {
+      position: relative;
+      height: 400px;
+    }
+
+    .about-quote-block {
+      background: var(--riso-pink);
+      padding: 40px;
+      border-radius: 8px;
+      transform: rotate(-3deg);
+      box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.1);
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .about-quote {
+      font-family: var(--font-display);
+      font-size: 42px;
+      color: var(--white);
+      text-align: center;
+      line-height: 1.3;
+      letter-spacing: -1px;
+    }
+
+    @media (max-width: 900px) {
+      .about-quote {
+        font-size: 32px;
+      }
+    }
+
+    .about-text h3 {
+      font-family: var(--font-display);
+      font-size: 36px;
+      margin-bottom: 20px;
+      letter-spacing: -0.5px;
+    }
+
+    .about-text p {
+      font-size: 16px;
+      line-height: 1.8;
+      margin-bottom: 16px;
+      color: var(--ink-black);
+    }
+
+    .about-dots {
+      position: absolute;
+      width: 60px;
+      height: 60px;
+      background: radial-gradient(circle, var(--riso-yellow) 2px, transparent 2px);
+      background-size: 8px 8px;
+      top: -30px;
+      right: -30px;
+      opacity: 0.6;
+    }
+
+    /* Why HalfNote section */
+    .why-section {
+      background: var(--riso-yellow);
+      padding: 80px 40px;
+      color: var(--ink-black);
+    }
+
+    @media (max-width: 900px) {
+      .why-section {
+        padding: 60px 20px;
+      }
+    }
+
+    .why-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      margin-top: 50px;
+    }
+
+    @media (max-width: 1200px) {
+      .why-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 600px) {
+      .why-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .why-card {
+      background: var(--ink-black);
+      color: var(--white);
+      padding: 32px 20px;
+      border-radius: 6px;
+      transform: rotate(0.5deg);
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .why-card:nth-child(2) {
+      transform: rotate(-0.5deg);
+      padding: 40px 24px;
+      font-size: 1.1em;
+    }
+
+    .why-card:nth-child(3) {
+      transform: rotate(1deg);
+    }
+
+    .why-card:nth-child(4) {
+      transform: rotate(-1.5deg);
+      padding: 36px 22px;
+    }
+
+    .why-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 16px 32px rgba(0, 0, 0, 0.2);
+    }
+
+    .why-card h3 {
+      font-family: var(--font-display);
+      font-size: 22px;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .why-card p {
+      font-size: 14px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .why-card::before {
+      content: '';
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      bottom: 10px;
+      background: radial-gradient(circle, rgba(255, 224, 66, 0.2) 2px, transparent 2px);
+      background-size: 6px 6px;
+      pointer-events: none;
+      border-radius: 4px;
+    }
+
+    /* Schedule section */
+    .schedule {
+      padding: 80px 40px;
+      background: var(--paper-light);
+    }
+
+    @media (max-width: 900px) {
+      .schedule {
+        padding: 60px 20px;
+      }
+    }
+
+    .schedule-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 40px;
+      border: 3px solid var(--ink-black);
+    }
+
+    .schedule-table thead {
+      background: var(--ink-black);
+      color: var(--white);
+    }
+
+    .schedule-table th {
+      padding: 16px;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      border-right: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .schedule-table th:last-child {
+      border-right: none;
+    }
+
+    .schedule-table td {
+      padding: 12px;
+      text-align: center;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      border: 1px solid var(--muted-gray);
+    }
+
+    .schedule-table .time-col {
+      font-weight: 700;
+      background: rgba(0, 0, 0, 0.04);
+    }
+
+    .schedule-cell {
+      padding: 4px 8px;
+      font-size: 10px;
+      border-radius: 3px;
+      font-weight: 700;
+      color: var(--white);
+      margin: 2px;
+      display: inline-block;
+    }
+
+    .schedule-cell.group {
+      background: var(--riso-blue);
+    }
+
+    .schedule-cell.private {
+      background: var(--riso-pink);
+    }
+
+    .schedule-cell.workshop {
+      background: var(--riso-yellow);
+      color: var(--ink-black);
+    }
+
+    /* Testimonials section */
+    .testimonials {
+      background: var(--riso-pink);
+      padding: 80px 40px;
+      color: var(--white);
+    }
+
+    @media (max-width: 900px) {
+      .testimonials {
+        padding: 60px 20px;
+      }
+    }
+
+    .testimonials .section-title {
+      color: var(--white);
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-top: 50px;
+    }
+
+    .testimonial-card {
+      background: var(--paper-white);
+      color: var(--ink-black);
+      padding: 30px;
+      border-left: 4px solid var(--riso-blue);
+      position: relative;
+      box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.1);
+      animation: fadeInUp 0.6s ease-out backwards;
+    }
+
+    .testimonial-card:nth-child(2) {
+      animation-delay: 0.1s;
+    }
+
+    .testimonial-card:nth-child(3) {
+      animation-delay: 0.2s;
+    }
+
+    .testimonial-quote {
+      font-family: var(--font-body);
+      font-style: italic;
+      font-size: 16px;
+      margin-bottom: 20px;
+      line-height: 1.8;
+    }
+
+    .testimonial-quote::before {
+      content: '"';
+      font-size: 48px;
+      color: var(--riso-pink);
+      position: absolute;
+      left: 16px;
+      top: -10px;
+      opacity: 0.5;
+    }
+
+    .testimonial-author {
+      font-family: var(--font-display);
+      font-size: 16px;
+      color: var(--ink-black);
+      margin-bottom: 4px;
+    }
+
+    .testimonial-meta {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--muted-gray);
+    }
+
+    /* FAQ section */
+    .faq {
+      padding: 80px 40px;
+      background: var(--paper-white);
+    }
+
+    @media (max-width: 900px) {
+      .faq {
+        padding: 60px 20px;
+      }
+    }
+
+    .faq-list {
+      max-width: 800px;
+      margin: 50px auto 0;
+    }
+
+    .faq-item {
+      margin-bottom: 40px;
+      padding-bottom: 40px;
+      border-bottom: 1px dotted var(--muted-gray);
+      animation: fadeInUp 0.6s ease-out backwards;
+    }
+
+    .faq-item:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    .faq-item:nth-child(1) { animation-delay: 0.05s; }
+    .faq-item:nth-child(2) { animation-delay: 0.1s; }
+    .faq-item:nth-child(3) { animation-delay: 0.15s; }
+    .faq-item:nth-child(4) { animation-delay: 0.2s; }
+    .faq-item:nth-child(5) { animation-delay: 0.25s; }
+    .faq-item:nth-child(6) { animation-delay: 0.3s; }
+
+    .faq-question {
+      font-family: var(--font-display);
+      font-size: 18px;
+      margin-bottom: 12px;
+      letter-spacing: -0.5px;
+    }
+
+    .faq-question::before {
+      content: 'Q';
+      display: inline-block;
+      background: var(--riso-blue);
+      color: var(--white);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 28px;
+      margin-right: 12px;
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 16px;
+    }
+
+    .faq-answer {
+      font-size: 15px;
+      line-height: 1.8;
+      color: var(--ink-black);
+      margin-left: 40px;
+    }
+
+    /* Service areas section */
+    .service-areas {
+      background: var(--ink-black);
+      color: var(--white);
+      padding: 80px 40px;
+    }
+
+    @media (max-width: 900px) {
+      .service-areas {
+        padding: 60px 20px;
+      }
+    }
+
+    .service-areas .section-title {
+      color: var(--white);
+    }
+
+    .areas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+      margin-top: 50px;
+    }
+
+    .area-item {
+      font-family: var(--font-display);
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      animation: fadeInUp 0.6s ease-out backwards;
+    }
+
+    .area-item:nth-child(1) { animation-delay: 0.05s; }
+    .area-item:nth-child(2) { animation-delay: 0.1s; }
+    .area-item:nth-child(3) { animation-delay: 0.15s; }
+    .area-item:nth-child(4) { animation-delay: 0.2s; }
+    .area-item:nth-child(5) { animation-delay: 0.25s; }
+    .area-item:nth-child(6) { animation-delay: 0.3s; }
+    .area-item:nth-child(7) { animation-delay: 0.35s; }
+    .area-item:nth-child(8) { animation-delay: 0.4s; }
+    .area-item:nth-child(9) { animation-delay: 0.45s; }
+    .area-item:nth-child(10) { animation-delay: 0.5s; }
+
+    .area-item::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      background: var(--riso-yellow);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    /* Contact section */
+    .contact {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0;
+      min-height: 500px;
+    }
+
+    @media (max-width: 900px) {
+      .contact {
+        grid-template-columns: 1fr;
+        min-height: auto;
+      }
+    }
+
+    .contact-info {
+      background: var(--riso-blue);
+      color: var(--white);
+      padding: 80px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    @media (max-width: 900px) {
+      .contact-info {
+        padding: 60px 20px;
+      }
+    }
+
+    .contact-info h3 {
+      font-family: var(--font-display);
+      font-size: 32px;
+      margin-bottom: 30px;
+      letter-spacing: -0.5px;
+    }
+
+    .contact-row {
+      margin-bottom: 24px;
+    }
+
+    .contact-label {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      opacity: 0.8;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .contact-value {
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .contact-value a {
+      color: var(--white);
+      text-decoration: underline;
+    }
+
+    .contact-form {
+      background: var(--paper-white);
+      padding: 80px 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    @media (max-width: 900px) {
+      .contact-form {
+        padding: 60px 20px;
+      }
+    }
+
+    .form-group {
+      margin-bottom: 24px;
+    }
+
+    .form-group label {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      color: var(--ink-black);
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      border: none;
+      border-bottom: 2px solid var(--ink-black);
+      padding: 8px 0;
+      font-family: var(--font-body);
+      font-size: 14px;
+      background: transparent;
+      color: var(--ink-black);
+      transition: border-color 0.3s ease;
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: var(--muted-gray);
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-bottom-color: var(--riso-blue);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 120px;
+      font-size: 13px;
+    }
+
+    .form-submit {
+      background: var(--riso-pink);
+      color: var(--white);
+      border: none;
+      padding: 14px 32px;
+      font-family: var(--font-display);
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: all 0.3s ease;
+      transform: rotate(-1deg);
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      margin-top: 16px;
+    }
+
+    .form-submit:hover {
+      background: #d64765;
+      transform: rotate(-1deg) translateY(-2px);
+      box-shadow: 0 8px 16px rgba(232, 93, 117, 0.3);
+    }
+
+    .form-error {
+      color: #DC2626;
+      font-size: 12px;
+      margin-top: 4px;
+      font-family: var(--font-mono);
+      display: none;
+    }
+
+    .form-group.error input,
+    .form-group.error textarea {
+      border-bottom-color: #DC2626;
+    }
+
+    .form-group.error .form-error {
+      display: block;
+    }
+
+    /* CTA Banner section */
+    .cta-banner {
+      background: var(--riso-yellow);
+      border: 3px dashed var(--ink-black);
+      padding: 80px 40px;
+      text-align: center;
+      color: var(--ink-black);
+      position: relative;
+      margin: 60px 40px;
+      border-radius: 8px;
+    }
+
+    @media (max-width: 900px) {
+      .cta-banner {
+        margin: 40px 20px;
+        padding: 60px 20px;
+      }
+    }
+
+    .cta-banner h2 {
+      font-family: var(--font-display);
+      font-size: 56px;
+      letter-spacing: -1px;
+      margin-bottom: 20px;
+      line-height: 1.2;
+    }
+
+    @media (max-width: 900px) {
+      .cta-banner h2 {
+        font-size: 40px;
+      }
+    }
+
+    .cta-banner p {
+      font-size: 16px;
+      margin-bottom: 30px;
+    }
+
+    .cta-button {
+      background: var(--ink-black);
+      color: var(--white);
+      border: none;
+      padding: 14px 40px;
+      font-family: var(--font-display);
+      font-size: 14px;
+      cursor: pointer;
+      border-radius: 3px;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+      letter-spacing: 0.5px;
+    }
+
+    .cta-button:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Footer */
+    footer {
+      background: var(--ink-black);
+      color: var(--white);
+      padding: 60px 40px;
+    }
+
+    @media (max-width: 900px) {
+      footer {
+        padding: 40px 20px;
+      }
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 40px;
+      max-width: 1200px;
+      margin: 0 auto;
+      margin-bottom: 40px;
+    }
+
+    .footer-column h4 {
+      font-family: var(--font-display);
+      font-size: 16px;
+      margin-bottom: 16px;
+      letter-spacing: -0.5px;
+    }
+
+    .footer-column ul {
+      list-style: none;
+    }
+
+    .footer-column li {
+      margin-bottom: 10px;
+    }
+
+    .footer-column a {
+      color: rgba(255, 255, 255, 0.8);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.3s ease;
+    }
+
+    .footer-column a:hover {
+      color: var(--riso-yellow);
+    }
+
+    .footer-brand {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.7);
+      line-height: 1.8;
+    }
+
+    .footer-license {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.6);
+      margin-top: 8px;
+    }
+
+    .footer-divider {
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+      padding-top: 20px;
+      margin-top: 40px;
+      text-align: center;
+    }
+
+    .footer-divider p {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .footer-divider a {
+      color: var(--riso-yellow);
+      text-decoration: none;
+    }
+
+    .footer-divider a:hover {
+      text-decoration: underline;
+    }
+
+    /* Accessibility */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border-width: 0;
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 600px) {
+      .section-title {
+        font-size: 32px;
+      }
+
+      .cta-banner h2 {
+        font-size: 32px;
+      }
+
+      .hero-headline {
+        font-size: 40px;
+      }
+
+      .lessons-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .why-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .testimonials-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .areas-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .schedule-table {
+        font-size: 12px;
+      }
+
+      .schedule-table td,
+      .schedule-table th {
+        padding: 10px 6px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Mobile Menu Button -->
+  <button class="mobile-menu-button" id="menuButton" aria-label="Toggle navigation menu">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+
+  <!-- Mobile Top Header -->
+  <header id="mobileHeader" class="sr-only">
+    <div class="top-logo">HalfNote</div>
+  </header>
+
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar-nav" id="sidebarNav">
+    <div class="nav-logo">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="32" height="32">
+        <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>
+        <path d="M13 6h-2v8l6 3.6 1.06-1.77L13 13.2z"/>
+      </svg>
+      <div>HalfNote</div>
+      <div style="font-size: 11px; font-family: var(--font-mono); font-weight: normal;">Studios</div>
+    </div>
+
+    <ul class="nav-links">
+      <li><a href="#hero">Lessons <span class="page-number">01</span></a></li>
+      <li><a href="#about">About <span class="page-number">02</span></a></li>
+      <li><a href="#why">Why Us <span class="page-number">03</span></a></li>
+      <li><a href="#schedule">Schedule <span class="page-number">04</span></a></li>
+      <li><a href="#testimonials">Reviews <span class="page-number">05</span></a></li>
+      <li><a href="#faq">Questions <span class="page-number">06</span></a></li>
+      <li><a href="#areas">Service Areas <span class="page-number">07</span></a></li>
+      <li><a href="#contact">Contact <span class="page-number">08</span></a></li>
+    </ul>
+
+    <div class="nav-bottom">
+      <div class="nav-phone">
+        (305) 555-1750<br>
+        <small>Monday–Friday<br>10AM–9PM</small>
+      </div>
+      <a href="#contact" class="nav-cta">ENROLL NOW</a>
+    </div>
+  </nav>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero" id="hero">
+      <div class="hero-decorative">
+        <div class="hero-shape-1"></div>
+        <div class="hero-shape-2"></div>
+        <div class="hero-shape-3"></div>
+      </div>
+
+      <div class="hero-content">
+        <h1 class="hero-headline">FIND YOUR<br><span class="accent">SOUND.</span></h1>
+
+        <div class="hero-stamp">EST.<br>2019</div>
+
+        <div class="hero-instruments">
+          <span class="instrument-pill">Piano</span>
+          <span class="instrument-pill">Guitar</span>
+          <span class="instrument-pill">Voice</span>
+          <span class="instrument-pill">Drums</span>
+          <span class="instrument-pill">Violin</span>
+          <span class="instrument-pill">Bass</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lessons -->
+    <section class="lessons" id="lessons">
+      <h2 class="section-title">Our Lessons</h2>
+
+      <div class="lessons-grid">
+        <div class="lesson-card">
+          <div class="lesson-index">01</div>
+          <h3 class="lesson-name">Piano</h3>
+          <p class="lesson-description">From classical foundations to contemporary styles. Learn to read music, develop finger technique, and express yourself through the keys.</p>
+          <p class="lesson-price">$45–65 / session</p>
+        </div>
+
+        <div class="lesson-card">
+          <div class="lesson-index">02</div>
+          <h3 class="lesson-name">Guitar</h3>
+          <p class="lesson-description">Acoustic or electric. Chords, scales, songwriting, and performance techniques. Suitable for all ages and experience levels.</p>
+          <p class="lesson-price">$40–60 / session</p>
+        </div>
+
+        <div class="lesson-card">
+          <div class="lesson-index">03</div>
+          <h3 class="lesson-name">Voice</h3>
+          <p class="lesson-description">Vocal training that covers breathing, projection, pitch control, and interpretation. Perfect for singers and those new to music.</p>
+          <p class="lesson-price">$50–70 / session</p>
+        </div>
+
+        <div class="lesson-card">
+          <div class="lesson-index">04</div>
+          <h3 class="lesson-name">Drums</h3>
+          <p class="lesson-description">Rhythm, timing, coordination, and styles from jazz to rock. Build confidence and groove with our experienced percussionists.</p>
+          <p class="lesson-price">$45–65 / session</p>
+        </div>
+
+        <div class="lesson-card">
+          <div class="lesson-index">05</div>
+          <h3 class="lesson-name">Violin</h3>
+          <p class="lesson-description">Classical to contemporary. Posture, bowing technique, intonation, and musicality. Discover the beauty of string instruments.</p>
+          <p class="lesson-price">$50–70 / session</p>
+        </div>
+
+        <div class="lesson-card">
+          <div class="lesson-index">06</div>
+          <h3 class="lesson-name">Bass</h3>
+          <p class="lesson-description">Electric or upright bass. Learn groove, foundational music theory, and become the backbone of any ensemble.</p>
+          <p class="lesson-price">$45–65 / session</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- About -->
+    <section class="about" id="about">
+      <div class="about-visual">
+        <div class="about-quote-block">
+          <div class="about-quote">Music is the shortcut to emotion.</div>
+        </div>
+        <div class="about-dots"></div>
+      </div>
+
+      <div class="about-text">
+        <h3>About HalfNote</h3>
+        <p>HalfNote Studios was founded by a collective of professional musicians who believe that music education should be accessible, inspiring, and tailored to each student's unique goals.</p>
+        <p>We've spent years teaching in Coconut Grove and across South Florida, and we're passionate about helping you discover your musical voice—whether you're picking up an instrument for the first time or honing a lifetime of practice.</p>
+        <p>Our instructors are accomplished performers and patient educators. We teach everything from classical foundations to contemporary songwriting, always with encouragement and flexibility.</p>
+      </div>
+    </section>
+
+    <!-- Why HalfNote -->
+    <section class="why-section" id="why">
+      <h2 class="section-title">Why HalfNote?</h2>
+
+      <div class="why-grid">
+        <div class="why-card">
+          <h3>Professional Instructors</h3>
+          <p>20+ years combined experience. Seasoned performers who genuinely love teaching.</p>
+        </div>
+
+        <div class="why-card">
+          <h3>All Ages Welcome</h3>
+          <p>From ages 5 to 95. Whether you're starting out or returning to music, we've got you.</p>
+        </div>
+
+        <div class="why-card">
+          <h3>Flexible Scheduling</h3>
+          <p>Online and in-person lessons. Evenings, weekends, and makeup lessons available.</p>
+        </div>
+
+        <div class="why-card">
+          <h3>Recitals & Community</h3>
+          <p>Quarterly student performances. Perform in front of friends, family, and fellow musicians.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Schedule -->
+    <section class="schedule" id="schedule">
+      <h2 class="section-title">Sample Schedule</h2>
+
+      <table class="schedule-table">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Monday</th>
+            <th>Tuesday</th>
+            <th>Wednesday</th>
+            <th>Thursday</th>
+            <th>Friday</th>
+            <th>Saturday</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="time-col">10AM</td>
+            <td><span class="schedule-cell group">Piano Group</span></td>
+            <td><span class="schedule-cell private">Voice Private</span></td>
+            <td><span class="schedule-cell workshop">Guitar Workshop</span></td>
+            <td><span class="schedule-cell group">Piano Group</span></td>
+            <td><span class="schedule-cell private">Drums Private</span></td>
+            <td><span class="schedule-cell workshop">Music Fundamentals</span></td>
+          </tr>
+          <tr>
+            <td class="time-col">2PM</td>
+            <td><span class="schedule-cell private">Guitar Private</span></td>
+            <td><span class="schedule-cell group">Violin Group</span></td>
+            <td><span class="schedule-cell private">Piano Private</span></td>
+            <td><span class="schedule-cell private">Voice Private</span></td>
+            <td><span class="schedule-cell group">Bass Group</span></td>
+            <td><span class="schedule-cell private">All Instruments</span></td>
+          </tr>
+          <tr>
+            <td class="time-col">5PM</td>
+            <td><span class="schedule-cell private">Piano Private</span></td>
+            <td><span class="schedule-cell private">Guitar Private</span></td>
+            <td><span class="schedule-cell private">Drums Private</span></td>
+            <td><span class="schedule-cell group">Ensemble Workshop</span></td>
+            <td><span class="schedule-cell private">Violin Private</span></td>
+            <td>Closed</td>
+          </tr>
+          <tr>
+            <td class="time-col">7PM</td>
+            <td><span class="schedule-cell group">Guitar Group</span></td>
+            <td><span class="schedule-cell private">Voice Private</span></td>
+            <td><span class="schedule-cell private">Bass Private</span></td>
+            <td><span class="schedule-cell private">Piano Private</span></td>
+            <td><span class="schedule-cell workshop">Songwriting Lab</span></td>
+            <td>Closed</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p style="margin-top: 30px; text-align: center; color: var(--muted-gray); font-size: 14px;">
+        <strong>Hours:</strong> Mon–Fri 10AM–9PM | Sat 9AM–6PM | Sun 11AM–5PM<br>
+        Schedule subject to instructor availability. Contact us to book your first lesson.
+      </p>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials" id="testimonials">
+      <h2 class="section-title">What Our Students Say</h2>
+
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="testimonial-quote">
+            My daughter has been taking piano lessons here for a year and she absolutely loves coming every week. The instructors are patient and encouraging, and she's already learning to play her favorite songs!
+          </div>
+          <div class="testimonial-author">Maria G.</div>
+          <div class="testimonial-meta">Parent / Piano Student Age 8</div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-quote">
+            As an adult learner, I was nervous about starting guitar. HalfNote made it so fun and approachable. Now I'm playing songs I love and thinking about joining their ensemble workshop!
+          </div>
+          <div class="testimonial-author">James R.</div>
+          <div class="testimonial-meta">Adult Guitar Student / Age 45</div>
+        </div>
+
+        <div class="testimonial-card">
+          <div class="testimonial-quote">
+            The recital experiences have been incredible. Seeing my confidence grow on stage, and the support from instructors and other students, has changed how I see myself as a musician.
+          </div>
+          <div class="testimonial-author">Sophia L.</div>
+          <div class="testimonial-meta">Voice & Piano Student / Age 16</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq" id="faq">
+      <h2 class="section-title">Frequently Asked</h2>
+
+      <div class="faq-list">
+        <div class="faq-item">
+          <h3 class="faq-question">Do you offer trial lessons?</h3>
+          <p class="faq-answer">
+            Yes! We offer a free 15-minute consultation and a reduced-rate first lesson ($20) so you can get a feel for our teaching style and the studio. We're confident you'll love it.
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h3 class="faq-question">Can I rent or borrow an instrument?</h3>
+          <p class="faq-answer">
+            We partner with local music rental shops and can recommend affordable options for piano, guitar, drums, violin, and more. We'll help you find something suitable for your budget and goals.
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h3 class="faq-question">How often do you hold recitals?</h3>
+          <p class="faq-answer">
+            We hold student recitals quarterly (roughly every 3 months) at our studio in Coconut Grove. Participation is optional but highly encouraged—it's a wonderful way to celebrate progress and perform in a supportive environment.
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h3 class="faq-question">What's the difference between group classes and private lessons?</h3>
+          <p class="faq-answer">
+            Private lessons (one-on-one) offer personalized instruction tailored to your pace and goals. Group classes are more social and affordable, great for foundational learning and ensemble skills. Many students do both.
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h3 class="faq-question">What if I need to cancel or reschedule?</h3>
+          <p class="faq-answer">
+            We ask for 24 hours notice for cancellations. If you cancel with 24+ hours notice, you can reschedule free of charge. Same-day cancellations are charged as a lesson. Life happens—we're flexible within reason.
+          </p>
+        </div>
+
+        <div class="faq-item">
+          <h3 class="faq-question">What should I bring to my first lesson?</h3>
+          <p class="faq-answer">
+            Just yourself and enthusiasm! We have instruments available, or bring your own if you have one. Your instructor will guide you on music materials and any books needed after your first session.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Service Areas -->
+    <section class="service-areas" id="areas">
+      <h2 class="section-title">Service Areas</h2>
+
+      <div class="areas-grid">
+        <div class="area-item">Coconut Grove</div>
+        <div class="area-item">Coral Gables</div>
+        <div class="area-item">South Miami</div>
+        <div class="area-item">Brickell</div>
+        <div class="area-item">Key Biscayne</div>
+        <div class="area-item">Pinecrest</div>
+        <div class="area-item">Kendall</div>
+        <div class="area-item">Miami Beach</div>
+        <div class="area-item">Downtown Miami</div>
+        <div class="area-item">Little Havana</div>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section class="contact" id="contact">
+      <div class="contact-info">
+        <h3>Get in Touch</h3>
+
+        <div class="contact-row">
+          <span class="contact-label">Phone</span>
+          <div class="contact-value"><a href="tel:+13055551750">(305) 555-1750</a></div>
+        </div>
+
+        <div class="contact-row">
+          <span class="contact-label">Email</span>
+          <div class="contact-value"><a href="mailto:hello@halfnotestudios.com">hello@halfnotestudios.com</a></div>
+        </div>
+
+        <div class="contact-row">
+          <span class="contact-label">Address</span>
+          <div class="contact-value">
+            3401 Main Highway<br>
+            Coconut Grove, FL 33133
+          </div>
+        </div>
+
+        <div class="contact-row">
+          <span class="contact-label">Hours</span>
+          <div class="contact-value">
+            Mon–Fri: 10AM–9PM<br>
+            Sat: 9AM–6PM<br>
+            Sun: 11AM–5PM
+          </div>
+        </div>
+      </div>
+
+      <form class="contact-form" id="contactForm">
+        <div class="form-group">
+          <label for="name">Your Name</label>
+          <input type="text" id="name" name="name" required>
+          <span class="form-error">Name is required</span>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" name="email" required>
+          <span class="form-error">Valid email is required</span>
+        </div>
+
+        <div class="form-group">
+          <label for="instrument">Interested Instrument</label>
+          <input type="text" id="instrument" name="instrument" placeholder="e.g., Piano, Guitar, Voice" required>
+          <span class="form-error">Please tell us which instrument interests you</span>
+        </div>
+
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" required></textarea>
+          <span class="form-error">Please let us know a bit more</span>
+        </div>
+
+        <button type="submit" class="form-submit">SEND MESSAGE</button>
+      </form>
+    </section>
+
+    <!-- CTA Banner -->
+    <section class="cta-banner">
+      <h2>YOUR FIRST LESSON IS ON US.</h2>
+      <p>New students get a free trial lesson and $20 off your first session.</p>
+      <a href="#contact" class="cta-button">START TODAY</a>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-column">
+        <div class="footer-brand">
+          <strong>HalfNote Studios</strong><br>
+          Music Lessons & Performance Academy<br>
+          Coconut Grove, Miami, FL
+        </div>
+        <div class="footer-license">License: #MUS2024-0234</div>
+      </div>
+
+      <div class="footer-column">
+        <h4>Lessons</h4>
+        <ul>
+          <li><a href="#lessons">Piano</a></li>
+          <li><a href="#lessons">Guitar</a></li>
+          <li><a href="#lessons">Voice</a></li>
+          <li><a href="#lessons">Drums</a></li>
+          <li><a href="#lessons">Violin</a></li>
+          <li><a href="#lessons">Bass</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#about">About</a></li>
+          <li><a href="#why">Why HalfNote</a></li>
+          <li><a href="#faq">FAQ</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li><a href="#schedule">Schedule</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-column">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="tel:+13055551750">(305) 555-1750</a></li>
+          <li><a href="mailto:hello@halfnotestudios.com">Email Us</a></li>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">Facebook</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-divider">
+      <p>Built with <strong>Webnari</strong> — <a href="https://webnari.io">Website-as-a-Service for Service Businesses</a></p>
+      <p style="margin-top: 12px; font-size: 12px;">© 2024 HalfNote Studios. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu toggle
+    const menuButton = document.getElementById('menuButton');
+    const sidebarNav = document.getElementById('sidebarNav');
+
+    menuButton.addEventListener('click', () => {
+      menuButton.classList.toggle('active');
+      sidebarNav.classList.toggle('active');
+    });
+
+    // Close menu when a link is clicked
+    const navLinks = sidebarNav.querySelectorAll('a');
+    navLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        menuButton.classList.remove('active');
+        sidebarNav.classList.remove('active');
+      });
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!sidebarNav.contains(e.target) && !menuButton.contains(e.target)) {
+        menuButton.classList.remove('active');
+        sidebarNav.classList.remove('active');
+      }
+    });
+
+    // Intersection Observer for scroll animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.animation = `${entry.target.dataset.animation || 'fadeInUp'} 0.6s ease-out forwards`;
+          observer.unobserve(entry.target);
+        }
+      });
+    }, observerOptions);
+
+    // Observe all animatable elements
+    document.querySelectorAll('.lesson-card, .testimonial-card, .faq-item, .area-item, .why-card').forEach(el => {
+      observer.observe(el);
+    });
+
+    // Form validation and submission
+    const contactForm = document.getElementById('contactForm');
+
+    const validateEmail = (email) => {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    };
+
+    const validateField = (field) => {
+      const value = field.value.trim();
+      const formGroup = field.closest('.form-group');
+
+      if (field.type === 'email') {
+        if (!validateEmail(value)) {
+          formGroup.classList.add('error');
+          return false;
+        }
+      } else if (!value) {
+        formGroup.classList.add('error');
+        return false;
+      }
+
+      formGroup.classList.remove('error');
+      return true;
+    };
+
+    // Validate on blur
+    contactForm.querySelectorAll('input, textarea').forEach(field => {
+      field.addEventListener('blur', () => {
+        validateField(field);
+      });
+
+      field.addEventListener('focus', () => {
+        field.closest('.form-group').classList.remove('error');
+      });
+    });
+
+    // Handle form submission
+    contactForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      let isValid = true;
+      contactForm.querySelectorAll('input, textarea').forEach(field => {
+        if (!validateField(field)) {
+          isValid = false;
+        }
+      });
+
+      if (!isValid) return;
+
+      // Submit using formsubmit.co
+      const formData = new FormData(contactForm);
+
+      try {
+        const response = await fetch('https://formsubmit.co/hello@halfnotestudios.com', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (response.ok) {
+          alert('Thank you! We received your message. We\'ll be in touch soon!');
+          contactForm.reset();
+          contactForm.querySelectorAll('.form-group').forEach(group => {
+            group.classList.remove('error');
+          });
+        }
+      } catch (error) {
+        console.error('Form submission error:', error);
+        alert('There was an error sending your message. Please try again or call us at (305) 555-1750.');
+      }
+    });
+
+    // Smooth scroll behavior for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        const href = this.getAttribute('href');
+        if (href !== '#' && document.querySelector(href)) {
+          e.preventDefault();
+          const target = document.querySelector(href);
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
+    // Add parallax effect to grain on scroll
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const scrollY = window.scrollY;
+          const grainOverlay = document.querySelector('body::after');
+          // Subtle parallax effect (handled via CSS animation)
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+  </script>
+</body>
+</html>

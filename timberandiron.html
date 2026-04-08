@@ -1,0 +1,1664 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Timber & Iron Axe Co. — Axe Throwing Miami</title>
+<meta name="description" content="Timber & Iron Axe Co. — Miami's premier axe throwing venue. Walk-ins welcome, private lanes, corporate events, and birthday parties. Doral, FL.">
+<meta property="og:title" content="Timber & Iron Axe Co. — Axe Throwing Miami">
+<meta property="og:description" content="Miami's premier axe throwing venue. Walk-ins welcome. Corporate events, birthday parties, team outings. Doral, FL.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rye&family=Bitter:ital,wght@0,400;0,500;0,700;1,400;1,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --wood: #1C1208;
+    --wood2: #2A1C0E;
+    --wood3: #3A2618;
+    --wood4: #4A3228;
+    --plank: #5C4030;
+    --copper: #B87333;
+    --copper2: #D4924A;
+    --copper3: #E8B060;
+    --cream: #F5E6C8;
+    --cream2: #EDD8A8;
+    --cream3: #D4BC88;
+    --forest: #2A4218;
+    --forest2: #3A5A24;
+    --forest3: #4E7030;
+    --red: #8B1A1A;
+    --red2: #A82424;
+    --text-light: #C4A882;
+    --text-mid: #8A7060;
+    --text-muted: #5A4838;
+    --rule: #2A1C0E;
+  }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Bitter', serif;
+    background: var(--wood);
+    color: var(--cream);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+  /* Woodgrain texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      repeating-linear-gradient(
+        178deg,
+        transparent 0px,
+        transparent 8px,
+        rgba(0,0,0,0.04) 8px,
+        rgba(0,0,0,0.04) 9px
+      ),
+      repeating-linear-gradient(
+        2deg,
+        transparent 0px,
+        transparent 20px,
+        rgba(255,200,100,0.02) 20px,
+        rgba(255,200,100,0.02) 21px
+      );
+    pointer-events: none;
+    z-index: 0;
+    opacity: 1;
+  }
+  * { position: relative; z-index: 1; }
+  body::before { z-index: 0; }
+
+  /* EMERGENCY STRIP */
+  .alert-strip {
+    background: var(--red);
+    text-align: center;
+    padding: 10px 24px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--cream);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .alert-sep { opacity: 0.5; }
+
+  /* NAVIGATION */
+  .nav {
+    background: var(--wood2);
+    border-bottom: 2px solid var(--copper);
+    padding: 0 60px;
+    height: 76px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-logo {
+    text-decoration: none;
+    display: flex;
+    flex-direction: column;
+    line-height: 1;
+  }
+  .nav-logo-main {
+    font-family: 'Rye', cursive;
+    font-size: 1.4rem;
+    color: var(--cream);
+    letter-spacing: 0.06em;
+    line-height: 1;
+  }
+  .nav-logo-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--copper2);
+    margin-top: 3px;
+  }
+  .nav-links { display: flex; align-items: center; gap: 28px; }
+  .nav-links a {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--cream); }
+  .nav-cta {
+    background: var(--copper);
+    color: var(--wood) !important;
+    padding: 10px 22px;
+    font-weight: 500 !important;
+    clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+    transition: background 0.2s !important;
+  }
+  .nav-cta:hover { background: var(--copper2) !important; }
+  .hamburger {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    flex-direction: column;
+    gap: 5px;
+    padding: 4px;
+  }
+  .hamburger span { display: block; width: 26px; height: 2px; background: var(--cream); transition: all 0.3s; }
+  .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+  .hamburger.open span:nth-child(2) { opacity: 0; }
+  .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+  .mobile-menu {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: var(--wood);
+    z-index: 90;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    padding-top: 80px;
+  }
+  .mobile-menu.open { display: flex; }
+  .mobile-menu a {
+    font-family: 'Rye', cursive;
+    font-size: 2.2rem;
+    color: var(--cream);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: color 0.2s;
+  }
+  .mobile-menu a:hover { color: var(--copper); }
+  .mobile-menu .m-cta {
+    background: var(--copper);
+    color: var(--wood);
+    padding: 14px 40px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-weight: 500;
+    text-decoration: none;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+  }
+
+  /* HERO */
+  .hero {
+    background: var(--wood);
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+  /* Diagonal split */
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: linear-gradient(160deg, var(--wood) 60%, var(--wood2) 60%);
+    z-index: 0;
+  }
+  /* Ember glow */
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 400px;
+    background: radial-gradient(ellipse, rgba(184,115,51,0.12) 0%, transparent 70%);
+    z-index: 0;
+    pointer-events: none;
+  }
+  .hero-left {
+    position: relative;
+    z-index: 2;
+    padding: 100px 60px 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 32px;
+    width: fit-content;
+  }
+  .hero-badge-inner {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--copper2);
+    border: 1px solid var(--wood3);
+    padding: 6px 16px;
+  }
+  .hero-h1 {
+    font-family: 'Rye', cursive;
+    font-size: clamp(3.5rem, 6vw, 6rem);
+    line-height: 1.0;
+    color: var(--cream);
+    letter-spacing: 0.02em;
+    margin-bottom: 8px;
+  }
+  .hero-h1 .copper-acc { color: var(--copper); }
+  .hero-rule { width: 60px; height: 2px; background: var(--copper3); margin: 28px 0; }
+  .hero-desc {
+    font-size: 1rem;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--text-light);
+    line-height: 1.75;
+    max-width: 400px;
+    margin-bottom: 40px;
+  }
+  .hero-btns { display: flex; gap: 16px; flex-wrap: wrap; }
+  .btn-copper {
+    background: var(--copper);
+    color: var(--wood);
+    padding: 14px 36px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-decoration: none;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+    transition: background 0.2s;
+    display: inline-block;
+  }
+  .btn-copper:hover { background: var(--copper2); }
+  .btn-ghost-cream {
+    border: 1px solid var(--wood3);
+    color: var(--cream);
+    padding: 14px 36px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: border-color 0.2s;
+    display: inline-block;
+  }
+  .btn-ghost-cream:hover { border-color: var(--copper); color: var(--copper); }
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    margin-top: 56px;
+    border: 1px solid var(--wood3);
+  }
+  .hero-stat { padding: 18px 20px; border-right: 1px solid var(--wood3); }
+  .hero-stat:last-child { border-right: none; }
+  .h-stat-num {
+    font-family: 'Rye', cursive;
+    font-size: 2rem;
+    color: var(--copper);
+    line-height: 1;
+    letter-spacing: 0.04em;
+  }
+  .h-stat-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-top: 5px;
+  }
+  .hero-right {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 60px;
+  }
+  /* Rotating stamp badge */
+  .hero-rotate-badge {
+    position: absolute;
+    top: 60px; right: 50px;
+    width: 130px; height: 130px;
+    border: 3px solid var(--copper);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    transform: rotate(-12deg);
+    background: var(--wood2);
+    padding: 12px;
+    animation: rotateBadge 20s linear infinite;
+  }
+  @keyframes rotateBadge { from { transform: rotate(-12deg); } to { transform: rotate(348deg); } }
+  .badge-ring-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    color: var(--copper2);
+  }
+  .hero-axe-svg { width: 100%; max-width: 360px; }
+  .hero-walkbin {
+    position: absolute;
+    bottom: 60px; left: 50%;
+    transform: translateX(-50%);
+    background: var(--forest);
+    border: 1px solid var(--forest2);
+    padding: 10px 24px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--cream2);
+    white-space: nowrap;
+  }
+
+  /* DIAGONAL ORNAMENT STRIP */
+  .ornament-strip {
+    background: var(--copper);
+    padding: 16px 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    font-family: 'Bitter', serif;
+    font-style: italic;
+    font-size: 0.85rem;
+    color: var(--wood);
+    font-weight: 700;
+  }
+  .ornament-diamond { font-style: normal; font-weight: 400; }
+
+  /* SECTION BASE */
+  .section-inner { padding: 100px 60px; }
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    font-weight: 500;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--copper2);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .section-label::before { content: ''; display: block; width: 28px; height: 2px; background: var(--copper); }
+  .section-h2 {
+    font-family: 'Rye', cursive;
+    font-size: clamp(2.4rem, 4vw, 4rem);
+    letter-spacing: 0.04em;
+    color: var(--cream);
+    line-height: 1.05;
+    margin-bottom: 20px;
+  }
+  .section-h2 .copper { color: var(--copper); }
+  .section-desc {
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--text-light);
+    line-height: 1.75;
+    max-width: 500px;
+  }
+  .watermark-bg {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .watermark-bg span {
+    font-family: 'Rye', cursive;
+    font-size: 20rem;
+    color: rgba(184,115,51,0.04);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  /* LANES / EXPERIENCES */
+  .lanes-section { background: var(--wood); }
+  .lanes-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: end;
+    margin-bottom: 64px;
+  }
+  .lanes-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--wood3); }
+  .lane-card { background: var(--wood2); padding: 40px 32px; position: relative; border-top: 3px solid transparent; transition: border-color 0.3s, background 0.2s; overflow: hidden; }
+  .lane-card:hover { border-color: var(--copper); background: var(--wood3); }
+  .lane-num {
+    position: absolute;
+    bottom: 20px; right: 24px;
+    font-family: 'Rye', cursive;
+    font-size: 6rem;
+    color: rgba(184,115,51,0.07);
+    line-height: 1;
+    user-select: none;
+  }
+  .lane-icon { margin-bottom: 24px; color: var(--copper2); }
+  .lane-price {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--copper3);
+    margin-bottom: 12px;
+  }
+  .lane-name {
+    font-family: 'Rye', cursive;
+    font-size: 1.7rem;
+    color: var(--cream);
+    line-height: 1.05;
+    margin-bottom: 16px;
+    letter-spacing: 0.04em;
+  }
+  .lane-desc { font-size: 0.88rem; font-style: italic; color: var(--text-light); line-height: 1.7; margin-bottom: 20px; }
+  .lane-includes { display: flex; flex-direction: column; gap: 8px; }
+  .lane-include {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text-mid);
+    letter-spacing: 0.05em;
+  }
+  .lane-include::before { content: '→'; color: var(--copper); flex-shrink: 0; }
+
+  /* ABOUT SECTION */
+  .about-section { background: var(--wood2); }
+  .about-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  .about-left {
+    padding: 100px 60px;
+    border-right: 1px solid var(--rule);
+  }
+  .about-right {
+    padding: 100px 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .about-pullquote {
+    font-family: 'Rye', cursive;
+    font-size: 1.6rem;
+    color: var(--copper);
+    line-height: 1.3;
+    margin-bottom: 32px;
+    letter-spacing: 0.03em;
+  }
+  .about-body {
+    font-size: 0.92rem;
+    font-style: italic;
+    color: var(--text-light);
+    line-height: 1.85;
+    margin-bottom: 32px;
+  }
+  .about-stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--wood3); margin-bottom: 40px; }
+  .about-stat { background: var(--wood2); padding: 24px 20px; text-align: center; }
+  .about-stat-num {
+    font-family: 'Rye', cursive;
+    font-size: 2.2rem;
+    color: var(--copper);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .about-stat-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .rules-list { display: flex; flex-direction: column; gap: 14px; }
+  .rule-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--rule);
+  }
+  .rule-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--copper3);
+    flex-shrink: 0;
+    width: 24px;
+    margin-top: 2px;
+    letter-spacing: 0.05em;
+  }
+  .rule-text { font-size: 0.88rem; font-style: italic; color: var(--text-light); line-height: 1.6; }
+
+  /* PRICING / PACKAGES */
+  .pricing-section { background: var(--wood3); }
+  .pricing-header {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: end;
+    margin-bottom: 64px;
+  }
+  .pricing-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--wood4); }
+  .pricing-card { background: var(--wood3); padding: 44px 36px; position: relative; }
+  .pricing-card.featured { background: var(--wood2); }
+  .pricing-badge-tag {
+    position: absolute;
+    top: 0; left: 36px;
+    background: var(--copper);
+    color: var(--wood);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.58rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    font-weight: 500;
+  }
+  .pricing-tier {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+  .pricing-price {
+    font-family: 'Rye', cursive;
+    font-size: 3.8rem;
+    color: var(--cream);
+    line-height: 1;
+    margin-bottom: 4px;
+    letter-spacing: 0.02em;
+  }
+  .pricing-price sup { font-size: 1.5rem; vertical-align: top; margin-top: 8px; }
+  .pricing-per {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    margin-bottom: 32px;
+  }
+  .pricing-rule { width: 40px; height: 2px; background: var(--copper); margin-bottom: 28px; }
+  .pricing-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 36px; }
+  .pricing-features li { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; color: var(--text-light); letter-spacing: 0.04em; display: flex; align-items: flex-start; gap: 10px; }
+  .pricing-features li::before { content: '✓'; color: var(--copper3); flex-shrink: 0; }
+  .pricing-btn {
+    display: block;
+    text-align: center;
+    padding: 13px 24px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.2s;
+    clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+  }
+  .pricing-btn-ghost { border: 1px solid var(--wood4); color: var(--cream2); }
+  .pricing-btn-ghost:hover { background: var(--wood2); border-color: var(--copper); color: var(--copper); }
+  .pricing-btn-copper { background: var(--copper); color: var(--wood); }
+  .pricing-btn-copper:hover { background: var(--copper2); }
+
+  /* TESTIMONIALS */
+  .reviews-section { background: var(--wood); }
+  .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px; background: var(--wood3); margin-top: 64px; }
+  .review-card { background: var(--wood); padding: 40px 32px; position: relative; }
+  .review-giant-quote {
+    position: absolute;
+    top: 20px; right: 24px;
+    font-family: 'Rye', cursive;
+    font-size: 6rem;
+    color: rgba(184,115,51,0.08);
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+  }
+  .review-stars { color: var(--copper); font-size: 0.9rem; letter-spacing: 3px; margin-bottom: 20px; }
+  .review-text {
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--cream2);
+    line-height: 1.7;
+    margin-bottom: 28px;
+  }
+  .review-divider { width: 36px; height: 1px; background: var(--wood3); margin-bottom: 20px; }
+  .review-name {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    color: var(--cream);
+    margin-bottom: 4px;
+  }
+  .review-meta { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; color: var(--text-muted); letter-spacing: 0.08em; }
+
+  /* EVENTS / GROUP BOOKINGS */
+  .events-section { background: var(--forest); }
+  .events-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+    padding: 100px 60px;
+  }
+  .event-types { display: flex; flex-direction: column; gap: 1px; background: var(--forest2); margin-top: 48px; }
+  .event-type {
+    background: var(--forest);
+    padding: 28px 28px;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 24px;
+    transition: background 0.2s;
+    cursor: pointer;
+  }
+  .event-type:hover { background: var(--forest2); }
+  .event-type-icon {
+    width: 44px; height: 44px;
+    border: 1px solid var(--forest2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--copper2);
+    flex-shrink: 0;
+  }
+  .event-type-name {
+    font-family: 'Rye', cursive;
+    font-size: 1.1rem;
+    color: var(--cream);
+    letter-spacing: 0.03em;
+  }
+  .event-type-sub { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; color: var(--text-mid); letter-spacing: 0.08em; margin-top: 4px; }
+  .event-arrow { color: var(--copper3); font-size: 1.2rem; }
+  .events-right { }
+  .events-big-stat {
+    font-family: 'Rye', cursive;
+    font-size: 7rem;
+    color: var(--copper);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    margin-bottom: 8px;
+  }
+  .events-big-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(245,230,196,0.5);
+    margin-bottom: 36px;
+  }
+  .events-desc { font-size: 1rem; font-style: italic; color: var(--text-light); line-height: 1.75; margin-bottom: 36px; max-width: 360px; }
+
+  /* FAQ */
+  .faq-section { background: var(--wood2); padding: 100px 60px; }
+  .faq-inner { display: grid; grid-template-columns: 1fr 2fr; gap: 80px; }
+  .faq-sidebar { position: sticky; top: 80px; align-self: start; }
+  .faq-list { display: flex; flex-direction: column; gap: 1px; background: var(--wood3); }
+  .faq-item { background: var(--wood2); }
+  .faq-q {
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 20px 24px;
+    text-align: left;
+    font-family: 'Bitter', serif;
+    font-size: 0.9rem;
+    font-style: italic;
+    color: var(--cream2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    transition: background 0.2s;
+  }
+  .faq-q:hover, .faq-q.active { background: var(--wood3); }
+  .faq-toggle {
+    font-family: 'Rye', cursive;
+    font-size: 1rem;
+    color: var(--copper);
+    flex-shrink: 0;
+    transition: transform 0.3s;
+    font-style: normal;
+  }
+  .faq-q.active .faq-toggle { transform: rotate(45deg); }
+  .faq-a {
+    display: none;
+    padding: 0 24px 20px;
+    font-size: 0.85rem;
+    font-style: italic;
+    color: var(--text-light);
+    line-height: 1.8;
+    border-top: 1px solid var(--wood3);
+    padding-top: 16px;
+  }
+  .faq-a.open { display: block; }
+
+  /* AREAS */
+  .areas-section { background: var(--wood3); padding: 80px 60px; }
+  .areas-grid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 40px; }
+  .area-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    border: 1px solid var(--wood4);
+    padding: 8px 18px;
+    clip-path: polygon(0 0, calc(100% - 5px) 0, 100% 5px, 100% 100%, 5px 100%, 0 calc(100% - 5px));
+    transition: border-color 0.2s, color 0.2s;
+  }
+  .area-tag:hover { border-color: var(--copper); color: var(--copper2); }
+
+  /* CONTACT */
+  .contact-section { background: var(--wood); }
+  .contact-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  .contact-left { padding: 100px 60px; border-right: 1px solid var(--wood3); }
+  .contact-right { padding: 100px 60px; }
+  .contact-info-rows { display: flex; flex-direction: column; gap: 28px; margin-top: 48px; }
+  .c-row { display: flex; align-items: flex-start; gap: 16px; }
+  .c-icon {
+    width: 40px; height: 40px;
+    background: var(--wood2);
+    border: 1px solid var(--wood3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--copper2);
+    flex-shrink: 0;
+  }
+  .c-label { font-family: 'IBM Plex Mono', monospace; font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 4px; }
+  .c-val { font-size: 0.9rem; font-style: italic; color: var(--text-light); line-height: 1.5; }
+  .form-group { margin-bottom: 24px; }
+  .form-label { display: block; font-family: 'IBM Plex Mono', monospace; font-size: 0.58rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+  .form-control {
+    width: 100%;
+    background: var(--wood2);
+    border: 1px solid var(--wood3);
+    border-radius: 0;
+    padding: 12px 16px;
+    font-family: 'Bitter', serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--cream);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-control::placeholder { color: var(--text-muted); }
+  .form-control:focus { border-color: var(--copper); }
+  .form-select {
+    width: 100%;
+    background: var(--wood2);
+    border: 1px solid var(--wood3);
+    padding: 12px 16px;
+    font-family: 'Bitter', serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: var(--cream);
+    outline: none;
+    appearance: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+  .form-select:focus { border-color: var(--copper); }
+  .form-select option { background: var(--wood2); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-submit {
+    width: 100%;
+    background: var(--copper);
+    color: var(--wood);
+    border: none;
+    padding: 14px 36px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.2s;
+    clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+    margin-top: 8px;
+  }
+  .form-submit:hover { background: var(--copper2); }
+
+  /* CTA BANNER */
+  .cta-section {
+    background: var(--red);
+    padding: 80px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-section::before {
+    content: 'BULLSEYE';
+    font-family: 'Rye', cursive;
+    font-size: 16rem;
+    color: rgba(0,0,0,0.1);
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    white-space: nowrap;
+    pointer-events: none;
+    letter-spacing: 0.04em;
+    z-index: 0;
+  }
+  .cta-content { position: relative; z-index: 1; }
+  .cta-h2 {
+    font-family: 'Rye', cursive;
+    font-size: clamp(2.8rem, 5.5vw, 5.5rem);
+    color: var(--cream);
+    letter-spacing: 0.04em;
+    line-height: 1.05;
+    margin-bottom: 16px;
+  }
+  .cta-sub { font-size: 1rem; font-style: italic; color: rgba(245,230,196,0.8); margin-bottom: 40px; }
+  .cta-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .cta-btn-cream { background: var(--cream); color: var(--red); padding: 14px 40px; font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none; clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px)); transition: background 0.2s; }
+  .cta-btn-cream:hover { background: var(--cream2); }
+  .cta-btn-ghost { border: 2px solid rgba(245,230,196,0.4); color: var(--cream); padding: 14px 40px; font-family: 'IBM Plex Mono', monospace; font-size: 0.75rem; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; text-decoration: none; transition: border-color 0.2s; }
+  .cta-btn-ghost:hover { border-color: var(--cream); }
+
+  /* FOOTER */
+  .footer { background: var(--wood); border-top: 1px solid var(--rule); }
+  .footer-inner { padding: 64px 60px 40px; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; }
+  .footer-brand { text-decoration: none; display: block; margin-bottom: 16px; }
+  .footer-brand-name { font-family: 'Rye', cursive; font-size: 1.5rem; color: var(--cream); letter-spacing: 0.06em; line-height: 1; margin-bottom: 2px; }
+  .footer-brand-sub { font-family: 'IBM Plex Mono', monospace; font-size: 0.55rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--copper2); display: block; margin-top: 3px; }
+  .footer-blurb { font-size: 0.82rem; font-style: italic; color: var(--text-muted); line-height: 1.7; max-width: 280px; margin-bottom: 16px; }
+  .footer-license { font-family: 'IBM Plex Mono', monospace; font-size: 0.58rem; color: var(--text-muted); letter-spacing: 0.05em; opacity: 0.6; }
+  .footer-col-title { font-family: 'IBM Plex Mono', monospace; font-size: 0.58rem; font-weight: 500; letter-spacing: 0.22em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 20px; opacity: 0.7; }
+  .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  .footer-links a { font-size: 0.8rem; font-style: italic; color: var(--text-muted); text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--copper); }
+  .footer-contact-list { display: flex; flex-direction: column; gap: 12px; }
+  .footer-contact-row { display: flex; gap: 10px; align-items: flex-start; }
+  .footer-contact-row svg { color: var(--copper3); flex-shrink: 0; margin-top: 2px; }
+  .footer-contact-row span { font-size: 0.78rem; font-style: italic; color: var(--text-muted); line-height: 1.5; }
+  .footer-bottom { margin: 0 60px; padding: 20px 0; border-top: 1px solid var(--rule); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+  .footer-copy { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; color: var(--text-muted); opacity: 0.5; }
+  .webnari-badge { font-family: 'IBM Plex Mono', monospace; font-size: 0.62rem; color: var(--text-muted); opacity: 0.5; text-decoration: none; transition: opacity 0.2s; }
+  .webnari-badge:hover { opacity: 1; color: var(--copper); }
+
+  /* REVEAL */
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.visible { opacity: 1; transform: none; }
+  .reveal-delay-1 { transition-delay: 0.12s; }
+  .reveal-delay-2 { transition-delay: 0.24s; }
+  .reveal-delay-3 { transition-delay: 0.36s; }
+  .reveal-delay-4 { transition-delay: 0.48s; }
+
+  /* RESPONSIVE */
+  @media (max-width: 1100px) {
+    .section-inner { padding: 80px 40px; }
+    .lanes-grid { grid-template-columns: 1fr 1fr; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .footer-inner { grid-template-columns: 1fr 1fr; }
+    .footer-bottom { margin: 0 40px; }
+  }
+  @media (max-width: 900px) {
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .nav { padding: 0 24px; }
+    .hero { grid-template-columns: 1fr; }
+    .hero-left { padding: 80px 32px 60px; }
+    .hero-right { display: none; }
+    .lanes-header { grid-template-columns: 1fr; gap: 32px; }
+    .lanes-grid { grid-template-columns: 1fr; }
+    .about-inner { grid-template-columns: 1fr; }
+    .about-left { border-right: none; border-bottom: 1px solid var(--rule); padding: 60px 32px; }
+    .about-right { padding: 60px 32px; }
+    .about-stats-row { grid-template-columns: 1fr 1fr; }
+    .pricing-header { grid-template-columns: 1fr; gap: 32px; }
+    .pricing-grid { grid-template-columns: 1fr; }
+    .reviews-grid { grid-template-columns: 1fr; }
+    .events-inner { grid-template-columns: 1fr; padding: 60px 32px; }
+    .faq-section { padding: 70px 32px; }
+    .faq-inner { grid-template-columns: 1fr; gap: 48px; }
+    .faq-sidebar { position: static; }
+    .areas-section { padding: 70px 32px; }
+    .contact-inner { grid-template-columns: 1fr; }
+    .contact-left, .contact-right { padding: 60px 32px; }
+    .contact-left { border-right: none; border-bottom: 1px solid var(--rule); }
+    .cta-section { padding: 60px 32px; }
+    .footer-inner { padding: 60px 32px 40px; grid-template-columns: 1fr 1fr; }
+    .footer-bottom { margin: 0 32px; }
+    .section-inner { padding: 70px 32px; }
+    .form-row { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 540px) {
+    .hero-stats { grid-template-columns: 1fr 1fr; }
+    .hero-h1 { font-size: 3rem; }
+    .footer-inner { grid-template-columns: 1fr; }
+    .cta-btns { flex-direction: column; }
+    .alert-strip { font-size: 0.6rem; }
+    .pricing-card.featured { order: -1; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ALERT STRIP -->
+<div class="alert-strip">
+  <span>WALK-INS ALWAYS WELCOME</span>
+  <span class="alert-sep">◆</span>
+  <span>OPEN 7 DAYS A WEEK · DORAL, MIAMI</span>
+  <span class="alert-sep">◆</span>
+  <span>CALL (786) 555-0960</span>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="#" class="nav-logo">
+    <span class="nav-logo-main">Timber & Iron</span>
+    <span class="nav-logo-sub">Axe Throwing Co. · Doral, FL</span>
+  </a>
+  <div class="nav-links">
+    <a href="#lanes">Experiences</a>
+    <a href="#about">About</a>
+    <a href="#pricing">Pricing</a>
+    <a href="#events">Events</a>
+    <a href="#contact">Book Now</a>
+    <a href="#contact" class="nav-cta">Reserve a Lane</a>
+  </div>
+  <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#lanes" class="mob-link">Experiences</a>
+  <a href="#about" class="mob-link">About</a>
+  <a href="#pricing" class="mob-link">Pricing</a>
+  <a href="#events" class="mob-link">Events</a>
+  <a href="#contact" class="mob-link">Contact</a>
+  <a href="#contact" class="m-cta">Reserve a Lane</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-left">
+    <div class="hero-badge">
+      <div class="hero-badge-inner">Est. 2021 · Doral, Miami</div>
+    </div>
+    <h1 class="hero-h1">
+      Throw<br>
+      Your <span class="copper-acc">Fears.</span>
+    </h1>
+    <div class="hero-rule"></div>
+    <p class="hero-desc">Miami's premier axe throwing experience. No experience needed — just show up, throw down, and leave the stress behind. Walk-ins always welcome.</p>
+    <div class="hero-btns">
+      <a href="#contact" class="btn-copper">Reserve a Lane</a>
+      <a href="#lanes" class="btn-ghost-cream">View Experiences</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="h-stat-num">12</div>
+        <div class="h-stat-label">Throwing Lanes</div>
+      </div>
+      <div class="hero-stat">
+        <div class="h-stat-num">4.9★</div>
+        <div class="h-stat-label">Google Rating</div>
+      </div>
+      <div class="hero-stat">
+        <div class="h-stat-num">500+</div>
+        <div class="h-stat-label">Events Hosted</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <!-- Axe throwing SVG illustration -->
+    <svg class="hero-axe-svg" viewBox="0 0 360 500" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Axe throwing target illustration">
+      <!-- Target / bullseye -->
+      <circle cx="260" cy="260" r="80" fill="none" stroke="rgba(184,115,51,0.25)" stroke-width="1.5"/>
+      <circle cx="260" cy="260" r="60" fill="none" stroke="rgba(184,115,51,0.2)" stroke-width="1.5"/>
+      <circle cx="260" cy="260" r="40" fill="none" stroke="var(--red)" stroke-width="2" stroke-dasharray="8 4"/>
+      <circle cx="260" cy="260" r="20" fill="rgba(139,26,26,0.3)" stroke="var(--red)" stroke-width="2"/>
+      <circle cx="260" cy="260" r="8" fill="var(--red)"/>
+      <!-- Target crosshairs -->
+      <line x1="180" y1="260" x2="340" y2="260" stroke="rgba(184,115,51,0.15)" stroke-width="1"/>
+      <line x1="260" y1="180" x2="260" y2="340" stroke="rgba(184,115,51,0.15)" stroke-width="1"/>
+      <!-- Axe in motion — handle -->
+      <rect x="95" y="200" width="14" height="120" rx="3" transform="rotate(-35 102 260)" fill="var(--plank)" stroke="var(--copper)" stroke-width="1"/>
+      <!-- Axe head -->
+      <path d="M80 160 L120 140 L138 180 L130 195 L90 205 Z" fill="var(--copper)" stroke="var(--copper3)" stroke-width="1.5"/>
+      <!-- Axe blade edge (sharp) -->
+      <path d="M120 140 Q145 160 138 180" fill="rgba(232,176,96,0.5)" stroke="var(--copper3)" stroke-width="1"/>
+      <!-- Motion lines for the axe -->
+      <line x1="60" y1="170" x2="30" y2="155" stroke="rgba(184,115,51,0.3)" stroke-width="1.5" stroke-dasharray="4 3"/>
+      <line x1="70" y1="190" x2="36" y2="182" stroke="rgba(184,115,51,0.2)" stroke-width="1" stroke-dasharray="4 3"/>
+      <line x1="68" y1="155" x2="38" y2="138" stroke="rgba(184,115,51,0.2)" stroke-width="1" stroke-dasharray="4 3"/>
+      <!-- Wood target board -->
+      <rect x="225" y="150" width="12" height="200" rx="2" fill="var(--plank)" stroke="var(--wood3)" stroke-width="1" opacity="0.5"/>
+      <rect x="245" y="155" width="12" height="200" rx="2" fill="var(--plank)" stroke="var(--wood3)" stroke-width="1" opacity="0.7"/>
+      <rect x="302" y="155" width="12" height="200" rx="2" fill="var(--plank)" stroke="var(--wood3)" stroke-width="1" opacity="0.7"/>
+      <rect x="318" y="150" width="12" height="200" rx="2" fill="var(--plank)" stroke="var(--wood3)" stroke-width="1" opacity="0.5"/>
+      <!-- Score labels -->
+      <text x="260" y="265" fill="rgba(245,230,196,0.6)" font-size="10" font-family="sans-serif" letter-spacing="1" text-anchor="middle" font-weight="bold">10</text>
+      <text x="235" y="244" fill="rgba(245,230,196,0.3)" font-size="8" font-family="sans-serif" text-anchor="middle">6</text>
+      <text x="287" y="244" fill="rgba(245,230,196,0.3)" font-size="8" font-family="sans-serif" text-anchor="middle">6</text>
+      <!-- Decorative border -->
+      <rect x="20" y="20" width="320" height="460" rx="0" fill="none" stroke="rgba(184,115,51,0.1)" stroke-width="1"/>
+      <rect x="30" y="30" width="300" height="440" rx="0" fill="none" stroke="rgba(184,115,51,0.06)" stroke-width="1"/>
+      <!-- Flames at base — ember effect -->
+      <path d="M160 440 Q180 410 200 435 Q220 410 240 440 Q260 415 280 440 Q300 415 320 440" stroke="rgba(184,115,51,0.2)" stroke-width="1.5" fill="none"/>
+      <path d="M170 460 Q190 430 210 455 Q230 430 250 460 Q270 435 290 460 Q310 435 330 460" stroke="rgba(139,26,26,0.15)" stroke-width="1" fill="none"/>
+      <!-- Location watermark -->
+      <text x="180" y="490" fill="rgba(184,115,51,0.3)" font-size="9" font-family="sans-serif" letter-spacing="4" text-anchor="middle">DORAL · MIAMI</text>
+    </svg>
+    <!-- Rotating badge -->
+    <div class="hero-rotate-badge" aria-hidden="true">
+      <div class="badge-ring-text">WALK-INS<br>WELCOME<br>ALWAYS</div>
+    </div>
+    <!-- Walk-in note -->
+    <div class="hero-walkbin">No Reservation Required for Walk-Ins</div>
+  </div>
+</section>
+
+<!-- ORNAMENT STRIP -->
+<div class="ornament-strip">
+  <span>Axes</span>
+  <span class="ornament-diamond">◆</span>
+  <span>Hatchets</span>
+  <span class="ornament-diamond">◆</span>
+  <span>Big Blades</span>
+  <span class="ornament-diamond">◆</span>
+  <span>Group Events</span>
+  <span class="ornament-diamond">◆</span>
+  <span>Corporate</span>
+  <span class="ornament-diamond">◆</span>
+  <span>Birthday Parties</span>
+  <span class="ornament-diamond">◆</span>
+  <span>Leagues</span>
+</div>
+
+<!-- LANES / EXPERIENCES -->
+<section class="lanes-section section-inner" id="lanes">
+  <div class="watermark-bg"><span>AXE</span></div>
+  <div class="lanes-header">
+    <div>
+      <div class="section-label reveal">Throwing Experiences</div>
+      <h2 class="section-h2 reveal reveal-delay-1">Pick your <span class="copper">lane.</span></h2>
+    </div>
+    <p class="section-desc reveal reveal-delay-2">Whether you're a first-timer looking for a good time or a seasoned hurler chasing the bullseye, Timber & Iron has the right lane for you. No experience required — ever.</p>
+  </div>
+  <div class="lanes-grid">
+    <div class="lane-card reveal">
+      <div class="lane-num">01</div>
+      <svg class="lane-icon" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="30" cy="20" r="10" stroke-dasharray="4 3"/><circle cx="30" cy="20" r="6"/><circle cx="30" cy="20" r="2" fill="currentColor"/><line x1="20" y1="20" x2="4" y2="20"/><path d="M4 16 L10 20 L4 24"/></svg>
+      <div class="lane-price">from $28 / person</div>
+      <div class="lane-name">Walk-In Throwing</div>
+      <div class="lane-desc">No reservation, no fuss. Show up any time during open hours and we'll set you up with a lane, axes, and a coach to get you hitting the board in minutes.</div>
+      <div class="lane-includes">
+        <div class="lane-include">60 minutes of open throwing</div>
+        <div class="lane-include">All equipment provided</div>
+        <div class="lane-include">Coaching from our experts</div>
+        <div class="lane-include">Minimum age 12+</div>
+      </div>
+    </div>
+    <div class="lane-card reveal reveal-delay-1">
+      <div class="lane-num">02</div>
+      <svg class="lane-icon" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="4" y="24" width="32" height="10" rx="1"/><path d="M10 24 L20 6 L30 24"/><circle cx="20" cy="14" r="3"/></svg>
+      <div class="lane-price">from $45 / person</div>
+      <div class="lane-name">Coached Session</div>
+      <div class="lane-desc">Spend 90 minutes with a dedicated WATL-certified axe throwing coach. Learn proper form, improve your groupings, and compete in a mini tournament with your group.</div>
+      <div class="lane-includes">
+        <div class="lane-include">90 minutes private coaching</div>
+        <div class="lane-include">WATL-certified instructor</div>
+        <div class="lane-include">Mini tournament included</div>
+        <div class="lane-include">Printable scorecard & awards</div>
+      </div>
+    </div>
+    <div class="lane-card reveal reveal-delay-2">
+      <div class="lane-num">03</div>
+      <svg class="lane-icon" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><polygon points="20,4 36,36 4,36"/><line x1="20" y1="4" x2="20" y2="36"/><line x1="12" y1="20" x2="28" y2="20"/></svg>
+      <div class="lane-price">$80 / person</div>
+      <div class="lane-name">Big Blade Challenge</div>
+      <div class="lane-desc">Try our full-size competition throwing axes used in WATL sanctioned events. Not for the faint of heart — this is where serious throwers test their limits.</div>
+      <div class="lane-includes">
+        <div class="lane-include">Full-size competition axes</div>
+        <div class="lane-include">60-minute dedicated lane</div>
+        <div class="lane-include">Head-to-head bracket play</div>
+        <div class="lane-include">Must be 18+ for big blades</div>
+      </div>
+    </div>
+    <div class="lane-card reveal">
+      <div class="lane-num">04</div>
+      <svg class="lane-icon" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="20" cy="20" r="16"/><path d="M12 20 L18 26 L28 14"/></svg>
+      <div class="lane-price">$55 / person</div>
+      <div class="lane-name">Hatchet League</div>
+      <div class="lane-desc">Join our weekly Tuesday Hatchet League — 8-week season, official WATL rules, standings tracked online. Compete for prizes and bragging rights with Miami's best throwers.</div>
+      <div class="lane-includes">
+        <div class="lane-include">8-week season ($55/week)</div>
+        <div class="lane-include">Official WATL scoring</div>
+        <div class="lane-include">Weekly standings & playoffs</div>
+        <div class="lane-include">Season champion prizes</div>
+      </div>
+    </div>
+    <div class="lane-card reveal reveal-delay-1">
+      <div class="lane-num">05</div>
+      <svg class="lane-icon" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M8 36 L20 8 L32 36"/><path d="M12 26 L28 26"/></svg>
+      <div class="lane-price">from $350 / group</div>
+      <div class="lane-name">Party Lane</div>
+      <div class="lane-desc">Book an exclusive lane for birthdays, bachelorettes, or team nights. Add a party host, custom targets, and catering coordination. We bring the party — you bring the chaos.</div>
+      <div class="lane-includes">
+        <div class="lane-include">2-hour private lane (up to 10)</div>
+        <div class="lane-include">Dedicated party host</div>
+        <div class="lane-include">Custom scoring targets</div>
+        <div class="lane-include">BYO food & drinks allowed</div>
+      </div>
+    </div>
+    <div class="lane-card reveal reveal-delay-2">
+      <div class="lane-num">06</div>
+      <svg class="lane-icon" width="40" height="40" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="4" y="12" width="32" height="20" rx="2"/><path d="M12 12 L12 8 Q12 4 20 4 Q28 4 28 8 L28 12"/><circle cx="20" cy="22" r="4"/></svg>
+      <div class="lane-price">Custom Quote</div>
+      <div class="lane-name">Corporate Events</div>
+      <div class="lane-desc">Build team chemistry the Timber & Iron way. We handle everything: venue buyout, catering, custom branding, tournament brackets, and prizes. Perfect for Doral's corporate crowd.</div>
+      <div class="lane-includes">
+        <div class="lane-include">Full venue buyout option</div>
+        <div class="lane-include">Catering coordination</div>
+        <div class="lane-include">Custom branded events</div>
+        <div class="lane-include">Invoice & receipt provided</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="about-section" id="about">
+  <div class="about-inner">
+    <div class="about-left">
+      <div class="section-label reveal">The Story</div>
+      <h2 class="section-h2 reveal reveal-delay-1">Born in the <span class="copper">woods.</span><br>Built for Miami.</h2>
+      <p class="about-body reveal reveal-delay-2">Timber & Iron was built by lifelong outdoorsmen who couldn't find a proper axe throwing venue in South Florida — so they built one. Our 6,000 sq ft facility in Doral houses 12 professional-grade throwing lanes, a full bar, and the most knowledgeable staff this side of the Everglades.</p>
+      <p class="about-body reveal reveal-delay-3">We're World Axe Throwing League (WATL) certified, meaning every lane, target, and safety protocol meets international competition standards. Whether you're throwing for the first time or chasing a podium spot, Timber & Iron is built for you.</p>
+    </div>
+    <div class="about-right">
+      <div class="about-stats-row">
+        <div class="about-stat reveal">
+          <div class="about-stat-num">12</div>
+          <div class="about-stat-label">Throwing Lanes</div>
+        </div>
+        <div class="about-stat reveal reveal-delay-1">
+          <div class="about-stat-num">6K</div>
+          <div class="about-stat-label">Sq Ft Facility</div>
+        </div>
+        <div class="about-stat reveal reveal-delay-2">
+          <div class="about-stat-num">WATL</div>
+          <div class="about-stat-label">Certified</div>
+        </div>
+        <div class="about-stat reveal reveal-delay-3">
+          <div class="about-stat-num">4.9</div>
+          <div class="about-stat-label">Star Rating</div>
+        </div>
+      </div>
+      <div class="section-label reveal" style="margin-top:0;">Safety Rules</div>
+      <div class="rules-list reveal reveal-delay-1">
+        <div class="rule-item">
+          <div class="rule-num">01</div>
+          <div class="rule-text">Closed-toe shoes required at all times in the throwing area. No sandals, heels, or bare feet.</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-num">02</div>
+          <div class="rule-text">Minimum age 12 years old. Ages 12–17 require a waiver signed by a parent or legal guardian present on-site.</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-num">03</div>
+          <div class="rule-text">Do not approach the target board while others are throwing. Wait for the all-clear from your lane coach.</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-num">04</div>
+          <div class="rule-text">Alcohol is permitted but management reserves the right to remove any participant who appears intoxicated.</div>
+        </div>
+        <div class="rule-item">
+          <div class="rule-num">05</div>
+          <div class="rule-text">All axes remain in the throwing lane. Never carry an axe outside your designated throwing area.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section section-inner" id="pricing">
+  <div class="watermark-bg"><span>BULL</span></div>
+  <div class="pricing-header">
+    <div>
+      <div class="section-label reveal">Simple Pricing</div>
+      <h2 class="section-h2 reveal reveal-delay-1">No hidden <span class="copper">bulls.</span></h2>
+    </div>
+    <p class="section-desc reveal reveal-delay-2">Straightforward pricing — no membership required. Walk in, pay, throw. Group and corporate packages get even better with size discounts.</p>
+  </div>
+  <div class="pricing-grid">
+    <div class="pricing-card reveal">
+      <div class="pricing-tier">Walk-In / Drop-In</div>
+      <div class="pricing-price"><sup>$</sup>28</div>
+      <div class="pricing-per">per person · 60 min</div>
+      <div class="pricing-rule"></div>
+      <ul class="pricing-features">
+        <li>Any open lane (shared or private)</li>
+        <li>Coaching & safety briefing</li>
+        <li>All axes & equipment included</li>
+        <li>60 minutes of throwing time</li>
+        <li>Extend for +$12/person/30 min</li>
+      </ul>
+      <a href="#contact" class="pricing-btn pricing-btn-ghost">Walk In Now</a>
+    </div>
+    <div class="pricing-card featured reveal reveal-delay-1">
+      <div class="pricing-badge-tag">Best Value</div>
+      <div class="pricing-tier">Coached Experience</div>
+      <div class="pricing-price"><sup>$</sup>45</div>
+      <div class="pricing-per">per person · 90 min</div>
+      <div class="pricing-rule"></div>
+      <ul class="pricing-features">
+        <li>Private lane guaranteed</li>
+        <li>WATL-certified coach (1-on-1)</li>
+        <li>Technique & form instruction</li>
+        <li>Mini tournament bracket</li>
+        <li>Achievement scorecard printed</li>
+        <li>Ideal for groups of 4–10</li>
+      </ul>
+      <a href="#contact" class="pricing-btn pricing-btn-copper">Book This Experience</a>
+    </div>
+    <div class="pricing-card reveal reveal-delay-2">
+      <div class="pricing-tier">Private Party Lane</div>
+      <div class="pricing-price"><sup>$</sup>350</div>
+      <div class="pricing-per">per group · 2 hrs (up to 10)</div>
+      <div class="pricing-rule"></div>
+      <ul class="pricing-features">
+        <li>Exclusive lane — no sharing</li>
+        <li>Dedicated party host</li>
+        <li>Custom target designs available</li>
+        <li>BYO food & non-alcoholic drinks</li>
+        <li>Add bar tab or catering package</li>
+        <li>Add extra guests: +$35/person</li>
+      </ul>
+      <a href="#contact" class="pricing-btn pricing-btn-ghost">Inquire</a>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="reviews-section section-inner" id="reviews">
+  <div class="watermark-bg"><span>★</span></div>
+  <div class="section-label reveal">Guest Reviews</div>
+  <h2 class="section-h2 reveal reveal-delay-1">They <span class="copper">nailed</span> it.</h2>
+  <div class="reviews-grid">
+    <div class="review-card reveal">
+      <div class="review-giant-quote">"</div>
+      <div class="review-stars">★★★★★</div>
+      <div class="review-text">Brought 8 guys from work for a team outing and it was hands-down the best corporate event we've ever done. The staff made everyone feel like pros by the end. We're already planning round two.</div>
+      <div class="review-divider"></div>
+      <div class="review-name">Carlos B.</div>
+      <div class="review-meta">Corporate Event · Doral</div>
+    </div>
+    <div class="review-card reveal reveal-delay-1">
+      <div class="review-giant-quote">"</div>
+      <div class="review-stars">★★★★★</div>
+      <div class="review-text">Threw axes here for my bachelorette and I've never laughed so hard. The coach was hilarious, patient, and somehow got all of us — including our grandma — hitting bullseyes. 10/10.</div>
+      <div class="review-divider"></div>
+      <div class="review-name">Marisol G.</div>
+      <div class="review-meta">Bachelorette Party · Miami</div>
+    </div>
+    <div class="review-card reveal reveal-delay-2">
+      <div class="review-giant-quote">"</div>
+      <div class="review-stars">★★★★★</div>
+      <div class="review-text">Walked in on a Saturday with no reservation and was throwing within 15 minutes. The facility is gorgeous, super clean, and the vibe is just right — dark wood, good music, great energy.</div>
+      <div class="review-divider"></div>
+      <div class="review-name">Trevor M.</div>
+      <div class="review-meta">Walk-In · Coral Gables</div>
+    </div>
+  </div>
+</section>
+
+<!-- EVENTS -->
+<section class="events-section" id="events">
+  <div class="events-inner">
+    <div>
+      <div class="section-label reveal" style="color:rgba(245,230,196,0.7);">Group Events</div>
+      <h2 class="section-h2 reveal reveal-delay-1" style="color:var(--cream);">We host <span class="copper">everything.</span></h2>
+      <div class="event-types">
+        <div class="event-type reveal">
+          <div class="event-type-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+          </div>
+          <div>
+            <div class="event-type-name">Corporate Team Building</div>
+            <div class="event-type-sub">Full buyouts · Custom brackets · Catering</div>
+          </div>
+          <div class="event-arrow">→</div>
+        </div>
+        <div class="event-type reveal reveal-delay-1">
+          <div class="event-type-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          </div>
+          <div>
+            <div class="event-type-name">Bachelorette & Bachelor</div>
+            <div class="event-type-sub">Party host · Custom targets · Photo ops</div>
+          </div>
+          <div class="event-arrow">→</div>
+        </div>
+        <div class="event-type reveal reveal-delay-2">
+          <div class="event-type-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+          </div>
+          <div>
+            <div class="event-type-name">Birthday Parties</div>
+            <div class="event-type-sub">All ages welcome · Party packages · Decorations</div>
+          </div>
+          <div class="event-arrow">→</div>
+        </div>
+        <div class="event-type reveal reveal-delay-3">
+          <div class="event-type-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          </div>
+          <div>
+            <div class="event-type-name">WATL League Play</div>
+            <div class="event-type-sub">Weekly · Seasonal · Tournaments</div>
+          </div>
+          <div class="event-arrow">→</div>
+        </div>
+      </div>
+    </div>
+    <div class="events-right reveal reveal-delay-1">
+      <div class="events-big-stat">500+</div>
+      <div class="events-big-label">Events Hosted Since 2021</div>
+      <div class="events-desc">From intimate birthday parties for 6 to full corporate buyouts for 120, Timber & Iron has become Doral's go-to venue for groups that want to do something genuinely unforgettable.</div>
+      <a href="#contact" class="btn-copper">Inquire About Group Events</a>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section" id="faq">
+  <div class="faq-inner">
+    <div class="faq-sidebar reveal">
+      <div class="section-label">Questions?</div>
+      <h2 class="section-h2" style="font-size:2.6rem;">Good <span class="copper">aim</span> means knowing the rules.</h2>
+      <p style="font-size:0.85rem;font-style:italic;color:var(--text-muted);line-height:1.8;margin-top:16px;">Everything you need to know before your first throw at Timber & Iron.</p>
+    </div>
+    <div class="faq-list reveal reveal-delay-1">
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">Do I need to book in advance? <span class="faq-toggle">+</span></button>
+        <div class="faq-a">Walk-ins are always welcome during open hours — just show up. We recommend booking in advance for groups of 5 or more, or for private coached sessions and party lanes, to guarantee your lane. Use our online form or call (786) 555-0960.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">Is it safe for beginners? <span class="faq-toggle">+</span></button>
+        <div class="faq-a">Absolutely. Every session begins with a thorough safety briefing from one of our certified coaches. Axe throwing is statistically safer than many common activities when proper safety protocols are followed — and we don't cut corners.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">What should I wear? <span class="faq-toggle">+</span></button>
+        <div class="faq-a">Closed-toe shoes are required — no sandals, heels, or bare feet. Comfortable clothing you can move in is ideal. We keep axes away from your body, so there's no special protective gear needed.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">Can we bring food and drinks? <span class="faq-toggle">+</span></button>
+        <div class="faq-a">Yes! Outside food is welcome (we love a good birthday cake in the venue). We have a full bar with craft beers, cocktails, and non-alcoholic options. For large groups we can coordinate catering with partner restaurants.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">What is the age minimum? <span class="faq-toggle">+</span></button>
+        <div class="faq-a">Minimum throwing age is 12 years old. Ages 12–17 require a parent or legal guardian to be present and sign a waiver on their behalf. Big Blade lanes are 18+ only.</div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" aria-expanded="false">Can I host a corporate event here? <span class="faq-toggle">+</span></button>
+        <div class="faq-a">Yes — and it's one of our specialties. We can host groups from 10 to 120+ with full venue buyout, custom tournament brackets, catering coordination, branded materials, and invoicing for business expense purposes. Contact us for a custom quote.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AREAS -->
+<section class="areas-section" id="areas">
+  <div class="watermark-bg"><span>MIAMI</span></div>
+  <div class="section-label reveal">We Serve</div>
+  <h2 class="section-h2 reveal reveal-delay-1">All of <span class="copper">South Florida.</span></h2>
+  <p class="section-desc reveal reveal-delay-2" style="max-width:600px; margin-bottom:0;">Located in Doral — centrally positioned for easy access from all Miami-Dade neighborhoods. Group transport coordination available for large corporate events.</p>
+  <div class="areas-grid">
+    <span class="area-tag reveal">Doral</span>
+    <span class="area-tag reveal reveal-delay-1">Hialeah</span>
+    <span class="area-tag reveal reveal-delay-2">Miami</span>
+    <span class="area-tag reveal">Coral Gables</span>
+    <span class="area-tag reveal reveal-delay-1">Brickell</span>
+    <span class="area-tag reveal reveal-delay-2">Kendall</span>
+    <span class="area-tag reveal">Westchester</span>
+    <span class="area-tag reveal reveal-delay-1">Miami Lakes</span>
+    <span class="area-tag reveal reveal-delay-2">Sweetwater</span>
+    <span class="area-tag reveal">Medley</span>
+    <span class="area-tag reveal reveal-delay-1">Opa-Locka</span>
+    <span class="area-tag reveal reveal-delay-2">Miami Gardens</span>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact-section" id="contact">
+  <div class="contact-inner">
+    <div class="contact-left">
+      <div class="section-label reveal">Reserve Your Lane</div>
+      <h2 class="section-h2 reveal reveal-delay-1">Let's <span class="copper">throw.</span></h2>
+      <div class="contact-info-rows">
+        <div class="c-row reveal reveal-delay-2">
+          <div class="c-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg></div>
+          <div><div class="c-label">Location</div><div class="c-val">8900 NW 36th Street, Suite 12<br>Doral, FL 33178</div></div>
+        </div>
+        <div class="c-row reveal reveal-delay-2">
+          <div class="c-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg></div>
+          <div><div class="c-label">Phone</div><div class="c-val">(786) 555-0960</div></div>
+        </div>
+        <div class="c-row reveal reveal-delay-3">
+          <div class="c-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg></div>
+          <div><div class="c-label">Hours</div><div class="c-val">Mon–Thu: 3:00 PM – 11:00 PM<br>Fri: 1:00 PM – 12:00 AM<br>Sat–Sun: 11:00 AM – 12:00 AM</div></div>
+        </div>
+        <div class="c-row reveal reveal-delay-3">
+          <div class="c-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="2,4 12,13 22,4"/></svg></div>
+          <div><div class="c-label">Email</div><div class="c-val">throw@timberandiron.com</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="contact-right">
+      <form action="https://formsubmit.co/throw@timberandiron.com" method="POST" id="throwForm" novalidate>
+        <input type="hidden" name="_subject" value="Lane Reservation — Timber & Iron Axe Co.">
+        <input type="hidden" name="_captcha" value="false">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="fname">First Name</label>
+            <input class="form-control" type="text" id="fname" name="fname" placeholder="Jake" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="lname">Last Name</label>
+            <input class="form-control" type="text" id="lname" name="lname" placeholder="Hartley" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="email">Email Address</label>
+          <input class="form-control" type="email" id="email" name="email" placeholder="you@email.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="phone">Phone Number</label>
+          <input class="form-control" type="tel" id="phone" name="phone" placeholder="(786) 555-0000">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="experience">Experience Type</label>
+            <select class="form-select" id="experience" name="experience">
+              <option value="">Select...</option>
+              <option>Walk-In (no reservation)</option>
+              <option>Coached Session</option>
+              <option>Big Blade Challenge</option>
+              <option>Hatchet League</option>
+              <option>Private Party Lane</option>
+              <option>Corporate Event</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="guests">Group Size</label>
+            <input class="form-control" type="number" id="guests" name="guests" placeholder="e.g. 8" min="1">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="preferred-date">Preferred Date & Time</label>
+          <input class="form-control" type="datetime-local" id="preferred-date" name="preferred_date">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="notes">Notes or Special Requests</label>
+          <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Birthday party, corporate group, first-timers..."></textarea>
+        </div>
+        <button type="submit" class="form-submit">Send Reservation Request</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section class="cta-section">
+  <div class="cta-content">
+    <h2 class="cta-h2 reveal">Hit the Bullseye<br>or Die Trying.</h2>
+    <p class="cta-sub reveal reveal-delay-1">Walk-ins always welcome. No experience needed. Just show up and let the axes fly.</p>
+    <div class="cta-btns">
+      <a href="#contact" class="cta-btn-cream reveal reveal-delay-2">Reserve Your Lane</a>
+      <a href="tel:7865550960" class="cta-btn-ghost reveal reveal-delay-3">Call (786) 555-0960</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <a href="#" class="footer-brand">
+        <div class="footer-brand-name">Timber & Iron</div>
+        <span class="footer-brand-sub">Axe Throwing Co. · Doral, Miami</span>
+      </a>
+      <p class="footer-blurb">Miami-Dade's premier axe throwing venue — WATL certified, walk-ins welcome, and ready to host your next unforgettable event. Built for throwers of all skill levels.</p>
+      <div class="footer-license">WATL Certified Venue · FL Business #AX2021-0667 · Fully Insured</div>
+    </div>
+    <div>
+      <div class="footer-col-title">Experiences</div>
+      <ul class="footer-links">
+        <li><a href="#lanes">Walk-In Throwing</a></li>
+        <li><a href="#lanes">Coached Sessions</a></li>
+        <li><a href="#lanes">Big Blade Challenge</a></li>
+        <li><a href="#lanes">Hatchet League</a></li>
+        <li><a href="#lanes">Private Party Lane</a></li>
+        <li><a href="#lanes">Corporate Events</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Venue</div>
+      <ul class="footer-links">
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#events">Group Events</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#contact">Reserve a Lane</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-col-title">Find Us</div>
+      <div class="footer-contact-list">
+        <div class="footer-contact-row">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6A19.79 19.79 0 012.12 4.18 2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          <span>(786) 555-0960</span>
+        </div>
+        <div class="footer-contact-row">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+          <span>8900 NW 36th St, Suite 12<br>Doral, FL 33178</span>
+        </div>
+        <div class="footer-contact-row">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg>
+          <span>Mon–Thu 3PM–11PM<br>Fri–Sun 11AM–12AM</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2025 Timber & Iron Axe Co. All rights reserved.</div>
+    <a href="https://webnari.io" class="webnari-badge" target="_blank" rel="noopener">Powered by Webnari</a>
+  </div>
+</footer>
+
+<script>
+  // Mobile menu
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  hamburger.addEventListener('click', () => {
+    hamburger.classList.toggle('open');
+    mobileMenu.classList.toggle('open');
+    document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : '';
+  });
+  mobileMenu.querySelectorAll('a').forEach(a => {
+    a.addEventListener('click', () => {
+      hamburger.classList.remove('open');
+      mobileMenu.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+  });
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const ans = btn.nextElementSibling;
+      const isOpen = btn.classList.contains('active');
+      document.querySelectorAll('.faq-q').forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-expanded', 'false');
+        b.nextElementSibling.classList.remove('open');
+      });
+      if (!isOpen) {
+        btn.classList.add('active');
+        btn.setAttribute('aria-expanded', 'true');
+        ans.classList.add('open');
+      }
+    });
+  });
+
+  // Scroll reveal
+  const revealElements = document.querySelectorAll('.reveal');
+  const revealObs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        revealObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  revealElements.forEach(el => revealObs.observe(el));
+
+  // Form validation
+  const throwForm = document.getElementById('throwForm');
+  throwForm.addEventListener('submit', e => {
+    let valid = true;
+    throwForm.querySelectorAll('[required]').forEach(f => {
+      if (!f.value.trim()) { f.style.borderColor = 'var(--red2)'; valid = false; }
+      else { f.style.borderColor = ''; }
+    });
+    if (!valid) { e.preventDefault(); alert('Please fill in all required fields.'); }
+  });
+  throwForm.querySelectorAll('.form-control[required]').forEach(f => {
+    f.addEventListener('blur', () => {
+      f.style.borderColor = f.value.trim() ? 'var(--copper)' : 'var(--red2)';
+    });
+  });
+</script>
+</body>
+</html>

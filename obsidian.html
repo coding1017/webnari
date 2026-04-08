@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Obsidian Roasters — Specialty Coffee Roastery & Cafe | Miami, FL</title>
+<meta name="description" content="Obsidian Roasters is a specialty coffee roastery and cafe in Miami's Wynwood district. Single-origin beans, small-batch roasting, and expert brewing.">
+<meta property="og:title" content="Obsidian Roasters — Specialty Coffee Roastery & Cafe">
+<meta property="og:description" content="Small-batch specialty coffee roasted in Wynwood, Miami. Single-origin beans sourced directly from farmers worldwide.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --black: #0A0A08;
+  --dark: #141410;
+  --surface: #1C1C18;
+  --surface2: #242420;
+  --border: #2E2E28;
+  --concrete: #3A3A34;
+  --copper: #B87333;
+  --copper2: #D4945A;
+  --copper3: #E8B080;
+  --cream: #E8DCC8;
+  --espresso: #3D2B1F;
+  --rust: #8B4513;
+  --smoke: #6B6B60;
+  --text: #9A9A8E;
+  --white: #F0EDE4;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Space Grotesk', sans-serif;
+  background: var(--black);
+  color: var(--text);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+/* Concrete noise texture */
+body::before {
+  content: '';
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: url("data:image/svg+xml,%3Csvg width='300' height='300' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none; z-index: 0;
+}
+section, nav, footer, header { position: relative; z-index: 1; }
+
+/* NAV — Left sidebar on desktop, top bar on mobile */
+.sidebar-nav {
+  position: fixed; left: 0; top: 0;
+  width: 72px; height: 100vh;
+  background: var(--dark);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: space-between;
+  padding: 24px 0; z-index: 100;
+}
+.sidebar-logo {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem; letter-spacing: 6px;
+  color: var(--copper); text-decoration: none;
+  transform: rotate(180deg);
+}
+.sidebar-links {
+  display: flex; flex-direction: column; gap: 24px;
+  align-items: center; list-style: none;
+}
+.sidebar-links a {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--smoke);
+  text-decoration: none; transition: color 0.3s;
+}
+.sidebar-links a:hover { color: var(--copper); }
+.sidebar-cta {
+  width: 40px; height: 40px;
+  background: var(--copper); color: var(--black);
+  display: flex; align-items: center; justify-content: center;
+  text-decoration: none; font-size: 1.2rem;
+  transition: background 0.3s;
+}
+.sidebar-cta:hover { background: var(--copper2); }
+.mobile-top-bar {
+  display: none; position: fixed; top: 0; left: 0;
+  width: 100%; height: 56px; background: var(--dark);
+  border-bottom: 1px solid var(--border);
+  z-index: 100; padding: 0 20px;
+  align-items: center; justify-content: space-between;
+}
+.mobile-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem; letter-spacing: 4px;
+  color: var(--copper); text-decoration: none;
+}
+.mobile-hamburger {
+  background: none; border: none; cursor: pointer;
+  display: flex; flex-direction: column; gap: 4px; padding: 8px;
+}
+.mobile-hamburger span {
+  display: block; width: 20px; height: 2px;
+  background: var(--cream); transition: all 0.3s;
+}
+.mobile-overlay {
+  display: none; position: fixed; top: 0; left: 0;
+  width: 100%; height: 100vh;
+  background: var(--black); z-index: 99;
+  flex-direction: column; align-items: center;
+  justify-content: center; gap: 32px;
+}
+.mobile-overlay.active { display: flex; }
+.mobile-overlay a {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem; letter-spacing: 6px;
+  color: var(--cream); text-decoration: none;
+}
+.mobile-overlay-close {
+  position: absolute; top: 16px; right: 20px;
+  background: none; border: none; cursor: pointer;
+  color: var(--cream); font-size: 2rem;
+}
+
+/* MAIN CONTENT OFFSET */
+.main-content { margin-left: 72px; }
+
+/* HERO */
+.hero {
+  min-height: 100vh; display: flex; align-items: center;
+  padding: 0 60px; position: relative;
+  background: var(--black); overflow: hidden;
+}
+.hero::after {
+  content: 'OBSIDIAN';
+  position: absolute; bottom: -30px; right: -20px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(10rem, 20vw, 18rem);
+  color: var(--surface); letter-spacing: 20px;
+  line-height: 1; pointer-events: none;
+  opacity: 0.5;
+}
+.hero-content { max-width: 700px; position: relative; z-index: 2; }
+.hero-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem; letter-spacing: 4px;
+  text-transform: uppercase; color: var(--copper);
+  margin-bottom: 20px;
+  display: flex; align-items: center; gap: 12px;
+}
+.hero-tag::before {
+  content: ''; width: 40px; height: 1px; background: var(--copper);
+}
+.hero h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3.5rem, 9vw, 7rem);
+  color: var(--white); line-height: 0.95;
+  letter-spacing: 4px; margin-bottom: 24px;
+}
+.hero h1 span {
+  display: block; color: var(--copper);
+  font-size: 0.55em; letter-spacing: 8px;
+}
+.hero p {
+  font-size: 1.05rem; color: var(--smoke);
+  max-width: 480px; margin-bottom: 36px;
+  font-weight: 300;
+}
+.hero-btns { display: flex; gap: 16px; flex-wrap: wrap; }
+.btn-copper {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem; letter-spacing: 2px;
+  text-transform: uppercase; padding: 14px 28px;
+  background: var(--copper); color: var(--black);
+  text-decoration: none; border: 2px solid var(--copper);
+  transition: all 0.3s; font-weight: 500;
+}
+.btn-copper:hover { background: transparent; color: var(--copper); }
+.btn-outline {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem; letter-spacing: 2px;
+  text-transform: uppercase; padding: 14px 28px;
+  background: transparent; color: var(--cream);
+  text-decoration: none; border: 2px solid var(--border);
+  transition: all 0.3s; font-weight: 500;
+}
+.btn-outline:hover { border-color: var(--copper); color: var(--copper); }
+.hero-stats {
+  display: flex; gap: 48px; margin-top: 60px;
+  padding-top: 32px; border-top: 1px solid var(--border);
+}
+.hero-stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.4rem; color: var(--copper);
+  line-height: 1;
+}
+.hero-stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 2px;
+  color: var(--smoke); text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* MARQUEE */
+.marquee-strip {
+  background: var(--copper); padding: 12px 0;
+  overflow: hidden; white-space: nowrap;
+}
+.marquee-track {
+  display: inline-flex; animation: marquee 30s linear infinite;
+}
+.marquee-track span {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1rem; letter-spacing: 4px;
+  color: var(--black); padding: 0 32px;
+}
+@keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+/* SECTIONS */
+.section { padding: 100px 60px; }
+.section-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem; letter-spacing: 4px;
+  text-transform: uppercase; color: var(--copper);
+  margin-bottom: 12px;
+  display: flex; align-items: center; gap: 12px;
+}
+.section-label::before {
+  content: ''; width: 24px; height: 1px; background: var(--copper);
+}
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  color: var(--white); letter-spacing: 3px;
+  line-height: 1.05; margin-bottom: 40px;
+}
+.section-title span { color: var(--copper); }
+
+/* BEANS / OFFERINGS */
+.beans-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 2px; background: var(--border);
+}
+.bean-card {
+  background: var(--dark); padding: 40px 32px;
+  transition: background 0.4s;
+  position: relative; overflow: hidden;
+}
+.bean-card::before {
+  content: attr(data-num);
+  position: absolute; top: -10px; right: 12px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 6rem; color: var(--surface);
+  line-height: 1; pointer-events: none;
+  transition: color 0.4s;
+}
+.bean-card:hover { background: var(--surface); }
+.bean-card:hover::before { color: var(--border); }
+.bean-origin {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--copper);
+  margin-bottom: 16px;
+}
+.bean-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem; color: var(--white);
+  letter-spacing: 2px; margin-bottom: 10px;
+}
+.bean-notes {
+  font-size: 0.88rem; color: var(--smoke);
+  font-weight: 300; margin-bottom: 20px; line-height: 1.6;
+}
+.bean-meta {
+  display: flex; gap: 16px; flex-wrap: wrap;
+}
+.bean-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 1px;
+  color: var(--text); padding: 4px 10px;
+  border: 1px solid var(--border);
+  text-transform: uppercase;
+}
+
+/* ABOUT / CRAFT */
+.craft-section { background: var(--surface); }
+.craft-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 60px; align-items: center;
+}
+.craft-visual {
+  aspect-ratio: 4/5; background: var(--dark);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.craft-visual svg { width: 60%; opacity: 0.15; }
+.craft-text h3 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.8rem; color: var(--white);
+  letter-spacing: 2px; margin-bottom: 16px;
+}
+.craft-text p {
+  font-size: 0.95rem; font-weight: 300;
+  color: var(--smoke); margin-bottom: 16px; line-height: 1.8;
+}
+.craft-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 2px; background: var(--border); margin-top: 32px;
+}
+.craft-stat {
+  background: var(--dark); padding: 20px; text-align: center;
+}
+.craft-stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2rem; color: var(--copper);
+}
+.craft-stat-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55rem; letter-spacing: 2px;
+  color: var(--smoke); text-transform: uppercase;
+  margin-top: 4px;
+}
+
+/* PROCESS */
+.process-row {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 0; border: 1px solid var(--border);
+}
+.process-card {
+  padding: 40px 28px;
+  border-right: 1px solid var(--border);
+  position: relative;
+}
+.process-card:last-child { border-right: none; }
+.process-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0;
+  width: 100%; height: 3px;
+  background: linear-gradient(90deg, var(--copper), transparent);
+  opacity: 0; transition: opacity 0.4s;
+}
+.process-card:hover::before { opacity: 1; }
+.process-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3rem; color: var(--border);
+  line-height: 1; margin-bottom: 16px;
+}
+.process-card:hover .process-num { color: var(--copper); }
+.process-card h4 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600; font-size: 1rem;
+  color: var(--white); margin-bottom: 8px;
+}
+.process-card p {
+  font-size: 0.85rem; font-weight: 300;
+  color: var(--smoke); line-height: 1.6;
+}
+
+/* MENU */
+.menu-section { background: var(--surface); }
+.menu-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0; border: 1px solid var(--border);
+}
+.menu-item {
+  display: flex; justify-content: space-between;
+  align-items: baseline; padding: 20px 28px;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  transition: background 0.3s;
+}
+.menu-item:hover { background: var(--dark); }
+.menu-item:nth-child(even) { border-right: none; }
+.menu-name {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 500; color: var(--white);
+  font-size: 0.95rem;
+}
+.menu-desc {
+  font-size: 0.75rem; color: var(--smoke);
+  font-weight: 300; margin-top: 2px;
+}
+.menu-price {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem; color: var(--copper);
+  white-space: nowrap;
+}
+
+/* TESTIMONIALS */
+.reviews-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 2px; background: var(--border);
+}
+.review-card { background: var(--dark); padding: 36px 28px; }
+.review-stars {
+  color: var(--copper); font-size: 0.75rem;
+  letter-spacing: 3px; margin-bottom: 16px;
+}
+.review-text {
+  font-size: 0.9rem; font-weight: 300;
+  color: var(--smoke); line-height: 1.7;
+  margin-bottom: 20px; font-style: italic;
+}
+.review-author {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem; letter-spacing: 2px;
+  color: var(--copper); text-transform: uppercase;
+}
+
+/* FAQ */
+.faq-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0; border: 1px solid var(--border);
+}
+.faq-item {
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  padding: 24px 28px;
+}
+.faq-item:nth-child(even) { border-right: none; }
+.faq-q {
+  display: flex; justify-content: space-between; align-items: center;
+  cursor: pointer; background: none; border: none; width: 100%;
+  text-align: left; padding: 0;
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 500; font-size: 0.9rem; color: var(--white);
+}
+.faq-toggle {
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--copper); font-size: 1rem;
+  transition: transform 0.3s; min-width: 16px; text-align: right;
+}
+.faq-item.active .faq-toggle { transform: rotate(45deg); }
+.faq-a {
+  max-height: 0; overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.4s;
+  font-size: 0.85rem; font-weight: 300;
+  color: var(--smoke); line-height: 1.7;
+}
+.faq-item.active .faq-a { max-height: 200px; padding-top: 12px; }
+
+/* AREAS */
+.areas-row {
+  display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px;
+}
+.area-pill {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem; letter-spacing: 1px;
+  text-transform: uppercase; color: var(--smoke);
+  padding: 8px 16px; border: 1px solid var(--border);
+  transition: all 0.3s;
+}
+.area-pill:hover { border-color: var(--copper); color: var(--copper); }
+
+/* CONTACT */
+.contact-section { background: var(--surface); }
+.contact-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 60px;
+}
+.contact-info { display: flex; flex-direction: column; gap: 24px; }
+.contact-row {
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+}
+.contact-row-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--copper);
+  margin-bottom: 6px;
+}
+.contact-row-value {
+  font-weight: 500; color: var(--white);
+  font-size: 0.95rem;
+}
+.contact-form { display: flex; flex-direction: column; gap: 20px; }
+.cform-group label {
+  display: block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--smoke);
+  margin-bottom: 8px;
+}
+.cform-group input, .cform-group textarea {
+  width: 100%; font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.9rem; padding: 12px 16px;
+  background: var(--dark); color: var(--white);
+  border: 1px solid var(--border);
+  outline: none; transition: border-color 0.3s;
+}
+.cform-group input:focus, .cform-group textarea:focus {
+  border-color: var(--copper);
+}
+.cform-group textarea { resize: vertical; min-height: 100px; }
+.cform-submit {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem; letter-spacing: 2px;
+  text-transform: uppercase; padding: 14px 28px;
+  background: var(--copper); color: var(--black);
+  border: 2px solid var(--copper); cursor: pointer;
+  transition: all 0.3s; align-self: flex-start;
+  font-weight: 500;
+}
+.cform-submit:hover { background: transparent; color: var(--copper); }
+
+/* CTA */
+.cta-banner {
+  background: var(--copper); padding: 80px 60px;
+  text-align: center; position: relative;
+  overflow: hidden;
+}
+.cta-banner::before {
+  content: 'ROAST';
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 14rem; color: rgba(0,0,0,0.08);
+  letter-spacing: 20px; pointer-events: none;
+}
+.cta-banner h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2rem, 4vw, 3rem);
+  color: var(--black); letter-spacing: 4px;
+  margin-bottom: 16px; position: relative;
+}
+.cta-banner p {
+  font-weight: 300; color: var(--espresso);
+  margin-bottom: 28px; font-size: 1rem;
+  position: relative;
+}
+
+/* FOOTER */
+footer {
+  background: var(--dark); padding: 60px 60px 32px;
+  border-top: 1px solid var(--border);
+}
+.footer-grid {
+  display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 40px; margin-bottom: 40px;
+}
+.footer-brand-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem; color: var(--white);
+  letter-spacing: 4px; margin-bottom: 12px;
+}
+.footer-brand p {
+  font-size: 0.85rem; font-weight: 300;
+  color: var(--smoke); line-height: 1.6;
+}
+.footer-col h4 {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem; letter-spacing: 3px;
+  text-transform: uppercase; color: var(--copper);
+  margin-bottom: 16px;
+}
+.footer-col a {
+  display: block; color: var(--smoke);
+  text-decoration: none; font-size: 0.85rem;
+  font-weight: 300; margin-bottom: 10px;
+  transition: color 0.3s;
+}
+.footer-col a:hover { color: var(--copper); }
+.footer-bottom {
+  padding-top: 24px; border-top: 1px solid var(--border);
+  display: flex; justify-content: space-between; align-items: center;
+}
+.footer-copy {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.6rem; color: var(--smoke); letter-spacing: 1px;
+}
+.webnari-badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.55rem; color: var(--smoke);
+  opacity: 0.5; text-decoration: none;
+  letter-spacing: 1px; transition: opacity 0.3s;
+}
+.webnari-badge:hover { opacity: 0.9; }
+
+/* REVEALS */
+.reveal {
+  opacity: 0; transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .sidebar-nav { display: none; }
+  .mobile-top-bar { display: flex; }
+  .main-content { margin-left: 0; }
+  .hero { padding: 100px 24px 60px; min-height: auto; }
+  .hero h1 { font-size: 3rem; }
+  .hero-stats { flex-direction: column; gap: 20px; }
+  .section { padding: 60px 24px; }
+  .beans-grid { grid-template-columns: 1fr; }
+  .craft-grid { grid-template-columns: 1fr; }
+  .craft-visual { display: none; }
+  .process-row { grid-template-columns: 1fr 1fr; }
+  .process-card { border-bottom: 1px solid var(--border); }
+  .menu-grid { grid-template-columns: 1fr; }
+  .menu-item { border-right: none !important; }
+  .reviews-grid { grid-template-columns: 1fr; }
+  .faq-grid { grid-template-columns: 1fr; }
+  .faq-item { border-right: none !important; }
+  .contact-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .cta-banner { padding: 60px 24px; }
+  footer { padding: 40px 24px 24px; }
+}
+@media (max-width: 500px) {
+  .process-row { grid-template-columns: 1fr; }
+  .craft-stats { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+  .footer-bottom { flex-direction: column; gap: 12px; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR NAV (Desktop) -->
+<nav class="sidebar-nav">
+  <a href="#" class="sidebar-logo">OBSIDIAN</a>
+  <ul class="sidebar-links">
+    <li><a href="#beans">Beans</a></li>
+    <li><a href="#craft">Craft</a></li>
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#reviews">Reviews</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="sidebar-cta" aria-label="Visit us">&rarr;</a>
+</nav>
+
+<!-- MOBILE TOP BAR -->
+<div class="mobile-top-bar">
+  <a href="#" class="mobile-logo">OBSIDIAN</a>
+  <button class="mobile-hamburger" onclick="toggleMobile()" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+</div>
+<div class="mobile-overlay" id="mobileOverlay">
+  <button class="mobile-overlay-close" onclick="toggleMobile()">&times;</button>
+  <a href="#beans" onclick="toggleMobile()">Beans</a>
+  <a href="#craft" onclick="toggleMobile()">Craft</a>
+  <a href="#menu" onclick="toggleMobile()">Menu</a>
+  <a href="#reviews" onclick="toggleMobile()">Reviews</a>
+  <a href="#contact" onclick="toggleMobile()">Contact</a>
+</div>
+
+<div class="main-content">
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-tag">Est. 2018 &middot; Wynwood, Miami</div>
+    <h1>OBSIDIAN<br>ROASTERS<span>Specialty Coffee &middot; Small Batch</span></h1>
+    <p>Single-origin beans roasted in small batches at our Wynwood roastery. Direct trade from the world's finest coffee farms to your cup.</p>
+    <div class="hero-btns">
+      <a href="#menu" class="btn-copper">View Menu</a>
+      <a href="#beans" class="btn-outline">Our Beans</a>
+    </div>
+    <div class="hero-stats">
+      <div>
+        <div class="hero-stat-num">12</div>
+        <div class="hero-stat-label">Single Origins</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">8</div>
+        <div class="hero-stat-label">Years Roasting</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">6</div>
+        <div class="hero-stat-label">Farm Partners</div>
+      </div>
+      <div>
+        <div class="hero-stat-num">4.9</div>
+        <div class="hero-stat-label">Google Rating</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-strip">
+  <div class="marquee-track">
+    <span>POUR OVER</span><span>&middot;</span>
+    <span>ESPRESSO</span><span>&middot;</span>
+    <span>COLD BREW</span><span>&middot;</span>
+    <span>NITRO</span><span>&middot;</span>
+    <span>SINGLE ORIGIN</span><span>&middot;</span>
+    <span>DIRECT TRADE</span><span>&middot;</span>
+    <span>SMALL BATCH</span><span>&middot;</span>
+    <span>POUR OVER</span><span>&middot;</span>
+    <span>ESPRESSO</span><span>&middot;</span>
+    <span>COLD BREW</span><span>&middot;</span>
+    <span>NITRO</span><span>&middot;</span>
+    <span>SINGLE ORIGIN</span><span>&middot;</span>
+    <span>DIRECT TRADE</span><span>&middot;</span>
+    <span>SMALL BATCH</span><span>&middot;</span>
+  </div>
+</div>
+
+<!-- BEANS -->
+<section class="section" id="beans">
+  <div class="section-label reveal">Our Beans</div>
+  <h2 class="section-title reveal">SOURCED FROM <span>SIX CONTINENTS</span></h2>
+  <div class="beans-grid">
+    <div class="bean-card reveal reveal-delay-1" data-num="01">
+      <div class="bean-origin">Ethiopia &middot; Yirgacheffe</div>
+      <div class="bean-name">MIDNIGHT BLOOM</div>
+      <p class="bean-notes">Bright floral notes with blueberry undertones. Light roast that showcases the bean's natural sweetness and complexity.</p>
+      <div class="bean-meta">
+        <span class="bean-tag">Light Roast</span>
+        <span class="bean-tag">Washed</span>
+        <span class="bean-tag">1,900m</span>
+      </div>
+    </div>
+    <div class="bean-card reveal reveal-delay-2" data-num="02">
+      <div class="bean-origin">Colombia &middot; Huila</div>
+      <div class="bean-name">VOLCANIC ASH</div>
+      <p class="bean-notes">Rich chocolate and caramel with a bright citrus finish. Our most popular medium roast for everyday drinking.</p>
+      <div class="bean-meta">
+        <span class="bean-tag">Medium Roast</span>
+        <span class="bean-tag">Natural</span>
+        <span class="bean-tag">1,700m</span>
+      </div>
+    </div>
+    <div class="bean-card reveal reveal-delay-3" data-num="03">
+      <div class="bean-origin">Guatemala &middot; Antigua</div>
+      <div class="bean-name">SMOKE SIGNAL</div>
+      <p class="bean-notes">Deep smoky body with dark chocolate and walnut. A bold espresso roast for those who like it strong.</p>
+      <div class="bean-meta">
+        <span class="bean-tag">Dark Roast</span>
+        <span class="bean-tag">Honey</span>
+        <span class="bean-tag">1,500m</span>
+      </div>
+    </div>
+    <div class="bean-card reveal reveal-delay-1" data-num="04">
+      <div class="bean-origin">Kenya &middot; Nyeri</div>
+      <div class="bean-name">RED EARTH</div>
+      <p class="bean-notes">Vibrant blackcurrant and grapefruit with a wine-like body. A stunning single-origin for pour over.</p>
+      <div class="bean-meta">
+        <span class="bean-tag">Light Roast</span>
+        <span class="bean-tag">Washed</span>
+        <span class="bean-tag">1,800m</span>
+      </div>
+    </div>
+    <div class="bean-card reveal reveal-delay-2" data-num="05">
+      <div class="bean-origin">Brazil &middot; Cerrado</div>
+      <div class="bean-name">IRON BARK</div>
+      <p class="bean-notes">Nutty and sweet with brown sugar and dried fruit. Smooth body perfect for milk-based espresso drinks.</p>
+      <div class="bean-meta">
+        <span class="bean-tag">Medium Roast</span>
+        <span class="bean-tag">Natural</span>
+        <span class="bean-tag">1,100m</span>
+      </div>
+    </div>
+    <div class="bean-card reveal reveal-delay-3" data-num="06">
+      <div class="bean-origin">Indonesia &middot; Sumatra</div>
+      <div class="bean-name">OBSIDIAN RESERVE</div>
+      <p class="bean-notes">Our signature. Earthy, full-bodied with cedar and dark molasses. Aged 60 days for peak depth.</p>
+      <div class="bean-meta">
+        <span class="bean-tag">Dark Roast</span>
+        <span class="bean-tag">Wet-Hulled</span>
+        <span class="bean-tag">1,300m</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CRAFT / ABOUT -->
+<section class="section craft-section" id="craft">
+  <div class="section-label reveal">Our Craft</div>
+  <h2 class="section-title reveal">ROASTED WITH <span>INTENTION</span></h2>
+  <div class="craft-grid">
+    <div class="craft-visual reveal">
+      <svg viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="0.8">
+        <circle cx="100" cy="100" r="80" stroke="#B87333"/>
+        <circle cx="100" cy="100" r="60" stroke="#B87333"/>
+        <circle cx="100" cy="100" r="40" stroke="#B87333"/>
+        <circle cx="100" cy="100" r="20" stroke="#B87333"/>
+        <path d="M100 20 Q120 60 100 100 Q80 140 100 180" stroke="#B87333"/>
+        <path d="M20 100 Q60 80 100 100 Q140 120 180 100" stroke="#B87333"/>
+      </svg>
+    </div>
+    <div class="craft-text reveal">
+      <h3>FROM SEED TO CUP</h3>
+      <p>Every bean we roast tells a story. We travel to origin, meet the farmers, and cup hundreds of samples to find coffees worthy of the Obsidian name.</p>
+      <p>Our Loring S15 Falcon roaster allows us to craft precise roast profiles that honor each bean's unique character. We roast weekly in small batches to guarantee peak freshness.</p>
+      <p>Founded in 2018 in a converted warehouse in Wynwood, Obsidian has grown from a one-bag-at-a-time operation to Miami's go-to specialty roaster serving over 40 wholesale partners.</p>
+      <div class="craft-stats">
+        <div class="craft-stat">
+          <div class="craft-stat-num">40+</div>
+          <div class="craft-stat-label">Wholesale Partners</div>
+        </div>
+        <div class="craft-stat">
+          <div class="craft-stat-num">12K</div>
+          <div class="craft-stat-label">Lbs Roasted Monthly</div>
+        </div>
+        <div class="craft-stat">
+          <div class="craft-stat-num">6</div>
+          <div class="craft-stat-label">Origin Countries</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="section" id="process">
+  <div class="section-label reveal">The Process</div>
+  <h2 class="section-title reveal">FOUR STEPS TO <span>PERFECT COFFEE</span></h2>
+  <div class="process-row">
+    <div class="process-card reveal reveal-delay-1">
+      <div class="process-num">01</div>
+      <h4>Source</h4>
+      <p>We travel to origin, visit farms, and cup hundreds of samples to find exceptional lots worthy of small-batch roasting.</p>
+    </div>
+    <div class="process-card reveal reveal-delay-2">
+      <div class="process-num">02</div>
+      <h4>Profile</h4>
+      <p>Each bean gets a custom roast profile developed through dozens of test roasts to unlock its best flavors.</p>
+    </div>
+    <div class="process-card reveal reveal-delay-3">
+      <div class="process-num">03</div>
+      <h4>Roast</h4>
+      <p>Small-batch roasting on our Loring S15 Falcon. Every roast is logged, analyzed, and quality-checked.</p>
+    </div>
+    <div class="process-card reveal">
+      <div class="process-num">04</div>
+      <h4>Brew</h4>
+      <p>Expert baristas extract each coffee's potential using precision brewing equipment calibrated daily.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CAFE MENU -->
+<section class="section menu-section" id="menu">
+  <div class="section-label reveal">Cafe Menu</div>
+  <h2 class="section-title reveal">BREWED <span>DAILY</span></h2>
+  <div class="menu-grid reveal">
+    <div class="menu-item">
+      <div><div class="menu-name">Espresso</div><div class="menu-desc">Double shot, single origin</div></div>
+      <div class="menu-price">$4.00</div>
+    </div>
+    <div class="menu-item">
+      <div><div class="menu-name">Cortado</div><div class="menu-desc">Equal parts espresso & steamed milk</div></div>
+      <div class="menu-price">$5.00</div>
+    </div>
+    <div class="menu-item">
+      <div><div class="menu-name">Flat White</div><div class="menu-desc">Double ristretto, velvety microfoam</div></div>
+      <div class="menu-price">$5.50</div>
+    </div>
+    <div class="menu-item">
+      <div><div class="menu-name">Oat Latte</div><div class="menu-desc">Espresso with Oatly Barista Edition</div></div>
+      <div class="menu-price">$6.00</div>
+    </div>
+    <div class="menu-item">
+      <div><div class="menu-name">Pour Over</div><div class="menu-desc">V60, rotating single origin</div></div>
+      <div class="menu-price">$6.50</div>
+    </div>
+    <div class="menu-item">
+      <div><div class="menu-name">Cold Brew</div><div class="menu-desc">24-hour steeped, served on ice</div></div>
+      <div class="menu-price">$5.50</div>
+    </div>
+    <div class="menu-item">
+      <div><div class="menu-name">Nitro Cold Brew</div><div class="menu-desc">Nitrogen-infused, creamy texture</div></div>
+      <div class="menu-price">$6.50</div>
+    </div>
+    <div class="menu-item">
+      <div><div class="menu-name">Drip Coffee</div><div class="menu-desc">Batch brew, always fresh</div></div>
+      <div class="menu-price">$3.50</div>
+    </div>
+    <div class="menu-item">
+      <div><div class="menu-name">Americano</div><div class="menu-desc">Espresso + hot water</div></div>
+      <div class="menu-price">$4.50</div>
+    </div>
+    <div class="menu-item">
+      <div><div class="menu-name">Cappuccino</div><div class="menu-desc">Espresso, steamed milk, foam</div></div>
+      <div class="menu-price">$5.50</div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="section" id="reviews">
+  <div class="section-label reveal">Reviews</div>
+  <h2 class="section-title reveal">WHAT PEOPLE <span>SAY</span></h2>
+  <div class="reviews-grid">
+    <div class="review-card reveal reveal-delay-1">
+      <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="review-text">The best pour over I've had outside of Tokyo. The Midnight Bloom is absolutely stunning — floral, fruity, and perfectly extracted.</p>
+      <div class="review-author">Diana L. &mdash; Brickell</div>
+    </div>
+    <div class="review-card reveal reveal-delay-2">
+      <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="review-text">We switched our entire cafe to Obsidian wholesale beans. Our customers noticed the difference immediately. Quality is unmatched.</p>
+      <div class="review-author">Marco S. &mdash; Coral Gables</div>
+    </div>
+    <div class="review-card reveal reveal-delay-3">
+      <div class="review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="review-text">The space is beautiful and the coffee is even better. The baristas really know their craft. This is what specialty coffee should be.</p>
+      <div class="review-author">Aisha K. &mdash; Wynwood</div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section" id="faq" style="background:var(--surface);">
+  <div class="section-label reveal">FAQ</div>
+  <h2 class="section-title reveal">COMMON <span>QUESTIONS</span></h2>
+  <div class="faq-grid">
+    <div class="faq-item">
+      <button class="faq-q">Do you offer subscriptions? <span class="faq-toggle">+</span></button>
+      <div class="faq-a">Yes. We offer bi-weekly and monthly subscription boxes. Choose a single origin or let us pick our roaster's choice. Free shipping on all subscriptions.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Can I visit the roastery? <span class="faq-toggle">+</span></button>
+      <div class="faq-a">Absolutely. Our cafe is attached to the roastery. Walk-ins welcome. We also offer guided cupping sessions every Saturday at 10am ($15/person).</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Do you sell wholesale? <span class="faq-toggle">+</span></button>
+      <div class="faq-a">We partner with cafes, restaurants, and offices across South Florida. Minimum order is 10lbs per origin. Contact us for wholesale pricing.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Is your coffee organic? <span class="faq-toggle">+</span></button>
+      <div class="faq-a">Several of our origins are certified organic. All of our partner farms use sustainable practices. We prioritize quality and ethics in our sourcing.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">Do you ship nationwide? <span class="faq-toggle">+</span></button>
+      <div class="faq-a">Yes, we ship roasted beans across the US. Orders placed before 2pm ship same day. Most deliveries arrive within 2-4 business days.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q">What milk alternatives do you offer? <span class="faq-toggle">+</span></button>
+      <div class="faq-a">We carry Oatly Barista Edition, almond, and coconut milk. Oat milk is our baristas' recommendation for espresso drinks. No extra charge.</div>
+    </div>
+  </div>
+</section>
+
+<!-- AREAS -->
+<section class="section" id="areas">
+  <div class="section-label reveal">Service Areas</div>
+  <h2 class="section-title reveal">DELIVERING ACROSS <span>SOUTH FLORIDA</span></h2>
+  <div class="areas-row reveal">
+    <span class="area-pill">Wynwood</span>
+    <span class="area-pill">Brickell</span>
+    <span class="area-pill">Miami Beach</span>
+    <span class="area-pill">Coral Gables</span>
+    <span class="area-pill">Coconut Grove</span>
+    <span class="area-pill">Doral</span>
+    <span class="area-pill">Hialeah</span>
+    <span class="area-pill">Kendall</span>
+    <span class="area-pill">South Miami</span>
+    <span class="area-pill">Homestead</span>
+    <span class="area-pill">North Miami</span>
+    <span class="area-pill">Fort Lauderdale</span>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section contact-section" id="contact">
+  <div class="section-label reveal">Contact</div>
+  <h2 class="section-title reveal">VISIT THE <span>ROASTERY</span></h2>
+  <div class="contact-grid">
+    <div class="contact-info reveal">
+      <div class="contact-row">
+        <div class="contact-row-label">Address</div>
+        <div class="contact-row-value">2740 NW 3rd Ave, Unit 12<br>Wynwood, Miami FL 33127</div>
+      </div>
+      <div class="contact-row">
+        <div class="contact-row-label">Phone</div>
+        <div class="contact-row-value">(786) 555-2400</div>
+      </div>
+      <div class="contact-row">
+        <div class="contact-row-label">Email</div>
+        <div class="contact-row-value">hello@obsidianroasters.com</div>
+      </div>
+      <div class="contact-row">
+        <div class="contact-row-label">Hours</div>
+        <div class="contact-row-value">Mon&ndash;Fri 7AM&ndash;6PM<br>Sat&ndash;Sun 8AM&ndash;5PM</div>
+      </div>
+      <div class="contact-row">
+        <div class="contact-row-label">Cupping Sessions</div>
+        <div class="contact-row-value">Saturdays 10AM &middot; $15/person</div>
+      </div>
+    </div>
+    <form class="contact-form reveal" action="https://formsubmit.co/hello@obsidianroasters.com" method="POST" id="contactForm">
+      <input type="hidden" name="_subject" value="New Inquiry from Website">
+      <input type="hidden" name="_captcha" value="false">
+      <div class="cform-group">
+        <label for="cname">Name</label>
+        <input type="text" id="cname" name="name" required>
+      </div>
+      <div class="cform-group">
+        <label for="cemail">Email</label>
+        <input type="email" id="cemail" name="email" required>
+      </div>
+      <div class="cform-group">
+        <label for="csubject">Subject</label>
+        <input type="text" id="csubject" name="subject" placeholder="General inquiry, wholesale, events...">
+      </div>
+      <div class="cform-group">
+        <label for="cmessage">Message</label>
+        <textarea id="cmessage" name="message" rows="4" required></textarea>
+      </div>
+      <button type="submit" class="cform-submit">Send Message</button>
+    </form>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section class="cta-banner">
+  <h2>TASTE THE DIFFERENCE</h2>
+  <p>Visit our Wynwood roastery or order online. Fresh-roasted beans shipped same day.</p>
+  <a href="#menu" class="btn-copper" style="background:var(--black);color:var(--copper);border-color:var(--black);">View Menu</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="footer-brand-name">OBSIDIAN ROASTERS</div>
+      <p>Specialty coffee roastery and cafe in Miami's Wynwood Arts District. Small-batch, single-origin, direct-trade since 2018.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Cafe</h4>
+      <a href="#menu">Menu</a>
+      <a href="#beans">Our Beans</a>
+      <a href="#craft">Our Story</a>
+      <a href="#process">Process</a>
+    </div>
+    <div class="footer-col">
+      <h4>More</h4>
+      <a href="#reviews">Reviews</a>
+      <a href="#faq">FAQ</a>
+      <a href="#areas">Delivery Areas</a>
+      <a href="#">Wholesale</a>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <a href="tel:+17865552400">(786) 555-2400</a>
+      <a href="mailto:hello@obsidianroasters.com">Email Us</a>
+      <a href="#">2740 NW 3rd Ave</a>
+      <a href="#">Wynwood, Miami FL</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">&copy; 2026 Obsidian Roasters. All rights reserved.</span>
+    <a href="https://webnari.io" target="_blank" class="webnari-badge">Powered by Webnari</a>
+  </div>
+</footer>
+
+</div><!-- /main-content -->
+
+<script>
+function toggleMobile() {
+  document.getElementById('mobileOverlay').classList.toggle('active');
+}
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) entry.target.classList.add('visible');
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// FAQ
+document.querySelectorAll('.faq-q').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.parentElement;
+    const wasActive = item.classList.contains('active');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+    if (!wasActive) item.classList.add('active');
+  });
+});
+
+// Form validation
+document.getElementById('contactForm').addEventListener('submit', function(e) {
+  let valid = true;
+  this.querySelectorAll('[required]').forEach(input => {
+    if (!input.value.trim()) { input.style.borderColor = '#C05746'; valid = false; }
+    else { input.style.borderColor = ''; }
+  });
+  if (!valid) e.preventDefault();
+});
+document.querySelectorAll('#contactForm [required]').forEach(input => {
+  input.addEventListener('blur', function() {
+    if (!this.value.trim()) this.style.borderColor = '#C05746';
+    else this.style.borderColor = '';
+  });
+});
+</script>
+</body>
+</html>

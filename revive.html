@@ -1,0 +1,1948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Revive Appliance Co. — Premier appliance repair service in South Florida. 24/7 emergency service, licensed professionals, same-day repairs available.">
+    <meta name="theme-color" content="#1E40AF">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Revive Appliance Co. — Professional Appliance Repair">
+    <meta property="og:description" content="Expert appliance repair for washers, dryers, refrigerators, dishwashers, and more. Same-day service available.">
+    <meta property="og:type" content="business.business">
+    <meta property="og:url" content="https://webnari.io/revive.html">
+
+    <title>Revive Appliance Co. — South Florida Appliance Repair</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Azeret+Mono:wght@400;700;900&family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: #F0F4FF;
+            background-image:
+                linear-gradient(0deg, #E0EBFF 1px, transparent 1px),
+                linear-gradient(90deg, #E0EBFF 1px, transparent 1px);
+            background-size: 40px 40px;
+            color: #4B5563;
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Azeret Mono', monospace;
+            color: #1E293B;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+        }
+
+        /* ============================================
+           HEADER / NAVIGATION
+           ============================================ */
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(30, 41, 59, 0.98);
+            border-bottom: 3px solid #1E40AF;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Azeret Mono', monospace;
+            font-size: 1.4rem;
+            font-weight: 900;
+            color: #DBEAFE;
+            text-decoration: none;
+            letter-spacing: 0.1em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .logo::before {
+            content: 'REV';
+            font-size: 0.9rem;
+            color: #DC2626;
+            font-weight: 700;
+            border: 2px solid #DC2626;
+            padding: 0.25rem 0.5rem;
+        }
+
+        nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        nav a {
+            font-family: 'Azeret Mono', monospace;
+            font-size: 0.85rem;
+            color: #DBEAFE;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: 1px solid transparent;
+            padding: 0.5rem 0.8rem;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover {
+            border: 1px dashed #1E40AF;
+            color: #1E40AF;
+        }
+
+        .cta-button {
+            background-color: #DC2626;
+            color: #F0F4FF !important;
+            padding: 0.6rem 1.2rem !important;
+            border: 2px solid #DC2626 !important;
+            border-radius: 0;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.8rem !important;
+            letter-spacing: 0.08em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            transform-origin: center;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            bottom: -4px;
+            left: -4px;
+            border: 1px dashed #DC2626;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .cta-button:hover {
+            background-color: transparent;
+            color: #DC2626 !important;
+            transform: scale(1.05);
+        }
+
+        .cta-button:hover::before {
+            opacity: 1;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 2px;
+            background-color: #DBEAFE;
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        /* ============================================
+           MOBILE NAV
+           ============================================ */
+
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            right: -300px;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background-color: #1E293B;
+            border-left: 3px solid #1E40AF;
+            padding-top: 80px;
+            transition: right 0.3s ease;
+            z-index: 999;
+            overflow-y: auto;
+        }
+
+        .mobile-nav.active {
+            right: 0;
+        }
+
+        .mobile-nav a {
+            display: block;
+            font-family: 'Azeret Mono', monospace;
+            font-size: 0.9rem;
+            color: #DBEAFE;
+            text-decoration: none;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #4B5563;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .mobile-nav a:hover {
+            background-color: #1E40AF;
+            color: #F0F4FF;
+        }
+
+        /* ============================================
+           HERO SECTION
+           ============================================ */
+
+        .hero {
+            margin-top: 70px;
+            min-height: 100vh;
+            background-color: #F0F4FF;
+            background-image:
+                linear-gradient(0deg, #E0EBFF 1px, transparent 1px),
+                linear-gradient(90deg, #E0EBFF 1px, transparent 1px);
+            background-size: 40px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: 3rem 2rem;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 30px;
+            height: 30px;
+            border: 2px solid #1E40AF;
+            border-radius: 2px;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 30px;
+            height: 30px;
+            border: 2px solid #1E40AF;
+            border-radius: 2px;
+        }
+
+        .hero-content {
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .hero-text h1 {
+            font-size: 3rem;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            color: #1E293B;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .hero-text::before {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 2px;
+            background-color: #1E40AF;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-text::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 2px;
+            background-color: #DC2626;
+            margin-top: 1.5rem;
+        }
+
+        .hero-description {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            color: #4B5563;
+            line-height: 1.8;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.8rem 1.8rem;
+            border: 2px solid #1E40AF;
+            background-color: transparent;
+            color: #1E40AF;
+            font-family: 'Azeret Mono', monospace;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #1E40AF;
+            color: #F0F4FF;
+        }
+
+        .btn-primary {
+            background-color: #DC2626;
+            border-color: #DC2626;
+            color: #F0F4FF;
+        }
+
+        .btn-primary:hover {
+            background-color: transparent;
+            color: #DC2626;
+        }
+
+        .hero-illustration {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        svg {
+            max-width: 100%;
+            height: auto;
+            filter: drop-shadow(0 0 15px rgba(30, 64, 175, 0.2));
+        }
+
+        .hero-stats {
+            position: absolute;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: #1E293B;
+            color: #DBEAFE;
+            padding: 1.5rem;
+            border: 2px solid #1E40AF;
+            max-width: 280px;
+            font-family: 'Azeret Mono', monospace;
+            font-size: 0.85rem;
+        }
+
+        .hero-stats h3 {
+            color: #DBEAFE;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px dashed #1E40AF;
+        }
+
+        .stat-row:last-child {
+            border-bottom: none;
+        }
+
+        /* ============================================
+           SECTION STYLES
+           ============================================ */
+
+        section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .section-number {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 50px;
+            border: 3px solid #1E40AF;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #F0F4FF;
+            font-family: 'Azeret Mono', monospace;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1E40AF;
+        }
+
+        .section-label {
+            font-family: 'Azeret Mono', monospace;
+            font-size: 0.75rem;
+            color: #4B5563;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        section h2 {
+            font-size: 2.5rem;
+            text-transform: uppercase;
+            margin-bottom: 3rem;
+            position: relative;
+            padding-bottom: 1.5rem;
+        }
+
+        section h2::after {
+            content: '';
+            display: block;
+            width: 100px;
+            height: 2px;
+            background-color: #DC2626;
+            margin-top: 1rem;
+        }
+
+        /* ============================================
+           SERVICES SECTION
+           ============================================ */
+
+        #services {
+            background-color: #F0F4FF;
+            position: relative;
+            margin-top: 80px;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .service-card {
+            background-color: #FFFFFF;
+            border: 2px dashed #1E40AF;
+            padding: 2rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .service-card:hover {
+            border-style: solid;
+            box-shadow: 0 10px 30px rgba(30, 64, 175, 0.15);
+            transform: translateY(-5px);
+        }
+
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 1.5rem;
+        }
+
+        .service-icon svg {
+            width: 100%;
+            height: 100%;
+            stroke: #1E40AF;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .service-spec {
+            font-family: 'Azeret Mono', monospace;
+            font-size: 0.75rem;
+            color: #DC2626;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .service-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .service-card p {
+            color: #4B5563;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+
+        .service-card::before {
+            content: attr(data-spec);
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-family: 'Azeret Mono', monospace;
+            font-size: 0.7rem;
+            color: #1E40AF;
+            font-weight: 700;
+            border: 1px solid #1E40AF;
+            padding: 0.3rem 0.6rem;
+        }
+
+        /* ============================================
+           WHY US SECTION
+           ============================================ */
+
+        #whyus {
+            background-color: #1E293B;
+            color: #DBEAFE;
+            position: relative;
+            margin-top: 80px;
+        }
+
+        #whyus h2 {
+            color: #DBEAFE;
+        }
+
+        #whyus h2::after {
+            background-color: #DBEAFE;
+        }
+
+        .whyus-stat {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #DC2626;
+            font-family: 'Azeret Mono', monospace;
+            margin-bottom: 1rem;
+        }
+
+        .whyus-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .whyus-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .whyus-card {
+            border: 2px solid #1E40AF;
+            padding: 2rem;
+            position: relative;
+            counter-increment: whyus-counter;
+        }
+
+        .whyus-card::before {
+            content: counter(whyus-counter);
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            width: 35px;
+            height: 35px;
+            border: 2px solid #DBEAFE;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Azeret Mono', monospace;
+            font-weight: 700;
+            color: #DBEAFE;
+            font-size: 0.9rem;
+        }
+
+        #whyus {
+            counter-reset: whyus-counter;
+        }
+
+        .whyus-card h3 {
+            color: #DBEAFE;
+            margin-top: 1.5rem;
+            padding-left: 50px;
+            font-size: 1.1rem;
+            text-transform: uppercase;
+        }
+
+        .whyus-card p {
+            color: #AEBFDC;
+            margin-top: 0.5rem;
+            padding-left: 50px;
+            font-size: 0.9rem;
+        }
+
+        /* ============================================
+           PROCESS SECTION
+           ============================================ */
+
+        #process {
+            background-color: #F0F4FF;
+            position: relative;
+            margin-top: 80px;
+        }
+
+        .process-flow {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+            position: relative;
+        }
+
+        .process-step {
+            background-color: #FFFFFF;
+            border: 2px solid #1E40AF;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .process-step::before {
+            content: attr(data-step);
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 50px;
+            background-color: #1E40AF;
+            border: 2px solid #FFFFFF;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FFFFFF;
+            font-family: 'Azeret Mono', monospace;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+
+        .process-step h3 {
+            margin-top: 1.5rem;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+        }
+
+        .process-step p {
+            margin-top: 1rem;
+            color: #4B5563;
+            font-size: 0.95rem;
+        }
+
+        .process-step::after {
+            content: '→';
+            position: absolute;
+            right: -45px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            color: #1E40AF;
+            font-weight: bold;
+        }
+
+        .process-step:last-child::after {
+            content: '';
+        }
+
+        /* ============================================
+           TESTIMONIALS SECTION
+           ============================================ */
+
+        #testimonials {
+            background-color: #F0F4FF;
+            position: relative;
+            margin-top: 80px;
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .testimonial-card {
+            background-color: #FFFFFF;
+            border: 2px solid #1E40AF;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .testimonial-card::before {
+            content: '✓';
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            width: 24px;
+            height: 24px;
+            border: 2px solid #DC2626;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #DC2626;
+            font-weight: bold;
+        }
+
+        .testimonial-date {
+            font-family: 'Azeret Mono', monospace;
+            font-size: 0.7rem;
+            color: #4B5563;
+            text-transform: uppercase;
+            margin-top: 0.5rem;
+        }
+
+        .testimonial-text {
+            color: #4B5563;
+            margin: 1.5rem 0 1rem 0;
+            font-style: italic;
+            line-height: 1.8;
+        }
+
+        .testimonial-author {
+            font-family: 'Azeret Mono', monospace;
+            font-weight: 700;
+            color: #1E293B;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .testimonial-signature {
+            border-top: 1px solid #1E40AF;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            font-family: 'Azeret Mono', monospace;
+            font-size: 0.75rem;
+            color: #4B5563;
+        }
+
+        /* ============================================
+           FAQ SECTION
+           ============================================ */
+
+        #faq {
+            background-color: #F0F4FF;
+            position: relative;
+            margin-top: 80px;
+        }
+
+        .faq-list {
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+
+        .faq-item {
+            background-color: #FFFFFF;
+            border: 1px solid #1E40AF;
+            margin-bottom: 1rem;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            padding: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #F0F4FF;
+            font-family: 'Azeret Mono', monospace;
+            font-weight: 700;
+            color: #1E293B;
+            text-transform: uppercase;
+            font-size: 0.95rem;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+        }
+
+        .faq-question:hover {
+            background-color: #DBEAFE;
+        }
+
+        .faq-toggle {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #DC2626;
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .faq-item.active .faq-toggle {
+            transform: rotate(180deg);
+        }
+
+        .faq-answer {
+            display: none;
+            padding: 1.5rem;
+            background-color: #FFFFFF;
+            border-top: 1px dashed #1E40AF;
+            color: #4B5563;
+            line-height: 1.8;
+        }
+
+        .faq-item.active .faq-answer {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ============================================
+           AREAS SECTION
+           ============================================ */
+
+        #areas {
+            background-color: #F0F4FF;
+            position: relative;
+            margin-top: 80px;
+        }
+
+        .areas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .area-bubble {
+            background-color: #FFFFFF;
+            border: 2px solid #1E40AF;
+            padding: 1.5rem;
+            text-align: center;
+            position: relative;
+            font-family: 'Azeret Mono', monospace;
+            font-weight: 700;
+            color: #1E293B;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+        }
+
+        .area-bubble:hover {
+            background-color: #DBEAFE;
+            border-color: #DC2626;
+            box-shadow: 0 8px 20px rgba(220, 38, 38, 0.15);
+        }
+
+        .area-bubble::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            right: 15px;
+            width: 2px;
+            height: 15px;
+            background-color: #1E40AF;
+        }
+
+        .area-bubble::after {
+            content: '';
+            position: absolute;
+            right: 15px;
+            width: 6px;
+            height: 6px;
+            border: 2px solid #1E40AF;
+            background-color: #FFFFFF;
+            top: -21px;
+        }
+
+        /* ============================================
+           CONTACT SECTION
+           ============================================ */
+
+        #contact {
+            background-color: #F0F4FF;
+            position: relative;
+            margin-top: 80px;
+        }
+
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-top: 2rem;
+        }
+
+        .contact-info {
+            background-color: #FFFFFF;
+            border: 2px solid #1E40AF;
+            padding: 2rem;
+        }
+
+        .info-row {
+            display: grid;
+            grid-template-columns: 40px 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px dashed #1E40AF;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-icon {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #1E40AF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Azeret Mono', monospace;
+            color: #1E40AF;
+        }
+
+        .info-content h4 {
+            font-family: 'Azeret Mono', monospace;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: #4B5563;
+            margin-bottom: 0.3rem;
+        }
+
+        .info-content p {
+            color: #1E293B;
+            font-weight: 600;
+        }
+
+        .contact-form {
+            background-color: #FFFFFF;
+            border: 2px dashed #1E40AF;
+            padding: 2rem;
+        }
+
+        .contact-form h3 {
+            font-family: 'Azeret Mono', monospace;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            margin-bottom: 1.5rem;
+            color: #4B5563;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-family: 'Azeret Mono', monospace;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: #4B5563;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.05em;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: none;
+            border-bottom: 2px solid #1E40AF;
+            background-color: #F0F4FF;
+            font-family: 'Space Grotesk', sans-serif;
+            color: #1E293B;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            background-color: #DBEAFE;
+            border-bottom-color: #DC2626;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-submit {
+            position: relative;
+            background-color: #DC2626;
+            border: 2px solid #DC2626;
+            color: #F0F4FF;
+            padding: 1rem 2rem;
+            font-family: 'Azeret Mono', monospace;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.08em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .form-submit::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            right: -6px;
+            bottom: -6px;
+            border: 2px dashed #DC2626;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .form-submit:hover {
+            background-color: transparent;
+            color: #DC2626;
+        }
+
+        .form-submit:hover::before {
+            opacity: 1;
+        }
+
+        /* ============================================
+           CTA BANNER
+           ============================================ */
+
+        .cta-banner {
+            background-color: #DC2626;
+            color: #F0F4FF;
+            padding: 2rem;
+            text-align: center;
+            margin: 5rem 0;
+            border: 3px solid #1E293B;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background-image: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(30, 41, 59, 0.1) 10px,
+                rgba(30, 41, 59, 0.1) 20px
+            );
+            animation: stripeMove 20s linear infinite;
+        }
+
+        @keyframes stripeMove {
+            0% {
+                left: -100%;
+            }
+            100% {
+                left: 100%;
+            }
+        }
+
+        .cta-banner h2 {
+            position: relative;
+            z-index: 2;
+            color: #F0F4FF;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+
+        .cta-banner p {
+            position: relative;
+            z-index: 2;
+            font-size: 1.1rem;
+            letter-spacing: 0.05em;
+        }
+
+        /* ============================================
+           FOOTER
+           ============================================ */
+
+        footer {
+            background-color: #1E293B;
+            color: #DBEAFE;
+            padding: 3rem 2rem;
+            border-top: 3px double #1E40AF;
+            margin-top: 5rem;
+        }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h4 {
+            font-family: 'Azeret Mono', monospace;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            color: #DBEAFE;
+            margin-bottom: 1rem;
+            letter-spacing: 0.05em;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: #AEBFDC;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: #DBEAFE;
+        }
+
+        .footer-license {
+            font-family: 'Azeret Mono', monospace;
+            font-size: 0.8rem;
+            color: #DC2626;
+            margin-top: 1rem;
+        }
+
+        .footer-revision {
+            font-family: 'Azeret Mono', monospace;
+            font-size: 0.75rem;
+            color: #4B5563;
+            margin-top: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border-top: 1px dashed #1E40AF;
+            padding-top: 1rem;
+        }
+
+        .powered-by {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px dashed #1E40AF;
+            font-size: 0.8rem;
+            color: #AEBFDC;
+        }
+
+        .powered-by a {
+            color: #1E40AF;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .powered-by a:hover {
+            text-decoration: underline;
+        }
+
+        /* ============================================
+           ANIMATIONS
+           ============================================ */
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-delay-1 {
+            transition-delay: 0.1s;
+        }
+
+        .reveal-delay-2 {
+            transition-delay: 0.2s;
+        }
+
+        .reveal-delay-3 {
+            transition-delay: 0.3s;
+        }
+
+        /* ============================================
+           RESPONSIVE DESIGN
+           ============================================ */
+
+        @media (max-width: 768px) {
+            .hamburger {
+                display: flex;
+            }
+
+            nav {
+                display: none;
+            }
+
+            .mobile-nav {
+                display: block;
+            }
+
+            .hero-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .hero-text h1 {
+                font-size: 1.8rem;
+            }
+
+            .hero-stats {
+                position: static;
+                margin-top: 2rem;
+            }
+
+            .contact-content {
+                grid-template-columns: 1fr;
+            }
+
+            section {
+                padding: 3rem 1rem;
+            }
+
+            section h2 {
+                font-size: 1.8rem;
+            }
+
+            .process-step::after {
+                right: auto;
+                bottom: -40px;
+                top: auto;
+                transform: none;
+                content: '↓';
+            }
+
+            .process-step:last-child::after {
+                content: '';
+            }
+
+            .services-grid,
+            .testimonials-grid,
+            .areas-grid,
+            .whyus-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-banner h2 {
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-text h1 {
+                font-size: 1.4rem;
+            }
+
+            .hero-description {
+                font-size: 0.95rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .footer-inner {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER / NAVIGATION -->
+    <header>
+        <div class="header-inner">
+            <a href="revive.html" class="logo">REVIVE</a>
+
+            <nav>
+                <a href="#services">Services</a>
+                <a href="#whyus">Why Us</a>
+                <a href="#process">Process</a>
+                <a href="#testimonials">Reviews</a>
+                <a href="#faq">FAQ</a>
+                <a href="#contact">Contact</a>
+                <a href="tel:+13055552000" class="cta-button">Call Now</a>
+            </nav>
+
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </header>
+
+    <!-- MOBILE NAVIGATION -->
+    <nav class="mobile-nav" id="mobileNav">
+        <a href="#services">Services</a>
+        <a href="#whyus">Why Us</a>
+        <a href="#process">Process</a>
+        <a href="#testimonials">Reviews</a>
+        <a href="#faq">FAQ</a>
+        <a href="#contact">Contact</a>
+        <a href="tel:+13055552000" style="background-color: #DC2626; color: #F0F4FF; font-weight: 700;">Call Now</a>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1>Precision Appliance Repair</h1>
+                <p class="hero-description">Expert service for all major appliances. Same-day repairs available. Licensed, insured, and trusted by thousands of South Florida homeowners.</p>
+                <div class="hero-buttons">
+                    <a href="#contact" class="btn btn-primary">Schedule Service</a>
+                    <a href="tel:+13055552000" class="btn">Call (305) 555-2000</a>
+                </div>
+            </div>
+
+            <div class="hero-illustration">
+                <svg viewBox="0 0 200 250" width="200" height="250" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Washer Machine -->
+                    <rect x="30" y="40" width="140" height="140" rx="10" fill="none" stroke="#1E40AF" stroke-width="2"/>
+                    <circle cx="100" cy="110" r="50" fill="none" stroke="#1E40AF" stroke-width="2"/>
+                    <circle cx="100" cy="110" r="35" fill="none" stroke="#1E40AF" stroke-width="1" stroke-dasharray="5,5"/>
+
+                    <!-- Drum holes -->
+                    <circle cx="80" cy="90" r="3" fill="none" stroke="#1E40AF" stroke-width="1"/>
+                    <circle cx="100" cy="85" r="3" fill="none" stroke="#1E40AF" stroke-width="1"/>
+                    <circle cx="120" cy="90" r="3" fill="none" stroke="#1E40AF" stroke-width="1"/>
+                    <circle cx="85" cy="110" r="3" fill="none" stroke="#1E40AF" stroke-width="1"/>
+                    <circle cx="115" cy="110" r="3" fill="none" stroke="#1E40AF" stroke-width="1"/>
+                    <circle cx="80" cy="130" r="3" fill="none" stroke="#1E40AF" stroke-width="1"/>
+                    <circle cx="100" cy="135" r="3" fill="none" stroke="#1E40AF" stroke-width="1"/>
+                    <circle cx="120" cy="130" r="3" fill="none" stroke="#1E40AF" stroke-width="1"/>
+
+                    <!-- Control panel -->
+                    <rect x="45" y="50" width="110" height="20" fill="none" stroke="#1E40AF" stroke-width="1"/>
+                    <circle cx="60" cy="60" r="3" fill="none" stroke="#1E40AF" stroke-width="1"/>
+                    <circle cx="75" cy="60" r="3" fill="none" stroke="#1E40AF" stroke-width="1"/>
+                    <circle cx="90" cy="60" r="3" fill="none" stroke="#1E40AF" stroke-width="1"/>
+                    <circle cx="105" cy="60" r="3" fill="none" stroke="#1E40AF" stroke-width="1"/>
+
+                    <!-- Dimension lines -->
+                    <line x1="20" y1="190" x2="180" y2="190" stroke="#1E40AF" stroke-width="1"/>
+                    <line x1="20" y1="185" x2="20" y2="195" stroke="#1E40AF" stroke-width="1"/>
+                    <line x1="180" y1="185" x2="180" y2="195" stroke="#1E40AF" stroke-width="1"/>
+
+                    <!-- Label -->
+                    <text x="100" y="230" text-anchor="middle" font-family="Azeret Mono, monospace" font-size="10" fill="#1E40AF" font-weight="bold">WASHER UNIT</text>
+                </svg>
+
+                <div class="hero-stats">
+                    <h3>DWG NO.</h3>
+                    <div class="stat-row">
+                        <span>REV</span>
+                        <span>03</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>REPAIRS</span>
+                        <span>15K+</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>AVG RESPONSE</span>
+                        <span>2HRS</span>
+                    </div>
+                    <div class="stat-row">
+                        <span>RATING</span>
+                        <span>4.9★</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVICES SECTION -->
+    <section id="services">
+        <div class="section-number">02</div>
+        <div class="section-label">DWG-REV / SPEC SHEET</div>
+        <h2>Our Services</h2>
+
+        <div class="services-grid">
+            <div class="service-card" data-spec="SPEC 001">
+                <div class="service-icon">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="15" y="20" width="70" height="60" rx="5"/>
+                        <circle cx="35" cy="65" r="8"/>
+                        <circle cx="65" cy="65" r="8"/>
+                        <rect x="25" y="30" width="50" height="25" stroke-dasharray="3,3"/>
+                    </svg>
+                </div>
+                <p class="service-spec">Service 01</p>
+                <h3>Washer & Dryer</h3>
+                <p>Complete washer and dryer repair services. Drum repairs, seal replacements, and all electrical issues.</p>
+            </div>
+
+            <div class="service-card" data-spec="SPEC 002">
+                <div class="service-icon">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="15" y="20" width="70" height="65" rx="5"/>
+                        <line x1="25" y1="35" x2="75" y2="35"/>
+                        <line x1="25" y1="50" x2="75" y2="50"/>
+                        <line x1="25" y1="65" x2="75" y2="65"/>
+                        <circle cx="85" cy="45" r="6" fill="none"/>
+                    </svg>
+                </div>
+                <p class="service-spec">Service 02</p>
+                <h3>Refrigerator</h3>
+                <p>Cooling failures, ice maker repairs, door seal issues, and compressor service.</p>
+            </div>
+
+            <div class="service-card" data-spec="SPEC 003">
+                <div class="service-icon">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="15" y="25" width="70" height="50" rx="5"/>
+                        <rect x="25" y="35" width="50" height="30" stroke-dasharray="3,3"/>
+                        <circle cx="35" cy="62" r="4"/>
+                        <circle cx="50" cy="62" r="4"/>
+                        <circle cx="65" cy="62" r="4"/>
+                    </svg>
+                </div>
+                <p class="service-spec">Service 03</p>
+                <h3>Dishwasher</h3>
+                <p>Cleaning and draining problems, pump repairs, spray arm issues, and electrical service.</p>
+            </div>
+
+            <div class="service-card" data-spec="SPEC 004">
+                <div class="service-icon">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="20" y="20" width="60" height="60" rx="3"/>
+                        <line x1="30" y1="30" x2="70" y2="30"/>
+                        <line x1="30" y1="40" x2="70" y2="40"/>
+                        <circle cx="40" cy="55" r="4"/>
+                        <circle cx="60" cy="55" r="4"/>
+                    </svg>
+                </div>
+                <p class="service-spec">Service 04</p>
+                <h3>Oven & Range</h3>
+                <p>Heating element replacement, burner repair, thermostat calibration, and ignition service.</p>
+            </div>
+
+            <div class="service-card" data-spec="SPEC 005">
+                <div class="service-icon">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="15" y="15" width="70" height="70" rx="5"/>
+                        <line x1="35" y1="30" x2="35" y2="75"/>
+                        <line x1="50" y1="30" x2="50" y2="75"/>
+                        <line x1="65" y1="30" x2="65" y2="75"/>
+                        <line x1="25" y1="50" x2="75" y2="50"/>
+                    </svg>
+                </div>
+                <p class="service-spec">Service 05</p>
+                <h3>HVAC Units</h3>
+                <p>AC repair and maintenance, heating system service, filter replacement, and efficiency testing.</p>
+            </div>
+
+            <div class="service-card" data-spec="SPEC 006">
+                <div class="service-icon">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="20" y="30" width="25" height="35" rx="3"/>
+                        <rect x="55" y="30" width="25" height="35" rx="3"/>
+                        <circle cx="32" cy="65" r="3"/>
+                        <circle cx="67" cy="65" r="3"/>
+                        <line x1="32" y1="20" x2="32" y2="28"/>
+                        <line x1="67" y1="20" x2="67" y2="28"/>
+                    </svg>
+                </div>
+                <p class="service-spec">Service 06</p>
+                <h3>Small Appliances</h3>
+                <p>Microwave, coffee maker, toaster, and other small appliance repairs and service.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- WHY US SECTION -->
+    <section id="whyus">
+        <div class="section-number">03</div>
+        <div class="section-label" style="color: #AEBFDC;">ADVANTAGE SUMMARY</div>
+        <h2>Why Choose Revive</h2>
+
+        <div style="background-color: #1E40AF; color: #FFFFFF; padding: 2rem; margin: 2rem 0; border: 2px solid #DBEAFE; text-align: center;">
+            <div class="whyus-stat" style="color: #DBEAFE;">15,000+</div>
+            <p style="font-size: 1.1rem; text-transform: uppercase; letter-spacing: 0.05em; font-family: 'Azeret Mono', monospace;">Repairs Completed Since 2010</p>
+        </div>
+
+        <div class="whyus-grid">
+            <div class="whyus-card">
+                <h3>Licensed & Insured</h3>
+                <p>Full state licensing and comprehensive insurance coverage for complete peace of mind.</p>
+            </div>
+
+            <div class="whyus-card">
+                <h3>Same-Day Service</h3>
+                <p>Emergency repairs available 24/7. Most repairs completed within 24 hours of call.</p>
+            </div>
+
+            <div class="whyus-card">
+                <h3>Expert Technicians</h3>
+                <p>All technicians factory-certified with 10+ years of experience in appliance repair.</p>
+            </div>
+
+            <div class="whyus-card">
+                <h3>Transparent Pricing</h3>
+                <p>No hidden fees. Free diagnostic service. Fixed labor rates and written estimates.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROCESS SECTION -->
+    <section id="process">
+        <div class="section-number">04</div>
+        <div class="section-label">PROCESS FLOW DIAGRAM</div>
+        <h2>How It Works</h2>
+
+        <div class="process-flow">
+            <div class="process-step" data-step="1">
+                <h3>Diagnose</h3>
+                <p>We inspect your appliance, identify the issue, and provide a detailed assessment with no obligation.</p>
+            </div>
+
+            <div class="process-step" data-step="2">
+                <h3>Quote</h3>
+                <p>Receive a transparent, written estimate with all labor and parts costs clearly detailed.</p>
+            </div>
+
+            <div class="process-step" data-step="3">
+                <h3>Repair</h3>
+                <p>Our technicians complete the repair using genuine parts and factory-approved methods.</p>
+            </div>
+
+            <div class="process-step" data-step="4">
+                <h3>Verify</h3>
+                <p>Final testing and inspection ensure your appliance operates perfectly. 1-year parts warranty.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS SECTION -->
+    <section id="testimonials">
+        <div class="section-number">05</div>
+        <div class="section-label">INSPECTION REPORTS</div>
+        <h2>Customer Reviews</h2>
+
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <p class="testimonial-text">"Had a refrigerator issue on a Saturday. Revive got to us in 2 hours and fixed it same day. Fantastic service and fair pricing. Highly recommend!"</p>
+                <p class="testimonial-author">Sarah Martinez</p>
+                <p class="testimonial-date">Verified Service — 2026-03-15</p>
+                <div class="testimonial-signature">
+                    <div style="margin: 0.8rem 0; font-size: 1.2rem; color: #DC2626;">★★★★★</div>
+                    Status: ✓ Approved
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <p class="testimonial-text">"My dishwasher broke down right before a dinner party. The Revive team came out, diagnosed the problem in minutes, and had it working in an hour. Heroes!"</p>
+                <p class="testimonial-author">James Chen</p>
+                <p class="testimonial-date">Verified Service — 2026-02-28</p>
+                <div class="testimonial-signature">
+                    <div style="margin: 0.8rem 0; font-size: 1.2rem; color: #DC2626;">★★★★★</div>
+                    Status: ✓ Approved
+                </div>
+            </div>
+
+            <div class="testimonial-card">
+                <p class="testimonial-text">"Called about our washer. The technician was professional, explained everything clearly, and the repair was done perfectly. Fair price too. Great company!"</p>
+                <p class="testimonial-author">Linda Rodriguez</p>
+                <p class="testimonial-date">Verified Service — 2026-01-12</p>
+                <div class="testimonial-signature">
+                    <div style="margin: 0.8rem 0; font-size: 1.2rem; color: #DC2626;">★★★★★</div>
+                    Status: ✓ Approved
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ SECTION -->
+    <section id="faq">
+        <div class="section-number">06</div>
+        <div class="section-label">TECHNICAL NOTES & ADDENDA</div>
+        <h2>Frequently Asked Questions</h2>
+
+        <div class="faq-list">
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>NOTE 01: Do you offer emergency service?</span>
+                    <span class="faq-toggle">▼</span>
+                </div>
+                <div class="faq-answer">
+                    Yes, we provide 24/7 emergency appliance repair service. Call (305) 555-2000 anytime for urgent issues. We prioritize emergency calls and dispatch technicians as quickly as possible.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>NOTE 02: Is there a service call fee?</span>
+                    <span class="faq-toggle">▼</span>
+                </div>
+                <div class="faq-answer">
+                    No service call fee if we complete the repair the same day. Diagnostic service is always free. If you choose not to proceed with repairs, you'll only pay $75 for the diagnostic.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>NOTE 03: What parts do you use?</span>
+                    <span class="faq-toggle">▼</span>
+                </div>
+                <div class="faq-answer">
+                    We use genuine OEM parts for all repairs. This ensures your appliance works as designed and maintains its warranty. We never use cheap knockoff parts.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>NOTE 04: Is there a warranty on repairs?</span>
+                    <span class="faq-toggle">▼</span>
+                </div>
+                <div class="faq-answer">
+                    Yes, all repairs come with a 1-year warranty on parts and labor. If the same issue occurs within one year, we'll fix it free of charge.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>NOTE 05: Do you work on all brands?</span>
+                    <span class="faq-toggle">▼</span>
+                </div>
+                <div class="faq-answer">
+                    We service all major brands including LG, Samsung, Whirlpool, GE, Maytag, Frigidaire, Bosch, KitchenAid, and more. Call with your brand to confirm.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>NOTE 06: How do I schedule a service?</span>
+                    <span class="faq-toggle">▼</span>
+                </div>
+                <div class="faq-answer">
+                    Call us at (305) 555-2000 or fill out the contact form below. We'll discuss your issue and schedule a convenient time. Emergency service available 24/7.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVICE AREAS SECTION -->
+    <section id="areas">
+        <div class="section-number">07</div>
+        <div class="section-label">OPERATIONAL ZONE MAP</div>
+        <h2>Service Areas</h2>
+
+        <div class="areas-grid">
+            <div class="area-bubble">Miami</div>
+            <div class="area-bubble">Kendall</div>
+            <div class="area-bubble">Coral Gables</div>
+            <div class="area-bubble">Doral</div>
+            <div class="area-bubble">Hialeah</div>
+            <div class="area-bubble">Homestead</div>
+            <div class="area-bubble">Miami Beach</div>
+            <div class="area-bubble">Brickell</div>
+            <div class="area-bubble">Westchester</div>
+            <div class="area-bubble">South Miami</div>
+            <div class="area-bubble">Miami Gardens</div>
+            <div class="area-bubble">North Miami</div>
+        </div>
+    </section>
+
+    <!-- CONTACT SECTION -->
+    <section id="contact">
+        <div class="section-number">08</div>
+        <div class="section-label">CONTACT & ORDER FORM</div>
+        <h2>Schedule Your Repair</h2>
+
+        <div class="contact-content">
+            <div class="contact-info">
+                <div class="info-row">
+                    <div class="info-icon">📞</div>
+                    <div class="info-content">
+                        <h4>Phone</h4>
+                        <p><a href="tel:+13055552000">(305) 555-2000</a></p>
+                    </div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-icon">📍</div>
+                    <div class="info-content">
+                        <h4>Location</h4>
+                        <p>Kendall, FL<br>Serving All of South Florida</p>
+                    </div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-icon">⏰</div>
+                    <div class="info-content">
+                        <h4>Hours</h4>
+                        <p>Mon–Sat: 7AM–8PM<br>Sun: 9AM–5PM<br>24/7 Emergency</p>
+                    </div>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-icon">✓</div>
+                    <div class="info-content">
+                        <h4>License</h4>
+                        <p class="footer-license">#APL2024-0901</p>
+                    </div>
+                </div>
+            </div>
+
+            <form class="contact-form" action="https://formsubmit.co/contact@reviveappliance.local" method="POST">
+                <h3>Work Order Form</h3>
+
+                <div class="form-group">
+                    <label for="name">Full Name *</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Phone Number *</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="appliance">Appliance Type *</label>
+                    <input type="text" id="appliance" name="appliance" placeholder="e.g., Washer, Refrigerator" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="issue">Issue Description *</label>
+                    <textarea id="issue" name="issue" required></textarea>
+                </div>
+
+                <button type="submit" class="form-submit">Submit Work Order</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- CTA BANNER -->
+    <div class="cta-banner">
+        <h2>⚠ URGENT: SAME-DAY SERVICE AVAILABLE</h2>
+        <p>Don't wait for repairs. Call now for immediate assistance: (305) 555-2000</p>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-section">
+                <h4>Revive Appliance Co.</h4>
+                <p>Premier appliance repair service serving South Florida since 2010.</p>
+                <div class="footer-license">License #APL2024-0901</div>
+            </div>
+
+            <div class="footer-section">
+                <h4>Services</h4>
+                <p><a href="#services">Washer & Dryer</a></p>
+                <p><a href="#services">Refrigerator</a></p>
+                <p><a href="#services">Dishwasher</a></p>
+                <p><a href="#services">Oven & Range</a></p>
+                <p><a href="#services">HVAC Units</a></p>
+                <p><a href="#services">Small Appliances</a></p>
+            </div>
+
+            <div class="footer-section">
+                <h4>Company</h4>
+                <p><a href="#services">Services</a></p>
+                <p><a href="#whyus">Why Choose Us</a></p>
+                <p><a href="#process">Process</a></p>
+                <p><a href="#testimonials">Reviews</a></p>
+                <p><a href="#faq">FAQ</a></p>
+                <p><a href="#contact">Contact</a></p>
+            </div>
+
+            <div class="footer-section">
+                <h4>Contact</h4>
+                <p><a href="tel:+13055552000">(305) 555-2000</a></p>
+                <p>Kendall, FL</p>
+                <p>24/7 Emergency Service</p>
+                <div class="footer-revision">
+                    REV. 03 — 2026<br>
+                    SHEET 1 OF 1<br>
+                    DWG NO. REV-APL-001
+                </div>
+            </div>
+        </div>
+
+        <div class="powered-by">
+            Powered by <a href="https://webnari.io" target="_blank" rel="noopener noreferrer">Webnari</a>
+        </div>
+    </footer>
+
+    <script>
+        // ============================================
+        // MOBILE NAVIGATION
+        // ============================================
+
+        const hamburger = document.getElementById('hamburger');
+        const mobileNav = document.getElementById('mobileNav');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            mobileNav.classList.toggle('active');
+        });
+
+        // Close mobile nav when clicking a link
+        const mobileNavLinks = mobileNav.querySelectorAll('a');
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                mobileNav.classList.remove('active');
+            });
+        });
+
+        // ============================================
+        // SCROLL REVEAL ANIMATIONS
+        // ============================================
+
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        // Observe service cards
+        const cards = document.querySelectorAll('.service-card, .process-step, .testimonial-card, .whyus-card, .area-bubble');
+        cards.forEach((card, index) => {
+            card.classList.add('reveal');
+            if (index % 3 > 0) {
+                card.classList.add(`reveal-delay-${index % 3}`);
+            }
+            observer.observe(card);
+        });
+
+        // ============================================
+        // FAQ ACCORDION
+        // ============================================
+
+        const faqItems = document.querySelectorAll('.faq-item');
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            question.addEventListener('click', () => {
+                faqItems.forEach(otherItem => {
+                    if (otherItem !== item) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+                item.classList.toggle('active');
+            });
+        });
+
+        // ============================================
+        // FORM VALIDATION
+        // ============================================
+
+        const form = document.querySelector('.contact-form');
+        const inputs = form.querySelectorAll('input, textarea');
+
+        inputs.forEach(input => {
+            input.addEventListener('blur', () => {
+                if (input.type === 'email') {
+                    const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(input.value);
+                    if (!isValid && input.value) {
+                        input.style.borderBottomColor = '#DC2626';
+                    } else {
+                        input.style.borderBottomColor = '#1E40AF';
+                    }
+                } else if (input.value.trim() === '') {
+                    input.style.borderBottomColor = '#DC2626';
+                } else {
+                    input.style.borderBottomColor = '#1E40AF';
+                }
+            });
+
+            input.addEventListener('focus', () => {
+                input.style.borderBottomColor = '#DC2626';
+            });
+        });
+
+        form.addEventListener('submit', (e) => {
+            let isValid = true;
+            inputs.forEach(input => {
+                if (input.value.trim() === '') {
+                    isValid = false;
+                    input.style.borderBottomColor = '#DC2626';
+                }
+            });
+
+            if (!isValid) {
+                e.preventDefault();
+                alert('Please fill out all required fields.');
+            }
+        });
+
+        // ============================================
+        // SMOOTH SCROLL
+        // ============================================
+
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href !== '#' && document.querySelector(href)) {
+                    e.preventDefault();
+                    document.querySelector(href).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

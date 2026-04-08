@@ -1,0 +1,2474 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brickell Brewing Co. | Craft Beer Taproom | Miami, FL</title>
+<meta name="description" content="Brickell Brewing Co. — Miami's premier craft brewery and taproom. Small-batch ales, lagers & seasonal brews crafted right in the heart of Brickell. Tours, tastings, events & more.">
+<meta property="og:title" content="Brickell Brewing Co. | Craft Beer Taproom | Miami, FL">
+<meta property="og:description" content="Handcrafted beers brewed in Miami. Taproom open daily, private events, tours & beer club memberships.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rye&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --black: #0E0904;
+  --oak: #1C1209;
+  --surface: #251A0E;
+  --surface2: #2E2010;
+  --border: #3D2A12;
+  --border2: #4D360F;
+  --amber: #B45309;
+  --amber2: #D97706;
+  --amber3: #F59E0B;
+  --copper: #92400E;
+  --gold: #CA8A04;
+  --cream: #F5EDD4;
+  --cream2: #EDE0BC;
+  --muted: #8B7355;
+  --text: #C4A97A;
+  --heading: #F5EDD4;
+  --hop: #4B6B2F;
+  --hop2: #6B9B47;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Libre Baskerville', Georgia, serif;
+  background: var(--black);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+/* TEXTURE OVERLAY */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23noise)' opacity='0.045'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.6;
+}
+
+/* NAVIGATION */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  background: rgba(14, 9, 4, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 40px;
+}
+
+.nav-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+}
+
+.nav-logo-badge {
+  width: 48px;
+  height: 48px;
+}
+
+.nav-brand {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-brand-name {
+  font-family: 'Rye', serif;
+  font-size: 1.1rem;
+  color: var(--amber3);
+  line-height: 1;
+  letter-spacing: 0.02em;
+}
+
+.nav-brand-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--muted);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--amber3); }
+
+.nav-cta {
+  background: var(--amber);
+  color: var(--cream) !important;
+  padding: 10px 22px;
+  font-weight: 700;
+  border: none;
+  transition: background 0.2s !important;
+}
+
+.nav-cta:hover { background: var(--amber2) !important; color: var(--black) !important; }
+
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.nav-hamburger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--cream);
+  transition: 0.3s;
+}
+
+.mobile-menu {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: var(--oak);
+  z-index: 999;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+}
+
+.mobile-menu.open { display: flex; }
+
+.mobile-menu a {
+  font-family: 'Rye', serif;
+  font-size: 1.8rem;
+  color: var(--cream);
+  text-decoration: none;
+  letter-spacing: 0.05em;
+  transition: color 0.2s;
+}
+
+.mobile-menu a:hover { color: var(--amber3); }
+
+.mobile-close {
+  position: absolute;
+  top: 24px; right: 24px;
+  font-size: 2rem;
+  color: var(--text);
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+/* DECORATIVE LABEL BORDER */
+.label-border {
+  position: relative;
+  border: 2px solid var(--amber);
+  padding: 4px;
+}
+
+.label-border::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1px solid var(--border2);
+  pointer-events: none;
+}
+
+/* VINTAGE DIVIDER */
+.vintage-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 16px auto;
+  max-width: 400px;
+}
+
+.vintage-divider::before, .vintage-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--amber), transparent);
+}
+
+.vintage-divider-icon {
+  color: var(--amber3);
+  font-size: 1rem;
+}
+
+/* SECTION LABEL */
+.section-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--amber3);
+  margin-bottom: 12px;
+  display: block;
+}
+
+/* ===== HERO ===== */
+#hero {
+  min-height: 100vh;
+  background: var(--oak);
+  display: flex;
+  align-items: center;
+  padding-top: 72px;
+  position: relative;
+  overflow: hidden;
+}
+
+#hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 30px,
+      rgba(180, 83, 9, 0.03) 30px,
+      rgba(180, 83, 9, 0.03) 31px
+    );
+}
+
+.hero-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 80px 40px;
+  display: grid;
+  grid-template-columns: 1fr 480px;
+  gap: 80px;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--amber3);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.hero-label::before {
+  content: '';
+  width: 30px;
+  height: 1px;
+  background: var(--amber3);
+}
+
+.hero-headline {
+  font-family: 'Rye', serif;
+  font-size: clamp(2.8rem, 5vw, 4.8rem);
+  color: var(--cream);
+  line-height: 1.05;
+  margin-bottom: 24px;
+}
+
+.hero-headline span {
+  color: var(--amber3);
+}
+
+.hero-desc {
+  font-size: 1.05rem;
+  line-height: 1.8;
+  color: var(--text);
+  margin-bottom: 36px;
+  max-width: 520px;
+}
+
+.hero-btns {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  background: var(--amber);
+  color: var(--cream);
+  border: none;
+  padding: 14px 32px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.btn-primary:hover {
+  background: var(--amber2);
+  transform: translateY(-1px);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--cream);
+  border: 2px solid var(--border2);
+  padding: 12px 30px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.btn-outline:hover {
+  border-color: var(--amber3);
+  color: var(--amber3);
+}
+
+.hero-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  margin-top: 48px;
+  border: 1px solid var(--border);
+}
+
+.hero-stat {
+  background: var(--surface);
+  padding: 20px 16px;
+  text-align: center;
+}
+
+.hero-stat-num {
+  font-family: 'Rye', serif;
+  font-size: 2rem;
+  color: var(--amber3);
+  display: block;
+}
+
+.hero-stat-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 4px;
+}
+
+/* HERO SVG ILLUSTRATION */
+.hero-visual {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* MARQUEE */
+.marquee-strip {
+  background: var(--amber);
+  padding: 14px 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.marquee-track {
+  display: inline-flex;
+  animation: marquee 30s linear infinite;
+}
+
+.marquee-track span {
+  font-family: 'Rye', serif;
+  font-size: 0.9rem;
+  color: var(--cream);
+  letter-spacing: 0.08em;
+  padding: 0 32px;
+}
+
+.marquee-track .dot {
+  color: var(--oak);
+  font-size: 1.2rem;
+  vertical-align: middle;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* ===== BEERS ON TAP ===== */
+#beers {
+  padding: 100px 40px;
+  background: var(--black);
+  position: relative;
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 64px;
+}
+
+.section-header h2 {
+  font-family: 'Rye', serif;
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  color: var(--cream);
+  margin: 12px 0;
+}
+
+.section-header p {
+  max-width: 560px;
+  margin: 0 auto;
+  font-size: 1rem;
+  line-height: 1.75;
+  color: var(--text);
+}
+
+.container { max-width: 1200px; margin: 0 auto; }
+
+.beers-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  background: var(--border);
+}
+
+.beer-card {
+  background: var(--surface);
+  padding: 36px 28px;
+  border-top: 3px solid transparent;
+  transition: border-color 0.3s, background 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.beer-card::before {
+  content: attr(data-num);
+  position: absolute;
+  bottom: -10px;
+  right: -5px;
+  font-family: 'Rye', serif;
+  font-size: 7rem;
+  color: rgba(180, 83, 9, 0.05);
+  line-height: 1;
+  pointer-events: none;
+  transition: color 0.3s;
+}
+
+.beer-card:hover {
+  background: var(--surface2);
+  border-color: var(--amber3);
+}
+
+.beer-card:hover::before { color: rgba(245, 158, 11, 0.08); }
+
+.beer-style {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--amber3);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.beer-style::before {
+  content: '';
+  width: 20px;
+  height: 1px;
+  background: var(--amber3);
+}
+
+.beer-name {
+  font-family: 'Rye', serif;
+  font-size: 1.5rem;
+  color: var(--cream);
+  margin-bottom: 8px;
+  line-height: 1.2;
+}
+
+.beer-desc {
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: var(--text);
+  margin-bottom: 20px;
+}
+
+.beer-meta {
+  display: flex;
+  gap: 16px;
+}
+
+.beer-meta-item {
+  text-align: center;
+}
+
+.beer-meta-val {
+  font-family: 'DM Mono', monospace;
+  font-size: 1.1rem;
+  color: var(--amber3);
+  display: block;
+  font-weight: 500;
+}
+
+.beer-meta-key {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ABV BAR */
+.abv-bar {
+  margin-top: 16px;
+  height: 3px;
+  background: var(--border);
+  position: relative;
+}
+
+.abv-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--copper), var(--amber3));
+  transition: width 1.2s ease;
+}
+
+/* ===== TAPROOM ===== */
+#taproom {
+  padding: 100px 40px;
+  background: var(--oak);
+}
+
+.taproom-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.taproom-visual {
+  position: relative;
+}
+
+.taproom-frame {
+  background: var(--surface);
+  border: 2px solid var(--amber);
+  padding: 6px;
+  aspect-ratio: 4/3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.taproom-frame::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border: 1px solid var(--border2);
+}
+
+.taproom-badge {
+  position: absolute;
+  bottom: -20px;
+  right: -20px;
+  width: 100px;
+  height: 100px;
+  background: var(--amber);
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 4px solid var(--oak);
+}
+
+.taproom-badge span:first-child {
+  font-family: 'Rye', serif;
+  font-size: 1.4rem;
+  color: var(--cream);
+  line-height: 1;
+}
+
+.taproom-badge span:last-child {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--oak);
+}
+
+.taproom-content h2 {
+  font-family: 'Rye', serif;
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  color: var(--cream);
+  line-height: 1.15;
+  margin: 12px 0 20px;
+}
+
+.taproom-content p {
+  font-size: 1rem;
+  line-height: 1.8;
+  color: var(--text);
+  margin-bottom: 16px;
+}
+
+.taproom-features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 32px;
+}
+
+.taproom-feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.taproom-feature-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.taproom-feature-text strong {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cream);
+  margin-bottom: 2px;
+}
+
+.taproom-feature-text span {
+  font-size: 0.82rem;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* ===== EVENTS ===== */
+#events {
+  padding: 100px 40px;
+  background: var(--black);
+}
+
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.event-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 32px;
+  position: relative;
+  transition: border-color 0.3s, transform 0.3s;
+}
+
+.event-card:hover {
+  border-color: var(--amber);
+  transform: translateY(-4px);
+}
+
+.event-card-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--amber3);
+  background: rgba(180, 83, 9, 0.12);
+  border: 1px solid rgba(180, 83, 9, 0.3);
+  padding: 4px 10px;
+  display: inline-block;
+  margin-bottom: 16px;
+}
+
+.event-card h3 {
+  font-family: 'Rye', serif;
+  font-size: 1.4rem;
+  color: var(--cream);
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+
+.event-card p {
+  font-size: 0.88rem;
+  line-height: 1.7;
+  color: var(--text);
+  margin-bottom: 20px;
+}
+
+.event-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+}
+
+.event-price {
+  font-family: 'Rye', serif;
+  font-size: 1.3rem;
+  color: var(--amber3);
+}
+
+.event-price small {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  color: var(--muted);
+}
+
+.event-link {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--amber3);
+  text-decoration: none;
+  border-bottom: 1px solid var(--amber3);
+  padding-bottom: 1px;
+  transition: opacity 0.2s;
+}
+
+.event-link:hover { opacity: 0.7; }
+
+/* ===== ABOUT ===== */
+#about {
+  padding: 100px 40px;
+  background: var(--surface);
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.about-content h2 {
+  font-family: 'Rye', serif;
+  font-size: clamp(1.8rem, 3vw, 2.8rem);
+  color: var(--cream);
+  line-height: 1.15;
+  margin: 12px 0 24px;
+}
+
+.about-content p {
+  font-size: 1rem;
+  line-height: 1.85;
+  color: var(--text);
+  margin-bottom: 20px;
+}
+
+blockquote.brewing-quote {
+  border-left: 3px solid var(--amber);
+  padding: 16px 24px;
+  margin: 28px 0;
+  background: var(--surface2);
+}
+
+blockquote.brewing-quote p {
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--cream2);
+  margin: 0;
+}
+
+blockquote.brewing-quote cite {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--amber3);
+  margin-top: 8px;
+  display: block;
+}
+
+.about-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2px;
+  background: var(--border);
+}
+
+.about-stat {
+  background: var(--surface2);
+  padding: 28px 24px;
+}
+
+.about-stat-num {
+  font-family: 'Rye', serif;
+  font-size: 2.4rem;
+  color: var(--amber3);
+  line-height: 1;
+  display: block;
+}
+
+.about-stat-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-top: 6px;
+  display: block;
+}
+
+.about-stat-desc {
+  font-size: 0.82rem;
+  color: var(--text);
+  margin-top: 4px;
+  line-height: 1.5;
+}
+
+/* ===== TOURS ===== */
+#tours {
+  padding: 100px 40px;
+  background: var(--oak);
+  position: relative;
+  overflow: hidden;
+}
+
+#tours::after {
+  content: 'TOURS';
+  position: absolute;
+  bottom: -20px;
+  right: -20px;
+  font-family: 'Rye', serif;
+  font-size: 12rem;
+  color: rgba(180, 83, 9, 0.04);
+  pointer-events: none;
+  line-height: 1;
+}
+
+.tours-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--border);
+}
+
+.tour-row {
+  background: var(--surface);
+  display: grid;
+  grid-template-columns: 80px 1fr auto;
+  gap: 24px;
+  align-items: center;
+  padding: 28px 32px;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+.tour-row:hover { background: var(--surface2); }
+
+.tour-num {
+  font-family: 'Rye', serif;
+  font-size: 2rem;
+  color: var(--amber);
+  line-height: 1;
+}
+
+.tour-info h3 {
+  font-family: 'Rye', serif;
+  font-size: 1.2rem;
+  color: var(--cream);
+  margin-bottom: 4px;
+}
+
+.tour-info p {
+  font-size: 0.85rem;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.tour-tags {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.tour-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 1px solid var(--border2);
+  padding: 3px 8px;
+}
+
+.tour-price {
+  text-align: right;
+}
+
+.tour-price .price {
+  font-family: 'Rye', serif;
+  font-size: 1.5rem;
+  color: var(--amber3);
+  display: block;
+}
+
+.tour-price .per {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ===== TESTIMONIALS ===== */
+#reviews {
+  padding: 100px 40px;
+  background: var(--black);
+}
+
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  background: var(--border);
+}
+
+.review-card {
+  background: var(--surface);
+  padding: 36px 32px;
+  position: relative;
+}
+
+.review-quote-mark {
+  font-family: 'Rye', serif;
+  font-size: 5rem;
+  color: var(--amber);
+  opacity: 0.2;
+  line-height: 0.8;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.review-text {
+  font-style: italic;
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: var(--text);
+  margin-bottom: 24px;
+}
+
+.review-author {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+}
+
+.review-avatar {
+  width: 42px;
+  height: 42px;
+  background: var(--amber);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Rye', serif;
+  font-size: 1rem;
+  color: var(--cream);
+  flex-shrink: 0;
+}
+
+.review-author-info strong {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--cream);
+}
+
+.review-author-info span {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.review-stars {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 8px;
+}
+
+/* ===== FAQ ===== */
+#faq {
+  padding: 100px 40px;
+  background: var(--oak);
+}
+
+.faq-grid {
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 80px;
+}
+
+.faq-sidebar h2 {
+  font-family: 'Rye', serif;
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  color: var(--cream);
+  line-height: 1.15;
+  margin: 12px 0 20px;
+}
+
+.faq-sidebar p {
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: var(--text);
+  margin-bottom: 32px;
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.faq-item {
+  border-bottom: 1px solid var(--border);
+}
+
+.faq-question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 0;
+  cursor: pointer;
+  gap: 16px;
+}
+
+.faq-question-text {
+  font-family: 'Libre Baskerville', serif;
+  font-size: 0.95rem;
+  color: var(--cream);
+  font-weight: 700;
+}
+
+.faq-toggle {
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-family: 'DM Mono', monospace;
+  font-size: 1rem;
+  color: var(--amber3);
+  transition: background 0.2s;
+}
+
+.faq-item.open .faq-toggle {
+  background: var(--amber);
+  color: var(--cream);
+  border-color: var(--amber);
+}
+
+.faq-answer {
+  display: none;
+  padding: 0 0 20px;
+  font-size: 0.9rem;
+  line-height: 1.8;
+  color: var(--text);
+}
+
+.faq-item.open .faq-answer { display: block; }
+
+/* ===== HOURS & AREAS ===== */
+#hours {
+  padding: 100px 40px;
+  background: var(--black);
+}
+
+.hours-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 2px;
+  background: var(--border);
+}
+
+.hours-block {
+  background: var(--surface);
+  padding: 32px 28px;
+}
+
+.hours-block h3 {
+  font-family: 'Rye', serif;
+  font-size: 1.1rem;
+  color: var(--amber3);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hours-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.85rem;
+}
+
+.hours-day { color: var(--text); }
+.hours-time { font-family: 'DM Mono', monospace; font-size: 0.78rem; color: var(--cream); }
+
+.areas-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.area-tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  border: 1px solid var(--border2);
+  padding: 6px 14px;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.area-tag:hover { color: var(--amber3); border-color: var(--amber3); }
+
+/* ===== CONTACT ===== */
+#contact {
+  padding: 100px 40px;
+  background: var(--oak);
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+}
+
+.contact-info h2 {
+  font-family: 'Rye', serif;
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  color: var(--cream);
+  line-height: 1.15;
+  margin: 12px 0 24px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.contact-icon {
+  width: 40px;
+  height: 40px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.contact-item-text strong {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--amber3);
+  margin-bottom: 4px;
+}
+
+.contact-item-text span {
+  font-size: 0.92rem;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.contact-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--cream);
+  padding: 12px 16px;
+  font-family: 'Libre Baskerville', serif;
+  font-size: 0.88rem;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--amber3);
+}
+
+.form-group textarea { resize: vertical; min-height: 100px; }
+
+.form-group select option { background: var(--surface); }
+
+.form-error {
+  font-size: 0.72rem;
+  color: #ef4444;
+  display: none;
+}
+
+.form-group.invalid .form-error { display: block; }
+.form-group.invalid input,
+.form-group.invalid textarea { border-color: #ef4444; }
+
+/* ===== CTA BANNER ===== */
+#cta-banner {
+  padding: 80px 40px;
+  background: var(--amber);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+#cta-banner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 20px,
+      rgba(0,0,0,0.04) 20px,
+      rgba(0,0,0,0.04) 21px
+    );
+}
+
+#cta-banner h2 {
+  font-family: 'Rye', serif;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  color: var(--cream);
+  margin-bottom: 16px;
+  position: relative;
+}
+
+#cta-banner p {
+  font-size: 1.05rem;
+  color: var(--oak);
+  margin-bottom: 32px;
+  position: relative;
+}
+
+#cta-banner .btn-dark {
+  background: var(--oak);
+  color: var(--cream);
+  border: none;
+  padding: 16px 40px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.82rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+  position: relative;
+  transition: background 0.2s;
+}
+
+#cta-banner .btn-dark:hover { background: var(--black); }
+
+/* ===== FOOTER ===== */
+footer {
+  background: var(--black);
+  border-top: 1px solid var(--border);
+  padding: 64px 40px 32px;
+}
+
+.footer-grid {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1.2fr;
+  gap: 48px;
+  margin-bottom: 48px;
+}
+
+.footer-brand .nav-brand-name { font-size: 1.3rem; margin-bottom: 6px; }
+.footer-brand .nav-brand-sub { font-size: 0.62rem; }
+
+.footer-brand p {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: var(--muted);
+  margin-top: 16px;
+  margin-bottom: 20px;
+}
+
+.footer-heading {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--amber3);
+  margin-bottom: 16px;
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-links a {
+  font-size: 0.85rem;
+  color: var(--text);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover { color: var(--amber3); }
+
+.footer-contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 12px;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.footer-contact-item svg { flex-shrink: 0; margin-top: 2px; }
+
+.footer-bottom {
+  max-width: 1200px;
+  margin: 0 auto;
+  border-top: 1px solid var(--border);
+  padding-top: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.footer-bottom-text {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+.webnari-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.webnari-badge:hover { color: var(--amber3); border-color: var(--amber3); }
+
+/* REVEAL ANIMATIONS */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+.reveal-delay-5 { transition-delay: 0.5s; }
+
+/* RESPONSIVE */
+@media (max-width: 968px) {
+  .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+  .hero-visual { display: none; }
+  .taproom-grid { grid-template-columns: 1fr; gap: 40px; }
+  .about-grid { grid-template-columns: 1fr; gap: 40px; }
+  .contact-grid { grid-template-columns: 1fr; gap: 40px; }
+  .beers-grid { grid-template-columns: 1fr; }
+  .events-grid { grid-template-columns: 1fr; }
+  .reviews-grid { grid-template-columns: 1fr; }
+  .hours-grid { grid-template-columns: 1fr; }
+  .faq-grid { grid-template-columns: 1fr; gap: 40px; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+  nav { padding: 0 24px; }
+  #hero, #beers, #taproom, #events, #about, #tours, #reviews, #faq, #hours, #contact { padding-left: 24px; padding-right: 24px; }
+  footer { padding-left: 24px; padding-right: 24px; }
+  .nav-links { display: none; }
+  .nav-hamburger { display: flex; }
+  .tour-row { grid-template-columns: 60px 1fr; }
+  .tour-price { display: none; }
+}
+
+@media (max-width: 640px) {
+  .footer-grid { grid-template-columns: 1fr; }
+  .hero-stats { grid-template-columns: repeat(3, 1fr); }
+  .form-row { grid-template-columns: 1fr; }
+  .taproom-features { grid-template-columns: 1fr; }
+  .about-stats { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="brickellbrewing.html" class="nav-logo" aria-label="Brickell Brewing Co.">
+      <svg class="nav-logo-badge" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="24" r="22" stroke="#B45309" stroke-width="2"/>
+        <circle cx="24" cy="24" r="17" stroke="#4D360F" stroke-width="1"/>
+        <text x="24" y="20" font-family="serif" font-size="7" fill="#F59E0B" text-anchor="middle" font-weight="bold">BBC</text>
+        <text x="24" y="30" font-family="serif" font-size="4.5" fill="#C4A97A" text-anchor="middle">EST. 2015</text>
+        <!-- Hop dots -->
+        <circle cx="24" cy="10" r="2" fill="#4B6B2F"/>
+        <circle cx="38" cy="24" r="2" fill="#4B6B2F"/>
+        <circle cx="24" cy="38" r="2" fill="#4B6B2F"/>
+        <circle cx="10" cy="24" r="2" fill="#4B6B2F"/>
+      </svg>
+      <div class="nav-brand">
+        <span class="nav-brand-name">Brickell Brewing</span>
+        <span class="nav-brand-sub">Craft Beer · Miami, FL</span>
+      </div>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#beers">Our Beers</a></li>
+      <li><a href="#taproom">Taproom</a></li>
+      <li><a href="#events">Events</a></li>
+      <li><a href="#tours">Tours</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#contact" class="nav-cta">Visit Us</a></li>
+    </ul>
+    <div class="nav-hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <button class="mobile-close" onclick="toggleMobileMenu()" aria-label="Close menu">✕</button>
+  <a href="#beers" onclick="toggleMobileMenu()">Our Beers</a>
+  <a href="#taproom" onclick="toggleMobileMenu()">Taproom</a>
+  <a href="#events" onclick="toggleMobileMenu()">Events</a>
+  <a href="#tours" onclick="toggleMobileMenu()">Tours</a>
+  <a href="#about" onclick="toggleMobileMenu()">About</a>
+  <a href="#contact" onclick="toggleMobileMenu()">Visit Us</a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <div class="hero-label">Est. 2015 · Brickell, Miami</div>
+      <h1 class="hero-headline">
+        Brewed With<br>
+        <span>Passion</span> &<br>
+        Precision
+      </h1>
+      <p class="hero-desc">
+        Small-batch craft beers made from locally-sourced ingredients. From our barrel room to your glass — every pour tells a story of craft, community, and Miami sunshine.
+      </p>
+      <div class="hero-btns">
+        <a href="#taproom" class="btn-primary">Visit Our Taproom</a>
+        <a href="#beers" class="btn-outline">See Current Taps</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="hero-stat-num">24+</span>
+          <span class="hero-stat-label">Beers on Tap</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-num">9yr</span>
+          <span class="hero-stat-label">Craft Heritage</span>
+        </div>
+        <div class="hero-stat">
+          <span class="hero-stat-num">4.9★</span>
+          <span class="hero-stat-label">Google Rating</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <!-- SVG Barrel & Hops Illustration -->
+      <svg viewBox="0 0 420 480" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:420px">
+        <!-- Barrel body -->
+        <ellipse cx="210" cy="140" rx="130" ry="36" fill="#2E2010" stroke="#B45309" stroke-width="2.5"/>
+        <rect x="80" y="140" width="260" height="200" fill="#1C1209" stroke="#B45309" stroke-width="2"/>
+        <ellipse cx="210" cy="340" rx="130" ry="36" fill="#2E2010" stroke="#B45309" stroke-width="2.5"/>
+        <!-- Barrel staves -->
+        <line x1="120" y1="144" x2="120" y2="336" stroke="#3D2A12" stroke-width="1.5"/>
+        <line x1="160" y1="148" x2="160" y2="332" stroke="#3D2A12" stroke-width="1.5"/>
+        <line x1="200" y1="150" x2="200" y2="330" stroke="#3D2A12" stroke-width="1.5"/>
+        <line x1="240" y1="150" x2="240" y2="330" stroke="#3D2A12" stroke-width="1.5"/>
+        <line x1="280" y1="148" x2="280" y2="332" stroke="#3D2A12" stroke-width="1.5"/>
+        <line x1="320" y1="144" x2="320" y2="336" stroke="#3D2A12" stroke-width="1.5"/>
+        <!-- Barrel hoops -->
+        <path d="M80 200 Q80 196 84 196 L336 196 Q340 196 340 200" stroke="#B45309" stroke-width="3" fill="none"/>
+        <path d="M80 240 Q80 236 84 236 L336 236 Q340 236 340 240" stroke="#B45309" stroke-width="3" fill="none"/>
+        <path d="M80 280 Q80 276 84 276 L336 276 Q340 276 340 280" stroke="#B45309" stroke-width="3" fill="none"/>
+        <!-- Label area -->
+        <rect x="130" y="175" width="160" height="130" rx="4" fill="#251A0E" stroke="#4D360F" stroke-width="1.5"/>
+        <rect x="136" y="181" width="148" height="118" rx="2" fill="none" stroke="#3D2A12" stroke-width="1"/>
+        <text x="210" y="215" font-family="serif" font-size="11" fill="#F59E0B" text-anchor="middle" font-weight="bold">BRICKELL</text>
+        <text x="210" y="228" font-family="serif" font-size="7" fill="#C4A97A" text-anchor="middle">BREWING CO.</text>
+        <line x1="150" y1="234" x2="270" y2="234" stroke="#4D360F" stroke-width="1"/>
+        <text x="210" y="254" font-family="serif" font-size="8" fill="#8B7355" text-anchor="middle">MIAMI · FLORIDA</text>
+        <text x="210" y="270" font-family="serif" font-size="6.5" fill="#6B5335" text-anchor="middle">EST. 2015</text>
+        <!-- Tap handle -->
+        <rect x="198" y="80" width="24" height="60" rx="12" fill="#3D2A12" stroke="#B45309" stroke-width="1.5"/>
+        <ellipse cx="210" cy="80" rx="12" ry="8" fill="#B45309" stroke="#F59E0B" stroke-width="1"/>
+        <!-- Hops left -->
+        <circle cx="70" cy="100" r="12" fill="none" stroke="#4B6B2F" stroke-width="1.5"/>
+        <circle cx="70" cy="100" r="7" fill="#4B6B2F" opacity="0.6"/>
+        <line x1="82" y1="88" x2="95" y2="75" stroke="#4B6B2F" stroke-width="1.5"/>
+        <circle cx="95" cy="75" r="8" fill="none" stroke="#4B6B2F" stroke-width="1.5"/>
+        <circle cx="108" cy="58" r="6" fill="none" stroke="#4B6B2F" stroke-width="1"/>
+        <!-- Hops right -->
+        <circle cx="360" cy="110" r="12" fill="none" stroke="#4B6B2F" stroke-width="1.5"/>
+        <circle cx="360" cy="110" r="7" fill="#4B6B2F" opacity="0.6"/>
+        <line x1="348" y1="98" x2="335" y2="85" stroke="#4B6B2F" stroke-width="1.5"/>
+        <circle cx="330" cy="78" r="8" fill="none" stroke="#4B6B2F" stroke-width="1"/>
+        <!-- Wheat stems -->
+        <path d="M55 380 Q 60 340 70 300" stroke="#8B7355" stroke-width="1.5" fill="none"/>
+        <ellipse cx="70" cy="295" rx="5" ry="10" fill="#CA8A04" opacity="0.7"/>
+        <ellipse cx="63" cy="315" rx="4" ry="8" fill="#CA8A04" opacity="0.5" transform="rotate(-20 63 315)"/>
+        <path d="M375 380 Q 370 340 360 300" stroke="#8B7355" stroke-width="1.5" fill="none"/>
+        <ellipse cx="360" cy="295" rx="5" ry="10" fill="#CA8A04" opacity="0.7"/>
+        <ellipse cx="367" cy="315" rx="4" ry="8" fill="#CA8A04" opacity="0.5" transform="rotate(20 367 315)"/>
+        <!-- Foam on top -->
+        <ellipse cx="180" cy="138" rx="20" ry="10" fill="#F5EDD4" opacity="0.15"/>
+        <ellipse cx="220" cy="136" rx="18" ry="9" fill="#F5EDD4" opacity="0.1"/>
+        <ellipse cx="250" cy="139" rx="14" ry="8" fill="#F5EDD4" opacity="0.12"/>
+      </svg>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-strip">
+  <div class="marquee-track">
+    <span>IPA &amp; Ales</span><span class="dot">◆</span>
+    <span>Lagers &amp; Pilsners</span><span class="dot">◆</span>
+    <span>Stouts &amp; Porters</span><span class="dot">◆</span>
+    <span>Seasonal Brews</span><span class="dot">◆</span>
+    <span>Sours &amp; Saisons</span><span class="dot">◆</span>
+    <span>Barrel-Aged Rarities</span><span class="dot">◆</span>
+    <span>Private Events</span><span class="dot">◆</span>
+    <span>Brewery Tours</span><span class="dot">◆</span>
+    <span>Beer Club</span><span class="dot">◆</span>
+    <span>IPA &amp; Ales</span><span class="dot">◆</span>
+    <span>Lagers &amp; Pilsners</span><span class="dot">◆</span>
+    <span>Stouts &amp; Porters</span><span class="dot">◆</span>
+    <span>Seasonal Brews</span><span class="dot">◆</span>
+    <span>Sours &amp; Saisons</span><span class="dot">◆</span>
+    <span>Barrel-Aged Rarities</span><span class="dot">◆</span>
+    <span>Private Events</span><span class="dot">◆</span>
+    <span>Brewery Tours</span><span class="dot">◆</span>
+    <span>Beer Club</span><span class="dot">◆</span>
+  </div>
+</div>
+
+<!-- BEERS ON TAP -->
+<section id="beers">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">What's Pouring</span>
+      <h2>Beers on Tap</h2>
+      <p>Rotating lineup of handcrafted beers — from bold IPAs to smooth lagers — brewed right here in Miami. Tap list updated weekly.</p>
+    </div>
+    <div class="beers-grid">
+      <div class="beer-card reveal" data-num="01">
+        <div class="beer-style">West Coast IPA</div>
+        <h3 class="beer-name">Brickell Breeze IPA</h3>
+        <p class="beer-desc">Bold, citrus-forward West Coast IPA with notes of grapefruit, pine, and a clean bitter finish. Our flagship brew since day one.</p>
+        <div class="beer-meta">
+          <div class="beer-meta-item">
+            <span class="beer-meta-val">6.8%</span>
+            <span class="beer-meta-key">ABV</span>
+          </div>
+          <div class="beer-meta-item">
+            <span class="beer-meta-val">65</span>
+            <span class="beer-meta-key">IBU</span>
+          </div>
+          <div class="beer-meta-item">
+            <span class="beer-meta-val">SRM 5</span>
+            <span class="beer-meta-key">Color</span>
+          </div>
+        </div>
+        <div class="abv-bar"><div class="abv-fill" style="width:68%"></div></div>
+      </div>
+      <div class="beer-card reveal reveal-delay-1" data-num="02">
+        <div class="beer-style">Munich Lager</div>
+        <h3 class="beer-name">Bayfront Golden Lager</h3>
+        <p class="beer-desc">Crisp, clean Munich-style lager brewed with German pilsner malt and noble Hallertau hops. Perfect for Miami's year-round sunshine.</p>
+        <div class="beer-meta">
+          <div class="beer-meta-item">
+            <span class="beer-meta-val">4.9%</span>
+            <span class="beer-meta-key">ABV</span>
+          </div>
+          <div class="beer-meta-item">
+            <span class="beer-meta-val">18</span>
+            <span class="beer-meta-key">IBU</span>
+          </div>
+          <div class="beer-meta-item">
+            <span class="beer-meta-val">SRM 3</span>
+            <span class="beer-meta-key">Color</span>
+          </div>
+        </div>
+        <div class="abv-bar"><div class="abv-fill" style="width:49%"></div></div>
+      </div>
+      <div class="beer-card reveal reveal-delay-2" data-num="03">
+        <div class="beer-style">Oatmeal Stout</div>
+        <h3 class="beer-name">Dark Dock Stout</h3>
+        <p class="beer-desc">Rich, silky oatmeal stout with roasted coffee, dark chocolate, and vanilla character. A night cap in a glass.</p>
+        <div class="beer-meta">
+          <div class="beer-meta-item">
+            <span class="beer-meta-val">5.6%</span>
+            <span class="beer-meta-key">ABV</span>
+          </div>
+          <div class="beer-meta-item">
+            <span class="beer-meta-val">35</span>
+            <span class="beer-meta-key">IBU</span>
+          </div>
+          <div class="beer-meta-item">
+            <span class="beer-meta-val">SRM 40</span>
+            <span class="beer-meta-key">Color</span>
+          </div>
+        </div>
+        <div class="abv-bar"><div class="abv-fill" style="width:56%"></div></div>
+      </div>
+      <div class="beer-card reveal reveal-delay-3" data-num="04">
+        <div class="beer-style">Hazy IPA</div>
+        <h3 class="beer-name">Little Havana Haze</h3>
+        <p class="beer-desc">New England-style hazy IPA bursting with tropical fruit — mango, passionfruit, and papaya. A local tribute in every sip.</p>
+        <div class="beer-meta">
+          <div class="beer-meta-item">
+            <span class="beer-meta-val">7.2%</span>
+            <span class="beer-meta-key">ABV</span>
+          </div>
+          <div class="beer-meta-item">
+            <span class="beer-meta-val">45</span>
+            <span class="beer-meta-key">IBU</span>
+          </div>
+          <div class="beer-meta-item">
+            <span class="beer-meta-val">SRM 6</span>
+            <span class="beer-meta-key">Color</span>
+          </div>
+        </div>
+        <div class="abv-bar"><div class="abv-fill" style="width:72%"></div></div>
+      </div>
+      <div class="beer-card reveal reveal-delay-4" data-num="05">
+        <div class="beer-style">Berliner Weisse</div>
+        <h3 class="beer-name">Cayo Sour</h3>
+        <p class="beer-desc">Tart, refreshing Berliner Weisse with guava and lime zest. Inspired by the Florida Keys. Low ABV, high flavor.</p>
+        <div class="beer-meta">
+          <div class="beer-meta-item">
+            <span class="beer-meta-val">3.4%</span>
+            <span class="beer-meta-key">ABV</span>
+          </div>
+          <div class="beer-meta-item">
+            <span class="beer-meta-val">8</span>
+            <span class="beer-meta-key">IBU</span>
+          </div>
+          <div class="beer-meta-item">
+            <span class="beer-meta-val">SRM 2</span>
+            <span class="beer-meta-key">Color</span>
+          </div>
+        </div>
+        <div class="abv-bar"><div class="abv-fill" style="width:34%"></div></div>
+      </div>
+      <div class="beer-card reveal reveal-delay-5" data-num="06">
+        <div class="beer-style">Belgian Tripel — Seasonal</div>
+        <h3 class="beer-name">Coral Gables Tripel</h3>
+        <p class="beer-desc">Complex Belgian-style golden tripel with spicy yeast character, dried fruit notes, and warming alcohol. Limited release.</p>
+        <div class="beer-meta">
+          <div class="beer-meta-item">
+            <span class="beer-meta-val">9.1%</span>
+            <span class="beer-meta-key">ABV</span>
+          </div>
+          <div class="beer-meta-item">
+            <span class="beer-meta-val">28</span>
+            <span class="beer-meta-key">IBU</span>
+          </div>
+          <div class="beer-meta-item">
+            <span class="beer-meta-val">SRM 7</span>
+            <span class="beer-meta-key">Color</span>
+          </div>
+        </div>
+        <div class="abv-bar"><div class="abv-fill" style="width:91%"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TAPROOM -->
+<section id="taproom">
+  <div class="container">
+    <div class="taproom-grid">
+      <div class="taproom-visual reveal">
+        <div class="taproom-frame">
+          <svg viewBox="0 0 380 280" fill="none" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:380px;padding:20px">
+            <!-- Bar counter -->
+            <rect x="20" y="180" width="340" height="60" rx="4" fill="#251A0E" stroke="#4D360F" stroke-width="1.5"/>
+            <rect x="20" y="175" width="340" height="10" rx="2" fill="#3D2A12"/>
+            <!-- Bar stools -->
+            <circle cx="80" cy="230" r="20" fill="none" stroke="#3D2A12" stroke-width="2"/>
+            <circle cx="160" cy="230" r="20" fill="none" stroke="#3D2A12" stroke-width="2"/>
+            <circle cx="240" cy="230" r="20" fill="none" stroke="#3D2A12" stroke-width="2"/>
+            <circle cx="320" cy="230" r="20" fill="none" stroke="#3D2A12" stroke-width="2"/>
+            <!-- Tap handles -->
+            <line x1="100" y1="175" x2="100" y2="120" stroke="#B45309" stroke-width="3"/>
+            <rect x="92" y="108" width="16" height="24" rx="8" fill="#2E2010" stroke="#B45309" stroke-width="1.5"/>
+            <line x1="150" y1="175" x2="150" y2="120" stroke="#B45309" stroke-width="3"/>
+            <rect x="142" y="108" width="16" height="24" rx="8" fill="#2E2010" stroke="#F59E0B" stroke-width="1.5"/>
+            <line x1="200" y1="175" x2="200" y2="120" stroke="#B45309" stroke-width="3"/>
+            <rect x="192" y="108" width="16" height="24" rx="8" fill="#2E2010" stroke="#B45309" stroke-width="1.5"/>
+            <line x1="250" y1="175" x2="250" y2="120" stroke="#B45309" stroke-width="3"/>
+            <rect x="242" y="108" width="16" height="24" rx="8" fill="#2E2010" stroke="#4B6B2F" stroke-width="1.5"/>
+            <!-- Beer glasses -->
+            <path d="M60 130 L65 175 L95 175 L100 130 Z" fill="#B45309" opacity="0.3" stroke="#B45309" stroke-width="1"/>
+            <path d="M130 140 L135 175 L165 175 L170 140 Z" fill="#F59E0B" opacity="0.2" stroke="#B45309" stroke-width="1"/>
+            <!-- Sign on wall -->
+            <rect x="240" y="40" width="120" height="60" rx="3" fill="none" stroke="#4D360F" stroke-width="1.5"/>
+            <rect x="245" y="45" width="110" height="50" rx="2" fill="none" stroke="#3D2A12" stroke-width="1"/>
+            <text x="300" y="68" font-family="serif" font-size="8" fill="#F59E0B" text-anchor="middle">BRICKELL</text>
+            <text x="300" y="78" font-family="serif" font-size="6" fill="#8B7355" text-anchor="middle">BREWING CO.</text>
+            <text x="300" y="88" font-family="serif" font-size="5" fill="#6B5335" text-anchor="middle">EST. 2015</text>
+            <!-- Bottles on shelf -->
+            <rect x="20" y="60" width="200" height="8" rx="2" fill="#3D2A12"/>
+            <rect x="30" y="35" width="10" height="26" rx="3" fill="#251A0E" stroke="#4D360F" stroke-width="1"/>
+            <rect x="47" y="30" width="10" height="31" rx="3" fill="#1C1209" stroke="#B45309" stroke-width="1"/>
+            <rect x="64" y="38" width="10" height="23" rx="3" fill="#251A0E" stroke="#4D360F" stroke-width="1"/>
+            <rect x="81" y="32" width="10" height="29" rx="3" fill="#1C1209" stroke="#F59E0B" stroke-width="0.8"/>
+            <rect x="98" y="36" width="10" height="25" rx="3" fill="#251A0E" stroke="#4D360F" stroke-width="1"/>
+            <rect x="115" y="28" width="10" height="33" rx="3" fill="#1C1209" stroke="#B45309" stroke-width="1"/>
+          </svg>
+          <div class="taproom-badge">
+            <span>24</span>
+            <span>On Tap</span>
+          </div>
+        </div>
+      </div>
+      <div class="taproom-content reveal reveal-delay-2">
+        <span class="section-label">Our Taproom</span>
+        <h2>A Corner of<br>Miami Worth Visiting</h2>
+        <p>Settle in at our 3,000 sq ft taproom in the heart of Brickell. Belly up to our 30-foot reclaimed wood bar, find your favorite stool, and let our knowledgeable taproom team walk you through what's pouring today.</p>
+        <p>Dog-friendly outdoor patio, live music Friday–Saturday nights, and food truck partnerships every weekend. Families welcome before 7PM.</p>
+        <div class="taproom-features">
+          <div class="taproom-feature">
+            <div class="taproom-feature-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2">
+                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+              </svg>
+            </div>
+            <div class="taproom-feature-text">
+              <strong>3,000 sq ft</strong>
+              <span>Indoor + outdoor seating</span>
+            </div>
+          </div>
+          <div class="taproom-feature">
+            <div class="taproom-feature-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+              </svg>
+            </div>
+            <div class="taproom-feature-text">
+              <strong>Open Daily</strong>
+              <span>Mon–Thu 3–11PM, Fri–Sat 12–1AM, Sun 12–9PM</span>
+            </div>
+          </div>
+          <div class="taproom-feature">
+            <div class="taproom-feature-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2">
+                <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/>
+              </svg>
+            </div>
+            <div class="taproom-feature-text">
+              <strong>Dog Friendly</strong>
+              <span>Outdoor patio welcomes leashed dogs</span>
+            </div>
+          </div>
+          <div class="taproom-feature">
+            <div class="taproom-feature-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2">
+                <path d="M9 18V5l12-2v13"/>
+                <circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>
+              </svg>
+            </div>
+            <div class="taproom-feature-text">
+              <strong>Live Music</strong>
+              <span>Local artists every Fri &amp; Sat night</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EVENTS -->
+<section id="events">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Raise a Glass</span>
+      <h2>Events & Experiences</h2>
+      <p>From intimate tasting dinners to raucous tap takeovers, there's always something happening at Brickell Brewing.</p>
+    </div>
+    <div class="events-grid">
+      <div class="event-card reveal">
+        <span class="event-card-tag">Weekly</span>
+        <h3>Trivia Thursday</h3>
+        <p>Test your knowledge every Thursday at 7PM. Teams of up to 6 compete for bar tabs, merch, and serious bragging rights. Hosted by your favorite regulars.</p>
+        <div class="event-card-footer">
+          <div class="event-price">Free <small>to enter</small></div>
+          <a href="#contact" class="event-link">Reserve table</a>
+        </div>
+      </div>
+      <div class="event-card reveal reveal-delay-1">
+        <span class="event-card-tag">Monthly</span>
+        <h3>Rare &amp; Reserve Tasting</h3>
+        <p>First Saturday each month. Guided vertical tasting of our barrel-aged and limited-release beers, paired with charcuterie. Tickets sell out fast — book ahead.</p>
+        <div class="event-card-footer">
+          <div class="event-price">$55 <small>per person</small></div>
+          <a href="#contact" class="event-link">Book tickets</a>
+        </div>
+      </div>
+      <div class="event-card reveal reveal-delay-2">
+        <span class="event-card-tag">Private</span>
+        <h3>Private Events</h3>
+        <p>Host your birthday, corporate happy hour, or rehearsal dinner in our private event room. Customizable beer packages, dedicated taproom staff, catering coordination.</p>
+        <div class="event-card-footer">
+          <div class="event-price">Custom <small>pricing</small></div>
+          <a href="#contact" class="event-link">Inquire</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-content reveal">
+        <span class="section-label">Our Story</span>
+        <h2>Born in Miami,<br>Brewed with Pride</h2>
+        <p>Brickell Brewing Co. was founded in 2015 by brothers Marco and Luis Delgado — two Miami natives who grew tired of drinking beer that had nothing to do with Florida. They wanted something local, crafted, and alive.</p>
+        <p>Starting with a 7-barrel system in a 1,200 sq ft garage in Allapattah, the brothers brewed every weekend, pouring samples at farmers markets and neighborhood cookouts. Within two years, demand forced a move to our current 12,000 sq ft facility in Brickell.</p>
+        <blockquote class="brewing-quote">
+          <p>"Great beer is honest. It tells you where it's from, who made it, and why they cared. We put Miami in every batch."</p>
+          <cite>— Marco Delgado, Head Brewer &amp; Co-Founder</cite>
+        </blockquote>
+        <p>Today we brew over 35 different recipes annually, distribute to 200+ South Florida restaurants and bars, and pour 24 rotating taps in our Brickell taproom daily.</p>
+      </div>
+      <div class="about-stats reveal reveal-delay-2">
+        <div class="about-stat">
+          <span class="about-stat-num">35+</span>
+          <span class="about-stat-label">Annual Recipes</span>
+          <span class="about-stat-desc">New beers designed and brewed every year</span>
+        </div>
+        <div class="about-stat">
+          <span class="about-stat-num">200+</span>
+          <span class="about-stat-label">Distribution Partners</span>
+          <span class="about-stat-desc">Restaurants and bars across South Florida</span>
+        </div>
+        <div class="about-stat">
+          <span class="about-stat-num">9yrs</span>
+          <span class="about-stat-label">Crafting Excellence</span>
+          <span class="about-stat-desc">Proudly independent and Miami-owned</span>
+        </div>
+        <div class="about-stat">
+          <span class="about-stat-num">12k</span>
+          <span class="about-stat-label">Sq Ft Brewery</span>
+          <span class="about-stat-desc">State-of-the-art brewing facility in Brickell</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TOURS -->
+<section id="tours">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Behind the Brew</span>
+      <h2>Tours &amp; Tastings</h2>
+      <p>Step behind the bar and see how the magic happens. Every tour ends with pints of your choice.</p>
+    </div>
+    <div class="tours-list">
+      <div class="tour-row reveal">
+        <div class="tour-num">01</div>
+        <div class="tour-info">
+          <h3>Intro Brewery Tour</h3>
+          <p>45-minute walkthrough of the brewhouse — mash tun, fermentation tanks, and barrel room. Ends with 2 pints. Perfect for first-timers and beer curious.</p>
+          <div class="tour-tags">
+            <span class="tour-tag">45 min</span>
+            <span class="tour-tag">2 pints included</span>
+            <span class="tour-tag">All levels</span>
+          </div>
+        </div>
+        <div class="tour-price">
+          <span class="price">$28</span>
+          <span class="per">per person</span>
+        </div>
+      </div>
+      <div class="tour-row reveal reveal-delay-1">
+        <div class="tour-num">02</div>
+        <div class="tour-info">
+          <h3>Brewer's Deep Dive</h3>
+          <p>90-minute immersive tour led by our head brewer. Includes tasting flights of 6 beers, access to the barrel room, and a Q&amp;A session on craft brewing techniques.</p>
+          <div class="tour-tags">
+            <span class="tour-tag">90 min</span>
+            <span class="tour-tag">6-beer flight</span>
+            <span class="tour-tag">Beer enthusiasts</span>
+          </div>
+        </div>
+        <div class="tour-price">
+          <span class="price">$55</span>
+          <span class="per">per person</span>
+        </div>
+      </div>
+      <div class="tour-row reveal reveal-delay-2">
+        <div class="tour-num">03</div>
+        <div class="tour-info">
+          <h3>Brew Your Own Experience</h3>
+          <p>A half-day workshop where you design and brew your own small-batch beer alongside our brewers. Your batch is ready in 3–4 weeks for pickup. Max 8 participants.</p>
+          <div class="tour-tags">
+            <span class="tour-tag">4 hours</span>
+            <span class="tour-tag">Take your beer home</span>
+            <span class="tour-tag">Advanced booking</span>
+          </div>
+        </div>
+        <div class="tour-price">
+          <span class="price">$150</span>
+          <span class="per">per person</span>
+        </div>
+      </div>
+      <div class="tour-row reveal reveal-delay-3">
+        <div class="tour-num">04</div>
+        <div class="tour-info">
+          <h3>Beer Club Membership</h3>
+          <p>Monthly can releases, exclusive barrel-aged allocations, 15% off taproom purchases, plus invitations to members-only events. Cancel anytime.</p>
+          <div class="tour-tags">
+            <span class="tour-tag">Monthly shipment</span>
+            <span class="tour-tag">Member events</span>
+            <span class="tour-tag">15% discount</span>
+          </div>
+        </div>
+        <div class="tour-price">
+          <span class="price">$45</span>
+          <span class="per">per month</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section id="reviews">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">The People Have Spoken</span>
+      <h2>What Guests Are Saying</h2>
+    </div>
+    <div class="reviews-grid">
+      <div class="review-card reveal">
+        <span class="review-quote-mark">"</span>
+        <div class="review-stars">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <p class="review-text">"The Brickell Breeze IPA is legitimately one of the best I've had on the East Coast. The taproom itself has this amazing industrial-cozy feel — brick walls, low lighting, great music. We've been back four times this month."</p>
+        <div class="review-author">
+          <div class="review-avatar">J</div>
+          <div class="review-author-info">
+            <strong>Jason M.</strong>
+            <span>Brickell resident · Regular</span>
+          </div>
+        </div>
+      </div>
+      <div class="review-card reveal reveal-delay-1">
+        <span class="review-quote-mark">"</span>
+        <div class="review-stars">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <p class="review-text">"Hosted my company's holiday party here. The private room was perfect, the custom beer flight was a huge hit with the team, and the staff went above and beyond. Highly recommend for corporate events. Will absolutely be back."</p>
+        <div class="review-author">
+          <div class="review-avatar">S</div>
+          <div class="review-author-info">
+            <strong>Sofia R.</strong>
+            <span>Event organizer · Corporate client</span>
+          </div>
+        </div>
+      </div>
+      <div class="review-card reveal reveal-delay-2">
+        <span class="review-quote-mark">"</span>
+        <div class="review-stars">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#F59E0B"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        </div>
+        <p class="review-text">"Did the Brewer's Deep Dive tour last week — absolutely incredible. Marco walked us through the whole process, shared stories about each batch, and the barrel room is something special. Cayo Sour is my new summer obsession."</p>
+        <div class="review-author">
+          <div class="review-avatar">D</div>
+          <div class="review-author-info">
+            <strong>David K.</strong>
+            <span>Beer enthusiast · Miami Beach</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="container">
+    <div class="faq-grid">
+      <div class="faq-sidebar reveal">
+        <span class="section-label">Got Questions?</span>
+        <h2>Frequently Asked</h2>
+        <p>Everything you need to know before your visit. Can't find what you're looking for? Reach out and we'll get back to you same day.</p>
+        <a href="#contact" class="btn-primary" style="margin-top:8px">Contact Us</a>
+      </div>
+      <div class="faq-list reveal reveal-delay-1">
+        <div class="faq-item">
+          <div class="faq-question">
+            <span class="faq-question-text">Do you allow dogs in the taproom?</span>
+            <span class="faq-toggle">+</span>
+          </div>
+          <div class="faq-answer">Yes! Leashed, well-behaved dogs are welcome on our outdoor patio. We always have a water bowl available, and our staff will fuss over your pup. Inside seating is humans-only.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <span class="faq-question-text">Is there food at the taproom?</span>
+            <span class="faq-toggle">+</span>
+          </div>
+          <div class="faq-answer">We partner with local food trucks that park outside Friday–Sunday. We also allow outside food to be brought in. Light snacks (pretzels, nuts, charcuterie) are available at the bar daily.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <span class="faq-question-text">Do I need to book a tour in advance?</span>
+            <span class="faq-toggle">+</span>
+          </div>
+          <div class="faq-answer">The Intro Tour runs on weekends at 2PM and 4PM — walk-ins are welcome but booking guarantees your spot. The Deep Dive and Brew Your Own experiences require advance booking and fill up quickly.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <span class="faq-question-text">Where can I find your beers outside the taproom?</span>
+            <span class="faq-toggle">+</span>
+          </div>
+          <div class="faq-answer">Our beers are available at 200+ restaurants, bars, and bottle shops across South Florida. Check our website's distribution finder for the closest location. We also ship to select Florida ZIP codes via our online store.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <span class="faq-question-text">How do I host a private event at Brickell Brewing?</span>
+            <span class="faq-toggle">+</span>
+          </div>
+          <div class="faq-answer">Our private event room seats up to 80 guests and includes custom beer packages, dedicated staff, and AV equipment. Reach out via our contact form or call us directly. We book 6–8 weeks in advance on weekends.</div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question">
+            <span class="faq-question-text">What's included in the Beer Club membership?</span>
+            <span class="faq-toggle">+</span>
+          </div>
+          <div class="faq-answer">Members receive 12 cans of exclusive monthly releases (including barrel-aged and small-batch beers not available elsewhere), 15% off all taproom purchases, invitations to members-only events, and first access to new releases. Cancel anytime.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOURS & AREAS -->
+<section id="hours">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-label">Find Us</span>
+      <h2>Hours, Location &amp; Service Areas</h2>
+    </div>
+    <div class="hours-grid">
+      <div class="hours-block reveal">
+        <h3>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Taproom Hours
+        </h3>
+        <div class="hours-row"><span class="hours-day">Monday</span><span class="hours-time">3:00 PM – 11:00 PM</span></div>
+        <div class="hours-row"><span class="hours-day">Tuesday</span><span class="hours-time">3:00 PM – 11:00 PM</span></div>
+        <div class="hours-row"><span class="hours-day">Wednesday</span><span class="hours-time">3:00 PM – 11:00 PM</span></div>
+        <div class="hours-row"><span class="hours-day">Thursday</span><span class="hours-time">3:00 PM – 12:00 AM</span></div>
+        <div class="hours-row"><span class="hours-day">Friday</span><span class="hours-time">12:00 PM – 1:00 AM</span></div>
+        <div class="hours-row"><span class="hours-day">Saturday</span><span class="hours-time">12:00 PM – 1:00 AM</span></div>
+        <div class="hours-row"><span class="hours-day">Sunday</span><span class="hours-time">12:00 PM – 9:00 PM</span></div>
+      </div>
+      <div class="hours-block reveal reveal-delay-1">
+        <h3>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          Location
+        </h3>
+        <div style="margin-bottom:12px">
+          <strong style="color:var(--cream);font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase">Address</strong>
+          <p style="font-size:.88rem;color:var(--text);margin-top:4px;line-height:1.6">1234 Brickell Ave, Suite 100<br>Miami, FL 33131</p>
+        </div>
+        <div style="margin-bottom:12px">
+          <strong style="color:var(--cream);font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase">Phone</strong>
+          <p style="font-size:.88rem;color:var(--amber3);margin-top:4px">(305) 555-2100</p>
+        </div>
+        <div>
+          <strong style="color:var(--cream);font-family:'DM Mono',monospace;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase">Brewery License</strong>
+          <p style="font-family:'DM Mono',monospace;font-size:.72rem;color:var(--muted);margin-top:4px">#BRW2015-0441</p>
+        </div>
+      </div>
+      <div class="hours-block reveal reveal-delay-2">
+        <h3>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+          Distribution Areas
+        </h3>
+        <div class="areas-list">
+          <span class="area-tag">Miami</span>
+          <span class="area-tag">Brickell</span>
+          <span class="area-tag">Coral Gables</span>
+          <span class="area-tag">Doral</span>
+          <span class="area-tag">Hialeah</span>
+          <span class="area-tag">Miami Beach</span>
+          <span class="area-tag">Kendall</span>
+          <span class="area-tag">South Miami</span>
+          <span class="area-tag">Westchester</span>
+          <span class="area-tag">Homestead</span>
+          <span class="area-tag">Miami Gardens</span>
+          <span class="area-tag">North Miami</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <span class="section-label">Get in Touch</span>
+        <h2>We'd Love to Hear<br>From You</h2>
+        <div class="contact-item">
+          <div class="contact-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 .82h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          </div>
+          <div class="contact-item-text">
+            <strong>Phone</strong>
+            <span>(305) 555-2100</span>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          </div>
+          <div class="contact-item-text">
+            <strong>Email</strong>
+            <span>hello@brickellbrewing.com</span>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div class="contact-item-text">
+            <strong>Address</strong>
+            <span>1234 Brickell Ave, Suite 100, Miami, FL 33131</span>
+          </div>
+        </div>
+      </div>
+      <form class="contact-form reveal reveal-delay-2" action="https://formsubmit.co/hello@brickellbrewing.com" method="POST" id="contactForm" novalidate>
+        <input type="hidden" name="_captcha" value="false">
+        <input type="hidden" name="_subject" value="New inquiry from website">
+        <div class="form-row">
+          <div class="form-group" id="fg-name">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name" placeholder="Your name">
+            <span class="form-error">Please enter your name</span>
+          </div>
+          <div class="form-group" id="fg-email">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="your@email.com">
+            <span class="form-error">Please enter a valid email</span>
+          </div>
+        </div>
+        <div class="form-group" id="fg-inquiry">
+          <label for="inquiry">Type of Inquiry</label>
+          <select id="inquiry" name="inquiry">
+            <option value="">Select one...</option>
+            <option>Tour Booking</option>
+            <option>Private Event</option>
+            <option>Beer Club</option>
+            <option>Distribution / Wholesale</option>
+            <option>General Question</option>
+          </select>
+        </div>
+        <div class="form-group" id="fg-message">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" placeholder="Tell us more..."></textarea>
+          <span class="form-error">Please enter a message</span>
+        </div>
+        <button type="submit" class="btn-primary" style="width:100%;padding:16px;font-size:.82rem">Send Message</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section id="cta-banner">
+  <h2>Your Next Pint is Waiting</h2>
+  <p>Open 7 days a week. Walk-ins always welcome. No reservations needed (except tours).</p>
+  <a href="tel:3055552100" class="btn-dark">Call (305) 555-2100</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="nav-brand">
+        <span class="nav-brand-name">Brickell Brewing Co.</span>
+        <span class="nav-brand-sub" style="font-size:.65rem;display:block;margin-top:4px;color:var(--muted)">Est. 2015 · Miami, Florida</span>
+      </div>
+      <p>Small-batch craft beers made from locally-sourced ingredients. From our barrel room in Brickell to craft beer lovers all over South Florida.</p>
+      <a href="brickellbrewing.html" class="btn-outline" style="font-size:.65rem;padding:8px 16px">Visit Taproom</a>
+    </div>
+    <div>
+      <div class="footer-heading">Tap Room</div>
+      <ul class="footer-links">
+        <li><a href="#beers">Beers on Tap</a></li>
+        <li><a href="#taproom">Taproom Info</a></li>
+        <li><a href="#events">Events Calendar</a></li>
+        <li><a href="#tours">Tours &amp; Tastings</a></li>
+        <li><a href="#hours">Hours &amp; Location</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-heading">Company</div>
+      <ul class="footer-links">
+        <li><a href="#about">Our Story</a></li>
+        <li><a href="#tours">Beer Club</a></li>
+        <li><a href="#events">Private Events</a></li>
+        <li><a href="#contact">Distribution</a></li>
+        <li><a href="#contact">Press Inquiries</a></li>
+      </ul>
+    </div>
+    <div>
+      <div class="footer-heading">Contact</div>
+      <div class="footer-contact-item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 .82h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+        (305) 555-2100
+      </div>
+      <div class="footer-contact-item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        hello@brickellbrewing.com
+      </div>
+      <div class="footer-contact-item">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        1234 Brickell Ave, Suite 100<br>Miami, FL 33131
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-bottom-text">© 2025 Brickell Brewing Co. LLC · Brewery License #BRW2015-0441 · Please drink responsibly. Must be 21+ to enter.</span>
+    <a href="https://webnari.io" class="webnari-badge" target="_blank" rel="noopener">Powered by Webnari</a>
+  </div>
+</footer>
+
+<script>
+// Mobile menu
+function toggleMobileMenu() {
+  document.getElementById('mobileMenu').classList.toggle('open');
+}
+
+// Scroll reveal
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+// FAQ accordion
+document.querySelectorAll('.faq-question').forEach(q => {
+  q.addEventListener('click', () => {
+    const item = q.closest('.faq-item');
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+    if (!isOpen) item.classList.add('open');
+  });
+});
+
+// ABV bar animation on scroll
+const barObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.querySelectorAll('.abv-fill').forEach(bar => {
+        const w = bar.style.width;
+        bar.style.width = '0';
+        setTimeout(() => { bar.style.width = w; }, 100);
+      });
+    }
+  });
+}, { threshold: 0.2 });
+
+document.querySelectorAll('.beers-grid').forEach(el => barObserver.observe(el));
+
+// Form validation
+const form = document.getElementById('contactForm');
+if (form) {
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    let valid = true;
+
+    const name = document.getElementById('name');
+    const email = document.getElementById('email');
+    const message = document.getElementById('message');
+
+    if (!name.value.trim()) {
+      document.getElementById('fg-name').classList.add('invalid');
+      valid = false;
+    } else {
+      document.getElementById('fg-name').classList.remove('invalid');
+    }
+
+    const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRe.test(email.value.trim())) {
+      document.getElementById('fg-email').classList.add('invalid');
+      valid = false;
+    } else {
+      document.getElementById('fg-email').classList.remove('invalid');
+    }
+
+    if (!message.value.trim()) {
+      document.getElementById('fg-message').classList.add('invalid');
+      valid = false;
+    } else {
+      document.getElementById('fg-message').classList.remove('invalid');
+    }
+
+    if (valid) form.submit();
+  });
+
+  ['name', 'email', 'message'].forEach(id => {
+    const el = document.getElementById(id);
+    el.addEventListener('blur', () => {
+      const fg = document.getElementById('fg-' + id);
+      if (id === 'email') {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        fg.classList.toggle('invalid', !re.test(el.value.trim()));
+      } else {
+        fg.classList.toggle('invalid', !el.value.trim());
+      }
+    });
+  });
+}
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+</script>
+</body>
+</html>

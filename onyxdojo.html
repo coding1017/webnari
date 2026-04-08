@@ -1,0 +1,1682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="OnyxDojo - Mixed Martial Arts & Combat Training Academy in Wynwood, Miami. Brazilian Jiu-Jitsu, Muay Thai, Boxing, Wrestling, MMA, and Private Training.">
+    <meta property="og:title" content="OnyxDojo - Master the Art of Combat">
+    <meta property="og:description" content="Mixed Martial Arts & Combat Training Academy in Wynwood, Miami. 15+ years of excellence.">
+    <meta property="og:type" content="website">
+    <meta name="theme-color" content="#151210">
+    <title>OnyxDojo - Mixed Martial Arts Training Academy in Miami</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700;900&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #9B111E;
+            --secondary: #C4B5A0;
+            --bg: #151210;
+            --surface: #1E1A16;
+            --surface2: #282220;
+            --border: #3A3430;
+            --text: #C8BDB0;
+            --muted: #7A706A;
+            --heading: #F0EBE4;
+            --white: #F0EBE4;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Zen Kaku Gothic New', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image:
+                repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.03) 0px, rgba(255, 255, 255, 0.03) 1px, transparent 1px, transparent 2px),
+                repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.03) 0px, rgba(255, 255, 255, 0.03) 1px, transparent 1px, transparent 2px);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Noto Serif JP', serif;
+            color: var(--heading);
+            font-weight: 700;
+        }
+
+        a {
+            color: var(--secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: var(--primary);
+        }
+
+        /* NAV */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(21, 18, 16, 0.98);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Noto Serif JP', serif;
+            font-size: 28px;
+            font-weight: 900;
+            color: var(--heading);
+            letter-spacing: -0.5px;
+        }
+
+        .enso-mark {
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--primary);
+            border-radius: 50%;
+            border-top-color: transparent;
+            animation: spin-slow 8s linear infinite;
+        }
+
+        @keyframes spin-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            align-items: center;
+        }
+
+        .nav-links a {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+            padding: 8px 0;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .hamburger span {
+            width: 24px;
+            height: 2px;
+            background-color: var(--heading);
+            transition: all 0.3s ease;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(8px, 8px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(8px, -8px);
+        }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 80%;
+            height: 100%;
+            background-color: var(--surface2);
+            z-index: 999;
+            padding-top: 100px;
+            padding-left: 40px;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .mobile-menu a {
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--heading);
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 16px 20px;
+            }
+
+            .nav-logo {
+                font-size: 24px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .mobile-menu.active {
+                display: flex;
+            }
+        }
+
+        /* HERO */
+        .hero {
+            min-height: 100vh;
+            background-color: var(--surface);
+            background-image:
+                linear-gradient(135deg, rgba(155, 17, 30, 0.08) 0%, transparent 50%),
+                repeating-linear-gradient(0deg, rgba(0, 0, 0, 0.3) 0px, rgba(0, 0, 0, 0.3) 2px, transparent 2px, transparent 4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            padding: 80px 40px 40px;
+        }
+
+        .hero::before {
+            content: 'DISCIPLINE';
+            position: absolute;
+            left: 40px;
+            top: 50%;
+            transform: translateY(-50%) rotate(-90deg);
+            font-family: 'Noto Serif JP', serif;
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--secondary);
+            opacity: 0.3;
+            white-space: nowrap;
+            letter-spacing: 8px;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 800px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero h1 {
+            font-size: 72px;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            font-weight: 900;
+            letter-spacing: -1px;
+        }
+
+        .hero h1 .accent {
+            color: var(--primary);
+        }
+
+        .ink-drop {
+            width: 80px;
+            height: 80px;
+            margin: 40px auto;
+            position: relative;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-top: 40px;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hero-stat {
+            padding: 16px;
+            border-left: 2px solid var(--primary);
+        }
+
+        .hero-stat strong {
+            display: block;
+            font-size: 28px;
+            color: var(--heading);
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                padding: 80px 20px 40px;
+            }
+
+            .hero::before {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 48px;
+            }
+
+            .hero-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+        }
+
+        /* BRUSH STROKE DIVIDER */
+        .brush-divider {
+            width: 120px;
+            height: 24px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* SECTION STYLES */
+        section {
+            padding: 80px 40px;
+            position: relative;
+        }
+
+        section h2 {
+            font-size: 56px;
+            margin-bottom: 12px;
+            letter-spacing: -0.5px;
+        }
+
+        section .section-accent {
+            color: var(--primary);
+        }
+
+        section > .subtitle {
+            color: var(--muted);
+            font-size: 16px;
+            margin-bottom: 48px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* DISCIPLINES */
+        .disciplines {
+            background-color: var(--bg);
+        }
+
+        .disciplines-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 48px;
+        }
+
+        .discipline-card {
+            background-color: var(--surface);
+            padding: 40px;
+            position: relative;
+            border-bottom: 2px solid var(--border);
+            transition: border-color 0.3s ease, transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .discipline-card:hover {
+            border-bottom-color: var(--primary);
+            transform: translateY(-4px);
+        }
+
+        .discipline-card .kanji {
+            font-size: 80px;
+            opacity: 0.15;
+            margin-bottom: 20px;
+            font-family: 'Noto Serif JP', serif;
+            color: var(--primary);
+        }
+
+        .discipline-card h3 {
+            font-size: 24px;
+            margin-bottom: 12px;
+            color: var(--heading);
+        }
+
+        .discipline-card p {
+            font-size: 14px;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        @media (max-width: 768px) {
+            .disciplines-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+
+            .discipline-card {
+                padding: 24px;
+            }
+        }
+
+        /* PHILOSOPHY */
+        .philosophy {
+            background-color: var(--surface);
+            display: flex;
+            align-items: center;
+            gap: 60px;
+        }
+
+        .philosophy-enso {
+            flex: 0 0 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            height: 400px;
+        }
+
+        .enso-circle {
+            width: 300px;
+            height: 300px;
+            border: 8px solid var(--primary);
+            border-radius: 50%;
+            opacity: 0.25;
+            position: relative;
+            border-top: 8px solid transparent;
+        }
+
+        .philosophy-content {
+            flex: 1;
+        }
+
+        .philosophy-content h2 {
+            margin-bottom: 24px;
+        }
+
+        .philosophy-quote {
+            font-family: 'Noto Serif JP', serif;
+            font-size: 24px;
+            font-style: italic;
+            color: var(--primary);
+            margin: 32px 0;
+            line-height: 1.8;
+            padding-left: 24px;
+            border-left: 3px solid var(--primary);
+        }
+
+        .philosophy-content p {
+            font-size: 15px;
+            line-height: 1.8;
+            margin-bottom: 16px;
+            color: var(--text);
+        }
+
+        @media (max-width: 768px) {
+            .philosophy {
+                flex-direction: column;
+                gap: 40px;
+            }
+
+            .philosophy-enso {
+                flex: 1;
+                width: 100%;
+            }
+
+            section {
+                padding: 60px 20px;
+            }
+
+            section h2 {
+                font-size: 42px;
+            }
+        }
+
+        /* INSTRUCTORS */
+        .instructors {
+            background-color: var(--bg);
+        }
+
+        .instructors-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            margin-top: 48px;
+        }
+
+        .instructor-card {
+            background-color: var(--surface);
+            padding: 40px;
+            border-left: 4px solid var(--primary);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .instructor-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background-color: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Noto Serif JP', serif;
+            font-size: 56px;
+            font-weight: 900;
+            color: var(--bg);
+            margin-bottom: 20px;
+        }
+
+        .instructor-card h3 {
+            font-size: 22px;
+            margin-bottom: 8px;
+            color: var(--heading);
+        }
+
+        .instructor-card .rank {
+            color: var(--primary);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .instructor-card p {
+            font-size: 14px;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        @media (max-width: 768px) {
+            .instructors-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+        }
+
+        /* SCHEDULE */
+        .schedule {
+            background-color: var(--surface);
+        }
+
+        .schedule-table {
+            width: 100%;
+            margin-top: 48px;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .schedule-table th {
+            background-color: var(--surface2);
+            color: var(--heading);
+            padding: 16px;
+            text-align: left;
+            border-bottom: 2px solid var(--border);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .schedule-table td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .schedule-table tr:hover {
+            background-color: var(--surface2);
+        }
+
+        .class-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .bjj { background-color: rgba(155, 17, 30, 0.3); color: var(--primary); }
+        .muaythai { background-color: rgba(196, 181, 160, 0.3); color: var(--secondary); }
+        .boxing { background-color: rgba(122, 112, 106, 0.3); color: var(--muted); }
+        .wrestling { background-color: rgba(248, 235, 228, 0.3); color: var(--heading); }
+        .mma { background-color: rgba(155, 17, 30, 0.5); color: var(--primary); }
+
+        @media (max-width: 768px) {
+            .schedule-table {
+                font-size: 12px;
+            }
+
+            .schedule-table th, .schedule-table td {
+                padding: 12px;
+            }
+        }
+
+        /* TESTIMONIALS */
+        .testimonials {
+            background-color: var(--bg);
+        }
+
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+            margin-top: 48px;
+        }
+
+        .testimonial-card {
+            background-color: var(--surface);
+            padding: 32px;
+            position: relative;
+        }
+
+        .testimonial-mark {
+            font-family: 'Noto Serif JP', serif;
+            font-size: 80px;
+            color: var(--primary);
+            opacity: 0.3;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            line-height: 1;
+        }
+
+        .testimonial-card p {
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 24px;
+            margin-top: 24px;
+            color: var(--text);
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            color: var(--heading);
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .testimonial-duration {
+            color: var(--primary);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 768px) {
+            .testimonials-grid {
+                grid-template-columns: 1fr;
+                gap: 24px;
+            }
+        }
+
+        /* FAQ */
+        .faq {
+            background-color: var(--surface);
+        }
+
+        .faq-list {
+            max-width: 800px;
+            margin-top: 48px;
+        }
+
+        .faq-item {
+            border-left: 3px solid var(--border);
+            padding: 24px;
+            padding-left: 32px;
+            margin-bottom: 16px;
+            cursor: pointer;
+            transition: border-color 0.3s ease, background-color 0.3s ease;
+        }
+
+        .faq-item:hover {
+            background-color: var(--surface2);
+        }
+
+        .faq-item.active {
+            border-left-color: var(--primary);
+            background-color: rgba(155, 17, 30, 0.08);
+        }
+
+        .faq-item h3 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: var(--heading);
+        }
+
+        .faq-toggle {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+            transition: all 0.3s ease;
+        }
+
+        .faq-item.active .faq-toggle {
+            border-color: var(--primary);
+            background-color: var(--primary);
+            color: var(--heading);
+        }
+
+        .faq-answer {
+            display: none;
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--text);
+            margin-top: 16px;
+        }
+
+        .faq-item.active .faq-answer {
+            display: block;
+        }
+
+        /* AREAS */
+        .areas {
+            background-color: var(--bg);
+        }
+
+        .areas-list {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-top: 48px;
+            max-width: 900px;
+        }
+
+        .area-item {
+            font-size: 14px;
+            color: var(--text);
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            position: relative;
+            padding-left: 24px;
+        }
+
+        .area-item::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .areas-list {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* CONTACT */
+        .contact {
+            background-color: var(--surface);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: start;
+        }
+
+        .contact-info {
+            padding-right: 40px;
+        }
+
+        .contact-block {
+            margin-bottom: 32px;
+        }
+
+        .contact-block h3 {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .contact-block p {
+            font-size: 18px;
+            color: var(--heading);
+            line-height: 1.6;
+        }
+
+        .contact-block a {
+            color: var(--primary);
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--muted);
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border);
+            color: var(--text);
+            padding: 12px 0;
+            font-family: 'Zen Kaku Gothic New', sans-serif;
+            font-size: 15px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-bottom-color: var(--primary);
+            background-color: rgba(155, 17, 30, 0.05);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: var(--muted);
+        }
+
+        .form-submit {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 16px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            font-family: 'Zen Kaku Gothic New', sans-serif;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            margin-top: 12px;
+        }
+
+        .form-submit:hover {
+            background-color: var(--primary);
+            color: var(--heading);
+        }
+
+        .form-error {
+            color: #FF6B6B;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+
+        .form-error.show {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .contact {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .contact-info {
+                padding-right: 0;
+            }
+        }
+
+        /* CTA BANNER */
+        .cta-banner {
+            background-color: var(--primary);
+            text-align: center;
+            padding: 80px 40px;
+        }
+
+        .cta-banner h2 {
+            font-size: 56px;
+            margin-bottom: 24px;
+            color: var(--heading);
+            letter-spacing: -1px;
+        }
+
+        .cta-banner p {
+            font-size: 16px;
+            color: var(--heading);
+            margin-bottom: 32px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            border: 2px solid var(--heading);
+            color: var(--heading);
+            padding: 16px 48px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 14px;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            background: transparent;
+            font-family: 'Zen Kaku Gothic New', sans-serif;
+        }
+
+        .cta-button:hover {
+            background-color: var(--heading);
+            color: var(--primary);
+        }
+
+        /* FOOTER */
+        footer {
+            background-color: var(--surface);
+            padding: 60px 40px;
+            border-top: 1px solid var(--border);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+            margin-bottom: 40px;
+        }
+
+        .footer-column h3 {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--muted);
+            margin-bottom: 20px;
+        }
+
+        .footer-column .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .footer-column .brand-text {
+            font-family: 'Noto Serif JP', serif;
+            font-size: 20px;
+            font-weight: 900;
+            color: var(--heading);
+        }
+
+        .footer-column ul {
+            list-style: none;
+        }
+
+        .footer-column li {
+            margin-bottom: 12px;
+        }
+
+        .footer-column a {
+            font-size: 14px;
+            color: var(--text);
+        }
+
+        .footer-column p {
+            font-size: 13px;
+            color: var(--text);
+            line-height: 1.7;
+            margin-bottom: 8px;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .footer-bottom a {
+            color: var(--secondary);
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 24px;
+            }
+
+            footer {
+                padding: 40px 20px;
+            }
+        }
+
+        /* REVEAL ANIMATION */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .reveal-delay-1.active { transition-delay: 0.1s; }
+        .reveal-delay-2.active { transition-delay: 0.2s; }
+        .reveal-delay-3.active { transition-delay: 0.3s; }
+        .reveal-delay-4.active { transition-delay: 0.4s; }
+        .reveal-delay-5.active { transition-delay: 0.5s; }
+        .reveal-delay-6.active { transition-delay: 0.6s; }
+
+        /* UTILITIES */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVIGATION -->
+    <nav>
+        <div class="nav-logo">
+            <div class="enso-mark"></div>
+            <span>OnyxDojo</span>
+        </div>
+
+        <div class="nav-links">
+            <a href="#disciplines">Disciplines</a>
+            <a href="#instructors">Team</a>
+            <a href="#schedule">Schedule</a>
+            <a href="#contact">Contact</a>
+        </div>
+
+        <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#disciplines">Disciplines</a>
+        <a href="#instructors">Team</a>
+        <a href="#schedule">Schedule</a>
+        <a href="#contact">Contact</a>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Master the Art of <span class="accent">Combat</span></h1>
+
+            <svg class="ink-drop" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <ellipse cx="50" cy="30" rx="20" ry="25" fill="none" stroke="#9B111E" stroke-width="2" opacity="0.6"/>
+                <path d="M 50 55 Q 30 75, 50 95 Q 70 75, 50 55" fill="#9B111E" opacity="0.4"/>
+            </svg>
+
+            <div class="hero-stats">
+                <div class="hero-stat reveal">
+                    <strong>15+</strong>
+                    Years
+                </div>
+                <div class="hero-stat reveal reveal-delay-1">
+                    <strong>2000+</strong>
+                    Students
+                </div>
+                <div class="hero-stat reveal reveal-delay-2">
+                    <strong>6</strong>
+                    Disciplines
+                </div>
+                <div class="hero-stat reveal reveal-delay-3">
+                    <strong>12</strong>
+                    Black Belts
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DISCIPLINES -->
+    <section class="disciplines" id="disciplines">
+        <h2>Core <span class="section-accent">Disciplines</span></h2>
+        <p class="subtitle">Master Your Craft</p>
+
+        <div class="disciplines-grid">
+            <div class="discipline-card reveal">
+                <div class="kanji">柔</div>
+                <h3>Brazilian Jiu-Jitsu</h3>
+                <p>Master the art of leverage and technique. Build strength, flexibility, and mental resilience through ground fighting fundamentals.</p>
+            </div>
+
+            <div class="discipline-card reveal reveal-delay-1">
+                <div class="kanji">拳</div>
+                <h3>Muay Thai</h3>
+                <p>The art of eight limbs. Develop devastating striking power using fists, elbows, knees, and shins with traditional Thai training.</p>
+            </div>
+
+            <div class="discipline-card reveal reveal-delay-2">
+                <div class="kanji">闘</div>
+                <h3>Boxing</h3>
+                <p>The sweet science refined. Precision footwork, hand speed, and ring intelligence combined with cardiovascular excellence.</p>
+            </div>
+
+            <div class="discipline-card reveal reveal-delay-3">
+                <div class="kanji">組</div>
+                <h3>Wrestling</h3>
+                <p>Control the clinch and takedown game. Build explosive power and positioning mastery for MMA competition and self-defense.</p>
+            </div>
+
+            <div class="discipline-card reveal reveal-delay-4">
+                <div class="kanji">武</div>
+                <h3>MMA Fundamentals</h3>
+                <p>Integrated combat training blending all disciplines. Learn seamless transitions between striking, grappling, and submissions.</p>
+            </div>
+
+            <div class="discipline-card reveal reveal-delay-5">
+                <div class="kanji">道</div>
+                <h3>Private Training</h3>
+                <p>One-on-one coaching tailored to your goals. Personalized curriculum with expert instructors for accelerated skill development.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- PHILOSOPHY -->
+    <section class="philosophy">
+        <div class="philosophy-enso">
+            <div class="enso-circle"></div>
+        </div>
+
+        <div class="philosophy-content reveal">
+            <h2>Our <span class="section-accent">Philosophy</span></h2>
+
+            <p class="philosophy-quote">
+                "The dojo is not a place to escape. It is a place to discover who you truly are."
+            </p>
+
+            <p>
+                At OnyxDojo, we believe martial arts transcend physical combat. Every punch, kick, and submission is a meditation on discipline, humility, and continuous improvement. Our instructors guide students through progressive mastery—not rushing strength, but building unshakeable foundation.
+            </p>
+
+            <p>
+                We honor the traditions of martial arts while embracing modern training science. Whether you're a complete beginner seeking confidence or a competitive athlete chasing excellence, you belong here. The path to mastery starts with a single step.
+            </p>
+        </div>
+    </section>
+
+    <!-- INSTRUCTORS -->
+    <section class="instructors" id="instructors">
+        <h2>Meet the <span class="section-accent">Team</span></h2>
+        <p class="subtitle">Expert Instructors</p>
+
+        <div class="instructors-grid">
+            <div class="instructor-card reveal">
+                <div class="instructor-avatar">征</div>
+                <h3>Sensei Masato</h3>
+                <p class="rank">Black Belt • BJJ/MMA Head Coach</p>
+                <p>15+ years training in Japan and Brazil. Competition record: 89 wins, 23 losses. Specializes in leg lock systems and guard retention.</p>
+            </div>
+
+            <div class="instructor-card reveal reveal-delay-1">
+                <div class="instructor-avatar">龍</div>
+                <h3>Khun Rosa</h3>
+                <p class="rank">Former Muay Thai Fighter • Ring Certified</p>
+                <p>Fought in Bangkok stadia for 7 years. Now focuses on developing conditioning and striking mechanics for next-generation competitors.</p>
+            </div>
+
+            <div class="instructor-card reveal reveal-delay-2">
+                <div class="instructor-avatar">拳</div>
+                <h3>Coach Marcus</h3>
+                <p class="rank">Boxing Head Coach • Golden Gloves Champion</p>
+                <p>Former amateur boxer with 45 wins. Expert in footwork, hand speed development, and amateur/professional fight preparation.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- SCHEDULE -->
+    <section class="schedule" id="schedule">
+        <h2>Weekly <span class="section-accent">Schedule</span></h2>
+        <p class="subtitle">Classes & Open Mat Times</p>
+
+        <table class="schedule-table">
+            <thead>
+                <tr>
+                    <th>Time</th>
+                    <th>Monday</th>
+                    <th>Tuesday</th>
+                    <th>Wednesday</th>
+                    <th>Thursday</th>
+                    <th>Friday</th>
+                    <th>Saturday</th>
+                    <th>Sunday</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>6:00 AM</strong></td>
+                    <td><span class="class-badge boxing">Boxing</span></td>
+                    <td><span class="class-badge muaythai">Muay Thai</span></td>
+                    <td><span class="class-badge boxing">Boxing</span></td>
+                    <td><span class="class-badge wrestling">Wrestling</span></td>
+                    <td><span class="class-badge boxing">Boxing</span></td>
+                    <td>—</td>
+                    <td>—</td>
+                </tr>
+                <tr>
+                    <td><strong>7:30 AM</strong></td>
+                    <td><span class="class-badge bjj">BJJ</span></td>
+                    <td><span class="class-badge bjj">BJJ</span></td>
+                    <td><span class="class-badge bjj">BJJ</span></td>
+                    <td><span class="class-badge bjj">BJJ</span></td>
+                    <td><span class="class-badge bjj">BJJ</span></td>
+                    <td><span class="class-badge bjj">BJJ</span></td>
+                    <td><span class="class-badge bjj">BJJ</span></td>
+                </tr>
+                <tr>
+                    <td><strong>12:00 PM</strong></td>
+                    <td><span class="class-badge mma">MMA</span></td>
+                    <td><span class="class-badge muaythai">Muay Thai</span></td>
+                    <td><span class="class-badge mma">MMA</span></td>
+                    <td><span class="class-badge muaythai">Muay Thai</span></td>
+                    <td><span class="class-badge mma">MMA</span></td>
+                    <td>—</td>
+                    <td>—</td>
+                </tr>
+                <tr>
+                    <td><strong>5:30 PM</strong></td>
+                    <td><span class="class-badge boxing">Boxing</span></td>
+                    <td><span class="class-badge wrestling">Wrestling</span></td>
+                    <td><span class="class-badge boxing">Boxing</span></td>
+                    <td><span class="class-badge wrestling">Wrestling</span></td>
+                    <td><span class="class-badge boxing">Boxing</span></td>
+                    <td><span class="class-badge wrestling">Wrestling</span></td>
+                    <td>—</td>
+                </tr>
+                <tr>
+                    <td><strong>7:00 PM</strong></td>
+                    <td><span class="class-badge muaythai">Muay Thai</span></td>
+                    <td><span class="class-badge bjj">BJJ</span></td>
+                    <td><span class="class-badge muaythai">Muay Thai</span></td>
+                    <td><span class="class-badge bjj">BJJ</span></td>
+                    <td><span class="class-badge muaythai">Muay Thai</span></td>
+                    <td><span class="class-badge mma">MMA</span></td>
+                    <td><span class="class-badge bjj">BJJ</span></td>
+                </tr>
+                <tr>
+                    <td><strong>8:30 PM</strong></td>
+                    <td><span class="class-badge mma">MMA</span></td>
+                    <td><span class="class-badge mma">MMA</span></td>
+                    <td><span class="class-badge mma">MMA</span></td>
+                    <td><span class="class-badge mma">MMA</span></td>
+                    <td><span class="class-badge mma">MMA</span></td>
+                    <td>—</td>
+                    <td>—</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="testimonials">
+        <h2>Student <span class="section-accent">Stories</span></h2>
+        <p class="subtitle">From Our Community</p>
+
+        <div class="testimonials-grid">
+            <div class="testimonial-card reveal">
+                <div class="testimonial-mark">"</div>
+                <p>
+                    "I came in zero experience, terrified of contact. Now I'm competing in amateur BJJ tournaments. The instructors made me believe I could do this. OnyxDojo changed my life."
+                </p>
+                <div class="testimonial-author">— Sarah M.</div>
+                <div class="testimonial-duration">Training 2 years</div>
+            </div>
+
+            <div class="testimonial-card reveal reveal-delay-1">
+                <div class="testimonial-mark">"</div>
+                <p>
+                    "Muay Thai here is legit. The conditioning is brutal but the technique is unmatched. Sensei Khun Rosa knows the game. Worth every second."
+                </p>
+                <div class="testimonial-author">— David H.</div>
+                <div class="testimonial-duration">Training 1.5 years</div>
+            </div>
+
+            <div class="testimonial-card reveal reveal-delay-2">
+                <div class="testimonial-mark">"</div>
+                <p>
+                    "I'm 58 years old and training BJJ. Everyone here is welcoming. The philosophy of continuous improvement over age resonates with me daily."
+                </p>
+                <div class="testimonial-author">— Richard T.</div>
+                <div class="testimonial-duration">Training 3 years</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="faq">
+        <h2>Frequently <span class="section-accent">Asked</span></h2>
+        <p class="subtitle">Questions & Answers</p>
+
+        <div class="faq-list">
+            <div class="faq-item" data-faq="0">
+                <h3>
+                    I've never trained martial arts before. Can I start?
+                    <span class="faq-toggle">+</span>
+                </h3>
+                <div class="faq-answer">
+                    Absolutely. Every instructor here was once a beginner. We structure all fundamental classes to welcome students of any background. Start with a free trial class—no commitment.
+                </div>
+            </div>
+
+            <div class="faq-item" data-faq="1">
+                <h3>
+                    What's the difference between classes and private training?
+                    <span class="faq-toggle">+</span>
+                </h3>
+                <div class="faq-answer">
+                    Classes ($30 drop-in or $179/month unlimited) are group-based with standardized curriculum. Private sessions ($100+/hr) are one-on-one, customized to your goals—perfect for competitive preparation or accelerated learning.
+                </div>
+            </div>
+
+            <div class="faq-item" data-faq="2">
+                <h3>
+                    Do I need to buy expensive equipment?
+                    <span class="faq-toggle">+</span>
+                </h3>
+                <div class="faq-answer">
+                    Not for your first month. We provide basic gear rental. Once you're sure about training, a BJJ gi (~$80), hand wraps (~$15), and Muay Thai shorts (~$40) are minimal investments. Boxing and wrestling use basics you likely already own.
+                </div>
+            </div>
+
+            <div class="faq-item" data-faq="3">
+                <h3>
+                    Is OnyxDojo competition-focused or casual?
+                    <span class="faq-toggle">+</span>
+                </h3>
+                <div class="faq-answer">
+                    Both. We have a thriving competition team competing at local, regional, and national levels. But we equally celebrate students training purely for fitness, self-defense, or mental health. Your goals are respected.
+                </div>
+            </div>
+
+            <div class="faq-item" data-faq="4">
+                <h3>
+                    What are class sizes typically like?
+                    <span class="faq-toggle">+</span>
+                </h3>
+                <div class="faq-answer">
+                    Morning and evening peak classes run 15–25 students. Afternoon classes are smaller (8–12). We maintain student-to-instructor ratios that allow personalized correction and safety oversight.
+                </div>
+            </div>
+
+            <div class="faq-item" data-faq="5">
+                <h3>
+                    Do you offer women-only or youth programs?
+                    <span class="faq-toggle">+</span>
+                </h3>
+                <div class="faq-answer">
+                    Women make up 30% of our student body and train in all standard classes. We're planning a dedicated women's BJJ cohort launching next month. Youth (ages 6–12) have Saturday morning fundamentals. Ask about these during enrollment.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SERVICE AREAS -->
+    <section class="areas">
+        <h2>Service <span class="section-accent">Areas</span></h2>
+        <p class="subtitle">South Florida Coverage</p>
+
+        <div class="areas-list">
+            <div class="area-item">Miami</div>
+            <div class="area-item">Coral Gables</div>
+            <div class="area-item">Doral</div>
+            <div class="area-item">Hialeah</div>
+            <div class="area-item">Kendall</div>
+            <div class="area-item">Miami Beach</div>
+            <div class="area-item">Brickell</div>
+            <div class="area-item">Wynwood</div>
+            <div class="area-item">Westchester</div>
+            <div class="area-item">South Miami</div>
+            <div class="area-item">Homestead</div>
+            <div class="area-item">Coconut Grove</div>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="contact" id="contact">
+        <div class="contact-info reveal">
+            <h2>Get in <span class="section-accent">Touch</span></h2>
+
+            <div class="contact-block">
+                <h3>Address</h3>
+                <p>2150 NW 24th Street<br>Wynwood, Miami FL 33127</p>
+            </div>
+
+            <div class="contact-block">
+                <h3>Phone</h3>
+                <p><a href="tel:+13055552250">(305) 555-2250</a></p>
+            </div>
+
+            <div class="contact-block">
+                <h3>Email</h3>
+                <p><a href="mailto:info@onyxdojo.com">info@onyxdojo.com</a></p>
+            </div>
+
+            <div class="contact-block">
+                <h3>Hours</h3>
+                <p>
+                    Monday–Friday: 6AM–10PM<br>
+                    Saturday: 7AM–8PM<br>
+                    Sunday: 8AM–4PM
+                </p>
+            </div>
+        </div>
+
+        <form class="contact-form reveal reveal-delay-1" id="contactForm" action="https://formsubmit.co/info@onyxdojo.com" method="POST">
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" name="name" required>
+                <div class="form-error" data-field="name">Please enter your name</div>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required>
+                <div class="form-error" data-field="email">Please enter a valid email</div>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone</label>
+                <input type="tel" id="phone" name="phone" required>
+                <div class="form-error" data-field="phone">Please enter a valid phone</div>
+            </div>
+
+            <div class="form-group">
+                <label for="interest">Interest</label>
+                <select id="interest" name="interest" style="background: transparent; border: none; border-bottom: 1px solid var(--border); color: var(--text); padding: 12px 0; font-family: 'Zen Kaku Gothic New', sans-serif; font-size: 15px;" required>
+                    <option value="" disabled selected style="color: var(--muted);">Select a discipline</option>
+                    <option value="Brazilian Jiu-Jitsu" style="color: #151210;">Brazilian Jiu-Jitsu</option>
+                    <option value="Muay Thai" style="color: #151210;">Muay Thai</option>
+                    <option value="Boxing" style="color: #151210;">Boxing</option>
+                    <option value="Wrestling" style="color: #151210;">Wrestling</option>
+                    <option value="MMA Fundamentals" style="color: #151210;">MMA Fundamentals</option>
+                    <option value="Private Training" style="color: #151210;">Private Training</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" placeholder="Tell us about your martial arts goals..." required></textarea>
+                <div class="form-error" data-field="message">Please enter a message</div>
+            </div>
+
+            <input type="hidden" name="_captcha" value="false">
+            <input type="hidden" name="_subject" value="New OnyxDojo Inquiry">
+
+            <button type="submit" class="form-submit">Send Message</button>
+        </form>
+    </section>
+
+    <!-- CTA BANNER -->
+    <section class="cta-banner">
+        <h2>Begin Your <span style="color: var(--bg);">Journey</span></h2>
+        <p>Start with a free trial class. No commitment. No pressure. Just pure martial arts.</p>
+        <a href="#contact" class="cta-button">Schedule Trial</a>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-column">
+                <div class="brand">
+                    <div class="enso-mark" style="width: 24px; height: 24px; border-width: 2px;"></div>
+                    <div class="brand-text">OnyxDojo</div>
+                </div>
+                <p>
+                    Mixed Martial Arts & Combat Training Academy
+                </p>
+                <p style="font-size: 12px; color: var(--muted); margin-top: 8px;">
+                    License: FL Athletic Commission #MA2024-0912
+                </p>
+            </div>
+
+            <div class="footer-column">
+                <h3>Disciplines</h3>
+                <ul>
+                    <li><a href="#disciplines">Brazilian Jiu-Jitsu</a></li>
+                    <li><a href="#disciplines">Muay Thai</a></li>
+                    <li><a href="#disciplines">Boxing</a></li>
+                    <li><a href="#disciplines">Wrestling</a></li>
+                    <li><a href="#disciplines">MMA Fundamentals</a></li>
+                    <li><a href="#disciplines">Private Training</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="#schedule">Schedule</a></li>
+                    <li><a href="#instructors">Team</a></li>
+                    <li><a href="#faq">FAQ</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-column">
+                <h3>Contact</h3>
+                <p>2150 NW 24th Street<br>Wynwood, Miami FL 33127</p>
+                <p><a href="tel:+13055552250">(305) 555-2250</a></p>
+                <p><a href="mailto:info@onyxdojo.com">info@onyxdojo.com</a></p>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            Powered by <a href="https://webnari.io" target="_blank" rel="noopener noreferrer">Webnari</a> • © 2024 OnyxDojo. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+        });
+
+        // Close mobile menu on link click
+        document.querySelectorAll('.mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                mobileMenu.classList.remove('active');
+            });
+        });
+
+        // Intersection Observer for reveal animations
+        const revealElements = document.querySelectorAll('.reveal');
+
+        const revealOptions = {
+            threshold: 0.15,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const revealOnScroll = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, revealOptions);
+
+        revealElements.forEach(element => {
+            revealOnScroll.observe(element);
+        });
+
+        // FAQ Accordion
+        const faqItems = document.querySelectorAll('.faq-item');
+
+        faqItems.forEach(item => {
+            item.addEventListener('click', () => {
+                // Close other items
+                faqItems.forEach(otherItem => {
+                    if (otherItem !== item && otherItem.classList.contains('active')) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+
+                // Toggle current item
+                item.classList.toggle('active');
+            });
+        });
+
+        // Form Validation
+        const form = document.getElementById('contactForm');
+        const inputs = form.querySelectorAll('input[required], textarea[required], select[required]');
+
+        inputs.forEach(input => {
+            input.addEventListener('blur', validateField);
+        });
+
+        function validateField(e) {
+            const field = e.target;
+            const fieldName = field.name;
+            const errorElement = document.querySelector(`[data-field="${fieldName}"]`);
+            let isValid = true;
+
+            if (fieldName === 'email') {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                isValid = emailRegex.test(field.value);
+            } else if (fieldName === 'phone') {
+                const phoneRegex = /^[\d\s\-\+\(\)]+$/;
+                isValid = phoneRegex.test(field.value) && field.value.replace(/\D/g, '').length >= 10;
+            } else {
+                isValid = field.value.trim() !== '';
+            }
+
+            if (!isValid) {
+                if (errorElement) {
+                    errorElement.classList.add('show');
+                }
+                field.style.borderBottomColor = '#FF6B6B';
+            } else {
+                if (errorElement) {
+                    errorElement.classList.remove('show');
+                }
+                field.style.borderBottomColor = 'var(--border)';
+            }
+        }
+
+        form.addEventListener('submit', (e) => {
+            let isFormValid = true;
+
+            inputs.forEach(input => {
+                const fieldName = input.name;
+                const errorElement = document.querySelector(`[data-field="${fieldName}"]`);
+                let isValid = true;
+
+                if (fieldName === 'email') {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    isValid = emailRegex.test(input.value);
+                } else if (fieldName === 'phone') {
+                    const phoneRegex = /^[\d\s\-\+\(\)]+$/;
+                    isValid = phoneRegex.test(input.value) && input.value.replace(/\D/g, '').length >= 10;
+                } else {
+                    isValid = input.value.trim() !== '';
+                }
+
+                if (!isValid) {
+                    isFormValid = false;
+                    if (errorElement) {
+                        errorElement.classList.add('show');
+                    }
+                    input.style.borderBottomColor = '#FF6B6B';
+                } else {
+                    if (errorElement) {
+                        errorElement.classList.remove('show');
+                    }
+                    input.style.borderBottomColor = 'var(--border)';
+                }
+            });
+
+            if (!isFormValid) {
+                e.preventDefault();
+            }
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                if (href !== '#' && document.querySelector(href)) {
+                    e.preventDefault();
+                    document.querySelector(href).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

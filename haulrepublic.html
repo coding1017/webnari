@@ -1,0 +1,2283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Haul Republic — South Florida's most reliable junk removal and hauling service. Same-day pickup. Honest flat-rate pricing. Serving Miami, Doral, Hialeah, and all of South Florida.">
+<meta property="og:title" content="Haul Republic | Junk Removal South Florida">
+<meta property="og:description" content="Same-day junk removal with honest flat-rate pricing. No hidden fees, no nonsense. Serving all of South Florida.">
+<meta property="og:type" content="website">
+<title>Haul Republic | Junk Removal South Florida</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --dark: #1A1208;
+    --dark2: #231A0A;
+    --brown: #3D2B10;
+    --olive: #4A5228;
+    --olive2: #5C6B2E;
+    --rust: #C4511A;
+    --rust2: #E06230;
+    --cream: #F5E6C8;
+    --cream2: #EDD9A3;
+    --sand: #D4C090;
+    --tan: #B8A070;
+    --white: #FDFAF3;
+    --text: #2A1E08;
+    --muted: #7A6840;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Libre Baskerville', serif;
+    background: var(--cream);
+    color: var(--text);
+    overflow-x: hidden;
+  }
+
+  /* Halftone texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    background-image: radial-gradient(circle, rgba(26,18,8,0.06) 1px, transparent 1px);
+    background-size: 4px 4px;
+  }
+
+  /* ===== NAV ===== */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: var(--dark);
+    padding: 0 60px;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 3px solid var(--rust);
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+
+  .logo-badge {
+    width: 40px;
+    height: 40px;
+    background: var(--rust);
+    clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .logo-text {
+    font-family: 'Alfa Slab One', serif;
+    font-size: 20px;
+    color: var(--cream);
+    letter-spacing: 0.04em;
+    line-height: 1;
+  }
+
+  .logo-sub {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 9px;
+    color: var(--muted);
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 36px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--sand);
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--cream); }
+
+  .nav-book {
+    font-family: 'Alfa Slab One', serif;
+    font-size: 13px;
+    color: var(--dark) !important;
+    background: var(--rust);
+    padding: 8px 20px;
+    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+    transition: background 0.2s !important;
+    letter-spacing: 0.05em;
+  }
+
+  .nav-book:hover {
+    background: var(--rust2) !important;
+    color: var(--dark) !important;
+  }
+
+  .hamburger {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    background: none;
+    border: none;
+  }
+
+  .hamburger span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--cream);
+    transition: all 0.3s;
+  }
+
+  /* MOBILE MENU */
+  .mobile-menu {
+    position: fixed;
+    inset: 0;
+    background: var(--dark);
+    z-index: 2000;
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 60px;
+    gap: 28px;
+    transform: translateY(-100%);
+    transition: transform 0.4s ease;
+  }
+
+  .mobile-menu.open { transform: translateY(0); display: flex; }
+
+  .mobile-menu a {
+    font-family: 'Alfa Slab One', serif;
+    font-size: 32px;
+    color: var(--cream);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    transition: color 0.2s;
+  }
+
+  .mobile-menu a:hover { color: var(--rust2); }
+
+  .menu-close {
+    position: absolute;
+    top: 20px;
+    right: 24px;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-size: 32px;
+    cursor: pointer;
+    line-height: 1;
+  }
+
+  /* ===== HERO ===== */
+  .hero {
+    background: var(--dark);
+    min-height: 92vh;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+
+  /* Vintage diagonal stripes */
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      -55deg,
+      transparent,
+      transparent 40px,
+      rgba(255,255,255,0.015) 40px,
+      rgba(255,255,255,0.015) 80px
+    );
+    pointer-events: none;
+  }
+
+  /* Rustic edge texture */
+  .hero::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: var(--rust);
+  }
+
+  .hero-bg-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Alfa Slab One', serif;
+    font-size: clamp(100px, 20vw, 260px);
+    color: rgba(255,255,255,0.03);
+    white-space: nowrap;
+    letter-spacing: -0.03em;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    padding: 60px 80px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: end;
+  }
+
+  .hero-stamp {
+    position: absolute;
+    top: 48px;
+    right: 80px;
+    width: 140px;
+    height: 140px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 4px solid var(--rust);
+    border-radius: 50%;
+    transform: rotate(12deg);
+    z-index: 3;
+    background: rgba(196,81,26,0.08);
+  }
+
+  .hero-stamp-text1 {
+    font-family: 'Alfa Slab One', serif;
+    font-size: 11px;
+    color: var(--rust);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  .hero-stamp-num {
+    font-family: 'Alfa Slab One', serif;
+    font-size: 28px;
+    color: var(--rust);
+    line-height: 1;
+    margin: 2px 0;
+  }
+
+  .hero-stamp-text2 {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 8px;
+    color: var(--rust);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .hero-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--rust2);
+    width: fit-content;
+  }
+
+  .hero-tag::before {
+    content: '';
+    display: block;
+    width: 32px;
+    height: 2px;
+    background: var(--rust);
+  }
+
+  .hero-title {
+    font-family: 'Alfa Slab One', serif;
+    font-size: clamp(48px, 7vw, 96px);
+    color: var(--cream);
+    line-height: 0.9;
+    letter-spacing: -0.01em;
+  }
+
+  .hero-title .italic {
+    font-family: 'Libre Baskerville', serif;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--cream2);
+    font-size: 0.85em;
+  }
+
+  .hero-desc {
+    font-size: 17px;
+    color: var(--tan);
+    line-height: 1.7;
+    max-width: 420px;
+    font-style: italic;
+  }
+
+  .hero-buttons {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .btn-rust {
+    font-family: 'Alfa Slab One', serif;
+    font-size: 14px;
+    color: var(--dark);
+    background: var(--rust);
+    padding: 14px 32px;
+    text-decoration: none;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    transition: background 0.2s;
+    display: inline-block;
+    letter-spacing: 0.05em;
+  }
+
+  .btn-rust:hover { background: var(--rust2); }
+
+  .btn-outline-cream {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--cream);
+    padding: 14px 28px;
+    border: 2px solid var(--tan);
+    text-decoration: none;
+    transition: border-color 0.2s, color 0.2s;
+    display: inline-block;
+  }
+
+  .btn-outline-cream:hover {
+    border-color: var(--cream);
+    color: var(--white);
+  }
+
+  .hero-right {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .hero-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border: 2px solid var(--brown);
+  }
+
+  .h-stat {
+    padding: 20px 16px;
+    border-right: 2px solid var(--brown);
+    text-align: center;
+  }
+
+  .h-stat:last-child { border-right: none; }
+
+  .h-stat-num {
+    font-family: 'Alfa Slab One', serif;
+    font-size: 32px;
+    color: var(--cream);
+    line-height: 1;
+    display: block;
+  }
+
+  .h-stat-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-top: 4px;
+    display: block;
+  }
+
+  /* TRUCK SVG ILLUSTRATION */
+  .truck-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding: 40px 0 0;
+  }
+
+  /* ===== ORNAMENT DIVIDER ===== */
+  .ornament-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 24px 0;
+    background: var(--rust);
+  }
+
+  .ornament-line {
+    flex: 1;
+    height: 1px;
+    background: rgba(253,250,243,0.3);
+    max-width: 200px;
+  }
+
+  .ornament-text {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--dark);
+    white-space: nowrap;
+  }
+
+  .ornament-diamond {
+    width: 8px;
+    height: 8px;
+    background: var(--dark);
+    transform: rotate(45deg);
+    flex-shrink: 0;
+  }
+
+  /* ===== SECTION BASE ===== */
+  .container {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 80px;
+  }
+
+  .section-eyebrow {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--rust);
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .section-eyebrow::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: var(--rust);
+    transform: rotate(45deg);
+  }
+
+  .section-heading {
+    font-family: 'Alfa Slab One', serif;
+    font-size: clamp(36px, 4.5vw, 64px);
+    color: var(--dark);
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+    margin-bottom: 16px;
+  }
+
+  .section-heading .cream-line {
+    color: var(--rust);
+  }
+
+  .section-sub {
+    font-size: 17px;
+    font-style: italic;
+    color: var(--muted);
+    line-height: 1.7;
+    max-width: 520px;
+  }
+
+  /* ===== SERVICES ===== */
+  .services {
+    padding: 100px 0;
+    background: var(--cream);
+    border-bottom: 3px solid var(--tan);
+  }
+
+  .services-header {
+    margin-bottom: 60px;
+  }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    background: var(--tan);
+  }
+
+  .service-card {
+    background: var(--cream);
+    padding: 40px 32px;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+    cursor: default;
+  }
+
+  .service-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--rust);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+
+  .service-card:hover::before { transform: scaleX(1); }
+  .service-card:hover { background: var(--white); }
+
+  .service-icon-ring {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 3px solid var(--olive);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    transition: border-color 0.3s, background 0.3s;
+  }
+
+  .service-card:hover .service-icon-ring {
+    background: var(--rust);
+    border-color: var(--rust);
+  }
+
+  .service-card:hover .service-icon-ring svg path,
+  .service-card:hover .service-icon-ring svg rect,
+  .service-card:hover .service-icon-ring svg circle,
+  .service-card:hover .service-icon-ring svg line,
+  .service-card:hover .service-icon-ring svg polygon {
+    stroke: var(--cream) !important;
+    fill: var(--cream) !important;
+  }
+
+  .service-name {
+    font-family: 'Alfa Slab One', serif;
+    font-size: 20px;
+    color: var(--dark);
+    margin-bottom: 10px;
+    letter-spacing: 0.01em;
+    line-height: 1.1;
+  }
+
+  .service-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.7;
+    font-style: italic;
+  }
+
+  .service-badge {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--rust);
+    border: 1px solid var(--rust);
+    padding: 3px 8px;
+  }
+
+  /* ===== PRICING ===== */
+  .pricing {
+    padding: 100px 0;
+    background: var(--dark2);
+    position: relative;
+    overflow: hidden;
+    border-bottom: 3px solid var(--rust);
+  }
+
+  .pricing::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 60px,
+      rgba(255,255,255,0.015) 60px,
+      rgba(255,255,255,0.015) 61px
+    );
+  }
+
+  .pricing .section-eyebrow { color: var(--rust2); }
+  .pricing .section-eyebrow::before { background: var(--rust2); }
+  .pricing .section-heading { color: var(--cream); }
+  .pricing .section-sub { color: var(--muted); }
+
+  .pricing-intro {
+    margin-bottom: 60px;
+  }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    background: var(--brown);
+  }
+
+  .pricing-card {
+    background: var(--dark);
+    padding: 40px 32px;
+    position: relative;
+    border-top: 4px solid transparent;
+    transition: border-color 0.3s;
+  }
+
+  .pricing-card:hover { border-top-color: var(--rust); }
+  .pricing-card.featured { border-top-color: var(--olive2); background: var(--dark2); }
+
+  .pricing-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .pricing-card.featured .pricing-label { color: var(--olive2); }
+
+  .pricing-name {
+    font-family: 'Alfa Slab One', serif;
+    font-size: 26px;
+    color: var(--cream);
+    margin-bottom: 8px;
+    line-height: 1;
+  }
+
+  .pricing-price {
+    font-family: 'Alfa Slab One', serif;
+    font-size: 48px;
+    color: var(--rust);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .pricing-card.featured .pricing-price { color: var(--olive2); }
+
+  .pricing-note {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 28px;
+    font-style: italic;
+  }
+
+  .pricing-features {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 32px;
+  }
+
+  .pricing-features li {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--sand);
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    line-height: 1.4;
+  }
+
+  .pricing-features li::before {
+    content: '✓';
+    color: var(--rust);
+    font-weight: 700;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .pricing-card.featured .pricing-features li::before { color: var(--olive2); }
+
+  .pricing-cta {
+    display: block;
+    text-align: center;
+    font-family: 'Alfa Slab One', serif;
+    font-size: 13px;
+    color: var(--dark);
+    background: var(--rust);
+    padding: 14px 24px;
+    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+    text-decoration: none;
+    letter-spacing: 0.05em;
+    transition: background 0.2s;
+  }
+
+  .pricing-cta:hover { background: var(--rust2); }
+  .pricing-card.featured .pricing-cta { background: var(--olive2); }
+  .pricing-card.featured .pricing-cta:hover { background: #6B8030; }
+
+  /* ===== WHY US ===== */
+  .why {
+    padding: 100px 0;
+    background: var(--olive);
+    border-bottom: 3px solid var(--dark);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .why::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 39px,
+      rgba(0,0,0,0.08) 39px,
+      rgba(0,0,0,0.08) 40px
+    );
+    pointer-events: none;
+  }
+
+  .why .section-eyebrow { color: var(--cream2); }
+  .why .section-eyebrow::before { background: var(--cream2); }
+  .why .section-heading { color: var(--cream); }
+
+  .why-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 80px;
+    align-items: center;
+    margin-top: 60px;
+  }
+
+  .why-left {}
+
+  .why-big-statement {
+    font-family: 'Alfa Slab One', serif;
+    font-size: clamp(48px, 6vw, 80px);
+    color: var(--cream);
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+  }
+
+  .why-italic {
+    font-family: 'Libre Baskerville', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: 0.75em;
+    color: var(--cream2);
+  }
+
+  .why-copy {
+    font-size: 16px;
+    font-style: italic;
+    color: rgba(245,230,200,0.7);
+    line-height: 1.7;
+  }
+
+  .why-features {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    position: relative;
+    z-index: 2;
+  }
+
+  .why-feature {
+    display: grid;
+    grid-template-columns: 60px 1fr;
+    gap: 20px;
+    align-items: start;
+    padding: 28px 0;
+    border-bottom: 1px solid rgba(245,230,200,0.15);
+    opacity: 0;
+    transform: translateX(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .why-feature.reveal-visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .why-feature:last-child { border-bottom: none; }
+
+  .why-num {
+    font-family: 'Alfa Slab One', serif;
+    font-size: 36px;
+    color: rgba(196,81,26,0.5);
+    line-height: 1;
+    text-align: center;
+  }
+
+  .why-feature-title {
+    font-family: 'Alfa Slab One', serif;
+    font-size: 18px;
+    color: var(--cream);
+    margin-bottom: 4px;
+    letter-spacing: 0.02em;
+  }
+
+  .why-feature-desc {
+    font-size: 14px;
+    color: rgba(245,230,200,0.65);
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  /* ===== PROCESS ===== */
+  .process {
+    padding: 100px 0;
+    background: var(--cream);
+    border-bottom: 3px solid var(--tan);
+  }
+
+  .process-header { margin-bottom: 60px; }
+
+  .process-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    position: relative;
+  }
+
+  .process-steps::before {
+    content: '';
+    position: absolute;
+    top: 32px;
+    left: 10%;
+    right: 10%;
+    height: 2px;
+    background: var(--tan);
+    z-index: 0;
+  }
+
+  .process-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0 20px;
+    position: relative;
+    z-index: 1;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+
+  .process-step.reveal-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .step-circle {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 3px solid var(--olive);
+    background: var(--cream);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 24px;
+    font-family: 'Alfa Slab One', serif;
+    font-size: 24px;
+    color: var(--rust);
+    position: relative;
+    z-index: 2;
+    transition: background 0.3s, border-color 0.3s;
+  }
+
+  .process-step:hover .step-circle {
+    background: var(--rust);
+    border-color: var(--rust);
+    color: var(--cream);
+  }
+
+  .step-title {
+    font-family: 'Alfa Slab One', serif;
+    font-size: 16px;
+    color: var(--dark);
+    margin-bottom: 8px;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+  }
+
+  .step-desc {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  /* ===== TESTIMONIALS ===== */
+  .testimonials {
+    padding: 100px 0;
+    background: var(--dark);
+    border-bottom: 3px solid var(--rust);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .testimonials::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      transparent,
+      transparent 30px,
+      rgba(255,255,255,0.01) 30px,
+      rgba(255,255,255,0.01) 60px
+    );
+  }
+
+  .testimonials .section-eyebrow { color: var(--rust2); }
+  .testimonials .section-eyebrow::before { background: var(--rust2); }
+  .testimonials .section-heading { color: var(--cream); }
+
+  .reviews-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 3px;
+    background: var(--brown);
+    margin-top: 60px;
+  }
+
+  .review-card {
+    background: var(--dark2);
+    padding: 40px 32px;
+    position: relative;
+    border-bottom: 3px solid transparent;
+    transition: border-color 0.3s, background 0.3s;
+  }
+
+  .review-card:hover {
+    background: var(--dark);
+    border-bottom-color: var(--rust);
+  }
+
+  .big-quote {
+    font-family: 'Alfa Slab One', serif;
+    font-size: 80px;
+    color: rgba(196,81,26,0.2);
+    line-height: 0.7;
+    margin-bottom: 16px;
+    display: block;
+  }
+
+  .review-text {
+    font-size: 15px;
+    font-style: italic;
+    color: var(--sand);
+    line-height: 1.7;
+    margin-bottom: 24px;
+  }
+
+  .reviewer-name {
+    font-family: 'Alfa Slab One', serif;
+    font-size: 15px;
+    color: var(--cream);
+    letter-spacing: 0.03em;
+  }
+
+  .reviewer-loc {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 2px;
+  }
+
+  .review-stars {
+    position: absolute;
+    top: 32px;
+    right: 28px;
+    font-size: 14px;
+    color: var(--rust);
+    letter-spacing: 2px;
+  }
+
+  /* ===== FAQ ===== */
+  .faq {
+    padding: 100px 0;
+    background: var(--cream);
+    border-bottom: 3px solid var(--tan);
+  }
+
+  .faq-layout {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 80px;
+    margin-top: 60px;
+  }
+
+  .faq-sidebar { position: sticky; top: 100px; }
+
+  .faq-sidebar .section-sub {
+    margin-top: 16px;
+    font-size: 15px;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  .faq-call {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'Alfa Slab One', serif;
+    font-size: 14px;
+    color: var(--dark);
+    background: var(--rust);
+    padding: 12px 24px;
+    clip-path: polygon(6px 0%, 100% 0%, calc(100% - 6px) 100%, 0% 100%);
+    text-decoration: none;
+    margin-top: 24px;
+    transition: background 0.2s;
+    letter-spacing: 0.05em;
+  }
+
+  .faq-call:hover { background: var(--rust2); }
+
+  .faq-list {}
+
+  .faq-item {
+    border-bottom: 2px solid var(--tan);
+  }
+
+  .faq-q {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 24px 0;
+    text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    cursor: pointer;
+    font-family: 'Alfa Slab One', serif;
+    font-size: 17px;
+    color: var(--dark);
+    transition: color 0.2s;
+    line-height: 1.2;
+  }
+
+  .faq-q:hover { color: var(--rust); }
+
+  .faq-toggle {
+    font-size: 24px;
+    color: var(--rust);
+    flex-shrink: 0;
+    transition: transform 0.3s;
+    line-height: 1;
+    width: 24px;
+    text-align: center;
+  }
+
+  .faq-item.open .faq-toggle { transform: rotate(45deg); }
+
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+
+  .faq-answer-inner {
+    padding: 0 0 24px;
+    font-size: 15px;
+    font-style: italic;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+
+  /* ===== AREAS ===== */
+  .areas {
+    padding: 80px 0;
+    background: var(--rust);
+    border-bottom: 3px solid var(--dark);
+  }
+
+  .areas .section-eyebrow { color: var(--dark); }
+  .areas .section-eyebrow::before { background: var(--dark); }
+  .areas .section-heading { color: var(--cream); }
+
+  .areas-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 40px;
+  }
+
+  .area-pill {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--dark);
+    background: var(--cream);
+    padding: 8px 18px;
+    clip-path: polygon(8px 0%, 100% 0%, calc(100% - 8px) 100%, 0% 100%);
+    transition: background 0.2s;
+    cursor: default;
+  }
+
+  .area-pill:hover { background: var(--cream2); }
+
+  /* ===== CONTACT ===== */
+  .contact {
+    padding: 100px 0;
+    background: var(--dark2);
+    border-bottom: 3px solid var(--rust);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .contact::before {
+    content: 'HAUL';
+    position: absolute;
+    right: -60px;
+    bottom: -40px;
+    font-family: 'Alfa Slab One', serif;
+    font-size: 200px;
+    color: rgba(255,255,255,0.02);
+    pointer-events: none;
+    line-height: 1;
+  }
+
+  .contact .section-eyebrow { color: var(--rust2); }
+  .contact .section-eyebrow::before { background: var(--rust2); }
+  .contact .section-heading { color: var(--cream); }
+
+  .contact-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 80px;
+    margin-top: 60px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .contact-info {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .ci-item {}
+
+  .ci-label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 4px;
+  }
+
+  .ci-value {
+    font-family: 'Alfa Slab One', serif;
+    font-size: 18px;
+    color: var(--cream);
+    letter-spacing: 0.02em;
+  }
+
+  .ci-value a { color: var(--cream); text-decoration: none; transition: color 0.2s; }
+  .ci-value a:hover { color: var(--rust2); }
+
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    border: 2px solid var(--brown);
+  }
+
+  .cf-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .cf-group {
+    padding: 20px 24px;
+    border-bottom: 2px solid var(--brown);
+    border-right: 2px solid var(--brown);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .cf-group:last-child { border-right: none; }
+  .cf-group.full { border-right: none; }
+
+  .cf-group label {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .cf-group input,
+  .cf-group select,
+  .cf-group textarea {
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: 'Libre Baskerville', serif;
+    font-size: 15px;
+    font-style: italic;
+    color: var(--cream);
+    appearance: none;
+    width: 100%;
+    resize: none;
+  }
+
+  .cf-group input::placeholder,
+  .cf-group textarea::placeholder { color: var(--brown); }
+
+  .cf-group textarea { min-height: 100px; }
+
+  .cf-group select option { background: var(--dark); color: var(--cream); }
+
+  .cf-group.error { background: rgba(196,81,26,0.08); }
+  .cf-error {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    color: var(--rust2);
+    display: none;
+    letter-spacing: 0.1em;
+  }
+  .cf-group.error .cf-error { display: block; }
+
+  .cf-submit-wrap {
+    padding: 0;
+  }
+
+  .cf-submit {
+    width: 100%;
+    background: var(--rust);
+    color: var(--dark);
+    border: none;
+    padding: 20px 40px;
+    font-family: 'Alfa Slab One', serif;
+    font-size: 16px;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .cf-submit:hover { background: var(--rust2); }
+
+  /* ===== CTA BANNER ===== */
+  .cta-banner {
+    background: var(--olive);
+    padding: 80px 0;
+    text-align: center;
+    border-bottom: 3px solid var(--dark);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cta-banner::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 20px,
+      rgba(0,0,0,0.04) 20px,
+      rgba(0,0,0,0.04) 40px
+    );
+  }
+
+  .cta-banner-title {
+    font-family: 'Alfa Slab One', serif;
+    font-size: clamp(32px, 5vw, 64px);
+    color: var(--cream);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    margin-bottom: 16px;
+    position: relative;
+  }
+
+  .cta-banner-sub {
+    font-size: 18px;
+    font-style: italic;
+    color: rgba(245,230,200,0.7);
+    margin-bottom: 36px;
+    position: relative;
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: var(--dark);
+    border-top: 3px solid var(--rust);
+    padding: 60px 0 0;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 60px;
+    padding-bottom: 60px;
+    border-bottom: 1px solid var(--brown);
+  }
+
+  .footer-brand {}
+
+  .footer-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    margin-bottom: 16px;
+  }
+
+  .footer-logo-text {
+    font-family: 'Alfa Slab One', serif;
+    font-size: 20px;
+    color: var(--cream);
+    letter-spacing: 0.04em;
+  }
+
+  .footer-brand p {
+    font-size: 13px;
+    font-style: italic;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 20px;
+    max-width: 280px;
+  }
+
+  .footer-lic {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    border: 1px solid var(--brown);
+    padding: 6px 12px;
+    display: inline-block;
+  }
+
+  .footer-col-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--rust2);
+    margin-bottom: 20px;
+  }
+
+  .footer-links {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .footer-links a {
+    font-size: 14px;
+    font-style: italic;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .footer-links a:hover { color: var(--cream); }
+
+  .footer-bottom {
+    padding: 20px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .footer-copy {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .webnari-badge {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 11px;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .webnari-badge:hover { color: var(--cream); }
+
+  /* ===== REVEAL ===== */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .reveal.reveal-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 1024px) {
+    .services-grid { grid-template-columns: repeat(2, 1fr); }
+    .pricing-grid { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+    .process-steps::before { display: none; }
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 0 24px; }
+    .nav-links { display: none; }
+    .hamburger { display: flex; }
+    .hero-content { grid-template-columns: 1fr; gap: 40px; padding: 48px 32px; }
+    .hero-stamp { top: 24px; right: 24px; width: 100px; height: 100px; }
+    .container { padding: 0 32px; }
+    .services-grid { grid-template-columns: 1fr; }
+    .why-layout { grid-template-columns: 1fr; gap: 48px; }
+    .process-steps { grid-template-columns: repeat(2, 1fr); gap: 40px; }
+    .reviews-grid { grid-template-columns: 1fr; }
+    .faq-layout { grid-template-columns: 1fr; gap: 48px; }
+    .faq-sidebar { position: static; }
+    .contact-layout { grid-template-columns: 1fr; gap: 48px; }
+    .cf-row { grid-template-columns: 1fr; }
+    .cf-group { border-right: none !important; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .hero-right { display: none; }
+  }
+
+  @media (max-width: 480px) {
+    .process-steps { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="haulrepublic.html" class="nav-logo">
+    <div class="logo-badge">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <rect x="2" y="12" width="16" height="6" rx="1" fill="#1A1208"/>
+        <rect x="2" y="8" width="10" height="4" fill="#1A1208"/>
+        <circle cx="6" cy="18" r="2" fill="#F5E6C8" stroke="#1A1208" stroke-width="1"/>
+        <circle cx="14" cy="18" r="2" fill="#F5E6C8" stroke="#1A1208" stroke-width="1"/>
+      </svg>
+    </div>
+    <div>
+      <div class="logo-text">HAUL REPUBLIC</div>
+      <div class="logo-sub">Est. Miami, FL</div>
+    </div>
+  </a>
+
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#why">Why Us</a></li>
+    <li><a href="#reviews">Reviews</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="tel:3055551350" class="nav-book">BOOK A HAUL</a></li>
+  </ul>
+
+  <button class="hamburger" id="hamburger" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobile-menu">
+  <button class="menu-close" id="menu-close">&times;</button>
+  <a href="#services" class="mm-link">Services</a>
+  <a href="#pricing" class="mm-link">Pricing</a>
+  <a href="#why" class="mm-link">Why Us</a>
+  <a href="#reviews" class="mm-link">Reviews</a>
+  <a href="#contact" class="mm-link">Contact</a>
+  <a href="tel:3055551350" style="color:var(--rust2);margin-top:12px;font-size:24px;">(305) 555-1350</a>
+</div>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-bg-text" aria-hidden="true">REPUBLIC</div>
+
+  <div class="hero-stamp" aria-label="Same day service">
+    <div class="hero-stamp-text1">SAME<br>DAY</div>
+    <div class="hero-stamp-num">✓</div>
+    <div class="hero-stamp-text2">Pickup Available</div>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-left">
+      <div class="hero-tag">South Florida's Trusted Haulers</div>
+
+      <h1 class="hero-title">
+        WE HAUL<br>
+        IT<br>
+        <span class="italic">all away.</span>
+      </h1>
+
+      <p class="hero-desc">
+        Same-day junk removal, furniture pickup, and cleanout services with honest flat-rate pricing. No hidden fees, no surprises — just reliable, hardworking haulers who show up on time.
+      </p>
+
+      <div class="hero-buttons">
+        <a href="#contact" class="btn-rust">Get a Free Quote</a>
+        <a href="tel:3055551350" class="btn-outline-cream">(305) 555-1350</a>
+      </div>
+    </div>
+
+    <div class="hero-right">
+      <!-- Truck SVG illustration -->
+      <div class="truck-container">
+        <svg width="480" height="280" viewBox="0 0 480 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Ground shadow -->
+          <ellipse cx="240" cy="272" rx="220" ry="8" fill="rgba(26,18,8,0.5)"/>
+
+          <!-- Truck body (box) -->
+          <rect x="80" y="80" width="280" height="160" rx="4" fill="#3D2B10"/>
+          <rect x="80" y="80" width="280" height="160" rx="4" fill="none" stroke="#C4511A" stroke-width="2"/>
+          <!-- Body detail lines -->
+          <line x1="80" y1="120" x2="360" y2="120" stroke="#5C3A15" stroke-width="1.5"/>
+          <!-- Loading door -->
+          <rect x="200" y="90" width="150" height="140" rx="2" fill="#2A1E08"/>
+          <line x1="275" y1="90" x2="275" y2="230" stroke="#3D2B10" stroke-width="2"/>
+          <line x1="200" y1="160" x2="350" y2="160" stroke="#3D2B10" stroke-width="2"/>
+          <!-- Door handle -->
+          <rect x="264" y="155" width="22" height="10" rx="3" fill="#C4511A"/>
+          <!-- Haul Republic branding on truck -->
+          <rect x="92" y="130" width="90" height="34" rx="2" fill="#C4511A" opacity="0.2"/>
+          <text x="137" y="151" text-anchor="middle" font-family="serif" font-size="10" fill="#F5E6C8" font-weight="bold" letter-spacing="1">HAUL</text>
+          <text x="137" y="163" text-anchor="middle" font-family="serif" font-size="8" fill="#C4511A" letter-spacing="2">REPUBLIC</text>
+
+          <!-- Cab -->
+          <path d="M360 140 L360 240 L440 240 L440 180 L420 140 Z" fill="#4A3015"/>
+          <path d="M360 140 L360 240 L440 240 L440 180 L420 140 Z" fill="none" stroke="#C4511A" stroke-width="2"/>
+          <!-- Cab window -->
+          <path d="M368 148 L368 185 L432 185 L432 180 L415 148 Z" fill="#1A2540" opacity="0.8"/>
+          <path d="M368 148 L368 185 L432 185 L432 180 L415 148 Z" fill="none" stroke="#C4511A" stroke-width="1"/>
+          <!-- Windshield reflection -->
+          <line x1="375" y1="152" x2="385" y2="182" stroke="rgba(255,255,255,0.12)" stroke-width="8" stroke-linecap="round"/>
+          <!-- Cab door -->
+          <rect x="368" y="192" width="64" height="40" rx="2" fill="#3D2510"/>
+          <rect x="368" y="192" width="64" height="40" rx="2" fill="none" stroke="#5C3A15" stroke-width="1"/>
+          <!-- Door handle -->
+          <rect x="406" y="210" width="18" height="6" rx="2" fill="#C4511A"/>
+          <!-- Exhaust pipe -->
+          <rect x="432" y="120" width="8" height="40" rx="2" fill="#5C3A15"/>
+          <!-- Exhaust smoke -->
+          <circle cx="436" cy="112" r="6" fill="rgba(180,160,120,0.2)"/>
+          <circle cx="440" cy="100" r="8" fill="rgba(180,160,120,0.12)"/>
+          <!-- Bumper -->
+          <rect x="360" y="237" width="82" height="10" rx="2" fill="#5C3A15"/>
+          <rect x="360" y="237" width="82" height="10" rx="2" fill="none" stroke="#C4511A" stroke-width="1"/>
+
+          <!-- Frame/Chassis -->
+          <rect x="80" y="235" width="380" height="8" rx="2" fill="#2A1E08"/>
+
+          <!-- Rear wheels -->
+          <circle cx="130" cy="255" r="26" fill="#1A1208"/>
+          <circle cx="130" cy="255" r="20" fill="#2A1E08"/>
+          <circle cx="130" cy="255" r="12" fill="#3D2B10"/>
+          <circle cx="130" cy="255" r="5" fill="#C4511A"/>
+
+          <circle cx="200" cy="255" r="26" fill="#1A1208"/>
+          <circle cx="200" cy="255" r="20" fill="#2A1E08"/>
+          <circle cx="200" cy="255" r="12" fill="#3D2B10"/>
+          <circle cx="200" cy="255" r="5" fill="#C4511A"/>
+
+          <!-- Front wheels -->
+          <circle cx="410" cy="255" r="26" fill="#1A1208"/>
+          <circle cx="410" cy="255" r="20" fill="#2A1E08"/>
+          <circle cx="410" cy="255" r="12" fill="#3D2B10"/>
+          <circle cx="410" cy="255" r="5" fill="#C4511A"/>
+
+          <!-- Headlight -->
+          <rect x="434" y="195" width="12" height="16" rx="2" fill="#FFD600" opacity="0.8"/>
+          <!-- Tail lights -->
+          <rect x="78" y="200" width="8" height="20" rx="2" fill="#C4511A" opacity="0.9"/>
+
+          <!-- Junk items visible on truck bed top -->
+          <rect x="100" y="65" width="24" height="18" rx="1" fill="#4A5228" opacity="0.7"/>
+          <rect x="128" y="55" width="30" height="28" rx="1" fill="#5C3A15" opacity="0.7"/>
+          <rect x="162" y="60" width="20" height="22" rx="1" fill="#3D2B10" opacity="0.7"/>
+          <rect x="188" y="65" width="16" height="18" rx="1" fill="#4A5228" opacity="0.5"/>
+          <line x1="132" y1="55" x2="132" y2="45" stroke="#7A6840" stroke-width="2"/>
+          <line x1="148" y1="55" x2="148" y2="45" stroke="#7A6840" stroke-width="2"/>
+          <line x1="132" y1="45" x2="148" y2="45" stroke="#7A6840" stroke-width="2"/>
+        </svg>
+      </div>
+
+      <div class="hero-stats">
+        <div class="h-stat">
+          <span class="h-stat-num">1,200+</span>
+          <span class="h-stat-label">Hauls Done</span>
+        </div>
+        <div class="h-stat">
+          <span class="h-stat-num">Same</span>
+          <span class="h-stat-label">Day Available</span>
+        </div>
+        <div class="h-stat">
+          <span class="h-stat-num">$0</span>
+          <span class="h-stat-label">Hidden Fees</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ORNAMENT DIVIDER -->
+<div class="ornament-divider" aria-hidden="true">
+  <div class="ornament-line"></div>
+  <div class="ornament-diamond"></div>
+  <span class="ornament-text">Junk Removal · Hauling · Cleanouts · Demolition</span>
+  <div class="ornament-diamond"></div>
+  <div class="ornament-line"></div>
+</div>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <div class="container">
+    <div class="services-header">
+      <div class="section-eyebrow reveal">What We Remove</div>
+      <h2 class="section-heading reveal reveal-delay-1">One Call.<br>All Gone.</h2>
+      <p class="section-sub reveal reveal-delay-2">From a single old couch to a full estate cleanout — we haul it, dispose of it responsibly, and leave your space spotless.</p>
+    </div>
+
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <div class="service-badge">Most Popular</div>
+        <div class="service-icon-ring">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <rect x="4" y="8" width="20" height="16" rx="2" fill="none" stroke="#4A5228" stroke-width="2.5"/>
+            <path d="M10 8 L10 5 C10 3.9 10.9 3 12 3 L16 3 C17.1 3 18 3.9 18 5 L18 8" stroke="#4A5228" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3 class="service-name">Junk Removal</h3>
+        <p class="service-desc">We take anything that's not bolted down — appliances, electronics, furniture, mattresses, yard waste, and miscellaneous clutter. You point, we haul.</p>
+      </div>
+
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-icon-ring">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <rect x="3" y="14" width="22" height="10" rx="2" fill="none" stroke="#4A5228" stroke-width="2.5"/>
+            <rect x="6" y="8" width="14" height="6" rx="1" fill="none" stroke="#4A5228" stroke-width="2"/>
+            <line x1="10" y1="8" x2="10" y2="5" stroke="#4A5228" stroke-width="2" stroke-linecap="round"/>
+            <line x1="18" y1="8" x2="18" y2="5" stroke="#4A5228" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3 class="service-name">Furniture Pickup</h3>
+        <p class="service-desc">Sofas, sectionals, beds, dining sets, dressers — we pick up heavy furniture from anywhere in your home. No stairs surcharges, no excuses.</p>
+      </div>
+
+      <div class="service-card reveal reveal-delay-2">
+        <div class="service-icon-ring">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <rect x="3" y="4" width="22" height="20" rx="2" fill="none" stroke="#4A5228" stroke-width="2.5"/>
+            <line x1="3" y1="10" x2="25" y2="10" stroke="#4A5228" stroke-width="2"/>
+            <line x1="14" y1="10" x2="14" y2="24" stroke="#4A5228" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <h3 class="service-name">Estate Cleanouts</h3>
+        <p class="service-desc">Full-property cleanouts for estate sales, foreclosures, and property flips. We empty entire homes, garages, and storage units completely.</p>
+      </div>
+
+      <div class="service-card reveal reveal-delay-3">
+        <div class="service-icon-ring">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <path d="M14 4 L22 8 L22 20 L14 24 L6 20 L6 8 Z" fill="none" stroke="#4A5228" stroke-width="2.5" stroke-linejoin="round"/>
+            <line x1="14" y1="4" x2="14" y2="24" stroke="#4A5228" stroke-width="1.5"/>
+            <line x1="6" y1="14" x2="22" y2="14" stroke="#4A5228" stroke-width="1.5"/>
+          </svg>
+        </div>
+        <h3 class="service-name">Construction Debris</h3>
+        <p class="service-desc">Drywall, lumber, concrete, tile, flooring, and renovation waste. We work alongside contractors and homeowners doing remodels.</p>
+      </div>
+
+      <div class="service-card reveal">
+        <div class="service-icon-ring">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <circle cx="14" cy="14" r="10" fill="none" stroke="#4A5228" stroke-width="2.5"/>
+            <path d="M10 18 C10 14 12 12 14 12 C16 12 18 14 18 16" stroke="#4A5228" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="14" cy="10" r="2" fill="#4A5228"/>
+          </svg>
+        </div>
+        <h3 class="service-name">Appliance Removal</h3>
+        <p class="service-desc">Refrigerators, washers, dryers, dishwashers, AC units, water heaters — proper disposal and recycling of all major appliances.</p>
+      </div>
+
+      <div class="service-card reveal reveal-delay-1">
+        <div class="service-icon-ring">
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <path d="M8 4 L8 24" stroke="#4A5228" stroke-width="2.5" stroke-linecap="round"/>
+            <path d="M8 4 L20 10 L8 16" stroke="#4A5228" stroke-width="2.5" stroke-linejoin="round" fill="none"/>
+          </svg>
+        </div>
+        <h3 class="service-name">Yard & Debris Hauling</h3>
+        <p class="service-desc">Tree branches, stumps, mulch, soil, rocks, and landscaping waste. After-storm debris removal available with priority scheduling.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="pricing-intro">
+      <div class="section-eyebrow reveal">Flat-Rate Pricing</div>
+      <h2 class="section-heading reveal reveal-delay-1">Honest Prices.<br>No Surprises.</h2>
+      <p class="section-sub reveal reveal-delay-2">We quote upfront before we lift a finger. The price we quote is the price you pay — period.</p>
+    </div>
+
+    <div class="pricing-grid">
+      <div class="pricing-card reveal">
+        <span class="pricing-label">Minimum Load</span>
+        <h3 class="pricing-name">Small Haul</h3>
+        <div class="pricing-price">$129</div>
+        <p class="pricing-note">Up to 1/4 truck load</p>
+        <ul class="pricing-features">
+          <li>A few small items or boxes</li>
+          <li>Single furniture piece</li>
+          <li>1–2 appliances</li>
+          <li>Same-day available</li>
+          <li>Includes labor & disposal</li>
+        </ul>
+        <a href="#contact" class="pricing-cta">Book This Load</a>
+      </div>
+
+      <div class="pricing-card featured reveal reveal-delay-1">
+        <span class="pricing-label">Most Popular</span>
+        <h3 class="pricing-name">Half Truck</h3>
+        <div class="pricing-price">$279</div>
+        <p class="pricing-note">Approx. 1/2 truck load</p>
+        <ul class="pricing-features">
+          <li>Multiple furniture items</li>
+          <li>Full room cleanout</li>
+          <li>Up to 3–4 large appliances</li>
+          <li>Same-day or next-day</li>
+          <li>Includes labor & disposal</li>
+          <li>Free 30-min load estimate</li>
+        </ul>
+        <a href="#contact" class="pricing-cta">Book This Load</a>
+      </div>
+
+      <div class="pricing-card reveal reveal-delay-2">
+        <span class="pricing-label">Full Cleanout</span>
+        <h3 class="pricing-name">Full Truck</h3>
+        <div class="pricing-price">$479</div>
+        <p class="pricing-note">Full 16 cu. yd. load</p>
+        <ul class="pricing-features">
+          <li>Full home or estate cleanout</li>
+          <li>Garage or storage unit</li>
+          <li>Construction debris load</li>
+          <li>Priority scheduling</li>
+          <li>Includes labor & disposal</li>
+          <li>Free sweep-out included</li>
+        </ul>
+        <a href="#contact" class="pricing-cta">Book This Load</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY US -->
+<section class="why" id="why">
+  <div class="container">
+    <div class="section-eyebrow reveal">Why Haul Republic</div>
+    <h2 class="section-heading reveal reveal-delay-1" style="color:var(--cream);">Built on<br>straight talk.</h2>
+
+    <div class="why-layout">
+      <div class="why-left reveal">
+        <div class="why-big-statement">
+          SHOW<br>
+          UP.<br>
+          HAUL<br>
+          <span class="why-italic">it all.</span>
+        </div>
+        <p class="why-copy">We don't upsell. We don't add fees. We don't send subcontractors. Every truck has a Haul Republic employee behind the wheel — trained, insured, and accountable.</p>
+      </div>
+
+      <div class="why-features">
+        <div class="why-feature reveal">
+          <div class="why-num">01</div>
+          <div>
+            <div class="why-feature-title">Flat-Rate, Upfront Pricing</div>
+            <p class="why-feature-desc">No hourly surprises. We quote you a flat rate before we start, based on the volume of your load. That's what you pay. Nothing more.</p>
+          </div>
+        </div>
+        <div class="why-feature reveal reveal-delay-1">
+          <div class="why-num">02</div>
+          <div>
+            <div class="why-feature-title">Same-Day Availability</div>
+            <p class="why-feature-desc">Call before noon, and we'll be there today in most cases. We run tight schedules and keep early slots open for urgent requests.</p>
+          </div>
+        </div>
+        <div class="why-feature reveal reveal-delay-2">
+          <div class="why-num">03</div>
+          <div>
+            <div class="why-feature-title">Responsible Disposal</div>
+            <p class="why-feature-desc">We donate usable items to local charities, recycle metals and electronics properly, and minimize landfill impact on every haul.</p>
+          </div>
+        </div>
+        <div class="why-feature reveal reveal-delay-3">
+          <div class="why-num">04</div>
+          <div>
+            <div class="why-feature-title">Licensed & Fully Insured</div>
+            <p class="why-feature-desc">FL Hauling License #HR2024-0881. $2M liability coverage. If anything goes wrong (rare), you're fully protected. No cheap surprises.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process" id="process">
+  <div class="container">
+    <div class="process-header">
+      <div class="section-eyebrow reveal">How It Works</div>
+      <h2 class="section-heading reveal reveal-delay-1">Simple as 1, 2, 3 <span class="cream-line">& Done.</span></h2>
+    </div>
+
+    <div class="process-steps">
+      <div class="process-step reveal">
+        <div class="step-circle">1</div>
+        <h3 class="step-title">Call or Book Online</h3>
+        <p class="step-desc">Describe what you need hauled. We give you a flat-rate quote on the spot — no in-person visit needed for most jobs.</p>
+      </div>
+      <div class="process-step reveal reveal-delay-1">
+        <div class="step-circle">2</div>
+        <h3 class="step-title">We Show Up On Time</h3>
+        <p class="step-desc">Our crew arrives in a 2-hour arrival window. We confirm with a call 30 minutes before pulling up — no ghost appointments.</p>
+      </div>
+      <div class="process-step reveal reveal-delay-2">
+        <div class="step-circle">3</div>
+        <h3 class="step-title">We Do the Work</h3>
+        <p class="step-desc">We load everything, from the basement to the attic. No item is too heavy or awkward. We handle it all so you don't have to lift a finger.</p>
+      </div>
+      <div class="process-step reveal reveal-delay-3">
+        <div class="step-circle">4</div>
+        <h3 class="step-title">Gone. Paid. Done.</h3>
+        <p class="step-desc">We sweep up after ourselves, collect payment (cash, card, Zelle all accepted), and you're left with a clean, clear space.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials" id="reviews">
+  <div class="container">
+    <div class="section-eyebrow reveal">What Clients Say</div>
+    <h2 class="section-heading reveal reveal-delay-1">The Republic<br>Delivers.</h2>
+
+    <div class="reviews-grid">
+      <div class="review-card reveal">
+        <span class="review-stars">★★★★★</span>
+        <span class="big-quote">"</span>
+        <p class="review-text">"Called at 8am, they were at my house by noon. Hauled out a full garage's worth of junk — old furniture, boxes, broken appliances. Two guys, done in 90 minutes. Worth every penny."</p>
+        <div class="reviewer-name">Roberto M.</div>
+        <div class="reviewer-loc">Doral, FL</div>
+      </div>
+
+      <div class="review-card reveal reveal-delay-1">
+        <span class="review-stars">★★★★★</span>
+        <span class="big-quote">"</span>
+        <p class="review-text">"We needed a full estate cleanout after my mother passed. The Haul Republic crew was respectful, fast, and thorough. They even swept up afterward. This is how a business should be run."</p>
+        <div class="reviewer-name">Carla & David T.</div>
+        <div class="reviewer-loc">Kendall, FL</div>
+      </div>
+
+      <div class="review-card reveal reveal-delay-2">
+        <span class="review-stars">★★★★★</span>
+        <span class="big-quote">"</span>
+        <p class="review-text">"No hidden fees, no excuses. They quoted me $279, they charged me $279. They even took a big old hot tub I thought nobody would touch. Best hauling experience I've ever had."</p>
+        <div class="reviewer-name">Marcus P.</div>
+        <div class="reviewer-loc">Hialeah, FL</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq" id="faq">
+  <div class="container">
+    <div class="faq-layout">
+      <div class="faq-sidebar">
+        <div class="section-eyebrow reveal">Common Questions</div>
+        <h2 class="section-heading reveal reveal-delay-1">Got a<br>question?</h2>
+        <p class="section-sub reveal reveal-delay-2">If it's not covered below, just call us. We answer during business hours and reply to texts within the hour.</p>
+        <a href="tel:3055551350" class="faq-call reveal reveal-delay-3">
+          Call (305) 555-1350
+        </a>
+      </div>
+
+      <div class="faq-list">
+        <div class="faq-item">
+          <button class="faq-q">What items can't you take? <span class="faq-toggle">+</span></button>
+          <div class="faq-answer"><div class="faq-answer-inner">We can't take hazardous waste — paint cans (full), chemicals, biohazardous material, asbestos, or propane tanks. For everything else, we can almost certainly take it. When in doubt, just ask when you call.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">Do I need to carry anything out myself? <span class="faq-toggle">+</span></button>
+          <div class="faq-answer"><div class="faq-answer-inner">Not a thing. Our crew carries everything from wherever it is — basement, attic, second floor, backyard. We bring our own equipment and do all the heavy lifting. You just show us what's going.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">How is pricing determined? <span class="faq-toggle">+</span></button>
+          <div class="faq-answer"><div class="faq-answer-inner">By volume — how much of our truck you fill. We quote based on your description or a quick phone or text photo review. The quote is flat-rate and final. We don't charge by the hour or add fees after the fact.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">Can you really come the same day? <span class="faq-toggle">+</span></button>
+          <div class="faq-answer"><div class="faq-answer-inner">Yes, in most cases. We keep morning slots reserved for same-day bookings. Call before noon and we can usually get to you that afternoon. For large jobs or specific times, next-day scheduling is always available.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">Do you donate usable items instead of dumping them? <span class="faq-toggle">+</span></button>
+          <div class="faq-answer"><div class="faq-answer-inner">Yes — we partner with local thrift stores and charities in the Miami area. Gently used furniture, clothing, and household goods are donated whenever possible. We always try to keep usable items out of the landfill.</div></div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-q">What payment methods do you accept? <span class="faq-toggle">+</span></button>
+          <div class="faq-answer"><div class="faq-answer-inner">Cash, credit/debit card, Zelle, and Venmo — all accepted on the spot at job completion. No deposit required for standard jobs. For large estate cleanouts, we may ask for a small booking deposit.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AREAS -->
+<section class="areas" id="areas">
+  <div class="container">
+    <div class="section-eyebrow reveal">Service Area</div>
+    <h2 class="section-heading reveal reveal-delay-1" style="color:var(--cream);">Hauling across<br>South Florida.</h2>
+    <div class="areas-list reveal reveal-delay-2">
+      <div class="area-pill">Miami</div>
+      <div class="area-pill">Coral Gables</div>
+      <div class="area-pill">Doral</div>
+      <div class="area-pill">Hialeah</div>
+      <div class="area-pill">Kendall</div>
+      <div class="area-pill">Miami Beach</div>
+      <div class="area-pill">Brickell</div>
+      <div class="area-pill">Westchester</div>
+      <div class="area-pill">South Miami</div>
+      <div class="area-pill">Homestead</div>
+      <div class="area-pill">Miami Gardens</div>
+      <div class="area-pill">North Miami</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div class="container">
+    <div class="section-eyebrow reveal">Book a Haul</div>
+    <h2 class="section-heading reveal reveal-delay-1" style="color:var(--cream);">Let's clear<br>it out.</h2>
+
+    <div class="contact-layout">
+      <div class="contact-info">
+        <div class="ci-item reveal">
+          <div class="ci-label">Call or Text</div>
+          <div class="ci-value"><a href="tel:3055551350">(305) 555-1350</a></div>
+        </div>
+        <div class="ci-item reveal reveal-delay-1">
+          <div class="ci-label">Email</div>
+          <div class="ci-value"><a href="mailto:haul@haulrepublic.io">haul@haulrepublic.io</a></div>
+        </div>
+        <div class="ci-item reveal reveal-delay-2">
+          <div class="ci-label">Hours</div>
+          <div class="ci-value" style="font-size:16px;font-family:'Libre Baskerville',serif;">Mon–Sat: 7AM–7PM<br>Sun: 8AM–3PM</div>
+        </div>
+        <div class="ci-item reveal reveal-delay-3">
+          <div class="ci-label">License</div>
+          <div class="ci-value" style="font-size:16px;font-family:'Libre Baskerville',serif;">#HR2024-0881</div>
+        </div>
+        <div class="ci-item reveal reveal-delay-4">
+          <div class="ci-label">Same-Day Bookings</div>
+          <div class="ci-value" style="font-size:14px;font-family:'Libre Baskerville',serif;font-style:italic;color:var(--rust2);">Call before noon for same-day service</div>
+        </div>
+      </div>
+
+      <form class="contact-form" action="https://formsubmit.co/haul@haulrepublic.io" method="POST" id="haulForm">
+        <input type="hidden" name="_subject" value="New Haul Quote Request — Haul Republic">
+        <input type="hidden" name="_captcha" value="false">
+
+        <div class="cf-row">
+          <div class="cf-group" id="hfg-name">
+            <label>Your Name *</label>
+            <input type="text" id="hname" name="name" placeholder="John Smith">
+            <span class="cf-error">Name required</span>
+          </div>
+          <div class="cf-group" id="hfg-phone">
+            <label>Best Phone *</label>
+            <input type="tel" id="hphone" name="phone" placeholder="(305) 555-0000">
+            <span class="cf-error">Phone required</span>
+          </div>
+        </div>
+
+        <div class="cf-row">
+          <div class="cf-group" id="hfg-email">
+            <label>Email *</label>
+            <input type="email" id="hemail" name="email" placeholder="you@email.com">
+            <span class="cf-error">Valid email required</span>
+          </div>
+          <div class="cf-group">
+            <label>Service Type</label>
+            <select name="service">
+              <option value="">Select service...</option>
+              <option>Junk Removal</option>
+              <option>Furniture Pickup</option>
+              <option>Estate Cleanout</option>
+              <option>Construction Debris</option>
+              <option>Appliance Removal</option>
+              <option>Yard & Debris Hauling</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="cf-row">
+          <div class="cf-group">
+            <label>Load Size (estimate)</label>
+            <select name="load">
+              <option value="">Select load size...</option>
+              <option>Small – A few items (1/4 truck)</option>
+              <option>Medium – Several items (1/2 truck)</option>
+              <option>Large – Full room or more (3/4 truck)</option>
+              <option>Full Truck / Estate Cleanout</option>
+              <option>Not sure — need quote</option>
+            </select>
+          </div>
+          <div class="cf-group">
+            <label>Preferred Date</label>
+            <input type="text" name="date" placeholder="Today, Tomorrow, or a date...">
+          </div>
+        </div>
+
+        <div class="cf-row" style="grid-template-columns:1fr;">
+          <div class="cf-group full" style="grid-column:1/-1;">
+            <label>What Are We Hauling?</label>
+            <textarea name="description" placeholder="Describe what needs to go — old sofa, fridge, boxes, construction debris... The more detail, the faster we can quote you."></textarea>
+          </div>
+        </div>
+
+        <div class="cf-submit-wrap">
+          <button type="submit" class="cf-submit">GET MY FREE HAUL QUOTE →</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<div class="cta-banner">
+  <div class="container">
+    <h2 class="cta-banner-title">Stop living around<br>the clutter.</h2>
+    <p class="cta-banner-sub">One call and it's gone. Haul Republic — same day, flat rate, no nonsense.</p>
+    <a href="#contact" class="btn-rust">Book a Haul Today</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="haulrepublic.html" class="footer-logo">
+          <div class="logo-badge" style="width:32px;height:32px;">
+            <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+              <rect x="2" y="12" width="16" height="6" rx="1" fill="#1A1208"/>
+              <rect x="2" y="8" width="10" height="4" fill="#1A1208"/>
+              <circle cx="6" cy="18" r="2" fill="#F5E6C8" stroke="#1A1208" stroke-width="1"/>
+              <circle cx="14" cy="18" r="2" fill="#F5E6C8" stroke="#1A1208" stroke-width="1"/>
+            </svg>
+          </div>
+          <span class="footer-logo-text">HAUL REPUBLIC</span>
+        </a>
+        <p>South Florida's most reliable junk removal crew. We haul it, we dispose of it right, and we leave your space spotless.</p>
+        <div class="footer-lic">License: #HR2024-0881</div>
+      </div>
+
+      <div>
+        <div class="footer-col-title">Services</div>
+        <ul class="footer-links">
+          <li><a href="#services">Junk Removal</a></li>
+          <li><a href="#services">Furniture Pickup</a></li>
+          <li><a href="#services">Estate Cleanouts</a></li>
+          <li><a href="#services">Construction Debris</a></li>
+          <li><a href="#services">Appliance Removal</a></li>
+          <li><a href="#services">Yard & Debris Hauling</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="footer-col-title">Pricing</div>
+        <ul class="footer-links">
+          <li><a href="#pricing">Small Haul — from $129</a></li>
+          <li><a href="#pricing">Half Truck — from $279</a></li>
+          <li><a href="#pricing">Full Truck — from $479</a></li>
+          <li><a href="#contact">Get a Custom Quote</a></li>
+        </ul>
+      </div>
+
+      <div>
+        <div class="footer-col-title">Contact</div>
+        <ul class="footer-links">
+          <li><a href="tel:3055551350">(305) 555-1350</a></li>
+          <li><a href="mailto:haul@haulrepublic.io">haul@haulrepublic.io</a></li>
+          <li><a href="#">Miami, FL</a></li>
+          <li style="color:var(--muted);font-size:13px;margin-top:8px;font-style:italic;">Mon–Sat 7AM–7PM<br>Sun 8AM–3PM</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <div class="footer-copy">© 2025 Haul Republic — License #HR2024-0881 — Miami, FL</div>
+      <a href="https://webnari.io" class="webnari-badge" target="_blank" rel="noopener">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="#7A6840" stroke-width="1.2"/><path d="M3 6 L5 8 L9 4" stroke="#7A6840" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Powered by Webnari
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Hamburger menu
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobile-menu');
+  const menuClose = document.getElementById('menu-close');
+
+  hamburger.addEventListener('click', () => {
+    mobileMenu.style.display = 'flex';
+    setTimeout(() => mobileMenu.classList.add('open'), 10);
+  });
+
+  menuClose.addEventListener('click', () => {
+    mobileMenu.classList.remove('open');
+    setTimeout(() => mobileMenu.style.display = 'none', 400);
+  });
+
+  document.querySelectorAll('.mm-link').forEach(link => {
+    link.addEventListener('click', () => {
+      mobileMenu.classList.remove('open');
+      setTimeout(() => mobileMenu.style.display = 'none', 400);
+    });
+  });
+
+  // Scroll reveal
+  const revealEls = document.querySelectorAll('.reveal, .service-card, .why-feature, .process-step, .review-card, .pricing-card, .ci-item');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('reveal-visible');
+      }
+    });
+  }, { threshold: 0.1 });
+  revealEls.forEach(el => observer.observe(el));
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const answer = item.querySelector('.faq-answer');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item.open').forEach(open => {
+        open.classList.remove('open');
+        open.querySelector('.faq-answer').style.maxHeight = '0';
+      });
+      if (!isOpen) {
+        item.classList.add('open');
+        answer.style.maxHeight = answer.scrollHeight + 'px';
+      }
+    });
+  });
+
+  // Form validation
+  const form = document.getElementById('haulForm');
+  if (form) {
+    document.getElementById('hname').addEventListener('blur', function() {
+      document.getElementById('hfg-name').classList.toggle('error', this.value.trim().length < 2);
+    });
+    document.getElementById('hphone').addEventListener('blur', function() {
+      document.getElementById('hfg-phone').classList.toggle('error', this.value.trim().length < 7);
+    });
+    document.getElementById('hemail').addEventListener('blur', function() {
+      document.getElementById('hfg-email').classList.toggle('error', !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.value));
+    });
+
+    form.addEventListener('submit', e => {
+      const n = document.getElementById('hname');
+      const p = document.getElementById('hphone');
+      const em = document.getElementById('hemail');
+      let valid = true;
+      if (n.value.trim().length < 2) { document.getElementById('hfg-name').classList.add('error'); valid = false; }
+      if (p.value.trim().length < 7) { document.getElementById('hfg-phone').classList.add('error'); valid = false; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em.value)) { document.getElementById('hfg-email').classList.add('error'); valid = false; }
+      if (!valid) e.preventDefault();
+    });
+  }
+
+  // Smooth scroll
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const t = document.querySelector(a.getAttribute('href'));
+      if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }); }
+    });
+  });
+</script>
+</body>
+</html>

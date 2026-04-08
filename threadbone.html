@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Thread & Bone - Bespoke tailoring, alterations, and custom garments in Miami's Design District. Premium atelier services for suits, dresses, wedding wear, and leather work.">
+    <meta name="keywords" content="tailoring, alterations, bespoke suits, wedding alterations, custom clothing, Miami tailors">
+    <meta name="author" content="Thread & Bone">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="Thread & Bone - Bespoke Tailoring & Alterations">
+    <meta property="og:description" content="Premium atelier tailoring services in Miami's Design District. Suits, dresses, wedding wear, leather work, and custom garments.">
+    <meta property="og:type" content="business.business">
+    <meta property="og:url" content="https://webnari.io/threadbone.html">
+    <meta property="og:image" content="https://webnari.io/og-threadbone.png">
+
+    <title>Thread & Bone - Bespoke Tailoring & Alterations | Miami</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=Jost:wght@200;300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --black: #0C0A08;
+            --ivory: #FAF7F2;
+            --taupe: #A8998A;
+            --gray: #E8E4DE;
+            --text: #2C2420;
+            --transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Jost', sans-serif;
+            color: var(--text);
+            background-color: var(--ivory);
+            line-height: 1.7;
+            letter-spacing: 0.3px;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Film grain texture overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' result='noise' /%3E%3CfeColorMatrix in='noise' type='saturate' values='0' /%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23noiseFilter)' opacity='0.03'/%3E%3C/svg%3E");
+            z-index: -1;
+        }
+
+        /* Typography */
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Bodoni Moda', serif;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 8vw, 6rem);
+            letter-spacing: -0.02em;
+        }
+
+        h2 {
+            font-size: clamp(2rem, 6vw, 4.5rem);
+            letter-spacing: -0.01em;
+        }
+
+        h3 {
+            font-size: clamp(1.3rem, 4vw, 2.2rem);
+        }
+
+        p {
+            font-size: clamp(0.95rem, 1.2vw, 1.1rem);
+            font-weight: 300;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background-color: var(--ivory);
+            border-bottom: 1px solid var(--gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .nav-left {
+            font-size: 0.75rem;
+            font-weight: 300;
+            letter-spacing: 1px;
+            color: var(--taupe);
+            text-transform: uppercase;
+        }
+
+        .nav-center {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Bodoni Moda', serif;
+            font-size: clamp(0.9rem, 2vw, 1.2rem);
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .nav-right {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            font-size: 0.9rem;
+            letter-spacing: 0.05em;
+            color: var(--taupe);
+            position: relative;
+            padding-bottom: 2px;
+        }
+
+        .nav-link::after {
+            content: '→';
+            position: absolute;
+            right: -12px;
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .nav-link:hover::after {
+            opacity: 1;
+            right: -18px;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            width: 30px;
+            height: 24px;
+            justify-content: center;
+        }
+
+        .hamburger span {
+            width: 100%;
+            height: 1px;
+            background-color: var(--black);
+            transition: var(--transition);
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(10px, 10px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(7px, -7px);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--ivory);
+            z-index: 999;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        .mobile-menu.active {
+            display: flex;
+        }
+
+        .mobile-menu a {
+            font-family: 'Bodoni Moda', serif;
+            font-size: 2rem;
+            font-style: italic;
+            text-align: center;
+        }
+
+        /* Hero Section */
+        .hero {
+            margin-top: 70px;
+            height: 100vh;
+            display: grid;
+            grid-template-rows: 2fr 1fr;
+            background-color: var(--black);
+            color: var(--ivory);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-top {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 3rem;
+            position: relative;
+        }
+
+        .hero-top h1 {
+            font-style: italic;
+            font-weight: 300;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            animation: slideUp 1s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-bottom {
+            background-color: var(--ivory);
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .hero-bottom p {
+            max-width: 600px;
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+        }
+
+        .hero-cta {
+            color: var(--taupe);
+            font-size: 0.95rem;
+            letter-spacing: 0.1em;
+            position: relative;
+            padding-bottom: 3px;
+            border-bottom: 1px solid var(--taupe);
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .hero-cta:hover {
+            color: var(--black);
+            border-bottom-color: var(--black);
+        }
+
+        /* Scroll hint */
+        .scroll-hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        .scroll-hint-line {
+            width: 1px;
+            height: 30px;
+            background-color: var(--taupe);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        /* Services Section - Horizontal Scroll */
+        .services {
+            background-color: var(--ivory);
+            padding: 6rem 2rem;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .services h2 {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-style: italic;
+            font-weight: 400;
+        }
+
+        .services-scroll {
+            display: flex;
+            gap: 1.5rem;
+            overflow-x: auto;
+            padding: 1rem 0;
+            scroll-behavior: smooth;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .services-scroll::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .services-scroll::-webkit-scrollbar-track {
+            background: var(--gray);
+        }
+
+        .services-scroll::-webkit-scrollbar-thumb {
+            background: var(--taupe);
+        }
+
+        .service-card {
+            min-width: 180px;
+            height: 400px;
+            background-color: var(--black);
+            color: var(--ivory);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            scroll-snap-align: start;
+            cursor: grab;
+            transition: var(--transition);
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+        }
+
+        .service-name {
+            font-family: 'Bodoni Moda', serif;
+            font-size: 0.9rem;
+            writing-mode: vertical-lr;
+            text-orientation: mixed;
+            transform: rotate(180deg);
+            letter-spacing: 0.1em;
+            font-style: italic;
+            height: 100px;
+        }
+
+        .service-desc {
+            font-size: 0.9rem;
+            font-weight: 300;
+            line-height: 1.6;
+        }
+
+        .service-price {
+            font-family: 'Bodoni Moda', serif;
+            font-size: 1rem;
+            color: var(--taupe);
+        }
+
+        /* Atelier Story Section */
+        .story {
+            background-color: var(--black);
+            color: var(--ivory);
+            padding: 6rem 2rem;
+            min-height: 70vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            align-items: center;
+            gap: 3rem;
+            position: relative;
+        }
+
+        .story-watermark {
+            position: absolute;
+            left: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-family: 'Bodoni Moda', serif;
+            font-size: clamp(6rem, 20vw, 15rem);
+            font-weight: 900;
+            color: rgba(250, 247, 242, 0.08);
+            line-height: 1;
+        }
+
+        .story-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .story-content h2 {
+            font-style: italic;
+            font-weight: 400;
+            margin-bottom: 2rem;
+            line-height: 1.3;
+        }
+
+        .story-content p {
+            margin-bottom: 1.5rem;
+            font-weight: 300;
+        }
+
+        .story-quote {
+            font-style: italic;
+            font-size: 1.2rem;
+            margin: 2rem 0;
+            padding-left: 1.5rem;
+            border-left: 2px solid var(--taupe);
+            color: var(--taupe);
+        }
+
+        /* Craft Section */
+        .craft {
+            background-color: var(--ivory);
+            padding: 6rem 2rem;
+            min-height: auto;
+        }
+
+        .craft-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+            margin-bottom: 4rem;
+            padding-bottom: 3rem;
+            border-bottom: 1px solid var(--gray);
+        }
+
+        .craft-row:last-child {
+            border-bottom: none;
+        }
+
+        .craft-row.reverse {
+            grid-template-columns: 1fr 1fr;
+            direction: rtl;
+        }
+
+        .craft-row.reverse > * {
+            direction: ltr;
+        }
+
+        .craft-image {
+            width: 100%;
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, var(--gray) 0%, var(--taupe) 100%);
+            border: 1px solid var(--gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--taupe);
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+
+        .craft-text h3 {
+            margin-bottom: 1rem;
+            font-style: italic;
+            font-weight: 400;
+        }
+
+        .craft-text p {
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+
+        /* Testimonials Section */
+        .testimonials {
+            background-color: var(--black);
+            color: var(--ivory);
+            padding: 6rem 2rem;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .testimonials h2 {
+            text-align: center;
+            margin-bottom: 3rem;
+            font-style: italic;
+            font-weight: 400;
+        }
+
+        .testimonial-slider {
+            max-width: 800px;
+            text-align: center;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .testimonial-quote {
+            font-size: 1.3rem;
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+            opacity: 0;
+            transition: opacity 0.8s ease-in-out;
+        }
+
+        .testimonial-quote.active {
+            opacity: 1;
+        }
+
+        .testimonial-author {
+            color: var(--taupe);
+            font-size: 0.95rem;
+            font-weight: 400;
+        }
+
+        .testimonial-dots {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--gray);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .dot.active {
+            background-color: var(--taupe);
+            width: 20px;
+            border-radius: 3px;
+        }
+
+        /* FAQ Section */
+        .faq {
+            background-color: var(--ivory);
+            padding: 6rem 2rem;
+            min-height: 60vh;
+            display: grid;
+            grid-template-columns: 1fr 1.5fr;
+            gap: 4rem;
+            align-items: flex-start;
+        }
+
+        .faq-title {
+            font-family: 'Bodoni Moda', serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 400;
+            font-style: italic;
+            line-height: 1.2;
+            position: sticky;
+            top: 100px;
+        }
+
+        .faq-items {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .faq-item {
+            border-bottom: 1px solid var(--gray);
+            padding-bottom: 1.5rem;
+        }
+
+        .faq-item:last-child {
+            border-bottom: none;
+        }
+
+        .faq-question {
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .faq-toggle {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out;
+            margin-top: 1rem;
+            font-weight: 300;
+            line-height: 1.7;
+        }
+
+        .faq-item.open .faq-answer {
+            max-height: 500px;
+        }
+
+        .faq-item.open .faq-toggle {
+            transform: rotate(45deg);
+        }
+
+        /* Visit Section */
+        .visit {
+            background-color: var(--black);
+            color: var(--ivory);
+            padding: 6rem 2rem;
+            min-height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .visit-content {
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .visit-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .visit-header h2 {
+            font-style: italic;
+            font-weight: 400;
+            margin-bottom: 1rem;
+        }
+
+        .visit-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .visit-card {
+            border-top: 1px solid var(--taupe);
+            padding-top: 1.5rem;
+        }
+
+        .visit-card-label {
+            color: var(--taupe);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 0.5rem;
+        }
+
+        .visit-card-content {
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+
+        .visit-map {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, var(--gray) 0%, var(--taupe) 100%);
+            border: 1px solid var(--taupe);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--black);
+            font-style: italic;
+            font-size: 0.9rem;
+        }
+
+        /* Contact Section */
+        .contact {
+            background-color: var(--ivory);
+            padding: 6rem 2rem;
+            min-height: 60vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .contact-info h2 {
+            font-style: italic;
+            font-weight: 400;
+            margin-bottom: 2rem;
+        }
+
+        .contact-info p {
+            font-weight: 300;
+            margin-bottom: 1rem;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--taupe);
+        }
+
+        .form-group input,
+        .form-group textarea {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--gray);
+            padding: 0.75rem 0;
+            font-family: 'Jost', sans-serif;
+            font-size: 0.95rem;
+            color: var(--text);
+            transition: var(--transition);
+            font-weight: 300;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-bottom-color: var(--taupe);
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-submit {
+            background-color: transparent;
+            border: 1px solid var(--taupe);
+            color: var(--taupe);
+            padding: 1rem;
+            font-family: 'Jost', sans-serif;
+            font-size: 0.9rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: var(--transition);
+            align-self: flex-start;
+            margin-top: 1rem;
+        }
+
+        .form-submit:hover {
+            background-color: var(--taupe);
+            color: var(--ivory);
+        }
+
+        .form-error {
+            color: #c53030;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--black);
+            color: var(--ivory);
+            padding: 4rem 2rem;
+            text-align: center;
+            border-top: 1px solid var(--gray);
+        }
+
+        .footer-logo {
+            font-family: 'Bodoni Moda', serif;
+            font-size: 1.2rem;
+            letter-spacing: 0.1em;
+            margin-bottom: 1.5rem;
+            font-weight: 400;
+        }
+
+        .footer-copyright {
+            font-size: 0.8rem;
+            color: var(--taupe);
+            margin-bottom: 1rem;
+        }
+
+        .footer-badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            color: var(--taupe);
+            border: 1px solid var(--taupe);
+            padding: 0.5rem 1rem;
+            margin-top: 1rem;
+        }
+
+        .footer-badge a {
+            color: var(--taupe);
+            text-decoration: underline;
+        }
+
+        /* SVG Divider */
+        .svg-divider {
+            width: 100%;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: transparent;
+        }
+
+        /* Scroll Reveal Animation */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            nav {
+                padding: 0 1rem;
+            }
+
+            .nav-left, .nav-link {
+                display: none;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .story {
+                grid-template-columns: 1fr;
+            }
+
+            .story-watermark {
+                display: none;
+            }
+
+            .craft-row,
+            .craft-row.reverse {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .faq {
+                grid-template-columns: 1fr;
+            }
+
+            .faq-title {
+                position: static;
+                margin-bottom: 2rem;
+            }
+
+            .visit-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .contact {
+                grid-template-columns: 1fr;
+            }
+
+            .services, .testimonials, .visit, .craft {
+                padding: 4rem 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-center {
+                font-size: 0.8rem;
+            }
+
+            h1 {
+                font-size: clamp(2rem, 6vw, 3rem);
+            }
+
+            h2 {
+                font-size: clamp(1.5rem, 5vw, 2.5rem);
+            }
+
+            .service-card {
+                min-width: 140px;
+                height: 350px;
+                padding: 1.5rem 1rem;
+            }
+
+            .hero {
+                margin-top: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="nav-left">Est. 2019</div>
+        <div class="nav-center">THREAD & BONE</div>
+        <div class="nav-right">
+            <a href="#contact" class="nav-link">Book</a>
+            <div class="hamburger" id="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#services">Services</a>
+        <a href="#story">Our Story</a>
+        <a href="#craft">Craft</a>
+        <a href="#testimonials">Reviews</a>
+        <a href="#contact">Contact</a>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-top">
+            <h1>The Art of the Perfect Fit</h1>
+            <div class="scroll-hint">
+                <div class="scroll-hint-line"></div>
+            </div>
+        </div>
+        <div class="hero-bottom">
+            <p>Precision tailoring and bespoke alterations for the discerning client. Every seam tells a story.</p>
+            <a href="#contact" class="hero-cta">Book a Consultation</a>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <h2>Our Services</h2>
+        <div class="services-scroll">
+            <div class="service-card reveal">
+                <div class="service-name">Bespoke Suits</div>
+                <div class="service-desc">Custom-tailored suits from the finest fabrics. Hand-finished details and architectural precision.</div>
+                <div class="service-price">From $1,200</div>
+            </div>
+            <div class="service-card reveal">
+                <div class="service-name">Dress Alterations</div>
+                <div class="service-desc">Perfect hemming, tailoring, and alterations for dresses and formal wear. Preservation of original design.</div>
+                <div class="service-price">From $85</div>
+            </div>
+            <div class="service-card reveal">
+                <div class="service-name">Wedding</div>
+                <div class="service-desc">Bridal gowns and formal wear alterations with meticulous attention to detail and preservation.</div>
+                <div class="service-price">From $150</div>
+            </div>
+            <div class="service-card reveal">
+                <div class="service-name">Leather Work</div>
+                <div class="service-desc">Premium leather alterations, custom jackets, and restoration of luxury leather garments.</div>
+                <div class="service-price">From $200</div>
+            </div>
+            <div class="service-card reveal">
+                <div class="service-name">Custom Shirts</div>
+                <div class="service-desc">Bespoke dress shirts and casual wear with custom proportions and perfect fit guaranteed.</div>
+                <div class="service-price">From $350</div>
+            </div>
+            <div class="service-card reveal">
+                <div class="service-name">Restyling</div>
+                <div class="service-desc">Transform vintage and classic pieces into contemporary designs. Creative reimagining with precision.</div>
+                <div class="service-price">From $175</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Atelier Story Section -->
+    <section class="story" id="story">
+        <div class="story-watermark">27</div>
+        <div class="story-content reveal">
+            <h2>Twenty-Seven Years of Mastery</h2>
+            <p>Thread & Bone was founded on the principle that exceptional tailoring is a lost art. In our Design District atelier, we combine traditional hand-craftsmanship with an understanding of modern design.</p>
+            <p>Every client is unique. Every garment deserves precision. We believe that the perfect fit is not just about measurements—it's about understanding how a garment should move with the body, how it should make you feel.</p>
+            <div class="story-quote">"A well-tailored garment is an investment in yourself. It's how you present yourself to the world."</div>
+            <p>Our commitment to excellence has earned us a reputation as Miami's premier atelier for those who demand nothing less than perfection.</p>
+        </div>
+    </section>
+
+    <!-- Craft Section -->
+    <section class="craft" id="craft">
+        <div class="craft-row reveal">
+            <div class="craft-image"></div>
+            <div class="craft-text">
+                <h3>Hand-Finished Details</h3>
+                <p>Every stitch is placed with intention. Our artisans employ centuries-old techniques in hand-finishing seams, buttonholes, and hems. The difference is visible in the movement and longevity of each piece.</p>
+                <p>We source the finest materials and work exclusively with premium fabrics that age beautifully.</p>
+            </div>
+        </div>
+
+        <div class="craft-row reverse reveal">
+            <div class="craft-image"></div>
+            <div class="craft-text">
+                <h3>Architectural Precision</h3>
+                <p>Bespoke tailoring is architecture for the body. We take precise measurements and create custom patterns that account for individual proportions, posture, and movement patterns.</p>
+                <p>Pattern-making is both science and art—our master tailors have decades of experience translating your vision into reality.</p>
+            </div>
+        </div>
+
+        <div class="craft-row reveal">
+            <div class="craft-image"></div>
+            <div class="craft-text">
+                <h3>Sustainable Craftsmanship</h3>
+                <p>We believe in creating garments that last generations. Alterations, restyling, and restoration extend the life of your favorite pieces while reducing waste.</p>
+                <p>Our approach honors both tradition and responsibility—craftsmanship that respects both the garment and the environment.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials" id="testimonials">
+        <h2>Client Stories</h2>
+        <div class="testimonial-slider">
+            <div class="testimonial-quote active">"Thread & Bone transformed my entire wardrobe. The precision, the attention to detail—it's incomparable. I feel confident in every piece."</div>
+            <div class="testimonial-quote">"I've been going to the same tailor for years, but Thread & Bone elevated everything. The craftsmanship is extraordinary."</div>
+            <div class="testimonial-quote">"My wedding dress alterations were handled with such care and expertise. The attention to detail exceeded every expectation."</div>
+            <div class="testimonial-quote">"Bespoke tailoring is an investment, but when you experience the quality of Thread & Bone, you understand why. It's art."</div>
+            <div class="testimonial-quote">"The leather work is phenomenal. They restored my vintage jacket to pristine condition. Highly recommended."</div>
+            <div class="testimonial-quote">"Finally found a tailor who understands fit. Every garment feels like it was made specifically for me. Because it was."</div>
+            <div class="testimonial-author" id="testimonial-author">— Miami Design District Client</div>
+        </div>
+        <div class="testimonial-dots">
+            <div class="dot active" data-index="0"></div>
+            <div class="dot" data-index="1"></div>
+            <div class="dot" data-index="2"></div>
+            <div class="dot" data-index="3"></div>
+            <div class="dot" data-index="4"></div>
+            <div class="dot" data-index="5"></div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq" id="faq">
+        <h2 class="faq-title">Questions</h2>
+        <div class="faq-items">
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>How long does bespoke tailoring typically take?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    Bespoke suits typically require 8-12 weeks from initial consultation to final fitting. This includes two fittings to ensure perfect proportions. Alterations and restyling projects vary based on complexity but generally take 2-4 weeks.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>What fabrics do you recommend for bespoke suits?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    We work exclusively with premium Italian and English woolen mills. Your choice depends on climate, intended use, and personal preference. Our team can guide you through options from lightweight tropical wools to structured overcoating materials.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Do you offer alterations on garments not made here?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    Absolutely. We welcome all garments—designer, vintage, or ready-made. Our philosophy is to enhance and perfect any piece. We handle everything from simple hemming to complex reconstruction.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>What's included in the initial consultation?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    The initial consultation is complimentary and includes detailed measurements, fabric selection, style discussion, timeline review, and a comprehensive quote. We listen carefully to understand your vision and requirements.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Can you restore vintage or damaged garments?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    Yes. We specialize in restoration work including seam repair, zipper replacement, re-lining, and reinforcement of stress points. Many vintage pieces can be brought back to wearable condition or even improved.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>What payment methods do you accept?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    We accept all major credit cards, checks, and bank transfers. For larger projects, we typically require a 50% deposit upon order confirmation with the balance due upon completion.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Visit Section -->
+    <section class="visit" id="visit">
+        <div class="visit-content">
+            <div class="visit-header">
+                <h2>Visit Our Atelier</h2>
+            </div>
+            <div class="visit-grid">
+                <div class="visit-card">
+                    <div class="visit-card-label">Address</div>
+                    <div class="visit-card-content">
+                        Design District<br>Miami, FL 33139<br>By appointment
+                    </div>
+                </div>
+                <div class="visit-card">
+                    <div class="visit-card-label">Hours</div>
+                    <div class="visit-card-content">
+                        Tue–Sat: 10AM–7PM<br>Sun: By Appointment<br>Mon: Closed
+                    </div>
+                </div>
+                <div class="visit-card">
+                    <div class="visit-card-label">Contact</div>
+                    <div class="visit-card-content">
+                        <a href="tel:+13055552650">(305) 555-2650</a><br>
+                        <a href="mailto:hello@threadandbone.com">hello@threadandbone.com</a>
+                    </div>
+                </div>
+            </div>
+            <div class="visit-map">Map Placeholder — Design District, Miami</div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="contact-info">
+            <h2>Book Your Consultation</h2>
+            <p>The first step is always a detailed consultation. We listen to your vision, take precise measurements, and discuss materials, timeline, and investment.</p>
+            <p>Schedule your appointment to begin your journey toward the perfect fit.</p>
+        </div>
+        <form class="contact-form" id="contactForm">
+            <div class="form-group">
+                <label for="name">Full Name *</label>
+                <input type="text" id="name" name="name" required>
+                <span class="form-error" id="nameError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email Address *</label>
+                <input type="email" id="email" name="email" required>
+                <span class="form-error" id="emailError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone">
+                <span class="form-error" id="phoneError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="service">Service Interest *</label>
+                <input type="text" id="service" name="service" placeholder="e.g., Bespoke Suit, Wedding Alterations" required>
+                <span class="form-error" id="serviceError"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="message">Message</label>
+                <textarea id="message" name="message" placeholder="Tell us about your project..."></textarea>
+                <span class="form-error" id="messageError"></span>
+            </div>
+
+            <button type="submit" class="form-submit">Send Inquiry</button>
+        </form>
+    </contact>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-logo">THREAD & BONE</div>
+        <div class="footer-copyright">
+            Miami, FL — Since 2019<br>
+            License #TB2019-0214
+        </div>
+        <div class="footer-badge">
+            <a href="https://webnari.io" target="_blank">Powered by Webnari</a>
+        </div>
+    </footer>
+
+    <script>
+        // Hamburger Menu Toggle
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+        });
+
+        // Close mobile menu when link is clicked
+        document.querySelectorAll('.mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                hamburger.classList.remove('active');
+                mobileMenu.classList.remove('active');
+            });
+        });
+
+        // Scroll Reveal Animation
+        const reveals = document.querySelectorAll('.reveal');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.15 });
+
+        reveals.forEach(reveal => observer.observe(reveal));
+
+        // Testimonials Carousel
+        const quotes = document.querySelectorAll('.testimonial-quote');
+        const dots = document.querySelectorAll('.dot');
+        const author = document.getElementById('testimonial-author');
+        const authors = [
+            '— Designer, Miami Beach',
+            '— Executive, Brickell',
+            '— Bride, Coral Gables',
+            '— Business Owner, Wynwood',
+            '— Collector, Design District',
+            '— Professional, Miami'
+        ];
+
+        let currentQuote = 0;
+
+        function showQuote(index) {
+            quotes.forEach(q => q.classList.remove('active'));
+            dots.forEach(d => d.classList.remove('active'));
+
+            quotes[index].classList.add('active');
+            dots[index].classList.add('active');
+            author.textContent = authors[index];
+        }
+
+        function nextQuote() {
+            currentQuote = (currentQuote + 1) % quotes.length;
+            showQuote(currentQuote);
+        }
+
+        setInterval(nextQuote, 6000);
+
+        dots.forEach(dot => {
+            dot.addEventListener('click', () => {
+                currentQuote = parseInt(dot.dataset.index);
+                showQuote(currentQuote);
+            });
+        });
+
+        // FAQ Accordion
+        const faqItems = document.querySelectorAll('.faq-item');
+
+        faqItems.forEach(item => {
+            const question = item.querySelector('.faq-question');
+            question.addEventListener('click', () => {
+                faqItems.forEach(otherItem => {
+                    if (otherItem !== item) {
+                        otherItem.classList.remove('open');
+                    }
+                });
+                item.classList.toggle('open');
+            });
+        });
+
+        // Form Validation
+        const form = document.getElementById('contactForm');
+        const nameInput = document.getElementById('name');
+        const emailInput = document.getElementById('email');
+        const phoneInput = document.getElementById('phone');
+        const serviceInput = document.getElementById('service');
+        const messageInput = document.getElementById('message');
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        function clearError(field) {
+            const errorField = document.getElementById(field + 'Error');
+            if (errorField) {
+                errorField.textContent = '';
+            }
+        }
+
+        function showError(field, message) {
+            const errorField = document.getElementById(field + 'Error');
+            if (errorField) {
+                errorField.textContent = message;
+            }
+        }
+
+        nameInput.addEventListener('blur', () => {
+            if (nameInput.value.trim() === '') {
+                showError('name', 'Name is required');
+            } else {
+                clearError('name');
+            }
+        });
+
+        emailInput.addEventListener('blur', () => {
+            if (emailInput.value.trim() === '') {
+                showError('email', 'Email is required');
+            } else if (!validateEmail(emailInput.value)) {
+                showError('email', 'Please enter a valid email');
+            } else {
+                clearError('email');
+            }
+        });
+
+        serviceInput.addEventListener('blur', () => {
+            if (serviceInput.value.trim() === '') {
+                showError('service', 'Service interest is required');
+            } else {
+                clearError('service');
+            }
+        });
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            let isValid = true;
+
+            if (nameInput.value.trim() === '') {
+                showError('name', 'Name is required');
+                isValid = false;
+            } else {
+                clearError('name');
+            }
+
+            if (emailInput.value.trim() === '') {
+                showError('email', 'Email is required');
+                isValid = false;
+            } else if (!validateEmail(emailInput.value)) {
+                showError('email', 'Please enter a valid email');
+                isValid = false;
+            } else {
+                clearError('email');
+            }
+
+            if (serviceInput.value.trim() === '') {
+                showError('service', 'Service interest is required');
+                isValid = false;
+            } else {
+                clearError('service');
+            }
+
+            if (isValid) {
+                // Submit to formsubmit.co
+                const formData = new FormData(form);
+                fetch('https://formsubmit.co/hello@threadandbone.com', {
+                    method: 'POST',
+                    body: formData
+                }).then(response => {
+                    if (response.ok) {
+                        alert('Thank you for your inquiry. We will be in touch shortly.');
+                        form.reset();
+                    }
+                }).catch(error => {
+                    console.error('Form submission error:', error);
+                    alert('There was an error submitting your inquiry. Please try again.');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
