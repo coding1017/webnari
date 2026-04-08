@@ -408,6 +408,8 @@ create table if not exists customers (
   email_verified               boolean not null default false,
   verification_token           text,
   verification_token_expires   timestamptz,
+  oauth_provider               text,         -- 'google', 'facebook', 'apple', etc.
+  oauth_provider_id            text,         -- provider's unique user ID
   unique(store_id, email)
 );
 

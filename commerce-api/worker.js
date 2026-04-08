@@ -597,6 +597,14 @@ export default {
       if (method === 'POST' && path === '/api/auth/resend-verification') {
         return await handleResendVerification(request, sb, env, storeId, corsOrigin);
       }
+      if (method === 'POST' && path === '/api/auth/google') {
+        return await handleGoogleLogin(request, sb, env, storeId, corsOrigin);
+      }
+
+      // ── Currency Exchange Rates ─────────────────────────────
+      if (method === 'GET' && path === '/api/currency/rates') {
+        return await handleGetExchangeRates(request, sb, env, storeId, corsOrigin);
+      }
 
       // ── Customer Account (requires auth token) ─────────────
       if (method === 'GET' && path === '/api/account/profile') {
@@ -1233,6 +1241,73 @@ async function handleGetStoreConfig(sb, storeId, corsOrigin) {
     squareLocationId: store.square_location_id,
     shippingRules: store.shipping_rules,
     settings: store.settings,
+  }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  CURRENCY EXCHANGE RATES
+// ═══════════════════════════════════════════════════════════════
+
+const exchangeRateCache = { rates: null, fetchedAt: 0 };
+
+async function handleGetExchangeRates(request, sb, env, storeId, corsOrigin) {
+  const store = await sb.query('stores', {
+    filters: { id: `eq.${storeId}` },
+    single: true,
+    select: 'currency,settings',
+  });
+  if (!store) return json({ error: 'Store not found' }, 404, corsOrigin);
+
+  const baseCurrency = (store.currency || 'usd').toUpperCase();
+  const supportedCurrencies = store.settings?.supported_currencies || [];
+
+  if (!supportedCurrencies.length) {
+    return json({
+      base: baseCurrency,
+      rates: {},
+      supported: [],
+    }, 200, corsOrigin);
+  }
+
+  // Cache exchange rates for 1 hour
+  const now = Date.now();
+  if (!exchangeRateCache.rates || now - exchangeRateCache.fetchedAt > 3600000) {
+    try {
+      // Use exchangerate.host (free, no API key required)
+      const rateRes = await fetch(`https://api.exchangerate.host/latest?base=${baseCurrency}&symbols=${supportedCurrencies.join(',')}`);
+      if (rateRes.ok) {
+        const rateData = await rateRes.json();
+        exchangeRateCache.rates = rateData.rates || {};
+        exchangeRateCache.fetchedAt = now;
+      }
+    } catch (err) {
+      console.error('Exchange rate fetch failed:', err);
+    }
+  }
+
+  // If API failed, use store-configured fallback rates
+  const rates = exchangeRateCache.rates || store.settings?.fallback_exchange_rates || {};
+
+  // Build response with only supported currencies
+  const filteredRates = {};
+  for (const curr of supportedCurrencies) {
+    const upper = curr.toUpperCase();
+    if (rates[upper]) filteredRates[upper] = rates[upper];
+  }
+
+  return json({
+    base: baseCurrency,
+    rates: filteredRates,
+    supported: supportedCurrencies.map(c => c.toUpperCase()),
+    symbols: {
+      USD: '$', EUR: '€', GBP: '£', CAD: 'CA$', AUD: 'A$',
+      JPY: '¥', MXN: 'MX$', BRL: 'R$', COP: 'COL$', ARS: 'AR$',
+      CLP: 'CL$', PEN: 'S/.', INR: '₹', CNY: '¥', KRW: '₩',
+      CHF: 'CHF', SEK: 'kr', NOK: 'kr', DKK: 'kr', PLN: 'zł',
+      CZK: 'Kč', HUF: 'Ft', TRY: '₺', ZAR: 'R', NZD: 'NZ$',
+      SGD: 'S$', HKD: 'HK$', THB: '฿', PHP: '₱', TWD: 'NT$',
+    },
   }, 200, corsOrigin);
 }
 
@@ -8343,6 +8418,82 @@ async function handleCustomerLogin(request, sb, env, storeId, corsOrigin) {
     customer: { id: customer.id, email: customer.email, name: customer.name, phone: customer.phone, email_verified: customer.email_verified ?? true },
   }, 200, corsOrigin);
 }
+
+// ── Google Social Login ───────────────────────────────────
+async function handleGoogleLogin(request, sb, env, storeId, corsOrigin) {
+  const { id_token, credential } = await request.json();
+  const token = id_token || credential;
+
+  if (!token) {
+    return json({ error: 'Google ID token required' }, 400, corsOrigin);
+  }
+
+  // Verify Google ID token via Google's tokeninfo endpoint
+  const googleRes = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(token)}`);
+  if (!googleRes.ok) {
+    return json({ error: 'Invalid Google token' }, 401, corsOrigin);
+  }
+
+  const googleUser = await googleRes.json();
+  const { email: gEmail, name: gName, sub: googleId, email_verified: gVerified } = googleUser;
+
+  if (!gEmail) {
+    return json({ error: 'Google account has no email' }, 400, corsOrigin);
+  }
+
+  const emailNorm = gEmail.toLowerCase().trim();
+
+  // Check if customer already exists with this email
+  let customer = await sb.query('customers', {
+    filters: { store_id: `eq.${storeId}`, email: `eq.${emailNorm}` },
+    single: true,
+    select: 'id,email,name,phone,email_verified,oauth_provider',
+  });
+
+  if (customer) {
+    // Existing customer — update oauth fields if not set, mark email verified
+    const updates = { last_login_at: new Date().toISOString() };
+    if (!customer.oauth_provider) {
+      updates.oauth_provider = 'google';
+      updates.oauth_provider_id = googleId;
+    }
+    if (!customer.email_verified && gVerified === 'true') {
+      updates.email_verified = true;
+    }
+    await sb.update('customers', { id: `eq.${customer.id}` }, updates);
+    customer.email_verified = updates.email_verified ?? customer.email_verified;
+  } else {
+    // New customer via Google — no password needed
+    customer = await sb.insert('customers', {
+      store_id: storeId,
+      email: emailNorm,
+      password_hash: '__oauth_google__',
+      name: gName || null,
+      email_verified: gVerified === 'true',
+      oauth_provider: 'google',
+      oauth_provider_id: googleId,
+    });
+
+    // Emit customer.created webhook
+    emitEvent(sb, env, storeId, 'customer.created', { id: customer.id, email: customer.email, name: customer.name }).catch(() => {});
+  }
+
+  // Generate JWT
+  const secret = env.JWT_SECRET || env.ADMIN_API_KEY || 'webnari-jwt-secret';
+  const jwt = await createJWT({
+    sub: customer.id,
+    email: customer.email,
+    store: storeId,
+    email_verified: customer.email_verified ?? true,
+    exp: Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60,
+  }, secret);
+
+  return json({
+    token: jwt,
+    customer: { id: customer.id, email: customer.email, name: customer.name || gName, email_verified: customer.email_verified ?? true },
+  }, 200, corsOrigin);
+}
+
 
 async function handleForgotPassword(request, sb, env, storeId, corsOrigin) {
   const { email } = await request.json();
