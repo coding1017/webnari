@@ -34,6 +34,7 @@ const STATUS_BADGES: Record<string, { cls: string; label: string }> = {
 function formatValue(type: string, value: number) {
   if (type === "percentage") return `${value}% off`;
   if (type === "fixed") return `$${(value / 100).toFixed(2)} off`;
+  if (type === "bxgy" || type === "buy_x_get_y") return "Buy X Get Y";
   return "Free shipping";
 }
 
@@ -91,8 +92,12 @@ export default function DiscountsPage() {
   }
 
   async function handleCreate() {
-    if (!newCode.trim() || !newValue.trim()) {
-      setMessage("Code and value are required");
+    if (!newIsAutomatic && !newCode.trim()) {
+      setMessage("Discount code is required");
+      return;
+    }
+    if (newType !== "buy_x_get_y" && newType !== "free_shipping" && !newValue.trim()) {
+      setMessage("Discount value is required");
       return;
     }
     setSaving(true);
@@ -100,7 +105,7 @@ export default function DiscountsPage() {
     try {
       await createDiscount(storeId, {
         code: newIsAutomatic ? undefined : newCode.trim(),
-        type: newType,
+        type: newType === "buy_x_get_y" ? "bxgy" : newType,
         value: newType === "fixed" ? Math.round(parseFloat(newValue || "0") * 100) : parseFloat(newValue || "0"),
         min_subtotal: newMinSubtotal ? Math.round(parseFloat(newMinSubtotal) * 100) : null,
         max_uses: newMaxUses ? parseInt(newMaxUses) : null,
