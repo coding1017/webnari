@@ -213,6 +213,12 @@ export default function IntegrationsPage() {
   const [emailTesting, setEmailTesting] = useState(false);
   const [hasCustomEmail, setHasCustomEmail] = useState(false);
 
+  // Expand/collapse state for top integrations
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+  const [detailLoaded, setDetailLoaded] = useState<Record<string, boolean>>({});
+  // Email toggles collapse
+  const [emailTogglesOpen, setEmailTogglesOpen] = useState(false);
+
   const squareIntegration = integrations.find((i) => i.provider === "square") || null;
   const qbIntegration = integrations.find((i) => i.provider === "quickbooks") || null;
   const stripeIntegration = integrations.find((i) => i.provider === "stripe") || null;
@@ -223,29 +229,19 @@ export default function IntegrationsPage() {
     setTimeout(() => setMessage(""), 10000);
   }, []);
 
-  const loadData = useCallback(async () => {
+  const loadDetailData = useCallback(async (provider: string) => {
     try {
-      const integ = await getIntegrations(storeId);
-      setIntegrations(integ);
-
-      const square = integ.find((i: Integration) => i.provider === "square");
-      if (square) {
+      if (provider === "square") {
         const [mapData, logData] = await Promise.all([
           getProductMappings(storeId),
           getSyncLog(storeId),
         ]);
         setMappings(mapData);
         setSyncLog(logData);
-      }
-
-      const qb = integ.find((i: Integration) => i.provider === "quickbooks");
-      if (qb) {
+      } else if (provider === "quickbooks") {
         const qbLogs = await getQuickBooksSyncLog(storeId);
         setQbSyncLog(qbLogs);
-      }
-
-      const stripe = integ.find((i: Integration) => i.provider === "stripe");
-      if (stripe) {
+      } else if (provider === "stripe") {
         const [mapData, logData] = await Promise.all([
           getProductMappings(storeId),
           getSyncLog(storeId),
@@ -253,6 +249,26 @@ export default function IntegrationsPage() {
         setStripeMappings(mapData.filter((m: ProductMapping) => m.provider === "stripe"));
         setStripeSyncLog(logData.filter((l: SyncLogEntry) => l.provider === "stripe"));
       }
+      setDetailLoaded(prev => ({ ...prev, [provider]: true }));
+    } catch {
+      // empty
+    }
+  }, [storeId]);
+
+  const toggleExpand = useCallback((key: string, provider?: string) => {
+    setExpanded(prev => {
+      const isOpening = !prev[key];
+      if (isOpening && provider && !detailLoaded[provider]) {
+        loadDetailData(provider);
+      }
+      return { ...prev, [key]: isOpening };
+    });
+  }, [detailLoaded, loadDetailData]);
+
+  const loadData = useCallback(async () => {
+    try {
+      const integ = await getIntegrations(storeId);
+      setIntegrations(integ);
     } catch {
       // empty
     }
@@ -800,7 +816,7 @@ export default function IntegrationsPage() {
 
       {/* Stripe Connect Card */}
       <div className="card" style={{ marginBottom: "24px" }}>
-        <div className="flex items-center justify-between" style={{ marginBottom: "20px" }}>
+        <div className="flex items-center justify-between" style={{ cursor: "pointer" }} onClick={() => toggleExpand("stripe", "stripe")}>
           <div className="flex items-center gap-3">
             <div
               style={{
@@ -827,17 +843,22 @@ export default function IntegrationsPage() {
             </div>
           </div>
 
-          {stripeIntegration ? (
-            stripeIntegration.metadata?.onboarding_complete ? (
-              <span className="badge badge-green">Connected</span>
+          <div className="flex items-center gap-3">
+            {stripeIntegration ? (
+              stripeIntegration.metadata?.onboarding_complete ? (
+                <span className="badge badge-green">Connected</span>
+              ) : (
+                <span className="badge badge-orange">Pending Setup</span>
+              )
             ) : (
-              <span className="badge badge-orange">Pending Setup</span>
-            )
-          ) : (
-            <span className="badge badge-gray">Not Connected</span>
-          )}
+              <span className="badge badge-gray">Not Connected</span>
+            )}
+            <svg style={{ width: "20px", height: "20px", color: "var(--text-tertiary)", transform: expanded.stripe ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+          </div>
         </div>
 
+        {expanded.stripe && (<>
+        <div style={{ marginTop: "20px" }} />
         {!stripeIntegration || !stripeIntegration.metadata?.onboarding_complete ? (
           <div style={{ textAlign: "center", padding: "24px 0 8px" }}>
             <div
@@ -1107,11 +1128,12 @@ export default function IntegrationsPage() {
             )}
           </>
         )}
+        </>)}
       </div>
 
       {/* Square POS Card */}
       <div className="card" style={{ marginBottom: "24px" }}>
-        <div className="flex items-center justify-between" style={{ marginBottom: "20px" }}>
+        <div className="flex items-center justify-between" style={{ cursor: "pointer" }} onClick={() => toggleExpand("square", "square")}>
           <div className="flex items-center gap-3">
             <div
               style={{
@@ -1137,13 +1159,18 @@ export default function IntegrationsPage() {
             </div>
           </div>
 
-          {squareIntegration ? (
-            <span className="badge badge-green">Connected</span>
-          ) : (
-            <span className="badge badge-gray">Not Connected</span>
-          )}
+          <div className="flex items-center gap-3">
+            {squareIntegration ? (
+              <span className="badge badge-green">Connected</span>
+            ) : (
+              <span className="badge badge-gray">Not Connected</span>
+            )}
+            <svg style={{ width: "20px", height: "20px", color: "var(--text-tertiary)", transform: expanded.square ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+          </div>
         </div>
 
+        {expanded.square && (<>
+        <div style={{ marginTop: "20px" }} />
         {!squareIntegration ? (
           <div style={{ textAlign: "center", padding: "24px 0 8px" }}>
             <div
@@ -1303,11 +1330,12 @@ export default function IntegrationsPage() {
             )}
           </>
         )}
+        </>)}
       </div>
 
       {/* QuickBooks Online Card */}
       <div className="card" style={{ marginBottom: "24px" }}>
-        <div className="flex items-center justify-between" style={{ marginBottom: "20px" }}>
+        <div className="flex items-center justify-between" style={{ cursor: "pointer" }} onClick={() => toggleExpand("quickbooks", "quickbooks")}>
           <div className="flex items-center gap-3">
             <div
               style={{
@@ -1334,13 +1362,18 @@ export default function IntegrationsPage() {
             </div>
           </div>
 
+          <div className="flex items-center gap-3">
           {qbIntegration ? (
             <span className="badge badge-green">Connected</span>
           ) : (
             <span className="badge badge-gray">Not Connected</span>
           )}
+            <svg style={{ width: "20px", height: "20px", color: "var(--text-tertiary)", transform: expanded.quickbooks ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+          </div>
         </div>
 
+        {expanded.quickbooks && (<>
+        <div style={{ marginTop: "20px" }} />
         {!qbIntegration ? (
           <div style={{ textAlign: "center", padding: "24px 0 8px" }}>
             <div
@@ -1514,11 +1547,12 @@ export default function IntegrationsPage() {
             )}
           </>
         )}
+        </>)}
       </div>
 
       {/* Google Analytics 4 Card */}
       <div className="card" style={{ marginBottom: "24px" }}>
-        <div className="flex items-center justify-between" style={{ marginBottom: "20px" }}>
+        <div className="flex items-center justify-between" style={{ cursor: "pointer" }} onClick={() => toggleExpand("ga4")}>
           <div className="flex items-center gap-3">
             <div
               style={{
@@ -1545,13 +1579,18 @@ export default function IntegrationsPage() {
             </div>
           </div>
 
-          {ga4Connected ? (
-            <span className="badge badge-green">Connected</span>
-          ) : (
-            <span className="badge badge-gray">Not Connected</span>
-          )}
+          <div className="flex items-center gap-3">
+            {ga4Connected ? (
+              <span className="badge badge-green">Connected</span>
+            ) : (
+              <span className="badge badge-gray">Not Connected</span>
+            )}
+            <svg style={{ width: "20px", height: "20px", color: "var(--text-tertiary)", transform: expanded.ga4 ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+          </div>
         </div>
 
+        {expanded.ga4 && (<>
+        <div style={{ marginTop: "20px" }} />
         {!ga4Connected ? (
           <div>
             {!ga4ShowForm ? (
@@ -1677,11 +1716,12 @@ export default function IntegrationsPage() {
             </div>
           </>
         )}
+        </>)}
       </div>
 
       {/* SMS & WhatsApp Notifications Card (Twilio) */}
       <div className="card" style={{ marginBottom: "24px" }}>
-        <div className="flex items-center justify-between" style={{ marginBottom: "20px" }}>
+        <div className="flex items-center justify-between" style={{ cursor: "pointer" }} onClick={() => toggleExpand("twilio")}>
           <div className="flex items-center gap-3">
             <div
               style={{
@@ -1708,13 +1748,18 @@ export default function IntegrationsPage() {
             </div>
           </div>
 
-          {twilioConnected ? (
-            <span className="badge badge-green">Connected</span>
-          ) : (
-            <span className="badge badge-gray">Not Connected</span>
-          )}
+          <div className="flex items-center gap-3">
+            {twilioConnected ? (
+              <span className="badge badge-green">Connected</span>
+            ) : (
+              <span className="badge badge-gray">Not Connected</span>
+            )}
+            <svg style={{ width: "20px", height: "20px", color: "var(--text-tertiary)", transform: expanded.twilio ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+          </div>
         </div>
 
+        {expanded.twilio && (<>
+        <div style={{ marginTop: "20px" }} />
         {!twilioConnected ? (
           <div>
             {!twilioShowForm ? (
@@ -1894,11 +1939,12 @@ export default function IntegrationsPage() {
             </div>
           </>
         )}
+        </>)}
       </div>
 
       {/* Email Notifications Card (Resend) */}
       <div className="card" style={{ marginBottom: "24px" }}>
-        <div className="flex items-center justify-between" style={{ marginBottom: "20px" }}>
+        <div className="flex items-center justify-between" style={{ cursor: "pointer" }} onClick={() => toggleExpand("email")}>
           <div className="flex items-center gap-3">
             <div
               style={{
@@ -1922,13 +1968,18 @@ export default function IntegrationsPage() {
               </p>
             </div>
           </div>
-          {hasCustomEmail ? (
-            <span className="badge badge-green">Custom</span>
-          ) : (
-            <span className="badge badge-gray">Webnari Default</span>
-          )}
+          <div className="flex items-center gap-3">
+            {hasCustomEmail ? (
+              <span className="badge badge-green">Custom</span>
+            ) : (
+              <span className="badge badge-gray">Webnari Default</span>
+            )}
+            <svg style={{ width: "20px", height: "20px", color: "var(--text-tertiary)", transform: expanded.email ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+          </div>
         </div>
 
+        {expanded.email && (<>
+        <div style={{ marginTop: "20px" }} />
         {/* Custom Email Provider Section */}
         <div style={{ padding: "16px", background: "var(--bg-grouped)", borderRadius: "var(--radius-sm)", marginBottom: "20px" }}>
           <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-secondary)", marginBottom: "12px" }}>Custom Email Provider</div>
@@ -2036,15 +2087,19 @@ export default function IntegrationsPage() {
           </p>
         </div>
 
-        <div className="flex items-center gap-2" style={{ marginBottom: "20px" }}>
-          <p style={{ fontSize: "13px", color: "var(--text-tertiary)", margin: 0 }}>
-            Transactional emails are sent automatically. Toggle which notifications your customers receive.
-          </p>
-          {emailToggleSaving && (
-            <span style={{ fontSize: "11px", color: "var(--text-quaternary)", whiteSpace: "nowrap" }}>Saving...</span>
-          )}
+        <div style={{ marginBottom: "20px" }}>
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); setEmailTogglesOpen(!emailTogglesOpen); }}
+            className="flex items-center justify-between"
+            style={{ width: "100%", padding: "12px 14px", background: "var(--bg-grouped)", borderRadius: "var(--radius-sm)", border: "1px solid var(--border)", cursor: "pointer", fontSize: "13px", fontWeight: 600, color: "var(--text-secondary)" }}
+          >
+            <span>Email Notification Toggles {emailToggleSaving && <span style={{ fontSize: "11px", color: "var(--text-quaternary)", fontWeight: 400, marginLeft: "8px" }}>Saving...</span>}</span>
+            <svg style={{ width: "16px", height: "16px", color: "var(--text-tertiary)", transform: emailTogglesOpen ? "rotate(180deg)" : "rotate(0deg)", transition: "transform 0.2s" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
+          </button>
         </div>
 
+        {emailTogglesOpen && (
         <div style={{ display: "flex", flexDirection: "column", gap: "14px", marginBottom: "20px" }}>
           {([
             { key: "orderConfirmation" as const, label: "Order Confirmation" },
@@ -2126,6 +2181,7 @@ export default function IntegrationsPage() {
             </label>
           ))}
         </div>
+        )}
 
         <div style={{ padding: "12px 16px", background: "var(--bg-grouped)", borderRadius: "var(--radius-sm)", fontSize: "12px", color: "var(--text-tertiary)" }}>
           <strong style={{ color: "var(--text-secondary)" }}>From Email:</strong>{" "}
@@ -2136,6 +2192,7 @@ export default function IntegrationsPage() {
             </span>
           )}
         </div>
+        </>)}
       </div>
 
       {/* More Integrations */}

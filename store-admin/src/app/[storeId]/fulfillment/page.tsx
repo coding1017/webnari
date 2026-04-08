@@ -2,11 +2,11 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
-import Link from "next/link";
 import {
   getOrders,
   updateOrder,
   getStoreConfig,
+  updateStore,
 } from "@/app/[storeId]/actions/commerce-actions";
 
 interface OrderItem {
@@ -34,9 +34,10 @@ interface Order {
 }
 
 interface ShippingRule {
-  min_order: number;
-  max_order: number | null;
+  min_total: number;
+  max_total: number | null;
   cost: number;
+  label: string;
 }
 
 function formatCurrency(cents: number): string {
@@ -69,6 +70,7 @@ export default function FulfillmentPage() {
   const [shippingRules, setShippingRules] = useState<ShippingRule[]>([]);
   const [loading, setLoading] = useState(true);
   const [markingShipped, setMarkingShipped] = useState<string | null>(null);
+  const [savingRules, setSavingRules] = useState(false);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"success" | "error">("success");
 
@@ -86,7 +88,7 @@ export default function FulfillmentPage() {
       ]);
       const orders = Array.isArray(ordersData) ? ordersData : ordersData.orders || [];
       setAllOrders(orders);
-      setShippingRules(configData?.shipping_rules || configData?.store?.shipping_rules || []);
+      setShippingRules(configData?.shippingRules || configData?.shipping_rules || []);
     } catch (err) {
       showMessage(`Failed to load data: ${(err as Error).message}`, "error");
     } finally {
@@ -488,97 +490,88 @@ export default function FulfillmentPage() {
 
       {/* ── Shipping Rules ────────────────────────────────── */}
       <div className="card">
-        <div
-          style={{
-            padding: "20px 24px",
-            borderBottom: "1.5px solid var(--border)",
-          }}
-        >
-          <div
-            className="flex items-center"
-            style={{ justifyContent: "space-between", flexWrap: "wrap", gap: "8px" }}
-          >
-            <h2 className="heading-sm" style={{ margin: 0 }}>Shipping Rules</h2>
-            <Link
-              href={`/${storeId}/settings`}
-              style={{
-                fontSize: "13px",
-                color: "var(--gold)",
-                fontWeight: 500,
-                textDecoration: "none",
-              }}
+        <div style={{ padding: "20px 24px", borderBottom: "1.5px solid var(--border)" }}>
+          <div className="flex items-center" style={{ justifyContent: "space-between", flexWrap: "wrap", gap: "8px" }}>
+            <div>
+              <h2 className="heading-sm" style={{ margin: 0 }}>Shipping Rules</h2>
+              <p style={{ fontSize: "12px", color: "var(--text-tertiary)", margin: "4px 0 0" }}>Set cost tiers by order total</p>
+            </div>
+            <button
+              onClick={() => setShippingRules([...shippingRules, { min_total: 0, max_total: null, cost: 0, label: "Shipping" }])}
+              className="btn btn-secondary btn-sm"
+              style={{ fontSize: "12px" }}
             >
-              Edit shipping rules in Settings &rarr;
-            </Link>
+              <svg style={{ width: "14px", height: "14px" }} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" /></svg>
+              Add Rule
+            </button>
           </div>
         </div>
 
-        {shippingRules.length === 0 ? (
-          <div style={{ padding: "36px 24px", textAlign: "center" }}>
-            <div
-              style={{
-                fontSize: "14px",
-                color: "var(--text-tertiary)",
-                marginBottom: "8px",
-              }}
-            >
-              No shipping rules configured
+        <div style={{ padding: "20px 24px" }}>
+          {shippingRules.length > 0 ? (
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "16px" }}>
+              {shippingRules.map((rule, i) => (
+                <div key={i} className="grid grid-cols-5 gap-3 items-end" style={{ padding: "12px 16px", background: "var(--bg-grouped)", borderRadius: "var(--radius-sm)" }}>
+                  <div>
+                    <label style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-tertiary)", display: "block", marginBottom: "4px" }}>Min Total ($)</label>
+                    <input type="number" step="0.01" value={(rule.min_total / 100).toFixed(2)} onChange={(e) => {
+                      const updated = [...shippingRules];
+                      updated[i] = { ...updated[i], min_total: Math.round(parseFloat(e.target.value || "0") * 100) };
+                      setShippingRules(updated);
+                    }} />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-tertiary)", display: "block", marginBottom: "4px" }}>Max Total ($)</label>
+                    <input type="number" step="0.01" value={rule.max_total !== null ? (rule.max_total / 100).toFixed(2) : ""} onChange={(e) => {
+                      const updated = [...shippingRules];
+                      updated[i] = { ...updated[i], max_total: e.target.value === "" ? null : Math.round(parseFloat(e.target.value || "0") * 100) };
+                      setShippingRules(updated);
+                    }} placeholder="No limit" />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-tertiary)", display: "block", marginBottom: "4px" }}>Cost ($)</label>
+                    <input type="number" step="0.01" value={(rule.cost / 100).toFixed(2)} onChange={(e) => {
+                      const updated = [...shippingRules];
+                      updated[i] = { ...updated[i], cost: Math.round(parseFloat(e.target.value || "0") * 100) };
+                      setShippingRules(updated);
+                    }} />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: "11px", fontWeight: 600, color: "var(--text-tertiary)", display: "block", marginBottom: "4px" }}>Label</label>
+                    <input value={rule.label} onChange={(e) => {
+                      const updated = [...shippingRules];
+                      updated[i] = { ...updated[i], label: e.target.value };
+                      setShippingRules(updated);
+                    }} />
+                  </div>
+                  <div className="flex items-end">
+                    <button onClick={() => setShippingRules(shippingRules.filter((_, idx) => idx !== i))} className="btn btn-danger btn-sm" style={{ fontSize: "12px", minHeight: "36px" }}>Remove</button>
+                  </div>
+                </div>
+              ))}
             </div>
-            <Link
-              href={`/${storeId}/settings`}
-              className="btn btn-secondary btn-sm"
-              style={{ textDecoration: "none" }}
-            >
-              Configure in Settings
-            </Link>
-          </div>
-        ) : (
-          <div style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "13px" }}>
-              <thead>
-                <tr style={{ borderBottom: "1.5px solid var(--border)" }}>
-                  {["Min Order", "Max Order", "Shipping Cost"].map((h) => (
-                    <th
-                      key={h}
-                      style={{
-                        textAlign: "left",
-                        padding: "10px 16px",
-                        fontSize: "11px",
-                        fontWeight: 600,
-                        color: "var(--text-tertiary)",
-                        textTransform: "uppercase",
-                        letterSpacing: "0.04em",
-                      }}
-                    >
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {shippingRules.map((rule, i) => (
-                  <tr key={i} style={{ borderBottom: "1px solid var(--border)" }}>
-                    <td style={{ padding: "12px 16px", color: "var(--text-primary)" }}>
-                      {formatCurrency(rule.min_order)}
-                    </td>
-                    <td style={{ padding: "12px 16px", color: "var(--text-primary)" }}>
-                      {rule.max_order != null ? formatCurrency(rule.max_order) : "No limit"}
-                    </td>
-                    <td style={{ padding: "12px 16px" }}>
-                      {rule.cost === 0 ? (
-                        <span className="badge badge-green">Free</span>
-                      ) : (
-                        <span style={{ fontWeight: 600, color: "var(--text-primary)" }}>
-                          {formatCurrency(rule.cost)}
-                        </span>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+          ) : (
+            <p style={{ fontSize: "13px", color: "var(--text-tertiary)", textAlign: "center", padding: "16px 0", marginBottom: "16px" }}>No shipping rules. Free shipping by default.</p>
+          )}
+
+          <button
+            onClick={async () => {
+              setSavingRules(true);
+              try {
+                await updateStore(storeId, { shipping_rules: shippingRules });
+                showMessage("Shipping rules saved", "success");
+              } catch (err) {
+                showMessage(`Failed to save: ${(err as Error).message}`, "error");
+              }
+              setSavingRules(false);
+            }}
+            disabled={savingRules}
+            className="btn btn-primary btn-sm"
+            style={{ fontSize: "13px" }}
+          >
+            {savingRules ? "Saving..." : "Save Shipping Rules"}
+          </button>
+        </div>
       </div>
     </div>
   );
