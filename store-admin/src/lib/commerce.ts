@@ -533,6 +533,72 @@ export class CommerceClient {
       body: JSON.stringify({ subtotal, toZip }),
     });
   }
+
+  // ── Tags ─────────────────────────────────────────────
+  async getTags() {
+    return this.fetch('/api/admin/tags');
+  }
+
+  async setProductTags(productId: string, tags: string[]) {
+    return this.fetch(`/api/admin/products/${productId}/tags`, {
+      method: 'POST',
+      body: JSON.stringify({ tags }),
+    });
+  }
+
+  // ── Draft / Manual Orders ────────────────────────────
+  async createOrder(data: Record<string, unknown>) {
+    return this.fetch('/api/orders', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  // ── Shipping Labels ──────────────────────────────────
+  async purchaseLabel(orderId: string, rateId: string) {
+    return this.fetch(`/api/orders/${orderId}/label`, {
+      method: 'POST',
+      body: JSON.stringify({ rate_id: rateId }),
+    });
+  }
+
+  async getShippingRates(data: { toZip: string; items: Array<{ productId: string; variantId?: string; quantity: number }> }) {
+    return this.fetch('/api/shipping/rates', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  // ── Staff / RBAC ─────────────────────────────────────
+  async getStaff() {
+    return this.fetch('/api/admin/staff');
+  }
+
+  async createStaff(data: { name: string; email: string; role?: string; permissions?: string[] }) {
+    return this.fetch('/api/admin/staff', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async updateStaff(staffId: string, data: Record<string, unknown>) {
+    return this.fetch(`/api/admin/staff/${staffId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    });
+  }
+
+  async deleteStaff(staffId: string) {
+    return this.fetch(`/api/admin/staff/${staffId}`, { method: 'DELETE' });
+  }
+
+  // ── Partial Refund ───────────────────────────────────
+  async refundOrder(orderId: string, data: { refund_amount?: number; refund_items?: Array<{ order_item_id: string; quantity: number }> }) {
+    return this.fetch(`/api/orders/${orderId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status: data.refund_amount ? undefined : 'refunded', ...data }),
+    });
+  }
 }
 
 export function getCommerceClient(storeId: string) {

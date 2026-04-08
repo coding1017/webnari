@@ -97,6 +97,19 @@ create table if not exists variants (
 create index if not exists idx_variants_product on variants(product_id);
 
 
+-- ── 5b. Product Tags ──────────────────────────────────────────
+create table if not exists product_tags (
+  id         uuid primary key default gen_random_uuid(),
+  store_id   text not null references stores(id) on delete cascade,
+  product_id text not null references products(id) on delete cascade,
+  tag        text not null,
+  unique(product_id, tag)
+);
+
+create index if not exists idx_product_tags_store_tag on product_tags(store_id, tag);
+create index if not exists idx_product_tags_product on product_tags(product_id);
+
+
 -- ── 6. Variant Images ───────────────────────────────────────
 create table if not exists variant_images (
   id         uuid primary key default gen_random_uuid(),
@@ -115,7 +128,8 @@ create table if not exists orders (
   stripe_session_id      text,
   stripe_payment_intent  text,
   square_payment_id      text,
-  status                 text not null default 'pending',  -- pending | confirmed | processing | shipped | delivered | cancelled | refunded
+  status                 text not null default 'pending',  -- draft | pending | confirmed | processing | shipped | delivered | cancelled | refunded | partially_refunded
+  is_manual              boolean not null default false,
   customer_email         text not null,
   customer_name          text,
   customer_phone         text,
@@ -126,6 +140,9 @@ create table if not exists orders (
   total                  integer not null default 0,       -- cents
   tracking_number        text,
   tracking_url           text,
+  label_url              text,                             -- Shippo label PDF
+  shippo_transaction_id  text,
+  refund_amount          integer not null default 0,       -- cumulative refunded cents
   notes                  text,
   created_at             timestamptz not null default now(),
   updated_at             timestamptz not null default now()
@@ -145,9 +162,10 @@ create table if not exists order_items (
   product_name text not null,
   variant_name text,
   sku          text,
-  price        integer not null,     -- cents, price at time of purchase
-  quantity     integer not null,
-  image_url    text
+  price              integer not null,     -- cents, price at time of purchase
+  quantity           integer not null,
+  refunded_quantity  integer not null default 0,
+  image_url          text
 );
 
 
@@ -221,6 +239,8 @@ create table if not exists discounts (
   is_active          boolean not null default true,
   starts_at          timestamptz,
   expires_at         timestamptz,
+  config             jsonb not null default '{}',       -- BXGY config: {buy_min_qty, buy_category, get_qty, get_category, get_discount_percent}
+  auto_apply         boolean not null default false,    -- apply automatically without code
   created_at         timestamptz not null default now(),
   unique(store_id, code)
 );
@@ -291,11 +311,15 @@ create index if not exists idx_glossary_slug on glossary_terms(store_id, slug);
 -- ── 16. Store Admins ────────────────────────────────────────
 -- Maps Supabase Auth users to stores they can manage
 create table if not exists store_admins (
-  id       uuid primary key default gen_random_uuid(),
-  user_id  uuid not null,
-  store_id text not null references stores(id) on delete cascade,
-  role     text not null default 'owner',  -- 'owner' | 'manager'
-  created_at timestamptz not null default now(),
+  id           uuid primary key default gen_random_uuid(),
+  user_id      uuid,
+  store_id     text not null references stores(id) on delete cascade,
+  role         text not null default 'owner',  -- 'owner' | 'manager'
+  permissions  text[] not null default '{}',   -- e.g. {'products:write','orders:read'}
+  api_key_hash text,                           -- sha256 of staff API key
+  name         text,
+  email        text,
+  created_at   timestamptz not null default now(),
   unique(user_id, store_id)
 );
 
@@ -333,7 +357,10 @@ create table if not exists customers (
   phone              text,
   created_at         timestamptz not null default now(),
   updated_at         timestamptz not null default now(),
-  last_login_at      timestamptz,
+  last_login_at                timestamptz,
+  email_verified               boolean not null default false,
+  verification_token           text,
+  verification_token_expires   timestamptz,
   unique(store_id, email)
 );
 

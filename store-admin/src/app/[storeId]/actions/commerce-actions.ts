@@ -537,3 +537,56 @@ export async function getSeoHealth(storeId: string) {
   const client = new CommerceClient(storeId);
   return client.getSeoHealth();
 }
+
+// ── Staff / RBAC ────────────────────────────────────────────
+
+export async function getStaff(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.getStaff();
+}
+
+export async function createStaff(storeId: string, data: { name: string; email: string; role?: string; permissions?: string[] }) {
+  const client = new CommerceClient(storeId);
+  return client.createStaff(data);
+}
+
+export async function updateStaff(storeId: string, staffId: string, data: Record<string, unknown>) {
+  const client = new CommerceClient(storeId);
+  return client.updateStaff(staffId, data);
+}
+
+export async function deleteStaff(storeId: string, staffId: string) {
+  const client = new CommerceClient(storeId);
+  return client.deleteStaff(staffId);
+}
+
+// ── Tags ────────────────────────────────────────────────────
+
+export async function getTags(storeId: string) {
+  const client = new CommerceClient(storeId);
+  return client.getTags();
+}
+
+export async function setProductTags(storeId: string, productId: string, tags: string[]) {
+  const client = new CommerceClient(storeId);
+  return client.setProductTags(productId, tags);
+}
+
+// ── Manual Orders ───────────────────────────────────────────
+
+export async function createManualOrder(storeId: string, data: Record<string, unknown>) {
+  const client = new CommerceClient(storeId);
+  return client.createOrder(data);
+}
+
+// ── Shipping Labels ─────────────────────────────────────────
+
+export async function purchaseLabel(storeId: string, orderId: string, rateId: string) {
+  const client = new CommerceClient(storeId);
+  return client.purchaseLabel(orderId, rateId);
+}
+
+export async function getShippingRates(storeId: string, data: { toZip: string; items: Array<{ productId: string; variantId?: string; quantity: number }> }) {
+  const client = new CommerceClient(storeId);
+  return client.getShippingRates(data);
+}

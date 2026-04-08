@@ -188,9 +188,16 @@ export default {
       if (method === 'GET' && path === '/api/orders') {
         return await handleListOrders(request, sb, env, storeId, url, corsOrigin);
       }
+      if (method === 'POST' && path === '/api/orders') {
+        return await handleAdminCreateOrder(request, sb, env, storeId, corsOrigin);
+      }
       if (method === 'PATCH' && path.match(/^\/api\/orders\/[^/]+$/)) {
         const orderId = path.split('/').pop();
         return await handleUpdateOrder(request, sb, env, storeId, orderId, corsOrigin);
+      }
+      if (method === 'POST' && path.match(/^\/api\/orders\/[^/]+\/label$/)) {
+        const orderId = path.split('/')[3];
+        return await handlePurchaseLabel(request, sb, env, storeId, orderId, corsOrigin);
       }
 
       // Inventory
@@ -260,6 +267,31 @@ export default {
       if (method === 'DELETE' && path.match(/^\/api\/admin\/variants\/[^/]+$/)) {
         const variantId = path.split('/').pop();
         return await handleAdminDeleteVariant(request, sb, env, storeId, variantId, corsOrigin);
+      }
+
+      // Admin Tags
+      if (method === 'GET' && path === '/api/admin/tags') {
+        return await handleAdminListTags(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path.match(/^\/api\/admin\/products\/[^/]+\/tags$/)) {
+        const productId = path.split('/')[4];
+        return await handleAdminSetProductTags(request, sb, env, storeId, productId, corsOrigin);
+      }
+
+      // Admin Staff
+      if (method === 'GET' && path === '/api/admin/staff') {
+        return await handleAdminListStaff(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/admin/staff') {
+        return await handleAdminCreateStaff(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'PATCH' && path.match(/^\/api\/admin\/staff\/[^/]+$/)) {
+        const staffId = path.split('/').pop();
+        return await handleAdminUpdateStaff(request, sb, env, storeId, staffId, corsOrigin);
+      }
+      if (method === 'DELETE' && path.match(/^\/api\/admin\/staff\/[^/]+$/)) {
+        const staffId = path.split('/').pop();
+        return await handleAdminDeleteStaff(request, sb, env, storeId, staffId, corsOrigin);
       }
 
       // Admin Reviews
@@ -530,6 +562,12 @@ export default {
       }
       if (method === 'POST' && path === '/api/auth/reset-password') {
         return await handleResetPassword(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/auth/verify-email') {
+        return await handleVerifyEmail(request, sb, env, storeId, corsOrigin);
+      }
+      if (method === 'POST' && path === '/api/auth/resend-verification') {
+        return await handleResendVerification(request, sb, env, storeId, corsOrigin);
       }
 
       // ── Customer Account (requires auth token) ─────────────
@@ -1089,17 +1127,58 @@ function requireAdmin(request, env, storeId) {
   if (!auth || !auth.startsWith('Bearer ')) return false;
   const token = auth.slice(7);
 
-  // Check master admin key (your Webnari admin access)
+  // Check master admin key (your Webnari admin access) — super admin, all permissions
   if (env.ADMIN_API_KEY && token === env.ADMIN_API_KEY) return true;
 
-  // Check per-store admin key (client-specific access)
+  // Check per-store admin key (client-specific access) — full access
   if (storeId) {
     const storeKey = env[`ADMIN_API_KEY_${storeId.toUpperCase().replace(/-/g, '_')}`];
     if (storeKey && token === storeKey) return true;
   }
 
+  // Store the token for async permission checks (staff API keys)
+  request._staffToken = token;
   return false;
 }
+
+// Check staff API key from store_admins table (async version)
+async function requireAdminAsync(request, sb, env, storeId) {
+  // First try env-based keys (sync, fast)
+  if (requireAdmin(request, env, storeId)) return { role: 'owner', permissions: ['*'] };
+
+  // Then try database-backed staff key
+  const token = request._staffToken;
+  if (!token) return null;
+
+  try {
+    const tokenHash = await sha256(token);
+    const admin = await sb.query('store_admins', {
+      filters: { store_id: `eq.${storeId}`, api_key_hash: `eq.${tokenHash}` },
+      single: true,
+      select: 'id,role,permissions,name,email',
+    });
+    if (admin) return admin;
+  } catch (e) { /* store_admins table may not have api_key_hash column yet */ }
+
+  return null;
+}
+
+// Permission check — owner gets all, manager checks permissions array
+async function requirePermission(request, sb, env, storeId, permission) {
+  const admin = await requireAdminAsync(request, sb, env, storeId);
+  if (!admin) return false;
+  if (admin.role === 'owner' || (admin.permissions && admin.permissions.includes('*'))) return true;
+  if (admin.permissions && admin.permissions.includes(permission)) return true;
+  return false;
+}
+
+const PERMISSION_SCOPES = [
+  'products:read', 'products:write',
+  'orders:read', 'orders:write', 'orders:refund',
+  'discounts:write', 'customers:read',
+  'settings:write', 'integrations:write',
+  'analytics:read', 'blog:write', 'labels:purchase',
+];
 
 
 // ═══════════════════════════════════════════════════════════════
@@ -1206,6 +1285,7 @@ async function handleCreateCheckout(request, sb, env, storeId, corsOrigin) {
       price,
       quantity: item.quantity,
       image: product.img || null,
+      category: product.category || null,
     });
 
     reservations.push({
@@ -1221,37 +1301,100 @@ async function handleCreateCheckout(request, sb, env, storeId, corsOrigin) {
   let discountLabel = '';
   let freeShipping = false;
 
+  // Helper: apply a validated discount to the cart
+  function applyDiscount(discount) {
+    discountId = discount.id;
+    if (discount.type === 'percentage') {
+      discountAmount = Math.round(subtotal * parseFloat(discount.value) / 100);
+      discountLabel = `${discount.value}% off (${discount.code})`;
+    } else if (discount.type === 'fixed') {
+      discountAmount = Math.round(parseFloat(discount.value) * 100);
+      if (discountAmount > subtotal) discountAmount = subtotal;
+      discountLabel = `$${parseFloat(discount.value).toFixed(2)} off (${discount.code})`;
+    } else if (discount.type === 'free_shipping') {
+      freeShipping = true;
+      discountLabel = `Free shipping (${discount.code})`;
+    } else if (discount.type === 'bxgy') {
+      const cfg = discount.config || {};
+      const buyQty = cfg.buy_min_qty || 2;
+      const buyCategory = cfg.buy_category || null;
+      const getQty = cfg.get_qty || 1;
+      const getCategory = cfg.get_category || null;
+      const getPct = cfg.get_discount_percent || 100;
+
+      // Count qualifying "buy" items
+      let buyCount = 0;
+      for (const li of lineItems) {
+        if (!buyCategory || li.category === buyCategory) buyCount += li.quantity;
+      }
+
+      if (buyCount >= buyQty) {
+        // Find cheapest qualifying "get" items and discount them
+        const getItems = [];
+        for (const li of lineItems) {
+          if (!getCategory || li.category === getCategory) {
+            for (let i = 0; i < li.quantity; i++) getItems.push(li.price);
+          }
+        }
+        getItems.sort((a, b) => a - b); // cheapest first
+        const toDiscount = Math.min(getQty, getItems.length);
+        let bxgyAmount = 0;
+        for (let i = 0; i < toDiscount; i++) {
+          bxgyAmount += Math.round(getItems[i] * getPct / 100);
+        }
+        discountAmount = Math.min(bxgyAmount, subtotal);
+        const pctLabel = getPct === 100 ? 'Free' : `${getPct}% off`;
+        discountLabel = `Buy ${buyQty} Get ${getQty} ${pctLabel} (${discount.code})`;
+      }
+    }
+  }
+
+  // Helper: validate discount eligibility
+  function isDiscountValid(discount) {
+    const now = new Date();
+    if (discount.starts_at && new Date(discount.starts_at) > now) return false;
+    if (discount.expires_at && new Date(discount.expires_at) < now) return false;
+    if (discount.max_uses && discount.used_count >= discount.max_uses) return false;
+    if (discount.min_order && subtotal < discount.min_order) return false;
+    return true;
+  }
+
   if (discountCode) {
     try {
       const discount = await sb.query('discounts', {
         filters: { store_id: `eq.${storeId}`, code: `eq.${discountCode.toUpperCase().trim()}`, is_active: 'eq.true' },
         single: true,
       });
-
-      if (discount) {
-        const now = new Date();
-        const notStarted = discount.starts_at && new Date(discount.starts_at) > now;
-        const expired = discount.expires_at && new Date(discount.expires_at) < now;
-        const maxedOut = discount.max_uses && discount.used_count >= discount.max_uses;
-        const belowMin = discount.min_order && subtotal < discount.min_order;
-
-        if (!notStarted && !expired && !maxedOut && !belowMin) {
-          discountId = discount.id;
-          if (discount.type === 'percentage') {
-            discountAmount = Math.round(subtotal * parseFloat(discount.value) / 100);
-            discountLabel = `${discount.value}% off (${discount.code})`;
-          } else if (discount.type === 'fixed') {
-            discountAmount = Math.round(parseFloat(discount.value) * 100);
-            if (discountAmount > subtotal) discountAmount = subtotal;
-            discountLabel = `$${parseFloat(discount.value).toFixed(2)} off (${discount.code})`;
-          } else if (discount.type === 'free_shipping') {
-            freeShipping = true;
-            discountLabel = `Free shipping (${discount.code})`;
-          }
-        }
-      }
+      if (discount && isDiscountValid(discount)) applyDiscount(discount);
     } catch (e) {
       // discounts table may not exist — continue without discount
+    }
+  }
+
+  // Auto-apply: if no manual code used, check for auto-apply discounts
+  if (!discountId) {
+    try {
+      const autoDiscounts = await sb.query('discounts', {
+        filters: { store_id: `eq.${storeId}`, auto_apply: 'eq.true', is_active: 'eq.true' },
+      });
+      // Apply the best (highest discount amount) valid auto-apply discount
+      let bestAmount = 0;
+      let bestDiscount = null;
+      for (const ad of autoDiscounts) {
+        if (!isDiscountValid(ad)) continue;
+        // Temporarily calculate what this discount would give
+        const saved = { discountAmount, discountId, discountLabel, freeShipping };
+        discountAmount = 0; discountId = null; discountLabel = ''; freeShipping = false;
+        applyDiscount(ad);
+        const thisAmount = discountAmount + (freeShipping ? 1 : 0); // freeShipping counts as better than nothing
+        if (thisAmount > bestAmount) { bestAmount = thisAmount; bestDiscount = ad; }
+        // Restore
+        discountAmount = saved.discountAmount; discountId = saved.discountId;
+        discountLabel = saved.discountLabel; freeShipping = saved.freeShipping;
+      }
+      if (bestDiscount) applyDiscount(bestDiscount);
+    } catch (e) {
+      // auto-apply not available — continue
     }
   }
 
@@ -2661,13 +2804,179 @@ async function handleListOrders(request, sb, env, storeId, url, corsOrigin) {
   return json(orders, 200, corsOrigin);
 }
 
+// ═══════════════════════════════════════════════════════════════
+//  ADMIN — PURCHASE SHIPPING LABEL (Shippo)
+// ═══════════════════════════════════════════════════════════════
+
+async function handlePurchaseLabel(request, sb, env, storeId, orderId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const body = await request.json();
+  const { rate_id } = body;
+  if (!rate_id) return json({ error: 'rate_id required (from /api/shipping/rates)' }, 400, corsOrigin);
+
+  // Get Shippo API key
+  const store = await sb.query('stores', { filters: { id: `eq.${storeId}` }, single: true });
+  const shippoKey = store?.settings?.shippo_api_key || env.SHIPPO_API_KEY;
+  if (!shippoKey) return json({ error: 'Shippo API key not configured' }, 501, corsOrigin);
+
+  // Purchase label via Shippo Transaction API
+  const txnRes = await fetch('https://api.goshippo.com/transactions/', {
+    method: 'POST',
+    headers: {
+      Authorization: `ShippoToken ${shippoKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ rate: rate_id, async: false }),
+  });
+
+  if (!txnRes.ok) {
+    const err = await txnRes.json();
+    return json({ error: 'Label purchase failed', details: err.messages || err }, 500, corsOrigin);
+  }
+
+  const txn = await txnRes.json();
+
+  if (txn.status !== 'SUCCESS') {
+    return json({ error: 'Label purchase failed', details: txn.messages }, 500, corsOrigin);
+  }
+
+  // Update order with tracking + label
+  const orderUpdates = {
+    tracking_number: txn.tracking_number || null,
+    tracking_url: txn.tracking_url_provider || null,
+    label_url: txn.label_url || null,
+    shippo_transaction_id: txn.object_id || null,
+    status: 'shipped',
+    updated_at: new Date().toISOString(),
+  };
+
+  await sb.update('orders', { id: `eq.${orderId}`, store_id: `eq.${storeId}` }, orderUpdates);
+
+  // Send shipping notification email
+  const order = await sb.query('orders', { filters: { id: `eq.${orderId}`, store_id: `eq.${storeId}` }, single: true });
+  if (order) {
+    sendOrderStatusEmail(sb, env, storeId, order, 'shipped', orderUpdates.tracking_number, orderUpdates.tracking_url)
+      .catch(err => console.error('Shipping email failed:', err));
+    emitEvent(sb, env, storeId, 'order.shipped', order).catch(() => {});
+  }
+
+  return json({
+    label_url: txn.label_url,
+    tracking_number: txn.tracking_number,
+    tracking_url: txn.tracking_url_provider,
+    transaction_id: txn.object_id,
+  }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  ADMIN — CREATE MANUAL/DRAFT ORDER
+// ═══════════════════════════════════════════════════════════════
+
+async function handleAdminCreateOrder(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const body = await request.json();
+  const { customer, items, shipping_address, notes, status } = body;
+
+  if (!customer?.email) return json({ error: 'Customer email required' }, 400, corsOrigin);
+  if (!items?.length) return json({ error: 'At least one item required' }, 400, corsOrigin);
+
+  const orderStatus = status === 'confirmed' ? 'confirmed' : 'draft';
+  const orderNumber = await generateOrderNumber(sb, storeId);
+
+  // Calculate totals from items
+  let subtotal = 0;
+  const orderItems = [];
+  for (const item of items) {
+    const product = await sb.query('products', {
+      filters: { id: `eq.${item.product_id}`, store_id: `eq.${storeId}` },
+      single: true,
+    });
+    if (!product) return json({ error: `Product not found: ${item.product_id}` }, 400, corsOrigin);
+
+    let price = item.price_override || product.price;
+    let itemName = product.name;
+    let variantName = null;
+
+    if (item.variant_id) {
+      const variant = await sb.query('variants', {
+        filters: { id: `eq.${item.variant_id}`, product_id: `eq.${item.product_id}` },
+        single: true,
+      });
+      if (variant) {
+        if (!item.price_override && variant.price) price = variant.price;
+        variantName = variant.name;
+        itemName = `${product.name} — ${variant.name}`;
+      }
+    }
+
+    const qty = item.quantity || 1;
+    subtotal += price * qty;
+    orderItems.push({
+      product_id: item.product_id,
+      variant_id: item.variant_id || null,
+      product_name: itemName,
+      variant_name: variantName,
+      sku: product.sku || null,
+      price,
+      quantity: qty,
+      image_url: product.img || null,
+    });
+  }
+
+  const shippingCost = body.shipping || 0;
+  const taxAmount = body.tax || 0;
+  const total = subtotal + shippingCost + taxAmount;
+
+  const [order] = await sb.insert('orders', {
+    store_id: storeId,
+    order_number: orderNumber,
+    payment_provider: null,
+    status: orderStatus,
+    is_manual: true,
+    customer_email: customer.email,
+    customer_name: customer.name || null,
+    customer_phone: customer.phone || null,
+    shipping_address: shipping_address || null,
+    subtotal,
+    shipping: shippingCost,
+    tax: taxAmount,
+    total,
+    notes: notes || null,
+  });
+
+  // Insert order items
+  for (const oi of orderItems) {
+    await sb.insert('order_items', { order_id: order.id, ...oi });
+  }
+
+  // If confirmed immediately, deduct inventory
+  if (orderStatus === 'confirmed') {
+    for (const oi of orderItems) {
+      if (oi.variant_id) {
+        const v = await sb.query('variants', { filters: { id: `eq.${oi.variant_id}` }, single: true });
+        if (v) await sb.update('variants', { id: `eq.${oi.variant_id}` }, { stock_quantity: Math.max(0, v.stock_quantity - oi.quantity) });
+      } else {
+        const p = await sb.query('products', { filters: { id: `eq.${oi.product_id}` }, single: true });
+        if (p && p.track_inventory) await sb.update('products', { id: `eq.${oi.product_id}` }, { stock_quantity: Math.max(0, p.stock_quantity - oi.quantity) });
+      }
+    }
+    emitEvent(sb, env, storeId, 'order.created', order).catch(() => {});
+  }
+
+  return json(order, 201, corsOrigin);
+}
+
+
 async function handleUpdateOrder(request, sb, env, storeId, orderId, corsOrigin) {
   if (!requireAdmin(request, env, storeId)) {
     return json({ error: 'Unauthorized' }, 401, corsOrigin);
   }
 
   const body = await request.json();
-  const allowed = ['status', 'tracking_number', 'tracking_url', 'notes'];
+  const allowed = ['status', 'tracking_number', 'tracking_url', 'label_url', 'notes'];
   const updates = {};
   for (const key of allowed) {
     if (body[key] !== undefined) updates[key] = body[key];
@@ -2677,23 +2986,59 @@ async function handleUpdateOrder(request, sb, env, storeId, orderId, corsOrigin)
     return json({ error: 'No valid fields to update' }, 400, corsOrigin);
   }
 
-  // Handle refund if status changed to 'refunded'
-  if (updates.status === 'refunded') {
+  // Handle draft → confirmed transition (deduct inventory + send email)
+  if (updates.status === 'confirmed') {
     const order = await sb.query('orders', {
       filters: { id: `eq.${orderId}`, store_id: `eq.${storeId}` },
       single: true,
     });
+    if (order && order.status === 'draft') {
+      const items = await sb.query('order_items', { filters: { order_id: `eq.${orderId}` } });
+      for (const item of items) {
+        if (item.variant_id) {
+          const v = await sb.query('variants', { filters: { id: `eq.${item.variant_id}` }, single: true });
+          if (v) await sb.update('variants', { id: `eq.${item.variant_id}` }, { stock_quantity: Math.max(0, v.stock_quantity - item.quantity) });
+        } else {
+          const p = await sb.query('products', { filters: { id: `eq.${item.product_id}` }, single: true });
+          if (p && p.track_inventory) await sb.update('products', { id: `eq.${item.product_id}` }, { stock_quantity: Math.max(0, p.stock_quantity - item.quantity) });
+        }
+      }
+      // Send confirmation email
+      const store = await sb.query('stores', { filters: { id: `eq.${storeId}` }, single: true });
+      if (store) {
+        sendOrderConfirmationEmail(sb, env, storeId, { ...order, status: 'confirmed' }, store).catch(() => {});
+      }
+      emitEvent(sb, env, storeId, 'order.created', { ...order, status: 'confirmed' }).catch(() => {});
+    }
+  }
 
-    if (order && order.payment_provider === 'stripe' && order.stripe_payment_intent) {
+  // Handle refund (full or partial)
+  const isFullRefund = updates.status === 'refunded';
+  const isPartialRefund = body.refund_amount && !isFullRefund;
+
+  if (isFullRefund || isPartialRefund) {
+    const order = await sb.query('orders', {
+      filters: { id: `eq.${orderId}`, store_id: `eq.${storeId}` },
+      single: true,
+    });
+    if (!order) return json({ error: 'Order not found' }, 404, corsOrigin);
+
+    // Determine refund amount
+    const previouslyRefunded = order.refund_amount || 0;
+    const remaining = order.total - previouslyRefunded;
+    const refundAmount = isFullRefund ? remaining : Math.min(body.refund_amount, remaining);
+
+    if (refundAmount <= 0) return json({ error: 'Nothing left to refund' }, 400, corsOrigin);
+
+    // Process payment provider refund
+    if (order.payment_provider === 'stripe' && order.stripe_payment_intent) {
       const stripeKey = getStoreSecret(env, storeId, 'STRIPE_SECRET_KEY');
       if (stripeKey) {
+        const refundBody = `payment_intent=${order.stripe_payment_intent}&amount=${refundAmount}`;
         const refundRes = await fetch('https://api.stripe.com/v1/refunds', {
           method: 'POST',
-          headers: {
-            Authorization: `Bearer ${stripeKey}`,
-            'Content-Type': 'application/x-www-form-urlencoded',
-          },
-          body: `payment_intent=${order.stripe_payment_intent}`,
+          headers: { Authorization: `Bearer ${stripeKey}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: refundBody,
         });
         if (!refundRes.ok) {
           const err = await refundRes.json();
@@ -2702,24 +3047,13 @@ async function handleUpdateOrder(request, sb, env, storeId, orderId, corsOrigin)
       }
     }
 
-    if (order && order.payment_provider === 'square' && order.square_payment_id) {
+    if (order.payment_provider === 'square' && order.square_payment_id) {
       const accessToken = getStoreSecret(env, storeId, 'SQUARE_ACCESS_TOKEN');
       if (accessToken) {
         const refundRes = await fetch('https://connect.squareup.com/v2/refunds', {
           method: 'POST',
-          headers: {
-            'Square-Version': '2024-01-18',
-            Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            idempotency_key: crypto.randomUUID(),
-            payment_id: order.square_payment_id,
-            amount_money: {
-              amount: order.total,
-              currency: 'USD',
-            },
-          }),
+          headers: { 'Square-Version': '2024-01-18', Authorization: `Bearer ${accessToken}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ idempotency_key: crypto.randomUUID(), payment_id: order.square_payment_id, amount_money: { amount: refundAmount, currency: (order.currency || 'USD').toUpperCase() } }),
         });
         if (!refundRes.ok) {
           const err = await refundRes.json();
@@ -2728,34 +3062,69 @@ async function handleUpdateOrder(request, sb, env, storeId, orderId, corsOrigin)
       }
     }
 
-    // Restore inventory
-    if (order) {
-      const items = await sb.query('order_items', {
-        filters: { order_id: `eq.${orderId}` },
-      });
-      for (const item of items) {
-        if (item.variant_id) {
-          const variant = await sb.query('variants', {
-            filters: { id: `eq.${item.variant_id}` },
-            single: true,
+    if (order.payment_provider === 'paypal' && order.paypal_capture_id) {
+      const store = await sb.query('stores', { filters: { id: `eq.${storeId}` }, single: true });
+      const ppClientId = store?.settings?.paypal_client_id;
+      const ppSecret = store?.settings?.paypal_client_secret;
+      const ppMode = store?.settings?.paypal_mode || 'sandbox';
+      if (ppClientId && ppSecret) {
+        const ppBase = ppMode === 'live' ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com';
+        const authRes = await fetch(`${ppBase}/v1/oauth2/token`, {
+          method: 'POST',
+          headers: { Authorization: `Basic ${btoa(`${ppClientId}:${ppSecret}`)}`, 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: 'grant_type=client_credentials',
+        });
+        if (authRes.ok) {
+          const { access_token } = await authRes.json();
+          await fetch(`${ppBase}/v2/payments/captures/${order.paypal_capture_id}/refund`, {
+            method: 'POST',
+            headers: { Authorization: `Bearer ${access_token}`, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: { value: (refundAmount / 100).toFixed(2), currency_code: (order.currency || 'USD').toUpperCase() } }),
           });
-          if (variant) {
-            await sb.update('variants',
-              { id: `eq.${item.variant_id}` },
-              { stock_quantity: variant.stock_quantity + item.quantity }
-            );
-          }
+        }
+      }
+    }
+
+    // Update cumulative refund amount
+    const newRefundTotal = previouslyRefunded + refundAmount;
+    updates.refund_amount = newRefundTotal;
+    if (newRefundTotal >= order.total) {
+      updates.status = 'refunded';
+    } else if (!isFullRefund) {
+      updates.status = 'partially_refunded';
+    }
+
+    // Restore inventory for refunded items
+    if (body.refund_items && Array.isArray(body.refund_items)) {
+      // Partial: restore specific items
+      for (const ri of body.refund_items) {
+        const orderItem = await sb.query('order_items', { filters: { id: `eq.${ri.order_item_id}` }, single: true });
+        if (!orderItem) continue;
+        const refundQty = Math.min(ri.quantity, orderItem.quantity - (orderItem.refunded_quantity || 0));
+        if (refundQty <= 0) continue;
+        await sb.update('order_items', { id: `eq.${ri.order_item_id}` }, { refunded_quantity: (orderItem.refunded_quantity || 0) + refundQty });
+        // Restore stock
+        if (orderItem.variant_id) {
+          const v = await sb.query('variants', { filters: { id: `eq.${orderItem.variant_id}` }, single: true });
+          if (v) await sb.update('variants', { id: `eq.${orderItem.variant_id}` }, { stock_quantity: v.stock_quantity + refundQty });
         } else {
-          const product = await sb.query('products', {
-            filters: { id: `eq.${item.product_id}` },
-            single: true,
-          });
-          if (product) {
-            await sb.update('products',
-              { id: `eq.${item.product_id}` },
-              { stock_quantity: product.stock_quantity + item.quantity }
-            );
-          }
+          const p = await sb.query('products', { filters: { id: `eq.${orderItem.product_id}` }, single: true });
+          if (p) await sb.update('products', { id: `eq.${orderItem.product_id}` }, { stock_quantity: p.stock_quantity + refundQty });
+        }
+      }
+    } else if (isFullRefund) {
+      // Full refund: restore all inventory
+      const items = await sb.query('order_items', { filters: { order_id: `eq.${orderId}` } });
+      for (const item of items) {
+        const restoreQty = item.quantity - (item.refunded_quantity || 0);
+        if (restoreQty <= 0) continue;
+        await sb.update('order_items', { id: `eq.${item.id}` }, { refunded_quantity: item.quantity });
+        if (item.variant_id) {
+          const variant = await sb.query('variants', { filters: { id: `eq.${item.variant_id}` }, single: true });
+          if (variant) await sb.update('variants', { id: `eq.${item.variant_id}` }, { stock_quantity: variant.stock_quantity + restoreQty });
+        } else {
+          const product = await sb.query('products', { filters: { id: `eq.${item.product_id}` }, single: true });
+          if (product) await sb.update('products', { id: `eq.${item.product_id}` }, { stock_quantity: product.stock_quantity + restoreQty });
         }
       }
     }
@@ -3393,10 +3762,11 @@ async function handleAdminStats(request, sb, env, storeId, corsOrigin) {
 
 // Helper: enrich a product row with images, variants, and reviews for public API
 async function enrichProductForPublic(sb, product) {
-  const [images, variants, reviews] = await Promise.all([
+  const [images, variants, reviews, tagRows] = await Promise.all([
     sb.query('product_images', { filters: { product_id: `eq.${product.id}` }, order: 'sort_order.asc' }),
     sb.query('variants', { filters: { product_id: `eq.${product.id}` }, order: 'sort_order.asc' }),
     sb.query('reviews', { filters: { product_id: `eq.${product.id}`, approved: 'eq.true' }, order: 'created_at.desc' }),
+    sb.query('product_tags', { filters: { product_id: `eq.${product.id}` }, select: 'tag' }).catch(() => []),
   ]);
 
   const variantsWithImgs = await Promise.all(variants.map(async v => {
@@ -3431,19 +3801,32 @@ async function enrichProductForPublic(sb, product) {
     isCollection: product.is_collection || false,
     reviews: reviews.map(r => ({ name: r.name, text: r.text, rating: r.rating, date: r.created_at?.slice(0, 10) || '' })),
     variants: variantsWithImgs.length > 0 ? variantsWithImgs : undefined,
+    tags: tagRows.map(t => t.tag),
   };
 }
 
 async function handlePublicListProducts(sb, storeId, url, corsOrigin) {
   const category = url.searchParams.get('category');
+  const tag = url.searchParams.get('tag');
   const filters = { store_id: `eq.${storeId}` };
   if (category) filters.category = `eq.${category}`;
 
-  const products = await sb.query('products', {
+  let products = await sb.query('products', {
     filters,
     order: 'sort_order.asc,created_at.desc',
     limit: 100,
   });
+
+  // Filter by tag if requested
+  if (tag) {
+    try {
+      const taggedIds = (await sb.query('product_tags', {
+        filters: { store_id: `eq.${storeId}`, tag: `eq.${tag.toLowerCase().trim()}` },
+        select: 'product_id',
+      })).map(t => t.product_id);
+      products = products.filter(p => taggedIds.includes(p.id));
+    } catch (e) { /* product_tags may not exist */ }
+  }
 
   const enriched = await Promise.all(products.map(p => enrichProductForPublic(sb, p)));
   return json(enriched, 200, corsOrigin);
@@ -3726,6 +4109,126 @@ async function handleAdminDeleteVariant(request, sb, env, storeId, variantId, co
 
 
 // ═══════════════════════════════════════════════════════════════
+//  ADMIN — TAGS
+// ═══════════════════════════════════════════════════════════════
+
+async function handleAdminListTags(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+  try {
+    const tags = await sb.query('product_tags', { filters: { store_id: `eq.${storeId}` }, select: 'tag' });
+    const unique = [...new Set(tags.map(t => t.tag))].sort();
+    return json(unique, 200, corsOrigin);
+  } catch (e) {
+    return json([], 200, corsOrigin);
+  }
+}
+
+async function handleAdminSetProductTags(request, sb, env, storeId, productId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const body = await request.json();
+  const tags = body.tags || [];
+
+  // Verify product belongs to store
+  const product = await sb.query('products', { filters: { id: `eq.${productId}`, store_id: `eq.${storeId}` }, single: true });
+  if (!product) return json({ error: 'Product not found' }, 404, corsOrigin);
+
+  // Delete existing tags
+  try { await sb.delete('product_tags', { product_id: `eq.${productId}` }); } catch (e) { /* table may not exist */ }
+
+  // Insert new tags
+  if (tags.length > 0) {
+    for (const tag of tags) {
+      await sb.insert('product_tags', {
+        store_id: storeId,
+        product_id: productId,
+        tag: tag.toLowerCase().trim(),
+      });
+    }
+  }
+
+  return json({ tags }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
+//  ADMIN — STAFF MANAGEMENT (RBAC)
+// ═══════════════════════════════════════════════════════════════
+
+async function handleAdminListStaff(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const staff = await sb.query('store_admins', {
+    filters: { store_id: `eq.${storeId}` },
+    select: 'id,role,permissions,name,email,created_at',
+    order: 'created_at.asc',
+  });
+
+  return json({ staff, available_permissions: PERMISSION_SCOPES }, 200, corsOrigin);
+}
+
+async function handleAdminCreateStaff(request, sb, env, storeId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const body = await request.json();
+  const { name, email, role, permissions } = body;
+
+  if (!name || !email) return json({ error: 'Name and email required' }, 400, corsOrigin);
+
+  // Generate a unique API key for this staff member
+  const rawKey = `wsk_${storeId}_${randomToken(24)}`;
+  const keyHash = await sha256(rawKey);
+
+  const staffRole = role === 'owner' ? 'owner' : 'manager';
+  const staffPermissions = staffRole === 'owner' ? ['*'] : (permissions || []);
+
+  const [staffMember] = await sb.insert('store_admins', {
+    store_id: storeId,
+    user_id: null,
+    role: staffRole,
+    permissions: staffPermissions,
+    api_key_hash: keyHash,
+    name,
+    email,
+  });
+
+  return json({
+    id: staffMember.id,
+    name,
+    email,
+    role: staffRole,
+    permissions: staffPermissions,
+    api_key: rawKey, // Only returned once — admin must save this
+  }, 201, corsOrigin);
+}
+
+async function handleAdminUpdateStaff(request, sb, env, storeId, staffId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  const body = await request.json();
+  const updates = {};
+  if (body.name !== undefined) updates.name = body.name;
+  if (body.email !== undefined) updates.email = body.email;
+  if (body.role !== undefined) updates.role = body.role;
+  if (body.permissions !== undefined) updates.permissions = body.permissions;
+
+  if (Object.keys(updates).length === 0) {
+    return json({ error: 'No valid fields to update' }, 400, corsOrigin);
+  }
+
+  await sb.update('store_admins', { id: `eq.${staffId}`, store_id: `eq.${storeId}` }, updates);
+  return json({ updated: true }, 200, corsOrigin);
+}
+
+async function handleAdminDeleteStaff(request, sb, env, storeId, staffId, corsOrigin) {
+  if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
+
+  await sb.delete('store_admins', { id: `eq.${staffId}`, store_id: `eq.${storeId}` });
+  return json({ deleted: true }, 200, corsOrigin);
+}
+
+
+// ═══════════════════════════════════════════════════════════════
 //  ADMIN — REVIEWS
 // ═══════════════════════════════════════════════════════════════
 
@@ -4000,18 +4503,32 @@ async function handleAdminCreateDiscount(request, sb, env, storeId, corsOrigin) 
   if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const body = await request.json();
-  if (!body.code) return json({ error: 'Discount code required' }, 400, corsOrigin);
+  if (!body.code && !body.is_automatic) return json({ error: 'Discount code required' }, 400, corsOrigin);
+
+  // Normalize type name from admin UI
+  const discountType = (body.type === 'buy_x_get_y') ? 'bxgy' : (body.type || 'percentage');
+
+  // Build BXGY config if applicable
+  const config = discountType === 'bxgy' ? {
+    buy_min_qty: parseInt(body.buy_min_qty) || 2,
+    buy_category: body.buy_category || null,
+    get_qty: parseInt(body.get_qty) || 1,
+    get_category: body.get_category || null,
+    get_discount_percent: parseFloat(body.get_discount_percent) || 100,
+  } : (body.config || {});
 
   const discount = await sb.insert('discounts', {
     store_id: storeId,
-    code: body.code.toUpperCase().replace(/\s+/g, ''),
-    type: body.type || 'percentage',
+    code: body.is_automatic ? `AUTO_${crypto.randomUUID().slice(0, 8).toUpperCase()}` : body.code.toUpperCase().replace(/\s+/g, ''),
+    type: discountType,
     value: body.value || 0,
-    min_order: body.min_order || 0,
+    min_order: body.min_order || body.min_subtotal || 0,
     max_uses: body.max_uses || null,
     is_active: body.is_active !== undefined ? body.is_active : true,
     starts_at: body.starts_at || null,
     expires_at: body.expires_at || null,
+    config,
+    auto_apply: body.is_automatic || body.auto_apply || false,
   });
 
   return json(discount, 201, corsOrigin);
@@ -4021,7 +4538,7 @@ async function handleAdminUpdateDiscount(request, sb, env, storeId, discountId, 
   if (!requireAdmin(request, env, storeId)) return json({ error: 'Unauthorized' }, 401, corsOrigin);
 
   const body = await request.json();
-  const allowed = ['code', 'type', 'value', 'min_order', 'max_uses', 'is_active', 'starts_at', 'expires_at'];
+  const allowed = ['code', 'type', 'value', 'min_order', 'max_uses', 'is_active', 'starts_at', 'expires_at', 'config', 'auto_apply'];
   const updates = {};
   for (const key of allowed) {
     if (body[key] !== undefined) updates[key] = body[key];
@@ -7402,29 +7919,56 @@ async function handleCustomerRegister(request, sb, env, storeId, corsOrigin) {
 
   // Hash password and create customer
   const passwordHash = await hashPassword(password);
+
+  // Generate email verification token
+  const verificationRaw = randomToken(32);
+  const verificationHash = await sha256(verificationRaw);
+
   const customer = await sb.insert('customers', {
     store_id: storeId,
     email: email.toLowerCase().trim(),
     password_hash: passwordHash,
     name: name || null,
     phone: phone || null,
+    email_verified: false,
+    verification_token: verificationHash,
+    verification_token_expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(), // 24h
   });
+
+  // Send verification email (non-blocking)
+  const store = await sb.query('stores', { filters: { id: `eq.${storeId}` }, single: true, select: 'name,domain,settings' });
+  const storeName = store?.name || 'Store';
+  const domain = store?.domain || store?.settings?.domain || 'webnari.io';
+  const verifyUrl = `https://${domain}/verify-email?token=${verificationRaw}&store=${storeId}`;
+
+  sendEmail(env, {
+    to: email.toLowerCase().trim(),
+    subject: `${storeName} — Verify Your Email`,
+    html: emailShell(storeName, `
+      <h2 style="margin:0 0 8px;font-size:22px;color:#111827;">Verify Your Email</h2>
+      <p style="margin:0 0 24px;font-size:14px;color:#6b7280;">Thanks for creating an account! Please verify your email address to get started.</p>
+      <p style="margin:0 0 24px;"><a href="${esc(verifyUrl)}" style="display:inline-block;padding:14px 28px;background:#111827;color:#ffffff;text-decoration:none;border-radius:6px;font-size:14px;font-weight:600;">Verify Email</a></p>
+      <p style="margin:0;font-size:12px;color:#9ca3af;">This link expires in 24 hours. If you didn't create this account, ignore this email.</p>
+    `),
+    storeSettings: store?.settings,
+  }).catch(err => console.error('Verification email failed:', err));
 
   // Emit customer.created webhook event
   emitEvent(sb, env, storeId, 'customer.created', { id: customer.id, email: customer.email, name: customer.name }).catch(() => {});
 
-  // Generate JWT
+  // Generate JWT (customer can browse but email_verified=false)
   const secret = env.JWT_SECRET || env.ADMIN_API_KEY || 'webnari-jwt-secret';
   const token = await createJWT({
     sub: customer.id,
     email: customer.email,
     store: storeId,
+    email_verified: false,
     exp: Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60, // 30 days
   }, secret);
 
   return json({
     token,
-    customer: { id: customer.id, email: customer.email, name: customer.name },
+    customer: { id: customer.id, email: customer.email, name: customer.name, email_verified: false },
   }, 201, corsOrigin);
 }
 
@@ -7438,7 +7982,7 @@ async function handleCustomerLogin(request, sb, env, storeId, corsOrigin) {
   const customer = await sb.query('customers', {
     filters: { store_id: `eq.${storeId}`, email: `eq.${email.toLowerCase().trim()}` },
     single: true,
-    select: 'id,email,name,phone,password_hash',
+    select: 'id,email,name,phone,password_hash,email_verified',
   });
 
   if (!customer) {
@@ -7464,7 +8008,7 @@ async function handleCustomerLogin(request, sb, env, storeId, corsOrigin) {
 
   return json({
     token,
-    customer: { id: customer.id, email: customer.email, name: customer.name, phone: customer.phone },
+    customer: { id: customer.id, email: customer.email, name: customer.name, phone: customer.phone, email_verified: customer.email_verified ?? true },
   }, 200, corsOrigin);
 }
 
@@ -7546,6 +8090,75 @@ async function handleResetPassword(request, sb, env, storeId, corsOrigin) {
 
   return json({ ok: true }, 200, corsOrigin);
 }
+
+// ── Email Verification Handlers ──
+
+async function handleVerifyEmail(request, sb, env, storeId, corsOrigin) {
+  const { token } = await request.json();
+  if (!token) return json({ error: 'Verification token required' }, 400, corsOrigin);
+
+  const tokenHash = await sha256(token);
+  const customer = await sb.query('customers', {
+    filters: { store_id: `eq.${storeId}`, verification_token: `eq.${tokenHash}` },
+    single: true,
+    select: 'id,email,verification_token_expires',
+  });
+
+  if (!customer) return json({ error: 'Invalid verification link' }, 400, corsOrigin);
+  if (customer.verification_token_expires && new Date(customer.verification_token_expires) < new Date()) {
+    return json({ error: 'Verification link has expired. Please request a new one.' }, 400, corsOrigin);
+  }
+
+  await sb.update('customers', { id: `eq.${customer.id}` }, {
+    email_verified: true,
+    verification_token: null,
+    verification_token_expires: null,
+    updated_at: new Date().toISOString(),
+  });
+
+  return json({ ok: true, email: customer.email }, 200, corsOrigin);
+}
+
+async function handleResendVerification(request, sb, env, storeId, corsOrigin) {
+  const { email } = await request.json();
+  if (!email) return json({ ok: true }, 200, corsOrigin); // prevent enumeration
+
+  const customer = await sb.query('customers', {
+    filters: { store_id: `eq.${storeId}`, email: `eq.${email.toLowerCase().trim()}` },
+    single: true,
+    select: 'id,email,email_verified',
+  });
+
+  if (customer && !customer.email_verified) {
+    const verificationRaw = randomToken(32);
+    const verificationHash = await sha256(verificationRaw);
+
+    await sb.update('customers', { id: `eq.${customer.id}` }, {
+      verification_token: verificationHash,
+      verification_token_expires: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+    });
+
+    const store = await sb.query('stores', { filters: { id: `eq.${storeId}` }, single: true, select: 'name,domain,settings' });
+    const storeName = store?.name || 'Store';
+    const domain = store?.domain || store?.settings?.domain || 'webnari.io';
+    const verifyUrl = `https://${domain}/verify-email?token=${verificationRaw}&store=${storeId}`;
+
+    sendEmail(env, {
+      to: customer.email,
+      subject: `${storeName} — Verify Your Email`,
+      html: emailShell(storeName, `
+        <h2 style="margin:0 0 8px;font-size:22px;color:#111827;">Verify Your Email</h2>
+        <p style="margin:0 0 24px;font-size:14px;color:#6b7280;">Click the button below to verify your email address.</p>
+        <p style="margin:0 0 24px;"><a href="${esc(verifyUrl)}" style="display:inline-block;padding:14px 28px;background:#111827;color:#ffffff;text-decoration:none;border-radius:6px;font-size:14px;font-weight:600;">Verify Email</a></p>
+        <p style="margin:0;font-size:12px;color:#9ca3af;">This link expires in 24 hours.</p>
+      `),
+      storeSettings: store?.settings,
+    }).catch(err => console.error('Resend verification email failed:', err));
+  }
+
+  return json({ ok: true }, 200, corsOrigin);
+}
+
 
 // ── Account Handlers (require JWT) ──
 
@@ -9474,6 +10087,15 @@ async function handleValidateDiscount(request, sb, storeId, corsOrigin) {
   } else if (discount.type === 'free_shipping') {
     discountAmount = 0; // Applied to shipping, not subtotal
     label = 'Free shipping';
+  } else if (discount.type === 'bxgy') {
+    const cfg = discount.config || {};
+    const buyQty = cfg.buy_min_qty || 2;
+    const getQty = cfg.get_qty || 1;
+    const getPct = cfg.get_discount_percent || 100;
+    const pctLabel = getPct === 100 ? 'Free' : `${getPct}% off`;
+    label = `Buy ${buyQty} Get ${getQty} ${pctLabel}`;
+    // Exact discount calculated at checkout when cart items are known
+    discountAmount = 0;
   }
 
   return json({
@@ -9484,6 +10106,7 @@ async function handleValidateDiscount(request, sb, storeId, corsOrigin) {
     discountAmount,
     label,
     id: discount.id,
+    ...(discount.type === 'bxgy' ? { config: discount.config } : {}),
   }, 200, corsOrigin);
 }
 
