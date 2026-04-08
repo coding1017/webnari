@@ -35,6 +35,7 @@ function formatValue(type: string, value: number) {
   if (type === "percentage") return `${value}% off`;
   if (type === "fixed") return `$${(value / 100).toFixed(2)} off`;
   if (type === "bxgy" || type === "buy_x_get_y") return "Buy X Get Y";
+  if (type === "quantity_tier") return "Quantity Tiers";
   return "Free shipping";
 }
 
@@ -72,6 +73,12 @@ export default function DiscountsPage() {
   const [newGetQty, setNewGetQty] = useState("1");
   const [newGetCategory, setNewGetCategory] = useState("");
   const [newGetDiscountPercent, setNewGetDiscountPercent] = useState("100");
+  // Quantity tier fields
+  const [newTiers, setNewTiers] = useState<{ min_qty: string; discount_percent: string }[]>([
+    { min_qty: "3", discount_percent: "10" },
+    { min_qty: "6", discount_percent: "15" },
+    { min_qty: "12", discount_percent: "20" },
+  ]);
 
   useEffect(() => { load(); }, [storeId]);
 
@@ -96,7 +103,7 @@ export default function DiscountsPage() {
       setMessage("Discount code is required");
       return;
     }
-    if (newType !== "buy_x_get_y" && newType !== "free_shipping" && !newValue.trim()) {
+    if (newType !== "buy_x_get_y" && newType !== "quantity_tier" && newType !== "free_shipping" && !newValue.trim()) {
       setMessage("Discount value is required");
       return;
     }
@@ -120,6 +127,12 @@ export default function DiscountsPage() {
           get_qty: parseInt(newGetQty) || 1,
           get_category: newGetCategory || null,
           get_discount_percent: parseFloat(newGetDiscountPercent) || 100,
+        } : {}),
+        ...(newType === "quantity_tier" ? {
+          tiers: newTiers.map(t => ({
+            min_qty: parseInt(t.min_qty) || 1,
+            discount_percent: parseFloat(t.discount_percent) || 0,
+          })).filter(t => t.min_qty > 0 && t.discount_percent > 0),
         } : {}),
       });
       resetForm();
@@ -228,11 +241,12 @@ export default function DiscountsPage() {
                 <option value="fixed">Fixed Amount Off</option>
                 <option value="free_shipping">Free Shipping</option>
                 <option value="buy_x_get_y">Buy X Get Y</option>
+                <option value="quantity_tier">Quantity Tiers</option>
               </select>
             </div>
 
-            {/* Value (hidden for BXGY and free shipping) */}
-            {newType !== "buy_x_get_y" && (
+            {/* Value (hidden for BXGY, quantity_tier, and free shipping) */}
+            {newType !== "buy_x_get_y" && newType !== "quantity_tier" && (
               <div>
                 <label>{newType === "percentage" ? "Percentage (%)" : newType === "fixed" ? "Amount ($)" : "Value"}</label>
                 <input
@@ -279,6 +293,54 @@ export default function DiscountsPage() {
               </div>
               <p style={{ fontSize: "11px", color: "var(--text-tertiary)", marginTop: "8px" }}>
                 Example: Buy 2 from &quot;pouches&quot;, get 1 from &quot;pouches&quot; at 100% off (free)
+              </p>
+            </div>
+          )}
+
+          {/* Quantity Tier fields */}
+          {newType === "quantity_tier" && (
+            <div style={{ padding: "16px", background: "var(--bg-grouped)", borderRadius: "var(--radius-sm)", border: "1px solid var(--border)", marginBottom: "16px" }}>
+              <div className="flex items-center justify-between" style={{ marginBottom: "12px" }}>
+                <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--text-secondary)" }}>
+                  Quantity Tiers
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setNewTiers([...newTiers, { min_qty: "", discount_percent: "" }])}
+                  style={{ fontSize: "11px", fontWeight: 600, color: "var(--blue)", background: "none", border: "none", cursor: "pointer" }}
+                >
+                  + Add Tier
+                </button>
+              </div>
+              {newTiers.map((tier, i) => (
+                <div key={i} className="grid grid-cols-3 gap-3 items-end" style={{ marginBottom: "8px" }}>
+                  <div>
+                    <label>Min Quantity</label>
+                    <input type="number" min="1" value={tier.min_qty} onChange={(e) => {
+                      const updated = [...newTiers];
+                      updated[i] = { ...updated[i], min_qty: e.target.value };
+                      setNewTiers(updated);
+                    }} placeholder="3" />
+                  </div>
+                  <div>
+                    <label>Discount (%)</label>
+                    <input type="number" min="1" max="100" value={tier.discount_percent} onChange={(e) => {
+                      const updated = [...newTiers];
+                      updated[i] = { ...updated[i], discount_percent: e.target.value };
+                      setNewTiers(updated);
+                    }} placeholder="10" />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setNewTiers(newTiers.filter((_, idx) => idx !== i))}
+                    style={{ fontSize: "11px", color: "var(--red)", background: "none", border: "none", cursor: "pointer", padding: "8px 0", textAlign: "left" }}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+              <p style={{ fontSize: "11px", color: "var(--text-tertiary)", marginTop: "8px" }}>
+                Buy 3+ items → 10% off, 6+ → 15% off, 12+ → 20% off. Applied automatically to the best matching tier.
               </p>
             </div>
           )}

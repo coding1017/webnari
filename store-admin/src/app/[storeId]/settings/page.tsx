@@ -21,6 +21,11 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState("");
 
+  // Local Pickup
+  const [pickupEnabled, setPickupEnabled] = useState(false);
+  const [pickupAddress, setPickupAddress] = useState("");
+  const [pickupInstructions, setPickupInstructions] = useState("");
+
   // Tax Rate Lookup
   const [lookupZip, setLookupZip] = useState("");
   const [lookupAmount, setLookupAmount] = useState("");
@@ -47,6 +52,10 @@ export default function SettingsPage() {
       const cfg = await getStoreConfig(storeId);
       setConfig(cfg);
       setStoreName(cfg.name);
+      const s = cfg.settings || {};
+      setPickupEnabled(s.pickup_enabled || false);
+      setPickupAddress(s.pickup_address || "");
+      setPickupInstructions(s.pickup_instructions || "");
     } catch {
       // empty
     }
@@ -81,6 +90,9 @@ export default function SettingsPage() {
     try {
       await updateStore(storeId, {
         name: storeName,
+        pickup_enabled: pickupEnabled,
+        pickup_address: pickupAddress || null,
+        pickup_instructions: pickupInstructions || null,
       });
       setMessage("Settings saved");
       setTimeout(() => setMessage(""), 3000);
@@ -238,6 +250,42 @@ export default function SettingsPage() {
               )}
             </div>
           </div>
+        )}
+      </div>
+
+      {/* Local Pickup */}
+      <div className="card" style={{ marginBottom: "24px" }}>
+        <div className="flex items-center gap-3" style={{ marginBottom: "20px" }}>
+          <div style={{ width: "36px", height: "36px", borderRadius: "var(--radius-sm)", background: "#fef3c7", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <svg style={{ width: "18px", height: "18px" }} fill="none" viewBox="0 0 24 24" stroke="#f59e0b" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </div>
+          <div>
+            <h2 className="heading-sm" style={{ marginBottom: 0 }}>Local Pickup</h2>
+            <p style={{ fontSize: "12px", color: "var(--text-tertiary)", margin: 0 }}>Let customers pick up orders at your location</p>
+          </div>
+        </div>
+
+        <div style={{ marginBottom: "16px" }}>
+          <label className="flex items-center gap-2 cursor-pointer" style={{ marginBottom: 0 }}>
+            <input type="checkbox" checked={pickupEnabled} onChange={(e) => setPickupEnabled(e.target.checked)} />
+            <span style={{ fontSize: "14px", fontWeight: 500, color: "var(--text-secondary)" }}>Enable local pickup at checkout</span>
+          </label>
+        </div>
+
+        {pickupEnabled && (
+          <>
+            <div style={{ marginBottom: "12px" }}>
+              <label>Pickup Address</label>
+              <input value={pickupAddress} onChange={(e) => setPickupAddress(e.target.value)} placeholder="123 Main St, Miami, FL 33101" />
+            </div>
+            <div>
+              <label>Pickup Instructions</label>
+              <textarea value={pickupInstructions} onChange={(e) => setPickupInstructions(e.target.value)} rows={2} placeholder="e.g. Ring doorbell, pickup from front desk, available Mon-Fri 9am-5pm" />
+            </div>
+          </>
         )}
       </div>
 

@@ -667,9 +667,13 @@ td.bold { color: var(--white); font-weight: 600; }
 }
 .cat-card-showcase-slide.active { opacity: 1; }
 .cat-card-showcase-slide iframe {
-  width: 400%; height: 400%; transform: scale(0.25); transform-origin: 0 0;
-  border: none; pointer-events: none;
+  display: none; /* PERF: disabled — was crashing mobile with 90+ iframes */
 }
+.cat-card-showcase-icon {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(135deg, var(--_cat-color, var(--indigo))10, var(--_cat-color, var(--indigo))25);
+}
+.cat-card-showcase-icon svg { width: 40px; height: 40px; color: var(--_cat-color, var(--indigo)); opacity: 0.5; }
 .cat-card-showcase-empty {
   position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
   background: linear-gradient(135deg, var(--_cat-color, var(--indigo))08, var(--_cat-color, var(--indigo))18);
@@ -1297,7 +1301,12 @@ td.bold { color: var(--white); font-weight: 600; }
   .templates-grid { grid-template-columns: 1fr; }
 
   /* Tables: side scroll */
-  .table-wrap { -webkit-overflow-scrolling: touch; }
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  table { min-width: 600px; }
+
+  /* Horizontal scroll cards */
+  .overview-grid { overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap; }
+  .overview-grid > div { min-width: 200px; flex-shrink: 0; }
 
   /* Filter bar stacks */
   .filter-bar { flex-direction: column; align-items: stretch; }
@@ -4299,18 +4308,10 @@ function renderTemplateCard(t, usage, useMobilePreview) {
       <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><circle cx="3.5" cy="2" r="1.2"/><circle cx="8.5" cy="2" r="1.2"/><circle cx="3.5" cy="6" r="1.2"/><circle cx="8.5" cy="6" r="1.2"/><circle cx="3.5" cy="10" r="1.2"/><circle cx="8.5" cy="10" r="1.2"/></svg>
     </div>
     <div class="template-preview" style="height:160px;">
-        ${hasLiveUrl ? `
-          <div style="position:absolute;inset:0;overflow:hidden;border-radius:var(--radius-lg) var(--radius-lg) 0 0;">
-            <iframe src="${t.path}" scrolling="no" loading="lazy" tabindex="-1" data-tpl-preview style="width:1280px;height:900px;border:none;transform:scale(0.3);transform-origin:top left;pointer-events:none;overflow:hidden;"></iframe>
-          </div>
-          <div style="position:absolute;inset:0;z-index:2;"></div>
-          <div style="position:absolute;inset:0;background:linear-gradient(to bottom,transparent 60%,rgba(0,0,0,0.35) 100%);z-index:3;pointer-events:none;"></div>
-          <div style="position:absolute;top:8px;right:10px;z-index:4;background:rgba(255,255,255,0.85);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:10px;font-weight:600;color:var(--white);letter-spacing:0.04em;">LIVE</div>
-        ` : `
-          <div class="template-preview-bg" style="background:${t.color};"></div>
-          <div class="template-preview-grid"></div>
-          <div class="template-icon">${t.icon || ''}</div>
-        `}
+        <div class="template-preview-bg" style="background:linear-gradient(135deg, ${t.color}22, ${t.color}44);"></div>
+        <div class="template-preview-grid"></div>
+        <div class="template-icon">${t.icon || ''}</div>
+        ${hasLiveUrl ? `<div style="position:absolute;top:8px;right:10px;z-index:4;background:rgba(255,255,255,0.85);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:6px;padding:3px 8px;font-size:10px;font-weight:600;color:var(--green);letter-spacing:0.04em;">LIVE</div>` : ''}
     </div>
     <div class="template-info">
       <div class="template-name">${t.name}</div>
@@ -4477,23 +4478,9 @@ function renderTemplates() {
     cats.forEach(cat => {
       const n = counts[cat.id] || 0;
       const ready = readyCounts[cat.id] || 0;
-      // Get live website URLs for this category's showcase strip
-      const liveUrls = DB.templates.filter(t => t.category === cat.id && t.status === 'ready' && t.path).map(t => t.path);
-      // Build showcase slides
-      let showcaseHtml = '';
-      if (liveUrls.length > 0) {
-        liveUrls.forEach((url, i) => {
-          showcaseHtml += `<div class="cat-card-showcase-slide${i===0?' active':''}" data-slide="${i}"><iframe src="${url}" scrolling="no" loading="lazy" tabindex="-1"></iframe></div>`;
-        });
-        // Dot indicators
-        if (liveUrls.length > 1) {
-          showcaseHtml += '<div class="cat-card-dots">';
-          liveUrls.forEach((_, i) => { showcaseHtml += `<div class="cat-card-dot${i===0?' active':''}"></div>`; });
-          showcaseHtml += '</div>';
-        }
-      } else {
-        showcaseHtml = `<div class="cat-card-showcase-empty"><div style="width:40px;height:40px;color:var(--_cat-color,var(--indigo));opacity:0.4;">${cat.icon}</div></div>`;
-      }
+      // Static showcase — icon + gradient (no iframes for performance)
+      const ready = readyCounts[cat.id] || 0;
+      let showcaseHtml = `<div class="cat-card-showcase-icon">${cat.icon}</div>`;
       // Floating particles (5 per card, random positions)
       let particlesHtml = '<div class="cat-card-particles">';
       for (let pi = 0; pi < 5; pi++) {
@@ -4532,12 +4519,7 @@ function renderTemplates() {
     }
 
     container.innerHTML = html;
-    // Scroll showcase iframes to 20% so they show the actual animation
-    container.querySelectorAll('.cat-card-showcase-slide iframe').forEach(function(iframe) {
-      iframe.addEventListener('load', function() {
-        try { iframe.contentWindow.scrollTo(0, iframe.contentDocument.documentElement.scrollHeight * 0.50); } catch(e) {}
-      });
-    });
+    // No iframe listeners needed — static showcase icons
     // ── Drag & drop reorder for category cards ──
     initCatDragDrop(container);
     return;
@@ -4588,12 +4570,7 @@ function renderTemplates() {
 
   container.innerHTML = html;
 
-  // Scroll template iframe previews to ~40% to show parallax mid-build
-  container.querySelectorAll('iframe[data-tpl-preview]').forEach(iframe => {
-    iframe.addEventListener('load', function() {
-      try { iframe.contentWindow.scrollTo(0, iframe.contentDocument.documentElement.scrollHeight * 0.35); } catch(e) {}
-    });
-  });
+  // No iframe listeners — static previews for performance
   // ── Drag & drop reorder for template cards ──
   initTplDragDrop(container, activeCat);
 }

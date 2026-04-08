@@ -1343,6 +1343,15 @@ async function handleCreateCheckout(request, sb, env, storeId, corsOrigin) {
     } else if (discount.type === 'free_shipping') {
       freeShipping = true;
       discountLabel = `Free shipping (${discount.code})`;
+    } else if (discount.type === 'quantity_tier') {
+      const cfg = discount.config || {};
+      const tiers = (cfg.tiers || []).sort((a, b) => b.min_qty - a.min_qty);
+      const totalQty = lineItems.reduce((sum, li) => sum + li.quantity, 0);
+      const matchedTier = tiers.find(t => totalQty >= t.min_qty);
+      if (matchedTier) {
+        discountAmount = Math.round(subtotal * matchedTier.discount_percent / 100);
+        discountLabel = `${matchedTier.discount_percent}% off (${totalQty}+ items, ${discount.code})`;
+      }
     } else if (discount.type === 'bxgy') {
       const cfg = discount.config || {};
       const buyQty = cfg.buy_min_qty || 2;
@@ -4820,14 +4829,25 @@ async function handleAdminCreateDiscount(request, sb, env, storeId, corsOrigin) 
   // Normalize type name from admin UI
   const discountType = (body.type === 'buy_x_get_y') ? 'bxgy' : (body.type || 'percentage');
 
-  // Build BXGY config if applicable
-  const config = discountType === 'bxgy' ? {
-    buy_min_qty: parseInt(body.buy_min_qty) || 2,
-    buy_category: body.buy_category || null,
-    get_qty: parseInt(body.get_qty) || 1,
-    get_category: body.get_category || null,
-    get_discount_percent: parseFloat(body.get_discount_percent) || 100,
-  } : (body.config || {});
+  // Build config for complex discount types
+  let config = body.config || {};
+  if (discountType === 'bxgy') {
+    config = {
+      buy_min_qty: parseInt(body.buy_min_qty) || 2,
+      buy_category: body.buy_category || null,
+      get_qty: parseInt(body.get_qty) || 1,
+      get_category: body.get_category || null,
+      get_discount_percent: parseFloat(body.get_discount_percent) || 100,
+    };
+  } else if (discountType === 'quantity_tier' && body.tiers) {
+    config = {
+      tiers: body.tiers.map(t => ({
+        min_qty: parseInt(t.min_qty) || 1,
+        discount_percent: parseFloat(t.discount_percent) || 0,
+      })).filter(t => t.min_qty > 0 && t.discount_percent > 0)
+        .sort((a, b) => a.min_qty - b.min_qty),
+    };
+  }
 
   const discount = await sb.insert('discounts', {
     store_id: storeId,
@@ -9080,16 +9100,19 @@ async function handleStructuredData(request, sb, storeId, url, corsOrigin) {
 
   const schemas = [];
 
-  // Always include Organization/Store schema
+  // Always include Organization/Store schema — use LocalBusiness when address is present
+  const hasAddress = store.business_address && store.business_address.street;
+  const businessType = store.business_type || (hasAddress ? 'LocalBusiness' : 'Store');
   const orgSchema = {
     '@context': 'https://schema.org',
-    '@type': store.business_type || 'Store',
+    '@type': businessType,
     name: storeName,
     url: baseUrl,
   };
   if (store.logo_url) orgSchema.logo = store.logo_url;
   if (store.business_phone) orgSchema.telephone = store.business_phone;
   if (store.social_image_url) orgSchema.image = store.social_image_url;
+  if (store.business_description) orgSchema.description = store.business_description;
   if (store.business_address) {
     const addr = store.business_address;
     orgSchema.address = {
@@ -9100,6 +9123,23 @@ async function handleStructuredData(request, sb, storeId, url, corsOrigin) {
       postalCode: addr.zip || '',
       addressCountry: addr.country || 'US',
     };
+    // Add geo coordinates if available
+    if (addr.lat && addr.lng) {
+      orgSchema.geo = {
+        '@type': 'GeoCoordinates',
+        latitude: addr.lat,
+        longitude: addr.lng,
+      };
+    }
+  }
+  // Price range indicator for local business
+  if (hasAddress && store.price_range) orgSchema.priceRange = store.price_range;
+  // Area served for service businesses
+  if (store.service_area && Array.isArray(store.service_area)) {
+    orgSchema.areaServed = store.service_area.map(area => ({
+      '@type': 'City',
+      name: area,
+    }));
   }
   if (store.social_links) {
     const links = store.social_links;
@@ -9112,6 +9152,16 @@ async function handleStructuredData(request, sb, storeId, url, corsOrigin) {
       opens: h.open,
       closes: h.close,
     }));
+  }
+  // Aggregate rating if reviews exist
+  if (store.review_count && store.review_count > 0) {
+    orgSchema.aggregateRating = {
+      '@type': 'AggregateRating',
+      ratingValue: store.avg_rating || 5,
+      reviewCount: store.review_count,
+      bestRating: 5,
+      worstRating: 1,
+    };
   }
   schemas.push(orgSchema);
 
@@ -10406,7 +10456,12 @@ async function handleValidateDiscount(request, sb, storeId, corsOrigin) {
     const getPct = cfg.get_discount_percent || 100;
     const pctLabel = getPct === 100 ? 'Free' : `${getPct}% off`;
     label = `Buy ${buyQty} Get ${getQty} ${pctLabel}`;
-    // Exact discount calculated at checkout when cart items are known
+    discountAmount = 0;
+  } else if (discount.type === 'quantity_tier') {
+    const cfg = discount.config || {};
+    const tiers = (cfg.tiers || []).sort((a, b) => b.min_qty - a.min_qty);
+    const tierLabels = tiers.map(t => `${t.min_qty}+ → ${t.discount_percent}%`).join(', ');
+    label = `Quantity discount (${tierLabels})`;
     discountAmount = 0;
   }
 
@@ -10418,7 +10473,7 @@ async function handleValidateDiscount(request, sb, storeId, corsOrigin) {
     discountAmount,
     label,
     id: discount.id,
-    ...(discount.type === 'bxgy' ? { config: discount.config } : {}),
+    ...(discount.type === 'bxgy' || discount.type === 'quantity_tier' ? { config: discount.config } : {}),
   }, 200, corsOrigin);
 }
 

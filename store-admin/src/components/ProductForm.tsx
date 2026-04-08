@@ -169,6 +169,9 @@ export default function ProductForm({ storeId, product }: ProductFormProps) {
     parts.push(num);
     return parts.join("-");
   }
+  const [productType, setProductType] = useState<"physical" | "digital">((product as any)?.product_type || "physical");
+  const [fileUrl, setFileUrl] = useState((product as any)?.file_url || "");
+  const [maxDownloads, setMaxDownloads] = useState((product as any)?.max_downloads ?? 3);
   const [description, setDescription] = useState(product?.description || "");
   const [price, setPrice] = useState(product ? (product.price / 100).toFixed(2) : "");
   const [comparePrice, setComparePrice] = useState(product?.compare_at_price ? (product.compare_at_price / 100).toFixed(2) : "");
@@ -292,9 +295,12 @@ export default function ProductForm({ storeId, product }: ProductFormProps) {
       price: Math.round(parseFloat(price || "0") * 100),
       compare_at_price: comparePrice ? Math.round(parseFloat(comparePrice) * 100) : null,
       badge: badge || null,
+      product_type: productType,
+      file_url: productType === "digital" ? fileUrl || null : null,
+      max_downloads: productType === "digital" ? maxDownloads : null,
       in_stock: inStock,
-      track_inventory: trackInventory,
-      stock_quantity: stockQty,
+      track_inventory: productType === "digital" ? false : trackInventory,
+      stock_quantity: productType === "digital" ? 999999 : stockQty,
       low_stock_threshold: lowStockThreshold,
       images: imageUrls.map(url => ({ url, alt: name })),
       variants: variants.map(v => ({
@@ -427,6 +433,35 @@ export default function ProductForm({ storeId, product }: ProductFormProps) {
               <option value="SALE">Sale</option>
             </select>
           </div>
+        </div>
+
+        {/* Product Type Toggle */}
+        <div style={{ padding: "0 24px 16px", display: "flex", flexDirection: "column", gap: "12px" }}>
+          <div className="flex items-center gap-4">
+            <label className="flex items-center gap-2 cursor-pointer" style={{ marginBottom: 0 }}>
+              <input type="radio" name="productType" checked={productType === "physical"} onChange={() => setProductType("physical")} />
+              <span style={{ fontSize: "13px", fontWeight: 500, color: "var(--text-secondary)" }}>Physical Product</span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer" style={{ marginBottom: 0 }}>
+              <input type="radio" name="productType" checked={productType === "digital"} onChange={() => setProductType("digital")} />
+              <span style={{ fontSize: "13px", fontWeight: 500, color: "var(--text-secondary)" }}>Digital Product</span>
+            </label>
+          </div>
+          {productType === "digital" && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4" style={{ padding: "12px 16px", background: "var(--bg-grouped)", borderRadius: "var(--radius-sm)", border: "1px solid var(--border)" }}>
+              <div>
+                <label>Download URL</label>
+                <input value={fileUrl} onChange={(e) => setFileUrl(e.target.value)} placeholder="https://... (file link)" />
+              </div>
+              <div>
+                <label>Max Downloads</label>
+                <input type="number" min="1" max="100" value={maxDownloads} onChange={(e) => setMaxDownloads(parseInt(e.target.value) || 3)} />
+              </div>
+              <p style={{ fontSize: "11px", color: "var(--text-tertiary)", margin: 0, gridColumn: "1 / -1" }}>
+                Digital products skip shipping at checkout. Customers receive a download link after purchase.
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Quick-pick chips (right under SKU) */}
