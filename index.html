@@ -431,9 +431,9 @@ footer{border-top:1px solid var(--border);padding:48px}
 <nav>
   <div class="nav-logo" onclick="window.scrollTo({top:0,behavior:'smooth'})">Webnari</div>
   <div class="nav-links">
-    <a href="#features">Features</a>
+    <a href="features.html">Features</a>
     <a href="#process">Process</a>
-    <a href="#pricing">Pricing</a>
+    <a href="pricing.html">Pricing</a>
     <a href="portfolio.html">Our Work</a>
   </div>
   <div class="nav-right">
@@ -875,9 +875,9 @@ footer{border-top:1px solid var(--border);padding:48px}
       <p>Professional websites and digital marketing tools for local service businesses in South Florida.</p>
     </div>
     <div class="footer-links">
-      <div class="footer-col"><h4>PRODUCT</h4><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#process">Process</a></div>
-      <div class="footer-col"><h4>SERVICES</h4><a href="#">Website Design</a><a href="#">SEO Management</a><a href="#">Reputation</a></div>
-      <div class="footer-col"><h4>COMPANY</h4><a href="#">About</a><a href="#">Contact</a><a href="#" onclick="openAuth();return false">Client Login</a></div>
+      <div class="footer-col"><h4>PRODUCT</h4><a href="features.html">Features</a><a href="pricing.html">Pricing</a><a href="portfolio.html">Our Work</a></div>
+      <div class="footer-col"><h4>SERVICES</h4><a href="features.html#websites">Website Design</a><a href="features.html#seo">SEO Management</a><a href="features.html#ecommerce">E-Commerce</a></div>
+      <div class="footer-col"><h4>COMPANY</h4><a href="start.html">Get Started</a><a href="mailto:hello@webnari.io">Contact</a><a href="#" onclick="openAuth();return false">Client Login</a></div>
     </div>
   </div>
   <div class="footer-bottom">
@@ -1521,22 +1521,23 @@ function initCursor(){
 function renderPricing(){
   const db=getDB();
   // Hardcoded prices (not from localStorage — prevents stale cached values)
-  const pr={starter:79,standard:129,premium:189,
-    starterName:'Starter',starterDesc:'Everything you need to launch and get found online.',starterFeatures:'1 professionally built website\nUp to 5 pages\nMobile-responsive design\nSearch-ranked page structure\nSSL certificate & hosting\nGoogle Business integration\nMonthly performance snapshot\nEmail support',
-    standardName:'Standard',standardDesc:'For businesses ready to grow their reach and convert more leads.',standardFeatures:'1 professionally built website\nUp to 12 pages\nScroll-driven parallax effects\nAdvanced search ranking strategy\nBlog with monthly content\nContact & lead capture forms\nGoogle Analytics dashboard\nSchema markup for local search\nPriority support\nMonthly growth report',
-    premiumName:'Premium',premiumDesc:'Full-service digital presence, managed top to bottom.',premiumFeatures:'1 professionally built website\nUnlimited pages\nCustom parallax animations\nFull search ranking management\nWeekly blog content\nE-commerce or booking integration\nConversion-optimized landing pages\nReputation & review management\nDedicated account manager\nBi-weekly strategy reports\nPriority 24-hour support',
+  const pr={starter:29,standard:59,premium:99,
+    starterYearly:19,standardYearly:39,premiumYearly:69,
+    starterName:'Basic',starterDesc:'For new businesses launching their first website.',starterFeatures:'Professionally designed website\nUp to 5 pages\nMobile-responsive design\nSSL certificate & hosting\nBasic search optimization\nGoogle Business setup\nMonthly performance snapshot\nEmail support',
+    standardName:'Standard',standardDesc:'For growing businesses that want leads and conversions.',standardFeatures:'Professionally designed website\nUp to 15 pages\nScroll-driven parallax effects\nAdvanced search ranking strategy\nBlog with monthly content\nContact & lead capture forms\nGoogle Analytics dashboard\nSchema markup for local search\nPriority support\nMonthly growth report',
+    premiumName:'Pro',premiumDesc:'Full-service digital presence with e-commerce and dedicated support.',premiumFeatures:'Professionally designed website\nUnlimited pages\nCustom parallax animations\nFull search ranking management\nWeekly blog content\nE-commerce or booking integration\nConversion-optimized landing pages\nReputation & review management\nDedicated account manager\nBi-weekly strategy reports\nPriority 24-hour support',
   };
   const tiers=[
-    {key:'starter',name:pr.starterName||'Starter',price:pr.starter,desc:pr.starterDesc||'',features:pr.starterFeatures||'',cls:'',tierCls:'',setup:750},
-    {key:'standard',name:pr.standardName||'Standard',price:pr.standard,desc:pr.standardDesc||'',features:pr.standardFeatures||'',cls:'popular',tierCls:'std',setup:1000},
-    {key:'premium',name:pr.premiumName||'Premium',price:pr.premium,desc:pr.premiumDesc||'',features:pr.premiumFeatures||'',cls:'',tierCls:'prem',setup:1500},
+    {key:'starter',name:pr.starterName||'Basic',price:pr.starter,yearly:pr.starterYearly,desc:pr.starterDesc||'',features:pr.starterFeatures||'',cls:'',tierCls:''},
+    {key:'standard',name:pr.standardName||'Standard',price:pr.standard,yearly:pr.standardYearly,desc:pr.standardDesc||'',features:pr.standardFeatures||'',cls:'popular',tierCls:'std'},
+    {key:'premium',name:pr.premiumName||'Pro',price:pr.premium,yearly:pr.premiumYearly,desc:pr.premiumDesc||'',features:pr.premiumFeatures||'',cls:'',tierCls:'prem'},
   ];
   const chk='<svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>';
   document.getElementById('pricing-grid').innerHTML=tiers.map(t=>{
     const feats=(t.features||'').split('\n').filter(Boolean).map(f=>`<li>${chk}${f}</li>`).join('');
     const focused=t.key==='standard'?'focused':'';
     const badge=t.key==='standard'?'<div class="pricing-badge">MOST POPULAR</div>':'';
-    return`<div class="pricing-card ${focused}" data-tier="${t.key}" onclick="focusTier('${t.key}')">${badge}<div class="pricing-tier ${t.tierCls}">${t.name.toUpperCase()} PLAN</div><div class="pricing-name">${t.name}</div><div class="pricing-desc">${t.desc}</div><div class="pricing-price"><span>$</span>${t.price}</div><div class="pricing-period">per month</div><div class="pricing-setup">+ $${t.setup.toLocaleString()} one-time setup</div><ul class="pricing-features">${feats}</ul><button class="pricing-cta" onclick="event.stopPropagation();location.href='plan-${t.key}.html'">Get started</button></div>`;
+    return`<div class="pricing-card ${focused}" data-tier="${t.key}" onclick="focusTier('${t.key}')">${badge}<div class="pricing-tier ${t.tierCls}">${t.name.toUpperCase()} PLAN</div><div class="pricing-name">${t.name}</div><div class="pricing-desc">${t.desc}</div><div class="pricing-price"><span>$</span>${t.price}</div><div class="pricing-period">per month</div><div class="pricing-setup">$${t.yearly}/mo if billed yearly</div><ul class="pricing-features">${feats}</ul><button class="pricing-cta" onclick="event.stopPropagation();location.href='start.html'">Get started</button></div>`;
   }).join('');
 }
 

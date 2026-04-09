@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pricing — Webnari</title>
+<meta name="description" content="Simple, transparent pricing for professional websites. Monthly or yearly plans starting at $29/mo. No contracts, cancel anytime.">
+<meta property="og:title" content="Pricing — Webnari">
+<meta property="og:description" content="Professional websites starting at $29/mo. No contracts, no surprises.">
+<meta property="og:image" content="https://webnari.io/images/og-webnari.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#08080E;--surface:#14151F;--surface2:#1C1D2A;--surface3:#252636;
+  --border:#32334A;--border2:#42436A;
+  --accent:#C9A96E;--accent2:#E8D5A8;--accent-glow:rgba(201,169,110,.35);
+  --warm:#D4956B;
+  --white:#F2EDE6;--muted:#7A7A92;--text:#A0A0B8;
+  --green:#5EBD8A;--red:#E85D75;--amber:#D4956B;
+  --radius:12px;
+  --font-head:'Space Grotesk',sans-serif;
+  --font-body:'Instrument Sans',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+
+/* ── Nav ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 40px;background:rgba(8,8,14,.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(50,51,74,.4)}
+.nav-logo{font-family:var(--font-head);font-size:22px;font-weight:700;color:var(--white);cursor:pointer;text-decoration:none}
+.nav-links{display:flex;gap:32px}
+.nav-links a{font-size:14px;color:var(--text);text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--white)}
+.nav-right{display:flex;align-items:center;gap:12px}
+.btn-ghost-sm{background:none;border:1px solid var(--border);color:var(--text);padding:8px 18px;border-radius:var(--radius);font-size:13px;cursor:pointer;transition:all .2s}
+.btn-ghost-sm:hover{border-color:var(--accent);color:var(--white)}
+.btn-primary-sm{background:var(--accent);color:var(--bg);padding:8px 20px;border-radius:var(--radius);font-size:13px;font-weight:600;text-decoration:none;display:inline-block;transition:all .2s}
+.btn-primary-sm:hover{background:var(--accent2)}
+
+/* ── Hero ── */
+.pricing-hero{padding:140px 40px 60px;text-align:center;max-width:720px;margin:0 auto}
+.pricing-hero h1{font-family:var(--font-head);font-size:clamp(36px,5vw,56px);color:var(--white);line-height:1.1;margin-bottom:16px}
+.pricing-hero h1 span{color:var(--accent)}
+.pricing-hero p{font-size:17px;color:var(--text);line-height:1.6;max-width:560px;margin:0 auto}
+
+/* ── Toggle ── */
+.billing-toggle{display:flex;align-items:center;justify-content:center;gap:16px;margin:48px 0 40px}
+.billing-toggle span{font-size:14px;color:var(--muted);transition:color .2s}
+.billing-toggle span.active{color:var(--white);font-weight:600}
+.toggle-switch{width:52px;height:28px;background:var(--surface2);border:1px solid var(--border);border-radius:14px;position:relative;cursor:pointer;transition:all .3s}
+.toggle-switch::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--accent);transition:transform .3s}
+.toggle-switch.yearly::after{transform:translateX(24px)}
+.toggle-switch.yearly{border-color:var(--accent)}
+.save-badge{font-size:11px;font-weight:600;color:var(--green);background:rgba(94,189,138,.12);padding:3px 10px;border-radius:20px}
+
+/* ── Pricing Cards ── */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1080px;margin:0 auto;padding:0 40px 80px}
+.p-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px 28px;position:relative;transition:all .3s}
+.p-card:hover{border-color:var(--border2);transform:translateY(-4px)}
+.p-card.featured{border-color:var(--accent);background:var(--surface2)}
+.p-card.featured::before{content:'MOST POPULAR';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:var(--bg);font-size:10px;font-weight:700;letter-spacing:.08em;padding:4px 14px;border-radius:20px}
+.p-card-tier{font-size:12px;font-weight:600;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
+.p-card-price{display:flex;align-items:baseline;gap:4px;margin-bottom:4px}
+.p-card-price .dollar{font-family:var(--font-head);font-size:48px;font-weight:700;color:var(--white);line-height:1}
+.p-card-price .period{font-size:14px;color:var(--muted)}
+.p-card-year{font-size:12px;color:var(--muted);margin-bottom:16px;min-height:18px}
+.p-card-desc{font-size:14px;color:var(--text);line-height:1.5;margin-bottom:24px;min-height:42px}
+.p-card-cta{display:block;width:100%;text-align:center;padding:12px;border-radius:var(--radius);font-size:14px;font-weight:600;text-decoration:none;transition:all .2s;margin-bottom:24px}
+.p-card .p-card-cta{background:var(--surface2);color:var(--white);border:1px solid var(--border)}
+.p-card .p-card-cta:hover{border-color:var(--accent);color:var(--accent)}
+.p-card.featured .p-card-cta{background:var(--accent);color:var(--bg);border:none}
+.p-card.featured .p-card-cta:hover{background:var(--accent2)}
+.p-card-divider{height:1px;background:var(--border);margin-bottom:20px}
+.p-card ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.p-card li{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--text);line-height:1.4}
+.p-card li svg{width:16px;height:16px;flex-shrink:0;stroke:var(--green);stroke-width:2.5;margin-top:1px}
+.p-card li.section-label{font-size:11px;font-weight:600;letter-spacing:.04em;color:var(--muted);text-transform:uppercase;margin-top:8px;gap:0}
+.p-card li.section-label:first-child{margin-top:0}
+
+/* ── Comparison Table ── */
+.compare-section{max-width:1080px;margin:0 auto;padding:0 40px 80px}
+.compare-title{font-family:var(--font-head);font-size:28px;color:var(--white);text-align:center;margin-bottom:8px}
+.compare-sub{font-size:15px;color:var(--text);text-align:center;margin-bottom:40px}
+.compare-table{width:100%;border-collapse:collapse}
+.compare-table th{text-align:left;font-size:12px;font-weight:600;letter-spacing:.04em;color:var(--muted);text-transform:uppercase;padding:12px 16px;border-bottom:1px solid var(--border)}
+.compare-table th:not(:first-child){text-align:center}
+.compare-table td{padding:14px 16px;font-size:13px;color:var(--text);border-bottom:1px solid rgba(50,51,74,.3)}
+.compare-table td:not(:first-child){text-align:center;color:var(--white)}
+.compare-table tr:hover td{background:rgba(20,21,31,.5)}
+.compare-table .group-row td{font-size:11px;font-weight:600;letter-spacing:.04em;color:var(--accent);text-transform:uppercase;padding:20px 16px 10px;border-bottom:none;background:none}
+.chk{display:inline-block;width:18px;height:18px}
+.chk svg{stroke:var(--green);stroke-width:2.5;fill:none;width:18px;height:18px}
+.dash{color:var(--muted);font-size:16px}
+
+/* ── FAQ ── */
+.faq-section{max-width:720px;margin:0 auto;padding:0 40px 80px}
+.faq-title{font-family:var(--font-head);font-size:28px;color:var(--white);text-align:center;margin-bottom:40px}
+.faq-item{border-bottom:1px solid var(--border);padding:20px 0}
+.faq-q{font-size:15px;color:var(--white);cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:500}
+.faq-q::after{content:'+';font-size:20px;color:var(--muted);transition:transform .2s}
+.faq-item.open .faq-q::after{content:'-'}
+.faq-a{font-size:14px;color:var(--text);line-height:1.6;max-height:0;overflow:hidden;transition:max-height .3s,padding .3s;padding-top:0}
+.faq-item.open .faq-a{max-height:200px;padding-top:12px}
+
+/* ── CTA ── */
+.cta-section{text-align:center;padding:80px 40px;border-top:1px solid var(--border)}
+.cta-section h2{font-family:var(--font-head);font-size:32px;color:var(--white);margin-bottom:12px}
+.cta-section p{font-size:15px;color:var(--text);margin-bottom:28px}
+.cta-btn{display:inline-block;background:var(--accent);color:var(--bg);padding:14px 36px;border-radius:var(--radius);font-size:15px;font-weight:600;text-decoration:none;transition:all .2s}
+.cta-btn:hover{background:var(--accent2)}
+
+/* ── Footer ── */
+footer{border-top:1px solid var(--border);padding:48px 40px}
+.footer-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:48px;gap:40px;flex-wrap:wrap}
+.footer-brand{max-width:280px}
+.footer-brand .nav-logo{margin-bottom:12px;display:block}
+.footer-brand p{font-size:13px;color:var(--muted);line-height:1.6}
+.footer-links{display:flex;gap:48px;flex-wrap:wrap}
+.footer-col h4{font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:14px}
+.footer-col a{display:block;font-size:13px;color:var(--text);text-decoration:none;margin-bottom:8px;transition:color .2s}
+.footer-col a:hover{color:var(--white)}
+.footer-bottom{display:flex;justify-content:space-between;padding-top:24px;border-top:1px solid var(--border)}
+.footer-bottom p{font-size:12px;color:var(--muted)}
+
+/* ── Mobile ── */
+@media(max-width:900px){
+  nav{padding:14px 20px}
+  .nav-links{display:none}
+  .pricing-hero{padding:120px 20px 40px}
+  .pricing-grid{grid-template-columns:1fr;max-width:420px;padding:0 20px 60px}
+  .compare-section{padding:0 16px 60px;overflow-x:auto}
+  .compare-table{min-width:600px}
+  .faq-section{padding:0 20px 60px}
+  .cta-section{padding:60px 20px}
+  footer{padding:40px 20px}
+  .footer-top{flex-direction:column}
+  .footer-bottom{flex-direction:column;gap:8px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Webnari</a>
+  <div class="nav-links">
+    <a href="features.html">Features</a>
+    <a href="pricing.html" style="color:var(--white)">Pricing</a>
+    <a href="portfolio.html">Our Work</a>
+  </div>
+  <div class="nav-right">
+    <a href="start.html" class="btn-primary-sm">Get started</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="pricing-hero">
+  <h1>Simple pricing,<br><span>serious websites.</span></h1>
+  <p>Everything you need to launch, grow, and manage your online presence. No contracts, no hidden fees. Cancel anytime.</p>
+</div>
+
+<!-- Billing Toggle -->
+<div class="billing-toggle">
+  <span id="label-monthly" class="active">Monthly</span>
+  <div class="toggle-switch" id="billing-toggle" onclick="toggleBilling()"></div>
+  <span id="label-yearly">Yearly</span>
+  <span class="save-badge" id="save-badge" style="opacity:0">Save 25%</span>
+</div>
+
+<!-- Pricing Cards -->
+<div class="pricing-grid" id="pricing-grid"></div>
+
+<!-- Comparison Table -->
+<div class="compare-section">
+  <h2 class="compare-title">Compare all plans</h2>
+  <p class="compare-sub">Every plan includes hosting, SSL, and support. Here's what's different.</p>
+  <table class="compare-table" id="compare-table"></table>
+</div>
+
+<!-- FAQ -->
+<div class="faq-section">
+  <h2 class="faq-title">Frequently asked questions</h2>
+  <div id="faq-list"></div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <h2>Ready to grow your business online?</h2>
+  <p>Get a professionally designed website live in under 2 weeks.</p>
+  <a href="start.html" class="cta-btn">Get started free</a>
+</div>
+
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a class="nav-logo" href="index.html">Webnari</a>
+      <p>Professional websites and digital marketing tools for local service businesses in South Florida.</p>
+    </div>
+    <div class="footer-links">
+      <div class="footer-col"><h4>PRODUCT</h4><a href="features.html">Features</a><a href="pricing.html">Pricing</a><a href="portfolio.html">Our Work</a></div>
+      <div class="footer-col"><h4>SERVICES</h4><a href="features.html#websites">Website Design</a><a href="features.html#seo">SEO Management</a><a href="features.html#ecommerce">E-Commerce</a></div>
+      <div class="footer-col"><h4>COMPANY</h4><a href="start.html">Get Started</a><a href="mailto:hello@webnari.io">Contact</a></div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 Webnari. All rights reserved.</p>
+    <p>Built for local businesses.</p>
+  </div>
+</footer>
+
+<!-- Built and managed by Webnari -->
+
+<script>
+const CHK='<span class="chk"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></span>';
+const DASH='<span class="dash">&mdash;</span>';
+
+const PLANS=[
+  {
+    tier:'Basic',
+    monthly:29,
+    yearly:19,
+    desc:'For new businesses launching their first website.',
+    cta:'Get started',
+    features:[
+      {g:'Website'},
+      'Professionally designed website',
+      'Up to 5 pages',
+      'Mobile-responsive design',
+      'SSL certificate & hosting',
+      'Contact form',
+      {g:'SEO & Marketing'},
+      'Basic search optimization',
+      'Google Business setup',
+      'Monthly performance snapshot',
+      {g:'Support'},
+      'Email support',
+      '48-hour response time',
+    ]
+  },
+  {
+    tier:'Standard',
+    monthly:59,
+    yearly:39,
+    desc:'For growing businesses that want leads and conversions.',
+    cta:'Get started',
+    featured:true,
+    features:[
+      {g:'Website'},
+      'Professionally designed website',
+      'Up to 15 pages',
+      'Scroll-driven parallax effects',
+      'Blog with monthly content',
+      'Contact & lead capture forms',
+      {g:'SEO & Marketing'},
+      'Advanced search ranking strategy',
+      'Google Analytics dashboard',
+      'Schema markup for local search',
+      'Monthly growth report',
+      {g:'Support'},
+      'Priority email & chat support',
+      '24-hour response time',
+    ]
+  },
+  {
+    tier:'Pro',
+    monthly:99,
+    yearly:69,
+    desc:'Full-service digital presence with e-commerce and dedicated support.',
+    cta:'Get started',
+    features:[
+      {g:'Website'},
+      'Professionally designed website',
+      'Unlimited pages',
+      'Custom parallax animations',
+      'E-commerce or booking integration',
+      'Blog with weekly content',
+      'Conversion-optimized landing pages',
+      {g:'SEO & Marketing'},
+      'Full search ranking management',
+      'Reputation & review management',
+      'Google Merchant & Meta feeds',
+      'Bi-weekly strategy reports',
+      {g:'Support'},
+      'Dedicated account manager',
+      'Priority 24-hour support',
+      'Phone & video calls',
+    ]
+  }
+];
+
+let isYearly=false;
+
+function toggleBilling(){
+  isYearly=!isYearly;
+  document.getElementById('billing-toggle').classList.toggle('yearly',isYearly);
+  document.getElementById('label-monthly').classList.toggle('active',!isYearly);
+  document.getElementById('label-yearly').classList.toggle('active',isYearly);
+  document.getElementById('save-badge').style.opacity=isYearly?'1':'0';
+  renderCards();
+}
+
+function renderCards(){
+  const grid=document.getElementById('pricing-grid');
+  grid.innerHTML=PLANS.map(p=>{
+    const price=isYearly?p.yearly:p.monthly;
+    const yearNote=isYearly?`$${p.yearly*12}/year &middot; billed annually`:`$${p.yearly}/mo if billed yearly`;
+    const feats=p.features.map(f=>{
+      if(typeof f==='object') return `<li class="section-label">${f.g}</li>`;
+      return `<li><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>${f}</li>`;
+    }).join('');
+    return `
+      <div class="p-card${p.featured?' featured':''}">
+        <div class="p-card-tier">${p.tier}</div>
+        <div class="p-card-price"><span class="dollar">$${price}</span><span class="period">/mo</span></div>
+        <div class="p-card-year">${yearNote}</div>
+        <div class="p-card-desc">${p.desc}</div>
+        <a href="start.html" class="p-card-cta">${p.cta}</a>
+        <div class="p-card-divider"></div>
+        <ul>${feats}</ul>
+      </div>`;
+  }).join('');
+}
+
+// Comparison table
+const COMPARE=[
+  {group:'Website'},
+  {f:'Pages included',v:['Up to 5','Up to 15','Unlimited']},
+  {f:'Custom design',v:[CHK,CHK,CHK]},
+  {f:'Mobile responsive',v:[CHK,CHK,CHK]},
+  {f:'SSL & hosting',v:[CHK,CHK,CHK]},
+  {f:'Parallax scroll effects',v:[DASH,CHK,CHK]},
+  {f:'Blog',v:[DASH,CHK,CHK]},
+  {f:'E-commerce / booking',v:[DASH,DASH,CHK]},
+  {f:'Landing pages',v:[DASH,DASH,CHK]},
+  {group:'SEO & Marketing'},
+  {f:'Basic SEO setup',v:[CHK,CHK,CHK]},
+  {f:'Google Business integration',v:[CHK,CHK,CHK]},
+  {f:'Google Analytics',v:[DASH,CHK,CHK]},
+  {f:'Schema markup',v:[DASH,CHK,CHK]},
+  {f:'Full SEO management',v:[DASH,DASH,CHK]},
+  {f:'Review management',v:[DASH,DASH,CHK]},
+  {f:'Google Merchant feed',v:[DASH,DASH,CHK]},
+  {f:'Meta catalog feed',v:[DASH,DASH,CHK]},
+  {group:'E-Commerce (Pro only)'},
+  {f:'Product catalog',v:[DASH,DASH,CHK]},
+  {f:'Cart & checkout',v:[DASH,DASH,CHK]},
+  {f:'Stripe / Square / PayPal',v:[DASH,DASH,CHK]},
+  {f:'Discounts & gift cards',v:[DASH,DASH,CHK]},
+  {f:'Subscriptions & recurring',v:[DASH,DASH,CHK]},
+  {f:'Inventory management',v:[DASH,DASH,CHK]},
+  {f:'Shipping & fulfillment',v:[DASH,DASH,CHK]},
+  {f:'Customer accounts',v:[DASH,DASH,CHK]},
+  {group:'Support'},
+  {f:'Email support',v:[CHK,CHK,CHK]},
+  {f:'Priority support',v:[DASH,CHK,CHK]},
+  {f:'Dedicated account manager',v:[DASH,DASH,CHK]},
+  {f:'Phone & video calls',v:[DASH,DASH,CHK]},
+  {group:'Reporting'},
+  {f:'Monthly snapshot',v:[CHK,CHK,CHK]},
+  {f:'Growth reports',v:[DASH,'Monthly','Bi-weekly']},
+  {f:'Strategy sessions',v:[DASH,DASH,CHK]},
+];
+
+function renderTable(){
+  const hdr='<thead><tr><th>Feature</th><th>Basic</th><th>Standard</th><th>Pro</th></tr></thead>';
+  const rows=COMPARE.map(r=>{
+    if(r.group) return `<tr class="group-row"><td colspan="4">${r.group}</td></tr>`;
+    return `<tr><td>${r.f}</td>${r.v.map(v=>`<td>${v}</td>`).join('')}</tr>`;
+  }).join('');
+  document.getElementById('compare-table').innerHTML=hdr+'<tbody>'+rows+'</tbody>';
+}
+
+// FAQ
+const FAQS=[
+  {q:'Do I need to pay a setup fee?',a:'No. There are no setup fees, no contracts, and no hidden charges. You pay one monthly (or yearly) price and we handle everything — design, build, hosting, SSL, and support.'},
+  {q:'Can I switch plans later?',a:'Yes, you can upgrade or downgrade at any time. Changes take effect on your next billing cycle. If you upgrade mid-cycle, we prorate the difference.'},
+  {q:'What if I want to cancel?',a:'Cancel anytime with no penalties. Your site stays live until the end of your current billing period. We\'ll export your content if you need it.'},
+  {q:'How long does it take to launch?',a:'Most websites launch within 7-14 days. We handle everything — you just provide your business info, photos, and preferences during onboarding.'},
+  {q:'Do I own my website?',a:'You own all your content, images, and copy. The website design and hosting are part of your Webnari subscription. If you cancel, we can export your content for you.'},
+  {q:'Can I add e-commerce later?',a:'Absolutely. Start with Basic or Standard and upgrade to Pro whenever you\'re ready to sell online. We\'ll add your store seamlessly.'},
+  {q:'What payment methods do you accept?',a:'We accept all major credit cards. Yearly plans are billed in one annual payment for the discounted rate.'},
+  {q:'Do you work with businesses outside South Florida?',a:'Yes! While most of our clients are in South Florida, we work with service businesses and e-commerce brands nationwide.'},
+];
+
+function renderFAQ(){
+  document.getElementById('faq-list').innerHTML=FAQS.map(f=>`
+    <div class="faq-item" onclick="this.classList.toggle('open')">
+      <div class="faq-q">${f.q}</div>
+      <div class="faq-a">${f.a}</div>
+    </div>
+  `).join('');
+}
+
+// Init
+renderCards();
+renderTable();
+renderFAQ();
+</script>
+</body>
+</html>
