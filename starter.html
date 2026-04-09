@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Starter Plan — Webnari</title>
+<meta name="description" content="Get a professionally built website for a one-time setup fee, then just $5/mo for CMS access, hosting, and domain upkeep. Self-service, no contracts.">
+<meta property="og:title" content="Starter Plan — Webnari">
+<meta property="og:description" content="We build it. You maintain it. $5/mo after setup.">
+<meta property="og:image" content="https://webnari.io/images/og-webnari.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#08080E;--surface:#14151F;--surface2:#1C1D2A;--surface3:#252636;
+  --border:#32334A;--border2:#42436A;
+  --accent:#C9A96E;--accent2:#E8D5A8;--accent-glow:rgba(201,169,110,.35);
+  --warm:#D4956B;
+  --white:#F2EDE6;--muted:#7A7A92;--text:#A0A0B8;
+  --green:#5EBD8A;--red:#E85D75;--amber:#D4956B;
+  --radius:12px;
+  --font-head:'Space Grotesk',sans-serif;
+  --font-body:'Instrument Sans',sans-serif;
+  --light-bg:#F2EDE6;--light-surface:#FFFFFF;--light-border:#DDD6CC;
+  --light-text:#3A3A4A;--light-muted:#6A6A7A;--light-heading:#14151F;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
+
+/* ── Nav ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:16px 40px;background:rgba(8,8,14,.85);backdrop-filter:blur(16px);border-bottom:1px solid rgba(50,51,74,.4)}
+.nav-logo{font-family:var(--font-head);font-size:22px;font-weight:700;color:var(--white);cursor:pointer;text-decoration:none}
+.nav-links{display:flex;gap:32px}
+.nav-links a{font-size:14px;color:var(--text);text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--white)}
+.btn-primary-sm{background:var(--accent);color:var(--bg);padding:8px 20px;border-radius:var(--radius);font-size:13px;font-weight:600;text-decoration:none;display:inline-block;transition:all .2s}
+.btn-primary-sm:hover{background:var(--accent2)}
+
+/* ── Hero ── */
+.starter-hero{padding:140px 40px 80px;max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:6px 16px 6px 8px;margin-bottom:24px;font-size:12px;color:var(--accent);font-weight:600;letter-spacing:.02em}
+.hero-badge .dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse-dot 2s ease infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+.starter-hero h1{font-family:var(--font-head);font-size:clamp(36px,4.5vw,56px);color:var(--white);line-height:1.08;margin-bottom:16px;letter-spacing:-.03em}
+.starter-hero h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.starter-hero .hero-desc{font-size:17px;color:var(--text);line-height:1.7;margin-bottom:32px}
+.price-block{display:flex;align-items:baseline;gap:12px;margin-bottom:8px}
+.price-block .dollar{font-family:var(--font-head);font-size:64px;font-weight:700;color:var(--white);line-height:1;letter-spacing:-.04em}
+.price-block .period{font-size:16px;color:var(--muted)}
+.price-note{font-size:13px;color:var(--muted);margin-bottom:32px}
+.hero-ctas{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:40px}
+.cta-btn{display:inline-block;background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--bg);padding:16px 36px;border-radius:var(--radius);font-size:16px;font-weight:600;text-decoration:none;transition:all .2s}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(201,169,110,.25)}
+.cta-btn-ghost{display:inline-block;background:none;border:1px solid var(--border2);color:var(--white);padding:16px 36px;border-radius:var(--radius);font-size:16px;font-weight:500;text-decoration:none;transition:all .2s}
+.cta-btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
+.hero-trust{display:flex;gap:24px;flex-wrap:wrap}
+.hero-trust .trust-item{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text)}
+.hero-trust .trust-item svg{width:16px;height:16px;stroke:var(--green);stroke-width:2.5;flex-shrink:0}
+
+/* Hero visual */
+.hero-visual{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px;position:relative;overflow:hidden}
+.hero-visual::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(201,169,110,.06) 0%,transparent 70%)}
+
+/* ── How it works ── */
+.how-section{padding:80px 40px;max-width:1100px;margin:0 auto}
+.how-section .section-label{font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--accent);text-transform:uppercase;text-align:center;margin-bottom:12px}
+.how-section h2{font-family:var(--font-head);font-size:clamp(28px,3.5vw,40px);color:var(--white);text-align:center;margin-bottom:48px;letter-spacing:-.02em}
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.how-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px 28px;text-align:center;transition:all .3s;position:relative;overflow:hidden}
+.how-card:hover{border-color:var(--border2);transform:translateY(-4px)}
+.how-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity .3s}
+.how-card:hover::before{opacity:1}
+.how-num{font-family:var(--font-head);font-size:48px;font-weight:700;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;margin-bottom:16px}
+.how-card h3{font-family:var(--font-head);font-size:18px;color:var(--white);margin-bottom:10px;font-weight:600}
+.how-card p{font-size:14px;color:var(--text);line-height:1.6}
+
+/* ── Features — LIGHT ── */
+.features-section{background:var(--light-bg);padding:100px 40px;position:relative;overflow:hidden}
+.features-section::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+.features-inner{max-width:1100px;margin:0 auto}
+.features-section .section-label{font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--accent);text-transform:uppercase;text-align:center;margin-bottom:12px}
+.features-section h2{font-family:var(--font-head);font-size:clamp(28px,3.5vw,40px);color:var(--light-heading);text-align:center;margin-bottom:12px;letter-spacing:-.02em}
+.features-section .section-sub{font-size:16px;color:var(--light-muted);text-align:center;max-width:520px;margin:0 auto 56px;line-height:1.6}
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.feat-card{background:var(--light-surface);border:1px solid var(--light-border);border-radius:16px;padding:0;overflow:hidden;transition:all .3s}
+.feat-card:hover{transform:translateY(-4px);box-shadow:0 12px 36px rgba(0,0,0,.08)}
+.feat-visual{height:160px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.feat-visual.v-dark{background:linear-gradient(135deg,#1C1D2A 0%,#252636 100%)}
+.feat-visual.v-warm{background:linear-gradient(135deg,#F0E4D4 0%,#E8D5C0 100%)}
+.feat-visual.v-cool{background:linear-gradient(135deg,#E6EDF5 0%,#D8E2EE 100%)}
+.feat-visual.v-green{background:linear-gradient(135deg,#E4F0E8 0%,#D0E8D8 100%)}
+.feat-visual.v-gold{background:linear-gradient(135deg,#F5EDDF 0%,#EDE2D0 100%)}
+.feat-visual svg{width:75%;height:75%;max-width:180px}
+.feat-body{padding:20px 24px 24px}
+.feat-body h3{font-family:var(--font-head);font-size:16px;color:var(--light-heading);margin-bottom:6px;font-weight:600}
+.feat-body p{font-size:13px;color:var(--light-muted);line-height:1.6}
+
+/* ── What's NOT included ── */
+.not-section{max-width:800px;margin:0 auto;padding:80px 40px}
+.not-section h2{font-family:var(--font-head);font-size:clamp(24px,3vw,32px);color:var(--white);text-align:center;margin-bottom:12px;letter-spacing:-.02em}
+.not-section .section-sub{font-size:15px;color:var(--text);text-align:center;margin-bottom:40px;line-height:1.6}
+.not-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.not-col h3{font-family:var(--font-head);font-size:15px;color:var(--white);margin-bottom:16px;font-weight:600;display:flex;align-items:center;gap:8px}
+.not-col h3 svg{width:18px;height:18px;flex-shrink:0}
+.not-list{list-style:none;display:flex;flex-direction:column;gap:10px}
+.not-list li{display:flex;align-items:flex-start;gap:10px;font-size:14px;color:var(--text);line-height:1.5}
+.not-list li svg{width:16px;height:16px;flex-shrink:0;margin-top:2px;stroke-width:2.5}
+.not-list li svg.chk-icon{stroke:var(--green)}
+.not-list li svg.x-icon{stroke:var(--red)}
+
+/* ── Upgrade CTA ── */
+.upgrade-section{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:80px 40px}
+.upgrade-inner{max-width:900px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.upgrade-content h2{font-family:var(--font-head);font-size:clamp(24px,3vw,32px);color:var(--white);margin-bottom:12px;letter-spacing:-.02em}
+.upgrade-content h2 em{font-style:italic;color:var(--accent)}
+.upgrade-content p{font-size:15px;color:var(--text);line-height:1.7;margin-bottom:24px}
+.upgrade-tiers{display:flex;flex-direction:column;gap:12px}
+.upgrade-tier{display:flex;align-items:center;gap:12px;padding:14px 18px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;transition:border-color .2s}
+.upgrade-tier:hover{border-color:var(--accent)}
+.upgrade-tier .tier-price{font-family:var(--font-head);font-size:20px;font-weight:700;color:var(--white);min-width:72px}
+.upgrade-tier .tier-name{font-size:14px;font-weight:600;color:var(--white)}
+.upgrade-tier .tier-desc{font-size:12px;color:var(--muted)}
+
+/* ── FAQ ── */
+.faq-section{max-width:800px;margin:0 auto;padding:80px 40px}
+.faq-header{text-align:center;margin-bottom:48px}
+.faq-header h2{font-family:var(--font-head);font-size:clamp(28px,3.5vw,40px);color:var(--white);margin-bottom:8px;letter-spacing:-.02em}
+.faq-header p{font-size:15px;color:var(--text)}
+.faq-item{border:1px solid var(--border);border-radius:12px;margin-bottom:8px;overflow:hidden;background:var(--surface);transition:border-color .2s}
+.faq-item:hover{border-color:var(--border2)}
+.faq-q{font-size:15px;color:var(--white);cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:500;padding:18px 24px;gap:16px}
+.faq-toggle{width:24px;height:24px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.faq-item.open .faq-toggle{background:var(--accent);transform:rotate(45deg)}
+.faq-toggle svg{width:12px;height:12px;stroke:var(--muted);stroke-width:2;transition:stroke .2s}
+.faq-item.open .faq-toggle svg{stroke:var(--bg)}
+.faq-a{font-size:14px;color:var(--text);line-height:1.7;max-height:0;overflow:hidden;transition:max-height .3s;padding:0 24px}
+.faq-item.open .faq-a{max-height:300px;padding:0 24px 20px}
+
+/* ── CTA ── */
+.cta-section{text-align:center;padding:100px 40px;position:relative;overflow:hidden}
+.cta-section::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(201,169,110,.06) 0%,transparent 70%);pointer-events:none}
+.cta-section h2{font-family:var(--font-head);font-size:clamp(32px,4vw,48px);color:var(--white);margin-bottom:16px;letter-spacing:-.02em;position:relative}
+.cta-section h2 em{font-style:italic;color:var(--accent)}
+.cta-section p{font-size:16px;color:var(--text);margin-bottom:32px;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.6;position:relative}
+
+/* ── Footer ── */
+footer{border-top:1px solid var(--border);padding:48px 40px}
+.footer-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:48px;gap:40px;flex-wrap:wrap}
+.footer-brand{max-width:280px}
+.footer-brand .nav-logo{margin-bottom:12px;display:block}
+.footer-brand p{font-size:13px;color:var(--muted);line-height:1.6}
+.footer-links{display:flex;gap:48px;flex-wrap:wrap}
+.footer-col h4{font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--muted);margin-bottom:14px}
+.footer-col a{display:block;font-size:13px;color:var(--text);text-decoration:none;margin-bottom:8px;transition:color .2s}
+.footer-col a:hover{color:var(--white)}
+.footer-bottom{display:flex;justify-content:space-between;padding-top:24px;border-top:1px solid var(--border)}
+.footer-bottom p{font-size:12px;color:var(--muted)}
+
+/* ── Scroll Reveal ── */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
+
+/* ── Mobile ── */
+@media(max-width:900px){
+  nav{padding:14px 20px}
+  .nav-links{display:none}
+  .starter-hero{grid-template-columns:1fr;padding:120px 20px 60px;gap:40px}
+  .how-grid{grid-template-columns:1fr}
+  .features-section{padding:60px 20px}
+  .feat-grid{grid-template-columns:1fr}
+  .not-section{padding:60px 20px}
+  .not-grid{grid-template-columns:1fr}
+  .upgrade-section{padding:60px 20px}
+  .upgrade-inner{grid-template-columns:1fr}
+  .faq-section{padding:60px 20px}
+  .cta-section{padding:60px 20px}
+  footer{padding:40px 20px}
+  .footer-top{flex-direction:column}
+  .footer-bottom{flex-direction:column;gap:8px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Webnari</a>
+  <div class="nav-links">
+    <a href="features.html">Features</a>
+    <a href="pricing.html">Pricing</a>
+    <a href="portfolio.html">Our Work</a>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <a href="start.html" class="btn-primary-sm">Get started</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<div class="starter-hero">
+  <div>
+    <div class="hero-badge reveal"><span class="dot"></span> We build it. You run it.</div>
+    <h1 class="reveal">A professional site for <span>$5/mo.</span></h1>
+    <p class="hero-desc reveal">We design and build your website from scratch. You get CMS access to maintain it yourself. One-time setup fee, then just $5/month for hosting, domain upkeep, and CMS editor.</p>
+    <div class="price-block reveal">
+      <span class="dollar">$5</span>
+      <span class="period">/mo after setup</span>
+    </div>
+    <p class="price-note reveal">One-time setup fee starting at $499. No contracts, cancel anytime.</p>
+    <div class="hero-ctas reveal">
+      <a href="start.html" class="cta-btn">Get started</a>
+      <a href="pricing.html" class="cta-btn-ghost">See managed plans</a>
+    </div>
+    <div class="hero-trust reveal">
+      <div class="trust-item"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>Professionally built</div>
+      <div class="trust-item"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>CMS included</div>
+      <div class="trust-item"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>SSL & hosting</div>
+    </div>
+  </div>
+  <div class="hero-visual reveal reveal-delay-1">
+    <svg viewBox="0 0 320 280" fill="none" style="width:100%">
+      <!-- CMS editor mockup -->
+      <rect x="0" y="0" width="320" height="280" rx="12" fill="#1C1D2A"/>
+      <!-- Top bar -->
+      <circle cx="18" cy="16" r="4" fill="#E85D75"/>
+      <circle cx="32" cy="16" r="4" fill="#D4956B"/>
+      <circle cx="46" cy="16" r="4" fill="#5EBD8A"/>
+      <rect x="0" y="28" width="320" height="1" fill="#32334A"/>
+      <!-- Sidebar -->
+      <rect x="0" y="29" width="72" height="251" fill="#14151F"/>
+      <rect x="0" y="29" width="72" height="1" fill="#32334A"/>
+      <rect x="14" y="44" width="44" height="5" rx="2" fill="#C9A96E" opacity=".5"/>
+      <rect x="14" y="60" width="44" height="4" rx="2" fill="#42436A"/>
+      <rect x="14" y="72" width="44" height="4" rx="2" fill="#42436A"/>
+      <rect x="14" y="84" width="44" height="4" rx="2" fill="#C9A96E" opacity=".3"/>
+      <rect x="14" y="96" width="44" height="4" rx="2" fill="#42436A"/>
+      <rect x="14" y="108" width="44" height="4" rx="2" fill="#42436A"/>
+      <rect x="14" y="120" width="44" height="4" rx="2" fill="#42436A"/>
+      <!-- Edit area -->
+      <rect x="84" y="42" width="100" height="6" rx="3" fill="#C9A96E" opacity=".6"/>
+      <rect x="84" y="58" width="220" height="5" rx="2" fill="#42436A"/>
+      <rect x="84" y="70" width="180" height="5" rx="2" fill="#42436A"/>
+      <rect x="84" y="82" width="200" height="5" rx="2" fill="#42436A"/>
+      <!-- Toolbar -->
+      <rect x="84" y="100" width="220" height="28" rx="6" fill="#252636" stroke="#32334A" stroke-width="1"/>
+      <rect x="92" y="108" width="16" height="12" rx="2" fill="#42436A"/>
+      <rect x="114" y="108" width="16" height="12" rx="2" fill="#42436A"/>
+      <rect x="136" y="108" width="16" height="12" rx="2" fill="#42436A"/>
+      <rect x="158" y="108" width="16" height="12" rx="2" fill="#42436A"/>
+      <rect x="180" y="108" width="16" height="12" rx="2" fill="#C9A96E" opacity=".3"/>
+      <!-- Content blocks -->
+      <rect x="84" y="140" width="104" height="70" rx="6" fill="#252636" stroke="#32334A" stroke-width="1"/>
+      <rect x="94" y="150" width="60" height="5" rx="2" fill="#A0A0B8"/>
+      <rect x="94" y="162" width="80" height="4" rx="2" fill="#42436A"/>
+      <rect x="94" y="172" width="70" height="4" rx="2" fill="#42436A"/>
+      <rect x="94" y="188" width="40" height="12" rx="4" fill="#C9A96E" opacity=".3"/>
+      <rect x="200" y="140" width="104" height="70" rx="6" fill="#252636" stroke="#32334A" stroke-width="1"/>
+      <rect x="210" y="150" width="70" height="5" rx="2" fill="#A0A0B8"/>
+      <rect x="210" y="162" width="80" height="4" rx="2" fill="#42436A"/>
+      <rect x="210" y="172" width="60" height="4" rx="2" fill="#42436A"/>
+      <rect x="210" y="188" width="40" height="12" rx="4" fill="#5EBD8A" opacity=".3"/>
+      <!-- Save button -->
+      <rect x="232" y="232" width="72" height="28" rx="8" fill="#C9A96E"/>
+      <rect x="248" y="242" width="40" height="6" rx="3" fill="#08080E"/>
+    </svg>
+  </div>
+</div>
+
+<!-- How it works -->
+<section class="how-section">
+  <div class="section-label reveal">How Starter works</div>
+  <h2 class="reveal">Three steps to your website</h2>
+  <div class="how-grid">
+    <div class="how-card reveal">
+      <div class="how-num">1</div>
+      <h3>We build it</h3>
+      <p>Choose from 70+ templates or request a custom design. We build your full website from scratch, optimized for your industry.</p>
+    </div>
+    <div class="how-card reveal reveal-delay-1">
+      <div class="how-num">2</div>
+      <h3>You get the keys</h3>
+      <p>Once live, you get full CMS editor access. Update text, images, pages, and content whenever you want — no code required.</p>
+    </div>
+    <div class="how-card reveal reveal-delay-2">
+      <div class="how-num">3</div>
+      <h3>$5/mo keeps it running</h3>
+      <p>We handle hosting, SSL, domain DNS, and uptime monitoring. Your site stays online, fast, and secure for just $5/month.</p>
+    </div>
+  </div>
+</section>
+
+<!-- What's included — LIGHT -->
+<section class="features-section">
+  <div class="features-inner">
+    <div class="section-label reveal">What's included</div>
+    <h2 class="reveal">Everything you need to stay online</h2>
+    <p class="section-sub reveal">Your $5/month covers the essentials. No surprise fees, no hidden costs.</p>
+    <div class="feat-grid">
+      <div class="feat-card reveal">
+        <div class="feat-visual v-dark">
+          <svg viewBox="0 0 180 120" fill="none">
+            <rect x="20" y="10" width="140" height="100" rx="8" fill="#252636" stroke="#42436A" stroke-width="1"/>
+            <circle cx="44" cy="26" r="3" fill="#E85D75"/>
+            <circle cx="54" cy="26" r="3" fill="#D4956B"/>
+            <circle cx="64" cy="26" r="3" fill="#5EBD8A"/>
+            <rect x="20" y="34" width="140" height="1" fill="#32334A"/>
+            <rect x="30" y="44" width="50" height="4" rx="2" fill="#C9A96E" opacity=".5"/>
+            <rect x="30" y="54" width="80" height="3" rx="1" fill="#42436A"/>
+            <rect x="30" y="62" width="60" height="3" rx="1" fill="#42436A"/>
+            <rect x="30" y="74" width="40" height="14" rx="4" fill="#C9A96E" opacity=".3"/>
+            <rect x="100" y="44" width="50" height="50" rx="4" fill="#32334A"/>
+          </svg>
+        </div>
+        <div class="feat-body">
+          <h3>CMS Editor</h3>
+          <p>Visual editor to update text, images, and page content. No coding required.</p>
+        </div>
+      </div>
+      <div class="feat-card reveal reveal-delay-1">
+        <div class="feat-visual v-cool">
+          <svg viewBox="0 0 180 120" fill="none">
+            <path d="M90 15 L125 33 L125 72 Q125 100 90 110 Q55 100 55 72 L55 33 Z" fill="none" stroke="#1C1D2A" stroke-width="1.5"/>
+            <path d="M90 24 L118 38 L118 70 Q118 93 90 102 Q62 93 62 70 L62 38 Z" fill="#E6EDF5" stroke="none"/>
+            <path d="M80 64 L87 71 L102 56" stroke="#5EBD8A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="82" y="42" width="16" height="12" rx="2" fill="none" stroke="#1C1D2A" stroke-width="1.2"/>
+            <path d="M85 42 V38 Q85 32 90 32 Q95 32 95 38 V42" fill="none" stroke="#1C1D2A" stroke-width="1.2"/>
+          </svg>
+        </div>
+        <div class="feat-body">
+          <h3>SSL & Hosting</h3>
+          <p>Cloudflare hosting with free SSL certificate. Fast, secure, 99.9% uptime.</p>
+        </div>
+      </div>
+      <div class="feat-card reveal reveal-delay-2">
+        <div class="feat-visual v-green">
+          <svg viewBox="0 0 180 120" fill="none">
+            <circle cx="90" cy="55" r="35" fill="none" stroke="#2D6A4F" stroke-width="1.5"/>
+            <circle cx="90" cy="55" r="25" fill="#E4F0E8"/>
+            <path d="M75 55 Q90 35 105 55 Q90 75 75 55 Z" fill="#5EBD8A" opacity=".3"/>
+            <circle cx="90" cy="55" r="5" fill="#2D6A4F"/>
+            <line x1="60" y1="40" x2="70" y2="46" stroke="#2D6A4F" stroke-width="1" stroke-dasharray="2 2"/>
+            <line x1="110" y1="46" x2="120" y2="40" stroke="#2D6A4F" stroke-width="1" stroke-dasharray="2 2"/>
+            <text x="90" y="98" text-anchor="middle" font-family="Space Grotesk" font-size="8" fill="#2D6A4F">webnari.io/you</text>
+          </svg>
+        </div>
+        <div class="feat-body">
+          <h3>Domain Management</h3>
+          <p>DNS setup and domain pointing. Use your own domain or a webnari.io subdomain.</p>
+        </div>
+      </div>
+      <div class="feat-card reveal">
+        <div class="feat-visual v-gold">
+          <svg viewBox="0 0 180 120" fill="none">
+            <rect x="25" y="20" width="130" height="80" rx="8" fill="#FFFFFF" stroke="#DDD6CC" stroke-width="1"/>
+            <rect x="35" y="32" width="40" height="4" rx="2" fill="#C9A96E"/>
+            <rect x="35" y="44" width="100" height="3" rx="1" fill="#DDD6CC"/>
+            <rect x="35" y="52" width="80" height="3" rx="1" fill="#DDD6CC"/>
+            <rect x="35" y="60" width="90" height="3" rx="1" fill="#DDD6CC"/>
+            <rect x="35" y="74" width="50" height="14" rx="4" fill="#C9A96E" opacity=".2"/>
+            <rect x="40" y="78" width="40" height="6" rx="3" fill="#C9A96E"/>
+          </svg>
+        </div>
+        <div class="feat-body">
+          <h3>Contact Form</h3>
+          <p>Built-in contact form that sends submissions directly to your email inbox.</p>
+        </div>
+      </div>
+      <div class="feat-card reveal reveal-delay-1">
+        <div class="feat-visual v-warm">
+          <svg viewBox="0 0 180 120" fill="none">
+            <rect x="35" y="15" width="50" height="85" rx="8" fill="#1C1D2A" stroke="#42436A" stroke-width="1"/>
+            <rect x="40" y="24" width="40" height="60" rx="3" fill="#252636"/>
+            <rect x="45" y="30" width="25" height="3" rx="1" fill="#C9A96E" opacity=".5"/>
+            <rect x="45" y="38" width="30" height="2" rx="1" fill="#42436A"/>
+            <rect x="45" y="44" width="20" height="2" rx="1" fill="#42436A"/>
+            <rect x="45" y="52" width="18" height="8" rx="2" fill="#C9A96E" opacity=".3"/>
+            <circle cx="60" cy="93" r="3" fill="#42436A"/>
+            <rect x="95" y="25" width="55" height="70" rx="8" fill="#1C1D2A" stroke="#42436A" stroke-width="1"/>
+            <rect x="100" y="34" width="45" height="45" rx="3" fill="#252636"/>
+            <rect x="105" y="40" width="30" height="3" rx="1" fill="#C9A96E" opacity=".5"/>
+            <rect x="105" y="48" width="35" height="2" rx="1" fill="#42436A"/>
+            <rect x="105" y="54" width="28" height="2" rx="1" fill="#42436A"/>
+          </svg>
+        </div>
+        <div class="feat-body">
+          <h3>Mobile Responsive</h3>
+          <p>Your site looks great on every device. Tested on phones, tablets, and desktops.</p>
+        </div>
+      </div>
+      <div class="feat-card reveal reveal-delay-2">
+        <div class="feat-visual v-dark">
+          <svg viewBox="0 0 180 120" fill="none">
+            <rect x="30" y="30" width="120" height="60" rx="8" fill="#252636" stroke="#42436A" stroke-width="1"/>
+            <circle cx="90" cy="60" r="16" fill="#32334A"/>
+            <path d="M84 60l4 4 8-8" stroke="#5EBD8A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <rect x="50" y="20" width="80" height="8" rx="4" fill="#5EBD8A" opacity=".15"/>
+            <rect x="60" y="22" width="60" height="4" rx="2" fill="#5EBD8A"/>
+          </svg>
+        </div>
+        <div class="feat-body">
+          <h3>Uptime Monitoring</h3>
+          <p>We monitor your site 24/7. If something goes down, we fix it automatically.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- What's NOT included -->
+<section class="not-section">
+  <h2 class="reveal">Starter vs. managed plans</h2>
+  <p class="section-sub reveal">Starter is perfect for businesses that want a great site without ongoing management costs. Here's how it compares.</p>
+  <div class="not-grid reveal">
+    <div class="not-col">
+      <h3><svg viewBox="0 0 24 24" fill="none" stroke="#5EBD8A" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg> Included in Starter</h3>
+      <ul class="not-list">
+        <li><svg class="chk-icon" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>Professionally designed website</li>
+        <li><svg class="chk-icon" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>CMS editor for self-service updates</li>
+        <li><svg class="chk-icon" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>SSL certificate & Cloudflare hosting</li>
+        <li><svg class="chk-icon" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>Domain DNS management</li>
+        <li><svg class="chk-icon" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>Contact form</li>
+        <li><svg class="chk-icon" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>Mobile responsive design</li>
+        <li><svg class="chk-icon" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>24/7 uptime monitoring</li>
+        <li><svg class="chk-icon" viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>Email support for hosting issues</li>
+      </ul>
+    </div>
+    <div class="not-col">
+      <h3><svg viewBox="0 0 24 24" fill="none" stroke="#E85D75" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Managed plans only</h3>
+      <ul class="not-list">
+        <li><svg class="x-icon" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Content updates and edits by our team</li>
+        <li><svg class="x-icon" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>SEO management and optimization</li>
+        <li><svg class="x-icon" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>E-commerce store</li>
+        <li><svg class="x-icon" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Analytics and performance reports</li>
+        <li><svg class="x-icon" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>AI product photo tools</li>
+        <li><svg class="x-icon" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Integrations (Stripe, Mailchimp, etc.)</li>
+        <li><svg class="x-icon" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Dedicated account manager</li>
+        <li><svg class="x-icon" viewBox="0 0 24 24" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>Priority / phone support</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Upgrade path -->
+<section class="upgrade-section">
+  <div class="upgrade-inner">
+    <div class="upgrade-content reveal">
+      <h2>Need more? <em>Upgrade anytime.</em></h2>
+      <p>Start with Starter and move to a managed plan when you're ready for e-commerce, SEO, or hands-on support. No penalties, no data loss.</p>
+    </div>
+    <div class="upgrade-tiers reveal reveal-delay-1">
+      <div class="upgrade-tier">
+        <div class="tier-price">$39</div>
+        <div><div class="tier-name">Basic</div><div class="tier-desc">E-commerce + SEO + managed support</div></div>
+      </div>
+      <div class="upgrade-tier" style="border-color:var(--accent)">
+        <div class="tier-price" style="color:var(--accent)">$105</div>
+        <div><div class="tier-name">Standard</div><div class="tier-desc">250 products + analytics + Mailchimp</div></div>
+      </div>
+      <div class="upgrade-tier">
+        <div class="tier-price">$399</div>
+        <div><div class="tier-name">Pro</div><div class="tier-desc">Unlimited + AI tools + dedicated team</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq-section">
+  <div class="faq-header reveal">
+    <h2>Questions about Starter</h2>
+    <p>Everything you need to know about the self-service plan.</p>
+  </div>
+  <div id="faq-list"></div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <h2 class="reveal">Get a pro website<br>for <em>$5/mo.</em></h2>
+  <p class="reveal">One-time setup fee. We build it, you own the content. Cancel anytime.</p>
+  <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative" class="reveal">
+    <a href="start.html" class="cta-btn">Get started</a>
+    <a href="pricing.html" class="cta-btn-ghost">See managed plans</a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a class="nav-logo" href="index.html">Webnari</a>
+      <p>Professional websites and digital marketing tools for local service businesses in South Florida.</p>
+    </div>
+    <div class="footer-links">
+      <div class="footer-col"><h4>PRODUCT</h4><a href="features.html">Features</a><a href="pricing.html">Pricing</a><a href="portfolio.html">Our Work</a></div>
+      <div class="footer-col"><h4>PLANS</h4><a href="starter.html">Starter — $5/mo</a><a href="pricing.html">Basic — $39/mo</a><a href="pricing.html">Standard — $105/mo</a><a href="pricing.html">Pro — $399/mo</a></div>
+      <div class="footer-col"><h4>COMPANY</h4><a href="start.html">Get Started</a><a href="mailto:hello@webnari.io">Contact</a></div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>&copy; 2026 Webnari. All rights reserved.</p>
+    <p>Built for local businesses.</p>
+  </div>
+</footer>
+
+<!-- Built and managed by Webnari -->
+
+<script>
+const FAQS=[
+  {q:'What does the one-time setup fee cover?',a:'The setup fee covers the full design and build of your website. We create it from scratch using one of our 70+ templates or a custom design tailored to your brand. Setup fees start at $499 depending on complexity and number of pages.'},
+  {q:'What can I edit with the CMS?',a:'You can update text, images, links, page content, and basic layout elements. The CMS is a visual editor — no coding required. It\'s similar to editing a Google Doc but for your website.'},
+  {q:'Can I add e-commerce to a Starter plan?',a:'E-commerce is available on our managed plans (Basic, Standard, Pro). If you want to sell online, you can upgrade at any time. Your existing site carries over seamlessly.'},
+  {q:'What happens if my site goes down?',a:'We monitor all Starter sites 24/7. If something goes down, our automated systems restore it. For hosting-related issues, email support is included.'},
+  {q:'Do I own my website content?',a:'Yes, you own all your content, images, and copy. The website design and hosting are part of your Starter subscription. If you cancel, we can export your content.'},
+  {q:'Can I use my own domain?',a:'Absolutely. We\'ll set up DNS pointing for your existing domain. If you don\'t have one, you can use a free webnari.io subdomain.'},
+  {q:'What if I want design changes later?',a:'Minor CSS or layout changes can be requested as one-time projects (billed hourly). For ongoing design updates and content management, upgrade to a managed plan.'},
+  {q:'Is there a contract or commitment?',a:'No contracts. You can cancel anytime. The $5/month is billed monthly. The one-time setup fee is non-refundable after work begins.'},
+];
+
+function renderFAQ(){
+  document.getElementById('faq-list').innerHTML=FAQS.map(f=>
+    '<div class="faq-item reveal" onclick="this.classList.toggle(\'open\')">'
+    +'<div class="faq-q">'+f.q+'<div class="faq-toggle"><svg viewBox="0 0 24 24" fill="none"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div>'
+    +'<div class="faq-a">'+f.a+'</div>'
+    +'</div>'
+  ).join('');
+}
+
+function initReveal(){
+  const obs=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}});
+  },{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+}
+
+function initStagger(){
+  document.querySelectorAll('.how-card').forEach((card,i)=>{
+    card.style.opacity='0';card.style.transform='translateY(24px)';
+    card.style.transition='opacity .5s ease '+(i*.12)+'s, transform .5s ease '+(i*.12)+'s';
+  });
+  const hObs=new IntersectionObserver(entries=>{
+    if(entries[0].isIntersecting){
+      document.querySelectorAll('.how-card').forEach(c=>{c.style.opacity='1';c.style.transform='translateY(0)'});
+      hObs.disconnect();
+    }
+  },{threshold:.1});
+  const hg=document.querySelector('.how-grid');
+  if(hg) hObs.observe(hg);
+
+  document.querySelectorAll('.feat-card').forEach((card,i)=>{
+    card.style.opacity='0';card.style.transform='translateY(24px)';
+    card.style.transition='opacity .5s ease '+(i*.1)+'s, transform .5s ease '+(i*.1)+'s';
+  });
+  const fObs=new IntersectionObserver(entries=>{
+    if(entries[0].isIntersecting){
+      document.querySelectorAll('.feat-card').forEach(c=>{c.style.opacity='1';c.style.transform='translateY(0)'});
+      fObs.disconnect();
+    }
+  },{threshold:.05});
+  const fg=document.querySelector('.feat-grid');
+  if(fg) fObs.observe(fg);
+}
+
+renderFAQ();
+document.addEventListener('DOMContentLoaded',()=>{initReveal();initStagger()});
+if(document.readyState==='complete'||document.readyState==='interactive'){initReveal();initStagger()}
+</script>
+</body>
+</html>
