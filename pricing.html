@@ -42,15 +42,27 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .btn-primary-sm:hover{background:var(--accent2)}
 
 /* ── Hero ── */
-.pricing-hero{padding:140px 40px 48px;text-align:center;max-width:760px;margin:0 auto;position:relative}
-.pricing-hero::before{content:'';position:absolute;top:80px;left:50%;transform:translateX(-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(201,169,110,.06) 0%,transparent 70%);pointer-events:none}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:6px 16px 6px 8px;margin-bottom:24px;font-size:12px;color:var(--accent);font-weight:600;letter-spacing:.02em}
-.hero-badge .dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse-dot 2s ease infinite}
-@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+.pricing-hero-wrap{position:relative;overflow:hidden;background:linear-gradient(170deg,#08080E 0%,#110F08 30%,#0D0B06 60%,#08080E 100%)}
+.pricing-hero-wrap::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 55% at 50% 35%,rgba(201,169,110,.09) 0%,transparent 65%);pointer-events:none}
+.pricing-hero-wrap::after{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(201,169,110,.035) 1px,transparent 1px);background-size:28px 28px;pointer-events:none}
+.pricing-hero{padding:140px 40px 48px;text-align:center;max-width:760px;margin:0 auto;position:relative;z-index:1}
 .pricing-hero h1{font-family:var(--font-head);font-size:clamp(40px,5.5vw,64px);color:var(--white);line-height:1.08;margin-bottom:16px;letter-spacing:-.03em;position:relative}
 .pricing-hero h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .pricing-hero p{font-size:18px;color:var(--text);line-height:1.7;max-width:540px;margin:0 auto}
 .pricing-hero .hero-sub-note{font-size:13px;color:var(--muted);margin-top:12px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(28,29,42,.7);border:1px solid rgba(201,169,110,.2);border-radius:100px;padding:6px 16px 6px 8px;margin-bottom:24px;font-size:12px;color:var(--accent);font-weight:600;letter-spacing:.02em;backdrop-filter:blur(8px)}
+.hero-badge .dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse-dot 2s ease infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+.pricing-hero-deco{position:absolute;pointer-events:none}
+.pricing-hero-deco.deco-ring{width:500px;height:500px;top:30px;left:50%;transform:translateX(-50%);border-radius:50%;border:1px solid rgba(201,169,110,.06);opacity:.5}
+.pricing-hero-deco.deco-ring2{width:700px;height:700px;top:-70px;left:50%;transform:translateX(-50%);border-radius:50%;border:1px solid rgba(201,169,110,.03);opacity:.4}
+.pricing-hero-deco.deco-line-l{top:130px;left:6%;width:100px;height:1px;background:linear-gradient(90deg,transparent,rgba(201,169,110,.12),transparent);transform:rotate(-12deg)}
+.pricing-hero-deco.deco-line-r{bottom:60px;right:6%;width:80px;height:1px;background:linear-gradient(90deg,transparent,rgba(232,213,168,.12),transparent);transform:rotate(15deg)}
+.pricing-hero-deco.deco-sparkle{width:4px;height:4px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px 2px rgba(201,169,110,.3)}
+.pricing-hero-deco.sp1{top:110px;left:18%;opacity:.3;animation:sparkleP 3s ease-in-out infinite}
+.pricing-hero-deco.sp2{top:180px;right:16%;opacity:.2;animation:sparkleP 4s ease-in-out infinite 1.5s}
+.pricing-hero-deco.sp3{bottom:50px;left:30%;opacity:.25;animation:sparkleP 3.5s ease-in-out infinite .8s}
+@keyframes sparkleP{0%,100%{opacity:.15;transform:scale(.7)}50%{opacity:.45;transform:scale(1.4)}}
 
 /* ── Trust Strip ── */
 .trust-strip{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:20px 40px;display:flex;align-items:center;justify-content:center;gap:40px;flex-wrap:wrap;max-width:100%}
@@ -245,10 +257,11 @@ footer{border-top:1px solid var(--border);padding:48px 40px}
 .reveal-delay-3{transition-delay:.3s}
 
 /* ── Floating accent shape (hero bg) ── */
-.pricing-hero .float-shape{position:absolute;border-radius:50%;filter:blur(80px);pointer-events:none;opacity:.04}
-.pricing-hero .fs1{width:300px;height:300px;background:var(--accent);top:60px;left:20%;animation:floatA 8s ease-in-out infinite}
-.pricing-hero .fs2{width:200px;height:200px;background:var(--warm);top:180px;right:15%;animation:floatA 10s ease-in-out infinite reverse}
-@keyframes floatA{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-20px) scale(1.05)}}
+.pricing-hero .float-shape{position:absolute;border-radius:50%;filter:blur(60px);pointer-events:none}
+.pricing-hero .fs1{width:350px;height:350px;background:radial-gradient(circle,rgba(201,169,110,.18) 0%,rgba(201,169,110,.05) 50%,transparent 70%);top:40px;left:15%;animation:floatA 8s ease-in-out infinite}
+.pricing-hero .fs2{width:260px;height:260px;background:radial-gradient(circle,rgba(212,149,107,.15) 0%,rgba(212,149,107,.04) 50%,transparent 70%);top:160px;right:10%;animation:floatA 10s ease-in-out infinite reverse}
+.pricing-hero .fs3{width:180px;height:180px;background:radial-gradient(circle,rgba(232,213,168,.12) 0%,transparent 60%);bottom:20px;left:45%;filter:blur(50px);animation:floatA 12s ease-in-out infinite 3s}
+@keyframes floatA{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-24px) scale(1.08)}}
 
 /* ── Card shimmer on hover ── */
 .p-card::after{content:'';position:absolute;inset:0;border-radius:16px;opacity:0;transition:opacity .3s;background:linear-gradient(135deg,transparent 40%,rgba(201,169,110,.04) 50%,transparent 60%);pointer-events:none}
@@ -272,6 +285,11 @@ footer{border-top:1px solid var(--border);padding:48px 40px}
   nav{padding:14px 20px}
   .nav-links{display:none}
   .pricing-hero{padding:120px 20px 36px}
+  .pricing-hero .fs1{width:220px;height:220px;left:5%}
+  .pricing-hero .fs2{width:160px;height:160px;right:0}
+  .pricing-hero-deco.deco-ring{width:320px;height:320px}
+  .pricing-hero-deco.deco-ring2{display:none}
+  .pricing-hero-deco.deco-line-l,.pricing-hero-deco.deco-line-r,.pricing-hero-deco.deco-sparkle{display:none}
   .pricing-grid{grid-template-columns:1fr;max-width:440px;padding:0 20px 40px}
   .included-section{padding:60px 20px}
   .included-grid{grid-template-columns:1fr}
@@ -317,13 +335,23 @@ footer{border-top:1px solid var(--border);padding:48px 40px}
 </nav>
 
 <!-- Hero -->
-<div class="pricing-hero reveal">
-  <div class="float-shape fs1"></div>
-  <div class="float-shape fs2"></div>
-  <div class="hero-badge"><span class="dot"></span> No contracts, cancel anytime</div>
-  <h1>Plans that grow<br>with <span>your business.</span></h1>
-  <p>Everything you need to launch, grow, and manage your online presence. Professional design, managed hosting, SEO, and support in one plan.</p>
-  <p class="hero-sub-note">All plans include a dedicated account team. We build it, we manage it, you grow.</p>
+<div class="pricing-hero-wrap">
+  <div class="pricing-hero-deco deco-ring"></div>
+  <div class="pricing-hero-deco deco-ring2"></div>
+  <div class="pricing-hero-deco deco-line-l"></div>
+  <div class="pricing-hero-deco deco-line-r"></div>
+  <div class="pricing-hero-deco deco-sparkle sp1"></div>
+  <div class="pricing-hero-deco deco-sparkle sp2"></div>
+  <div class="pricing-hero-deco deco-sparkle sp3"></div>
+  <div class="pricing-hero reveal">
+    <div class="float-shape fs1"></div>
+    <div class="float-shape fs2"></div>
+    <div class="float-shape fs3"></div>
+    <div class="hero-badge"><span class="dot"></span> No contracts, cancel anytime</div>
+    <h1>Plans that grow<br>with <span>your business.</span></h1>
+    <p>Everything you need to launch, grow, and manage your online presence. Professional design, managed hosting, SEO, and support in one plan.</p>
+    <p class="hero-sub-note">All plans include a dedicated account team. We build it, we manage it, you grow.</p>
+  </div>
 </div>
 
 <!-- Trust Strip -->
