@@ -52,6 +52,13 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .pricing-hero p{font-size:18px;color:var(--text);line-height:1.7;max-width:540px;margin:0 auto}
 .pricing-hero .hero-sub-note{font-size:13px;color:var(--muted);margin-top:12px}
 
+/* ── Trust Strip ── */
+.trust-strip{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:20px 40px;display:flex;align-items:center;justify-content:center;gap:40px;flex-wrap:wrap;max-width:100%}
+.trust-item-strip{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--text);white-space:nowrap}
+.trust-item-strip svg{width:20px;height:20px;flex-shrink:0;stroke:var(--accent);stroke-width:1.8;fill:none}
+@media(max-width:900px){.trust-strip{padding:20px 20px;gap:16px 28px}}
+@media(max-width:480px){.trust-strip{display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;justify-items:start}.trust-item-strip:last-child{grid-column:span 2;justify-self:center}}
+
 /* ── Toggle ── */
 .billing-toggle{display:flex;align-items:center;justify-content:flex-start;gap:16px;margin:40px auto 32px;max-width:1100px;padding:0 40px}
 .billing-toggle span{font-size:14px;color:var(--muted);transition:color .2s;cursor:pointer}
@@ -317,6 +324,30 @@ footer{border-top:1px solid var(--border);padding:48px 40px}
   <h1>Plans that grow<br>with <span>your business.</span></h1>
   <p>Everything you need to launch, grow, and manage your online presence. Professional design, managed hosting, SEO, and support in one plan.</p>
   <p class="hero-sub-note">All plans include a dedicated account team. We build it, we manage it, you grow.</p>
+</div>
+
+<!-- Trust Strip -->
+<div class="trust-strip reveal">
+  <div class="trust-item-strip">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v0M8 14.5c.8 1.5 2.3 2.5 4 2.5s3.2-1 4-2.5" stroke-linecap="round"/><line x1="12" y1="7" x2="12" y2="7" stroke-linecap="round" stroke-width="3"/></svg>
+    Custom domain
+  </div>
+  <div class="trust-item-strip">
+    <svg viewBox="0 0 24 24"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" stroke-linejoin="round"/></svg>
+    Cloudflare hosting
+  </div>
+  <div class="trust-item-strip">
+    <svg viewBox="0 0 24 24"><path d="M12 2L9.5 8.5 3 9.5l5 4.5-1.5 6.5L12 17l5.5 3.5L16 14l5-4.5-6.5-1z" stroke-linejoin="round"/></svg>
+    AI-powered tools
+  </div>
+  <div class="trust-item-strip">
+    <svg viewBox="0 0 24 24"><path d="M12 3L4 7v6c0 5.25 3.4 10.15 8 11.25 4.6-1.1 8-6 8-11.25V7l-8-4z" stroke-linejoin="round"/><path d="M9 12l2 2 4-4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    SSL & security
+  </div>
+  <div class="trust-item-strip">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    24/7 uptime monitoring
+  </div>
 </div>
 
 <!-- Billing Toggle -->
@@ -685,6 +716,7 @@ const PLANS=[
       {g:'AI & Tools'},
       '100 AI product photo scans/mo',
       'Basic analytics dashboard',
+      'Google Analytics integration',
       {g:'SEO & Marketing'},
       'On-page SEO setup',
       'Google Business integration',
@@ -692,6 +724,7 @@ const PLANS=[
       {g:'Support'},
       'Email support',
       '48-hour response time',
+      'Up to 3 forms',
     ]
   },
   {
@@ -716,9 +749,12 @@ const PLANS=[
       'Discount codes + buy-X-get-Y',
       'Abandoned cart recovery',
       'Customer accounts',
+      'Product reviews & ratings',
       {g:'AI & Tools'},
       '200 AI product photo scans/mo',
       'Full analytics dashboard',
+      'Automated email flows',
+      'CMS editor access',
       'Mailchimp integration',
       {g:'SEO & Marketing'},
       'Advanced SEO strategy',
@@ -744,6 +780,7 @@ const PLANS=[
       'Custom parallax animations',
       'Blog with weekly content',
       'Conversion-optimized landing pages',
+      'Custom API integrations',
       {g:'E-Commerce'},
       'Unlimited products & variants',
       'Full checkout + subscriptions',
@@ -753,9 +790,11 @@ const PLANS=[
       'Customer accounts & segments',
       'Multi-location inventory',
       'Shipping labels (Shippo)',
+      'Wholesale / B2B pricing',
       {g:'AI & Tools'},
       '500 AI product photo scans/mo',
       'Advanced analytics & reports',
+      'Custom reports & dashboards',
       'Klaviyo + Mailchimp',
       'QuickBooks sync',
       'Google Merchant & Meta feeds',
@@ -816,6 +855,7 @@ const COMPARE=[
   {f:'Blog',v:[DASH,CHK,CHK]},
   {f:'Booking / scheduling',v:[DASH,CHK,CHK]},
   {f:'Landing pages',v:[DASH,DASH,CHK]},
+  {f:'Custom forms',v:['3','10','Unlimited']},
   {group:'E-Commerce'},
   {f:'Online store',v:[CHK,CHK,CHK]},
   {f:'Products',v:['25','250','Unlimited']},
@@ -834,11 +874,15 @@ const COMPARE=[
   {f:'Multi-location inventory',v:[DASH,DASH,CHK]},
   {f:'Shipping labels (Shippo)',v:[DASH,DASH,CHK]},
   {f:'Draft / manual orders',v:[DASH,DASH,CHK]},
+  {f:'Product reviews & ratings',v:[DASH,CHK,CHK]},
+  {f:'Wholesale / B2B pricing',v:[DASH,DASH,CHK]},
   {group:'AI & Tools'},
   {f:'AI product photo scans',v:['100/mo','200/mo','500/mo']},
   {f:'Analytics dashboard',v:['Basic','Full','Advanced']},
   {f:'Automated email flows',v:[DASH,CHK,CHK]},
   {f:'CMS editor access',v:[DASH,CHK,CHK]},
+  {f:'Google Analytics',v:[CHK,CHK,CHK]},
+  {f:'Custom reports',v:[DASH,DASH,CHK]},
   {group:'Integrations'},
   {f:'Mailchimp',v:[DASH,CHK,CHK]},
   {f:'Klaviyo',v:[DASH,DASH,CHK]},
