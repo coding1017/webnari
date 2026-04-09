@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Pricing — Webnari</title>
-<meta name="description" content="Simple, transparent pricing for professional websites. Monthly or yearly plans starting at $29/mo. No contracts, cancel anytime.">
+<meta name="description" content="Professional websites starting at $39/mo. Shopify-level features with hands-on management. Monthly or yearly plans, no contracts.">
 <meta property="og:title" content="Pricing — Webnari">
-<meta property="og:description" content="Professional websites starting at $29/mo. No contracts, no surprises.">
+<meta property="og:description" content="Professional websites starting at $39/mo. No contracts, no surprises.">
 <meta property="og:image" content="https://webnari.io/images/og-webnari.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,6 +22,9 @@
   --radius:12px;
   --font-head:'Space Grotesk',sans-serif;
   --font-body:'Instrument Sans',sans-serif;
+  /* light section tokens */
+  --light-bg:#F2EDE6;--light-surface:#FFFFFF;--light-border:#DDD6CC;
+  --light-text:#3A3A4A;--light-muted:#6A6A7A;--light-heading:#14151F;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:var(--font-body);background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased}
@@ -33,82 +36,186 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:cen
 .nav-links a{font-size:14px;color:var(--text);text-decoration:none;transition:color .2s}
 .nav-links a:hover{color:var(--white)}
 .nav-right{display:flex;align-items:center;gap:12px}
-.btn-ghost-sm{background:none;border:1px solid var(--border);color:var(--text);padding:8px 18px;border-radius:var(--radius);font-size:13px;cursor:pointer;transition:all .2s}
+.btn-ghost-sm{background:none;border:1px solid var(--border);color:var(--text);padding:8px 18px;border-radius:var(--radius);font-size:13px;cursor:pointer;transition:all .2s;text-decoration:none}
 .btn-ghost-sm:hover{border-color:var(--accent);color:var(--white)}
 .btn-primary-sm{background:var(--accent);color:var(--bg);padding:8px 20px;border-radius:var(--radius);font-size:13px;font-weight:600;text-decoration:none;display:inline-block;transition:all .2s}
 .btn-primary-sm:hover{background:var(--accent2)}
 
 /* ── Hero ── */
-.pricing-hero{padding:140px 40px 60px;text-align:center;max-width:720px;margin:0 auto}
-.pricing-hero h1{font-family:var(--font-head);font-size:clamp(36px,5vw,56px);color:var(--white);line-height:1.1;margin-bottom:16px}
-.pricing-hero h1 span{color:var(--accent)}
-.pricing-hero p{font-size:17px;color:var(--text);line-height:1.6;max-width:560px;margin:0 auto}
+.pricing-hero{padding:140px 40px 48px;text-align:center;max-width:760px;margin:0 auto;position:relative}
+.pricing-hero::before{content:'';position:absolute;top:80px;left:50%;transform:translateX(-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(201,169,110,.06) 0%,transparent 70%);pointer-events:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:var(--surface2);border:1px solid var(--border);border-radius:100px;padding:6px 16px 6px 8px;margin-bottom:24px;font-size:12px;color:var(--accent);font-weight:600;letter-spacing:.02em}
+.hero-badge .dot{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse-dot 2s ease infinite}
+@keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.4}}
+.pricing-hero h1{font-family:var(--font-head);font-size:clamp(40px,5.5vw,64px);color:var(--white);line-height:1.08;margin-bottom:16px;letter-spacing:-.03em;position:relative}
+.pricing-hero h1 span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.pricing-hero p{font-size:18px;color:var(--text);line-height:1.7;max-width:540px;margin:0 auto}
+.pricing-hero .hero-sub-note{font-size:13px;color:var(--muted);margin-top:12px}
 
 /* ── Toggle ── */
-.billing-toggle{display:flex;align-items:center;justify-content:center;gap:16px;margin:48px 0 40px}
-.billing-toggle span{font-size:14px;color:var(--muted);transition:color .2s}
+.billing-toggle{display:flex;align-items:center;justify-content:center;gap:16px;margin:40px 0 32px}
+.billing-toggle span{font-size:14px;color:var(--muted);transition:color .2s;cursor:pointer}
 .billing-toggle span.active{color:var(--white);font-weight:600}
 .toggle-switch{width:52px;height:28px;background:var(--surface2);border:1px solid var(--border);border-radius:14px;position:relative;cursor:pointer;transition:all .3s}
 .toggle-switch::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--accent);transition:transform .3s}
 .toggle-switch.yearly::after{transform:translateX(24px)}
 .toggle-switch.yearly{border-color:var(--accent)}
-.save-badge{font-size:11px;font-weight:600;color:var(--green);background:rgba(94,189,138,.12);padding:3px 10px;border-radius:20px}
+.save-badge{font-size:11px;font-weight:600;color:var(--green);background:rgba(94,189,138,.12);padding:3px 10px;border-radius:20px;transition:opacity .3s}
 
 /* ── Pricing Cards ── */
-.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1080px;margin:0 auto;padding:0 40px 80px}
-.p-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px 28px;position:relative;transition:all .3s}
-.p-card:hover{border-color:var(--border2);transform:translateY(-4px)}
-.p-card.featured{border-color:var(--accent);background:var(--surface2)}
-.p-card.featured::before{content:'MOST POPULAR';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--accent);color:var(--bg);font-size:10px;font-weight:700;letter-spacing:.08em;padding:4px 14px;border-radius:20px}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1100px;margin:0 auto;padding:0 40px 48px}
+.p-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:32px 28px;position:relative;transition:all .3s;display:flex;flex-direction:column}
+.p-card:hover{border-color:var(--border2);transform:translateY(-4px);box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.p-card.featured{border-color:var(--accent);background:linear-gradient(180deg,var(--surface2) 0%,var(--surface) 100%)}
+.p-card.featured::before{content:'MOST POPULAR';position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--bg);font-size:10px;font-weight:700;letter-spacing:.08em;padding:4px 16px;border-radius:20px}
 .p-card-tier{font-size:12px;font-weight:600;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
 .p-card-price{display:flex;align-items:baseline;gap:4px;margin-bottom:4px}
-.p-card-price .dollar{font-family:var(--font-head);font-size:48px;font-weight:700;color:var(--white);line-height:1}
+.p-card-price .dollar{font-family:var(--font-head);font-size:52px;font-weight:700;color:var(--white);line-height:1;letter-spacing:-.03em}
 .p-card-price .period{font-size:14px;color:var(--muted)}
 .p-card-year{font-size:12px;color:var(--muted);margin-bottom:16px;min-height:18px}
-.p-card-desc{font-size:14px;color:var(--text);line-height:1.5;margin-bottom:24px;min-height:42px}
-.p-card-cta{display:block;width:100%;text-align:center;padding:12px;border-radius:var(--radius);font-size:14px;font-weight:600;text-decoration:none;transition:all .2s;margin-bottom:24px}
+.p-card-desc{font-size:14px;color:var(--text);line-height:1.6;margin-bottom:24px;min-height:44px}
+.p-card-cta{display:block;width:100%;text-align:center;padding:13px;border-radius:var(--radius);font-size:14px;font-weight:600;text-decoration:none;transition:all .2s;margin-bottom:24px}
 .p-card .p-card-cta{background:var(--surface2);color:var(--white);border:1px solid var(--border)}
 .p-card .p-card-cta:hover{border-color:var(--accent);color:var(--accent)}
-.p-card.featured .p-card-cta{background:var(--accent);color:var(--bg);border:none}
-.p-card.featured .p-card-cta:hover{background:var(--accent2)}
+.p-card.featured .p-card-cta{background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--bg);border:none}
+.p-card.featured .p-card-cta:hover{filter:brightness(1.1);transform:translateY(-1px)}
 .p-card-divider{height:1px;background:var(--border);margin-bottom:20px}
-.p-card ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.p-card ul{list-style:none;display:flex;flex-direction:column;gap:10px;flex:1}
 .p-card li{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--text);line-height:1.4}
 .p-card li svg{width:16px;height:16px;flex-shrink:0;stroke:var(--green);stroke-width:2.5;margin-top:1px}
 .p-card li.section-label{font-size:11px;font-weight:600;letter-spacing:.04em;color:var(--muted);text-transform:uppercase;margin-top:8px;gap:0}
 .p-card li.section-label:first-child{margin-top:0}
 
+/* ── Trusted By ── */
+.trusted-section{padding:48px 40px;text-align:center;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.trusted-section p{font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:20px}
+.trusted-logos{display:flex;justify-content:center;gap:48px;flex-wrap:wrap;align-items:center;opacity:.5}
+.trusted-logos span{font-family:var(--font-head);font-size:16px;font-weight:700;color:var(--text);letter-spacing:-.01em}
+
+/* ── Always Included — LIGHT SECTION ── */
+.included-section{background:var(--light-bg);padding:100px 40px;position:relative;overflow:hidden}
+.included-section::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent)}
+.section-label-sm{font-size:12px;font-weight:600;letter-spacing:.08em;color:var(--accent);text-transform:uppercase;text-align:center;margin-bottom:12px}
+.included-section h2{font-family:var(--font-head);font-size:clamp(32px,4vw,48px);color:var(--light-heading);text-align:center;line-height:1.1;margin-bottom:12px;letter-spacing:-.02em}
+.included-section .section-sub{font-size:17px;color:var(--light-muted);text-align:center;max-width:560px;margin:0 auto 56px;line-height:1.6}
+
+.included-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1100px;margin:0 auto}
+.included-card{background:var(--light-surface);border:1px solid var(--light-border);border-radius:16px;padding:0;overflow:hidden;transition:all .3s}
+.included-card:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,.08)}
+.included-card.wide{grid-column:span 2}
+.included-visual{height:200px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.included-visual.v-gold{background:linear-gradient(135deg,#F5EDDF 0%,#EDE2D0 100%)}
+.included-visual.v-dark{background:linear-gradient(135deg,#1C1D2A 0%,#252636 100%)}
+.included-visual.v-warm{background:linear-gradient(135deg,#F0E4D4 0%,#E8D5C0 100%)}
+.included-visual.v-cool{background:linear-gradient(135deg,#E6EDF5 0%,#D8E2EE 100%)}
+.included-visual.v-green{background:linear-gradient(135deg,#E4F0E8 0%,#D0E8D8 100%)}
+.included-visual svg{width:80%;height:80%;max-width:280px}
+.included-body{padding:24px 28px 28px}
+.included-body h3{font-family:var(--font-head);font-size:18px;color:var(--light-heading);margin-bottom:8px;font-weight:600}
+.included-body p{font-size:14px;color:var(--light-muted);line-height:1.6}
+
+/* ── Stats Section — DARK ── */
+.stats-section{background:var(--bg);padding:100px 40px;position:relative}
+.stats-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(201,169,110,.04) 0%,transparent 60%);pointer-events:none}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;max-width:1100px;margin:0 auto}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:48px 32px;text-align:center;position:relative;overflow:hidden;transition:all .3s}
+.stat-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:0;transition:opacity .3s}
+.stat-card:hover::before{opacity:1}
+.stat-number{font-family:var(--font-head);font-size:clamp(48px,6vw,72px);font-weight:700;color:var(--white);line-height:1;margin-bottom:8px;letter-spacing:-.04em}
+.stat-number span{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.stat-label{font-size:15px;color:var(--text);line-height:1.5}
+
+/* ── Testimonial — LIGHT ── */
+.testimonial-section{background:var(--light-bg);padding:100px 40px;position:relative}
+.testimonial-inner{max-width:900px;margin:0 auto;display:grid;grid-template-columns:1fr 1.4fr;gap:48px;align-items:center}
+.testimonial-visual{background:linear-gradient(135deg,#1C1D2A 0%,#252636 100%);border-radius:20px;height:360px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.testimonial-visual::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 40%,rgba(201,169,110,.15) 0%,transparent 60%)}
+.testimonial-visual svg{width:120px;height:120px;opacity:.6}
+.testimonial-content blockquote{font-family:var(--font-body);font-size:20px;color:var(--light-heading);line-height:1.7;margin-bottom:24px;font-style:italic;position:relative;padding-left:24px;border-left:3px solid var(--accent)}
+.testimonial-author{display:flex;align-items:center;gap:12px}
+.testimonial-avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-family:var(--font-head);font-size:18px;font-weight:700;color:var(--bg)}
+.testimonial-meta .t-name{font-size:15px;font-weight:600;color:var(--light-heading)}
+.testimonial-meta .t-role{font-size:13px;color:var(--light-muted)}
+
+/* ── Managed Service Banner ── */
+.managed-section{background:var(--surface);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:80px 40px}
+.managed-inner{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+.managed-content h2{font-family:var(--font-head);font-size:clamp(28px,3.5vw,40px);color:var(--white);line-height:1.15;margin-bottom:16px;letter-spacing:-.02em}
+.managed-content h2 em{font-style:italic;color:var(--accent)}
+.managed-content p{font-size:16px;color:var(--text);line-height:1.7;margin-bottom:24px}
+.managed-features{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.managed-feat{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:var(--text);line-height:1.4}
+.managed-feat svg{width:16px;height:16px;flex-shrink:0;stroke:var(--green);stroke-width:2.5;margin-top:1px}
+.managed-visual{background:linear-gradient(135deg,var(--surface2) 0%,var(--surface3) 100%);border-radius:16px;border:1px solid var(--border);height:320px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+.managed-visual::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(201,169,110,.08) 0%,transparent 70%)}
+
+/* Phone mockup inside managed visual */
+.phone-mockup{width:160px;height:280px;background:var(--bg);border:2px solid var(--border2);border-radius:24px;position:relative;padding:12px 8px;display:flex;flex-direction:column;gap:6px;overflow:hidden}
+.phone-mockup::before{content:'';position:absolute;top:6px;left:50%;transform:translateX(-50%);width:40px;height:4px;border-radius:4px;background:var(--border)}
+.phone-bar{height:6px;border-radius:3px;background:var(--accent);opacity:.8}
+.phone-bar.b2{width:80%;background:var(--border2)}
+.phone-bar.b3{width:60%;background:var(--border2)}
+.phone-block{height:40px;border-radius:6px;background:var(--surface2);border:1px solid var(--border)}
+.phone-block.gold{background:linear-gradient(135deg,rgba(201,169,110,.15),rgba(201,169,110,.05));border-color:rgba(201,169,110,.2)}
+
 /* ── Comparison Table ── */
-.compare-section{max-width:1080px;margin:0 auto;padding:0 40px 80px}
-.compare-title{font-family:var(--font-head);font-size:28px;color:var(--white);text-align:center;margin-bottom:8px}
-.compare-sub{font-size:15px;color:var(--text);text-align:center;margin-bottom:40px}
+.compare-section{max-width:1100px;margin:0 auto;padding:80px 40px}
+.compare-header{text-align:center;margin-bottom:48px}
+.compare-header h2{font-family:var(--font-head);font-size:clamp(28px,3.5vw,40px);color:var(--white);margin-bottom:8px;letter-spacing:-.02em}
+.compare-header p{font-size:15px;color:var(--text)}
 .compare-table{width:100%;border-collapse:collapse}
-.compare-table th{text-align:left;font-size:12px;font-weight:600;letter-spacing:.04em;color:var(--muted);text-transform:uppercase;padding:12px 16px;border-bottom:1px solid var(--border)}
-.compare-table th:not(:first-child){text-align:center}
+.compare-table th{text-align:left;font-size:12px;font-weight:600;letter-spacing:.04em;color:var(--muted);text-transform:uppercase;padding:14px 16px;border-bottom:2px solid var(--border);position:sticky;top:64px;background:var(--bg);z-index:10}
+.compare-table th:not(:first-child){text-align:center;color:var(--white);font-size:14px;letter-spacing:0;text-transform:none;font-family:var(--font-head)}
 .compare-table td{padding:14px 16px;font-size:13px;color:var(--text);border-bottom:1px solid rgba(50,51,74,.3)}
+.compare-table td:first-child{color:var(--white);font-weight:500}
 .compare-table td:not(:first-child){text-align:center;color:var(--white)}
-.compare-table tr:hover td{background:rgba(20,21,31,.5)}
-.compare-table .group-row td{font-size:11px;font-weight:600;letter-spacing:.04em;color:var(--accent);text-transform:uppercase;padding:20px 16px 10px;border-bottom:none;background:none}
-.chk{display:inline-block;width:18px;height:18px}
-.chk svg{stroke:var(--green);stroke-width:2.5;fill:none;width:18px;height:18px}
+.compare-table tr:hover td{background:rgba(20,21,31,.6)}
+.compare-table .group-row td{font-size:11px;font-weight:600;letter-spacing:.06em;color:var(--accent);text-transform:uppercase;padding:24px 16px 12px;border-bottom:1px solid var(--border);background:none}
+.chk{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;background:rgba(94,189,138,.12)}
+.chk svg{stroke:var(--green);stroke-width:2.5;fill:none;width:14px;height:14px}
 .dash{color:var(--muted);font-size:16px}
 
+/* ── Payment Rates Section ── */
+.rates-section{background:var(--surface);border-top:1px solid var(--border);padding:80px 40px}
+.rates-inner{max-width:1100px;margin:0 auto}
+.rates-header{text-align:center;margin-bottom:48px}
+.rates-header h2{font-family:var(--font-head);font-size:clamp(24px,3vw,32px);color:var(--white);margin-bottom:8px}
+.rates-header p{font-size:15px;color:var(--text)}
+.rates-table{width:100%;border-collapse:collapse;background:var(--surface2);border-radius:12px;overflow:hidden;border:1px solid var(--border)}
+.rates-table th{padding:16px 20px;font-size:12px;font-weight:600;letter-spacing:.04em;color:var(--muted);text-transform:uppercase;text-align:left;border-bottom:1px solid var(--border);background:var(--surface)}
+.rates-table th:not(:first-child){text-align:center;color:var(--white);font-size:14px;letter-spacing:0;text-transform:none;font-family:var(--font-head)}
+.rates-table td{padding:14px 20px;font-size:13px;color:var(--text);border-bottom:1px solid rgba(50,51,74,.25)}
+.rates-table td:first-child{color:var(--white);font-weight:500}
+.rates-table td:not(:first-child){text-align:center}
+.rates-table tr:last-child td{border-bottom:none}
+
 /* ── FAQ ── */
-.faq-section{max-width:720px;margin:0 auto;padding:0 40px 80px}
-.faq-title{font-family:var(--font-head);font-size:28px;color:var(--white);text-align:center;margin-bottom:40px}
-.faq-item{border-bottom:1px solid var(--border);padding:20px 0}
-.faq-q{font-size:15px;color:var(--white);cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:500}
-.faq-q::after{content:'+';font-size:20px;color:var(--muted);transition:transform .2s}
-.faq-item.open .faq-q::after{content:'-'}
-.faq-a{font-size:14px;color:var(--text);line-height:1.6;max-height:0;overflow:hidden;transition:max-height .3s,padding .3s;padding-top:0}
-.faq-item.open .faq-a{max-height:200px;padding-top:12px}
+.faq-section{max-width:800px;margin:0 auto;padding:80px 40px}
+.faq-header{text-align:center;margin-bottom:48px}
+.faq-header h2{font-family:var(--font-head);font-size:clamp(28px,3.5vw,40px);color:var(--white);margin-bottom:8px;letter-spacing:-.02em}
+.faq-header p{font-size:15px;color:var(--text)}
+.faq-item{border:1px solid var(--border);border-radius:12px;margin-bottom:8px;overflow:hidden;background:var(--surface);transition:border-color .2s}
+.faq-item:hover{border-color:var(--border2)}
+.faq-q{font-size:15px;color:var(--white);cursor:pointer;display:flex;justify-content:space-between;align-items:center;font-weight:500;padding:18px 24px;gap:16px}
+.faq-toggle{width:24px;height:24px;border-radius:50%;background:var(--surface2);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.faq-item.open .faq-toggle{background:var(--accent);transform:rotate(45deg)}
+.faq-toggle svg{width:12px;height:12px;stroke:var(--muted);stroke-width:2;transition:stroke .2s}
+.faq-item.open .faq-toggle svg{stroke:var(--bg)}
+.faq-a{font-size:14px;color:var(--text);line-height:1.7;max-height:0;overflow:hidden;transition:max-height .3s;padding:0 24px}
+.faq-item.open .faq-a{max-height:300px;padding:0 24px 20px}
 
 /* ── CTA ── */
-.cta-section{text-align:center;padding:80px 40px;border-top:1px solid var(--border)}
-.cta-section h2{font-family:var(--font-head);font-size:32px;color:var(--white);margin-bottom:12px}
-.cta-section p{font-size:15px;color:var(--text);margin-bottom:28px}
-.cta-btn{display:inline-block;background:var(--accent);color:var(--bg);padding:14px 36px;border-radius:var(--radius);font-size:15px;font-weight:600;text-decoration:none;transition:all .2s}
-.cta-btn:hover{background:var(--accent2)}
+.cta-section{text-align:center;padding:100px 40px;position:relative;overflow:hidden}
+.cta-section::before{content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:400px;background:radial-gradient(ellipse,rgba(201,169,110,.06) 0%,transparent 70%);pointer-events:none}
+.cta-section h2{font-family:var(--font-head);font-size:clamp(32px,4vw,48px);color:var(--white);margin-bottom:16px;letter-spacing:-.02em;position:relative}
+.cta-section h2 em{font-style:italic;color:var(--accent)}
+.cta-section p{font-size:16px;color:var(--text);margin-bottom:32px;max-width:480px;margin-left:auto;margin-right:auto;line-height:1.6;position:relative}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;position:relative}
+.cta-btn{display:inline-block;background:linear-gradient(135deg,var(--accent),var(--accent2));color:var(--bg);padding:16px 40px;border-radius:var(--radius);font-size:16px;font-weight:600;text-decoration:none;transition:all .2s;border:none}
+.cta-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(201,169,110,.25)}
+.cta-btn-ghost{display:inline-block;background:none;border:1px solid var(--border2);color:var(--white);padding:16px 40px;border-radius:var(--radius);font-size:16px;font-weight:500;text-decoration:none;transition:all .2s}
+.cta-btn-ghost:hover{border-color:var(--accent);color:var(--accent)}
 
 /* ── Footer ── */
 footer{border-top:1px solid var(--border);padding:48px 40px}
@@ -123,19 +230,45 @@ footer{border-top:1px solid var(--border);padding:48px 40px}
 .footer-bottom{display:flex;justify-content:space-between;padding-top:24px;border-top:1px solid var(--border)}
 .footer-bottom p{font-size:12px;color:var(--muted)}
 
+/* ── Scroll Reveal ── */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .6s ease,transform .6s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
+
 /* ── Mobile ── */
 @media(max-width:900px){
   nav{padding:14px 20px}
   .nav-links{display:none}
-  .pricing-hero{padding:120px 20px 40px}
-  .pricing-grid{grid-template-columns:1fr;max-width:420px;padding:0 20px 60px}
-  .compare-section{padding:0 16px 60px;overflow-x:auto}
+  .pricing-hero{padding:120px 20px 36px}
+  .pricing-grid{grid-template-columns:1fr;max-width:440px;padding:0 20px 40px}
+  .included-section{padding:60px 20px}
+  .included-grid{grid-template-columns:1fr}
+  .included-card.wide{grid-column:span 1}
+  .stats-section{padding:60px 20px}
+  .stats-grid{grid-template-columns:1fr}
+  .testimonial-section{padding:60px 20px}
+  .testimonial-inner{grid-template-columns:1fr;gap:32px}
+  .testimonial-visual{height:240px}
+  .managed-section{padding:60px 20px}
+  .managed-inner{grid-template-columns:1fr}
+  .managed-visual{height:240px}
+  .managed-features{grid-template-columns:1fr}
+  .compare-section{padding:60px 16px;overflow-x:auto}
   .compare-table{min-width:600px}
-  .faq-section{padding:0 20px 60px}
+  .rates-section{padding:60px 20px;overflow-x:auto}
+  .rates-table{min-width:500px}
+  .faq-section{padding:60px 20px}
   .cta-section{padding:60px 20px}
   footer{padding:40px 20px}
   .footer-top{flex-direction:column}
   .footer-bottom{flex-direction:column;gap:8px}
+  .trusted-logos{gap:24px}
+}
+@media(max-width:480px){
+  .pricing-hero h1{font-size:36px}
+  .stat-number{font-size:48px}
 }
 </style>
 </head>
@@ -154,41 +287,323 @@ footer{border-top:1px solid var(--border);padding:48px 40px}
 </nav>
 
 <!-- Hero -->
-<div class="pricing-hero">
-  <h1>Simple pricing,<br><span>serious websites.</span></h1>
-  <p>Everything you need to launch, grow, and manage your online presence. No contracts, no hidden fees. Cancel anytime.</p>
+<div class="pricing-hero reveal">
+  <div class="hero-badge"><span class="dot"></span> No contracts, cancel anytime</div>
+  <h1>Plans that grow<br>with <span>your business.</span></h1>
+  <p>Everything you need to launch, grow, and manage your online presence. Professional design, managed hosting, SEO, and support in one plan.</p>
+  <p class="hero-sub-note">All plans include a dedicated account team. We build it, we manage it, you grow.</p>
 </div>
 
 <!-- Billing Toggle -->
-<div class="billing-toggle">
-  <span id="label-monthly" class="active">Monthly</span>
+<div class="billing-toggle reveal">
+  <span id="label-monthly" class="active" onclick="if(isYearly)toggleBilling()">Pay monthly</span>
   <div class="toggle-switch" id="billing-toggle" onclick="toggleBilling()"></div>
-  <span id="label-yearly">Yearly</span>
+  <span id="label-yearly" onclick="if(!isYearly)toggleBilling()">Pay yearly</span>
   <span class="save-badge" id="save-badge" style="opacity:0">Save 25%</span>
 </div>
 
 <!-- Pricing Cards -->
 <div class="pricing-grid" id="pricing-grid"></div>
 
-<!-- Comparison Table -->
-<div class="compare-section">
-  <h2 class="compare-title">Compare all plans</h2>
-  <p class="compare-sub">Every plan includes hosting, SSL, and support. Here's what's different.</p>
-  <table class="compare-table" id="compare-table"></table>
+<!-- Trusted By -->
+<div class="trusted-section reveal">
+  <p>Trusted by growing businesses across South Florida</p>
+  <div class="trusted-logos">
+    <span>VoltPro</span><span>AirPro</span><span>FlowPro</span><span>PristineClean</span>
+    <span>Apex Detail</span><span>Fade & Co.</span><span>Jade's Spice</span><span>Wook Wear</span>
+  </div>
 </div>
+
+<!-- Always Included — LIGHT SECTION -->
+<section class="included-section">
+  <div class="section-label-sm reveal">Every plan includes</div>
+  <h2 class="reveal">What you get with <em style="color:var(--accent);font-style:italic">every</em> Webnari plan.</h2>
+  <p class="section-sub reveal">No hidden extras. These essentials are included from day one, on every plan.</p>
+
+  <div class="included-grid">
+    <!-- Card 1: Custom Design — wide -->
+    <div class="included-card wide reveal">
+      <div class="included-visual v-dark" style="height:220px">
+        <svg viewBox="0 0 400 180" fill="none">
+          <!-- Browser mockup -->
+          <rect x="40" y="10" width="320" height="160" rx="10" fill="#252636" stroke="#42436A" stroke-width="1"/>
+          <circle cx="62" cy="26" r="4" fill="#E85D75"/>
+          <circle cx="76" cy="26" r="4" fill="#D4956B"/>
+          <circle cx="90" cy="26" r="4" fill="#5EBD8A"/>
+          <rect x="40" y="36" width="320" height="1" fill="#32334A"/>
+          <!-- Page content -->
+          <rect x="56" y="52" width="120" height="8" rx="3" fill="#C9A96E" opacity=".6"/>
+          <rect x="56" y="68" width="180" height="5" rx="2" fill="#42436A"/>
+          <rect x="56" y="80" width="140" height="5" rx="2" fill="#42436A"/>
+          <rect x="56" y="96" width="80" height="24" rx="6" fill="#C9A96E"/>
+          <!-- Image placeholder -->
+          <rect x="260" y="52" width="84" height="70" rx="8" fill="#32334A"/>
+          <circle cx="302" cy="82" r="12" fill="#42436A"/>
+          <!-- Template thumbnails -->
+          <rect x="56" y="132" width="56" height="28" rx="4" fill="#32334A" stroke="#42436A" stroke-width=".5"/>
+          <rect x="120" y="132" width="56" height="28" rx="4" fill="#32334A" stroke="#C9A96E" stroke-width="1"/>
+          <rect x="184" y="132" width="56" height="28" rx="4" fill="#32334A" stroke="#42436A" stroke-width=".5"/>
+          <rect x="248" y="132" width="56" height="28" rx="4" fill="#32334A" stroke="#42436A" stroke-width=".5"/>
+        </svg>
+      </div>
+      <div class="included-body">
+        <h3>Professionally designed website</h3>
+        <p>Choose from 70+ stunning templates or get a fully custom design. Every site is hand-crafted, mobile-responsive, and built to convert visitors into customers.</p>
+      </div>
+    </div>
+
+    <!-- Card 2: Hosting & SSL -->
+    <div class="included-card reveal reveal-delay-1">
+      <div class="included-visual v-cool">
+        <svg viewBox="0 0 200 160" fill="none">
+          <!-- Shield -->
+          <path d="M100 20 L140 40 L140 90 Q140 130 100 145 Q60 130 60 90 L60 40 Z" fill="none" stroke="#1C1D2A" stroke-width="2"/>
+          <path d="M100 30 L132 46 L132 88 Q132 120 100 133 Q68 120 68 88 L68 46 Z" fill="#E6EDF5" stroke="none"/>
+          <path d="M88 82 L96 90 L114 72" stroke="#5EBD8A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <!-- Lock -->
+          <rect x="90" y="56" width="20" height="16" rx="3" fill="none" stroke="#1C1D2A" stroke-width="1.5"/>
+          <path d="M94 56 V50 Q94 42 100 42 Q106 42 106 50 V56" fill="none" stroke="#1C1D2A" stroke-width="1.5"/>
+        </svg>
+      </div>
+      <div class="included-body">
+        <h3>Managed hosting & SSL</h3>
+        <p>Enterprise-grade Cloudflare hosting with free SSL, global CDN, and 99.9% uptime. We handle all the technical infrastructure.</p>
+      </div>
+    </div>
+
+    <!-- Card 3: SEO -->
+    <div class="included-card reveal reveal-delay-2">
+      <div class="included-visual v-green">
+        <svg viewBox="0 0 200 160" fill="none">
+          <!-- Chart -->
+          <rect x="35" y="110" width="20" height="30" rx="3" fill="#5EBD8A" opacity=".3"/>
+          <rect x="65" y="90" width="20" height="50" rx="3" fill="#5EBD8A" opacity=".5"/>
+          <rect x="95" y="65" width="20" height="75" rx="3" fill="#5EBD8A" opacity=".7"/>
+          <rect x="125" y="40" width="20" height="100" rx="3" fill="#5EBD8A"/>
+          <rect x="155" y="28" width="20" height="112" rx="3" fill="#2D6A4F"/>
+          <!-- Trend line -->
+          <polyline points="45,100 75,82 105,58 135,34 165,24" stroke="#1C1D2A" stroke-width="2" fill="none" stroke-linecap="round"/>
+          <circle cx="165" cy="24" r="4" fill="#1C1D2A"/>
+        </svg>
+      </div>
+      <div class="included-body">
+        <h3>Search engine optimization</h3>
+        <p>Every site ships with SEO best practices: meta tags, schema markup, sitemaps, and Google Business integration.</p>
+      </div>
+    </div>
+
+    <!-- Card 4: Mobile Responsive -->
+    <div class="included-card reveal">
+      <div class="included-visual v-warm">
+        <svg viewBox="0 0 200 160" fill="none">
+          <!-- Phone -->
+          <rect x="70" y="12" width="60" height="110" rx="10" fill="#1C1D2A" stroke="#42436A" stroke-width="1"/>
+          <rect x="76" y="22" width="48" height="80" rx="4" fill="#252636"/>
+          <!-- Content lines -->
+          <rect x="82" y="30" width="30" height="4" rx="2" fill="#C9A96E" opacity=".6"/>
+          <rect x="82" y="40" width="36" height="3" rx="1" fill="#42436A"/>
+          <rect x="82" y="48" width="28" height="3" rx="1" fill="#42436A"/>
+          <rect x="82" y="60" width="20" height="10" rx="3" fill="#C9A96E"/>
+          <rect x="82" y="78" width="36" height="18" rx="3" fill="#32334A"/>
+          <circle cx="100" cy="110" r="4" fill="#42436A"/>
+          <!-- Resize arrows -->
+          <path d="M50 67 L40 67 M40 67 L44 63 M40 67 L44 71" stroke="#3A3A4A" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M150 67 L160 67 M160 67 L156 63 M160 67 L156 71" stroke="#3A3A4A" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="included-body">
+        <h3>Mobile responsive</h3>
+        <p>Every site looks flawless on phones, tablets, and desktops. No pinching or zooming required.</p>
+      </div>
+    </div>
+
+    <!-- Card 5: Contact forms & leads — wide -->
+    <div class="included-card wide reveal reveal-delay-1">
+      <div class="included-visual v-gold" style="height:200px">
+        <svg viewBox="0 0 400 160" fill="none">
+          <!-- Dashboard mockup -->
+          <rect x="30" y="10" width="340" height="140" rx="10" fill="#FFFFFF" stroke="#DDD6CC" stroke-width="1"/>
+          <!-- Header -->
+          <rect x="46" y="24" width="80" height="6" rx="3" fill="#C9A96E"/>
+          <rect x="260" y="22" width="60" height="10" rx="5" fill="#C9A96E" opacity=".2"/>
+          <rect x="330" y="22" width="26" height="10" rx="5" fill="#5EBD8A" opacity=".2"/>
+          <rect x="30" y="40" width="340" height="1" fill="#DDD6CC"/>
+          <!-- Leads list -->
+          <circle cx="54" cy="58" r="8" fill="#E8D5A8"/>
+          <rect x="70" y="54" width="100" height="4" rx="2" fill="#3A3A4A"/>
+          <rect x="70" y="62" width="60" height="3" rx="1" fill="#C9A96E" opacity=".4"/>
+          <rect x="290" y="54" width="40" height="10" rx="5" fill="#5EBD8A" opacity=".15"/>
+          <rect x="295" y="56" width="30" height="6" rx="3" fill="#5EBD8A"/>
+          <rect x="30" y="76" width="340" height="1" fill="#DDD6CC" opacity=".5"/>
+          <circle cx="54" cy="90" r="8" fill="#D4956B" opacity=".5"/>
+          <rect x="70" y="86" width="90" height="4" rx="2" fill="#3A3A4A"/>
+          <rect x="70" y="94" width="70" height="3" rx="1" fill="#C9A96E" opacity=".4"/>
+          <rect x="290" y="86" width="40" height="10" rx="5" fill="#D4956B" opacity=".15"/>
+          <rect x="295" y="88" width="30" height="6" rx="3" fill="#D4956B"/>
+          <rect x="30" y="108" width="340" height="1" fill="#DDD6CC" opacity=".5"/>
+          <circle cx="54" cy="122" r="8" fill="#A0A0B8" opacity=".3"/>
+          <rect x="70" y="118" width="80" height="4" rx="2" fill="#3A3A4A"/>
+          <rect x="70" y="126" width="55" height="3" rx="1" fill="#C9A96E" opacity=".4"/>
+          <rect x="290" y="118" width="40" height="10" rx="5" fill="#5EBD8A" opacity=".15"/>
+          <rect x="295" y="120" width="30" height="6" rx="3" fill="#5EBD8A"/>
+        </svg>
+      </div>
+      <div class="included-body">
+        <h3>Contact forms & lead capture</h3>
+        <p>Built-in contact forms, quote request forms, and lead capture tools that feed directly into your inbox. Never miss a potential customer.</p>
+      </div>
+    </div>
+
+    <!-- Card 6: Support -->
+    <div class="included-card reveal reveal-delay-2">
+      <div class="included-visual v-dark">
+        <svg viewBox="0 0 200 160" fill="none">
+          <!-- Chat bubbles -->
+          <rect x="30" y="30" width="100" height="40" rx="12" fill="#32334A" stroke="#42436A" stroke-width="1"/>
+          <rect x="40" y="44" width="60" height="4" rx="2" fill="#A0A0B8"/>
+          <rect x="40" y="54" width="40" height="4" rx="2" fill="#A0A0B8" opacity=".5"/>
+          <polygon points="50,70 60,70 45,82" fill="#32334A"/>
+          <!-- Reply -->
+          <rect x="70" y="90" width="110" height="40" rx="12" fill="#C9A96E" opacity=".2" stroke="#C9A96E" stroke-width="1"/>
+          <rect x="82" y="104" width="70" height="4" rx="2" fill="#C9A96E"/>
+          <rect x="82" y="114" width="45" height="4" rx="2" fill="#C9A96E" opacity=".5"/>
+          <polygon points="150,130 140,130 155,142" fill="rgba(201,169,110,.2)"/>
+        </svg>
+      </div>
+      <div class="included-body">
+        <h3>Hands-on support</h3>
+        <p>Real humans, not chatbots. Our team manages your site so you can focus on your business.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Stats Section -->
+<section class="stats-section">
+  <div class="section-label-sm reveal" style="text-align:center;margin-bottom:12px">By the numbers</div>
+  <h2 class="reveal" style="font-family:var(--font-head);font-size:clamp(28px,3.5vw,40px);color:var(--white);text-align:center;margin-bottom:48px;letter-spacing:-.02em">Built for businesses that <em style="color:var(--accent);font-style:italic">mean business.</em></h2>
+  <div class="stats-grid">
+    <div class="stat-card reveal">
+      <div class="stat-number"><span>70+</span></div>
+      <div class="stat-label">Unique website templates across industries, each hand-designed and ready to launch</div>
+    </div>
+    <div class="stat-card reveal reveal-delay-1">
+      <div class="stat-number"><span>172+</span></div>
+      <div class="stat-label">E-commerce features built in, from checkout to subscriptions to multi-location inventory</div>
+    </div>
+    <div class="stat-card reveal reveal-delay-2">
+      <div class="stat-number"><span>14</span></div>
+      <div class="stat-label">Average days from onboarding to live website launch with full SEO setup</div>
+    </div>
+  </div>
+</section>
+
+<!-- Testimonial — LIGHT -->
+<section class="testimonial-section">
+  <div class="testimonial-inner">
+    <div class="testimonial-visual reveal">
+      <svg viewBox="0 0 120 120" fill="none">
+        <circle cx="60" cy="60" r="50" fill="#32334A"/>
+        <text x="60" y="68" text-anchor="middle" font-family="Space Grotesk" font-size="28" font-weight="700" fill="#C9A96E">JT</text>
+      </svg>
+    </div>
+    <div class="testimonial-content reveal reveal-delay-1">
+      <blockquote>We were paying a developer $2,000/month to keep our site running and it still looked outdated. Webnari gave us a beautiful site with better SEO, e-commerce, and support for a fraction of the cost.</blockquote>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">JT</div>
+        <div class="testimonial-meta">
+          <div class="t-name">James Torres</div>
+          <div class="t-role">Owner, FlowPro Plumbing</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Managed Service Banner -->
+<section class="managed-section">
+  <div class="managed-inner">
+    <div class="managed-content reveal">
+      <div class="section-label-sm" style="text-align:left">Why Webnari over Shopify</div>
+      <h2>Same features. <em>We manage it for you.</em></h2>
+      <p>Shopify gives you the tools and says "figure it out." Webnari gives you the tools AND a team that builds, updates, and optimizes your site. Every plan includes:</p>
+      <div class="managed-features">
+        <div class="managed-feat"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>Website design & build</div>
+        <div class="managed-feat"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>Content updates on request</div>
+        <div class="managed-feat"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>SEO monitoring & fixes</div>
+        <div class="managed-feat"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>Performance optimization</div>
+        <div class="managed-feat"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>Security & uptime monitoring</div>
+        <div class="managed-feat"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>Monthly analytics reporting</div>
+        <div class="managed-feat"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>Integration setup & support</div>
+        <div class="managed-feat"><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>Dedicated account team</div>
+      </div>
+    </div>
+    <div class="managed-visual reveal reveal-delay-1">
+      <div class="phone-mockup">
+        <div style="height:14px"></div>
+        <div class="phone-bar"></div>
+        <div class="phone-bar b2"></div>
+        <div class="phone-bar b3"></div>
+        <div style="height:4px"></div>
+        <div class="phone-block gold"></div>
+        <div class="phone-block"></div>
+        <div class="phone-block"></div>
+        <div style="height:4px"></div>
+        <div class="phone-bar" style="width:50%;height:16px;border-radius:4px"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Comparison Table -->
+<section class="compare-section">
+  <div class="compare-header reveal">
+    <h2>Compare all plans</h2>
+    <p>Every plan includes hosting, SSL, and hands-on support. Here's what's different.</p>
+  </div>
+  <table class="compare-table reveal" id="compare-table"></table>
+</section>
+
+<!-- Payment Processing Rates -->
+<section class="rates-section">
+  <div class="rates-inner">
+    <div class="rates-header reveal">
+      <h2>Payment processing rates</h2>
+      <p>Competitive rates on every transaction. No hidden fees.</p>
+    </div>
+    <table class="rates-table reveal" id="rates-table">
+      <thead>
+        <tr><th>Processing</th><th>Basic</th><th>Standard</th><th>Pro</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Stripe online</td><td>2.9% + 30&cent;</td><td>2.9% + 30&cent;</td><td>2.9% + 30&cent;</td></tr>
+        <tr><td>Square in-person</td><td>2.6% + 10&cent;</td><td>2.6% + 10&cent;</td><td>2.6% + 10&cent;</td></tr>
+        <tr><td>PayPal</td><td>3.49% + 49&cent;</td><td>3.49% + 49&cent;</td><td>3.49% + 49&cent;</td></tr>
+        <tr><td>Platform transaction fee</td><td>0%</td><td>0%</td><td>0%</td></tr>
+      </tbody>
+    </table>
+    <p style="text-align:center;font-size:12px;color:var(--muted);margin-top:16px">Rates set by payment providers. Webnari never charges an additional transaction fee on any plan.</p>
+  </div>
+</section>
 
 <!-- FAQ -->
-<div class="faq-section">
-  <h2 class="faq-title">Frequently asked questions</h2>
+<section class="faq-section">
+  <div class="faq-header reveal">
+    <h2>Frequently asked questions</h2>
+    <p>Everything you need to know about Webnari plans.</p>
+  </div>
   <div id="faq-list"></div>
-</div>
+</section>
 
 <!-- CTA -->
-<div class="cta-section">
-  <h2>Ready to grow your business online?</h2>
-  <p>Get a professionally designed website live in under 2 weeks.</p>
-  <a href="start.html" class="cta-btn">Get started free</a>
-</div>
+<section class="cta-section">
+  <h2 class="reveal">Ready to grow your<br>business <em>online?</em></h2>
+  <p class="reveal">Get a professionally designed website live in under 2 weeks. No setup fees, no contracts.</p>
+  <div class="cta-btns reveal">
+    <a href="start.html" class="cta-btn">Get started free</a>
+    <a href="features.html" class="cta-btn-ghost">See all features</a>
+  </div>
+</section>
 
 <footer>
   <div class="footer-top">
@@ -217,9 +632,9 @@ const DASH='<span class="dash">&mdash;</span>';
 const PLANS=[
   {
     tier:'Basic',
-    monthly:29,
-    yearly:19,
-    desc:'For new businesses launching their first website.',
+    monthly:39,
+    yearly:29,
+    desc:'For new businesses launching their first professional website.',
     cta:'Get started',
     features:[
       {g:'Website'},
@@ -228,10 +643,11 @@ const PLANS=[
       'Mobile-responsive design',
       'SSL certificate & hosting',
       'Contact form',
+      'Monthly content update',
       {g:'SEO & Marketing'},
-      'Basic search optimization',
-      'Google Business setup',
-      'Monthly performance snapshot',
+      'On-page SEO setup',
+      'Google Business integration',
+      'Monthly performance report',
       {g:'Support'},
       'Email support',
       '48-hour response time',
@@ -239,9 +655,9 @@ const PLANS=[
   },
   {
     tier:'Standard',
-    monthly:59,
-    yearly:39,
-    desc:'For growing businesses that want leads and conversions.',
+    monthly:105,
+    yearly:79,
+    desc:'For growing businesses that need leads, conversions, and content.',
     cta:'Get started',
     featured:true,
     features:[
@@ -249,41 +665,44 @@ const PLANS=[
       'Professionally designed website',
       'Up to 15 pages',
       'Scroll-driven parallax effects',
-      'Blog with monthly content',
+      'Blog with bi-monthly content',
       'Contact & lead capture forms',
+      'Booking / scheduling widget',
       {g:'SEO & Marketing'},
-      'Advanced search ranking strategy',
+      'Advanced SEO strategy',
       'Google Analytics dashboard',
       'Schema markup for local search',
       'Monthly growth report',
       {g:'Support'},
-      'Priority email & chat support',
+      'Priority email & chat',
       '24-hour response time',
+      '5 staff accounts',
     ]
   },
   {
     tier:'Pro',
-    monthly:99,
-    yearly:69,
-    desc:'Full-service digital presence with e-commerce and dedicated support.',
+    monthly:399,
+    yearly:299,
+    desc:'Full-service digital presence with e-commerce, integrations, and a dedicated team.',
     cta:'Get started',
     features:[
       {g:'Website'},
       'Professionally designed website',
       'Unlimited pages',
       'Custom parallax animations',
-      'E-commerce or booking integration',
+      'Full e-commerce store',
       'Blog with weekly content',
       'Conversion-optimized landing pages',
       {g:'SEO & Marketing'},
-      'Full search ranking management',
+      'Full SEO management',
       'Reputation & review management',
       'Google Merchant & Meta feeds',
       'Bi-weekly strategy reports',
       {g:'Support'},
       'Dedicated account manager',
-      'Priority 24-hour support',
+      'Same-day priority support',
       'Phone & video calls',
+      '15 staff accounts',
     ]
   }
 ];
@@ -303,21 +722,20 @@ function renderCards(){
   const grid=document.getElementById('pricing-grid');
   grid.innerHTML=PLANS.map(p=>{
     const price=isYearly?p.yearly:p.monthly;
-    const yearNote=isYearly?`$${p.yearly*12}/year &middot; billed annually`:`$${p.yearly}/mo if billed yearly`;
+    const yearNote=isYearly?`$${p.yearly*12}/year billed annually`:`$${p.yearly}/mo when billed yearly`;
     const feats=p.features.map(f=>{
-      if(typeof f==='object') return `<li class="section-label">${f.g}</li>`;
-      return `<li><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>${f}</li>`;
+      if(typeof f==='object') return '<li class="section-label">'+f.g+'</li>';
+      return '<li><svg viewBox="0 0 24 24" fill="none"><polyline points="20 6 9 17 4 12"/></svg>'+f+'</li>';
     }).join('');
-    return `
-      <div class="p-card${p.featured?' featured':''}">
-        <div class="p-card-tier">${p.tier}</div>
-        <div class="p-card-price"><span class="dollar">$${price}</span><span class="period">/mo</span></div>
-        <div class="p-card-year">${yearNote}</div>
-        <div class="p-card-desc">${p.desc}</div>
-        <a href="start.html" class="p-card-cta">${p.cta}</a>
-        <div class="p-card-divider"></div>
-        <ul>${feats}</ul>
-      </div>`;
+    return '<div class="p-card'+(p.featured?' featured':'')+'">'
+      +'<div class="p-card-tier">'+p.tier+'</div>'
+      +'<div class="p-card-price"><span class="dollar">$'+price+'</span><span class="period">/mo</span></div>'
+      +'<div class="p-card-year">'+yearNote+'</div>'
+      +'<div class="p-card-desc">'+p.desc+'</div>'
+      +'<a href="start.html" class="p-card-cta">'+p.cta+'</a>'
+      +'<div class="p-card-divider"></div>'
+      +'<ul>'+feats+'</ul>'
+      +'</div>';
   }).join('');
 }
 
@@ -327,74 +745,95 @@ const COMPARE=[
   {f:'Pages included',v:['Up to 5','Up to 15','Unlimited']},
   {f:'Custom design',v:[CHK,CHK,CHK]},
   {f:'Mobile responsive',v:[CHK,CHK,CHK]},
-  {f:'SSL & hosting',v:[CHK,CHK,CHK]},
-  {f:'Parallax scroll effects',v:[DASH,CHK,CHK]},
+  {f:'SSL & managed hosting',v:[CHK,CHK,CHK]},
+  {f:'Scroll parallax effects',v:[DASH,CHK,CHK]},
   {f:'Blog',v:[DASH,CHK,CHK]},
-  {f:'E-commerce / booking',v:[DASH,DASH,CHK]},
+  {f:'Booking / scheduling',v:[DASH,CHK,CHK]},
+  {f:'E-commerce store',v:[DASH,DASH,CHK]},
   {f:'Landing pages',v:[DASH,DASH,CHK]},
   {group:'SEO & Marketing'},
-  {f:'Basic SEO setup',v:[CHK,CHK,CHK]},
+  {f:'On-page SEO setup',v:[CHK,CHK,CHK]},
   {f:'Google Business integration',v:[CHK,CHK,CHK]},
   {f:'Google Analytics',v:[DASH,CHK,CHK]},
   {f:'Schema markup',v:[DASH,CHK,CHK]},
   {f:'Full SEO management',v:[DASH,DASH,CHK]},
-  {f:'Review management',v:[DASH,DASH,CHK]},
+  {f:'Review & reputation management',v:[DASH,DASH,CHK]},
   {f:'Google Merchant feed',v:[DASH,DASH,CHK]},
   {f:'Meta catalog feed',v:[DASH,DASH,CHK]},
-  {group:'E-Commerce (Pro only)'},
+  {group:'E-Commerce'},
   {f:'Product catalog',v:[DASH,DASH,CHK]},
   {f:'Cart & checkout',v:[DASH,DASH,CHK]},
-  {f:'Stripe / Square / PayPal',v:[DASH,DASH,CHK]},
+  {f:'Stripe + Square + PayPal',v:[DASH,DASH,CHK]},
   {f:'Discounts & gift cards',v:[DASH,DASH,CHK]},
-  {f:'Subscriptions & recurring',v:[DASH,DASH,CHK]},
-  {f:'Inventory management',v:[DASH,DASH,CHK]},
-  {f:'Shipping & fulfillment',v:[DASH,DASH,CHK]},
-  {f:'Customer accounts',v:[DASH,DASH,CHK]},
-  {group:'Support'},
+  {f:'Subscriptions & recurring billing',v:[DASH,DASH,CHK]},
+  {f:'Multi-location inventory',v:[DASH,DASH,CHK]},
+  {f:'Shipping labels (Shippo)',v:[DASH,DASH,CHK]},
+  {f:'Customer accounts & segments',v:[DASH,DASH,CHK]},
+  {f:'Abandoned cart recovery',v:[DASH,DASH,CHK]},
+  {group:'Integrations'},
+  {f:'Mailchimp',v:[DASH,CHK,CHK]},
+  {f:'Klaviyo',v:[DASH,DASH,CHK]},
+  {f:'QuickBooks',v:[DASH,DASH,CHK]},
+  {f:'Meta (Facebook & Instagram)',v:[DASH,DASH,CHK]},
+  {f:'Google Merchant Center',v:[DASH,DASH,CHK]},
+  {group:'Support & Reporting'},
   {f:'Email support',v:[CHK,CHK,CHK]},
   {f:'Priority support',v:[DASH,CHK,CHK]},
   {f:'Dedicated account manager',v:[DASH,DASH,CHK]},
   {f:'Phone & video calls',v:[DASH,DASH,CHK]},
-  {group:'Reporting'},
-  {f:'Monthly snapshot',v:[CHK,CHK,CHK]},
-  {f:'Growth reports',v:[DASH,'Monthly','Bi-weekly']},
+  {f:'Content updates',v:['Monthly','Bi-monthly','Weekly']},
+  {f:'Performance reports',v:['Monthly','Monthly','Bi-weekly']},
   {f:'Strategy sessions',v:[DASH,DASH,CHK]},
+  {f:'Staff accounts',v:['1','5','15']},
 ];
 
 function renderTable(){
-  const hdr='<thead><tr><th>Feature</th><th>Basic</th><th>Standard</th><th>Pro</th></tr></thead>';
+  const hdr='<thead><tr><th>Feature</th><th>Basic<br><span style="font-size:11px;color:var(--muted);font-weight:400">$39/mo</span></th><th>Standard<br><span style="font-size:11px;color:var(--accent);font-weight:400">$105/mo</span></th><th>Pro<br><span style="font-size:11px;color:var(--muted);font-weight:400">$399/mo</span></th></tr></thead>';
   const rows=COMPARE.map(r=>{
-    if(r.group) return `<tr class="group-row"><td colspan="4">${r.group}</td></tr>`;
-    return `<tr><td>${r.f}</td>${r.v.map(v=>`<td>${v}</td>`).join('')}</tr>`;
+    if(r.group) return '<tr class="group-row"><td colspan="4">'+r.group+'</td></tr>';
+    return '<tr><td>'+r.f+'</td>'+r.v.map(v=>'<td>'+v+'</td>').join('')+'</tr>';
   }).join('');
   document.getElementById('compare-table').innerHTML=hdr+'<tbody>'+rows+'</tbody>';
 }
 
 // FAQ
 const FAQS=[
-  {q:'Do I need to pay a setup fee?',a:'No. There are no setup fees, no contracts, and no hidden charges. You pay one monthly (or yearly) price and we handle everything — design, build, hosting, SSL, and support.'},
+  {q:'Do I need to pay a setup fee?',a:'No. There are no setup fees, no contracts, and no hidden charges. You pay one monthly (or yearly) price and we handle everything \u2014 design, build, hosting, SSL, and support.'},
+  {q:'How is Webnari different from Shopify or Squarespace?',a:'With Shopify and Squarespace, you build and manage your own site. With Webnari, we do it all for you \u2014 professional design, content updates, SEO optimization, and technical support. Same features, zero DIY hassle.'},
   {q:'Can I switch plans later?',a:'Yes, you can upgrade or downgrade at any time. Changes take effect on your next billing cycle. If you upgrade mid-cycle, we prorate the difference.'},
-  {q:'What if I want to cancel?',a:'Cancel anytime with no penalties. Your site stays live until the end of your current billing period. We\'ll export your content if you need it.'},
-  {q:'How long does it take to launch?',a:'Most websites launch within 7-14 days. We handle everything — you just provide your business info, photos, and preferences during onboarding.'},
+  {q:'What if I want to cancel?',a:'Cancel anytime with no penalties. Your site stays live until the end of your current billing period. We\u2019ll export your content if you need it.'},
+  {q:'How long does it take to launch?',a:'Most websites launch within 7\u201314 days. We handle everything \u2014 you just provide your business info, photos, and preferences during onboarding.'},
   {q:'Do I own my website?',a:'You own all your content, images, and copy. The website design and hosting are part of your Webnari subscription. If you cancel, we can export your content for you.'},
-  {q:'Can I add e-commerce later?',a:'Absolutely. Start with Basic or Standard and upgrade to Pro whenever you\'re ready to sell online. We\'ll add your store seamlessly.'},
+  {q:'Can I add e-commerce later?',a:'Absolutely. Start with Basic or Standard and upgrade to Pro whenever you\u2019re ready to sell online. We\u2019ll add your store seamlessly.'},
+  {q:'Are there any transaction fees?',a:'Webnari charges zero platform transaction fees. The only fees are the standard rates from your payment processor (Stripe, Square, or PayPal).'},
   {q:'What payment methods do you accept?',a:'We accept all major credit cards. Yearly plans are billed in one annual payment for the discounted rate.'},
   {q:'Do you work with businesses outside South Florida?',a:'Yes! While most of our clients are in South Florida, we work with service businesses and e-commerce brands nationwide.'},
 ];
 
 function renderFAQ(){
-  document.getElementById('faq-list').innerHTML=FAQS.map(f=>`
-    <div class="faq-item" onclick="this.classList.toggle('open')">
-      <div class="faq-q">${f.q}</div>
-      <div class="faq-a">${f.a}</div>
-    </div>
-  `).join('');
+  document.getElementById('faq-list').innerHTML=FAQS.map(f=>
+    '<div class="faq-item reveal" onclick="this.classList.toggle(\'open\')">'
+    +'<div class="faq-q">'+f.q+'<div class="faq-toggle"><svg viewBox="0 0 24 24" fill="none"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div></div>'
+    +'<div class="faq-a">'+f.a+'</div>'
+    +'</div>'
+  ).join('');
+}
+
+// Scroll reveal
+function initReveal(){
+  const obs=new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target)}});
+  },{threshold:0.1,rootMargin:'0px 0px -40px 0px'});
+  document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 }
 
 // Init
 renderCards();
 renderTable();
 renderFAQ();
+document.addEventListener('DOMContentLoaded',initReveal);
+// Fallback for already-loaded pages
+if(document.readyState==='complete'||document.readyState==='interactive') initReveal();
 </script>
 </body>
 </html>
